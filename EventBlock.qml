@@ -5,6 +5,7 @@ Item {
 	id: block;
 	width: 256
 	height: 256
+	property string blockName: "genericEvent"
 
 	Image {
 		source: "images/eventBg.svg"
@@ -15,18 +16,9 @@ Item {
 		source: "images/eventCenter.svg"
 	}
 
-	Image {
+	LinkingPath {
 		id: linkingPath
-
-		source: "images/lineDotted.png"
 		visible: false
-		fillMode: Image.TileHorizontally
-
-		transform: Rotation {
-			id: linkingPathRotation
-			origin { x: 0; y: 0 }
-			angle: 0
-		}
 	}
 
 	// TODO: move somewhere else
@@ -45,9 +37,11 @@ Item {
 			var dx = mouse.x - 128;
 			var dy = mouse.y - 128;
 			mouse.accepted = dx*dx + dy*dy < 128*128;
+			// TODO: add another test for small handle, once we are sure we want to keep it
 			if (mouse.accepted) {
 				linkingPath.x = mouse.x;
 				linkingPath.y = mouse.y;
+				linkingPath.width = 1;
 				linkingPath.visible = true;
 			}
 		}
@@ -56,12 +50,30 @@ Item {
 			var dx = mouse.x - linkingPath.x;
 			var dy = mouse.y - linkingPath.y;
 			linkingPath.width = Math.sqrt(dx*dx + dy*dy);
-			linkingPathRotation.angle = toDegrees(Math.atan2(dy, dx));
+			linkingPath.rotationAngle = toDegrees(Math.atan2(dy, dx));
 		}
 
 		onReleased: {
 			linkingPath.visible = false;
-			// TODO: handle connections
+
+			var scene_pos = mapToItem(scene, mouse.x, mouse.y);
+			var dest_block = scene.contentItem.childAt(scene_pos.x, scene_pos.y);
+
+			if (dest_block && dest_block.blockName) {
+				// create connections
+				var path_start = mapToItem(scene, linkingPath.x, linkingPath.y)
+				var blockLinkComponent = Qt.createComponent("BlockLink.qml");
+				blockLinkComponent.createObject(scene.contentItem, {
+					x: path_start.x,
+					y: path_start.y,
+					z: 0, // FIXME: why z=0 does not lead to the path being in the background?
+					width: linkingPath.width,
+					rotationAngle: linkingPath.rotationAngle,
+					sourceBlock: this,
+					destinationBlock: dest_block
+				});
+			}
+			// TODO: decide for a model to track the links
 		}
 	}
 
@@ -83,6 +95,8 @@ Item {
 				block.z = ++scene.highestZ;
 			}
 		}
+
+		// TODO: add drag update step and move links
 
 		onReleased: {
 			scene.setContentSize();
