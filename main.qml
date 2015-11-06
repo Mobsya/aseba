@@ -52,8 +52,11 @@ Window {
 
 			property int highestZ: 1
 
-			ProxEventBlock { x: 0; y: 0 }
-			ProxEventBlock { x: 350; y: 350 }
+			//ProxEventBlock { x: 0; y: 0 }
+			//ProxEventBlock { x: 350; y: 350 }
+
+			EventBlock { x: 0; y: 0 }
+			EventBlock { x: 350; y: 350 }
 
 			Component.onCompleted: {
 				setContentSize();
