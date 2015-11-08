@@ -50,7 +50,7 @@ Window {
 
 			contentItem.transformOrigin: Item.TopLeft
 
-			property int highestZ: 1
+			property int highestZ: 2
 
 			//ProxEventBlock { x: 0; y: 0 }
 			//ProxEventBlock { x: 350; y: 350 }
