@@ -1,4 +1,5 @@
 import QtQuick 2.5
+import QtGraphicalEffects 1.0
 
 Item {
 	id: block;
@@ -10,13 +11,27 @@ Item {
 	property string bgImage
 	property string centerImage
 
+	property bool highlight: false
+	property Item highlightedBlock: null
+
 	Image {
 		source: bgImage
-
 	}
 
 	Image {
+		id: centerImageId
 		source: centerImage
+	}
+
+	DropShadow {
+		visible: highlight
+		anchors.fill: centerImageId
+		color: "#ffffff"
+		radius: 16
+		samples: 32
+		spread: 0.9
+		fast: true
+		source: centerImageId
 	}
 
 	LinkingPath {
@@ -72,11 +87,26 @@ Item {
 
 		onPositionChanged: {
 			updateLinkingPath(mouse.x, mouse.y);
+			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
+			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
+			if (destBlock && destBlock.blockName && destBlock != parent) {
+				// highlight destblock
+				if (highlightedBlock && highlightedBlock != destBlock) {
+					highlightedBlock.highlight = false;
+				}
+				destBlock.highlight = true;
+				highlightedBlock = destBlock;
+			} else if (highlightedBlock) {
+				highlightedBlock.highlight = false;
+			}
 		}
 
 		onReleased: {
 			linkingPath.visible = false;
 			linkingArrow.visible = false;
+			if (highlightedBlock) {
+				highlightedBlock.highlight = false;
+			}
 
 			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
@@ -102,7 +132,7 @@ Item {
 				blockLinkComponent.createObject(scene.contentItem, {
 					x: thisBlockCenter.x + Math.cos(linkAngle)*128,
 					y: thisBlockCenter.y + Math.sin(linkAngle)*128,
-					z: 0, // FIXME: why z=0 does not lead to the path being in the background?
+					z: 0, // TODO: play with this value
 					width: linkWidth,
 					rotationAngle: toDegrees(linkAngle),
 					sourceBlock: parent,
