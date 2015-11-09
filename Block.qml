@@ -14,6 +14,16 @@ Item {
 	property bool highlight: false
 	property Item highlightedBlock: null
 
+	LinkingPath {
+		id: linkingPath
+		visible: false
+	}
+	Image {
+		id: linkingArrow
+		source: "images/linkEndArrow.svg"
+		visible: false
+	}
+
 	Image {
 		source: bgImage
 	}
@@ -34,14 +44,11 @@ Item {
 		source: centerImageId
 	}
 
-	LinkingPath {
-		id: linkingPath
-		visible: false
-	}
-	Image {
-		id: linkingArrow
-		source: "images/linkEndArrow.svg"
-		visible: false
+	function bringBlockToFront() {
+		// make this element visible
+		if (block.z < scene.highestZ) {
+			block.z = ++scene.highestZ;
+		}
 	}
 
 	// TODO: move somewhere else
@@ -64,12 +71,14 @@ Item {
 			var dx = mx - cx;
 			var dy = my - cy;
 			var linkAngle = Math.atan2(dy, dx);
-			linkingPath.x = cx + Math.cos(linkAngle)*128;
-			linkingPath.y = cy + Math.sin(linkAngle)*128;
-			linkingPath.width = Math.sqrt(dx*dx + dy*dy) - 128 - 32;
+			linkingPath.x = cx;// + Math.cos(linkAngle)*128;
+			linkingPath.y = cy;// + Math.sin(linkAngle)*128;
+			linkingPath.setLength(Math.sqrt(dx*dx + dy*dy)); // - 128 - 32);
 			linkingPath.rotationAngle = toDegrees(linkAngle);
-			linkingArrow.x = cx + Math.cos(linkAngle) * (128+16+linkingPath.width) - 16;
-			linkingArrow.y = cx + Math.sin(linkAngle) * (128+16+linkingPath.width) - 16;
+			//linkingArrow.x = cx + Math.cos(linkAngle) * (128+16+linkingPath.width) - 16;
+			//linkingArrow.y = cy + Math.sin(linkAngle) * (128+16+linkingPath.width) - 16;
+			linkingArrow.x = cx + Math.cos(linkAngle) * linkingPath.width - 16;
+			linkingArrow.y = cy + Math.sin(linkAngle) * linkingPath.width - 16;
 			linkingArrow.rotation = toDegrees(linkAngle);
 		}
 
@@ -99,6 +108,7 @@ Item {
 				updateLinkingPath(mouse.x, mouse.y);
 				linkingPath.visible = true;
 				linkingArrow.visible = true;
+				bringBlockToFront();
 			}
 		}
 
@@ -132,29 +142,36 @@ Item {
 
 			if (isLinkTargetValid(destBlock)) {
 				// create link
-				var thisBlockCenter = mapToItem(scene.contentItem, width/2, height/2);
-				var thatBlockCenter = destBlock.mapToItem(scene.contentItem, destBlock.width/2, destBlock.height/2);
+				var thisBlockCenter = mapToItem(linkContainer, width/2, height/2);
+				var thatBlockCenter = destBlock.mapToItem(linkContainer, destBlock.width/2, destBlock.height/2);
 				var dx = thatBlockCenter.x - thisBlockCenter.x;
 				var dy = thatBlockCenter.y - thisBlockCenter.y;
 				var linkAngle = Math.atan2(dy, dx);
-				var linkWidth = Math.sqrt(dx*dx + dy*dy) - 2*128 - 32;
+				var linkWidth = Math.sqrt(dx*dx + dy*dy);
 				var blockLinkComponent = Qt.createComponent("BlockLink.qml");
-				blockLinkComponent.createObject(scene.contentItem, {
-					x: thisBlockCenter.x + Math.cos(linkAngle)*128,
-					y: thisBlockCenter.y + Math.sin(linkAngle)*128,
-					z: 0, // TODO: play with this value
+				blockLinkComponent.createObject(linkContainer, {
+					x: thisBlockCenter.x,
+					y: thisBlockCenter.y,
+					z: 0,
 					width: linkWidth,
 					rotationAngle: toDegrees(linkAngle),
 					sourceBlock: parent,
-					destBlock: destBlock
+					destBlock: destBlock,
+					trim: true
 				});
 				// create end arrow
+				var arrowDistToCenter = 99+16;
+				var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
+				var arcAngle = Math.PI - 2 * gamma;
+				var ax = thisBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
+				var ay = thisBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
+				var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
 				var blockLinkArrowComponent = Qt.createComponent("BlockLinkArrow.qml");
-				blockLinkArrowComponent.createObject(scene.contentItem, {
-					x: thisBlockCenter.x + Math.cos(linkAngle) * (128+16+linkWidth) - 16,
-					y: thisBlockCenter.y + Math.sin(linkAngle) * (128+16+linkWidth) - 16,
-					z: 0,
-					rotation: toDegrees(linkAngle),
+				blockLinkArrowComponent.createObject(linkContainer, {
+					x: ax - 16,
+					y: ay - 16,
+					z: 1,
+					rotation: toDegrees(arrowAngle),
 					sourceBlock: parent,
 					destBlock: destBlock
 				});
@@ -182,18 +199,15 @@ Item {
 			if (mouse.accepted) {
 				// store pressed position
 				lastMouseScenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
-				// make this element visible
-				if (block.z < scene.highestZ) {
-					block.z = ++scene.highestZ;
-				}
+				bringBlockToFront();
 			}
 		}
 
 		onPositionChanged: {
 			var mouseScenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			if (drag.active) {
-				for (var i = 0; i < scene.contentItem.children.length; ++i) {
-					var child = scene.contentItem.children[i];
+				for (var i = 0; i < linkContainer.children.length; ++i) {
+					var child = linkContainer.children[i];
 					// if child is part of a link
 					if (child && child.linkName) {
 						// get new link coordinates
@@ -202,17 +216,23 @@ Item {
 						var dx = destBlockCenter.x - sourceBlockCenter.x;
 						var dy = destBlockCenter.y - sourceBlockCenter.y;
 						var linkAngle = Math.atan2(dy, dx);
-						var linkWidth = Math.sqrt(dx*dx + dy*dy) - 2*128 - 32;
+						var linkWidth = Math.sqrt(dx*dx + dy*dy);
 						// update items
 						if (child.linkName == "link") {
-							child.x = sourceBlockCenter.x + Math.cos(linkAngle)*128;
-							child.y = sourceBlockCenter.y + Math.sin(linkAngle)*128;
+							child.x = sourceBlockCenter.x;
+							child.y = sourceBlockCenter.y;
 							child.width = linkWidth;
 							child.rotationAngle = toDegrees(linkAngle);
 						}
+						var arrowDistToCenter = 99+16;
+						var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
+						var arcAngle = Math.PI - 2 * gamma;
+						var ax = sourceBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
+						var ay = sourceBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
+						var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
 						if (child.linkName == "arrow") {
-							child.x = sourceBlockCenter.x + Math.cos(linkAngle) * (128+16+linkWidth) - 16;
-							child.y = sourceBlockCenter.y + Math.sin(linkAngle) * (128+16+linkWidth) - 16;
+							child.x = ax - 16;
+							child.y = ay - 16;
 							child.rotation = toDegrees(linkAngle);
 						}
 					}

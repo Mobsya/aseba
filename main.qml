@@ -59,6 +59,10 @@ Window {
 
 			property int highestZ: 2
 
+			Item {
+				id: linkContainer
+			}
+
 			EventBlock { x: 0; y: 0 }
 			ActionBlock { x: 650; y: 350 }
 			EventBlock { x: 500; y: 50 }
