@@ -23,6 +23,11 @@ Item {
 		id: linkingPath
 		visible: false
 	}
+	Image {
+		id: linkingArrow
+		source: "images/linkEndArrow.svg"
+		visible: false
+	}
 
 	// TODO: move somewhere else
 	function toDegrees (angle) {
@@ -38,29 +43,40 @@ Item {
 		anchors.fill: parent
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
+		function updateLinkingPath(mx, my) {
+			var cx = width/2;
+			var cy = height/2;
+			var dx = mx - cx;
+			var dy = my - cy;
+			var linkAngle = Math.atan2(dy, dx);
+			linkingPath.x = cx + Math.cos(linkAngle)*128;
+			linkingPath.y = cy + Math.sin(linkAngle)*128;
+			linkingPath.width = Math.sqrt(dx*dx + dy*dy) - 128 - 32;
+			linkingPath.rotationAngle = toDegrees(linkAngle);
+			linkingArrow.x = cx + Math.cos(linkAngle) * (128+16+linkingPath.width) - 16;
+			linkingArrow.y = cx + Math.sin(linkAngle) * (128+16+linkingPath.width) - 16;
+			linkingArrow.rotation = toDegrees(linkAngle);
+		}
+
 		onPressed: {
 			// within inner radius
 			var dx = mouse.x - 128;
 			var dy = mouse.y - 128;
-			mouse.accepted = dx*dx + dy*dy < 128*128;
-			// TODO: add another test for small handle, once we are sure we want to keep it
-			if (mouse.accepted) {
-				linkingPath.x = mouse.x;
-				linkingPath.y = mouse.y;
-				linkingPath.width = 1;
+			if (dx*dx + dy*dy < 128*128) {
+				mouse.accepted = true;
+				updateLinkingPath(mouse.x, mouse.y);
 				linkingPath.visible = true;
+				linkingArrow.visible = true;
 			}
 		}
 
 		onPositionChanged: {
-			var dx = mouse.x - linkingPath.x;
-			var dy = mouse.y - linkingPath.y;
-			linkingPath.width = Math.sqrt(dx*dx + dy*dy);
-			linkingPath.rotationAngle = toDegrees(Math.atan2(dy, dx));
+			updateLinkingPath(mouse.x, mouse.y);
 		}
 
 		onReleased: {
 			linkingPath.visible = false;
+			linkingArrow.visible = false;
 
 			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
