@@ -65,8 +65,16 @@ Item {
 			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
 
 			if (destBlock && destBlock.blockName) {
-				// TODO: check that this connection does not already exist!
-				// create connections
+				// check that this connection does not already exist!
+				for (var i = 0; i < scene.contentItem.children.length; ++i) {
+					var child = scene.contentItem.children[i];
+					// if so, return
+					if (child && child.linkName && child.linkName == "link" && child.sourceBlock == parent && child.destBlock == destBlock) {
+						return;
+					}
+				}
+
+				// create link
 				var thisBlockCenter = mapToItem(scene.contentItem, width/2, height/2);
 				var thatBlockCenter = destBlock.mapToItem(scene.contentItem, destBlock.width/2, destBlock.height/2);
 				var dx = thatBlockCenter.x - thisBlockCenter.x;
@@ -83,6 +91,7 @@ Item {
 					sourceBlock: parent,
 					destBlock: destBlock
 				});
+				// create end arrow
 				var blockLinkArrowComponent = Qt.createComponent("BlockLinkArrow.qml");
 				blockLinkArrowComponent.createObject(scene.contentItem, {
 					x: thisBlockCenter.x + Math.cos(linkAngle) * (128+16+linkWidth) - 16,
