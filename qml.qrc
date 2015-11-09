@@ -14,5 +14,7 @@
         <file>LinkingPath.qml</file>
         <file>BlockLink.qml</file>
         <file>BlockLinkArrow.qml</file>
+        <file>Block.qml</file>
+        <file>ActionBlock.qml</file>
     </qresource>
 </RCC>

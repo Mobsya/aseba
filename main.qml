@@ -59,8 +59,9 @@ Window {
 			property int highestZ: 2
 
 			EventBlock { x: 0; y: 0 }
-			EventBlock { x: 350; y: 350 }
-			EventBlock { x: 500; y: 150 }
+			ActionBlock { x: 650; y: 350 }
+			EventBlock { x: 500; y: 50 }
+			ActionBlock { x: 150; y: 300 }
 
 			Component.onCompleted: {
 				setContentSize();
