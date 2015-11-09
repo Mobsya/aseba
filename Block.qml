@@ -221,7 +221,7 @@ Item {
 						if (child.linkName == "link") {
 							child.x = sourceBlockCenter.x;
 							child.y = sourceBlockCenter.y;
-							child.width = linkWidth;
+							child.setLength(linkWidth);
 							child.rotationAngle = toDegrees(linkAngle);
 						}
 						var arrowDistToCenter = 99+16;

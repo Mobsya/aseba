@@ -14,12 +14,12 @@ Canvas {
 
 	function setLength(w) {
 		width = w;
-		height = w;
+		height = w/6;
 		requestPaint();
 	}
 
 	Component.onCompleted: {
-		height = width;
+		height = width/6;
 		requestPaint();
 	}
 
