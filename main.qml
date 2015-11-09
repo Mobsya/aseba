@@ -3,8 +3,8 @@ import QtQuick.Window 2.2
 
 Window {
 	visible: true
-	width: 800
-	height: 480
+	width: 1280
+	height: 720
 	color: "white"
 
 	PinchArea {
@@ -52,11 +52,9 @@ Window {
 
 			property int highestZ: 2
 
-			//ProxEventBlock { x: 0; y: 0 }
-			//ProxEventBlock { x: 350; y: 350 }
-
 			EventBlock { x: 0; y: 0 }
 			EventBlock { x: 350; y: 350 }
+			EventBlock { x: 500; y: 150 }
 
 			Component.onCompleted: {
 				setContentSize();

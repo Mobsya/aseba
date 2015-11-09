@@ -13,5 +13,6 @@
         <file>images/lineDotted.png</file>
         <file>LinkingPath.qml</file>
         <file>BlockLink.qml</file>
+        <file>BlockLinkArrow.qml</file>
     </qresource>
 </RCC>

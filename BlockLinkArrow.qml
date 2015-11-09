@@ -1,10 +1,11 @@
 import QtQuick 2.0
 
-LinkingPath {
-	id: blockLink
+Image {
+	source: "images/linkEndArrow.svg"
 
-	property string linkName: "link"
+	property string linkName: "arrow"
 
 	property Item sourceBlock: Null
 	property Item destBlock: Null
 }
+

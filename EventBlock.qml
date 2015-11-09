@@ -65,17 +65,32 @@ Item {
 			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
 
 			if (destBlock && destBlock.blockName) {
+				// TODO: check that this connection does not already exist!
 				// create connections
-				var path_start = mapToItem(scene, linkingPath.x, linkingPath.y)
+				var thisBlockCenter = mapToItem(scene, width/2, height/2);
+				var thatBlockCenter = destBlock.mapToItem(scene, destBlock.width/2, destBlock.height/2);
+				var dx = thatBlockCenter.x - thisBlockCenter.x;
+				var dy = thatBlockCenter.y - thisBlockCenter.y;
+				var linkAngle = Math.atan2(dy, dx);
+				var linkWidth = Math.sqrt(dx*dx + dy*dy) - 2*128 - 32;
 				var blockLinkComponent = Qt.createComponent("BlockLink.qml");
 				blockLinkComponent.createObject(scene.contentItem, {
-					x: path_start.x,
-					y: path_start.y,
+					x: thisBlockCenter.x + Math.cos(linkAngle)*128,
+					y: thisBlockCenter.y + Math.sin(linkAngle)*128,
 					z: 0, // FIXME: why z=0 does not lead to the path being in the background?
-					width: linkingPath.width,
-					rotationAngle: linkingPath.rotationAngle,
+					width: linkWidth,
+					rotationAngle: toDegrees(linkAngle),
 					sourceBlock: parent,
-					destinationBlock: destBlock
+					destBlock: destBlock
+				});
+				var blockLinkArrowComponent = Qt.createComponent("BlockLinkArrow.qml");
+				blockLinkArrowComponent.createObject(scene.contentItem, {
+					x: thisBlockCenter.x + Math.cos(linkAngle) * (128+16+linkWidth) - 16,
+					y: thisBlockCenter.y + Math.sin(linkAngle) * (128+16+linkWidth) - 16,
+					z: 0,
+					rotation: toDegrees(linkAngle),
+					sourceBlock: parent,
+					destBlock: destBlock
 				});
 			}
 		}
@@ -108,32 +123,31 @@ Item {
 			}
 		}
 
-		// TODO: add drag update step and move links
-
 		onPositionChanged: {
 			var mouseScenePos = mapToItem(scene, mouse.x, mouse.y);
 			if (drag.active) {
-				// TODO: move links
 				for (var i = 0; i < scene.contentItem.children.length; ++i) {
 					var child = scene.contentItem.children[i];
-					if (child && !child.blockName) {
-						var ddx = mouseScenePos.x - lastMouseScenePos.x;
-						var ddy = mouseScenePos.y - lastMouseScenePos.y;
-						if (child.sourceBlock == parent) {
-							// source is moving
-							child.x += ddx
-							child.y += ddy
-							var dx = child.width*Math.cos(toRadians(child.rotationAngle)) - ddx;
-							var dy = child.width*Math.sin(toRadians(child.rotationAngle)) - ddy;
-							child.width = Math.sqrt(dx*dx + dy*dy);
-							child.rotationAngle = toDegrees(Math.atan2(dy, dx));
+					// if child is part of a link
+					if (child && child.linkName) {
+						// get new link coordinates
+						var sourceBlockCenter = child.sourceBlock.mapToItem(scene, child.sourceBlock.width/2, child.sourceBlock.height/2);
+						var destBlockCenter = child.destBlock.mapToItem(scene, child.destBlock.width/2, child.destBlock.height/2);
+						var dx = destBlockCenter.x - sourceBlockCenter.x;
+						var dy = destBlockCenter.y - sourceBlockCenter.y;
+						var linkAngle = Math.atan2(dy, dx);
+						var linkWidth = Math.sqrt(dx*dx + dy*dy) - 2*128 - 32;
+						// update items
+						if (child.linkName == "link") {
+							child.x = sourceBlockCenter.x + Math.cos(linkAngle)*128;
+							child.y = sourceBlockCenter.y + Math.sin(linkAngle)*128;
+							child.width = linkWidth;
+							child.rotationAngle = toDegrees(linkAngle);
 						}
-						if (child.destinationBlock == parent) {
-							// destination is moving
-							var dx = child.width*Math.cos(toRadians(child.rotationAngle)) + ddx;
-							var dy = child.width*Math.sin(toRadians(child.rotationAngle)) + ddy;
-							child.width = Math.sqrt(dx*dx + dy*dy);
-							child.rotationAngle = toDegrees(Math.atan2(dy, dx));
+						if (child.linkName == "arrow") {
+							child.x = sourceBlockCenter.x + Math.cos(linkAngle) * (128+16+linkWidth) - 16;
+							child.y = sourceBlockCenter.y + Math.sin(linkAngle) * (128+16+linkWidth) - 16;
+							child.rotation = toDegrees(linkAngle);
 						}
 					}
 				}
