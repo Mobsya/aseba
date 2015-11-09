@@ -73,6 +73,23 @@ Item {
 			linkingArrow.rotation = toDegrees(linkAngle);
 		}
 
+		function isLinkTargetValid(destBlock) {
+			// do we have a valid block
+			if (destBlock && destBlock.blockName) {
+				// check that this connection does not already exist!
+				for (var i = 0; i < scene.contentItem.children.length; ++i) {
+					var child = scene.contentItem.children[i];
+					// if so, return
+					if (child && child.linkName && child.linkName == "link" && child.sourceBlock == parent && child.destBlock == destBlock) {
+						return false;
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 		onPressed: {
 			// within inner radius
 			var dx = mouse.x - 128;
@@ -94,8 +111,10 @@ Item {
 				if (highlightedBlock && highlightedBlock != destBlock) {
 					highlightedBlock.highlight = false;
 				}
-				destBlock.highlight = true;
-				highlightedBlock = destBlock;
+				if (isLinkTargetValid(destBlock)) {
+					destBlock.highlight = true;
+					highlightedBlock = destBlock;
+				}
 			} else if (highlightedBlock) {
 				highlightedBlock.highlight = false;
 			}
@@ -111,16 +130,7 @@ Item {
 			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
 
-			if (destBlock && destBlock.blockName) {
-				// check that this connection does not already exist!
-				for (var i = 0; i < scene.contentItem.children.length; ++i) {
-					var child = scene.contentItem.children[i];
-					// if so, return
-					if (child && child.linkName && child.linkName == "link" && child.sourceBlock == parent && child.destBlock == destBlock) {
-						return;
-					}
-				}
-
+			if (isLinkTargetValid(destBlock)) {
 				// create link
 				var thisBlockCenter = mapToItem(scene.contentItem, width/2, height/2);
 				var thatBlockCenter = destBlock.mapToItem(scene.contentItem, destBlock.width/2, destBlock.height/2);

@@ -18,6 +18,7 @@ Window {
 			scene.contentX -= (-scene.contentX - pinch.center.x) * deltaScale / scene.contentItem.scale;
 			scene.contentY -= (-scene.contentY - pinch.center.y) * deltaScale / scene.contentItem.scale;
 			scene.contentItem.scale += deltaScale;
+			scene.contentItem.scale = Math.max(scene.contentItem.scale, 1e-2);
 
 			// adjust content pos due to drag
 			scene.contentX -= pinch.center.x - pinch.previousCenter.x;
