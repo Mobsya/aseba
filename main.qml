@@ -43,6 +43,12 @@ Window {
 			console.log(scene.contentItem.y)
 		}
 
+		MouseArea {
+			anchors.fill: parent
+			drag.target: scene
+			scrollGestureEnabled: false
+		}
+
 		Flickable {
 			id: scene
 
@@ -61,12 +67,13 @@ Window {
 			}
 
 			function setContentSize() {
-				/*console.log(scene.contentWidth)
-				console.log(scene.contentItem.x)
-				scene.contentWidth = scene.contentItem.childrenRect.width;
-				scene.contentHeight = scene.contentItem.childrenRect.height;
-				console.log(scene.contentWidth)
-				console.log(scene.contentItem.x)*/
+				// FIXME: there is still a bug with zooming
+				//console.log(scene.contentWidth)
+				//console.log(scene.contentItem.x)
+				//scene.contentWidth = scene.contentItem.childrenRect.width * scene.contentItem.scale;
+				//scene.contentHeight = scene.contentItem.childrenRect.height * scene.contentItem.scale;
+				//console.log(scene.contentWidth)
+				//console.log(scene.contentItem.x)
 			}
 		}
 	}

@@ -61,14 +61,14 @@ Item {
 		onReleased: {
 			linkingPath.visible = false;
 
-			var scenePos = mapToItem(scene, mouse.x, mouse.y);
+			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
 
 			if (destBlock && destBlock.blockName) {
 				// TODO: check that this connection does not already exist!
 				// create connections
-				var thisBlockCenter = mapToItem(scene, width/2, height/2);
-				var thatBlockCenter = destBlock.mapToItem(scene, destBlock.width/2, destBlock.height/2);
+				var thisBlockCenter = mapToItem(scene.contentItem, width/2, height/2);
+				var thatBlockCenter = destBlock.mapToItem(scene.contentItem, destBlock.width/2, destBlock.height/2);
 				var dx = thatBlockCenter.x - thisBlockCenter.x;
 				var dy = thatBlockCenter.y - thisBlockCenter.y;
 				var linkAngle = Math.atan2(dy, dx);
@@ -115,7 +115,7 @@ Item {
 			} ();
 			if (mouse.accepted) {
 				// store pressed position
-				lastMouseScenePos = mapToItem(scene, mouse.x, mouse.y);
+				lastMouseScenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 				// make this element visible
 				if (block.z < scene.highestZ) {
 					block.z = ++scene.highestZ;
@@ -124,15 +124,15 @@ Item {
 		}
 
 		onPositionChanged: {
-			var mouseScenePos = mapToItem(scene, mouse.x, mouse.y);
+			var mouseScenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			if (drag.active) {
 				for (var i = 0; i < scene.contentItem.children.length; ++i) {
 					var child = scene.contentItem.children[i];
 					// if child is part of a link
 					if (child && child.linkName) {
 						// get new link coordinates
-						var sourceBlockCenter = child.sourceBlock.mapToItem(scene, child.sourceBlock.width/2, child.sourceBlock.height/2);
-						var destBlockCenter = child.destBlock.mapToItem(scene, child.destBlock.width/2, child.destBlock.height/2);
+						var sourceBlockCenter = child.sourceBlock.mapToItem(scene.contentItem, child.sourceBlock.width/2, child.sourceBlock.height/2);
+						var destBlockCenter = child.destBlock.mapToItem(scene.contentItem, child.destBlock.width/2, child.destBlock.height/2);
 						var dx = destBlockCenter.x - sourceBlockCenter.x;
 						var dy = destBlockCenter.y - sourceBlockCenter.y;
 						var linkAngle = Math.atan2(dy, dx);
