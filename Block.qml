@@ -86,10 +86,10 @@ Item {
 			// do we have a valid block
 			if (destBlock && destBlock.blockName) {
 				// check that this connection does not already exist!
-				for (var i = 0; i < scene.contentItem.children.length; ++i) {
-					var child = scene.contentItem.children[i];
+				for (var i = 0; i < linkContainer.children.length; ++i) {
+					var child = linkContainer.children[i];
 					// if so, return
-					if (child && child.linkName && child.linkName == "link" && child.sourceBlock == parent && child.destBlock == destBlock) {
+					if (child.linkName && child.linkName == "link" && child.sourceBlock == parent && child.destBlock == destBlock) {
 						return false;
 					}
 				}
