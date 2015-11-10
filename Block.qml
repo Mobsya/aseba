@@ -233,7 +233,7 @@ Item {
 						if (child.linkName == "arrow") {
 							child.x = ax - 16;
 							child.y = ay - 16;
-							child.rotation = toDegrees(linkAngle);
+							child.rotation = toDegrees(arrowAngle);
 						}
 					}
 				}
