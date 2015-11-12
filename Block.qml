@@ -59,6 +59,45 @@ Item {
 		return angle * Math.PI / 180;
 	}
 
+	function updateLinkPositions() {
+		// TODO: move this into links and arrows
+		for (var i = 0; i < linkContainer.children.length; ++i) {
+			var child = linkContainer.children[i];
+			// if child is part of a link
+			if (child && child.linkName) {
+				// get new link coordinates
+				var sourceBlockCenter = child.sourceBlock.mapToItem(scene.contentItem, child.sourceBlock.width/2, child.sourceBlock.height/2);
+				var destBlockCenter = child.destBlock.mapToItem(scene.contentItem, child.destBlock.width/2, child.destBlock.height/2);
+				var dx = destBlockCenter.x - sourceBlockCenter.x;
+				var dy = destBlockCenter.y - sourceBlockCenter.y;
+				var linkAngle = Math.atan2(dy, dx);
+				var linkWidth = Math.sqrt(dx*dx + dy*dy);
+				// update items
+				if (child.linkName == "link") {
+					child.x = sourceBlockCenter.x;
+					child.y = sourceBlockCenter.y;
+					child.setLength(linkWidth);
+					child.rotationAngle = toDegrees(linkAngle);
+				}
+				var arrowDistToCenter = 99+16;
+				var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
+				var arcAngle = Math.PI - 2 * gamma;
+				var ax = sourceBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
+				var ay = sourceBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
+				var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
+				if (child.linkName == "arrow") {
+					child.x = ax - 16;
+					child.y = ay - 16;
+					child.rotation = toDegrees(arrowAngle);
+				}
+			}
+		}
+	}
+
+	onXChanged: updateLinkPositions()
+
+	onYChanged: updateLinkPositions()
+
 	// link
 	MouseArea {
 		id: linkArea
@@ -114,8 +153,8 @@ Item {
 
 		onPositionChanged: {
 			updateLinkingPath(mouse.x, mouse.y);
-			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
-			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
+			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
+			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
 			if (destBlock && destBlock.blockName && destBlock != parent) {
 				// highlight destblock
 				if (highlightedBlock && highlightedBlock != destBlock) {
@@ -137,8 +176,8 @@ Item {
 				highlightedBlock.highlight = false;
 			}
 
-			var scenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
-			var destBlock = scene.contentItem.childAt(scenePos.x, scenePos.y);
+			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
+			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
 
 			if (isLinkTargetValid(destBlock)) {
 				// create link
@@ -186,9 +225,6 @@ Item {
 		drag.target: block
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
-		// last mouse position in scene coordinates
-		property var lastMouseScenePos
-
 		onPressed: {
 			// within inner radius
 			mouse.accepted = function () {
@@ -197,49 +233,14 @@ Item {
 				return dx*dx+dy*dy < 99*99;
 			} ();
 			if (mouse.accepted) {
-				// store pressed position
-				lastMouseScenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 				bringBlockToFront();
 			}
 		}
 
 		onPositionChanged: {
-			var mouseScenePos = mapToItem(scene.contentItem, mouse.x, mouse.y);
 			if (drag.active) {
-				for (var i = 0; i < linkContainer.children.length; ++i) {
-					var child = linkContainer.children[i];
-					// if child is part of a link
-					if (child && child.linkName) {
-						// get new link coordinates
-						var sourceBlockCenter = child.sourceBlock.mapToItem(scene.contentItem, child.sourceBlock.width/2, child.sourceBlock.height/2);
-						var destBlockCenter = child.destBlock.mapToItem(scene.contentItem, child.destBlock.width/2, child.destBlock.height/2);
-						var dx = destBlockCenter.x - sourceBlockCenter.x;
-						var dy = destBlockCenter.y - sourceBlockCenter.y;
-						var linkAngle = Math.atan2(dy, dx);
-						var linkWidth = Math.sqrt(dx*dx + dy*dy);
-						// update items
-						if (child.linkName == "link") {
-							child.x = sourceBlockCenter.x;
-							child.y = sourceBlockCenter.y;
-							child.setLength(linkWidth);
-							child.rotationAngle = toDegrees(linkAngle);
-						}
-						var arrowDistToCenter = 99+16;
-						var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
-						var arcAngle = Math.PI - 2 * gamma;
-						var ax = sourceBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
-						var ay = sourceBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
-						var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
-						if (child.linkName == "arrow") {
-							child.x = ax - 16;
-							child.y = ay - 16;
-							child.rotation = toDegrees(arrowAngle);
-						}
-					}
-				}
+				updateLinkPositions();
 			}
-			// update mouse last values
-			lastMouseScenePos = mouseScenePos;
 		}
 
 		onReleased: {

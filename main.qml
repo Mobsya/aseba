@@ -7,7 +7,14 @@ Window {
 	height: 720
 	color: "white"
 
+	Item {
+		id: screen
+		anchors.fill: parent
+	}
+
 	PinchArea {
+		id: pinchArea
+
 		anchors.fill: parent
 
 		onPinchUpdated: {
@@ -59,14 +66,53 @@ Window {
 
 			property int highestZ: 2
 
+			// container for all links
 			Item {
 				id: linkContainer
 			}
 
-			EventBlock { x: 0; y: 0 }
-			ActionBlock { x: 650; y: 350 }
-			EventBlock { x: 500; y: 50 }
-			ActionBlock { x: 150; y: 300 }
+			// container for all blocks
+			Item {
+				id: blockContainer
+
+				// timer to desinterlace objects
+				Timer {
+					interval: 40
+					repeat: true
+					running: true
+
+					function sign(v) {
+						if (v > 0)
+							return 1;
+						else if (v < 0)
+							return -1;
+						else
+							return 0;
+					}
+
+					onTriggered: {
+						var i, j;
+						for (i = 0; i < blockContainer.children.length; ++i) {
+							for (j = 0; j < blockContainer.children.length; ++j) {
+								if (i == j)
+									continue;
+								var dx = blockContainer.children[i].x - blockContainer.children[j].x;
+								var dy = blockContainer.children[i].y - blockContainer.children[j].y;
+								var dist = Math.sqrt(dx*dx + dy*dy);
+								if (dist < 330) {
+									var normDist = dist;
+									var factor = 40 / (normDist+1);
+									blockContainer.children[i].x += sign(dx) * factor;
+									blockContainer.children[j].x -= sign(dx) * factor;
+									blockContainer.children[i].y += sign(dy) * factor;
+									blockContainer.children[j].y -= sign(dy) * factor;
+								}
+
+							}
+						}
+					}
+				}
+			}
 
 			Component.onCompleted: {
 				setContentSize();
@@ -80,6 +126,44 @@ Window {
 				//scene.contentHeight = scene.contentItem.childrenRect.height * scene.contentItem.scale;
 				//console.log(scene.contentWidth)
 				//console.log(scene.contentItem.x)
+			}
+		}
+	}
+
+	// add block
+	Rectangle {
+		id: addBlock
+
+		width: 128
+		height: 128
+		radius: 64
+		color: "gray"
+		anchors.left: parent.left
+		anchors.leftMargin: 20
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: 20
+
+		property bool createEvent: false
+
+		MouseArea {
+			anchors.fill: parent
+			onClicked: {
+				var center = blockContainer.mapToItem(screen, screen.width/2, screen.height/2);
+				if (addBlock.createEvent) {
+					var eventBlockComponent = Qt.createComponent("EventBlock.qml");
+					eventBlockComponent.createObject(blockContainer, {
+						x: center.x - 128 + Math.random(),
+						y: center.y - 128 + Math.random()
+					});
+					addBlock.createEvent = false;
+				} else {
+					var actionBlockComponent = Qt.createComponent("ActionBlock.qml");
+					actionBlockComponent.createObject(blockContainer, {
+						x: center.x - 128 + Math.random(),
+						y: center.y - 128 + Math.random()
+					});
+					addBlock.createEvent = true;
+				}
 			}
 		}
 	}
