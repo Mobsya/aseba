@@ -92,16 +92,15 @@ Window {
 
 					onTriggered: {
 						var i, j;
+						// move all blocks too close
 						for (i = 0; i < blockContainer.children.length; ++i) {
-							for (j = 0; j < blockContainer.children.length; ++j) {
-								if (i == j)
-									continue;
+							for (j = 0; j < i; ++j) {
 								var dx = blockContainer.children[i].x - blockContainer.children[j].x;
 								var dy = blockContainer.children[i].y - blockContainer.children[j].y;
 								var dist = Math.sqrt(dx*dx + dy*dy);
-								if (dist < 330) {
+								if (dist < 310) {
 									var normDist = dist;
-									var factor = 40 / (normDist+1);
+									var factor = 100 / (normDist+1);
 									blockContainer.children[i].x += sign(dx) * factor;
 									blockContainer.children[j].x -= sign(dx) * factor;
 									blockContainer.children[i].y += sign(dy) * factor;
