@@ -14,6 +14,9 @@ Item {
 	property bool highlight: false
 	property Item highlightedBlock: null
 
+	property real vx: 0
+	property real vy: 0
+
 	LinkingPath {
 		id: linkingPath
 		visible: false
@@ -57,6 +60,14 @@ Item {
 	}
 	function toRadians (angle) {
 		return angle * Math.PI / 180;
+	}
+	function sign(v) {
+		if (v > 0)
+			return 1;
+		else if (v < 0)
+			return -1;
+		else
+			return 0;
 	}
 
 	function updateLinkPositions() {
@@ -104,6 +115,25 @@ Item {
 	onXChanged: nextLinkPositionsUpdate.start()
 
 	onYChanged: nextLinkPositionsUpdate.start()
+
+	// we use a timer to have some smooth effect
+	Timer {
+		id: accelerationTimer
+		interval: 33
+		repeat: true
+		onTriggered: {
+			x += vx;
+			y += vy;
+			vx *= 0.9;
+			vy *= 0.9;
+			if (Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05)
+			{
+				running = false;
+				vx = 0;
+				vy = 0;
+			}
+		}
+	}
 
 	// link
 	MouseArea {
@@ -232,6 +262,9 @@ Item {
 		drag.target: block
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
+		// last mouse position in scene coordinates
+		property var prevMousePos
+
 		onPressed: {
 			// within inner radius
 			mouse.accepted = function () {
@@ -240,6 +273,7 @@ Item {
 				return dx*dx+dy*dy < 99*99;
 			} ();
 			if (mouse.accepted) {
+				prevMousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				bringBlockToFront();
 			}
 		}
@@ -247,10 +281,15 @@ Item {
 		onPositionChanged: {
 			if (drag.active) {
 				updateLinkPositions();
+				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				block.vx = block.vx * 0.9 + (mousePos.x - prevMousePos.x) * 0.1;
+				block.vy = block.vy * 0.9 + (mousePos.y - prevMousePos.y) * 0.1;
+				prevMousePos = mousePos;
 			}
 		}
 
 		onReleased: {
+			accelerationTimer.running = true;
 			scene.setContentSize();
 		}
 	}

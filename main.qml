@@ -77,7 +77,7 @@ Window {
 
 				// timer to desinterlace objects
 				Timer {
-					interval: 40
+					interval: 33
 					repeat: true
 					running: true
 
