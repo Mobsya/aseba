@@ -124,8 +124,8 @@ Item {
 		onTriggered: {
 			x += vx;
 			y += vy;
-			vx *= 0.9;
-			vy *= 0.9;
+			vx *= 0.85;
+			vy *= 0.85;
 			if (Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05)
 			{
 				running = false;
@@ -282,13 +282,16 @@ Item {
 			if (drag.active) {
 				updateLinkPositions();
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				block.vx = block.vx * 0.9 + (mousePos.x - prevMousePos.x) * 0.1;
-				block.vy = block.vy * 0.9 + (mousePos.y - prevMousePos.y) * 0.1;
+				block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4;
+				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4;
 				prevMousePos = mousePos;
 			}
 		}
 
 		onReleased: {
+			var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+			block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4;
+			block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4;
 			accelerationTimer.running = true;
 			scene.setContentSize();
 		}
