@@ -17,54 +17,84 @@ Window {
 
 		anchors.fill: parent
 
+		property double prevTime: 0
+
+		onPinchStarted: {
+			prevTime = new Date().valueOf();
+		}
+
 		onPinchUpdated: {
-			// resize content
 			var deltaScale = pinch.scale - pinch.previousScale
 
 			// adjust content pos due to scale
-			scene.contentX -= (-scene.contentX - pinch.center.x) * deltaScale / scene.contentItem.scale;
-			scene.contentY -= (-scene.contentY - pinch.center.y) * deltaScale / scene.contentItem.scale;
-			scene.contentItem.scale += deltaScale;
-			scene.contentItem.scale = Math.max(scene.contentItem.scale, 1e-2);
+			if (scene.scale + deltaScale > 1e-1) {
+				scene.x += (scene.x - pinch.center.x) * deltaScale / scene.scale;
+				scene.y += (scene.y - pinch.center.y) * deltaScale / scene.scale;
+				scene.scale += deltaScale;
+			}
 
 			// adjust content pos due to drag
-			scene.contentX -= pinch.center.x - pinch.previousCenter.x;
-			scene.contentY -= pinch.center.y - pinch.previousCenter.y;
+			var now = new Date().valueOf();
+			var dt = now - prevTime;
+			var dx = pinch.center.x - pinch.previousCenter.x;
+			var dy = pinch.center.y - pinch.previousCenter.y;
+			scene.x += dx;
+			scene.y += dy;
+			//scene.vx = scene.vx * 0.6 + dx * 0.4 * dt;
+			//scene.vy = scene.vy * 0.6 + dy * 0.4 * dt;
+			prevTime = now;
 		}
 
 		onPinchFinished: {
-			// TODO: check if childrenrect is scaled or not, once non 0
-			// ensure that at least something is visible
-			if (scene.contentItem.x + scene.contentItem.childrenRect.x + scene.contentItem.childrenRect.width * scene.contentItem.scale < 0) {
-				scene.contentItem.x = width - scene.contentItem.childrenRect.x - scene.contentItem.childrenRect.width * scene.contentItem.scale;
-			}
-			if (scene.contentItem.x + scene.contentItem.childrenRect.x > width) {
-				scene.contentItem.x = -scene.contentItem.childrenRect.x;
-			}
-			if (scene.contentItem.y + scene.contentItem.childrenRect.y + scene.contentItem.childrenRect.height * scene.contentItem.scale < 0) {
-				scene.contentItem.y = height - scene.contentItem.childrenRect.y - scene.contentItem.childrenRect.height * scene.contentItem.scale;
-			}
-			if (scene.contentItem.y + scene.contentItem.childrenRect.y > height) {
-				scene.contentItem.y = -scene.contentItem.childrenRect.y;
-			}
-			console.log(scene.contentItem.x)
-			console.log(scene.contentItem.y)
+			//accelerationTimer.running = true;
 		}
 
 		MouseArea {
 			anchors.fill: parent
 			drag.target: scene
 			scrollGestureEnabled: false
+
+			onWheel: {
+				var deltaScale = scene.scale * wheel.angleDelta.y / 1200.;
+
+				// adjust content pos due to scale
+				if (scene.scale + deltaScale > 1e-1) {
+					scene.x += (scene.x - screen.width/2) * deltaScale / scene.scale;
+					scene.y += (scene.y - screen.height/2) * deltaScale / scene.scale;
+					scene.scale += deltaScale;
+				}
+			}
 		}
 
-		Flickable {
+		Item {
 			id: scene
 
-			//anchors.fill: parent
-
-			contentItem.transformOrigin: Item.TopLeft
-
 			property int highestZ: 2
+
+			property real vx: 0 // in px per millisecond
+			property real vy: 0 // in px per millisecond
+
+			// we use a timer to have some smooth effect
+			// TODO: fixme
+			Timer {
+				id: accelerationTimer
+				interval: 17
+				repeat: true
+				onTriggered: {
+					x += (vx * interval) * 0.001;
+					y += (vy * interval) * 0.001;
+					vx *= 0.85;
+					vy *= 0.85;
+					if (Math.abs(vx) < 1 && Math.abs(vy) < 1)
+					{
+						running = false;
+						vx = 0;
+						vy = 0;
+					}
+					console.log(vx);
+					console.log(vy);
+				}
+			}
 
 			// container for all links
 			Item {
@@ -112,18 +142,11 @@ Window {
 				}
 			}
 
-			Component.onCompleted: {
-				setContentSize();
-			}
+			property double prevTime: 0
 
-			function setContentSize() {
-				// FIXME: there is still a bug with zooming
-				//console.log(scene.contentWidth)
-				//console.log(scene.contentItem.x)
-				//scene.contentWidth = scene.contentItem.childrenRect.width * scene.contentItem.scale;
-				//scene.contentHeight = scene.contentItem.childrenRect.height * scene.contentItem.scale;
-				//console.log(scene.contentWidth)
-				//console.log(scene.contentItem.x)
+			Drag.onDragStarted: {
+				prevTime = new Date().valueOf();
+				console.log("drag started");
 			}
 		}
 	}

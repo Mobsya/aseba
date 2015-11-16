@@ -82,8 +82,8 @@ Item {
 			if ((child.sourceBlock != block) && (child.destBlock != block))
 				continue
 			// get new link coordinates
-			var sourceBlockCenter = child.sourceBlock.mapToItem(scene.contentItem, child.sourceBlock.width/2, child.sourceBlock.height/2);
-			var destBlockCenter = child.destBlock.mapToItem(scene.contentItem, child.destBlock.width/2, child.destBlock.height/2);
+			var sourceBlockCenter = child.sourceBlock.mapToItem(scene, child.sourceBlock.width/2, child.sourceBlock.height/2);
+			var destBlockCenter = child.destBlock.mapToItem(scene, child.destBlock.width/2, child.destBlock.height/2);
 			var dx = destBlockCenter.x - sourceBlockCenter.x;
 			var dy = destBlockCenter.y - sourceBlockCenter.y;
 			var linkAngle = Math.atan2(dy, dx);
@@ -130,8 +130,7 @@ Item {
 			y += (vy * interval) * 0.001;
 			vx *= 0.85;
 			vy *= 0.85;
-			if (Math.abs(vx) < 1 && Math.abs(vy) < 1)
-			{
+			if (Math.abs(vx) < 1 && Math.abs(vy) < 1) {
 				running = false;
 				vx = 0;
 				vy = 0;
@@ -302,7 +301,6 @@ Item {
 			block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
 			block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
 			accelerationTimer.running = true;
-			scene.setContentSize();
 		}
 	}
 }
