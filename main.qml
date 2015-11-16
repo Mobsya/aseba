@@ -77,7 +77,7 @@ Window {
 
 				// timer to desinterlace objects
 				Timer {
-					interval: 33
+					interval: 17
 					repeat: true
 					running: true
 
@@ -106,7 +106,6 @@ Window {
 									blockContainer.children[i].y += sign(dy) * factor;
 									blockContainer.children[j].y -= sign(dy) * factor;
 								}
-
 							}
 						}
 					}

@@ -14,11 +14,15 @@ Item {
 	property bool highlight: false
 	property Item highlightedBlock: null
 
-	property real vx: 0
-	property real vy: 0
+	property real vx: 0 // in px per millisecond
+	property real vy: 0 // in px per millisecond
 
-	LinkingPath {
+	Rectangle {
 		id: linkingPath
+		color: "#eceded"
+		width: 0
+		height: 10
+		transformOrigin: "Left"
 		visible: false
 	}
 	Image {
@@ -119,14 +123,14 @@ Item {
 	// we use a timer to have some smooth effect
 	Timer {
 		id: accelerationTimer
-		interval: 33
+		interval: 17
 		repeat: true
 		onTriggered: {
-			x += vx;
-			y += vy;
+			x += (vx * interval) * 0.001;
+			y += (vy * interval) * 0.001;
 			vx *= 0.85;
 			vy *= 0.85;
-			if (Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05)
+			if (Math.abs(vx) < 1 && Math.abs(vy) < 1)
 			{
 				running = false;
 				vx = 0;
@@ -147,12 +151,10 @@ Item {
 			var dx = mx - cx;
 			var dy = my - cy;
 			var linkAngle = Math.atan2(dy, dx);
-			linkingPath.x = cx;// + Math.cos(linkAngle)*128;
-			linkingPath.y = cy;// + Math.sin(linkAngle)*128;
-			linkingPath.setLength(Math.sqrt(dx*dx + dy*dy)); // - 128 - 32);
-			linkingPath.rotationAngle = toDegrees(linkAngle);
-			//linkingArrow.x = cx + Math.cos(linkAngle) * (128+16+linkingPath.width) - 16;
-			//linkingArrow.y = cy + Math.sin(linkAngle) * (128+16+linkingPath.width) - 16;
+			linkingPath.x = cx;
+			linkingPath.y = cy - linkingPath.height*0.5;
+			linkingPath.width = Math.sqrt(dx*dx + dy*dy);
+			linkingPath.rotation = toDegrees(linkAngle);
 			linkingArrow.x = cx + Math.cos(linkAngle) * linkingPath.width - 16;
 			linkingArrow.y = cy + Math.sin(linkAngle) * linkingPath.width - 16;
 			linkingArrow.rotation = toDegrees(linkAngle);
@@ -264,6 +266,7 @@ Item {
 
 		// last mouse position in scene coordinates
 		property var prevMousePos
+		property double prevMouseTime: 0
 
 		onPressed: {
 			// within inner radius
@@ -274,6 +277,7 @@ Item {
 			} ();
 			if (mouse.accepted) {
 				prevMousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				prevMouseTime = new Date().valueOf();
 				bringBlockToFront();
 			}
 		}
@@ -282,16 +286,21 @@ Item {
 			if (drag.active) {
 				updateLinkPositions();
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4;
-				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4;
+				var now = new Date().valueOf();
+				var dt = now - prevMouseTime;
+				block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
+				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
 				prevMousePos = mousePos;
+				prevMouseTime = now;
 			}
 		}
 
 		onReleased: {
 			var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-			block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4;
-			block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4;
+			var now = new Date().valueOf();
+			var dt = now - prevMouseTime;
+			block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
+			block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
 			accelerationTimer.running = true;
 			scene.setContentSize();
 		}
