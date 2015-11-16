@@ -188,5 +188,27 @@ Window {
 			}
 		}
 	}
+
+	// center view
+	Rectangle {
+		id: centerView
+
+		width: 96
+		height: 96
+		radius: 48
+		color: "gray"
+		anchors.right: parent.right
+		anchors.rightMargin: 20+16
+		anchors.top: parent.top
+		anchors.topMargin: 20+16
+
+		MouseArea {
+			anchors.fill: parent
+			onClicked: {
+				scene.x = screen.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
+				scene.y = screen.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
+			}
+		}
+	}
 }
 
