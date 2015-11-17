@@ -190,8 +190,11 @@ Window {
 				createBlock(pos.x, pos.y);
 			}
 			onPressed: {
-				if (editor.visible)
+				if (editor.visible) {
 					mouse.accepted  = false;
+				} else {
+					dragTarget.scale = scene.scale;
+				}
 			}
 			onReleased: {
 				if (!drag.active)
