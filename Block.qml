@@ -306,6 +306,7 @@ Item {
 		}
 
 		onClicked: {
+			editor.setEditorItem(miniature.createEditor(editor));
 			editor.editedBlock = parent;
 			editor.visible = true;
 		}

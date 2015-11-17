@@ -166,16 +166,48 @@ Window {
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: 20
 
+		Rectangle {
+			id: dragTarget
+
+			x: -64
+			y: -64
+			width: 256
+			height: 256
+			radius: 128
+			color: "#70000000"
+
+			visible: addBlockMouseArea.drag.active
+		}
+
 		MouseArea {
+			id: addBlockMouseArea
 			anchors.fill: parent
+			drag.target: dragTarget
 			onClicked: {
 				if (editor.visible)
 					return;
-				var center = blockContainer.mapToItem(screen, screen.width/2, screen.height/2);
+				var pos = screen.mapToItem(blockContainer, screen.width/2, screen.height/2);
+				createBlock(pos.x, pos.y);
+			}
+			onPressed: {
+				if (editor.visible)
+					mouse.accepted  = false;
+			}
+			onReleased: {
+				if (!drag.active)
+					return;
+				// create block
+				var pos = mapToItem(blockContainer, mouse.x, mouse.y);
+				createBlock(pos.x, pos.y);
+				// reset indicator
+				dragTarget.x = -64;
+				dragTarget.y = -64;
+			}
+			function createBlock(x, y) {
 				var blockComponent = Qt.createComponent("Block.qml");
 				var block = blockComponent.createObject(blockContainer, {
-					x: center.x - 128 + Math.random(),
-					y: center.y - 128 + Math.random()
+					x: x - 128 + Math.random(),
+					y: y - 128 + Math.random()
 				});
 				editor.editedBlock = block;
 				editor.visible = true;

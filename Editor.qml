@@ -17,6 +17,17 @@ Rectangle {
 	property Item editorItem: null
 	property Item editedBlock: null
 
+	function setEditorItem(item) {
+		if (editorItem) {
+			editorItem.parent = null;
+			editorItem = null;
+		}
+		editorItem = item;
+		editorItem.anchors.horizontalCenter = editor.horizontalCenter;
+		editorItem.anchors.verticalCenter = editor.verticalCenter;
+		resizeEditor();
+	}
+
 	ObjectModel {
 		id: eventBlocksModel
 		ProxEventBlock { }
@@ -44,10 +55,7 @@ Rectangle {
 		onCurrentItemChanged: {
 			console.log("event " + currentItem);
 			// re-create a new editor when another block is selected
-			editorItem = currentItem.createEditor(parent);
-			editorItem.anchors.horizontalCenter = parent.horizontalCenter;
-			editorItem.anchors.verticalCenter = parent.verticalCenter;
-			//parent.resizeEditor();
+			setEditorItem(currentItem.createEditor(parent));
 		}
 	}
 
