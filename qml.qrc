@@ -16,5 +16,6 @@
         <file>BlockLinkArrow.qml</file>
         <file>Block.qml</file>
         <file>ActionBlock.qml</file>
+        <file>Editor.qml</file>
     </qresource>
 </RCC>

@@ -1,13 +1,16 @@
 import QtQuick 2.5
 
-Rectangle {
+// this block is both the miniature and the editor
+Item {
 	id: block;
 
 	// event block background
 	width: 256
 	height: 256
-	color: "#f6871f"
-	antialiasing: true
+
+	property var params: [ "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED" ]
+	property var buttons: []
+	property bool editable: false
 
 	// Thymio body
 	Rectangle {
@@ -26,25 +29,6 @@ Rectangle {
 		radius: width
 	}
 
-	// drag
-	MouseArea {
-		id: dragArea
-		//hoverEnabled: true
-		anchors.fill: parent
-		drag.target: parent
-		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
-
-		onPressed: {
-			if (block.z < scene.highestZ) {
-				block.z = ++scene.highestZ;
-			}
-		}
-
-		onReleased: {
-			scene.setContentSize();
-		}
-	}
-
 	// sensor buttons
 	Component.onCompleted: {
 
@@ -52,7 +36,6 @@ Rectangle {
 		var buttonComponent = Qt.createComponent("InfraredButton.qml");
 		var ledComponent = Qt.createComponent("InfraredLed.qml");
 		var offset;
-		var buttons = [];
 		var led;
 
 		// front sensors
@@ -61,7 +44,9 @@ Rectangle {
 			buttons.push(buttonComponent.createObject(block, {
 				"x": 128 - 16 - 150*Math.sin(0.34906585*offset),
 				"y": 175 - 16 - 150*Math.cos(0.34906585*offset),
-				"rotation": -20*offset
+				"rotation": -20*offset,
+				"state": params[i],
+				"editable": editable
 			}));
 		}
 		ledComponent.createObject(block, { "x": 15-12, "y": 78-12, "associatedButton": buttons[0] });
@@ -75,11 +60,54 @@ Rectangle {
 		for (var i=0; i<2; ++i) {
 			buttons.push(buttonComponent.createObject(block, {
 				"x": 64 - 16 + i*128,
-				"y": 234 - 16
+				"y": 234 - 16,
+				"state": params[i+5],
+				"editable": editable
 			}));
 		}
 		ledComponent.createObject(block, { "x": 40-12, "y": 234-12, "associatedButton": buttons[5] });
 		ledComponent.createObject(block, { "x": 216-12, "y": 234-12, "associatedButton": buttons[6] });
+	}
+
+	// in editor mode
+	function getType() {
+		return "event";
+	}
+
+	// in editor mode
+	function getName() {
+		return "prox";
+	}
+
+	// in editor mode
+	function getParams() {
+		// TODO: this is a ugly fix, correct
+		if (buttons.length == 0)
+			return block.params;
+		var params = [];
+		for (var i=0; i<7; ++i) {
+			params.push(buttons[i].state);
+		}
+		return params;
+	}
+
+	// in editor mode
+	function getMiniature() {
+		var proxEventBlockComponent = Qt.createComponent("ProxEventBlock.qml");
+		var miniatureBlock = proxEventBlockComponent.createObject(null, {
+			"params": getParams(),
+			"editable": false
+		});
+		miniatureBlock.scale = 0.5;
+		return miniatureBlock;
+	}
+
+	function createEditor(parentItem) {
+		var proxEventBlockComponent = Qt.createComponent("ProxEventBlock.qml");
+		return proxEventBlockComponent.createObject(parentItem, {
+			"params": getParams(),
+			"editable": true
+		});
 	}
 }
 

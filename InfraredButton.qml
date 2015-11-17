@@ -11,9 +11,20 @@ Rectangle {
 	border.width: 5
 	state: "DISABLED"
 
+	property bool editable
+
 	MouseArea {
 		anchors.fill: parent
+		onPressed: {
+			if (!buttonRect.editable)
+				mouse.accepted = false;
+		}
+
 		onClicked: {
+			if (!buttonRect.editable) {
+				mouse.accepted = false;
+				return;
+			}
 			if (buttonRect.state == "DISABLED")
 				buttonRect.state = "CLOSE";
 			else if (buttonRect.state == "CLOSE")

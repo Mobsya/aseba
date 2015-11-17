@@ -3,13 +3,15 @@ import QtGraphicalEffects 1.0
 
 Item {
 	id: block;
+
 	width: 256
 	height: 256
 	z: 1
 
-	property string blockName
-	property string bgImage
-	property string centerImage
+	property string type
+	property string name
+	property var params: null
+	property Item miniature: null
 
 	property bool highlight: false
 	property Item highlightedBlock: null
@@ -32,12 +34,12 @@ Item {
 	}
 
 	Image {
-		source: bgImage
+		source: type == "event" ? "images/eventBg.svg" : "images/actionBg.svg"
 	}
 
 	Image {
 		id: centerImageId
-		source: centerImage
+		source: type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
 	}
 
 	DropShadow {
@@ -161,7 +163,7 @@ Item {
 
 		function isLinkTargetValid(destBlock) {
 			// do we have a valid block
-			if (destBlock && destBlock.blockName) {
+			if (destBlock && destBlock.name) {
 				// check that this connection does not already exist!
 				for (var i = 0; i < linkContainer.children.length; ++i) {
 					var child = linkContainer.children[i];
@@ -193,7 +195,7 @@ Item {
 			updateLinkingPath(mouse.x, mouse.y);
 			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
 			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-			if (destBlock && destBlock.blockName && destBlock != parent) {
+			if (destBlock && destBlock.name && destBlock != parent) {
 				// highlight destblock
 				if (highlightedBlock && highlightedBlock != destBlock) {
 					highlightedBlock.highlight = false;
@@ -301,6 +303,11 @@ Item {
 			block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
 			block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
 			accelerationTimer.running = true;
+		}
+
+		onClicked: {
+			editor.editedBlock = parent;
+			editor.visible = true;
 		}
 	}
 }

@@ -7,11 +7,13 @@ Window {
 	height: 720
 	color: "white"
 
+	// to get screen coordinates
 	Item {
 		id: screen
 		anchors.fill: parent
 	}
 
+	// container for main view
 	PinchArea {
 		id: pinchArea
 
@@ -164,28 +166,48 @@ Window {
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: 20
 
-		property bool createEvent: false
-
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
+				if (editor.visible)
+					return;
 				var center = blockContainer.mapToItem(screen, screen.width/2, screen.height/2);
-				if (addBlock.createEvent) {
-					var eventBlockComponent = Qt.createComponent("EventBlock.qml");
-					eventBlockComponent.createObject(blockContainer, {
-						x: center.x - 128 + Math.random(),
-						y: center.y - 128 + Math.random()
-					});
-					addBlock.createEvent = false;
-				} else {
-					var actionBlockComponent = Qt.createComponent("ActionBlock.qml");
-					actionBlockComponent.createObject(blockContainer, {
-						x: center.x - 128 + Math.random(),
-						y: center.y - 128 + Math.random()
-					});
-					addBlock.createEvent = true;
-				}
+				var blockComponent = Qt.createComponent("Block.qml");
+				var block = blockComponent.createObject(blockContainer, {
+					x: center.x - 128 + Math.random(),
+					y: center.y - 128 + Math.random()
+				});
+				editor.editedBlock = block;
+				editor.visible = true;
 			}
+		}
+	}
+
+	// delete block
+	DropArea {
+		id: delBlock
+		// FIXME: how to get this area receive drop for blocks, knowing they are rescaled?
+
+		width: 128
+		height: 128
+
+		anchors.right: parent.right
+		anchors.rightMargin: 20
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: 20
+
+		Rectangle {
+			anchors.fill: parent
+			radius: 64
+			color: "gray"
+		}
+
+		onEntered: {
+			console.log("entered");
+		}
+
+		onExited: {
+			console.log("exited");
 		}
 	}
 
@@ -209,6 +231,10 @@ Window {
 				scene.y = screen.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
 			}
 		}
+	}
+
+	Editor {
+		id: editor
 	}
 }
 
