@@ -270,12 +270,13 @@ Item {
 		property double prevMouseTime: 0
 
 		onPressed: {
-			// within inner radius
+			// within inner radius?
 			mouse.accepted = function () {
 				var dx = mouse.x - 128;
 				var dy = mouse.y - 128;
 				return dx*dx+dy*dy < 99*99;
 			} ();
+			// if so...
 			if (mouse.accepted) {
 				prevMousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				prevMouseTime = new Date().valueOf();
@@ -285,7 +286,9 @@ Item {
 
 		onPositionChanged: {
 			if (drag.active) {
+				// update links
 				updateLinkPositions();
+				// compute and accumulate displacement for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				var now = new Date().valueOf();
 				var dt = now - prevMouseTime;
@@ -293,16 +296,42 @@ Item {
 				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
 				prevMousePos = mousePos;
 				prevMouseTime = now;
+				// check whether we are hovering delete block item
+				var delBlockPos = mapToItem(delBlock, mouse.x, mouse.y);
+				if (delBlock.contains(delBlockPos))
+					delBlock.state = "HIGHLIGHTED";
+				else
+					delBlock.state = "NORMAL";
 			}
 		}
 
 		onReleased: {
-			var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-			var now = new Date().valueOf();
-			var dt = now - prevMouseTime;
-			block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
-			block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
-			accelerationTimer.running = true;
+			// to be deleted?
+			if (delBlock.state == "HIGHLIGHTED") {
+				// yes, collect all links and arrows from/to this block
+				var toDelete = []
+				for (var i = 0; i < linkContainer.children.length; ++i) {
+					var child = linkContainer.children[i];
+					// if so, collect for removal
+					if (child.sourceBlock == block || child.destBlock == block)
+						toDelete.push(child);
+				}
+				// remove collected links and arrows
+				for (i = 0; i < toDelete.length; ++i)
+					toDelete[i].parent = null;
+				// remove this block from the scene
+				block.parent = null;
+			} else {
+				// no, compute displacement and start timer for inertia
+				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				var now = new Date().valueOf();
+				var dt = now - prevMouseTime;
+				block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
+				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
+				accelerationTimer.running = true;
+			}
+			// in any case, set back the delete item to normal state
+			delBlock.state = "NORMAL";
 		}
 
 		onClicked: {

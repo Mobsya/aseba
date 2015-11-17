@@ -216,7 +216,7 @@ Window {
 	}
 
 	// delete block
-	DropArea {
+	Rectangle {
 		id: delBlock
 		// FIXME: how to get this area receive drop for blocks, knowing they are rescaled?
 
@@ -228,19 +228,23 @@ Window {
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: 20
 
-		Rectangle {
-			anchors.fill: parent
-			radius: 64
-			color: "gray"
-		}
+		radius: 64
+		color: "gray"
 
-		onEntered: {
-			console.log("entered");
-		}
+		state: "NORMAL"
 
-		onExited: {
-			console.log("exited");
-		}
+		states: [
+			State {
+				name: "HIGHLIGHTED"
+				PropertyChanges { target: delBlock; color: "white"; }
+			}
+		]
+
+		transitions:
+			Transition {
+				to: "*"
+				ColorAnimation { target: delBlock; duration: 100}
+			}
 	}
 
 	// center view
