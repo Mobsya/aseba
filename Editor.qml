@@ -5,12 +5,9 @@ import QtQml.Models 2.1
 Rectangle {
 	id: editor
 
-	width: screen.width - 200
-	height: screen.height - 200
-	anchors.horizontalCenter: parent.horizontalCenter
-	anchors.verticalCenter: parent.verticalCenter
+	anchors.fill: parent
 
-	color: "#3f000000"
+	color: "#1f000000"
 
 	visible: false
 
@@ -26,6 +23,15 @@ Rectangle {
 		editorItem.anchors.horizontalCenter = editor.horizontalCenter;
 		editorItem.anchors.verticalCenter = editor.verticalCenter;
 		resizeEditor();
+	}
+
+	// to blok events from going to the scene
+	PinchArea {
+		anchors.fill: parent
+	}
+	MouseArea {
+		anchors.fill: parent
+		onWheel: wheel.accepted = true;
 	}
 
 	ObjectModel {
