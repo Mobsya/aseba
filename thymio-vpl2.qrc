@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/thymio-vpl2">
+        <file>ProxEventBlock.qml</file>
+        <file>InfraredButton.qml</file>
+        <file>InfraredLed.qml</file>
+        <file>images/actionBg.svg</file>
+        <file>images/actionCenter.svg</file>
+        <file>images/eventBg.svg</file>
+        <file>images/eventCenter.svg</file>
+        <file>images/linkEndArrow.svg</file>
+        <file>EventBlock.qml</file>
+        <file>images/lineDotted.png</file>
+        <file>LinkingPath.qml</file>
+        <file>BlockLink.qml</file>
+        <file>BlockLinkArrow.qml</file>
+        <file>Block.qml</file>
+        <file>ActionBlock.qml</file>
+        <file>Editor.qml</file>
+    </qresource>
+</RCC>

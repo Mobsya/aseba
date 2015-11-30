@@ -1,11 +1,13 @@
 TEMPLATE = app
 
-QT += qml quick svg xml
+QT += qml
 CONFIG += c++11
 
 SOURCES += main.cpp
 
 RESOURCES += qml.qrc
+
+include(thymio-vpl2.pri)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
