@@ -145,6 +145,13 @@ Rectangle {
 				prevTime = new Date().valueOf();
 				console.log("drag started");
 			}
+
+			BlockLink {
+				id: blockLinkComponent
+			}
+			BlockLinkArrow {
+				id: blockLinkArrowComponent
+			}
 		}
 	}
 
