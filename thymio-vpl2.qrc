@@ -16,5 +16,6 @@
         <file>Block.qml</file>
         <file>ActionBlock.qml</file>
         <file>Editor.qml</file>
+        <file>FullEditor.qml</file>
     </qresource>
 </RCC>
