@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
 
-Item {
+Rectangle {
 	// to get screen coordinates
 	Item {
 		id: screen
