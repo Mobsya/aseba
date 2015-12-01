@@ -227,7 +227,6 @@ Item {
 				var dy = thatBlockCenter.y - thisBlockCenter.y;
 				var linkAngle = Math.atan2(dy, dx);
 				var linkWidth = Math.sqrt(dx*dx + dy*dy);
-				var blockLinkComponent = Qt.createComponent("BlockLink.qml");
 				blockLinkComponent.createObject(linkContainer, {
 					x: thisBlockCenter.x,
 					y: thisBlockCenter.y,
@@ -245,7 +244,6 @@ Item {
 				var ax = thisBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
 				var ay = thisBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
 				var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
-				var blockLinkArrowComponent = Qt.createComponent("BlockLinkArrow.qml");
 				blockLinkArrowComponent.createObject(linkContainer, {
 					x: ax - 16,
 					y: ay - 16,
