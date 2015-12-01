@@ -4,30 +4,14 @@ import QtQuick 2.5
 Item {
 	id: block;
 
-	// event block background
 	width: 256
 	height: 256
 
 	property var params: [ "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED" ]
 	property var buttons: []
-	property bool editable: false
 
 	// Thymio body
-	Rectangle {
-		width: 248
-		height: 176
-		x: 4
-		y: 76
-		radius: 5
-		color: "white"
-	}
-	Rectangle {
-		width: 248
-		height: 144
-		x: 4
-		y: 4
-		radius: width
-	}
+	ThymioBody {}
 
 	// sensor buttons
 	Component.onCompleted: {
@@ -45,8 +29,7 @@ Item {
 				"x": 128 - 16 - 150*Math.sin(0.34906585*offset),
 				"y": 175 - 16 - 150*Math.cos(0.34906585*offset),
 				"rotation": -20*offset,
-				"state": params[i],
-				"editable": editable
+				"state": params[i]
 			}));
 		}
 		ledComponent.createObject(block, { "x": 15-12, "y": 78-12, "associatedButton": buttons[0] });
@@ -61,8 +44,7 @@ Item {
 			buttons.push(buttonComponent.createObject(block, {
 				"x": 64 - 16 + i*128,
 				"y": 234 - 16,
-				"state": params[i+5],
-				"editable": editable
+				"state": params[i+5]
 			}));
 		}
 		ledComponent.createObject(block, { "x": 40-12, "y": 234-12, "associatedButton": buttons[5] });
@@ -96,17 +78,17 @@ Item {
 		var proxEventBlockComponent = Qt.createComponent("ProxEventBlock.qml");
 		var miniatureBlock = proxEventBlockComponent.createObject(null, {
 			"params": getParams(),
-			"editable": false
+			"enabled": false
 		});
 		miniatureBlock.scale = 0.5;
 		return miniatureBlock;
 	}
 
+	// in miniature mode
 	function createEditor(parentItem) {
 		var proxEventBlockComponent = Qt.createComponent("ProxEventBlock.qml");
 		return proxEventBlockComponent.createObject(parentItem, {
-			"params": getParams(),
-			"editable": true
+			"params": getParams()
 		});
 	}
 }

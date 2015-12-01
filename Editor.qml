@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.5
 import QtQml.Models 2.1
 
 // editor
@@ -36,17 +36,12 @@ Rectangle {
 
 	ObjectModel {
 		id: eventBlocksModel
-		ProxEventBlock { }
+		ProxEventBlock { enabled: false; }
 	}
 
 	ObjectModel {
 		id: actionBlocksModel
-		/*ProxEventBlock { }
-		ProxEventBlock { }
-		ProxEventBlock { }
-		ProxEventBlock { }
-		ProxEventBlock { }
-		ProxEventBlock { }*/
+		MotorActionBlock { enabled: false }
 	}
 
 	ListView {
@@ -58,8 +53,19 @@ Rectangle {
 		width: 256
 		clip: true
 
+		delegate: Component {
+			Item {
+				anchors.fill: parent
+				MouseArea {
+					anchors.fill: parent
+					onClicked: { eventBlocksView.currentIndex = index; console.log(index); }
+				}
+			}
+		}
+
 		onCurrentItemChanged: {
 			console.log("event " + currentItem);
+			actionBlocksView.currentIndex = -1;
 			// re-create a new editor when another block is selected
 			setEditorItem(currentItem.createEditor(parent));
 		}
@@ -76,6 +82,9 @@ Rectangle {
 
 		onCurrentItemChanged: {
 			console.log("action " + currentItem);
+			eventBlocksView.currentIndex = -1;
+			// re-create a new editor when another block is selected
+			setEditorItem(currentItem.createEditor(parent));
 		}
 	}
 

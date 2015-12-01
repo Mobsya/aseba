@@ -17,5 +17,9 @@
         <file>Block.qml</file>
         <file>ActionBlock.qml</file>
         <file>Editor.qml</file>
+        <file>MotorActionBlock.qml</file>
+        <file>images/vpl_background_motor.svgz</file>
+        <file>MotorSlider.qml</file>
+        <file>ThymioBody.qml</file>
     </qresource>
 </RCC>
