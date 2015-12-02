@@ -3,18 +3,8 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="-895 641 256 256" style="enable-background:new -895 641 256 256;" xml:space="preserve">
 <style type="text/css">
-	.st0{display:none;}
-	.st1{display:inline;opacity:0.13;fill:#1C93D1;enable-background:new    ;}
-	.st2{display:inline;fill:#A5A1AA;}
 	.st3{fill:#1C93D1;}
 </style>
-<g id="Fond" class="st0">
-	<path class="st1" d="M-639,769.3c0-70.7-57.3-128-128-128s-128,57.3-128,128s57.3,128,128,128c32,0,61.3-11.7,83.7-31.2
-		c3.3,1.4,7,2.3,10.8,2.3c15,0,27.1-12.1,27.1-27.1c0-6.4-2.3-12.4-6-17C-643.4,807.6-639,789-639,769.3z"/>
-	<polygon class="st2" points="-661.6,837.1 -654.2,854.8 -673.3,852.4 	"/>
-</g>
-<g id="fleche" class="st0">
-</g>
 <g>
 	<circle class="st3" cx="-766.9" cy="769" r="93"/>
 </g>

@@ -34,23 +34,24 @@ Item {
 	}
 
 	Image {
-		source: type == "event" ? "images/eventBg.svg" : "images/actionBg.svg"
+		id: backgroundImage
+		source: highlight ? "images/bgHighlight.svg" : "images/bgDefault.svg"
+	}
+
+	DropShadow {
+		visible: true
+		anchors.fill: centerImageId
+		color: highlight ? "#e0F05F48" : "#e082CEC6"
+		radius: 5
+		samples: 16
+		spread: 0.5
+		fast: true
+		source: backgroundImage
 	}
 
 	Image {
 		id: centerImageId
 		source: type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
-	}
-
-	DropShadow {
-		visible: highlight
-		anchors.fill: centerImageId
-		color: "#ffffff"
-		radius: 16
-		samples: 32
-		spread: 0.9
-		fast: true
-		source: centerImageId
 	}
 
 	function bringBlockToFront() {

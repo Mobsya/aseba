@@ -1,25 +1,26 @@
 <RCC>
     <qresource prefix="/thymio-vpl2">
-		<file>ProxEventBlock.qml</file>
-		<file>InfraredButton.qml</file>
-		<file>InfraredLed.qml</file>
-		<file>images/actionBg.svg</file>
-		<file>images/actionCenter.svg</file>
-		<file>images/eventBg.svg</file>
-		<file>images/eventCenter.svg</file>
-		<file>images/linkEndArrow.svg</file>
-		<file>images/vpl_background_motor.svgz</file>
-		<file>images/lineDotted.png</file>
-		<file>EventBlock.qml</file>
-		<file>LinkingPath.qml</file>
-		<file>BlockLink.qml</file>
-		<file>BlockLinkArrow.qml</file>
-		<file>Block.qml</file>
-		<file>ActionBlock.qml</file>
-		<file>Editor.qml</file>
-		<file>MotorActionBlock.qml</file>
-		<file>MotorSlider.qml</file>
-		<file>ThymioBody.qml</file>
-		<file>FullEditor.qml</file>
+        <file>ProxEventBlock.qml</file>
+        <file>InfraredButton.qml</file>
+        <file>InfraredLed.qml</file>
+        <file>images/actionCenter.svg</file>
+        <file>images/eventCenter.svg</file>
+        <file>images/linkEndArrow.svg</file>
+        <file>images/vpl_background_motor.svgz</file>
+        <file>images/lineDotted.png</file>
+        <file>EventBlock.qml</file>
+        <file>LinkingPath.qml</file>
+        <file>BlockLink.qml</file>
+        <file>BlockLinkArrow.qml</file>
+        <file>Block.qml</file>
+        <file>ActionBlock.qml</file>
+        <file>Editor.qml</file>
+        <file>MotorActionBlock.qml</file>
+        <file>MotorSlider.qml</file>
+        <file>ThymioBody.qml</file>
+        <file>FullEditor.qml</file>
+        <file>images/bgDefault.svg</file>
+        <file>images/bgHighlight.svg</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>
