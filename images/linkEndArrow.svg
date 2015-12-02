@@ -1,108 +1,27 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   x="0px"
-   y="0px"
-   viewBox="0 0 32 32"
-   xml:space="preserve"
-   id="svg2"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="linkEndArrow.svg"
-   width="32"
-   height="32"><metadata
-     id="metadata29"><rdf:RDF><cc:Work
-         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
-     id="defs27" /><sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1717"
-     inkscape:window-height="1014"
-     id="namedview25"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:zoom="7.375"
-     inkscape:cx="-28.002338"
-     inkscape:cy="16.000001"
-     inkscape:window-x="0"
-     inkscape:window-y="52"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="fleche" /><style
-     type="text/css"
-     id="style4">
-	.st0{display:none;}
-	.st1{display:inline;opacity:0.13;fill:#1C93D1;}
-	.st2{display:inline;fill:#A5A1AA;}
-	.st3{display:inline;opacity:0.13;fill:#F38420;}
-	.st4{display:inline;}
-	.st5{fill:#1C93D1;}
-	.st6{fill:#F38420;}
-	.st7{opacity:0.13;fill:#4B5351;}
-	.st8{fill:#A5A1AA;}
-	.st9{opacity:0.13;fill:#1C93D1;}
-</style><g
-     id="Fond"
-     class="st0"
-     style="display:none"
-     transform="translate(-112,-112)"><path
-       class="st1"
-       d="M 256,128.3 C 256,57.6 198.7,0.3 128,0.3 57.3,0.3 0,57.6 0,128.3 c 0,70.7 57.3,128 128,128 32,0 61.3,-11.7 83.7,-31.2 3.3,1.4 7,2.3 10.8,2.3 15,0 27.1,-12.1 27.1,-27.1 0,-6.4 -2.3,-12.4 -6,-17 8,-16.7 12.4,-35.3 12.4,-55 z"
-       id="path7"
-       inkscape:connector-curvature="0"
-       style="display:inline;opacity:0.12999998;fill:#1c93d1" /><polygon
-       class="st2"
-       points="233.4,196.1 240.8,213.8 221.7,211.4 "
-       id="polygon9"
-       style="display:inline;fill:#a5a1aa" /></g><g
-     id="centre"
-     class="st0"
-     style="display:none"
-     transform="translate(-112,-112)"><g
-       class="st4"
-       id="g12"
-       style="display:inline"><image
-         sodipodi:absref="/home/steph/data/aseba-thymio/aseba-community/thymio-vpl2/images/78FF0A8B6672CB45.png"
-         xlink:href="78FF0A8B6672CB45.png"
-         style="overflow:visible;opacity:0.35"
-         width="233"
-         height="232"
-         transform="translate(11.8236,12.8236)"
-         id="image14" /><g
-         id="g16"><circle
-           class="st5"
-           cx="128"
-           cy="128.3"
-           r="99.199997"
-           id="circle18"
-           style="fill:#1c93d1" /></g></g></g><g
-     id="fleche"
-     transform="matrix(1.1188811,0,0,1.1188811,-127.21678,-127.21678)"><circle
-       class="st7"
-       cx="128"
-       cy="128"
-       r="14.3"
-       id="circle21"
-       style="opacity:1;fill:#eceded;fill-opacity:1" /><polygon
-       class="st8"
-       points="135.5,127.6 123.8,134.9 123.3,121.1 "
-       id="polygon23"
-       style="fill:#a5a1aa" /></g></svg>
+<svg version="1.1"
+	 id="svg2" inkscape:version="0.91 r13725" sodipodi:docname="linkEndArrow.svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-111 113 32 32"
+	 enable-background="new -111 113 32 32" xml:space="preserve">
+<sodipodi:namedview  id="namedview25" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-height="1014" inkscape:window-x="0" inkscape:current-layer="fleche" fit-margin-right="0" fit-margin-bottom="0" inkscape:window-y="52" inkscape:window-width="1717" inkscape:window-maximized="0" borderopacity="1" showgrid="false" bordercolor="#666666" fit-margin-top="0" inkscape:cy="16.000001" guidetolerance="10" gridtolerance="10" inkscape:cx="-28.002338" fit-margin-left="0" inkscape:zoom="7.375" objecttolerance="10" pagecolor="#ffffff">
+	</sodipodi:namedview>
+<g id="Fond" transform="translate(-112,-112)" display="none">
+	
+		<path id="path7" inkscape:connector-curvature="0" display="inline" opacity="0.13" fill="#1C93D1" enable-background="new    " d="
+		M145,241.3c0-70.7-57.3-128-128-128s-128,57.3-128,128s57.3,128,128,128c32,0,61.3-11.7,83.7-31.2c3.3,1.4,7,2.3,10.8,2.3
+		c15,0,27.1-12.1,27.1-27.1c0-6.4-2.3-12.4-6-17C140.6,279.6,145,261,145,241.3L145,241.3z"/>
+	<polygon id="polygon9" display="inline" fill="#A5A1AA" points="122.4,309.1 129.8,326.8 110.7,324.4 	"/>
+</g>
+<g id="centre" transform="translate(-112,-112)" display="none">
+	<g id="g12" display="inline">
+		<g id="g16">
+			<circle id="circle18" fill="#1C93D1" cx="17" cy="241.3" r="99.2"/>
+		</g>
+	</g>
+</g>
+<g>
+	<path fill="#82CEC6" d="M-105.8,113.4l25.6,14.9c0.6,0.4,0.6,1.2,0,1.6l-25.7,14.7c-0.6,0.4-1.4-0.1-1.4-0.8l0.1-29.6
+		C-107.2,113.5-106.4,113-105.8,113.4z"/>
+</g>
+</svg>

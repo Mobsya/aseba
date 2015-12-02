@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="-895 641 256 256" style="enable-background:new -895 641 256 256;" xml:space="preserve">
 <style type="text/css">
-	.st0{opacity:0.13;fill:#F38420;}
-	.st1{opacity:0.13;fill:#1C93D1;}
-	.st2{fill:#A5A1AA;}
-	.st3{display:none;}
-	.st4{display:inline;}
-	.st5{fill:#F38420;}
-	.st6{fill:#1C93D1;}
-	.st7{display:inline;opacity:0.13;fill:#4B5351;}
-	.st8{display:inline;fill:#A5A1AA;}
-	.st9{display:inline;opacity:0.13;fill:#1C93D1;}
+	.st0{display:none;}
+	.st1{display:inline;}
+	.st2{fill:#F38420;}
+	.st3{display:inline;opacity:0.13;fill:#4B5351;enable-background:new    ;}
+	.st4{display:inline;fill:#A5A1AA;}
+	.st5{fill:none;stroke:#82CEC6;stroke-width:13.4958;stroke-miterlimit:10;}
 </style>
-<g id="Fond">
-	<path class="st0" d="M256,128.3c0-70.7-57.3-128-128-128S0,57.6,0,128.3s57.3,128,128,128c32,0,61.3-11.7,83.7-31.2
-		c3.3,1.4,7,2.3,10.8,2.3c15,0,27.1-12.1,27.1-27.1c0-6.4-2.3-12.4-6-17C251.6,166.6,256,148,256,128.3z"/>
-	<polygon class="st2" points="233.4,196.1 240.8,213.8 221.7,211.4 	"/>
-</g>
-<g id="centre" class="st3">
-	<g class="st4">
-		
-			<image style="overflow:visible;opacity:0.35;" width="233" height="232" xlink:href="C7E80299F7C8B4AE.png"  transform="matrix(1 0 0 1 11.8236 12.8236)">
-		</image>
+<g id="centre" class="st0">
+	<g class="st1">
 		<g>
-			<circle class="st5" cx="128" cy="128.3" r="99.2"/>
+			<circle class="st2" cx="-767" cy="769.3" r="99.2"/>
 		</g>
 	</g>
 </g>
-<g id="fleche" class="st3">
-	<circle class="st7" cx="128" cy="128" r="14.3"/>
-	<polygon class="st8" points="123.3,121.1 135.5,127.6 123.8,134.9 	"/>
+<g id="fleche" class="st0">
+	<circle class="st3" cx="-767" cy="769" r="14.3"/>
+	<polygon class="st4" points="-771.7,762.1 -759.5,768.6 -771.2,775.9 	"/>
+</g>
+<g>
+	
+		<image style="overflow:visible;opacity:0.8;" width="259" height="259" xlink:href="A775D070B3AB3B7B.png"  transform="matrix(1 0 0 1 -897 639)">
+	</image>
+	<g>
+		<circle class="st5" cx="-767.2" cy="768.1" r="110.2"/>
+	</g>
 </g>
 </svg>
