@@ -1,5 +1,7 @@
 import QtQuick 2.5
 import QtQml.Models 2.1
+import QtQuick.Window 2.2
+import QtGraphicalEffects 1.0
 
 // editor
 Rectangle {
@@ -7,7 +9,13 @@ Rectangle {
 
 	anchors.fill: parent
 
-	color: "#1f000000"
+	color: "#7f000000"
+
+	Desaturate {
+		anchors.fill: parent
+		source: mainContainer
+		desaturation: 0.5
+	}
 
 	visible: block !== null
 
@@ -35,14 +43,9 @@ Rectangle {
 	property BlockDefinition definition: eventBlocks[0]
 	property var params: definition.defaultParams
 
-	Item {
-		id: placeholder
-		anchors.centerIn: parent
-	}
-
 	onParamsChanged: {
-		placeholder.children = []
-		definition.editor.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder})
+		editorItemArea.children = []
+		definition.editor.createObject(editorItemArea, {"params": params})
 		resizeEditor();
 	}
 
@@ -55,51 +58,76 @@ Rectangle {
 		}
 	}
 
-	ListView {
-		id: eventBlocksView
-		model: eventBlocks
+	Rectangle {
 		anchors.left: parent.left
+		anchors.leftMargin: Screen.width > Screen.height ? 50 : 0
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 		width: 256
-		clip: true
-		delegate: MouseArea {
-			height: eventBlocksLoader.height
-			width: eventBlocksLoader.width
-			onClicked: {
-				definition = eventBlocks[index];
-				params = definition.defaultParams;
-			}
-			Loader {
-				id: eventBlocksLoader
-				enabled: false
-				sourceComponent: eventBlocks[index].miniature
+		color: "white";
+
+		ListView {
+			id: eventBlocksView
+			model: eventBlocks
+			anchors.fill: parent
+			clip: true
+
+			delegate: MouseArea {
+				height: eventBlocksLoader.height
+				width: eventBlocksLoader.width
+				onClicked: {
+					definition = eventBlocks[index];
+					params = definition.defaultParams;
+				}
+				Loader {
+					id: eventBlocksLoader
+					enabled: false
+					sourceComponent: eventBlocks[index].miniature
+				}
 			}
 		}
 	}
 
-	ListView {
-		id: actionBlocksView
-		model: actionBlocks
+	Rectangle {
 		anchors.right: parent.right
+		anchors.rightMargin: Screen.width > Screen.height ? 50 : 0
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 		width: 256
-		clip: true
-		delegate: MouseArea {
-			height: actionBlocksLoader.height
-			width: actionBlocksLoader.width
-			onClicked: {
-				definition = actionBlocks[index];
-				params = definition.defaultParams;
-			}
-			Loader {
-				id: actionBlocksLoader
-				enabled: false
-				sourceComponent: actionBlocks[index].miniature
+		color: "white";
+
+		ListView {
+			id: actionBlocksView
+			model: actionBlocks
+			anchors.fill: parent
+			clip: true
+
+			delegate: MouseArea {
+				height: actionBlocksLoader.height
+				width: actionBlocksLoader.width
+				onClicked: {
+					definition = actionBlocks[index];
+					params = definition.defaultParams;
+				}
+				Loader {
+					id: actionBlocksLoader
+					enabled: false
+					sourceComponent: actionBlocks[index].miniature
+				}
 			}
 		}
 
+	}
+
+	Rectangle {
+		id: editorItemArea
+
+		color: "gray"
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.verticalCenter: parent.verticalCenter
+
+		width: childrenRect.width
+		height: childrenRect.height
 	}
 
 	Rectangle {
@@ -119,7 +147,7 @@ Rectangle {
 			anchors.fill: parent
 			onClicked: {
 				block.definition = definition;
-				block.params = placeholder.children[0].getParams();
+				block.params = editorItemArea.children[0].getParams();
 				block = null;
 			}
 		}
@@ -133,6 +161,6 @@ Rectangle {
 		var availableHeight = height - 20*8 - closeButton.height;
 		var availableWidth = width - actionBlocksView.width - eventBlocksView.width;
 		var size = Math.min(availableWidth, availableHeight);
-		placeholder.scale = size / 256;
+		editorItemArea.scale = size / 256;
 	}
 }

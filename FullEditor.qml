@@ -3,7 +3,7 @@ import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
 Rectangle {
-	//color: "#000020"
+	id: mainContainer
 
 	RadialGradient {
 			anchors.fill: parent
@@ -14,9 +14,6 @@ Rectangle {
 				//GradientStop { position: 0.5; color: "#121729" }
 			}
 		}
-
-	// to get screen coordinates
-	id: screen
 
 	// container for main view
 	PinchArea {
@@ -66,8 +63,8 @@ Rectangle {
 
 				// adjust content pos due to scale
 				if (scene.scale + deltaScale > 1e-1) {
-					scene.x += (scene.x - screen.width/2) * deltaScale / scene.scale;
-					scene.y += (scene.y - screen.height/2) * deltaScale / scene.scale;
+					scene.x += (scene.x - mainContainer.width/2) * deltaScale / scene.scale;
+					scene.y += (scene.y - mainContainer.height/2) * deltaScale / scene.scale;
 					scene.scale += deltaScale;
 				}
 			}
@@ -197,7 +194,7 @@ Rectangle {
 			onClicked: {
 				if (editor.visible)
 					return;
-				var pos = screen.mapToItem(blockContainer, screen.width/2, screen.height/2);
+				var pos = mainContainer.mapToItem(blockContainer, mainContainer.width/2, mainContainer.height/2);
 				createBlock(pos.x, pos.y);
 			}
 			onPressed: {
@@ -288,8 +285,8 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				scene.x = screen.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
-				scene.y = screen.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
+				scene.x = mainContainer.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
+				scene.y = mainContainer.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
 			}
 		}
 	}
