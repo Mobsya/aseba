@@ -1,7 +1,20 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
+import QtGraphicalEffects 1.0
 
 Rectangle {
+	//color: "#000020"
+
+	RadialGradient {
+			anchors.fill: parent
+			gradient: Gradient {
+				GradientStop { position: 0.0; color: "white" }
+				GradientStop { position: 0.5; color: "#eaeced" }
+				//GradientStop { position: 0.0; color: "#1e2551" }
+				//GradientStop { position: 0.5; color: "#121729" }
+			}
+		}
+
 	// to get screen coordinates
 	Item {
 		id: screen
@@ -156,13 +169,12 @@ Rectangle {
 	}
 
 	// add block
-	Rectangle {
+	Image {
 		id: addBlock
+		source: "images/addButton.svg"
 
 		width: 128
 		height: 128
-		radius: 64
-		color: "gray"
 		anchors.left: parent.left
 		anchors.leftMargin: 20
 		anchors.bottom: parent.bottom
@@ -223,43 +235,48 @@ Rectangle {
 	// delete block
 	Rectangle {
 		id: delBlock
-		// FIXME: how to get this area receive drop for blocks, knowing they are rescaled?
-
-		width: 128
-		height: 128
 
 		anchors.right: parent.right
-		anchors.rightMargin: 20
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 20
 
-		radius: 64
-		color: "gray"
+		width: 96+40
+		height: 96+40
+
+		color: "transparent"
+
+		Image {
+			id: delBlockImage
+
+			source: "images/trashDefault.svg"
+
+			state: parent.state
+
+			width: 96
+			height: 96
+
+			anchors.right: parent.right
+			anchors.rightMargin: 20
+			anchors.bottom: parent.bottom
+			anchors.bottomMargin: 20+16
+		}
 
 		state: "NORMAL"
 
 		states: [
 			State {
 				name: "HIGHLIGHTED"
-				PropertyChanges { target: delBlock; color: "white"; }
+				PropertyChanges { target: delBlockImage; source: "images/trashOpen.svg"; }
 			}
 		]
-
-		transitions:
-			Transition {
-				to: "*"
-				ColorAnimation { target: delBlock; duration: 100}
-			}
 	}
 
 	// center view
-	Rectangle {
-		id: centerView
+	Image {
+		id: backgroundImage
+		source: "images/centerContent.svg"
 
-		width: 96
-		height: 96
-		radius: 48
-		color: "gray"
+		width: 80
+		height: 80
 		anchors.right: parent.right
 		anchors.rightMargin: 20+16
 		anchors.top: parent.top
@@ -274,6 +291,33 @@ Rectangle {
 		}
 	}
 
+	// run and stop
+	Image {
+		id: runButton
+		source: "images/playButton.svg"
+
+		width: 128
+		height: 128
+		anchors.top: parent.top
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.topMargin: 20
+
+		MouseArea {
+			anchors.fill: parent
+			onClicked: runButton.state == 'EDITING' ? runButton.state = "PLAYING" : runButton.state = 'EDITING';
+		}
+
+		state: "EDITING"
+
+		states: [
+			State {
+				name: "PLAYING"
+				PropertyChanges { target: runButton; source: "images/stopButton.svg"; }
+			}
+		]
+	}
+
+	// block editor
 	Editor {
 		id: editor
 	}

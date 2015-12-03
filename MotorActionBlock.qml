@@ -8,7 +8,7 @@ Item {
 	property var params: [ 0, 0 ]
 
 	// Thymio body
-	ThymioBody {}
+	//ThymioBody {}
 
 	Image {
 		source: "images/vpl_background_motor.svgz"

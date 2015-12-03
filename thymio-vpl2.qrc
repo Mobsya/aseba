@@ -21,6 +21,13 @@
         <file>FullEditor.qml</file>
         <file>images/bgDefault.svg</file>
         <file>images/bgHighlight.svg</file>
+        <file>images/centerContent.svg</file>
+        <file>images/addButton.svg</file>
+        <file>images/trashDefault.svg</file>
+        <file>images/trashOpen.svg</file>
+        <file>images/playButton.svg</file>
+        <file>images/playButtonBackground.svg</file>
+        <file>images/stopButton.svg</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
