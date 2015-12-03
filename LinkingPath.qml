@@ -7,7 +7,7 @@ Canvas {
 	property bool trim: false
 
 	property real leftRadius: 133
-	property real rightRadius: 118 // 129
+	property real rightRadius: 118
 
 	transform: Rotation {
 		id: linkingPathRotation
@@ -34,11 +34,17 @@ Canvas {
 		ctx.beginPath();
 		var leftArcAngle = 0;
 		var rightArcAngle = 0;
-		if (trim) {
+		var localTrim = trim;
+		if (width < 256)
+			localTrim = false;
+		if (localTrim) {
 			var leftGamma = Math.acos(leftRadius * 0.5 / width);
 			leftArcAngle = Math.PI - 2 * leftGamma;
 			var rightGamma = Math.acos(rightRadius * 0.5 / width);
 			rightArcAngle = Math.PI - 2 * rightGamma;
+		} else {
+			leftArcAngle = 0;
+			rightArcAngle = 0;
 		}
 		ctx.arc(width/2, -Math.sqrt(width*width*3/4), width, Math.PI/3+leftArcAngle, 2*Math.PI/3-rightArcAngle);
 		ctx.stroke();
