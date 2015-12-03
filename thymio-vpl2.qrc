@@ -28,6 +28,6 @@
         <file>images/playButton.svg</file>
         <file>images/playButtonBackground.svg</file>
         <file>images/stopButton.svg</file>
+        <file>BlockDefinition.qml</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>

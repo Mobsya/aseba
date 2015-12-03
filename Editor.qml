@@ -9,21 +9,7 @@ Rectangle {
 
 	color: "#1f000000"
 
-	visible: false
-
-	property Item editorItem: null
-	property Item editedBlock: null
-
-	function setEditorItem(item) {
-		if (editorItem) {
-			editorItem.parent = null;
-			editorItem = null;
-		}
-		editorItem = item;
-		editorItem.anchors.horizontalCenter = editor.horizontalCenter;
-		editorItem.anchors.verticalCenter = editor.verticalCenter;
-		resizeEditor();
-	}
+	visible: block !== null
 
 	// to blok events from going to the scene
 	PinchArea {
@@ -34,58 +20,86 @@ Rectangle {
 		onWheel: wheel.accepted = true;
 	}
 
-	ObjectModel {
-		id: eventBlocksModel
-		ProxEventBlock { enabled: false; }
+	property list<BlockDefinition> eventBlocks: [
+		ProxEventBlock {},
+		ProxEventBlock {},
+		ProxEventBlock {}
+	]
+	property list<BlockDefinition> actionBlocks: [
+		MotorActionBlock {},
+		MotorActionBlock {},
+		MotorActionBlock {}
+	]
+
+	property Block block: null
+	property BlockDefinition definition: eventBlocks[0]
+	property var params: definition.defaultParams
+
+	Item {
+		id: placeholder
+		anchors.centerIn: parent
 	}
 
-	ObjectModel {
-		id: actionBlocksModel
-		MotorActionBlock { enabled: false }
+	onParamsChanged: {
+		placeholder.children = []
+		definition.editor.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder})
+		resizeEditor();
+	}
+
+	onBlockChanged: {
+		if (block) {
+			definition = block.definition;
+			params = block.params;
+		} else {
+			params = definition.defaultParams;
+		}
 	}
 
 	ListView {
 		id: eventBlocksView
-		model: eventBlocksModel
+		model: eventBlocks
 		anchors.left: parent.left
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 		width: 256
 		clip: true
-
-		delegate: Component {
-			Item {
-				anchors.fill: parent
-				MouseArea {
-					anchors.fill: parent
-					onClicked: { eventBlocksView.currentIndex = index; console.log(index); }
-				}
+		delegate: MouseArea {
+			height: eventBlocksLoader.height
+			width: eventBlocksLoader.width
+			onClicked: {
+				definition = eventBlocks[index];
+				params = definition.defaultParams;
 			}
-		}
-
-		onCurrentItemChanged: {
-			console.log("event " + currentItem);
-			actionBlocksView.currentIndex = -1;
-			// re-create a new editor when another block is selected
-			setEditorItem(currentItem.createEditor(parent));
+			Loader {
+				id: eventBlocksLoader
+				enabled: false
+				sourceComponent: eventBlocks[index].miniature
+			}
 		}
 	}
 
 	ListView {
 		id: actionBlocksView
-		model: actionBlocksModel
+		model: actionBlocks
 		anchors.right: parent.right
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 		width: 256
 		clip: true
-
-		onCurrentItemChanged: {
-			console.log("action " + currentItem);
-			eventBlocksView.currentIndex = -1;
-			// re-create a new editor when another block is selected
-			setEditorItem(currentItem.createEditor(parent));
+		delegate: MouseArea {
+			height: actionBlocksLoader.height
+			width: actionBlocksLoader.width
+			onClicked: {
+				definition = actionBlocks[index];
+				params = definition.defaultParams;
+			}
+			Loader {
+				id: actionBlocksLoader
+				enabled: false
+				sourceComponent: actionBlocks[index].miniature
+			}
 		}
+
 	}
 
 	Rectangle {
@@ -104,13 +118,9 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				editedBlock.type = editorItem.getType();
-				editedBlock.name = editorItem.getName();
-				editedBlock.params = editorItem.getParams();
-				editedBlock.miniature = editorItem.getMiniature();
-				editedBlock.miniature.parent = editedBlock;
-				editedBlock = null;
-				editor.visible = false;
+				block.definition = definition;
+				block.params = placeholder.children[0].getParams();
+				block = null;
 			}
 		}
 	}
@@ -120,11 +130,9 @@ Rectangle {
 	}
 
 	function resizeEditor() {
-		if (editorItem) {
-			var availableHeight = height - 20*8 - closeButton.height;
-			var availableWidth = width - actionBlocksView.width - eventBlocksView.width;
-			var size = Math.min(availableWidth, availableHeight);
-			editorItem.scale = size / 256;
-		}
+		var availableHeight = height - 20*8 - closeButton.height;
+		var availableWidth = width - actionBlocksView.width - eventBlocksView.width;
+		var size = Math.min(availableWidth, availableHeight);
+		placeholder.scale = size / 256;
 	}
 }

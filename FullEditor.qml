@@ -16,10 +16,7 @@ Rectangle {
 		}
 
 	// to get screen coordinates
-	Item {
-		id: screen
-		anchors.fill: parent
-	}
+	id: screen
 
 	// container for main view
 	PinchArea {
@@ -221,14 +218,20 @@ Rectangle {
 				dragTarget.y = -64;
 			}
 			function createBlock(x, y) {
-				var blockComponent = Qt.createComponent("Block.qml");
 				var block = blockComponent.createObject(blockContainer, {
 					x: x - 128 + Math.random(),
-					y: y - 128 + Math.random()
+					y: y - 128 + Math.random(),
+					definition: editor.definition,
+					params: editor.params
 				});
-				editor.editedBlock = block;
-				editor.visible = true;
+				editor.block = block;
 			}
+		}
+	}
+
+	Component {
+		id: blockComponent
+		Block {
 		}
 	}
 
