@@ -18,9 +18,6 @@ BlockDefinition {
 
 			// sensor buttons
 			Component.onCompleted: {
-				// factory for buttons
-				var buttonComponent = Qt.createComponent("InfraredButton.qml");
-				var ledComponent = Qt.createComponent("InfraredLed.qml");
 				var offset;
 				var led;
 
@@ -58,5 +55,13 @@ BlockDefinition {
 				return buttons.map(function(button) { return button.state; });
 			}
 		}
+	}
+	Component {
+		id: buttonComponent
+		InfraredButton {}
+	}
+	Component {
+		id: ledComponent
+		InfraredLed {}
 	}
 }
