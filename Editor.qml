@@ -25,7 +25,7 @@ Rectangle {
 
 	visible: block !== null
 
-	// to blok events from going to the scene
+	// to block events from going to the scene
 	PinchArea {
 		anchors.fill: parent
 	}
@@ -55,8 +55,8 @@ Rectangle {
 			"params": params,
 			"anchors.horizontalCenter": editorItemArea.horizontalCenter,
 			"anchors.verticalCenter": editorItemArea.verticalCenter,
+			"scale": Math.max(editorItemArea.width / 256, 0.1)
 		})
-		resizeEditor();
 	}
 
 	onBlockChanged: {
@@ -174,6 +174,12 @@ Rectangle {
 
 		width: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
 		height: width
+
+		onWidthChanged: {
+			for (var i = 0; i < children.length; ++i) {
+				children[i].scale = Math.max(width / 256, 0.1);
+			}
+		}
 	}
 
 	Image {
@@ -196,16 +202,6 @@ Rectangle {
 				block.params = editorItemArea.children[0].getParams();
 				block = null;
 			}
-		}
-	}
-
-	onHeightChanged: {
-		resizeEditor();
-	}
-
-	function resizeEditor() {
-		if (editorItemArea.children.length > 0) {
-			editorItemArea.children[0].scale = editorItemArea.width / 256;
 		}
 	}
 }
