@@ -28,6 +28,7 @@
         <file>images/playButton.svg</file>
         <file>images/playButtonBackground.svg</file>
         <file>images/stopButton.svg</file>
+        <file>images/okButton.svg</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

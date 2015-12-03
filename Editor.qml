@@ -12,10 +12,16 @@ Rectangle {
 	color: "#7f000000"
 
 	Desaturate {
+		id: desaturated
 		anchors.fill: parent
 		source: mainContainer
 		desaturation: 0.5
 	}
+//	FastBlur {
+//	   anchors.fill: parent
+//	   source: mainContainer
+//	   radius: 32
+//	}
 
 	visible: false
 
@@ -54,18 +60,24 @@ Rectangle {
 	}
 
 	Rectangle {
+		property bool isLandscape: Window.width >= Window.height
+
 		anchors.left: parent.left
-		anchors.leftMargin: Screen.width > Screen.height ? 50 : 0
+		anchors.leftMargin: isLandscape ? 50 : 0
 		anchors.top: parent.top
-		anchors.bottom: parent.bottom
-		width: 256
-		color: "white";
+		anchors.bottom: isLandscape ? parent.bottom : undefined
+		anchors.right: isLandscape ? undefined : parent.right
+
+		width: isLandscape ? 256 : undefined
+		height: isLandscape ? undefined : 256
+		color: "#ebeef0"
 
 		ListView {
 			id: eventBlocksView
 			model: eventBlocksModel
 			anchors.fill: parent
 			clip: true
+			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
 
 			delegate: Component {
 				Item {
@@ -87,18 +99,24 @@ Rectangle {
 	}
 
 	Rectangle {
+		property bool isLandscape: Window.width >= Window.height
+
 		anchors.right: parent.right
-		anchors.rightMargin: Screen.width > Screen.height ? 50 : 0
-		anchors.top: parent.top
+		anchors.rightMargin: isLandscape ? 50 : 0
+		anchors.top: isLandscape ? parent.top : undefined
+		anchors.left: isLandscape ? undefined : parent.left
 		anchors.bottom: parent.bottom
-		width: 256
-		color: "white";
+
+		width: isLandscape ? 256 : undefined
+		height: isLandscape ? undefined : 256
+		color: "#ebeef0"
 
 		ListView {
 			id: actionBlocksView
 			model: actionBlocksModel
 			anchors.fill: parent
 			clip: true
+			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
 
 			onCurrentItemChanged: {
 				console.log("action " + currentItem);
@@ -112,26 +130,28 @@ Rectangle {
 	Rectangle {
 		id: editorItemArea
 
-		color: "gray"
+		property bool isLandscape: Window.width >= Window.height
+
+		color: "#a9acaf"
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
 
-		width: childrenRect.width
-		height: childrenRect.height
+		width: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
+		height: width
 	}
 
-	Rectangle {
+	Image {
 		id: closeButton
 
-		width: 200
-		height: 50
+		property bool isLandscape: Window.width >= Window.height
+
+		source: "images/okButton.svg"
+		width: 96
+		height: 96
 
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 20
+		anchors.bottomMargin: isLandscape ? 20 : 256 + 20
 		anchors.horizontalCenter: parent.horizontalCenter
-
-		radius: 50
-		color: "black"
 
 		MouseArea {
 			anchors.fill: parent
@@ -153,10 +173,7 @@ Rectangle {
 
 	function resizeEditor() {
 		if (editorItem) {
-			var availableHeight = height - 20*8 - closeButton.height;
-			var availableWidth = width - actionBlocksView.width - eventBlocksView.width;
-			var size = Math.min(availableWidth, availableHeight);
-			editorItem.scale = size / 256;
+			editorItem.scale = editorItemArea.width / 256;
 		}
 	}
 }
