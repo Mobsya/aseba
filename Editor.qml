@@ -95,10 +95,21 @@ Rectangle {
 					definition = eventBlocks[index];
 					params = definition.defaultParams;
 				}
-				Loader {
-					id: eventBlocksLoader
-					enabled: false
-					sourceComponent: eventBlocks[index].miniature
+				Rectangle {
+					width: parent.width * 0.8
+					height: parent.height * 0.8
+					radius: parent.width / 2
+					color: "#1c93d1"
+					anchors.horizontalCenter: parent.horizontalCenter
+					anchors.verticalCenter: parent.verticalCenter
+					Loader {
+						id: eventBlocksLoader
+						enabled: false
+						scale: 0.5
+						anchors.horizontalCenter: parent.horizontalCenter
+						anchors.verticalCenter: parent.verticalCenter
+						sourceComponent: eventBlocks[index].miniature
+					}
 				}
 			}
 		}
@@ -131,10 +142,21 @@ Rectangle {
 					definition = actionBlocks[index];
 					params = definition.defaultParams;
 				}
-				Loader {
-					id: actionBlocksLoader
-					enabled: false
-					sourceComponent: actionBlocks[index].miniature
+				Rectangle {
+					width: parent.width * 0.8
+					height: parent.height * 0.8
+					radius: parent.width / 2
+					color: "#f38420"
+					anchors.horizontalCenter: parent.horizontalCenter
+					anchors.verticalCenter: parent.verticalCenter
+					Loader {
+						id: actionBlocksLoader
+						enabled: false
+						scale: 0.5
+						anchors.horizontalCenter: parent.horizontalCenter
+						anchors.verticalCenter: parent.verticalCenter
+						sourceComponent: actionBlocks[index].miniature
+					}
 				}
 			}
 		}
