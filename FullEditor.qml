@@ -3,7 +3,7 @@ import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
 Rectangle {
-	//color: "#000020"
+	id: mainContainer
 
 	RadialGradient {
 			anchors.fill: parent
