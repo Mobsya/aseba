@@ -15,12 +15,6 @@ Rectangle {
 			}
 		}
 
-	// to get screen coordinates
-	Item {
-		id: screen
-		anchors.fill: parent
-	}
-
 	// container for main view
 	PinchArea {
 		id: pinchArea
@@ -69,8 +63,8 @@ Rectangle {
 
 				// adjust content pos due to scale
 				if (scene.scale + deltaScale > 1e-1) {
-					scene.x += (scene.x - screen.width/2) * deltaScale / scene.scale;
-					scene.y += (scene.y - screen.height/2) * deltaScale / scene.scale;
+					scene.x += (scene.x - mainContainer.width/2) * deltaScale / scene.scale;
+					scene.y += (scene.y - mainContainer.height/2) * deltaScale / scene.scale;
 					scene.scale += deltaScale;
 				}
 			}
@@ -200,7 +194,7 @@ Rectangle {
 			onClicked: {
 				if (editor.visible)
 					return;
-				var pos = screen.mapToItem(blockContainer, screen.width/2, screen.height/2);
+				var pos = mainContainer.mapToItem(blockContainer, mainContainer.width/2, mainContainer.height/2);
 				createBlock(pos.x, pos.y);
 			}
 			onPressed: {
@@ -221,14 +215,20 @@ Rectangle {
 				dragTarget.y = -64;
 			}
 			function createBlock(x, y) {
-				var blockComponent = Qt.createComponent("Block.qml");
 				var block = blockComponent.createObject(blockContainer, {
 					x: x - 128 + Math.random(),
-					y: y - 128 + Math.random()
+					y: y - 128 + Math.random(),
+					definition: editor.definition,
+					params: editor.params
 				});
-				editor.editedBlock = block;
-				editor.visible = true;
+				editor.block = block;
 			}
+		}
+	}
+
+	Component {
+		id: blockComponent
+		Block {
 		}
 	}
 
@@ -285,8 +285,8 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				scene.x = screen.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
-				scene.y = screen.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
+				scene.x = mainContainer.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
+				scene.y = mainContainer.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
 			}
 		}
 	}

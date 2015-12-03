@@ -8,10 +8,8 @@ Item {
 	height: 256
 	z: 1
 
-	property string type
-	property string name
-	property var params: null
-	property Item miniature: null
+	property BlockDefinition definition
+	property var params
 
 	property bool highlight: false
 	property Item highlightedBlock: null
@@ -54,7 +52,18 @@ Item {
 
 	Image {
 		id: centerImageId
-		source: type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
+		source: definition.type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
+	}
+
+	Item {
+		id: placeholder
+		enabled: false;
+		scale: 0.5
+		anchors.centerIn: block;
+	}
+	onParamsChanged: {
+		placeholder.children = [];
+		definition.editor.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
 	}
 
 	function bringBlockToFront() {
@@ -180,7 +189,7 @@ Item {
 
 		function isLinkTargetValid(destBlock) {
 			// do we have a valid block
-			if (destBlock && destBlock.name) {
+			if (destBlock && destBlock.parent === blockContainer) {
 				// check that this connection does not already exist!
 				for (var i = 0; i < linkContainer.children.length; ++i) {
 					var child = linkContainer.children[i];
@@ -210,7 +219,7 @@ Item {
 			updateLinkingPath(mouse.x, mouse.y);
 			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
 			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-			if (destBlock && destBlock.name && destBlock != parent) {
+			if (destBlock && destBlock.parent === blockContainer && destBlock != parent) {
 				// highlight destblock
 				if (highlightedBlock && highlightedBlock != destBlock) {
 					highlightedBlock.highlight = false;
@@ -348,9 +357,7 @@ Item {
 		}
 
 		onClicked: {
-			editor.setEditorItem(miniature.createEditor(editor));
-			editor.editedBlock = parent;
-			editor.visible = true;
+			editor.block = block;
 		}
 	}
 }

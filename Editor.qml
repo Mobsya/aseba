@@ -23,22 +23,7 @@ Rectangle {
 //	   radius: 32
 //	}
 
-	visible: false
-
-	property Item editedBlock: null
-	property Item editorItem: null
-
-	function setEditorItem(item) {
-		if (editorItem) {
-			editorItem.parent = null;
-			editorItem = null;
-		}
-		editorItem = item;
-		editorItem.parent = editorItemArea;
-		editorItem.anchors.horizontalCenter = editorItemArea.horizontalCenter;
-		editorItem.anchors.verticalCenter = editorItemArea.verticalCenter;
-		resizeEditor();
-	}
+	visible: block !== null
 
 	// to blok events from going to the scene
 	PinchArea {
@@ -49,14 +34,38 @@ Rectangle {
 		onWheel: wheel.accepted = true;
 	}
 
-	ObjectModel {
-		id: eventBlocksModel
-		ProxEventBlock { enabled: false; }
+	property list<BlockDefinition> eventBlocks: [
+		ProxEventBlock {},
+		ProxEventBlock {},
+		ProxEventBlock {}
+	]
+	property list<BlockDefinition> actionBlocks: [
+		MotorActionBlock {},
+		MotorActionBlock {},
+		MotorActionBlock {}
+	]
+
+	property Block block: null
+	property BlockDefinition definition: eventBlocks[0]
+	property var params: definition.defaultParams
+
+	onParamsChanged: {
+		editorItemArea.children = []
+		definition.editor.createObject(editorItemArea, {
+			"params": params,
+			"anchors.horizontalCenter": editorItemArea.horizontalCenter,
+			"anchors.verticalCenter": editorItemArea.verticalCenter,
+		})
+		resizeEditor();
 	}
 
-	ObjectModel {
-		id: actionBlocksModel
-		MotorActionBlock { enabled: false }
+	onBlockChanged: {
+		if (block) {
+			definition = block.definition;
+			params = block.params;
+		} else {
+			params = definition.defaultParams;
+		}
 	}
 
 	Rectangle {
@@ -74,26 +83,23 @@ Rectangle {
 
 		ListView {
 			id: eventBlocksView
-			model: eventBlocksModel
+			model: eventBlocks
 			anchors.fill: parent
 			clip: true
 			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
 
-			delegate: Component {
-				Item {
-					anchors.fill: parent
-					MouseArea {
-						anchors.fill: parent
-						onClicked: { eventBlocksView.currentIndex = index; console.log(index); }
-					}
+			delegate: MouseArea {
+				height: eventBlocksLoader.height
+				width: eventBlocksLoader.width
+				onClicked: {
+					definition = eventBlocks[index];
+					params = definition.defaultParams;
 				}
-			}
-
-			onCurrentItemChanged: {
-				console.log("event " + currentItem);
-				actionBlocksView.currentIndex = -1;
-				// re-create a new editor when another block is selected
-				setEditorItem(currentItem.createEditor(parent));
+				Loader {
+					id: eventBlocksLoader
+					enabled: false
+					sourceComponent: eventBlocks[index].miniature
+				}
 			}
 		}
 	}
@@ -113,18 +119,26 @@ Rectangle {
 
 		ListView {
 			id: actionBlocksView
-			model: actionBlocksModel
+			model: actionBlocks
 			anchors.fill: parent
 			clip: true
 			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
 
-			onCurrentItemChanged: {
-				console.log("action " + currentItem);
-				eventBlocksView.currentIndex = -1;
-				// re-create a new editor when another block is selected
-				setEditorItem(currentItem.createEditor(parent));
+			delegate: MouseArea {
+				height: actionBlocksLoader.height
+				width: actionBlocksLoader.width
+				onClicked: {
+					definition = actionBlocks[index];
+					params = definition.defaultParams;
+				}
+				Loader {
+					id: actionBlocksLoader
+					enabled: false
+					sourceComponent: actionBlocks[index].miniature
+				}
 			}
 		}
+
 	}
 
 	Rectangle {
@@ -156,13 +170,9 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				editedBlock.type = editorItem.getType();
-				editedBlock.name = editorItem.getName();
-				editedBlock.params = editorItem.getParams();
-				editedBlock.miniature = editorItem.getMiniature();
-				editedBlock.miniature.parent = editedBlock;
-				editedBlock = null;
-				editor.visible = false;
+				block.definition = definition;
+				block.params = editorItemArea.children[0].getParams();
+				block = null;
 			}
 		}
 	}
@@ -172,8 +182,8 @@ Rectangle {
 	}
 
 	function resizeEditor() {
-		if (editorItem) {
-			editorItem.scale = editorItemArea.width / 256;
+		if (editorItemArea.children.length > 0) {
+			editorItemArea.children[0].scale = editorItemArea.width / 256;
 		}
 	}
 }
