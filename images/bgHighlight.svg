@@ -3,9 +3,11 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="-895 641 256 256" style="enable-background:new -895 641 256 256;" xml:space="preserve">
 <style type="text/css">
-	.st4{fill:#F38420;}
+	.st5{fill:none;stroke:#F05F48;stroke-width:10;stroke-miterlimit:10;}
 </style>
 <g>
-	<circle class="st4" cx="-766.9" cy="769" r="93"/>
+	<g>
+		<circle class="st5" cx="-767.2" cy="768.1" r="110.2"/>
+	</g>
 </g>
 </svg>

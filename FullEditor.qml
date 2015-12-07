@@ -1,12 +1,19 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
+import QtGraphicalEffects 1.0
 
 Rectangle {
-	// to get screen coordinates
-	Item {
-		id: screen
-		anchors.fill: parent
-	}
+	id: mainContainer
+
+	RadialGradient {
+			anchors.fill: parent
+			gradient: Gradient {
+				GradientStop { position: 0.0; color: "white" }
+				GradientStop { position: 0.5; color: "#eaeced" }
+				//GradientStop { position: 0.0; color: "#1e2551" }
+				//GradientStop { position: 0.5; color: "#121729" }
+			}
+		}
 
 	// container for main view
 	PinchArea {
@@ -56,8 +63,8 @@ Rectangle {
 
 				// adjust content pos due to scale
 				if (scene.scale + deltaScale > 1e-1) {
-					scene.x += (scene.x - screen.width/2) * deltaScale / scene.scale;
-					scene.y += (scene.y - screen.height/2) * deltaScale / scene.scale;
+					scene.x += (scene.x - mainContainer.width/2) * deltaScale / scene.scale;
+					scene.y += (scene.y - mainContainer.height/2) * deltaScale / scene.scale;
 					scene.scale += deltaScale;
 				}
 			}
@@ -156,13 +163,12 @@ Rectangle {
 	}
 
 	// add block
-	Rectangle {
+	Image {
 		id: addBlock
+		source: "images/addButton.svg"
 
 		width: 128
 		height: 128
-		radius: 64
-		color: "gray"
 		anchors.left: parent.left
 		anchors.leftMargin: 20
 		anchors.bottom: parent.bottom
@@ -188,7 +194,7 @@ Rectangle {
 			onClicked: {
 				if (editor.visible)
 					return;
-				var pos = screen.mapToItem(blockContainer, screen.width/2, screen.height/2);
+				var pos = mainContainer.mapToItem(blockContainer, mainContainer.width/2, mainContainer.height/2);
 				createBlock(pos.x, pos.y);
 			}
 			onPressed: {
@@ -209,57 +215,68 @@ Rectangle {
 				dragTarget.y = -64;
 			}
 			function createBlock(x, y) {
-				var blockComponent = Qt.createComponent("Block.qml");
 				var block = blockComponent.createObject(blockContainer, {
 					x: x - 128 + Math.random(),
-					y: y - 128 + Math.random()
+					y: y - 128 + Math.random(),
+					definition: editor.definition,
+					params: editor.params
 				});
-				editor.editedBlock = block;
-				editor.visible = true;
+				editor.block = block;
 			}
+		}
+	}
+
+	Component {
+		id: blockComponent
+		Block {
 		}
 	}
 
 	// delete block
 	Rectangle {
 		id: delBlock
-		// FIXME: how to get this area receive drop for blocks, knowing they are rescaled?
-
-		width: 128
-		height: 128
 
 		anchors.right: parent.right
-		anchors.rightMargin: 20
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 20
 
-		radius: 64
-		color: "gray"
+		width: 96+40
+		height: 96+40
+
+		color: "transparent"
+
+		Image {
+			id: delBlockImage
+
+			source: "images/trashDefault.svg"
+
+			state: parent.state
+
+			width: 96
+			height: 96
+
+			anchors.right: parent.right
+			anchors.rightMargin: 20
+			anchors.bottom: parent.bottom
+			anchors.bottomMargin: 20+16
+		}
 
 		state: "NORMAL"
 
 		states: [
 			State {
 				name: "HIGHLIGHTED"
-				PropertyChanges { target: delBlock; color: "white"; }
+				PropertyChanges { target: delBlockImage; source: "images/trashOpen.svg"; }
 			}
 		]
-
-		transitions:
-			Transition {
-				to: "*"
-				ColorAnimation { target: delBlock; duration: 100}
-			}
 	}
 
 	// center view
-	Rectangle {
-		id: centerView
+	Image {
+		id: backgroundImage
+		source: "images/centerContent.svg"
 
-		width: 96
-		height: 96
-		radius: 48
-		color: "gray"
+		width: 80
+		height: 80
 		anchors.right: parent.right
 		anchors.rightMargin: 20+16
 		anchors.top: parent.top
@@ -268,12 +285,39 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				scene.x = screen.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
-				scene.y = screen.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
+				scene.x = mainContainer.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
+				scene.y = mainContainer.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
 			}
 		}
 	}
 
+	// run and stop
+	Image {
+		id: runButton
+		source: "images/playButton.svg"
+
+		width: 128
+		height: 128
+		anchors.top: parent.top
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.topMargin: 20
+
+		MouseArea {
+			anchors.fill: parent
+			onClicked: runButton.state == 'EDITING' ? runButton.state = "PLAYING" : runButton.state = 'EDITING';
+		}
+
+		state: "EDITING"
+
+		states: [
+			State {
+				name: "PLAYING"
+				PropertyChanges { target: runButton; source: "images/stopButton.svg"; }
+			}
+		]
+	}
+
+	// block editor
 	Editor {
 		id: editor
 	}

@@ -8,20 +8,21 @@ Item {
 	height: 256
 	z: 1
 
-	property string type
-	property string name
-	property var params: null
-	property Item miniature: null
+	property BlockDefinition definition
+	property var params
 
 	property bool highlight: false
 	property Item highlightedBlock: null
+
+	property real centerRadius: 93
+	property real arrowRadius: 115
 
 	property real vx: 0 // in px per millisecond
 	property real vy: 0 // in px per millisecond
 
 	Rectangle {
 		id: linkingPath
-		color: "#eceded"
+		color: "#a2d8dc"
 		width: 0
 		height: 10
 		transformOrigin: "Left"
@@ -34,23 +35,35 @@ Item {
 	}
 
 	Image {
-		source: type == "event" ? "images/eventBg.svg" : "images/actionBg.svg"
+		id: backgroundImage
+		source: highlight ? "images/bgHighlight.svg" : "images/bgDefault.svg"
 	}
+
+//	DropShadow {
+//		visible: true
+//		anchors.fill: backgroundImage
+//		color: highlight ? "#e0F05F48" : "#e082CEC6"
+//		radius: 5
+//		samples: 8
+//		spread: 0.5
+//		fast: true
+//		source: backgroundImage
+//	}
 
 	Image {
 		id: centerImageId
-		source: type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
+		source: definition.type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
 	}
 
-	DropShadow {
-		visible: highlight
-		anchors.fill: centerImageId
-		color: "#ffffff"
-		radius: 16
-		samples: 32
-		spread: 0.9
-		fast: true
-		source: centerImageId
+	Item {
+		id: placeholder
+		enabled: false;
+		scale: 0.5
+		anchors.centerIn: block;
+	}
+	onParamsChanged: {
+		placeholder.children = [];
+		definition.editor.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
 	}
 
 	function bringBlockToFront() {
@@ -97,7 +110,7 @@ Item {
 				child.setLength(linkWidth);
 				child.rotationAngle = toDegrees(linkAngle);
 			}
-			var arrowDistToCenter = 99+16;
+			var arrowDistToCenter = arrowRadius+16;
 			var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
 			var arcAngle = Math.PI - 2 * gamma;
 			var ax = sourceBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
@@ -107,6 +120,7 @@ Item {
 				child.x = ax - 16;
 				child.y = ay - 16;
 				child.rotation = toDegrees(arrowAngle);
+				child.visible = linkWidth > 256;
 			}
 		}
 	}
@@ -151,19 +165,31 @@ Item {
 			var cy = height/2;
 			var dx = mx - cx;
 			var dy = my - cy;
+			var length = Math.sqrt(dx*dx + dy*dy);
+			var startLength = 113;
+			var reducedLength = length - startLength;
+			if (reducedLength < 0) {
+				linkingPath.visible = false;
+				linkingArrow.visible = false;
+				return;
+			} else {
+				linkingPath.visible = true;
+				linkingArrow.visible = true;
+			}
+
 			var linkAngle = Math.atan2(dy, dx);
-			linkingPath.x = cx;
-			linkingPath.y = cy - linkingPath.height*0.5;
-			linkingPath.width = Math.sqrt(dx*dx + dy*dy);
+			linkingPath.x = cx + Math.cos(linkAngle) * startLength;
+			linkingPath.y = cy - linkingPath.height*0.5 + Math.sin(linkAngle) * startLength;
+			linkingPath.width = reducedLength;
 			linkingPath.rotation = toDegrees(linkAngle);
-			linkingArrow.x = cx + Math.cos(linkAngle) * linkingPath.width - 16;
-			linkingArrow.y = cy + Math.sin(linkAngle) * linkingPath.width - 16;
+			linkingArrow.x = cx + Math.cos(linkAngle) * length - 16;
+			linkingArrow.y = cy + Math.sin(linkAngle) * length - 16;
 			linkingArrow.rotation = toDegrees(linkAngle);
 		}
 
 		function isLinkTargetValid(destBlock) {
 			// do we have a valid block
-			if (destBlock && destBlock.name) {
+			if (destBlock && destBlock.parent === blockContainer) {
 				// check that this connection does not already exist!
 				for (var i = 0; i < linkContainer.children.length; ++i) {
 					var child = linkContainer.children[i];
@@ -185,8 +211,6 @@ Item {
 			if (dx*dx + dy*dy < 128*128) {
 				mouse.accepted = true;
 				updateLinkingPath(mouse.x, mouse.y);
-				linkingPath.visible = true;
-				linkingArrow.visible = true;
 				bringBlockToFront();
 			}
 		}
@@ -195,7 +219,7 @@ Item {
 			updateLinkingPath(mouse.x, mouse.y);
 			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
 			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-			if (destBlock && destBlock.name && destBlock != parent) {
+			if (destBlock && destBlock.parent === blockContainer && destBlock != parent) {
 				// highlight destblock
 				if (highlightedBlock && highlightedBlock != destBlock) {
 					highlightedBlock.highlight = false;
@@ -238,7 +262,7 @@ Item {
 					trim: true
 				});
 				// create end arrow
-				var arrowDistToCenter = 99+16;
+				var arrowDistToCenter = arrowRadius+16;
 				var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
 				var arcAngle = Math.PI - 2 * gamma;
 				var ax = thisBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
@@ -272,7 +296,7 @@ Item {
 			mouse.accepted = function () {
 				var dx = mouse.x - 128;
 				var dy = mouse.y - 128;
-				return dx*dx+dy*dy < 99*99;
+				return dx*dx+dy*dy < centerRadius*centerRadius;
 			} ();
 			// if so...
 			if (mouse.accepted) {
@@ -333,9 +357,7 @@ Item {
 		}
 
 		onClicked: {
-			editor.setEditorItem(miniature.createEditor(editor));
-			editor.editedBlock = parent;
-			editor.visible = true;
+			editor.block = block;
 		}
 	}
 }

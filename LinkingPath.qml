@@ -6,6 +6,9 @@ Canvas {
 	property alias rotationAngle: linkingPathRotation.angle
 	property bool trim: false
 
+	property real leftRadius: 133
+	property real rightRadius: 118
+
 	transform: Rotation {
 		id: linkingPathRotation
 		origin { x: 0; y: 0 }
@@ -24,18 +27,30 @@ Canvas {
 	}
 
 	onPaint: {
+		// compute start and end positions
+		var localLeftRadius = leftRadius;
+		var localRightRadius = rightRadius;
 		var ctx = linkingPath.getContext('2d');
+		if (width < 228) {
+			ctx.clearRect(0, 0, width, height);
+			return;
+		} else if (width < 256) {
+			localLeftRadius = rightRadius;
+		}
+		if (!trim) {
+			localLeftRadius = 0;
+			localRightRadius = 0;
+		}
+		var leftGamma = Math.acos(localLeftRadius * 0.5 / width);
+		var leftArcAngle = Math.PI - 2 * leftGamma;
+		var rightGamma = Math.acos(localRightRadius * 0.5 / width);
+		var rightArcAngle = Math.PI - 2 * rightGamma;
+		// do the drawing
 		ctx.lineWidth = 10;
 		ctx.lineCap = "square";
-		ctx.strokeStyle = "#eceded";
+		ctx.strokeStyle = "#a2d8dc";
 		ctx.beginPath();
-		var arcAngle = 0;
-		if (trim) {
-			var centerRadius = 99;
-			var gamma = Math.acos(centerRadius * 0.5 / width);
-			arcAngle = Math.PI - 2 * gamma;
-		}
-		ctx.arc(width/2, -Math.sqrt(width*width*3/4), width, Math.PI/3+arcAngle, 2*Math.PI/3-arcAngle);
+		ctx.arc(width/2, -Math.sqrt(width*width*3/4), width, Math.PI/3+leftArcAngle, 2*Math.PI/3-rightArcAngle);
 		ctx.stroke();
 		//ctx.fillRect(0,0,width,width);
 	}
