@@ -63,14 +63,14 @@ BlockDefinition {
 				if (param === "DISABLED") {
 					return source;
 				}
-				source += " or prox.horizontal[" + index + "] "
+				source += " and prox.horizontal[" + index + "] "
 				if (param === "CLOSE") {
 					source += "< 1000";
 				} else {
 					source += "> 2000";
 				}
 				return source;
-			}, "0 != 0"),
+			}, "0 == 0"),
 		};
 	}
 	Component {
