@@ -65,9 +65,9 @@ BlockDefinition {
 				}
 				source += " and prox.horizontal[" + index + "] "
 				if (param === "CLOSE") {
-					source += "< 1000";
-				} else {
 					source += "> 2000";
+				} else {
+					source += "< 1000";
 				}
 				return source;
 			}, "0 == 0"),
