@@ -5,4 +5,7 @@ Item {
 	property Component editor
 	property Component miniature: editor
 	property string type
+	function compile(params) {
+		return {};
+	}
 }

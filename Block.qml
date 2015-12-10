@@ -64,6 +64,7 @@ Item {
 	onParamsChanged: {
 		placeholder.children = [];
 		definition.editor.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
+		compiler.compile();
 	}
 
 	function bringBlockToFront() {
@@ -276,6 +277,7 @@ Item {
 					sourceBlock: parent,
 					destBlock: destBlock
 				});
+				compiler.compile();
 			}
 		}
 	}
@@ -340,9 +342,10 @@ Item {
 				}
 				// remove collected links and arrows
 				for (i = 0; i < toDelete.length; ++i)
-					toDelete[i].parent = null;
+					toDelete[i].destroy();
 				// remove this block from the scene
-				block.parent = null;
+				block.destroy();
+				compiler.compile();
 			} else {
 				// no, compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);

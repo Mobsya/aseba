@@ -5,6 +5,129 @@ import QtGraphicalEffects 1.0
 Rectangle {
 	id: mainContainer
 
+	readonly property alias blocks: blockContainer.children
+	readonly property alias links: linkContainer.children
+
+	property Item compiler: Item {
+		property string source
+		function compile() {
+			var indices = {};
+			var events = {};
+			var subs = [];
+			for (var i = 0; i < blocks.length; ++i) {
+				var block = blocks[i];
+				indices[block] = i;
+				var compiled = block.definition.compile(block.params);
+
+				var eventName = compiled.event;
+				if (eventName !== undefined) {
+					var eventSubs = events[eventName];
+					if (eventSubs === undefined) {
+						events[eventName] = [i];
+					} else {
+						eventSubs.push(i);
+					}
+				}
+
+				subs[i] = {
+					"compiled": compiled,
+					"parents": [],
+					"children": [],
+				};
+			}
+			for (var i = 0; i < links.length; ++i) {
+				var link = links[i];
+				if (link.linkName !== "link") {
+					continue;
+				}
+				var sourceIndex = indices[link.sourceBlock];
+				var destIndex = indices[link.destBlock];
+				subs[sourceIndex].children.push(destIndex);
+				subs[destIndex].parents.push(sourceIndex);
+			}
+
+			var lastIndex = subs.length;
+			var lastSub = {
+				"compiled": {
+					"action": "",
+				},
+				"parents": [],
+				"children": [],
+			};
+			subs.forEach(function(sub, index) {
+				if (sub.parents.length === 0) {
+					sub.parents.push(lastIndex);
+					lastSub.children.push(index);
+				}
+				if (sub.children.length === 0) {
+					sub.children.push(lastIndex);
+					lastSub.parents.push(index);
+				}
+			});
+			subs[lastIndex] = lastSub;
+
+			var src = "";
+			src += "var program_counter = -1" + "\n";
+			src += "callsub block" + lastIndex + "\n";
+			src = subs.reduce(function(source, sub, index) {
+				var global = sub.compiled.global;
+				if (global !== undefined) {
+					source += "\n";
+					source += global + "\n";
+				}
+				return source;
+			}, src);
+			src = subs.reduce(function(source, sub, index) {
+				var condition = sub.compiled.condition;
+				var action = sub.compiled.action;
+
+				source += "\n";
+				source += "sub block" + index + "\n";
+
+				if (condition !== undefined) {
+					source += "if " + condition + " then" + "\n";
+				}
+
+				if (action !== undefined) {
+					source += "program_counter = " + index + "\n";
+					//source += "emit action " + index + "\n";
+					source += action + "\n";
+				}
+
+				sub.children.forEach(function(childIndex) {
+					var child = subs[childIndex];
+					if (action === undefined || child.compiled.event === undefined)
+						source += "callsub block" + childIndex + "\n";
+				});
+
+				if (condition !== undefined) {
+					source += "end" + "\n";
+				}
+
+				return source;
+			}, src);
+			src = Object.keys(events).reduce(function(source, eventName) {
+				source += "\n";
+				source += "onevent " + eventName + "\n";
+				source = events[eventName].reduce(function(source, subIndex) {
+					var sub = subs[subIndex];
+					source += "if " + sub.parents.reduce(function(expr, parentIndex) {
+						return expr + " or program_counter == " + parentIndex;
+					}, "0 != 0") + " then" + "\n";
+					source += "callsub block" + subIndex + "\n";
+					//source += "else";
+					source += "end" + "\n";
+					return source;
+				}, source);
+				//source += "\n";
+				//source += "end" + "\n";
+				return source;
+			}, src);
+			source = src;
+			state = "OK";
+		}
+	}
+
 	RadialGradient {
 			anchors.fill: parent
 			gradient: Gradient {

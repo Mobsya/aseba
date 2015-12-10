@@ -56,6 +56,23 @@ BlockDefinition {
 			}
 		}
 	}
+	function compile(params) {
+		return {
+			event: "prox",
+			condition: params.reduce(function(source, param, index) {
+				if (param === "DISABLED") {
+					return source;
+				}
+				source += " or prox.horizontal[" + index + "] "
+				if (param === "CLOSE") {
+					source += "< 1000";
+				} else {
+					source += "> 2000";
+				}
+				return source;
+			}, "0 != 0"),
+		};
+	}
 	Component {
 		id: buttonComponent
 		InfraredButton {}

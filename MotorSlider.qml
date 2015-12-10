@@ -19,7 +19,7 @@ Slider {
 		}
 	}
 
-	minimumValue: -10
-	maximumValue: 10
-	stepSize: 1
+	minimumValue: -500
+	maximumValue: 500
+	stepSize: 50
 }
