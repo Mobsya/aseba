@@ -36,7 +36,7 @@ Rectangle {
 	}
 
 	property list<BlockDefinition> eventBlocks: [
-		ProxEventBlock {},
+		ButtonsEventBlock {},
 		ProxEventBlock {},
 		ProxEventBlock {}
 	]

@@ -27,5 +27,12 @@
         <file>images/okButton.svg</file>
         <file>images/elsePattern.png</file>
         <file>blocks/images/motorBackground.svgz</file>
+        <file>blocks/widgets/images/triangularButtonOff.svg</file>
+        <file>blocks/widgets/images/triangularButtonOn.svg</file>
+        <file>blocks/ButtonsEventBlock.qml</file>
+        <file>blocks/widgets/TriangularButton.qml</file>
+        <file>blocks/widgets/CircularButton.qml</file>
+        <file>blocks/widgets/images/circularButtonOff.svg</file>
+        <file>blocks/widgets/images/circularButtonOn.svg</file>
     </qresource>
 </RCC>
