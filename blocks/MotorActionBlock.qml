@@ -1,4 +1,6 @@
 import QtQuick 2.5
+import ".."
+import "widgets"
 
 BlockDefinition {
 	type: "action"
@@ -13,7 +15,7 @@ BlockDefinition {
 			//ThymioBody {}
 
 			Image {
-				source: "images/vpl_background_motor.svgz"
+				source: "images/motorBackground.svgz"
 			}
 
 			MotorSlider {

@@ -1,21 +1,20 @@
 <RCC>
     <qresource prefix="/thymio-vpl2">
-        <file>ProxEventBlock.qml</file>
-        <file>InfraredButton.qml</file>
-        <file>InfraredLed.qml</file>
-        <file>images/actionCenter.svg</file>
-        <file>images/eventCenter.svg</file>
-        <file>images/linkEndArrow.svg</file>
-        <file>images/vpl_background_motor.svgz</file>
+        <file>blocks/widgets/MotorSlider.qml</file>
+        <file>blocks/widgets/ThymioBody.qml</file>
+        <file>blocks/widgets/InfraredLed.qml</file>
+        <file>blocks/widgets/InfraredButton.qml</file>
+        <file>blocks/MotorActionBlock.qml</file>
+        <file>blocks/ProxEventBlock.qml</file>
         <file>LinkingPath.qml</file>
         <file>BlockLinkArrow.qml</file>
         <file>Block.qml</file>
         <file>Editor.qml</file>
-        <file>MotorActionBlock.qml</file>
-        <file>MotorSlider.qml</file>
-        <file>ThymioBody.qml</file>
         <file>FullEditor.qml</file>
         <file>BlockDefinition.qml</file>
+        <file>images/actionCenter.svg</file>
+        <file>images/eventCenter.svg</file>
+        <file>images/linkEndArrow.svg</file>
         <file>images/bgDefault.svg</file>
         <file>images/bgHighlight.svg</file>
         <file>images/centerContent.svg</file>
@@ -27,5 +26,6 @@
         <file>images/stopButton.svg</file>
         <file>images/okButton.svg</file>
         <file>images/elsePattern.png</file>
+        <file>blocks/images/motorBackground.svgz</file>
     </qresource>
 </RCC>
