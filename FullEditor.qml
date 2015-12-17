@@ -276,8 +276,9 @@ Rectangle {
 				console.log("drag started");
 			}
 
-			BlockLink {
+			Component {
 				id: blockLinkComponent
+				LinkingPath { }
 			}
 			BlockLinkArrow {
 				id: blockLinkArrowComponent

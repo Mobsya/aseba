@@ -9,7 +9,6 @@
         <file>images/vpl_background_motor.svgz</file>
         <file>EventBlock.qml</file>
         <file>LinkingPath.qml</file>
-        <file>BlockLink.qml</file>
         <file>BlockLinkArrow.qml</file>
         <file>Block.qml</file>
         <file>ActionBlock.qml</file>

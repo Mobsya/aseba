@@ -3,6 +3,11 @@ import QtQuick 2.0
 Canvas {
 	id: linkingPath
 
+	property string linkName: "link"
+
+	property Item sourceBlock: Null
+	property Item destBlock: Null
+
 	property alias rotationAngle: linkingPathRotation.angle
 	property bool trim: false
 
@@ -10,7 +15,16 @@ Canvas {
 	property real rightRadius: 118
 
 	property bool isElse: false
+	property bool canBeElse: sourceBlock && sourceBlock.definition.type === "event"
 
+	onIsElseChanged: requestPaint();
+	onCanBeElseChanged: {
+		if (!canBeElse)
+			isElse = false;
+		requestPaint();
+	}
+
+	// to force the image to be loaded upon initalization
 	Image {
 		source: "images/elsePattern.png"
 	}
@@ -37,8 +51,8 @@ Canvas {
 		var localLeftRadius = leftRadius;
 		var localRightRadius = rightRadius;
 		var ctx = linkingPath.getContext('2d');
+		ctx.clearRect(0, 0, width, height);
 		if (width < 228) {
-			ctx.clearRect(0, 0, width, height);
 			return;
 		} else if (width < 256) {
 			localLeftRadius = rightRadius;
@@ -53,7 +67,7 @@ Canvas {
 		var rightArcAngle = Math.PI - 2 * rightGamma;
 
 		// draw the mode toggle switch
-		if (width > 228 + 96) {
+		if (width > 228 + 96 && canBeElse) {
 			ctx.fillStyle = "#f48574";
 			ctx.beginPath();
 			var cx = width/2;
@@ -77,9 +91,8 @@ Canvas {
 		ctx.stroke();
 	}
 
-	onIsElseChanged: requestPaint();
-
 	MouseArea {
+		enabled: linkingPath.canBeElse
 		width: 96
 		height: 32
 		anchors.horizontalCenter: parent.horizontalCenter

@@ -260,7 +260,8 @@ Item {
 					rotationAngle: toDegrees(linkAngle),
 					sourceBlock: parent,
 					destBlock: destBlock,
-					trim: true
+					trim: true,
+					//canBeElse: Qt.binding(function() { return definition.type == "event"; })
 				});
 				// create end arrow
 				var arrowDistToCenter = arrowRadius+16;
