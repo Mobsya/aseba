@@ -255,7 +255,7 @@ Rectangle {
 								var dx = blockContainer.children[i].x - blockContainer.children[j].x;
 								var dy = blockContainer.children[i].y - blockContainer.children[j].y;
 								var dist = Math.sqrt(dx*dx + dy*dy);
-								if (dist < 310) {
+								if (dist < 330) {
 									var normDist = dist;
 									var factor = 100 / (normDist+1);
 									blockContainer.children[i].x += sign(dx) * factor;
