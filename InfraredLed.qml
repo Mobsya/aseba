@@ -10,7 +10,7 @@ RadialGradient {
 
 	width: 24
 	height: 24
-	state: "DISABLED"
+	state: associatedButton.state
 	gradient: Gradient {
 		GradientStop {
 			position: 0.0;
@@ -25,12 +25,10 @@ RadialGradient {
 	states: [
 		State {
 			name: "CLOSE"
-			when: (associatedButton.state == "CLOSE")
 			PropertyChanges { target: infraredLed; gradColor: "#ff0000"; }
 		},
 		State {
 			name: "FAR"
-			when: (associatedButton.state == "FAR")
 			PropertyChanges { target: infraredLed; gradColor: "#7fff0000"; }
 		}
 	]

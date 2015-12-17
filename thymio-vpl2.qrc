@@ -7,11 +7,9 @@
         <file>images/eventCenter.svg</file>
         <file>images/linkEndArrow.svg</file>
         <file>images/vpl_background_motor.svgz</file>
-        <file>EventBlock.qml</file>
         <file>LinkingPath.qml</file>
         <file>BlockLinkArrow.qml</file>
         <file>Block.qml</file>
-        <file>ActionBlock.qml</file>
         <file>Editor.qml</file>
         <file>MotorActionBlock.qml</file>
         <file>MotorSlider.qml</file>

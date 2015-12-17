@@ -18,19 +18,15 @@ BlockDefinition {
 
 			// sensor buttons
 			Component.onCompleted: {
-				var offset;
-				var led;
-
 				// front sensors
 				for (var i=0; i<5; ++i) {
-					offset = 2.0 - i;
-					var button = buttonComponent.createObject(block, {
-																  "x": 128 - 16 - 150*Math.sin(0.34906585*offset),
-																  "y": 175 - 16 - 150*Math.cos(0.34906585*offset),
-																  "rotation": -20*offset,
-																  "state": params[i]
-															  });
-					buttons.push(button);
+					var offset = 2.0 - i;
+					buttons.push(buttonComponent.createObject(block, {
+						"x": 128 - 16 - 150*Math.sin(0.34906585*offset),
+						"y": 175 - 16 - 150*Math.cos(0.34906585*offset),
+						"rotation": -20*offset,
+						"state": params[i]
+					}));
 				}
 				ledComponent.createObject(block, { "x": 15-12, "y": 78-12, "associatedButton": buttons[0] });
 				ledComponent.createObject(block, { "x": 54-12, "y": 43-12, "associatedButton": buttons[1] });
