@@ -60,7 +60,7 @@ BlockDefinition {
 	editor: Component {
 		Loader {
 			sourceComponent: editorComponent
-			scale: 0.7
+			scale: 0.9
 			property var params: defaultParams
 			function getParams() { return item.getParams(); }
 		}

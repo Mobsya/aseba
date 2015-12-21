@@ -10,14 +10,15 @@ Rectangle {
 
 	anchors.fill: parent
 
-	color: "#7f000000"
+	//color: "#af000000"
+	color: "#a9acaf"
 
-	Desaturate {
-		id: desaturated
-		anchors.fill: parent
-		source: mainContainer
-		desaturation: 0.5
-	}
+//	Desaturate {
+//		id: desaturated
+//		anchors.fill: parent
+//		source: mainContainer
+//		desaturation: 0.5
+//	}
 //	FastBlur {
 //	   anchors.fill: parent
 //	   source: mainContainer
@@ -70,6 +71,20 @@ Rectangle {
 		} else {
 			params = definition.defaultParams;
 		}
+	}
+
+	Rectangle {
+		id: editorItemArea
+
+		property bool isLandscape: Window.width >= Window.height
+		property real scaledWidth: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
+
+		color: "transparent"
+
+		anchors.centerIn: parent
+		scale: Math.max(scaledWidth / 256, 0.1)
+		width: 256
+		height: 256
 	}
 
 	Rectangle {
@@ -157,23 +172,6 @@ Rectangle {
 			}
 		}
 
-	}
-
-	Rectangle {
-		id: editorItemArea
-
-		property bool isLandscape: Window.width >= Window.height
-		property real scaledWidth: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
-
-		color: "#a9acaf"
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.verticalCenter
-
-		scale: Math.max(scaledWidth / 256, 0.1)
-
-		width: 256
-		height: 256
-		clip: true
 	}
 
 	Image {
