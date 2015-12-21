@@ -53,16 +53,19 @@ Item {
 	Image {
 		id: centerImageId
 		source: definition.type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
+		anchors.centerIn: parent
+		scale: 0.72
 	}
 
 	Item {
 		id: placeholder
 		enabled: false;
-		anchors.centerIn: block;
+		anchors.centerIn: parent
+		scale: 0.72
 	}
 	onParamsChanged: {
 		placeholder.children = [];
-		definition.editor.createObject(placeholder, {"params": params, "scale": definition.getMiniatureScale(), "anchors.centerIn": placeholder});
+		definition.miniature.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
 		compiler.compile();
 	}
 

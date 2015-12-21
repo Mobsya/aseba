@@ -36,7 +36,7 @@ RadialGradient {
 	transitions:
 		Transition {
 			to: "*"
-			ColorAnimation { target: infraredLed; duration: 50}
+			ColorAnimation { target: infraredLed; duration: 30}
 		}
 }
 

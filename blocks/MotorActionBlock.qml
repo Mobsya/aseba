@@ -11,25 +11,22 @@ BlockDefinition {
 			height: 256
 			property var params: defaultParams
 
-			// Thymio body
-			//ThymioBody {}
-
 			Image {
-				source: "images/motorBackground.svgz"
+				source: "images/motorBackground.svg"
 			}
 
 			MotorSlider {
 				id: leftMotorSlider
 				value: params[0]
-				x: 10
-				y: 15
+				x: 52
+				y: 70
 			}
 
 			MotorSlider {
 				id: rightMotorSlider
 				value: params[1]
-				x: 198
-				y: 15
+				x: 176
+				y: 70
 			}
 
 			function getParams() {
@@ -42,9 +39,5 @@ BlockDefinition {
 		return {
 			action: "motor.left.target = " + params[0] + "\n" + "motor.right.target = " + params[1]
 		};
-	}
-
-	function getMiniatureScale() {
-		return 0.5;
 	}
 }

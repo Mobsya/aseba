@@ -26,7 +26,6 @@
         <file>images/stopButton.svg</file>
         <file>images/okButton.svg</file>
         <file>images/elsePattern.png</file>
-        <file>blocks/images/motorBackground.svgz</file>
         <file>blocks/widgets/images/triangularButtonOff.svg</file>
         <file>blocks/widgets/images/triangularButtonOn.svg</file>
         <file>blocks/ButtonsEventBlock.qml</file>
@@ -36,5 +35,7 @@
         <file>blocks/widgets/images/circularButtonOn.svg</file>
         <file>blocks/images/clap.svg</file>
         <file>blocks/ClapEventBlock.qml</file>
+        <file>blocks/widgets/images/thymioBody.svg</file>
+        <file>blocks/images/motorBackground.svg</file>
     </qresource>
 </RCC>

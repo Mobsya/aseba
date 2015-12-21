@@ -5,13 +5,15 @@ import "widgets"
 BlockDefinition {
 	type: "event"
 	defaultParams: [ "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED" ]
-	editor: Component {
+
+	Component {
+		id: editorComponent
 		Item {
 			id: block;
 
 			width: 256
 			height: 256
-			property var params: defaultParams
+			//property var params: defaultParams
 
 			property var buttons: []
 
@@ -25,17 +27,17 @@ BlockDefinition {
 					var offset = 2.0 - i;
 					buttons.push(buttonComponent.createObject(block, {
 						"x": 128 - 16 - 150*Math.sin(0.34906585*offset),
-						"y": 175 - 16 - 150*Math.cos(0.34906585*offset),
+						"y": 172 - 16 - 150*Math.cos(0.34906585*offset),
 						"rotation": -20*offset,
 						"state": params[i]
 					}));
 				}
-				ledComponent.createObject(block, { "x": 15-12, "y": 78-12, "associatedButton": buttons[0] });
+				ledComponent.createObject(block, { "x": 17-12, "y": 78-12, "associatedButton": buttons[0] });
 				ledComponent.createObject(block, { "x": 54-12, "y": 43-12, "associatedButton": buttons[1] });
 				ledComponent.createObject(block, { "x": 104-12, "y": 26-12, "associatedButton": buttons[2] });
 				ledComponent.createObject(block, { "x": 152-12, "y": 26-12, "associatedButton": buttons[2] });
 				ledComponent.createObject(block, { "x": 202-12, "y": 43-12, "associatedButton": buttons[3] });
-				ledComponent.createObject(block, { "x": 241-12, "y": 78-12, "associatedButton": buttons[4] });
+				ledComponent.createObject(block, { "x": 239-12, "y": 78-12, "associatedButton": buttons[4] });
 
 				// back sensors
 				for (var i=0; i<2; ++i) {
@@ -55,6 +57,23 @@ BlockDefinition {
 		}
 	}
 
+	editor: Component {
+		Loader {
+			sourceComponent: editorComponent
+			scale: 0.7
+			property var params: defaultParams
+			function getParams() { return item.getParams(); }
+		}
+	}
+
+	miniature: Component {
+		Loader {
+			sourceComponent: editorComponent
+			scale: 0.6
+			property var params: defaultParams
+		}
+	}
+
 	function compile(params) {
 		return {
 			event: "prox",
@@ -71,10 +90,6 @@ BlockDefinition {
 				return source;
 			}, "0 == 0"),
 		};
-	}
-
-	function getMiniatureScale() {
-		return 0.5;
 	}
 
 	Component {

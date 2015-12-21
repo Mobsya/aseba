@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   id="svg4958"
+   viewBox="0 0 256 256"
+   height="256"
+   width="256">
+  <defs
+     id="defs4960">
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,-1,197.0062,368.4597)"
+       r="4.3762002"
+       cy="184.23039"
+       cx="104.3423"
+       id="SVGID_4_">
+      <stop
+         id="stop105"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop107"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       r="3.8055999"
+       cy="69.942101"
+       cx="138.63091"
+       id="SVGID_5_">
+      <stop
+         id="stop116"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop118"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       r="3.8055999"
+       cy="69.942101"
+       cx="117.4747"
+       id="SVGID_6_">
+      <stop
+         id="stop123"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop125"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.9971,-0.07611635,0.07611635,-0.9971,204.0175,160.9997)"
+       r="4.3776999"
+       cy="74.223198"
+       cx="115.8711"
+       id="SVGID_7_">
+      <stop
+         id="stop134"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop136"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.9971,-0.07611635,0.07611635,-0.9971,153.2758,179.5682)"
+       r="4.3769002"
+       cy="82.080498"
+       cx="86.497704"
+       id="SVGID_8_">
+      <stop
+         id="stop145"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop147"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.9971,-0.07611635,-0.07611635,-0.9971,7.3713,160.9997)"
+       r="4.3776999"
+       cy="70.822601"
+       cx="160.418"
+       id="SVGID_9_">
+      <stop
+         id="stop156"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop158"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.9971,-0.07611635,-0.07611635,-0.9971,58.113,179.5682)"
+       r="4.3769002"
+       cy="78.679901"
+       cx="131.0446"
+       id="SVGID_10_">
+      <stop
+         id="stop167"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop169"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,-1,134.5997,368.4597)"
+       r="4.3762002"
+       cy="184.23039"
+       cx="30.4161"
+       id="SVGID_11_">
+      <stop
+         id="stop178"
+         style="stop-color:#EC2024"
+         offset="0.3044" />
+      <stop
+         id="stop180"
+         style="stop-color:#FFFFFF;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+  </defs>
+  <metadata
+     id="metadata4963">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-796.36216)"
+     id="layer1">
+    <g
+       transform="matrix(1.9,0,0,1.9,-115.2,-831.92594)"
+       id="g6013">
+      <path
+         style="opacity:0.07999998"
+         id="path63"
+         d="m 66.200001,991.16216 c -2.8,0 -5,-2.2 -5,-5 l 0,-98.3 c 0,-1.3 0.5,-2.6 1.5,-3.6 17.5,-17.2 40.699999,-26.7 65.299999,-26.7 24.6,0 47.8,9.5 65.3,26.7 1,0.9 1.5,2.2 1.5,3.6 l 0,98.3 c 0,2.8 -2.2,5 -5,5 l -123.599999,0 z" />
+      <path
+         style="fill:#ffffff"
+         id="path98"
+         d="m 128.1,860.56216 c -24.6,0 -46.899999,9.9 -63.199999,25.8 -0.4,0.4 -0.6,0.9 -0.6,1.4 l 0,98.3 c 0,1.1 0.9,2 2,2 l 123.599999,0 c 1.1,0 2,-0.9 2,-2 l 0,-98.2 c 0,-0.5 -0.2,-1.1 -0.6,-1.4 -16.3,-16 -38.6,-25.9 -63.2,-25.9 z" />
+    </g>
+  </g>
+</svg>

@@ -35,6 +35,9 @@ Rectangle {
 		onWheel: wheel.accepted = true;
 	}
 
+	readonly property real blockListWidth: 220
+	readonly property real blockListBlockScale: 0.72
+
 	property list<BlockDefinition> eventBlocks: [
 		ButtonsEventBlock {},
 		ProxEventBlock {},
@@ -55,8 +58,7 @@ Rectangle {
 		definition.editor.createObject(editorItemArea, {
 			"params": params,
 			"anchors.horizontalCenter": editorItemArea.horizontalCenter,
-			"anchors.verticalCenter": editorItemArea.verticalCenter,
-			"scale": Math.max(editorItemArea.width / 256, 0.1)
+			"anchors.verticalCenter": editorItemArea.verticalCenter
 		})
 	}
 
@@ -78,8 +80,8 @@ Rectangle {
 		anchors.bottom: isLandscape ? parent.bottom : undefined
 		anchors.right: isLandscape ? undefined : parent.right
 
-		width: isLandscape ? 256 : undefined
-		height: isLandscape ? undefined : 256
+		width: isLandscape ? blockListWidth : undefined
+		height: isLandscape ? undefined : blockListWidth
 		color: "#ebeef0"
 
 		ListView {
@@ -90,19 +92,19 @@ Rectangle {
 			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
 
 			delegate: MouseArea {
-				height: eventBlocksLoader.height
-				width: eventBlocksLoader.width
+				height: blockListWidth
+				width: blockListWidth
 				onClicked: {
 					definition = eventBlocks[index];
 					params = definition.defaultParams;
 				}
 				Image {
-					anchors.fill: parent
+					anchors.centerIn: parent
 					source: "images/eventCenter.svg"
+					scale: blockListBlockScale
 					Loader {
 						id: eventBlocksLoader
 						enabled: false
-						scale: eventBlocks[index].getMiniatureScale()
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.verticalCenter: parent.verticalCenter
 						sourceComponent: eventBlocks[index].miniature
@@ -121,8 +123,8 @@ Rectangle {
 		anchors.left: isLandscape ? undefined : parent.left
 		anchors.bottom: parent.bottom
 
-		width: isLandscape ? 256 : undefined
-		height: isLandscape ? undefined : 256
+		width: isLandscape ? blockListWidth : undefined
+		height: isLandscape ? undefined : blockListWidth
 		color: "#ebeef0"
 
 		ListView {
@@ -133,19 +135,19 @@ Rectangle {
 			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
 
 			delegate: MouseArea {
-				height: actionBlocksLoader.height
-				width: actionBlocksLoader.width
+				height: blockListWidth
+				width: blockListWidth
 				onClicked: {
 					definition = actionBlocks[index];
 					params = definition.defaultParams;
 				}
 				Image {
-					anchors.fill: parent
+					anchors.centerIn: parent
 					source: "images/actionCenter.svg"
+					scale: blockListBlockScale
 					Loader {
 						id: actionBlocksLoader
 						enabled: false
-						scale: actionBlocks[index].getMiniatureScale()
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.verticalCenter: parent.verticalCenter
 						sourceComponent: actionBlocks[index].miniature
@@ -160,19 +162,16 @@ Rectangle {
 		id: editorItemArea
 
 		property bool isLandscape: Window.width >= Window.height
+		property real scaledWidth: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
 
 		color: "#a9acaf"
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
 
-		width: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
-		height: width
+		scale: Math.max(scaledWidth / 256, 0.1)
 
-		onWidthChanged: {
-			for (var i = 0; i < children.length; ++i) {
-				children[i].scale = Math.max(width / 256, 0.1);
-			}
-		}
+		width: 256
+		height: 256
 	}
 
 	Image {
