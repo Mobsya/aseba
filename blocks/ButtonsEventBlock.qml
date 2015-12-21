@@ -58,6 +58,7 @@ BlockDefinition {
 			}
 		}
 	}
+
 	function compile(params) {
 		return {
 			event: "buttons",
@@ -70,5 +71,9 @@ BlockDefinition {
 				}
 			}, "0 == 0"),
 		};
+	}
+
+	function getMiniatureScale() {
+		return 0.78;
 	}
 }

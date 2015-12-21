@@ -37,9 +37,14 @@ BlockDefinition {
 			}
 		}
 	}
+
 	function compile(params) {
 		return {
 			action: "motor.left.target = " + params[0] + "\n" + "motor.right.target = " + params[1]
 		};
+	}
+
+	function getMiniatureScale() {
+		return 0.5;
 	}
 }

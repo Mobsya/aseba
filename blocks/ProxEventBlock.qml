@@ -54,6 +54,7 @@ BlockDefinition {
 			}
 		}
 	}
+
 	function compile(params) {
 		return {
 			event: "prox",
@@ -71,6 +72,11 @@ BlockDefinition {
 			}, "0 == 0"),
 		};
 	}
+
+	function getMiniatureScale() {
+		return 0.5;
+	}
+
 	Component {
 		id: buttonComponent
 		InfraredButton {}

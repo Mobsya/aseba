@@ -38,7 +38,7 @@ Rectangle {
 	property list<BlockDefinition> eventBlocks: [
 		ButtonsEventBlock {},
 		ProxEventBlock {},
-		ProxEventBlock {}
+		ClapEventBlock {}
 	]
 	property list<BlockDefinition> actionBlocks: [
 		MotorActionBlock {},
@@ -96,17 +96,13 @@ Rectangle {
 					definition = eventBlocks[index];
 					params = definition.defaultParams;
 				}
-				Rectangle {
-					width: parent.width * 0.8
-					height: parent.height * 0.8
-					radius: parent.width / 2
-					color: "#1c93d1"
-					anchors.horizontalCenter: parent.horizontalCenter
-					anchors.verticalCenter: parent.verticalCenter
+				Image {
+					anchors.fill: parent
+					source: "images/eventCenter.svg"
 					Loader {
 						id: eventBlocksLoader
 						enabled: false
-						scale: 0.5
+						scale: eventBlocks[index].getMiniatureScale()
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.verticalCenter: parent.verticalCenter
 						sourceComponent: eventBlocks[index].miniature
@@ -143,17 +139,13 @@ Rectangle {
 					definition = actionBlocks[index];
 					params = definition.defaultParams;
 				}
-				Rectangle {
-					width: parent.width * 0.8
-					height: parent.height * 0.8
-					radius: parent.width / 2
-					color: "#f38420"
-					anchors.horizontalCenter: parent.horizontalCenter
-					anchors.verticalCenter: parent.verticalCenter
+				Image {
+					anchors.fill: parent
+					source: "images/actionCenter.svg"
 					Loader {
 						id: actionBlocksLoader
 						enabled: false
-						scale: 0.5
+						scale: actionBlocks[index].getMiniatureScale()
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.verticalCenter: parent.verticalCenter
 						sourceComponent: actionBlocks[index].miniature

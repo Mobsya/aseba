@@ -34,5 +34,7 @@
         <file>blocks/widgets/CircularButton.qml</file>
         <file>blocks/widgets/images/circularButtonOff.svg</file>
         <file>blocks/widgets/images/circularButtonOn.svg</file>
+        <file>blocks/images/clap.svg</file>
+        <file>blocks/ClapEventBlock.qml</file>
     </qresource>
 </RCC>

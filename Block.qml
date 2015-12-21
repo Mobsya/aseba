@@ -58,12 +58,11 @@ Item {
 	Item {
 		id: placeholder
 		enabled: false;
-		scale: 0.5
 		anchors.centerIn: block;
 	}
 	onParamsChanged: {
 		placeholder.children = [];
-		definition.editor.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
+		definition.editor.createObject(placeholder, {"params": params, "scale": definition.getMiniatureScale(), "anchors.centerIn": placeholder});
 		compiler.compile();
 	}
 
