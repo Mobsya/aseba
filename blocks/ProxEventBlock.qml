@@ -4,6 +4,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "event"
+
 	defaultParams: [ "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED" ]
 
 	Component {
@@ -13,7 +14,6 @@ BlockDefinition {
 
 			width: 256
 			height: 256
-			//property var params: defaultParams
 
 			property var buttons: []
 

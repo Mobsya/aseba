@@ -4,6 +4,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "event"
+
 	defaultParams: [ "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED" ]
 
 	editor: Component {

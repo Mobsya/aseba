@@ -4,7 +4,9 @@ import "widgets"
 
 BlockDefinition {
 	type: "action"
+
 	defaultParams: [ 0, 0 ]
+
 	editor: Component {
 		Item {
 			width: 256

@@ -41,6 +41,7 @@ Rectangle {
 	property list<BlockDefinition> eventBlocks: [
 		ButtonsEventBlock {},
 		ProxEventBlock {},
+		ProxGroundEventBlock {},
 		ClapEventBlock {}
 	]
 	property list<BlockDefinition> actionBlocks: [
@@ -172,6 +173,7 @@ Rectangle {
 
 		width: 256
 		height: 256
+		clip: true
 	}
 
 	Image {

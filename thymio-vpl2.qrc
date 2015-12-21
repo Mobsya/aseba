@@ -37,5 +37,7 @@
         <file>blocks/ClapEventBlock.qml</file>
         <file>blocks/widgets/images/thymioBody.svg</file>
         <file>blocks/images/motorBackground.svg</file>
+        <file>blocks/ProxGroundEventBlock.qml</file>
+        <file>blocks/widgets/ProxGroundShadow.qml</file>
     </qresource>
 </RCC>

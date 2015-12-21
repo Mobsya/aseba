@@ -2,14 +2,14 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.0
 
 RadialGradient {
-	id: infraredLed
+	id: groundShadow
 
 	property InfraredButton associatedButton
 
-	property color gradColor: associatedButton.state == "DISABLED" ? "transparent" : (associatedButton.state == "CLOSE" ? "#ff0000" : "#7fff0000")
+	property color gradColor: associatedButton.state == "DISABLED" ? "transparent" : (associatedButton.state == "CLOSE" ? "#ffffff" : "#000000")
 
-	width: 24
-	height: 24
+	width: 200
+	height: 200
 
 	gradient: Gradient {
 		GradientStop {
@@ -24,7 +24,7 @@ RadialGradient {
 
 	Behavior on gradColor {
 		ColorAnimation {
-			target: infraredLed;
+			target: groundShadow;
 			duration: 50
 		}
 	}
