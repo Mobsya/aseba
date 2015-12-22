@@ -430,6 +430,9 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
+				if (blockContainer.children.size === 0)
+					return;
+				scene.scale = Math.min(mainContainer.width * 0.8 / blockContainer.childrenRect.width, mainContainer.height * 0.8 / blockContainer.childrenRect.height);
 				scene.x = mainContainer.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
 				scene.y = mainContainer.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
 			}
