@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtGraphicalEffects 1.0
+import "utils.js" as Utils
 
 Item {
 	id: block;
@@ -15,7 +16,6 @@ Item {
 	property Item highlightedBlock: null
 
 	property real centerRadius: 93
-	property real arrowRadius: 115
 
 	property real vx: 0 // in px per millisecond
 	property real vy: 0 // in px per millisecond
@@ -76,69 +76,6 @@ Item {
 		}
 	}
 
-	// TODO: move somewhere else
-	function toDegrees (angle) {
-		return angle * (180 / Math.PI);
-	}
-	function toRadians (angle) {
-		return angle * Math.PI / 180;
-	}
-	function sign(v) {
-		if (v > 0)
-			return 1;
-		else if (v < 0)
-			return -1;
-		else
-			return 0;
-	}
-
-	function updateLinkPositions() {
-		// TODO: move this into links and arrows
-		for (var i = 0; i < linkContainer.children.length; ++i) {
-			var child = linkContainer.children[i];
-			// if child is part of a link
-			if ((child.sourceBlock != block) && (child.destBlock != block))
-				continue
-			// get new link coordinates
-			var sourceBlockCenter = child.sourceBlock.mapToItem(scene, child.sourceBlock.width/2, child.sourceBlock.height/2);
-			var destBlockCenter = child.destBlock.mapToItem(scene, child.destBlock.width/2, child.destBlock.height/2);
-			var dx = destBlockCenter.x - sourceBlockCenter.x;
-			var dy = destBlockCenter.y - sourceBlockCenter.y;
-			var linkAngle = Math.atan2(dy, dx);
-			var linkWidth = Math.sqrt(dx*dx + dy*dy);
-			// update items
-			if (child.linkName == "link") {
-				child.x = sourceBlockCenter.x;
-				child.y = sourceBlockCenter.y;
-				child.setLength(linkWidth);
-				child.rotationAngle = toDegrees(linkAngle);
-			}
-			var arrowDistToCenter = arrowRadius+16;
-			var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
-			var arcAngle = Math.PI - 2 * gamma;
-			var ax = sourceBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
-			var ay = sourceBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
-			var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
-			if (child.linkName == "arrow") {
-				child.x = ax - 16;
-				child.y = ay - 16;
-				child.rotation = toDegrees(arrowAngle);
-				child.visible = linkWidth > 256;
-			}
-		}
-	}
-
-	// we use a timer to avoid excess calls to updateLinkPositions
-	Timer {
-		id: nextLinkPositionsUpdate
-		interval: 0
-		onTriggered: updateLinkPositions()
-	}
-
-	onXChanged: nextLinkPositionsUpdate.start()
-
-	onYChanged: nextLinkPositionsUpdate.start()
-
 	// we use a timer to have some smooth effect
 	Timer {
 		id: accelerationTimer
@@ -157,7 +94,7 @@ Item {
 		}
 	}
 
-	// link
+	// link under creation
 	MouseArea {
 		id: linkArea
 		anchors.fill: parent
@@ -184,10 +121,10 @@ Item {
 			linkingPath.x = cx + Math.cos(linkAngle) * startLength;
 			linkingPath.y = cy - linkingPath.height*0.5 + Math.sin(linkAngle) * startLength;
 			linkingPath.width = reducedLength;
-			linkingPath.rotation = toDegrees(linkAngle);
+			linkingPath.rotation = Utils.toDegrees(linkAngle);
 			linkingArrow.x = cx + Math.cos(linkAngle) * length - 16;
 			linkingArrow.y = cy + Math.sin(linkAngle) * length - 16;
-			linkingArrow.rotation = toDegrees(linkAngle);
+			linkingArrow.rotation = Utils.toDegrees(linkAngle);
 		}
 
 		function isLinkTargetValid(destBlock) {
@@ -195,9 +132,9 @@ Item {
 			if (destBlock && destBlock.parent === blockContainer) {
 				// check that this connection does not already exist!
 				for (var i = 0; i < linkContainer.children.length; ++i) {
-					var child = linkContainer.children[i];
+					var link = linkContainer.children[i];
 					// if so, return
-					if (child.linkName && child.linkName == "link" && child.sourceBlock == parent && child.destBlock == destBlock) {
+					if (link.sourceBlock === parent && link.destBlock === destBlock) {
 						return false;
 					}
 				}
@@ -224,7 +161,7 @@ Item {
 			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
 			if (destBlock && destBlock.parent === blockContainer && destBlock != parent) {
 				// highlight destblock
-				if (highlightedBlock && highlightedBlock != destBlock) {
+				if (highlightedBlock && highlightedBlock !== destBlock) {
 					highlightedBlock.highlight = false;
 				}
 				if (isLinkTargetValid(destBlock)) {
@@ -248,35 +185,8 @@ Item {
 
 			if (isLinkTargetValid(destBlock)) {
 				// create link
-				var thisBlockCenter = mapToItem(linkContainer, width/2, height/2);
-				var thatBlockCenter = destBlock.mapToItem(linkContainer, destBlock.width/2, destBlock.height/2);
-				var dx = thatBlockCenter.x - thisBlockCenter.x;
-				var dy = thatBlockCenter.y - thisBlockCenter.y;
-				var linkAngle = Math.atan2(dy, dx);
-				var linkWidth = Math.sqrt(dx*dx + dy*dy);
-				blockLinkComponent.createObject(linkContainer, {
-					x: thisBlockCenter.x,
-					y: thisBlockCenter.y,
+				var link = blockLinkComponent.createObject(linkContainer, {
 					z: 0,
-					width: linkWidth,
-					rotationAngle: toDegrees(linkAngle),
-					sourceBlock: parent,
-					destBlock: destBlock,
-					trim: true,
-					//canBeElse: Qt.binding(function() { return definition.type == "event"; })
-				});
-				// create end arrow
-				var arrowDistToCenter = arrowRadius+16;
-				var gamma = Math.acos(arrowDistToCenter * 0.5 / linkWidth);
-				var arcAngle = Math.PI - 2 * gamma;
-				var ax = thisBlockCenter.x + linkWidth * Math.cos(linkAngle - Math.PI/3) + linkWidth * Math.cos(linkAngle + Math.PI/3 + arcAngle);
-				var ay = thisBlockCenter.y + linkWidth * Math.sin(linkAngle - Math.PI/3) + linkWidth * Math.sin(linkAngle + Math.PI/3 + arcAngle);
-				var arrowAngle = linkAngle + Math.PI / 3 + arcAngle - Math.PI / 2;
-				blockLinkArrowComponent.createObject(linkContainer, {
-					x: ax - 16,
-					y: ay - 16,
-					z: 1,
-					rotation: toDegrees(arrowAngle),
 					sourceBlock: parent,
 					destBlock: destBlock
 				});
@@ -313,8 +223,6 @@ Item {
 
 		onPositionChanged: {
 			if (drag.active) {
-				// update links
-				updateLinkPositions();
 				// compute and accumulate displacement for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				var now = new Date().valueOf();

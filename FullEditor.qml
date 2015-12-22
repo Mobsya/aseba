@@ -37,9 +37,6 @@ Rectangle {
 			}
 			for (var i = 0; i < links.length; ++i) {
 				var link = links[i];
-				if (link.linkName !== "link") {
-					continue;
-				}
 				var sourceIndex = indices[link.sourceBlock];
 				var destIndex = indices[link.destBlock];
 				subs[sourceIndex].children.push(destIndex);
@@ -278,10 +275,7 @@ Rectangle {
 
 			Component {
 				id: blockLinkComponent
-				LinkingPath { }
-			}
-			BlockLinkArrow {
-				id: blockLinkArrowComponent
+				Link { }
 			}
 		}
 	}

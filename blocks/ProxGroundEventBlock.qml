@@ -17,7 +17,7 @@ BlockDefinition {
 
 			property var buttons: []
 
-			// shadow
+			// shadows
 			Rectangle {
 				id: leftShadow
 				x: 0
@@ -42,7 +42,6 @@ BlockDefinition {
 
 			// sensor buttons
 			Component.onCompleted: {
-				// back sensors
 				for (var i=0; i<2; ++i) {
 					buttons.push(buttonComponent.createObject(block, {
 						"x": 100 - 16 + i*56,
