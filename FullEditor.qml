@@ -42,8 +42,13 @@ Rectangle {
 				}
 				var sourceIndex = indices[link.sourceBlock];
 				var destIndex = indices[link.destBlock];
-				subs[sourceIndex].children.push(destIndex);
-				subs[destIndex].parents.push(sourceIndex);
+				var arrow = {
+					"head": sourceIndex,
+					"tail": destIndex,
+					"isElse": link.isElse,
+				};
+				subs[sourceIndex].children.push(arrow);
+				subs[destIndex].parents.push(arrow);
 			}
 
 			var lastIndex = subs.length;
@@ -56,12 +61,22 @@ Rectangle {
 			};
 			subs.forEach(function(sub, index) {
 				if (sub.parents.length === 0) {
-					sub.parents.push(lastIndex);
-					lastSub.children.push(index);
+					var arrow = {
+						"head": lastIndex,
+						"tail": index,
+						"isElse": false,
+					};
+					sub.parents.push(arrow);
+					lastSub.children.push(arrow);
 				}
 				if (sub.children.length === 0) {
-					sub.children.push(lastIndex);
-					lastSub.parents.push(index);
+					var arrow2 = {
+						"head": index,
+						"tail": lastIndex,
+						"isElse": false,
+					};
+					sub.children.push(arrow2);
+					lastSub.parents.push(arrow2);
 				}
 			});
 			subs[lastIndex] = lastSub;
@@ -94,13 +109,25 @@ Rectangle {
 					source += action + "\n";
 				}
 
-				sub.children.forEach(function(childIndex) {
-					var child = subs[childIndex];
+				sub.children.forEach(function(arrow) {
+					if (arrow.isElse) {
+						return;
+					}
+					var child = subs[arrow.tail];
 					if (action === undefined || child.compiled.event === undefined)
-						source += "callsub block" + childIndex + "\n";
+						source += "callsub block" + arrow.tail + "\n";
 				});
 
 				if (condition !== undefined) {
+					source += "else" + "\n";
+					sub.children.forEach(function(arrow) {
+						if (!arrow.isElse) {
+							return;
+						}
+						var child = subs[arrow.tail];
+						if (action === undefined || child.compiled.event === undefined)
+							source += "callsub block" + arrow.tail + "\n";
+					});
 					source += "end" + "\n";
 				}
 
@@ -111,8 +138,8 @@ Rectangle {
 				source += "onevent " + eventName + "\n";
 				source = events[eventName].reduce(function(source, subIndex) {
 					var sub = subs[subIndex];
-					source += "if " + sub.parents.reduce(function(expr, parentIndex) {
-						return expr + " or program_counter == " + parentIndex;
+					source += "if " + sub.parents.reduce(function(expr, arrow) {
+						return expr + " or program_counter == " + arrow.head;
 					}, "0 != 0") + " then" + "\n";
 					source += "callsub block" + subIndex + "\n";
 					//source += "else";
