@@ -68,7 +68,7 @@ BlockDefinition {
 				if (param === "DISABLED") {
 					return source;
 				} else {
-					return source + " and buttons." + names[index] + " == 1";
+					return source + " and button." + names[index] + " == 1";
 				}
 			}, "0 == 0"),
 		};

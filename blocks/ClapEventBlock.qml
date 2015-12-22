@@ -29,7 +29,7 @@ BlockDefinition {
 
 	function compile(params) {
 		return {
-			event: "clap",
+			event: "tap",
 			condition: "0 == 0",
 		};
 	}
