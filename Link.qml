@@ -27,6 +27,8 @@ Canvas {
 		onTriggered: updatePosition()
 	}
 
+	property real lastPaintedWidth: 0
+
 	property bool isElse: false
 	property bool canBeElse: sourceBlock && sourceBlock.definition.type === "event"
 
@@ -77,10 +79,13 @@ Canvas {
 		arrow.rotation = Utils.toDegrees(arrowAngle);
 		if (!elseDeleteDoodleMouseArea.drag.active)
 			elseDeleteDoodle.resetPosition();
-		requestPaint();
+		// only redraw if width has changed more than 2 pixels
+		if (Math.abs(width - lastPaintedWidth) > 2)
+			requestPaint();
 	}
 
 	onPaint: {
+		lastPaintedWidth = width;
 		// compute start and end positions
 		var localLeftRadius = leftRadius;
 		var localRightRadius = rightRadius;
