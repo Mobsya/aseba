@@ -162,7 +162,7 @@ Item {
 			updateLinkingPath(mouse.x, mouse.y);
 			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
 			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-			if (destBlock && destBlock.parent === blockContainer && destBlock != parent) {
+			if (destBlock && destBlock.parent === blockContainer && destBlock !== parent) {
 				// highlight destblock
 				if (highlightedBlock && highlightedBlock !== destBlock) {
 					highlightedBlock.highlight = false;
@@ -173,6 +173,7 @@ Item {
 				}
 			} else if (highlightedBlock) {
 				highlightedBlock.highlight = false;
+				highlightedBlock = null;
 			}
 		}
 
@@ -181,6 +182,7 @@ Item {
 			linkingArrow.visible = false;
 			if (highlightedBlock) {
 				highlightedBlock.highlight = false;
+				highlightedBlock = null;
 			}
 
 			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);

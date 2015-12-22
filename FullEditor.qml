@@ -336,12 +336,15 @@ Rectangle {
 			id: addBlockMouseArea
 			anchors.fill: parent
 			drag.target: dragTarget
+			property Item highlightedBlock: null
+
 			onClicked: {
 				if (editor.visible)
 					return;
 				var pos = mainContainer.mapToItem(blockContainer, mainContainer.width/2, mainContainer.height/2);
 				createBlock(pos.x, pos.y);
 			}
+
 			onPressed: {
 				if (editor.visible) {
 					mouse.accepted  = false;
@@ -349,16 +352,65 @@ Rectangle {
 					dragTarget.scale = scene.scale;
 				}
 			}
+
+			onPositionChanged: {
+				// find nearest block
+				var scenePos = dragTarget.mapToItem(blockContainer, 128, 128);
+				var minDist = Number.MAX_VALUE;
+				var minIndex = 0;
+				for (var i = 0; i < blockContainer.children.length; ++i) {
+					var child = blockContainer.children[i];
+					var destPos = child.mapToItem(blockContainer, 128, 128);
+					var dx = scenePos.x - destPos.x;
+					var dy = scenePos.y - destPos.y;
+					var dist = Math.sqrt(dx*dx + dy*dy);
+					if (dist < minDist) {
+						minDist = dist;
+						minIndex = i;
+					}
+				}
+
+				// if blocks are close
+				if (minDist < 256) {
+					var destBlock = blockContainer.children[minIndex];
+					// highlight destblock
+					if (highlightedBlock && highlightedBlock !== destBlock) {
+						highlightedBlock.highlight = false;
+					}
+					destBlock.highlight = true;
+					highlightedBlock = destBlock;
+				} else if (highlightedBlock) {
+					highlightedBlock.highlight = false;
+					highlightedBlock = null;
+				}
+			}
+
 			onReleased: {
 				if (!drag.active)
 					return;
+
 				// create block
 				var pos = mapToItem(blockContainer, mouse.x, mouse.y);
-				createBlock(pos.x, pos.y);
+				var newBlock = createBlock(pos.x, pos.y);
+
+				// create link
+				if (highlightedBlock) {
+					var link = blockLinkComponent.createObject(linkContainer, {
+						z: 0,
+						sourceBlock: highlightedBlock,
+						destBlock: newBlock
+					});
+					compiler.compile();
+					// reset highlight
+					highlightedBlock.highlight = false;
+					highlightedBlock = null;
+				}
+
 				// reset indicator
 				dragTarget.x = -64;
 				dragTarget.y = -64;
 			}
+
 			function createBlock(x, y) {
 				var block = blockComponent.createObject(blockContainer, {
 					x: x - 128 + Math.random(),
@@ -367,6 +419,7 @@ Rectangle {
 					params: editor.params
 				});
 				editor.block = block;
+				return block;
 			}
 		}
 	}
