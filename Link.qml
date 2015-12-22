@@ -34,7 +34,7 @@ Canvas {
 	onCanBeElseChanged: {
 		if (!canBeElse)
 			isElse = false;
-		requestPaint();
+		elseDeleteDoodle.requestPaint();
 	}
 
 	// to force the image to be loaded upon initalization
@@ -75,6 +75,8 @@ Canvas {
 		arrow.x = ax - 16;
 		arrow.y = ay - 16 + height;
 		arrow.rotation = Utils.toDegrees(arrowAngle);
+		if (!elseDeleteDoodleMouseArea.drag.active)
+			elseDeleteDoodle.resetPosition();
 		requestPaint();
 	}
 
@@ -84,7 +86,6 @@ Canvas {
 		var localRightRadius = rightRadius;
 		var ctx = getContext('2d');
 		ctx.clearRect(0, 0, width, height);
-		//ctx.fillRect(0, 0, width, height);
 		if (width < 228) {
 			return;
 		} else if (width < 256) {
@@ -94,18 +95,6 @@ Canvas {
 		var leftArcAngle = Math.PI - 2 * leftGamma;
 		var rightGamma = Math.acos(localRightRadius * 0.5 / width);
 		var rightArcAngle = Math.PI - 2 * rightGamma;
-
-		// draw the mode toggle switch
-		if (width > 228 + 96 && canBeElse) {
-			ctx.fillStyle = "#f48574";
-			ctx.beginPath();
-			var cx = width/2;
-			var cy = height*(1.-0.805);
-			ctx.moveTo(cx-48, cy);
-			ctx.bezierCurveTo(cx-48, cy+16, cx-24, cy+32, cx, cy+32);
-			ctx.bezierCurveTo(cx+24, cy+32, cx+48, cy+16, cx+48, cy);
-			ctx.fill();
-		}
 
 		// draw the arc
 		ctx.lineWidth = 10;
@@ -120,15 +109,63 @@ Canvas {
 		ctx.stroke();
 	}
 
-	MouseArea {
-		enabled: parent.canBeElse
+	Canvas {
+		id: elseDeleteDoodle
+		visible: parent.width > 228 + 96
 		width: 96
 		height: 32
-		anchors.horizontalCenter: parent.horizontalCenter
-		y: parent.height*(1.-0.805)
+		z: -1
 
-		onClicked: {
-			parent.isElse = !parent.isElse;
+		function resetPosition() {
+			x = parent.width/2-48;
+			y = parent.height*(1.-0.805);
+		}
+
+		onPaint: {
+			var ctx = getContext('2d');
+			if (canBeElse) {
+				ctx.fillStyle = "#f48574";
+			} else {
+				ctx.fillStyle = "#a0a0a0";
+			}
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.bezierCurveTo(0, 16, 24, 32, 48, 32);
+			ctx.bezierCurveTo(72, 32, 96, 16, 96, 0);
+			ctx.fill();
+		}
+
+		MouseArea {
+			id: elseDeleteDoodleMouseArea
+			anchors.fill: parent
+			drag.target: elseDeleteDoodle
+
+			onClicked: {
+				if (canBeElse)
+					isElse = !isElse;
+			}
+
+			onPressed: { }
+
+			onPositionChanged: {
+				// check whether we are hovering delete block item
+				var delBlockPos = mapToItem(delBlock, mouse.x, mouse.y);
+				if (delBlock.contains(delBlockPos))
+					delBlock.state = "HIGHLIGHTED";
+				else
+					delBlock.state = "NORMAL";
+			}
+
+			onReleased: {
+				// to be deleted?
+				if (delBlock.state == "HIGHLIGHTED") {
+					parent.parent.destroy();
+				} else {
+					parent.resetPosition();
+				}
+				// in any case, set back the delete item to normal state
+				delBlock.state = "NORMAL";
+			}
 		}
 	}
 }

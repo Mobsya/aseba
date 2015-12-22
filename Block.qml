@@ -15,7 +15,8 @@ Item {
 	property bool highlight: false
 	property Item highlightedBlock: null
 
-	property real centerRadius: 93
+	readonly property real centerRadius: 93
+	readonly property Item linkingArrow: linkingArrow
 
 	property real vx: 0 // in px per millisecond
 	property real vy: 0 // in px per millisecond
@@ -57,12 +58,14 @@ Item {
 		scale: 0.72
 	}
 
+	// miniature
 	Item {
-		id: placeholder
+		id: placeholder // for miniature
 		enabled: false;
 		anchors.centerIn: parent
 		scale: 0.72
 	}
+	// recreate miniature on params changed
 	onParamsChanged: {
 		placeholder.children = [];
 		definition.miniature.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
