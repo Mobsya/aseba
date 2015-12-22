@@ -53,7 +53,7 @@ Item {
 
 	Image {
 		id: centerImageId
-		source: definition.type == "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
+		source: definition.type === "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
 		anchors.centerIn: parent
 		scale: 0.72
 	}
@@ -245,13 +245,13 @@ Item {
 
 		onReleased: {
 			// to be deleted?
-			if (delBlock.state == "HIGHLIGHTED") {
+			if (delBlock.state === "HIGHLIGHTED") {
 				// yes, collect all links and arrows from/to this block
 				var toDelete = []
 				for (var i = 0; i < linkContainer.children.length; ++i) {
 					var child = linkContainer.children[i];
 					// if so, collect for removal
-					if (child.sourceBlock == block || child.destBlock == block)
+					if (child.sourceBlock === block || child.destBlock === block)
 						toDelete.push(child);
 				}
 				// remove collected links and arrows

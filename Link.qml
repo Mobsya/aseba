@@ -158,7 +158,7 @@ Canvas {
 
 			onReleased: {
 				// to be deleted?
-				if (delBlock.state == "HIGHLIGHTED") {
+				if (delBlock.state === "HIGHLIGHTED") {
 					parent.parent.destroy();
 				} else {
 					parent.resetPosition();

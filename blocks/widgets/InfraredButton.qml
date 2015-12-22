@@ -15,9 +15,9 @@ Rectangle {
 		anchors.fill: parent
 
 		onClicked: {
-			if (buttonRect.state == "DISABLED")
+			if (buttonRect.state === "DISABLED")
 				buttonRect.state = "CLOSE";
-			else if (buttonRect.state == "CLOSE")
+			else if (buttonRect.state === "CLOSE")
 				buttonRect.state = "FAR";
 			else
 				buttonRect.state = "DISABLED";

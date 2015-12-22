@@ -6,7 +6,7 @@ RadialGradient {
 
 	property InfraredButton associatedButton
 
-	property color gradColor: associatedButton.state == "DISABLED" ? "transparent" : (associatedButton.state == "CLOSE" ? "#ff0000" : "#7fff0000")
+	property color gradColor: associatedButton.state === "DISABLED" ? "transparent" : (associatedButton.state === "CLOSE" ? "#ff0000" : "#7fff0000")
 
 	width: 24
 	height: 24
