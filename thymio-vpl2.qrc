@@ -40,5 +40,7 @@
         <file>blocks/ProxGroundEventBlock.qml</file>
         <file>blocks/widgets/ProxGroundShadow.qml</file>
         <file>utils.js</file>
+        <file>blocks/TopColorActionBlock.qml</file>
+        <file>blocks/widgets/ColorSlider.qml</file>
     </qresource>
 </RCC>
