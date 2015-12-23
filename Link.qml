@@ -32,7 +32,10 @@ Canvas {
 	property bool isElse: false
 	property bool canBeElse: sourceBlock && sourceBlock.definition.type === "event"
 
-	onIsElseChanged: requestPaint();
+	onIsElseChanged: {
+		requestPaint();
+		compiler.compile();
+	}
 	onCanBeElseChanged: {
 		if (!canBeElse)
 			isElse = false;
