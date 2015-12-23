@@ -158,6 +158,17 @@ Rectangle {
 		}
 	}
 
+	function execLink(sourceBlockIndex, targetBlockIndex) {
+		// TODO
+	}
+
+	function execBlock(blockIndex) {
+		console.log("execBlock " + blockIndex);
+		if (blockIndex < blockContainer.children.length) {
+			blockContainer.children[blockIndex].exec();
+		}
+	}
+
 	RadialGradient {
 			anchors.fill: parent
 			gradient: Gradient {

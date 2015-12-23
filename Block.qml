@@ -12,8 +12,10 @@ Item {
 	property BlockDefinition definition
 	property var params
 
+	// FIXME: should we use state for that? Or maybe even another object?
 	property bool highlight: false
 	property Item highlightedBlock: null
+	property bool execHighlight: false
 
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
@@ -37,7 +39,18 @@ Item {
 
 	Image {
 		id: backgroundImage
-		source: highlight ? "images/bgHighlight.svg" : "images/bgDefault.svg"
+		source: highlight ? "images/bgHighlight.svg" : (execHighlight ? "images/bgExec.svg" : "images/bgDefault.svg")
+	}
+
+	// highlight execution for a short while
+	Timer {
+		id: execHighlightTimer
+		interval: 100
+		onTriggered: execHighlight = false;
+	}
+	function exec() {
+		execHighlight = true;
+		execHighlightTimer.restart();
 	}
 
 //	DropShadow {

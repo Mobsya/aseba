@@ -42,5 +42,7 @@
         <file>utils.js</file>
         <file>blocks/TopColorActionBlock.qml</file>
         <file>blocks/widgets/ColorSlider.qml</file>
+        <file>images/arrowOptions.svg</file>
+        <file>images/bgExec.svg</file>
     </qresource>
 </RCC>
