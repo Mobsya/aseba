@@ -9,6 +9,8 @@ Canvas {
 	property Item sourceBlock: Null
 	property Item destBlock: Null
 
+	property bool execHighlight: false
+
 	// we update our position when attached blocks are moved
 	Connections {
 		target: sourceBlock
@@ -39,9 +41,28 @@ Canvas {
 		elseDeleteDoodle.requestPaint();
 	}
 
+	// highlight execution for a short while
+	Timer {
+		id: execHighlightTimer
+		interval: 100
+		onTriggered: {
+			execHighlight = false;
+			requestPaint();
+		}
+	}
+	function exec() {
+		execHighlight = true;
+		execHighlightTimer.restart();
+		requestPaint();
+	}
+
 	// to force the image to be loaded upon initalization
 	Image {
 		source: "images/elsePattern.png"
+		visible: false
+	}
+	Image {
+		source: "images/elsePatternExec.png"
 		visible: false
 	}
 
@@ -105,9 +126,15 @@ Canvas {
 		ctx.lineWidth = 10;
 		ctx.lineCap = "square";
 		if (isElse) {
-			ctx.strokeStyle = ctx.createPattern("images/elsePattern.png", "repeat");
+			if (execHighlight)
+				ctx.strokeStyle = ctx.createPattern("images/elsePatternExec.png", "repeat");
+			else
+				ctx.strokeStyle = ctx.createPattern("images/elsePattern.png", "repeat");
 		} else {
-			ctx.strokeStyle = "#a2d8dc";
+			if (execHighlight)
+				ctx.strokeStyle = "#E285FF";
+			else
+				ctx.strokeStyle = "#a2d8dc";
 		}
 		ctx.beginPath();
 		ctx.arc(width/2, height+Math.sqrt(width*width*3/4), width, 4*Math.PI/3+rightArcAngle, 5*Math.PI/3-leftArcAngle);

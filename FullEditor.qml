@@ -159,11 +159,20 @@ Rectangle {
 	}
 
 	function execLink(sourceBlockIndex, targetBlockIndex) {
-		// TODO
+		if (sourceBlockIndex >= blockContainer.children.length)
+			return;
+		if (targetBlockIndex >= blockContainer.children.length)
+			return;
+		var sourceBlock = blockContainer.children[sourceBlockIndex];
+		var targetBlock = blockContainer.children[targetBlockIndex];
+		for (var i = 0; i < linkContainer.children.length; ++i) {
+			var link = linkContainer.children[i];
+			if (link.sourceBlock === sourceBlock && link.destBlock === targetBlock)
+				link.exec();
+		}
 	}
 
 	function execBlock(blockIndex) {
-		console.log("execBlock " + blockIndex);
 		if (blockIndex < blockContainer.children.length) {
 			blockContainer.children[blockIndex].exec();
 		}

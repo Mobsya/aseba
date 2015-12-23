@@ -44,5 +44,6 @@
         <file>blocks/widgets/ColorSlider.qml</file>
         <file>images/arrowOptions.svg</file>
         <file>images/bgExec.svg</file>
+        <file>images/elsePatternExec.png</file>
     </qresource>
 </RCC>
