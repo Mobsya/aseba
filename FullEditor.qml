@@ -100,9 +100,10 @@ Rectangle {
 					source += "if " + condition + " then" + "\n";
 				}
 
+				source += "emit block " + index + "\n";
+
 				if (action !== undefined) {
 					source += "program_counter = " + index + "\n";
-					//source += "emit action " + index + "\n";
 					source += action + "\n";
 				}
 
@@ -111,8 +112,10 @@ Rectangle {
 						return;
 					}
 					var child = subs[arrow.tail];
-					if (action === undefined || child.compiled.event === undefined)
+					if (action === undefined || child.compiled.event === undefined) {
+						source += "emit link [" + index + ", " + arrow.tail + "]\n";
 						source += "callsub block" + arrow.tail + "\n";
+					}
 				});
 
 				if (condition !== undefined) {
@@ -122,8 +125,10 @@ Rectangle {
 							return;
 						}
 						var child = subs[arrow.tail];
-						if (action === undefined || child.compiled.event === undefined)
+						if (action === undefined || child.compiled.event === undefined) {
+							source += "emit link [" + index + ", " + arrow.tail + "]\n";
 							source += "callsub block" + arrow.tail + "\n";
+						}
 					});
 					source += "end" + "\n";
 				}
@@ -138,6 +143,7 @@ Rectangle {
 					source += "if " + sub.parents.reduce(function(expr, arrow) {
 						return expr + " or program_counter == " + arrow.head;
 					}, "0 != 0") + " then" + "\n";
+					source += "emit link [program_counter, " + subIndex + "]\n";
 					source += "callsub block" + subIndex + "\n";
 					//source += "else";
 					source += "end" + "\n";
