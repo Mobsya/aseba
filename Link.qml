@@ -2,6 +2,8 @@ import QtQuick 2.0
 import "utils.js" as Utils
 
 Canvas {
+	z: 0
+
 	readonly property real leftRadius: 133
 	readonly property real rightRadius: 118
 	readonly property real arrowRadius: 115
@@ -9,7 +11,8 @@ Canvas {
 	property Item sourceBlock: Null
 	property Item destBlock: Null
 
-	property bool execHighlight: false
+	property Item highlightedBlock: null // new block that is highlighted for link creation
+	property bool execHighlight: false // whether this link is highlighted for being executed currently
 
 	// we update our position when attached blocks are moved
 	Connections {
@@ -183,23 +186,54 @@ Canvas {
 			onPressed: { }
 
 			onPositionChanged: {
-				// check whether we are hovering delete block item
+				var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
 				var delBlockPos = mapToItem(delBlock, mouse.x, mouse.y);
-				if (delBlock.contains(delBlockPos))
+				// check whether we are hovering delete block item
+				if (delBlock.contains(delBlockPos)) {
 					delBlock.state = "HIGHLIGHTED";
-				else
+					if (highlightedBlock) {
+						highlightedBlock.highlight = false;
+						highlightedBlock = null;
+					}
+				// check whether we are hovering another block
+				} else if (sourceBlock.isLinkTargetValid(destBlock)) {
 					delBlock.state = "NORMAL";
+					if (highlightedBlock && highlightedBlock !== destBlock) {
+						highlightedBlock.highlight = false;
+						highlightedBlock = null;
+					}
+					highlightedBlock = destBlock;
+					highlightedBlock.highlight = true;
+				// we are not hovering anything
+				} else {
+					delBlock.state = "NORMAL";
+					if (highlightedBlock) {
+						highlightedBlock.highlight = false;
+						highlightedBlock = null;
+					}
+				}
 			}
 
 			onReleased: {
-				// to be deleted?
+				// if to be deleted, destroy this link
 				if (delBlock.state === "HIGHLIGHTED") {
 					parent.parent.destroy();
+					delBlock.state = "NORMAL";
+					compiler.compile();
+				// if to be moved to another block, create new link and destroy this link
+				} else if (highlightedBlock) {
+					highlightedBlock.highlight = false;
+					var link = blockLinkComponent.createObject(linkContainer, {
+						sourceBlock: sourceBlock,
+						destBlock: highlightedBlock,
+						isElse: isElse
+					});
+					parent.parent.destroy();
+					compiler.compile();
 				} else {
 					parent.resetPosition();
 				}
-				// in any case, set back the delete item to normal state
-				delBlock.state = "NORMAL";
 			}
 		}
 	}

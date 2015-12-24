@@ -545,7 +545,7 @@ Rectangle {
 	}
 
 	// block editor
-	Editor {
+	BlockEditor {
 		id: editor
 	}
 }

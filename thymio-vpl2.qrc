@@ -9,7 +9,7 @@
         <file>Link.qml</file>
         <file>BlockLinkArrow.qml</file>
         <file>Block.qml</file>
-        <file>Editor.qml</file>
+        <file>BlockEditor.qml</file>
         <file>FullEditor.qml</file>
         <file>BlockDefinition.qml</file>
         <file>images/actionCenter.svg</file>

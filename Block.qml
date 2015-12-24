@@ -13,9 +13,9 @@ Item {
 	property var params
 
 	// FIXME: should we use state for that? Or maybe even another object?
-	property bool highlight: false
-	property Item highlightedBlock: null
-	property bool execHighlight: false
+	property bool highlight: false // whether this block is highlighted for link creation
+	property Item highlightedBlock: null // other block that is highlighted for link creation
+	property bool execHighlight: false // whether this block is highlighted for being executed currently
 
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
@@ -92,6 +92,23 @@ Item {
 		}
 	}
 
+	function isLinkTargetValid(destBlock) {
+		// do we have a valid block
+		if (destBlock && destBlock !== this) {
+			// check that this connection does not already exist!
+			for (var i = 0; i < linkContainer.children.length; ++i) {
+				var link = linkContainer.children[i];
+				// if so, return
+				if (link.sourceBlock === this && link.destBlock === destBlock) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// we use a timer to have some smooth effect
 	Timer {
 		id: accelerationTimer
@@ -143,23 +160,6 @@ Item {
 			linkingArrow.rotation = Utils.toDegrees(linkAngle);
 		}
 
-		function isLinkTargetValid(destBlock) {
-			// do we have a valid block
-			if (destBlock && destBlock.parent === blockContainer) {
-				// check that this connection does not already exist!
-				for (var i = 0; i < linkContainer.children.length; ++i) {
-					var link = linkContainer.children[i];
-					// if so, return
-					if (link.sourceBlock === parent && link.destBlock === destBlock) {
-						return false;
-					}
-				}
-				return true;
-			} else {
-				return false;
-			}
-		}
-
 		onPressed: {
 			// within inner radius
 			var dx = mouse.x - 128;
@@ -175,15 +175,13 @@ Item {
 			updateLinkingPath(mouse.x, mouse.y);
 			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
 			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-			if (destBlock && destBlock.parent === blockContainer && destBlock !== parent) {
-				// highlight destblock
+			if (parent.isLinkTargetValid(destBlock)) {
 				if (highlightedBlock && highlightedBlock !== destBlock) {
 					highlightedBlock.highlight = false;
+					highlightedBlock = null;
 				}
-				if (isLinkTargetValid(destBlock)) {
-					destBlock.highlight = true;
-					highlightedBlock = destBlock;
-				}
+				highlightedBlock = destBlock;
+				highlightedBlock.highlight = true;
 			} else if (highlightedBlock) {
 				highlightedBlock.highlight = false;
 				highlightedBlock = null;
@@ -194,21 +192,15 @@ Item {
 			linkingPath.visible = false;
 			linkingArrow.visible = false;
 			if (highlightedBlock) {
-				highlightedBlock.highlight = false;
-				highlightedBlock = null;
-			}
-
-			var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
-			var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-
-			if (isLinkTargetValid(destBlock)) {
 				// create link
 				var link = blockLinkComponent.createObject(linkContainer, {
-					z: 0,
 					sourceBlock: parent,
-					destBlock: destBlock
+					destBlock: highlightedBlock
 				});
 				compiler.compile();
+				// dehighlight block
+				highlightedBlock.highlight = false;
+				highlightedBlock = null;
 			}
 		}
 	}
