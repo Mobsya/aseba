@@ -518,35 +518,10 @@ Rectangle {
 		}
 	}
 
-	// run and stop
-	Image {
-		id: runButton
-		source: "images/playButton.svg"
-
-		width: 128
-		height: 128
-		anchors.top: parent.top
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.topMargin: 20
-
-		MouseArea {
-			anchors.fill: parent
-			onClicked: runButton.state == 'EDITING' ? runButton.state = "PLAYING" : runButton.state = 'EDITING';
-		}
-
-		state: "EDITING"
-
-		states: [
-			State {
-				name: "PLAYING"
-				PropertyChanges { target: runButton; source: "images/stopButton.svg"; }
-			}
-		]
-	}
-
 	// block editor
 	BlockEditor {
 		id: editor
+		z: 1
 	}
 }
 
