@@ -15,7 +15,7 @@ BlockDefinition {
 			property var params: defaultParams
 
 			Image {
-				source: "images/clap.svg"
+				source: "images/tap.svg"
 				anchors.centerIn: parent
 			}
 

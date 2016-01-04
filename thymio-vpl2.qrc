@@ -45,5 +45,7 @@
         <file>blocks/widgets/ThymioFront.qml</file>
         <file>blocks/widgets/images/thymioFront.svg</file>
         <file>blocks/BottomColorActionBlock.qml</file>
+        <file>blocks/images/tap.svg</file>
+        <file>blocks/TapEventBlock.qml</file>
     </qresource>
 </RCC>

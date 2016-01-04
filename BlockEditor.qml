@@ -43,6 +43,7 @@ Rectangle {
 		ButtonsEventBlock {},
 		ProxEventBlock {},
 		ProxGroundEventBlock {},
+		TapEventBlock {},
 		ClapEventBlock {}
 	]
 	property list<BlockDefinition> actionBlocks: [
