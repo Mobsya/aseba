@@ -76,7 +76,7 @@ Rectangle {
 		id: editorItemArea
 
 		property bool isLandscape: Window.width >= Window.height
-		property real scaledWidth: isLandscape ? Math.min(Window.width - 512 - 100, Window.height - (96+20+20)*2) : Math.min(Window.height, Window.height - 512 - (96+20+20)*2)
+		property real scaledWidth: isLandscape ? Math.min(Window.width - 512, Window.height - (96+20+20)*2) : Math.min(Window.width, Window.height - 512 - (96+20+20)*2)
 
 		color: "transparent"
 
@@ -90,7 +90,6 @@ Rectangle {
 		property bool isLandscape: Window.width >= Window.height
 
 		anchors.left: parent.left
-		anchors.leftMargin: isLandscape ? 50 : 0
 		anchors.top: parent.top
 		anchors.bottom: isLandscape ? parent.bottom : undefined
 		anchors.right: isLandscape ? undefined : parent.right
@@ -133,7 +132,6 @@ Rectangle {
 		property bool isLandscape: Window.width >= Window.height
 
 		anchors.right: parent.right
-		anchors.rightMargin: isLandscape ? 50 : 0
 		anchors.top: isLandscape ? parent.top : undefined
 		anchors.left: isLandscape ? undefined : parent.left
 		anchors.bottom: parent.bottom
