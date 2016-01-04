@@ -15,7 +15,7 @@ BlockDefinition {
 
 			ThymioFront {
 				y: -80
-				topColor: Qt.rgba(red.bodyValue(), green.bodyValue(), blue.bodyValue(), Math.max(red.bodyValue(), green.bodyValue(), blue.bodyValue()))
+				bottomColor: Qt.rgba(red.bodyValue(), green.bodyValue(), blue.bodyValue(), Math.max(red.bodyValue(), green.bodyValue(), blue.bodyValue()))
 			}
 
 			ColorSlider {
@@ -57,14 +57,15 @@ BlockDefinition {
 			}
 
 			ThymioFront {
-				topColor: Qt.rgba(paramToColor(params[0]), paramToColor(params[1]), paramToColor(params[2]), Math.max(paramToColor(params[0]), paramToColor(params[1]), paramToColor(params[2])))
+				bottomColor: Qt.rgba(paramToColor(params[0]), paramToColor(params[1]), paramToColor(params[2]), Math.max(paramToColor(params[0]), paramToColor(params[1]), paramToColor(params[2])))
 			}
 		}
 	}
 
 	function compile(params) {
 		return {
-			action: "call leds.top(" + params[0] + ", " + params[1] + ", " + params[2] + ")"
+			action: "call leds.bottom.left(" + params[0] + ", " + params[1] + ", " + params[2] + ")\n" +
+					"call leds.bottom.right(" + params[0] + ", " + params[1] + ", " + params[2] + ")"
 		};
 	}
 }

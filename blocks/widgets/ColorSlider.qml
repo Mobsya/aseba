@@ -12,15 +12,13 @@ Slider {
 	style: SliderStyle {
 		groove: Rectangle {
 			implicitWidth: 180
-			implicitHeight: 40
+			implicitHeight: 28
 			color: slider.color
 		}
 		handle: Rectangle {
 			anchors.centerIn: parent
 			color: "white"
-			border.width: 4
-			border.color: "black"
-			implicitWidth: 40
+			implicitWidth: 20
 			implicitHeight: 40
 		}
 	}

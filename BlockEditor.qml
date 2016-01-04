@@ -47,7 +47,8 @@ Rectangle {
 	]
 	property list<BlockDefinition> actionBlocks: [
 		MotorActionBlock {},
-		TopColorActionBlock {}
+		TopColorActionBlock {},
+		BottomColorActionBlock {}
 	]
 
 	property Block block: null

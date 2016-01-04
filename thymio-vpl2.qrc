@@ -45,5 +45,8 @@
         <file>images/arrowOptions.svg</file>
         <file>images/bgExec.svg</file>
         <file>images/elsePatternExec.png</file>
+        <file>blocks/widgets/ThymioFront.qml</file>
+        <file>blocks/widgets/images/thymioFront.svg</file>
+        <file>blocks/BottomColorActionBlock.qml</file>
     </qresource>
 </RCC>
