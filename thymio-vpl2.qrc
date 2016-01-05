@@ -47,5 +47,13 @@
         <file>blocks/BottomColorActionBlock.qml</file>
         <file>blocks/images/tap.svg</file>
         <file>blocks/TapEventBlock.qml</file>
+        <file>blocks/TimerEventBlock.qml</file>
+        <file>blocks/widgets/TimerGlass.qml</file>
+        <file>blocks/widgets/images/timerLongFill.svg</file>
+        <file>blocks/widgets/images/timerLongStroke.svg</file>
+        <file>blocks/widgets/images/timerMiddleFill.svg</file>
+        <file>blocks/widgets/images/timerMiddleStroke.svg</file>
+        <file>blocks/widgets/images/timerShortFill.svg</file>
+        <file>blocks/widgets/images/timerShortStroke.svg</file>
     </qresource>
 </RCC>

@@ -44,7 +44,8 @@ Rectangle {
 		ProxEventBlock {},
 		ProxGroundEventBlock {},
 		TapEventBlock {},
-		ClapEventBlock {}
+		ClapEventBlock {},
+		TimerEventBlock {}
 	]
 	property list<BlockDefinition> actionBlocks: [
 		MotorActionBlock {},

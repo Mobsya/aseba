@@ -23,7 +23,7 @@ BlockDefinition {
 				return {};
 			}
 		}
-	}
+    }
 
 	function compile(params) {
 		return {
