@@ -8,6 +8,8 @@ Rectangle {
 	readonly property alias blocks: blockContainer.children
 	readonly property alias links: linkContainer.children
 
+	readonly property real repulsionMaxDist: 330
+
 	property Item compiler: Item {
 		property string source
 		function compile() {
@@ -306,7 +308,7 @@ Rectangle {
 								var dx = blockContainer.children[i].x - blockContainer.children[j].x;
 								var dy = blockContainer.children[i].y - blockContainer.children[j].y;
 								var dist = Math.sqrt(dx*dx + dy*dy);
-								if (dist < 330) {
+								if (dist < repulsionMaxDist) {
 									var normDist = dist;
 									var factor = 100 / (normDist+1);
 									blockContainer.children[i].x += sign(dx) * factor;
@@ -398,7 +400,7 @@ Rectangle {
 				}
 
 				// if blocks are close
-				if (minDist < 256) {
+				if (minDist < repulsionMaxDist) {
 					var destBlock = blockContainer.children[minIndex];
 					// highlight destblock
 					if (highlightedBlock && highlightedBlock !== destBlock) {
