@@ -86,7 +86,7 @@ Rectangle {
 				subs[lastIndex] = lastSub;
 
 				var src = "";
-				src += "var program_counter = -1" + "\n";
+				src += "var state = -1" + "\n";
 				src += "callsub block" + lastIndex + "\n";
 				src = subs.reduce(function(source, sub, index) {
 					var global = sub.compiled.global;
@@ -110,7 +110,7 @@ Rectangle {
 					source += "emit block [" + index + ", 1]\n";
 
 					if (action !== undefined) {
-						source += "program_counter = " + index + "\n";
+						source += "state = " + index + "\n";
 						source += action + "\n";
 					}
 
@@ -149,9 +149,9 @@ Rectangle {
 					source = events[eventName].reduce(function(source, subIndex) {
 						var sub = subs[subIndex];
 						source += "if " + sub.parents.reduce(function(expr, arrow) {
-							return expr + " or program_counter == " + arrow.head;
+							return expr + " or state == " + arrow.head;
 						}, "0 != 0") + " then" + "\n";
-						source += "emit link [program_counter, " + subIndex + "]\n";
+						source += "emit link [state, " + subIndex + "]\n";
 						source += "callsub block" + subIndex + "\n";
 						source += "end" + "\n";
 						return source;
