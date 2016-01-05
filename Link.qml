@@ -62,7 +62,7 @@ Canvas {
 		requestPaint();
 	}
 
-	// to force the image to be loaded upon initalization
+	// to force images used in context2d to be loaded upon initalization
 	Image {
 		source: "images/elsePattern.png"
 		visible: false
@@ -74,7 +74,7 @@ Canvas {
 
 	Image {
 		id: arrow
-		source: "images/linkEndArrow.svg"
+		source: execHighlight ? "images/linkEndArrow.svg" : "images/linkEndArrowExec.svg"
 		visible: parent.width > 256
 	}
 

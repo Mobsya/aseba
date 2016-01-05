@@ -16,6 +16,7 @@ Item {
 	property bool highlight: false // whether this block is highlighted for link creation
 	property Item highlightedBlock: null // other block that is highlighted for link creation
 	property bool execHighlight: false // whether this block is highlighted for being executed currently
+	property bool execTrue: true // whether this block execution was true
 
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
@@ -39,7 +40,7 @@ Item {
 
 	Image {
 		id: backgroundImage
-		source: highlight ? "images/bgHighlight.svg" : (execHighlight ? "images/bgExec.svg" : "images/bgDefault.svg")
+		source: highlight ? "images/bgHighlight.svg" : (execHighlight ? ( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") : "images/bgDefault.svg")
 	}
 
 	// highlight execution for a short while
