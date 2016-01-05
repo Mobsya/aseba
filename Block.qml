@@ -49,8 +49,9 @@ Item {
 		interval: 100
 		onTriggered: execHighlight = false;
 	}
-	function exec() {
+	function exec(isTrue) {
 		execHighlight = true;
+		execTrue = isTrue;
 		execHighlightTimer.restart();
 	}
 

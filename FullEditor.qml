@@ -100,7 +100,7 @@ Rectangle {
 					source += "if " + condition + " then" + "\n";
 				}
 
-				source += "emit block " + index + "\n";
+				source += "emit block [" + index + ", 1]\n";
 
 				if (action !== undefined) {
 					source += "program_counter = " + index + "\n";
@@ -120,6 +120,7 @@ Rectangle {
 
 				if (condition !== undefined) {
 					source += "else" + "\n";
+					source += "emit block [" + index + ", 0]\n";
 					sub.children.forEach(function(arrow) {
 						if (!arrow.isElse) {
 							return;
@@ -172,9 +173,9 @@ Rectangle {
 		}
 	}
 
-	function execBlock(blockIndex) {
+	function execBlock(blockIndex, isTrue) {
 		if (blockIndex < blockContainer.children.length) {
-			blockContainer.children[blockIndex].exec();
+			blockContainer.children[blockIndex].exec(isTrue);
 		}
 	}
 

@@ -74,7 +74,7 @@ Canvas {
 
 	Image {
 		id: arrow
-		source: execHighlight ? "images/linkEndArrow.svg" : "images/linkEndArrowExec.svg"
+		source: execHighlight ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg"
 		visible: parent.width > 256
 	}
 
