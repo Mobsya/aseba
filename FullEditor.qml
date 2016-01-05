@@ -87,6 +87,8 @@ Rectangle {
 
 				var src = "";
 				src += "var state = -1" + "\n";
+				src += "var age = -1" + "\n";
+				src += "timer.period[0] = 10" + "\n";
 				src += "callsub block" + lastIndex + "\n";
 				src = subs.reduce(function(source, sub, index) {
 					var global = sub.compiled.global;
@@ -111,6 +113,7 @@ Rectangle {
 
 					if (action !== undefined) {
 						source += "state = " + index + "\n";
+						source += "age = 0\n";
 						source += action + "\n";
 					}
 
@@ -146,6 +149,9 @@ Rectangle {
 				src = Object.keys(events).reduce(function(source, eventName) {
 					source += "\n";
 					source += "onevent " + eventName + "\n";
+					if (eventName === "timer0") {
+						source += "age += 1\n";
+					}
 					source = events[eventName].reduce(function(source, subIndex) {
 						var sub = subs[subIndex];
 						source += "if " + sub.parents.reduce(function(expr, arrow) {
@@ -158,6 +164,7 @@ Rectangle {
 					}, source);
 					return source;
 				}, src);
+				console.warn(src);
 				compiler.source = src;
 			}
 		}
