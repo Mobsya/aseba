@@ -55,5 +55,6 @@
         <file>blocks/widgets/images/timerMiddleStroke.svg</file>
         <file>blocks/widgets/images/timerShortFill.svg</file>
         <file>blocks/widgets/images/timerShortStroke.svg</file>
+        <file>blocks/NopActionBlock.qml</file>
     </qresource>
 </RCC>

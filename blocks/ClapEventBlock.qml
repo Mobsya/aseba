@@ -4,7 +4,7 @@ import ".."
 BlockDefinition {
 	type: "event"
 
-	defaultParams: {}
+	defaultParams: null
 
 	editor: Component {
 		Item {
@@ -12,6 +12,7 @@ BlockDefinition {
 
 			width: 256
 			height: 256
+
 			property var params: defaultParams
 
 			Image {
@@ -20,7 +21,7 @@ BlockDefinition {
 			}
 
 			function getParams() {
-				return {};
+				return null;
 			}
 		}
 	}
