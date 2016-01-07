@@ -11,7 +11,7 @@ Rectangle {
 	anchors.fill: parent
 
 	//color: "#af000000"
-	color: "#a9acaf"
+	color: "#c8c8c8"
 
 //	Desaturate {
 //		id: desaturated
