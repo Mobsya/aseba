@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 Image {
 	property int majorValue: 0
-	property int minorValue: 1
+	property real minorValue: 1
 
 	source: majorValue === 0 ? "images/timerShortStroke.svg" : (majorValue === 1 ? "images/timerMiddleStroke.svg" : "images/timerLongStroke.svg")
 

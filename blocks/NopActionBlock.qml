@@ -7,8 +7,10 @@ BlockDefinition {
 	defaultParams: null
 
 	editor: Component {
-		Item {
+		Image {
 			property var params: defaultParams
+
+			source: "images/nop.svg"
 
 			function getParams() {
 				return null;
