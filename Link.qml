@@ -138,7 +138,7 @@ Canvas {
 				ctx.strokeStyle = ctx.createPattern("images/elsePattern.png", "repeat");
 		} else {
 			if (execHighlight)
-				ctx.strokeStyle = "#E285FF";
+				ctx.strokeStyle = "#F5E800";
 			else
 				ctx.strokeStyle = "#a2d8dc";
 		}
