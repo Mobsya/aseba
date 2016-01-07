@@ -218,17 +218,18 @@ Canvas {
 			onReleased: {
 				// if to be deleted, destroy this link
 				if (delBlock.state === "HIGHLIGHTED") {
-					parent.parent.destroy();
+					scene.removeLink(parent.parent);
 					delBlock.state = "NORMAL";
 				// if to be moved to another block, create new link and destroy this link
 				} else if (highlightedBlock) {
 					highlightedBlock.highlight = false;
+					scene.joinClique(parent, highlightedBlock, parent.parent);
 					var link = blockLinkComponent.createObject(linkContainer, {
 						sourceBlock: sourceBlock,
 						destBlock: highlightedBlock,
 						isElse: isElse
 					});
-					parent.parent.destroy();
+					scene.removeLink(parent.parent);
 				} else {
 					parent.resetPosition();
 				}

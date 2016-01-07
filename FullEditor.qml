@@ -287,6 +287,82 @@ Rectangle {
 				}
 			}
 
+			// methods for querying and modifying block and link graph
+			function applyToClique(block, func, excludedLink) {
+				// build block to outgoing links map
+				var blockLinks = {};
+				for (var i = 0; i < links.length; ++i) {
+					var link = links[i];
+					if (link == excludedLink)
+						continue;
+					if (!(link.sourceBlock in blockLinks)) {
+						blockLinks[link.sourceBlock] = {};
+					}
+					blockLinks[link.sourceBlock][link.destBlock] = true;
+					if (!(link.destBlock in blockLinks)) {
+						blockLinks[link.destBlock] = {};
+					}
+					blockLinks[link.destBlock][link.sourceBlock] = true;
+				}
+				//console.log("applyToClique");
+				// set of seens blocks
+				var seenBlocks = {};
+				// recursive function to process each block
+				function processBlock(block) {
+					if (block in seenBlocks)
+						return;
+					func(block);
+					//console.log("processing " + block);
+					seenBlocks[block] = true;
+					if (!(block in blockLinks))
+						return;
+					var nextBlocks = blockLinks[block];
+					for (var nextBlock in nextBlocks) {
+						if (nextBlocks.hasOwnProperty(nextBlock)) {
+							processBlock(nextBlock);
+						}
+					}
+				}
+				// run from the passed block
+				processBlock(block);
+			}
+			function areBlocksInSameClique(block0, block1, excludedLink) {
+				var areInSameClique = false;
+				//console.log("areBlocksInSameClique()");
+				// FIXME: why do we need double equal here?
+				//applyToClique(block0, function (block) { console.log(block + " " + block1); if (block == block1) { areInSameClique = true; console.log("true"); } }, excludedLink);
+				//console.log("areBlocksInSameClique " + block0 + " " + block1 + " : " + areInSameClique);
+				applyToClique(block0, function (block) { if (block == block1) { areInSameClique = true; } }, excludedLink);
+				return areInSameClique;
+			}
+
+			// methods for updating link indicators
+
+			// set starting indicator on either the sourceBlock or the destBlock clique
+			function removeLink(link) {
+				// if after link is removed the blocks are in the same clique, do not do anything
+				if (!areBlocksInSameClique(link.sourceBlock, link.destBlock, link)) {
+					// blocks are in different cliques
+					var leftHasStart = false;
+					applyToClique(link.sourceBlock, function (block) { if (block.isStarting) leftHasStart = true; }, link);
+					if (leftHasStart) {
+						link.destBlock.isStarting = true;
+					} else {
+						link.sourceBlock.isStarting = true;
+					}
+				}
+				link.destroy();
+			}
+			// if the two blocks will form a united clique, clear the start indicator of old destination clique
+			function joinClique(sourceBlock, destBlock, excludedLink) {
+				var touching = false;
+				scene.applyToClique(sourceBlock, function (block) { touching = touching || (block == destBlock); }, excludedLink);
+				scene.applyToClique(destBlock, function (block) { touching = touching || (block == sourceBlock); }, excludedLink);
+				if (!touching) {
+					scene.applyToClique(destBlock, function (block) { block.isStarting = false; }, excludedLink);
+				}
+			}
+
 			// container for all links
 			Item {
 				id: linkContainer
@@ -437,8 +513,8 @@ Rectangle {
 
 				// create link
 				if (highlightedBlock) {
+					newBlock.isStarting = false;
 					var link = blockLinkComponent.createObject(linkContainer, {
-						z: 0,
 						sourceBlock: highlightedBlock,
 						destBlock: newBlock
 					});

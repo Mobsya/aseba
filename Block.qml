@@ -18,6 +18,8 @@ Item {
 	property bool execHighlight: false // whether this block is highlighted for being executed currently
 	property bool execTrue: true // whether this block execution was true
 
+	property bool isStarting: true // whether this block is a starting block
+
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
 
@@ -41,6 +43,64 @@ Item {
 	Image {
 		id: backgroundImage
 		source: highlight ? "images/bgHighlight.svg" : (execHighlight ? ( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") : "images/bgDefault.svg")
+	}
+
+	// starting indicator, show if this block is the start of its click
+	Rectangle {
+		id: isStartingIndicator
+		readonly property real yRest: (parent.height - height) / 2
+		color: "gray"
+		width: 64
+		height: 64
+		x: -50
+		y: yRest
+		z: 1
+		radius: 32
+		visible: isStarting
+
+		function resetPosition() {
+			x = -50;
+			y = yRest;
+		}
+
+		// drag
+		MouseArea {
+			anchors.fill: parent
+			drag.target: isStartingIndicator
+
+			onPressed: {
+				block.bringBlockToFront();
+			}
+
+			// FIXME: is there a way to clean up this copy-pasted highlighting logic?
+			onPositionChanged: {
+				var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
+				// if we are to drop on another block of the same clique
+				if (destBlock && destBlock !== block && scene.areBlocksInSameClique(destBlock, block)) {
+					if (highlightedBlock && highlightedBlock !== destBlock) {
+						highlightedBlock.highlight = false;
+					}
+					highlightedBlock = destBlock;
+					highlightedBlock.highlight = true;
+				} else if (highlightedBlock) {
+					highlightedBlock.highlight = false;
+					highlightedBlock = null;
+				}
+			}
+
+			onReleased: {
+				if (highlightedBlock) {
+					// exchange starting indicators
+					block.isStarting = false;
+					highlightedBlock.isStarting = true;
+					// dehighlight block
+					highlightedBlock.highlight = false;
+					highlightedBlock = null;
+				}
+				parent.resetPosition();
+			}
+		}
 	}
 
 	// highlight execution for a short while
@@ -180,7 +240,6 @@ Item {
 			if (parent.isLinkTargetValid(destBlock)) {
 				if (highlightedBlock && highlightedBlock !== destBlock) {
 					highlightedBlock.highlight = false;
-					highlightedBlock = null;
 				}
 				highlightedBlock = destBlock;
 				highlightedBlock.highlight = true;
@@ -194,6 +253,8 @@ Item {
 			linkingPath.visible = false;
 			linkingArrow.visible = false;
 			if (highlightedBlock) {
+				// prepare scene
+				scene.joinClique(parent, highlightedBlock);
 				// create link
 				var link = blockLinkComponent.createObject(linkContainer, {
 					sourceBlock: parent,
