@@ -199,7 +199,6 @@ Item {
 					sourceBlock: parent,
 					destBlock: highlightedBlock
 				});
-				compiler.compile();
 				// dehighlight block
 				highlightedBlock.highlight = false;
 				highlightedBlock = null;
@@ -268,7 +267,6 @@ Item {
 					toDelete[i].destroy();
 				// remove this block from the scene
 				block.destroy();
-				compiler.compile();
 			} else {
 				// no, compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);

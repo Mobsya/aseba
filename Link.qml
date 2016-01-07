@@ -220,7 +220,6 @@ Canvas {
 				if (delBlock.state === "HIGHLIGHTED") {
 					parent.parent.destroy();
 					delBlock.state = "NORMAL";
-					compiler.compile();
 				// if to be moved to another block, create new link and destroy this link
 				} else if (highlightedBlock) {
 					highlightedBlock.highlight = false;
@@ -230,7 +229,6 @@ Canvas {
 						isElse: isElse
 					});
 					parent.parent.destroy();
-					compiler.compile();
 				} else {
 					parent.resetPosition();
 				}

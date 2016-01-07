@@ -110,14 +110,13 @@ BlockDefinition {
 			}
 
 			function getParams() {
-				if (majorSlider.value === 0) {
+				switch(majorSlider.value) {
+				case 0:
 					return 10 * minorSlider.value;
-				} else {
-					if (majorSlider.value === 1) {
-						return 100 * minorSlider.value;
-					} else {
-						return 1000 * minorSlider.value;
-					}
+				case 1:
+					return 100 * minorSlider.value;
+				default:
+					return 1000 * minorSlider.value;
 				}
 			}
 		}
@@ -137,11 +136,10 @@ BlockDefinition {
 		}
 	}
 
-	function compile(params) {
+	function compile(param) {
 		return {
-			// FIXME: implement logic
-			event: "tap",
-			condition: "0 == 0",
+			event: "timer0",
+			condition: "age >= " + param,
 		};
 	}
 }
