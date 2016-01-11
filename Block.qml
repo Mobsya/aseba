@@ -12,10 +12,8 @@ Item {
 	property BlockDefinition definition
 	property var params
 
-	// FIXME: should we use state for that? Or maybe even another object?
 	property bool highlight: false // whether this block is highlighted for link creation
 	property Item highlightedBlock: null // other block that is highlighted for link creation
-	property bool execHighlight: false // whether this block is highlighted for being executed currently
 	property bool execTrue: true // whether this block execution was true
 
 	property bool isStarting: true // whether this block is a starting block
@@ -26,6 +24,7 @@ Item {
 	property real vx: 0 // in px per millisecond
 	property real vy: 0 // in px per millisecond
 
+	// link indicator
 	Rectangle {
 		id: linkingPath
 		color: "#a2d8dc"
@@ -40,92 +39,26 @@ Item {
 		visible: false
 	}
 
+	// ring for linking and highlighting
 	Image {
-		id: backgroundImage
-		source: highlight ? "images/bgHighlight.svg" : (execHighlight ? ( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") : "images/bgDefault.svg")
+		source: highlight ? "images/bgHighlight.svg" : (execHighlightTimer.highlighted ? ( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") : "images/bgDefault.svg")
 	}
 
 	// starting indicator, show if this block is the start of its click
-	Rectangle {
-		id: isStartingIndicator
-		readonly property real yRest: (parent.height - height) / 2
-		color: "gray"
-		width: 64
-		height: 64
-		x: -50
-		y: yRest
-		z: 1
-		radius: 32
-		visible: isStarting
-
-		function resetPosition() {
-			x = -50;
-			y = yRest;
-		}
-
-		// drag
-		MouseArea {
-			anchors.fill: parent
-			drag.target: isStartingIndicator
-
-			onPressed: {
-				block.bringBlockToFront();
-			}
-
-			// FIXME: is there a way to clean up this copy-pasted highlighting logic?
-			onPositionChanged: {
-				var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-				// if we are to drop on another block of the same clique
-				if (destBlock && destBlock !== block && scene.areBlocksInSameClique(destBlock, block)) {
-					if (highlightedBlock && highlightedBlock !== destBlock) {
-						highlightedBlock.highlight = false;
-					}
-					highlightedBlock = destBlock;
-					highlightedBlock.highlight = true;
-				} else if (highlightedBlock) {
-					highlightedBlock.highlight = false;
-					highlightedBlock = null;
-				}
-			}
-
-			onReleased: {
-				if (highlightedBlock) {
-					// exchange starting indicators
-					block.isStarting = false;
-					highlightedBlock.isStarting = true;
-					// dehighlight block
-					highlightedBlock.highlight = false;
-					highlightedBlock = null;
-				}
-				parent.resetPosition();
-			}
-		}
+	StartIndicator {
+		id: startIndicator
 	}
 
-	// highlight execution for a short while
-	Timer {
+	// highlight for a short while upon execution on the robot
+	HighlightTimer {
 		id: execHighlightTimer
-		interval: 100
-		onTriggered: execHighlight = false;
 	}
 	function exec(isTrue) {
-		execHighlight = true;
 		execTrue = isTrue;
-		execHighlightTimer.restart();
+		execHighlightTimer.highlight();
 	}
 
-//	DropShadow {
-//		visible: true
-//		anchors.fill: backgroundImage
-//		color: highlight ? "#e0F05F48" : "#e082CEC6"
-//		radius: 5
-//		samples: 8
-//		spread: 0.5
-//		fast: true
-//		source: backgroundImage
-//	}
-
+	// center background
 	Image {
 		id: centerImageId
 		source: definition.type === "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"

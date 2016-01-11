@@ -47,19 +47,13 @@ Canvas {
 		elseDeleteDoodle.requestPaint();
 	}
 
-	// highlight execution for a short while
-	Timer {
+	// highlight for a short while upon execution on the robot
+	HighlightTimer {
 		id: execHighlightTimer
-		interval: 100
-		onTriggered: {
-			execHighlight = false;
-			requestPaint();
-		}
+		onHighlightedChanged: parent.requestPaint()
 	}
 	function exec() {
-		execHighlight = true;
-		execHighlightTimer.restart();
-		requestPaint();
+		execHighlightTimer.highlight();
 	}
 
 	// to force images used in context2d to be loaded upon initalization
@@ -74,7 +68,7 @@ Canvas {
 
 	Image {
 		id: arrow
-		source: execHighlight ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg"
+		source: execHighlightTimer.highlighted ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg"
 		visible: parent.width > 256
 	}
 
@@ -132,12 +126,12 @@ Canvas {
 		ctx.lineWidth = 10;
 		ctx.lineCap = "square";
 		if (isElse) {
-			if (execHighlight)
+			if (execHighlightTimer.highlighted)
 				ctx.strokeStyle = ctx.createPattern("images/elsePatternExec.png", "repeat");
 			else
 				ctx.strokeStyle = ctx.createPattern("images/elsePattern.png", "repeat");
 		} else {
-			if (execHighlight)
+			if (execHighlightTimer.highlighted)
 				ctx.strokeStyle = "#F5E800";
 			else
 				ctx.strokeStyle = "#a2d8dc";

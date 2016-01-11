@@ -59,5 +59,9 @@
         <file>images/bgExecFalse.svg</file>
         <file>images/linkEndArrowExec.svg</file>
         <file>blocks/images/nop.svg</file>
+        <file>images/threadStartIndicator.svg</file>
+        <file>StartIndicator.qml</file>
+        <file>HighlightTimer.qml</file>
+        <file>images/threadStartIndicatorExec.svg</file>
     </qresource>
 </RCC>
