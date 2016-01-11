@@ -141,30 +141,16 @@ Canvas {
 		ctx.stroke();
 	}
 
-	Canvas {
+	Image {
 		id: elseDeleteDoodle
+
 		visible: parent.width > 228 + 96
-		width: 96
-		height: 32
-		z: -1
+		source: canBeElse ? "images/arrowOptionActive.svg" : "images/arrowOptionInactive.svg"
+		z: 1
 
 		function resetPosition() {
-			x = parent.width/2-48;
-			y = parent.height*(1.-0.805);
-		}
-
-		onPaint: {
-			var ctx = getContext('2d');
-			if (canBeElse) {
-				ctx.fillStyle = "#f48574";
-			} else {
-				ctx.fillStyle = "#a0a0a0";
-			}
-			ctx.beginPath();
-			ctx.moveTo(0, 0);
-			ctx.bezierCurveTo(0, 16, 24, 32, 48, 32);
-			ctx.bezierCurveTo(72, 32, 96, 16, 96, 0);
-			ctx.fill();
+			x = parent.width/2-25;
+			y = parent.height*(1.-0.805)-25;
 		}
 
 		MouseArea {
