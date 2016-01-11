@@ -63,5 +63,6 @@
         <file>StartIndicator.qml</file>
         <file>HighlightTimer.qml</file>
         <file>images/threadStartIndicatorExec.svg</file>
+        <file>BlockAcceleration.qml</file>
     </qresource>
 </RCC>

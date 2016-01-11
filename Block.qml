@@ -101,27 +101,6 @@ Item {
 		}
 	}
 
-	// we use a timer to have some smooth effect
-	property real vx: 0 // in px per millisecond
-	property real vy: 0 // in px per millisecond
-
-	Timer {
-		id: accelerationTimer
-		interval: 17
-		repeat: true
-		onTriggered: {
-			x += (vx * interval) * 0.001;
-			y += (vy * interval) * 0.001;
-			vx *= 0.85;
-			vy *= 0.85;
-			if (Math.abs(vx) < 1 && Math.abs(vy) < 1) {
-				running = false;
-				vx = 0;
-				vy = 0;
-			}
-		}
-	}
-
 	// link under creation
 	MouseArea {
 		id: linkArea
@@ -200,6 +179,11 @@ Item {
 		}
 	}
 
+	// we use a timer to have smooth effect affects
+	BlockAcceleration {
+		id: accelerationTimer
+	}
+
 	// drag
 	MouseArea {
 		id: dragArea
@@ -209,7 +193,6 @@ Item {
 
 		// last mouse position in scene coordinates
 		property var prevMousePos
-		property double prevMouseTime: 0
 
 		onPressed: {
 			// within inner radius?
@@ -221,7 +204,7 @@ Item {
 			// if so...
 			if (mouse.accepted) {
 				prevMousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				prevMouseTime = new Date().valueOf();
+				accelerationTimer.startEstimation();
 				bringBlockToFront();
 			}
 		}
@@ -230,12 +213,8 @@ Item {
 			if (drag.active) {
 				// compute and accumulate displacement for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				var now = new Date().valueOf();
-				var dt = now - prevMouseTime;
-				block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
-				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
+				accelerationTimer.updateEstimation(mousePos.x - prevMousePos.x, mousePos.y - prevMousePos.y);
 				prevMousePos = mousePos;
-				prevMouseTime = now;
 				// check whether we are hovering delete block item
 				var delBlockPos = mapToItem(delBlock, mouse.x, mouse.y);
 				if (delBlock.contains(delBlockPos))
@@ -264,11 +243,8 @@ Item {
 			} else {
 				// no, compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				var now = new Date().valueOf();
-				var dt = now - prevMouseTime;
-				block.vx = block.vx * 0.6 + (mousePos.x - prevMousePos.x) * 0.4 * dt;
-				block.vy = block.vy * 0.6 + (mousePos.y - prevMousePos.y) * 0.4 * dt;
-				accelerationTimer.running = true;
+				accelerationTimer.updateEstimation(mousePos.x - prevMousePos.x, mousePos.y - prevMousePos.y);
+				accelerationTimer.startAcceleration();
 			}
 			// in any case, set back the delete item to normal state
 			delBlock.state = "NORMAL";
