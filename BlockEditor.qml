@@ -1,6 +1,8 @@
 import QtQuick 2.5
 import QtQml.Models 2.1
 import QtQuick.Window 2.2
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 import "blocks"
 
@@ -175,22 +177,25 @@ Rectangle {
 
 	}
 
-	Image {
+	Button {
 		id: closeButton
 
 		property bool isLandscape: Window.width >= Window.height
-
-		source: "images/okButton.svg"
-		width: 96
-		height: 96
 
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: isLandscape ? 20 : 256 + 20
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		MouseArea {
-			anchors.fill: parent
-			onClicked: {
+		style: ButtonStyle {
+			background: Rectangle {
+				color: "transparent"
+			}
+		}
+
+		action: Action {
+			shortcut: "Return"
+			iconSource: "images/okButton.svg"
+			onTriggered: {
 				block.definition = definition;
 				block.params = editorItemArea.children[0].getParams();
 				block = null;
