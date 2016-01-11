@@ -298,13 +298,14 @@ Rectangle {
 					if (!(link.sourceBlock in blockLinks)) {
 						blockLinks[link.sourceBlock] = {};
 					}
-					blockLinks[link.sourceBlock][link.destBlock] = true;
+					// note: we use the same object for key and value in order to access it later
+					blockLinks[link.sourceBlock][link.destBlock] = link.destBlock;
 					if (!(link.destBlock in blockLinks)) {
 						blockLinks[link.destBlock] = {};
 					}
-					blockLinks[link.destBlock][link.sourceBlock] = true;
+					// note: we use the same object for key and value in order to access it later
+					blockLinks[link.destBlock][link.sourceBlock] = link.sourceBlock;
 				}
-				//console.log("applyToClique");
 				// set of seens blocks
 				var seenBlocks = {};
 				// recursive function to process each block
@@ -312,16 +313,14 @@ Rectangle {
 					if (block in seenBlocks)
 						return;
 					func(block);
-					//console.log("processing " + block);
 					seenBlocks[block] = true;
 					if (!(block in blockLinks))
 						return;
 					var nextBlocks = blockLinks[block];
-					for (var nextBlock in nextBlocks) {
-						if (nextBlocks.hasOwnProperty(nextBlock)) {
-							processBlock(nextBlock);
-						}
-					}
+					Object.keys(nextBlocks).forEach(function(nextBlockString) {
+						var nextBlock = nextBlocks[nextBlockString];
+						processBlock(nextBlock);
+					});
 				}
 				// run from the passed block
 				processBlock(block);
