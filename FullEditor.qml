@@ -288,12 +288,14 @@ Rectangle {
 			}
 
 			// methods for querying and modifying block and link graph
+
+			// apply func to every block in the clique starting from block, considering links as undirected
 			function applyToClique(block, func, excludedLink) {
 				// build block to outgoing links map
 				var blockLinks = {};
 				for (var i = 0; i < links.length; ++i) {
 					var link = links[i];
-					if (link == excludedLink)
+					if (link === excludedLink)
 						continue;
 					if (!(link.sourceBlock in blockLinks)) {
 						blockLinks[link.sourceBlock] = {};
@@ -327,11 +329,7 @@ Rectangle {
 			}
 			function areBlocksInSameClique(block0, block1, excludedLink) {
 				var areInSameClique = false;
-				//console.log("areBlocksInSameClique()");
-				// FIXME: why do we need double equal here?
-				//applyToClique(block0, function (block) { console.log(block + " " + block1); if (block == block1) { areInSameClique = true; console.log("true"); } }, excludedLink);
-				//console.log("areBlocksInSameClique " + block0 + " " + block1 + " : " + areInSameClique);
-				applyToClique(block0, function (block) { if (block == block1) { areInSameClique = true; } }, excludedLink);
+				applyToClique(block0, function (block) { if (block === block1) { areInSameClique = true; } }, excludedLink);
 				return areInSameClique;
 			}
 
@@ -355,8 +353,8 @@ Rectangle {
 			// if the two blocks will form a united clique, clear the start indicator of old destination clique
 			function joinClique(sourceBlock, destBlock, excludedLink) {
 				var touching = false;
-				scene.applyToClique(sourceBlock, function (block) { touching = touching || (block == destBlock); }, excludedLink);
-				scene.applyToClique(destBlock, function (block) { touching = touching || (block == sourceBlock); }, excludedLink);
+				scene.applyToClique(sourceBlock, function (block) { touching = touching || (block === destBlock); }, excludedLink);
+				//scene.applyToClique(destBlock, function (block) { touching = touching || (block == sourceBlock); }, excludedLink);
 				if (!touching) {
 					scene.applyToClique(destBlock, function (block) { block.isStarting = false; }, excludedLink);
 				}

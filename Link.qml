@@ -203,7 +203,7 @@ Canvas {
 				// if to be moved to another block, create new link and destroy this link
 				} else if (highlightedBlock) {
 					highlightedBlock.highlight = false;
-					scene.joinClique(parent, highlightedBlock, parent.parent);
+					scene.joinClique(sourceBlock, highlightedBlock, parent.parent);
 					var link = blockLinkComponent.createObject(linkContainer, {
 						sourceBlock: sourceBlock,
 						destBlock: highlightedBlock,
