@@ -4,8 +4,8 @@ Timer {
 	interval: 17
 	repeat: true
 
-	property real vx: 0 // in px per millisecond
-	property real vy: 0 // in px per millisecond
+	property real vx: 0 // in px per second
+	property real vy: 0 // in px per second
 	property double prevTime: 0 // from Date().valueOf()
 
 	onTriggered: {
@@ -21,6 +21,8 @@ Timer {
 	}
 
 	function startEstimation() {
+		vx = 0;
+		vy = 0;
 		prevTime = new Date().valueOf();
 	}
 

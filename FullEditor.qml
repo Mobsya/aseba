@@ -262,8 +262,8 @@ Rectangle {
 
 			property int highestZ: 2
 
-			property real vx: 0 // in px per millisecond
-			property real vy: 0 // in px per millisecond
+			property real vx: 0 // in px per second
+			property real vy: 0 // in px per second
 
 			// we use a timer to have some smooth effect
 			// TODO: fixme
@@ -354,7 +354,6 @@ Rectangle {
 			function joinClique(sourceBlock, destBlock, excludedLink) {
 				var touching = false;
 				scene.applyToClique(sourceBlock, function (block) { touching = touching || (block === destBlock); }, excludedLink);
-				//scene.applyToClique(destBlock, function (block) { touching = touching || (block == sourceBlock); }, excludedLink);
 				if (!touching) {
 					scene.applyToClique(destBlock, function (block) { block.isStarting = false; }, excludedLink);
 				}
