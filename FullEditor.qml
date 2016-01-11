@@ -411,13 +411,6 @@ Rectangle {
 				}
 			}
 
-			property double prevTime: 0
-
-			Drag.onDragStarted: {
-				prevTime = new Date().valueOf();
-				console.log("drag started");
-			}
-
 			Component {
 				id: blockLinkComponent
 				Link { }

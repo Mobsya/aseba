@@ -21,9 +21,6 @@ Item {
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
 
-	property real vx: 0 // in px per millisecond
-	property real vy: 0 // in px per millisecond
-
 	// link indicator
 	Rectangle {
 		id: linkingPath
@@ -105,6 +102,9 @@ Item {
 	}
 
 	// we use a timer to have some smooth effect
+	property real vx: 0 // in px per millisecond
+	property real vy: 0 // in px per millisecond
+
 	Timer {
 		id: accelerationTimer
 		interval: 17
