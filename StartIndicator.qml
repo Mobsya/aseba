@@ -12,7 +12,7 @@ Image {
 
 	// small rectangle visually linking to the block
 	Rectangle {
-		color: "#82cec6"
+		color: "#a2d8dc"
 		x: parent.width-2
 		width: 14
 		height: 10
