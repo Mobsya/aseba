@@ -12,7 +12,6 @@ Canvas {
 	property Item destBlock: Null
 
 	property Item highlightedBlock: null // new block that is highlighted for link creation
-	property bool execHighlight: false // whether this link is highlighted for being executed currently
 
 	// we update our position when attached blocks are moved
 	Connections {
@@ -144,7 +143,9 @@ Canvas {
 		id: elseDeleteDoodle
 
 		visible: parent.width > 228 + 96
-		source: canBeElse ? "images/arrowOptionActive.svg" : "images/arrowOptionInactive.svg"
+		source: canBeElse ?
+			(execHighlightTimer.highlighted ? "images/arrowOptionActiveExec.svg" : "images/arrowOptionActive.svg") :
+			(execHighlightTimer.highlighted ? "images/arrowOptionInactiveExec.svg" : "images/arrowOptionInactive.svg")
 		z: 1
 
 		function resetPosition() {

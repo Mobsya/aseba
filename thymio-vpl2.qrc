@@ -69,5 +69,7 @@
         <file>blocks/images/stop.svg</file>
         <file>Compiler.qml</file>
         <file>blocks/StateActionBlock.qml</file>
+        <file>images/arrowOptionActiveExec.svg</file>
+        <file>images/arrowOptionInactiveExec.svg</file>
     </qresource>
 </RCC>

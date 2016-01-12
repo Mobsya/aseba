@@ -12,7 +12,7 @@ Image {
 
 	// small rectangle visually linking to the block
 	Rectangle {
-		color: "#a2d8dc"
+		color: execHighlightTimer.highlighted ? "#F5E800" : "#a2d8dc"
 		x: parent.width-2
 		width: 14
 		height: 10
