@@ -65,5 +65,6 @@
         <file>BlockAcceleration.qml</file>
         <file>images/arrowOptionActive.svg</file>
         <file>images/arrowOptionInactive.svg</file>
+        <file>Compiler.qml</file>
     </qresource>
 </RCC>
