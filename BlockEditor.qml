@@ -54,7 +54,7 @@ Rectangle {
 		TopColorActionBlock {},
 		BottomColorActionBlock {},
 		StopActionBlock {},
-		NopActionBlock {}
+		StateActionBlock {}
 	]
 
 	property Block block: null
@@ -62,7 +62,9 @@ Rectangle {
 	property var params: definition.defaultParams
 
 	onParamsChanged: {
-		editorItemArea.children = []
+		for (var i = 0; i < editorItemArea.children.length; ++i) {
+			editorItemArea.children[i].destroy();
+		}
 		definition.editor.createObject(editorItemArea, {
 			"params": params,
 			"anchors.horizontalCenter": editorItemArea.horizontalCenter,

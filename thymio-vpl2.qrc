@@ -68,5 +68,6 @@
         <file>blocks/StopActionBlock.qml</file>
         <file>blocks/images/stop.svg</file>
         <file>Compiler.qml</file>
+        <file>blocks/StateActionBlock.qml</file>
     </qresource>
 </RCC>
