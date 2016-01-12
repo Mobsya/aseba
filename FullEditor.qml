@@ -27,8 +27,20 @@ Rectangle {
 	}
 
 	function execBlock(blockIndex, isTrue) {
-		if (blockIndex < blockContainer.children.length) {
-			blockContainer.children[blockIndex].exec(isTrue);
+		if (blockIndex < blocks.length) {
+			blocks[blockIndex].exec(isTrue);
+		} else {
+			var threadIndex = blockIndex - blocks.length;
+			for (var i = 0; i < blocks.length; ++i) {
+				var block = blocks[i];
+				if (block.isStarting) {
+					if (threadIndex === 0) {
+						block.startIndicator.exec();
+						break;
+					}
+					threadIndex -= 1;
+				}
+			}
 		}
 	}
 

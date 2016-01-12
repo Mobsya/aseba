@@ -20,6 +20,7 @@ Item {
 
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
+	readonly property StartIndicator startIndicator: startIndicator
 
 	// link indicator
 	Rectangle {
