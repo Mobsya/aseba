@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   height="92"
+   width="92"
+   xml:space="preserve"
+   enable-background="new 0 0 140 140"
+   viewBox="0 0 92 92"
+   y="0px"
+   x="0px"
+   id="Layer_1"
+   version="1.1"><metadata
+     id="metadata17"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs15" /><circle
+     style="fill:none;stroke:#f52300;stroke-width:10;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+     id="circle3"
+     r="40.179626"
+     cy="46"
+     cx="46"
+     stroke-miterlimit="10" /><g
+     transform="matrix(0.78783582,0,0,0.78783582,-2.6094707,-9.1485074)"
+     id="g5"><circle
+       style="fill:#77c22c"
+       id="circle7"
+       r="36.700001"
+       cy="70"
+       cx="61.700001" /><polygon
+       style="fill:#ffffff"
+       id="polygon9"
+       points="85.4,71 48.1,92.5 48.1,49.4 " /></g></svg>

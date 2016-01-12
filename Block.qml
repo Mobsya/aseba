@@ -12,6 +12,8 @@ Item {
 	property BlockDefinition definition
 	property var params
 
+	property bool isError: false // whether this block is involved in an error
+
 	property bool highlight: false // whether this block is highlighted for link creation
 	property Item highlightedBlock: null // other block that is highlighted for link creation
 	property bool execTrue: true // whether this block execution was true
@@ -39,7 +41,13 @@ Item {
 
 	// ring for linking and highlighting
 	Image {
-		source: highlight ? "images/bgHighlight.svg" : (execHighlightTimer.highlighted ? ( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") : "images/bgDefault.svg")
+		source: isError ? "images/bgError.svg" :
+			(highlight ? "images/bgHighlight.svg" :
+				(execHighlightTimer.highlighted ?
+					( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") :
+					"images/bgDefault.svg"
+				)
+			)
 	}
 
 	// starting indicator, show if this block is the start of its click

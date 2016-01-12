@@ -11,6 +11,8 @@ Canvas {
 	property Item sourceBlock: Null
 	property Item destBlock: Null
 
+	property bool isError: false // whether this link is involved in an error
+
 	property Item highlightedBlock: null // new block that is highlighted for link creation
 
 	// we update our position when attached blocks are moved
@@ -63,10 +65,14 @@ Canvas {
 		source: "images/elsePatternExec.png"
 		visible: false
 	}
+	Image {
+		source: "images/elsePatternError.png"
+		visible: false
+	}
 
 	Image {
 		id: arrow
-		source: execHighlightTimer.highlighted ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg"
+		source: isError ? "images/linkEndArrowError.svg" : (execHighlightTimer.highlighted ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg")
 		visible: parent.width > 256
 	}
 
@@ -124,15 +130,23 @@ Canvas {
 		ctx.lineWidth = 10;
 		ctx.lineCap = "square";
 		if (isElse) {
-			if (execHighlightTimer.highlighted)
-				ctx.strokeStyle = ctx.createPattern("images/elsePatternExec.png", "repeat");
-			else
-				ctx.strokeStyle = ctx.createPattern("images/elsePattern.png", "repeat");
+			if (isError) {
+				ctx.strokeStyle = ctx.createPattern("images/elsePatternError.png", "repeat");
+			} else {
+				if (execHighlightTimer.highlighted)
+					ctx.strokeStyle = ctx.createPattern("images/elsePatternExec.png", "repeat");
+				else
+					ctx.strokeStyle = ctx.createPattern("images/elsePattern.png", "repeat");
+			}
 		} else {
-			if (execHighlightTimer.highlighted)
-				ctx.strokeStyle = "#F5E800";
-			else
-				ctx.strokeStyle = "#a2d8dc";
+			if (isError) {
+				ctx.strokeStyle = "#f52300";
+			} else {
+				if (execHighlightTimer.highlighted)
+					ctx.strokeStyle = "#F5E800";
+				else
+					ctx.strokeStyle = "#a2d8dc";
+			}
 		}
 		ctx.beginPath();
 		ctx.arc(width/2, height+Math.sqrt(width*width*3/4), width, 4*Math.PI/3+rightArcAngle, 5*Math.PI/3-leftArcAngle);
@@ -143,9 +157,12 @@ Canvas {
 		id: elseDeleteDoodle
 
 		visible: parent.width > 228 + 96
-		source: canBeElse ?
-			(execHighlightTimer.highlighted ? "images/arrowOptionActiveExec.svg" : "images/arrowOptionActive.svg") :
-			(execHighlightTimer.highlighted ? "images/arrowOptionInactiveExec.svg" : "images/arrowOptionInactive.svg")
+		source: isError ?
+			(canBeElse ? "images/arrowOptionActiveError.svg" : "images/arrowOptionInactiveError.svg") :
+			(canBeElse ?
+				(execHighlightTimer.highlighted ? "images/arrowOptionActiveExec.svg" : "images/arrowOptionActive.svg") :
+				(execHighlightTimer.highlighted ? "images/arrowOptionInactiveExec.svg" : "images/arrowOptionInactive.svg")
+			)
 		z: 1
 
 		function resetPosition() {

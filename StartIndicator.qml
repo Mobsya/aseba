@@ -1,18 +1,24 @@
 import QtQuick 2.0
 
 Image {
+	property bool isError: false // whether this start indicator is involved in an error
+
 	readonly property real xRest: -width+2
 	readonly property real yRest: (parent.height - height) / 2
 
 	x: xRest
 	y: yRest
 	z: 1
-	source: execHighlightTimer.highlighted ? "images/threadStartIndicatorExec.svg" : "images/threadStartIndicator.svg"
+	source: isError ?
+		"images/threadStartIndicatorError.svg" :
+		(execHighlightTimer.highlighted ? "images/threadStartIndicatorExec.svg" : "images/threadStartIndicator.svg")
 	visible: isStarting
 
 	// small rectangle visually linking to the block
 	Rectangle {
-		color: execHighlightTimer.highlighted ? "#F5E800" : "#a2d8dc"
+		color: isError ?
+			"#f52300" :
+			(execHighlightTimer.highlighted ? "#F5E800" : "#a2d8dc")
 		x: parent.width-2
 		width: 14
 		height: 10

@@ -71,5 +71,11 @@
         <file>blocks/StateActionBlock.qml</file>
         <file>images/arrowOptionActiveExec.svg</file>
         <file>images/arrowOptionInactiveExec.svg</file>
+        <file>images/arrowOptionActiveError.svg</file>
+        <file>images/arrowOptionInactiveError.svg</file>
+        <file>images/bgError.svg</file>
+        <file>images/linkEndArrowError.svg</file>
+        <file>images/threadStartIndicatorError.svg</file>
+        <file>images/elsePatternError.png</file>
     </qresource>
 </RCC>
