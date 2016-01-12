@@ -453,6 +453,27 @@ Rectangle {
 		}
 	}
 
+	// error text
+	Text {
+		id: errorText
+		text: "test error text"
+		//text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque scelerisque laoreet enim ac mattis. "
+
+		font.pointSize: 20
+		color: "#f52300"
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			bottom: parent.bottom
+			bottomMargin: 20
+		}
+		width: parent.width - 2 * (128+40)
+		height: 128
+		wrapMode: Text.WordWrap
+		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignVCenter
+	}
+
 	// block editor
 	BlockEditor {
 		id: editor
