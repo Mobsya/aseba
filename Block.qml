@@ -175,6 +175,17 @@ Item {
 				// dehighlight block
 				highlightedBlock.highlight = false;
 				highlightedBlock = null;
+			} else {
+				// create block
+				var pos = mapToItem(blockContainer, mouse.x, mouse.y);
+				var newBlock = scene.createBlock(pos.x, pos.y);
+
+				// create link
+				newBlock.isStarting = false;
+				var link = blockLinkComponent.createObject(linkContainer, {
+					sourceBlock: parent,
+					destBlock: newBlock
+				});
 			}
 		}
 	}

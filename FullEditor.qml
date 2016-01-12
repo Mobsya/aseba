@@ -199,6 +199,18 @@ Rectangle {
 				}
 			}
 
+			// create a new block at given coordinates
+			function createBlock(x, y) {
+				var block = blockComponent.createObject(blockContainer, {
+					x: x - 128 + Math.random(),
+					y: y - 128 + Math.random(),
+					definition: editor.definition,
+					params: editor.params
+				});
+				editor.block = block;
+				return block;
+			}
+
 			// container for all links
 			Item {
 				id: linkContainer
@@ -289,7 +301,7 @@ Rectangle {
 				if (editor.visible)
 					return;
 				var pos = mainContainer.mapToItem(blockContainer, mainContainer.width/2, mainContainer.height/2);
-				createBlock(pos.x, pos.y);
+				scene.createBlock(pos.x, pos.y);
 			}
 
 			onPressed: {
@@ -338,7 +350,7 @@ Rectangle {
 
 				// create block
 				var pos = mapToItem(blockContainer, mouse.x, mouse.y);
-				var newBlock = createBlock(pos.x, pos.y);
+				var newBlock = scene.createBlock(pos.x, pos.y);
 
 				// create link
 				if (highlightedBlock) {
@@ -357,16 +369,7 @@ Rectangle {
 				dragTarget.y = -64;
 			}
 
-			function createBlock(x, y) {
-				var block = blockComponent.createObject(blockContainer, {
-					x: x - 128 + Math.random(),
-					y: y - 128 + Math.random(),
-					definition: editor.definition,
-					params: editor.params
-				});
-				editor.block = block;
-				return block;
-			}
+
 		}
 	}
 

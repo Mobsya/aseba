@@ -44,7 +44,6 @@ Canvas {
 	onCanBeElseChanged: {
 		if (!canBeElse)
 			isElse = false;
-		elseDeleteDoodle.requestPaint();
 	}
 
 	// highlight for a short while upon execution on the robot
