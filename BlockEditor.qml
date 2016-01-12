@@ -53,6 +53,7 @@ Rectangle {
 		MotorActionBlock {},
 		TopColorActionBlock {},
 		BottomColorActionBlock {},
+		StopActionBlock {},
 		NopActionBlock {}
 	]
 
