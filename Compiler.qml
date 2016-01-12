@@ -13,6 +13,7 @@ Item {
 			var indices = {};
 			var events = {};
 			var subs = [];
+			var starts = [];
 			for (var i = 0; i < blocks.length; ++i) {
 				var block = blocks[i];
 				indices[block] = i;
@@ -28,10 +29,15 @@ Item {
 					}
 				}
 
+				if (block.isStarting) {
+					starts.push(i);
+				}
+
 				subs[i] = {
 					"compiled": compiled,
 					"parents": [],
 					"children": [],
+					"thread": -1,
 				};
 			}
 			for (var i = 0; i < links.length; ++i) {
@@ -47,41 +53,49 @@ Item {
 				subs[destIndex].parents.push(arrow);
 			}
 
-			var lastIndex = subs.length;
-			var lastSub = {
-				"compiled": {
-					"action": "",
-				},
-				"parents": [],
-				"children": [],
-			};
-			subs.forEach(function(sub, index) {
-				if (sub.parents.length === 0) {
-					var arrow = {
-						"head": lastIndex,
-						"tail": index,
-						"isElse": false,
-					};
-					sub.parents.push(arrow);
-					lastSub.children.push(arrow);
-				}
-				if (sub.children.length === 0) {
-					var arrow2 = {
-						"head": index,
-						"tail": lastIndex,
-						"isElse": false,
-					};
-					sub.children.push(arrow2);
-					lastSub.parents.push(arrow2);
-				}
+			starts.forEach(function(start, thread) {
+				var lastIndex = subs.length;
+				var lastSub = {
+					"compiled": {
+						"action": "",
+					},
+					"parents": [],
+					"children": [],
+					"thread": thread,
+				};
+				scene.applyToClique(blocks[start], function(block) {
+					var index = indices[block];
+					var sub = subs[index];
+					sub.thread = thread;
+					if (sub.parents.length === 0) {
+						var arrow = {
+							"head": lastIndex,
+							"tail": index,
+							"isElse": false,
+						};
+						sub.parents.push(arrow);
+						lastSub.children.push(arrow);
+					}
+					if (sub.children.length === 0) {
+						var arrow2 = {
+							"head": index,
+							"tail": lastIndex,
+							"isElse": false,
+						};
+						sub.children.push(arrow2);
+						lastSub.parents.push(arrow2);
+					}
+				});
+				subs[lastIndex] = lastSub;
 			});
-			subs[lastIndex] = lastSub;
 
 			var src = "";
-			src += "var state = -1" + "\n";
-			src += "var age = -1" + "\n";
+			src += "var states[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
+			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
 			src += "timer.period[0] = 10" + "\n";
-			src += "callsub block" + lastIndex + "\n";
+			for (var i = subs.length - starts.length; i < subs.length; ++i) {
+				src += "callsub block" + i + "\n";
+			}
 			src = subs.reduce(function(source, sub, index) {
 				var global = sub.compiled.global;
 				if (global !== undefined) {
@@ -104,8 +118,8 @@ Item {
 				source += "emit block [" + index + ", 1]\n";
 
 				if (action !== undefined) {
-					source += "state = " + index + "\n";
-					source += "age = 0\n";
+					source += "states[" + sub.thread + "] = " + index + "\n";
+					source += "ages[" + sub.thread + "] = 0\n";
 					source += action + "\n";
 				}
 
@@ -142,14 +156,17 @@ Item {
 				source += "\n";
 				source += "onevent " + eventName + "\n";
 				if (eventName === "timer0") {
-					source += "age += 1\n";
+					starts.forEach(function(start, thread) {
+						source += "ages[" + thread + "] += 1\n";
+					});
 				}
 				source = events[eventName].reduce(function(source, subIndex) {
 					var sub = subs[subIndex];
+					var thread = sub.thread;
 					source += "if " + sub.parents.reduce(function(expr, arrow) {
-						return expr + " or state == " + arrow.head;
+						return expr + " or states[" + thread + "] == " + arrow.head;
 					}, "0 != 0") + " then" + "\n";
-					source += "emit link [state, " + subIndex + "]\n";
+					source += "emit link [states[" + thread + "], " + subIndex + "]\n";
 					source += "callsub block" + subIndex + "\n";
 					source += "end" + "\n";
 					return source;
