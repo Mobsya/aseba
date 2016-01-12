@@ -139,7 +139,7 @@ BlockDefinition {
 	function compile(param) {
 		return {
 			event: "timer0",
-			condition: "age >= " + param,
+			condition: "ages[thread] >= " + param,
 		};
 	}
 }
