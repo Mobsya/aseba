@@ -67,5 +67,6 @@
         <file>images/arrowOptionInactive.svg</file>
         <file>blocks/StopActionBlock.qml</file>
         <file>blocks/images/stop.svg</file>
+        <file>Compiler.qml</file>
     </qresource>
 </RCC>
