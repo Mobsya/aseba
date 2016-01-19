@@ -61,6 +61,7 @@ Item {
 				subs[destIndex].parents.push(arrow);
 			}
 
+			// create start states
 			starts.forEach(function(start, thread) {
 				var lastIndex = subs.length;
 				var lastSub = {
@@ -71,27 +72,25 @@ Item {
 					"children": [],
 					"thread": thread,
 				};
+				var arrow = {
+					"head": lastIndex,
+					"tail": start,
+					"isElse": false,
+				};
+				lastSub.children.push(arrow);
+				subs[start].parents.push(arrow);
 				scene.applyToClique(blocks[start], function(block) {
 					var index = indices[block];
 					var sub = subs[index];
 					sub.thread = thread;
-					if (index === start) {
-						var arrow = {
-							"head": lastIndex,
-							"tail": index,
-							"isElse": false,
-						};
-						sub.parents.push(arrow);
-						lastSub.children.push(arrow);
-					}
 					if (sub.children.length === 0) {
-						var arrow2 = {
+						var arrow = {
 							"head": index,
 							"tail": lastIndex,
 							"isElse": false,
 						};
-						sub.children.push(arrow2);
-						lastSub.parents.push(arrow2);
+						sub.children.push(arrow);
+						lastSub.parents.push(arrow);
 					}
 				});
 				subs[lastIndex] = lastSub;
