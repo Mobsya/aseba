@@ -109,34 +109,37 @@ Item {
 				subs[lastIndex] = lastSub;
 			});
 
+			function visitChildren(sub, visit) {
+				sub.children.forEach(function(arrow) {
+					var index = arrow.tail;
+					var sub = subs[index];
+					visit(sub, index);
+				});
+			}
+
 			subs.forEach(function(sub, head) {
 				if (sub.compiled.condition !== undefined)
 					return;
+
 				var conditions = [];
-				function visit(sub, index) {
-					if (sub.compiled.condition !== undefined) {
-						if (conditions.indexOf(index) !== -1) {
-							conditions.forEach(function(index) {
-								var block = blocks[index];
-								if (block !== undefined) {
-									block.isError = true;
-								}
-							});
-							throw "Infinite loop";
-						}
-						conditions.push(index);
-						visitChildren(sub);
-						conditions.pop();
+				function visitConditions(sub, index) {
+					if (sub.compiled.condition === undefined) {
+						return;
 					}
+					if (conditions.indexOf(index) !== -1) {
+						conditions.forEach(function(index) {
+							var block = blocks[index];
+							if (block !== undefined) {
+								block.isError = true;
+							}
+						});
+						throw "Infinite loop";
+					}
+					conditions.push(index);
+					visitChildren(sub, visitConditions);
+					conditions.pop();
 				}
-				function visitChildren(sub) {
-					sub.children.forEach(function(arrow) {
-						var index = arrow.tail;
-						var sub = subs[index];
-						visit(sub, index);
-					});
-				}
-				visitChildren(sub);
+				visitChildren(sub, visitConditions);
 			});
 
 			(function() {
