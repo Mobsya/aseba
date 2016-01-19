@@ -12,6 +12,12 @@ Item {
 		id: timer
 		interval: 0
 		onTriggered: {
+			if (blocks.length === 0) {
+				compiler.source = "";
+				compiler.error = "";
+				return;
+			}
+
 			var indices = {};
 			var events = {};
 			var subs = [];
