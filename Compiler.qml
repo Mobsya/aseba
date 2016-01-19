@@ -2,6 +2,8 @@ import QtQuick 2.0
 
 Item {
 	property string source
+	property string error
+
 	function compile() {
 		timer.start();
 	}
@@ -173,6 +175,7 @@ Item {
 				}, source);
 				return source;
 			}, src);
+			compiler.error = "";
 			compiler.source = src;
 		}
 	}

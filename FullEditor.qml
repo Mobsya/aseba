@@ -456,8 +456,7 @@ Rectangle {
 	// error text
 	Text {
 		id: errorText
-		text: "test error text"
-		//text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque scelerisque laoreet enim ac mattis. "
+		text: compiler.error
 
 		font.pointSize: 20
 		color: "#f52300"
