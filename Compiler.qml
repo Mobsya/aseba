@@ -67,6 +67,15 @@ Item {
 					var index = indices[block];
 					var sub = subs[index];
 					sub.thread = thread;
+					if (index === start) {
+						var arrow = {
+							"head": lastIndex,
+							"tail": index,
+							"isElse": false,
+						};
+						sub.parents.push(arrow);
+						lastSub.children.push(arrow);
+					}
 					if (sub.children.length === 0) {
 						var arrow2 = {
 							"head": index,
