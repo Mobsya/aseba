@@ -91,6 +91,35 @@ Item {
 				subs[lastIndex] = lastSub;
 			});
 
+			if (function() {
+				var visited = [];
+				starts.forEach(function(start, thread) {
+					function visit(index) {
+						if (visited.indexOf(index) !== -1) {
+							return;
+						}
+						visited.push(index);
+						subs[index].children.forEach(function(arrow) {
+							visit(arrow.tail);
+						});
+					}
+					visit(blocks.length + thread);
+				});
+				return subs.reduce(function(wasError, sub, index) {
+					var block = blocks[index];
+					if (!block) {
+						return wasError;
+					}
+					var isError = visited.indexOf(index) === -1;
+					block.isError = isError;
+					return wasError || isError;
+				}, false);
+			}()) {
+				compiler.source = "";
+				compiler.error = "Unreachable blocks";
+				return;
+			}
+
 			var src = "";
 			src += "var states[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
 			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
