@@ -36,6 +36,7 @@ Item {
 			var starts = [];
 			for (var i = 0; i < blocks.length; ++i) {
 				var block = blocks[i];
+				block.isError = false;
 				indices[block] = i;
 				var compiled = block.definition.compile(block.params);
 
