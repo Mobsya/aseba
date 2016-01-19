@@ -140,6 +140,26 @@ Item {
 					conditions.pop();
 				}
 				visitChildren(sub, visitConditions);
+
+				var states = [];
+				function visitStates(sub, index) {
+					if (sub.compiled.condition !== undefined) {
+						return;
+					}
+					if (states.indexOf(index) !== -1) {
+						states.forEach(function(index) {
+							var block = blocks[index];
+							if (block !== undefined) {
+								block.isError = true;
+							}
+						});
+						throw "Infinite loop";
+					}
+					states.push(index);
+					visitChildren(sub, visitStates);
+					states.pop();
+				}
+				visitChildren(sub, visitStates);
 			});
 
 			(function() {
