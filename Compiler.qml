@@ -12,10 +12,22 @@ Item {
 		id: timer
 		interval: 0
 		onTriggered: {
-			if (blocks.length === 0) {
-				compiler.source = "";
+			try {
+				compiler.source = compile();
 				compiler.error = "";
-				return;
+			} catch(error) {
+				if (typeof(error) === "string") {
+					compiler.source = "";
+					compiler.error = error;
+				} else {
+					throw error;
+				}
+			}
+		}
+
+		function compile() {
+			if (blocks.length === 0) {
+				return "";
 			}
 
 			var indices = {};
@@ -96,7 +108,7 @@ Item {
 				subs[lastIndex] = lastSub;
 			});
 
-			if (function() {
+			var unreachable = (function() {
 				var visited = [];
 				starts.forEach(function(start, thread) {
 					function visit(index) {
@@ -110,19 +122,21 @@ Item {
 					}
 					visit(blocks.length + thread);
 				});
-				return subs.reduce(function(wasError, sub, index) {
+				var errors = 0;
+				subs.forEach(function(sub, index) {
 					var block = blocks[index];
 					if (!block) {
-						return wasError;
+						return;
 					}
-					var isError = visited.indexOf(index) === -1;
-					block.isError = isError;
-					return wasError || isError;
-				}, false);
-			}()) {
-				compiler.source = "";
-				compiler.error = "Unreachable blocks";
-				return;
+					if (visited.indexOf(index) === -1) {
+						errors += 1;
+						block.isError = true;
+					}
+				});
+				return errors;
+			}());
+			if (unreachable !== 0) {
+				throw "Unreachable blocks";
 			}
 
 			var src = "";
@@ -209,8 +223,7 @@ Item {
 				}, source);
 				return source;
 			}, src);
-			compiler.error = "";
-			compiler.source = src;
+			return src;
 		}
 	}
 }
