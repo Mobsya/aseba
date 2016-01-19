@@ -108,7 +108,7 @@ Item {
 				subs[lastIndex] = lastSub;
 			});
 
-			var unreachable = (function() {
+			(function() {
 				var visited = [];
 				starts.forEach(function(start, thread) {
 					function visit(index) {
@@ -122,22 +122,21 @@ Item {
 					}
 					visit(blocks.length + thread);
 				});
-				var errors = 0;
+				var unreachable = 0;
 				subs.forEach(function(sub, index) {
 					var block = blocks[index];
 					if (!block) {
 						return;
 					}
 					if (visited.indexOf(index) === -1) {
-						errors += 1;
+						unreachable += 1;
 						block.isError = true;
 					}
 				});
-				return errors;
-			}());
-			if (unreachable !== 0) {
-				throw "Unreachable blocks";
-			}
+				if (unreachable !== 0) {
+					throw "Unreachable blocks";
+				}
+			})();
 
 			var src = "";
 			src += "var states[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
