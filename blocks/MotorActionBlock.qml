@@ -15,6 +15,8 @@ BlockDefinition {
 
 			Image {
 				source: "images/motorBackground.svg"
+				width: 256 // working around Qt bug with SVG and HiDPI
+				height: 256 // working around Qt bug with SVG and HiDPI
 			}
 
 			MotorSlider {

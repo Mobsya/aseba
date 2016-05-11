@@ -12,6 +12,8 @@ Image {
 	source: isError ?
 		"images/threadStartIndicatorError.svg" :
 		(execHighlightTimer.highlighted ? "images/threadStartIndicatorExec.svg" : "images/threadStartIndicator.svg")
+	width: 92 // working around Qt bug with SVG and HiDPI
+	height: 92 // working around Qt bug with SVG and HiDPI
 	visible: isStarting
 
 	// small rectangle visually linking to the block

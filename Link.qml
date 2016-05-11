@@ -73,6 +73,8 @@ Canvas {
 	Image {
 		id: arrow
 		source: isError ? "images/linkEndArrowError.svg" : (execHighlightTimer.highlighted ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg")
+		width: 32 // working around Qt bug with SVG and HiDPI
+		height: 32 // working around Qt bug with SVG and HiDPI
 		visible: parent.width > 256
 	}
 
@@ -163,6 +165,8 @@ Canvas {
 				(execHighlightTimer.highlighted ? "images/arrowOptionActiveExec.svg" : "images/arrowOptionActive.svg") :
 				(execHighlightTimer.highlighted ? "images/arrowOptionInactiveExec.svg" : "images/arrowOptionInactive.svg")
 			)
+		width: 50 // working around Qt bug with SVG and HiDPI
+		height: 50 // working around Qt bug with SVG and HiDPI
 		z: 1
 
 		function resetPosition() {

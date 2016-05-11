@@ -125,6 +125,8 @@ Rectangle {
 					anchors.centerIn: parent
 					source: "images/eventCenter.svg"
 					scale: blockListBlockScale
+					width: 256 // working around Qt bug with SVG and HiDPI
+					height: 256 // working around Qt bug with SVG and HiDPI
 					Loader {
 						id: eventBlocksLoader
 						enabled: false
@@ -167,6 +169,8 @@ Rectangle {
 					anchors.centerIn: parent
 					source: "images/actionCenter.svg"
 					scale: blockListBlockScale
+					width: 256 // working around Qt bug with SVG and HiDPI
+					height: 256 // working around Qt bug with SVG and HiDPI
 					Loader {
 						id: actionBlocksLoader
 						enabled: false

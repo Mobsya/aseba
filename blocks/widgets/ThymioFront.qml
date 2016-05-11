@@ -6,6 +6,8 @@ Image {
 	property color bottomColor: "#ffffff"
 
 	source: "images/thymioFront.svg"
+	width: 256 // working around Qt bug with SVG and HiDPI
+	height: 256 // working around Qt bug with SVG and HiDPI
 
 	Rectangle {
 		x: 33

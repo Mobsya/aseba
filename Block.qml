@@ -36,6 +36,8 @@ Item {
 	Image {
 		id: linkingArrow
 		source: "images/linkEndArrow.svg"
+		width: 32 // working around Qt bug with SVG and HiDPI
+		height: 32 // working around Qt bug with SVG and HiDPI
 		visible: false
 	}
 
@@ -48,6 +50,8 @@ Item {
 					"images/bgDefault.svg"
 				)
 			)
+		width: 256 // working around Qt bug with SVG and HiDPI
+		height: 256 // working around Qt bug with SVG and HiDPI
 	}
 
 	// starting indicator, show if this block is the start of its click
@@ -70,6 +74,8 @@ Item {
 		source: definition.type === "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
 		anchors.centerIn: parent
 		scale: 0.72
+		width: 256 // working around Qt bug with SVG and HiDPI
+		height: 256 // working around Qt bug with SVG and HiDPI
 	}
 
 	// miniature
@@ -78,6 +84,8 @@ Item {
 		enabled: false;
 		anchors.centerIn: parent
 		scale: 0.72
+		width: 256 // working around Qt bug with SVG and HiDPI
+		height: 256 // working around Qt bug with SVG and HiDPI
 	}
 	// recreate miniature on params changed
 	onParamsChanged: {

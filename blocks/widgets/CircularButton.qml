@@ -3,6 +3,8 @@ import QtQuick 2.0
 Image {
 	state: "DISABLED"
 	source: state === "DISABLED" ? "images/circularButtonOff.svg" : "images/circularButtonOn.svg"
+	width: 64 // working around Qt bug with SVG and HiDPI
+	height: 64 // working around Qt bug with SVG and HiDPI
 
 	MouseArea {
 		anchors.fill: parent
