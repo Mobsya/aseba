@@ -1,8 +1,9 @@
 import QtQuick 2.5
 import QtQml.Models 2.1
 import QtQuick.Window 2.2
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import Qt.labs.controls 1.0
+//import QtQuick.Controls 1.4
+//import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 import "blocks"
 
@@ -193,20 +194,14 @@ Rectangle {
 		anchors.bottomMargin: isLandscape ? 20 : 256 + 20
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		style: ButtonStyle {
-			background: Rectangle {
-				color: "transparent"
-			}
+		contentItem: Image{
+			source: "images/okButton.svg"
 		}
 
-		action: Action {
-			shortcut: "Return"
-			iconSource: "images/okButton.svg"
-			onTriggered: {
-				block.definition = definition;
-				block.params = editorItemArea.children[0].getParams();
-				block = null;
-			}
+		onClicked: {
+			block.definition = definition;
+			block.params = editorItemArea.children[0].getParams();
+			block = null;
 		}
 	}
 }

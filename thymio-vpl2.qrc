@@ -10,7 +10,6 @@
         <file>BlockLinkArrow.qml</file>
         <file>Block.qml</file>
         <file>BlockEditor.qml</file>
-        <file>FullEditor.qml</file>
         <file>BlockDefinition.qml</file>
         <file>images/actionCenter.svg</file>
         <file>images/eventCenter.svg</file>
@@ -18,11 +17,7 @@
         <file>images/bgDefault.svg</file>
         <file>images/bgHighlight.svg</file>
         <file>images/centerContent.svg</file>
-        <file>images/addButton.svg</file>
-        <file>images/trashDefault.svg</file>
-        <file>images/trashOpen.svg</file>
-        <file>images/okButton.svg</file>
-        <file>images/elsePattern.png</file>
+		<file>images/elsePattern.png</file>
         <file>blocks/widgets/images/triangularButtonOff.svg</file>
         <file>blocks/widgets/images/triangularButtonOn.svg</file>
         <file>blocks/ButtonsEventBlock.qml</file>
@@ -77,5 +72,14 @@
         <file>images/linkEndArrowError.svg</file>
         <file>images/threadStartIndicatorError.svg</file>
         <file>images/elsePatternError.png</file>
+        <file>BlocksList.qml</file>
+		<file>Editor.qml</file>
+        <file>images/grid.png</file>
+        <file>BlocksPane.qml</file>
+        <file>images/ic_delete_white_48px.svg</file>
+        <file>images/ic_delete_on_white_48px.svg</file>
+        <file>images/ic_gps_fixed_white_24px.svg</file>
+        <file>images/ic_clear_white_24px.svg</file>
+        <file>HDPIImage.qml</file>
     </qresource>
 </RCC>

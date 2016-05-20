@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-Image {
+HDPIImage {
 	property bool isError: false // whether this start indicator is involved in an error
 
 	readonly property real xRest: -width+2
@@ -20,7 +20,7 @@ Image {
 	Rectangle {
 		color: isError ?
 			"#f52300" :
-			(execHighlightTimer.highlighted ? "#F5E800" : "#a2d8dc")
+			(execHighlightTimer.highlighted ? "#F5E800" : "#9478aa")
 		x: parent.width-2
 		width: 14
 		height: 10

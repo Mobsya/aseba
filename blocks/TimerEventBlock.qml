@@ -1,6 +1,7 @@
 import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import Qt.labs.controls 1.0
+//import QtQuick.Controls 1.4
+//import QtQuick.Controls.Styles 1.4
 import ".."
 import "widgets"
 
@@ -38,23 +39,10 @@ BlockDefinition {
 				width: 88
 				height: 32
 
-				style: SliderStyle {
-					groove: Rectangle {
-						implicitWidth: 180
-						implicitHeight: 8
-						color: "white"
-					}
-					handle: Rectangle {
-						anchors.centerIn: parent
-						color: "red"
-						implicitWidth: 20
-						implicitHeight: 32
-					}
-				}
-
-				minimumValue: 0
-				maximumValue: 2
+				from: 0
+				to: 2
 				stepSize: 1
+				snapMode: Slider.SnapAlways
 
 				value: paramsToMajorValue(params)
 
@@ -70,23 +58,10 @@ BlockDefinition {
 				height: 170
 				orientation: Qt.Vertical
 
-				style: SliderStyle {
-					groove: Rectangle {
-						implicitWidth: 180
-						implicitHeight: 8
-						color: "white"
-					}
-					handle: Rectangle {
-						anchors.centerIn: parent
-						color: "red"
-						implicitWidth: 20
-						implicitHeight: 32
-					}
-				}
-
-				minimumValue: 1
-				maximumValue: 9
+				from: 1
+				to: 9
 				stepSize: 1
+				snapMode: Slider.SnapAlways
 
 				value: paramsToMinorValue(params)
 

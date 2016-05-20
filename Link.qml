@@ -70,7 +70,7 @@ Canvas {
 		visible: false
 	}
 
-	Image {
+	HDPIImage {
 		id: arrow
 		source: isError ? "images/linkEndArrowError.svg" : (execHighlightTimer.highlighted ? "images/linkEndArrowExec.svg" : "images/linkEndArrow.svg")
 		width: 32 // working around Qt bug with SVG and HiDPI
@@ -147,7 +147,7 @@ Canvas {
 				if (execHighlightTimer.highlighted)
 					ctx.strokeStyle = "#F5E800";
 				else
-					ctx.strokeStyle = "#a2d8dc";
+					ctx.strokeStyle = "#9478aa";
 			}
 		}
 		ctx.beginPath();
@@ -155,7 +155,7 @@ Canvas {
 		ctx.stroke();
 	}
 
-	Image {
+	HDPIImage {
 		id: elseDeleteDoodle
 
 		visible: parent.width > 228 + 96
@@ -189,17 +189,23 @@ Canvas {
 			onPositionChanged: {
 				var scenePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				var destBlock = blockContainer.childAt(scenePos.x, scenePos.y);
-				var delBlockPos = mapToItem(delBlock, mouse.x, mouse.y);
+
+				// show trash bin
+				eventPane.showTrash = true;
+				actionPane.showTrash = true;
+				// elseDeleteDoodle.z = 1; // FIXME: not working
+
 				// check whether we are hovering delete block item
-				if (delBlock.contains(delBlockPos)) {
-					delBlock.state = "HIGHLIGHTED";
+				eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
+				actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
+				// check whether we are hovering delete block item
+				if (eventPane.trashOpen || actionPane.trashOpen) {
 					if (highlightedBlock) {
 						highlightedBlock.highlight = false;
 						highlightedBlock = null;
 					}
 				// check whether we are hovering another block
 				} else if (sourceBlock.isLinkTargetValid(destBlock)) {
-					delBlock.state = "NORMAL";
 					if (highlightedBlock && highlightedBlock !== destBlock) {
 						highlightedBlock.highlight = false;
 						highlightedBlock = null;
@@ -208,7 +214,6 @@ Canvas {
 					highlightedBlock.highlight = true;
 				// we are not hovering anything
 				} else {
-					delBlock.state = "NORMAL";
 					if (highlightedBlock) {
 						highlightedBlock.highlight = false;
 						highlightedBlock = null;
@@ -218,9 +223,8 @@ Canvas {
 
 			onReleased: {
 				// if to be deleted, destroy this link
-				if (delBlock.state === "HIGHLIGHTED") {
+				if (eventPane.trashOpen || actionPane.trashOpen) {
 					scene.removeLink(parent.parent);
-					delBlock.state = "NORMAL";
 				// if to be moved to another block, create new link and destroy this link
 				} else if (highlightedBlock) {
 					highlightedBlock.highlight = false;
@@ -234,6 +238,10 @@ Canvas {
 				} else {
 					parent.resetPosition();
 				}
+				// in any case, hide back the delete icons
+				eventPane.clearTrash();
+				actionPane.clearTrash();
+				//block.parent.z = 0;
 			}
 		}
 	}

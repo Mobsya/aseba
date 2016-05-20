@@ -7,7 +7,7 @@ BlockDefinition {
 	defaultParams: null
 
 	editor: Component {
-		Image {
+		HDPIImage {
 			property var params: defaultParams
 
 			source: "images/nop.svg"

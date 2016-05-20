@@ -27,13 +27,13 @@ Item {
 	// link indicator
 	Rectangle {
 		id: linkingPath
-		color: "#a2d8dc"
+		color: "#9478aa"
 		width: 0
 		height: 10
 		transformOrigin: "Left"
 		visible: false
 	}
-	Image {
+	HDPIImage {
 		id: linkingArrow
 		source: "images/linkEndArrow.svg"
 		width: 32 // working around Qt bug with SVG and HiDPI
@@ -42,7 +42,7 @@ Item {
 	}
 
 	// ring for linking and highlighting
-	Image {
+	HDPIImage {
 		source: isError ? "images/bgError.svg" :
 			(highlight ? "images/bgHighlight.svg" :
 				(execHighlightTimer.highlighted ?
@@ -69,7 +69,7 @@ Item {
 	}
 
 	// center background
-	Image {
+	HDPIImage {
 		id: centerImageId
 		source: definition.type === "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
 		anchors.centerIn: parent
@@ -195,7 +195,7 @@ Item {
 			} else {
 				// create block
 				var pos = mapToItem(blockContainer, mouse.x, mouse.y);
-				var newBlock = scene.createBlock(pos.x, pos.y);
+				var newBlock = scene.createBlock(pos.x, pos.y, editor.definition);
 
 				// create link
 				newBlock.isStarting = false;
@@ -243,39 +243,39 @@ Item {
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				accelerationTimer.updateEstimation(mousePos.x - prevMousePos.x, mousePos.y - prevMousePos.y);
 				prevMousePos = mousePos;
+				// show trash bin
+				eventPane.showTrash = true;
+				actionPane.showTrash = true;
+				var extPos = mapToItem(mainContainer, 128, 128);
+				blockDragPreview.x = extPos.x - 128;
+				blockDragPreview.y = extPos.y - 128;
+				blockDragPreview.backgroundImage = centerImageId.source;
+				blockDragPreview.opacity = 1.0;
+				blockDragPreview.params = block.params;
+				blockDragPreview.definition = definition;
+				//block.parent.z = 1; // FIXME: not working
+
 				// check whether we are hovering delete block item
-				var delBlockPos = mapToItem(delBlock, mouse.x, mouse.y);
-				if (delBlock.contains(delBlockPos))
-					delBlock.state = "HIGHLIGHTED";
-				else
-					delBlock.state = "NORMAL";
+				eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
+				actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
 			}
 		}
 
 		onReleased: {
 			// to be deleted?
-			if (delBlock.state === "HIGHLIGHTED") {
-				// yes, collect all links and arrows from/to this block
-				var toDelete = []
-				for (var i = 0; i < linkContainer.children.length; ++i) {
-					var child = linkContainer.children[i];
-					// if so, collect for removal
-					if (child.sourceBlock === block || child.destBlock === block)
-						toDelete.push(child);
-				}
-				// remove collected links and arrows
-				for (i = 0; i < toDelete.length; ++i)
-					toDelete[i].destroy();
-				// remove this block from the scene
-				block.destroy();
+			if (eventPane.trashOpen || actionPane.trashOpen) {
+				scene.deleteBlock(block);
 			} else {
 				// no, compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				accelerationTimer.updateEstimation(mousePos.x - prevMousePos.x, mousePos.y - prevMousePos.y);
 				accelerationTimer.startAcceleration();
 			}
-			// in any case, set back the delete item to normal state
-			delBlock.state = "NORMAL";
+			// in any case, hide back the delete icons
+			eventPane.clearTrash();
+			actionPane.clearTrash();
+			blockDragPreview.definition = null;
+			//block.parent.z = 0;
 		}
 
 		onClicked: {

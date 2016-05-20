@@ -1,6 +1,7 @@
 import QtQuick 2.0
+import "../.."
 
-Image {
+HDPIImage {
 	state: "DISABLED"
 	source: state === "DISABLED" ? "images/triangularButtonOff.svg" : "images/triangularButtonOn.svg"
 	width: 58 // working around Qt bug with SVG and HiDPI

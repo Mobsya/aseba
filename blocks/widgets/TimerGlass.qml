@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "../.."
 
 Image {
 	property int majorValue: 0
@@ -8,7 +9,7 @@ Image {
 	width: 256 // working around Qt bug with SVG and HiDPI
 	height: 256 // working around Qt bug with SVG and HiDPI
 
-	Image {
+	HDPIImage {
 		anchors.horizontalCenter: parent.horizontalCenter
 		y: 99
 		source: majorValue === 0 ? "images/timerShortFill.svg" : (majorValue === 1 ? "images/timerMiddleFill.svg" : "images/timerLongFill.svg")
