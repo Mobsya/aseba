@@ -379,7 +379,7 @@ Item {
 
 		// center view
 		HDPIImage {
-			source: "images/ic_gps_fixed_white_24px.svg"
+			source: "icons/ic_gps_fixed_white_24px.svg"
 			width: 24 // working around Qt bug with SVG and HiDPI
 			height: 24 // working around Qt bug with SVG and HiDPI
 			anchors.right: parent.right
@@ -402,7 +402,7 @@ Item {
 
 		// clear content
 		HDPIImage {
-			source: "images/ic_clear_white_24px.svg"
+			source: "icons/ic_clear_white_24px.svg"
 			width: 24 // working around Qt bug with SVG and HiDPI
 			height: 24 // working around Qt bug with SVG and HiDPI
 			anchors.right: parent.right

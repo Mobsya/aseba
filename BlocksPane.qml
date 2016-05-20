@@ -30,7 +30,7 @@ Pane {
 	}
 
 	HDPIImage {
-		source: trashOpen ? "images/ic_delete_on_white_48px.svg" : "images/ic_delete_white_48px.svg"
+		source: trashOpen ? "icons/ic_delete_on_white_48px.svg" : "icons/ic_delete_white_48px.svg"
 		width: 64 // working around Qt bug with SVG and HiDPI
 		height: 64 // working around Qt bug with SVG and HiDPI
 		anchors.centerIn: parent

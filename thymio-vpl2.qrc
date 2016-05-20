@@ -76,10 +76,10 @@
 		<file>Editor.qml</file>
         <file>images/grid.png</file>
         <file>BlocksPane.qml</file>
-        <file>images/ic_delete_white_48px.svg</file>
-        <file>images/ic_delete_on_white_48px.svg</file>
-        <file>images/ic_gps_fixed_white_24px.svg</file>
-        <file>images/ic_clear_white_24px.svg</file>
+		<file>icons/ic_delete_white_48px.svg</file>
+		<file>icons/ic_delete_on_white_48px.svg</file>
+		<file>icons/ic_gps_fixed_white_24px.svg</file>
+		<file>icons/ic_clear_white_24px.svg</file>
         <file>HDPIImage.qml</file>
     </qresource>
 </RCC>
