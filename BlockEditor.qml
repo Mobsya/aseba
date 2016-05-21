@@ -1,10 +1,8 @@
-import QtQuick 2.5
+import QtQuick 2.6
+import QtQuick.Layouts 1.3
 import QtQml.Models 2.1
 import QtQuick.Window 2.2
 import Qt.labs.controls 1.0
-//import QtQuick.Controls 1.4
-//import QtQuick.Controls.Styles 1.4
-import QtGraphicalEffects 1.0
 import "blocks"
 
 // editor
@@ -12,24 +10,10 @@ Rectangle {
 	id: editor
 
 	anchors.fill: parent
-
-	//color: "#af000000"
-	color: "#c8c8c8"
-
-//	Desaturate {
-//		id: desaturated
-//		anchors.fill: parent
-//		source: mainContainer
-//		desaturation: 0.5
-//	}
-//	FastBlur {
-//	   anchors.fill: parent
-//	   source: mainContainer
-//	   radius: 32
-//	}
-
+	color: "#44285a"
 	visible: block !== null
 
+	// FIXME: still a problem?
 	// to block events from going to the scene
 	PinchArea {
 		anchors.fill: parent
@@ -39,169 +23,69 @@ Rectangle {
 		onWheel: wheel.accepted = true;
 	}
 
-	readonly property real blockListWidth: 220
-	readonly property real blockListBlockScale: 0.72
-
-	property list<BlockDefinition> eventBlocks: [
-		ButtonsEventBlock {},
-		ProxEventBlock {},
-		ProxGroundEventBlock {},
-		TapEventBlock {},
-		ClapEventBlock {},
-		TimerEventBlock {}
-	]
-	property list<BlockDefinition> actionBlocks: [
-		MotorActionBlock {},
-		TopColorActionBlock {},
-		BottomColorActionBlock {},
-		StopActionBlock {},
-		StateActionBlock {}
-	]
-
 	property Block block: null
-	property BlockDefinition definition: eventBlocks[0]
-	property var params: definition.defaultParams
+	property BlockDefinition definition: null
 
-	onParamsChanged: {
-		for (var i = 0; i < editorItemArea.children.length; ++i) {
-			editorItemArea.children[i].destroy();
-		}
-		definition.editor.createObject(editorItemArea, {
-			"params": params,
-			"anchors.horizontalCenter": editorItemArea.horizontalCenter,
-			"anchors.verticalCenter": editorItemArea.verticalCenter
-		})
+	function setBlock(block) {
+		editor.block = block;
+		editorItemLoader.defaultParams = block.params;
+		editor.definition = block.definition;
 	}
 
-	onBlockChanged: {
-		if (block) {
-			definition = block.definition;
-			params = block.params;
-		} else {
-			params = definition.defaultParams;
-		}
+	function setBlockType(definition) {
+		editorItemLoader.defaultParams = definition.defaultParams;
+		editor.definition = definition;
 	}
 
-	Rectangle {
-		id: editorItemArea
+	function clearBlock() {
+		editor.block = null;
+		editor.definition = null;
+	}
 
-		property bool isLandscape: Window.width >= Window.height
-		property real scaledWidth: isLandscape ? Math.min(Window.width - 512, Window.height - (96+20+20)*2) : Math.min(Window.width, Window.height - 512 - (96+20+20)*2)
-
-		color: "transparent"
-
+	Loader {
+		id: editorItemLoader
 		anchors.centerIn: parent
 		scale: Math.max(scaledWidth / 256, 0.1)
-		width: 256
-		height: 256
+		// FIXME: this is binded so that when it is changed just before setting the definition it generates errors
+		property var defaultParams
+
+		property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+16+16)*2)
+
+		sourceComponent: editor.definition ? editor.definition.editor : null
 	}
 
-	Rectangle {
-		property bool isLandscape: Window.width >= Window.height
-
-		anchors.left: parent.left
-		anchors.top: parent.top
-		anchors.bottom: isLandscape ? parent.bottom : undefined
-		anchors.right: isLandscape ? undefined : parent.right
-
-		width: isLandscape ? blockListWidth : undefined
-		height: isLandscape ? undefined : blockListWidth
-		color: "#ebeef0"
-
-		ListView {
-			id: eventBlocksView
-			model: eventBlocks
-			anchors.fill: parent
-			clip: true
-			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
-
-			delegate: MouseArea {
-				height: blockListWidth
-				width: blockListWidth
-				onClicked: {
-					definition = eventBlocks[index];
-					params = definition.defaultParams;
-				}
-				Image {
-					anchors.centerIn: parent
-					source: "images/eventCenter.svg"
-					scale: blockListBlockScale
-					width: 256 // working around Qt bug with SVG and HiDPI
-					height: 256 // working around Qt bug with SVG and HiDPI
-					Loader {
-						id: eventBlocksLoader
-						enabled: false
-						anchors.horizontalCenter: parent.horizontalCenter
-						anchors.verticalCenter: parent.verticalCenter
-						sourceComponent: eventBlocks[index].miniature
-					}
-				}
-			}
-		}
-	}
-
-	Rectangle {
-		property bool isLandscape: Window.width >= Window.height
-
-		anchors.right: parent.right
-		anchors.top: isLandscape ? parent.top : undefined
-		anchors.left: isLandscape ? undefined : parent.left
+	// buttons of the fake dialog
+	RowLayout {
 		anchors.bottom: parent.bottom
-
-		width: isLandscape ? blockListWidth : undefined
-		height: isLandscape ? undefined : blockListWidth
-		color: "#ebeef0"
-
-		ListView {
-			id: actionBlocksView
-			model: actionBlocks
-			anchors.fill: parent
-			clip: true
-			orientation: parent.isLandscape ? ListView.Vertical : ListView.Horizontal
-
-			delegate: MouseArea {
-				height: blockListWidth
-				width: blockListWidth
-				onClicked: {
-					definition = actionBlocks[index];
-					params = definition.defaultParams;
-				}
-				Image {
-					anchors.centerIn: parent
-					source: "images/actionCenter.svg"
-					scale: blockListBlockScale
-					width: 256 // working around Qt bug with SVG and HiDPI
-					height: 256 // working around Qt bug with SVG and HiDPI
-					Loader {
-						id: actionBlocksLoader
-						enabled: false
-						anchors.horizontalCenter: parent.horizontalCenter
-						anchors.verticalCenter: parent.verticalCenter
-						sourceComponent: actionBlocks[index].miniature
-					}
-				}
-			}
-		}
-
-	}
-
-	Button {
-		id: closeButton
-
-		property bool isLandscape: Window.width >= Window.height
-
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: isLandscape ? 20 : 256 + 20
+		anchors.bottomMargin: 16
 		anchors.horizontalCenter: parent.horizontalCenter
+		spacing: 16
 
-		contentItem: Image{
-			source: "images/okButton.svg"
+		Button {
+			id: cancelButton
+			text: "Cancel"
+
+	//		contentItem: Image{
+	//			source: "images/okButton.svg"
+	//		}
+
+			onClicked: {
+				clearBlock();
+			}
 		}
 
-		onClicked: {
-			block.definition = definition;
-			block.params = editorItemArea.children[0].getParams();
-			block = null;
+		Button {
+			text: "Ok"
+
+	//		contentItem: Image{
+	//			source: "images/okButton.svg"
+	//		}
+
+			onClicked: {
+				block.definition = editor.definition;
+				block.params = editorItemLoader.item.getParams();
+				clearBlock();
+			}
 		}
 	}
 }

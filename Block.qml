@@ -279,7 +279,7 @@ Item {
 		}
 
 		onClicked: {
-			editor.block = block;
+			blockEditor.setBlock(block);
 		}
 	}
 }

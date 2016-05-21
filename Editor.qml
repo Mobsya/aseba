@@ -52,7 +52,14 @@ Item {
 	BlocksPane {
 		id: eventPane
 
-		blocks: editor.eventBlocks
+		blocks: [
+			ButtonsEventBlock {},
+			ProxEventBlock {},
+			ProxGroundEventBlock {},
+			TapEventBlock {},
+			ClapEventBlock {},
+			TimerEventBlock {}
+		]
 		backImage: "images/eventCenter.svg"
 		x: vplEditor.minimized ? -width : 0
 
@@ -62,7 +69,13 @@ Item {
 	BlocksPane {
 		id: actionPane
 
-		blocks: editor.actionBlocks
+		blocks: [
+			MotorActionBlock {},
+			TopColorActionBlock {},
+			BottomColorActionBlock {},
+			StopActionBlock {},
+			StateActionBlock {}
+		]
 		backImage: "images/actionCenter.svg"
 		x: vplEditor.minimized ? parent.width : parent.width - width
 
@@ -423,8 +436,7 @@ Item {
 
 		// block editor
 		BlockEditor {
-			id: editor
-			z: 1
+			id: blockEditor
 		}
 	}
 }

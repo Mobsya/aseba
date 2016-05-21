@@ -13,12 +13,9 @@ BlockDefinition {
 			height: 256
 			property var params: defaultParams
 
-			Camera {
-				id: camera
-			}
-
 			VideoOutput {
 				id: output
+				// FIXME: resolve scope
 				source: camera
 				anchors.fill: parent
 				fillMode: Image.PreserveAspectCrop

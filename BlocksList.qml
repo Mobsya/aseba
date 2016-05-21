@@ -7,12 +7,6 @@ ListView {
 	property string backImage
 	property bool isLandscape: true
 
-//	onDraggingChanged: {
-//		if (dragging) {
-//			addBlockPreview.definition = null;
-//		}
-//	}
-
 	anchors.fill: parent
 	clip: true
 	orientation: isLandscape ? ListView.Vertical : ListView.Horizontal
@@ -24,7 +18,19 @@ ListView {
 
 		property Item highlightedBlock: null
 
+		onClicked: {
+			// only process in block editor mode
+			if (blockEditor.visible) {
+				blockEditor.setBlockType(blocks[index]);
+			}
+		}
+
 		onPositionChanged: {
+			// only process if not in block editor mode
+			if (blockEditor.visible) {
+				return;
+			}
+
 			var pos = mapToItem(mainContainer, mouse.x, mouse.y);
 			blockDragPreview.x = pos.x - 128;
 			blockDragPreview.y = pos.y - 128;
@@ -72,6 +78,11 @@ ListView {
 		}
 
 		onReleased: {
+			// only process if not in block editor mode
+			if (blockEditor.visible) {
+				return;
+			}
+
 			// create block
 			var pos = mapToItem(mainContainer, mouse.x, mouse.y);
 			if (mainContainer.contains(pos)) {
@@ -103,8 +114,7 @@ ListView {
 			height: 256 // working around Qt bug with SVG and HiDPI
 			Loader {
 				enabled: false
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter
+				anchors.centerIn: parent
 				sourceComponent: blocks[index].miniature
 			}
 		}

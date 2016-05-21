@@ -17,6 +17,7 @@ Pane {
 	}
 
 	BlocksList {
+		id: blocksList
 		blocks: pane.blocks
 		backImage: pane.backImage
 		anchors.fill: parent
