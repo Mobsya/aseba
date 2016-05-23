@@ -1,6 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
-import QtGraphicalEffects 1.0
+import QtMultimedia 5.5
 import Qt.labs.controls 1.0
 import "blocks"
 
@@ -9,6 +9,8 @@ Item {
 
 	// whether VPL editor is minimized on top of background image
 	property bool minimized: false
+
+	property Camera camera
 
 	property Compiler compiler: Compiler {}
 
@@ -72,9 +74,7 @@ Item {
 		blocks: [
 			MotorActionBlock {},
 			TopColorActionBlock {},
-			BottomColorActionBlock {},
-			StopActionBlock {},
-			StateActionBlock {}
+			BottomColorActionBlock {}
 		]
 		backImage: "images/actionCenter.svg"
 		x: vplEditor.minimized ? parent.width : parent.width - width

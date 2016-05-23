@@ -49,7 +49,7 @@ Rectangle {
 		// FIXME: this is binded so that when it is changed just before setting the definition it generates errors
 		property var defaultParams
 
-		property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+16+16)*2)
+		property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+12+12)*2)
 
 		sourceComponent: editor.definition ? editor.definition.editor : null
 	}
@@ -57,9 +57,9 @@ Rectangle {
 	// buttons of the fake dialog
 	RowLayout {
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 16
+		anchors.bottomMargin: 12
 		anchors.horizontalCenter: parent.horizontalCenter
-		spacing: 16
+		spacing: 24
 
 		Button {
 			id: cancelButton

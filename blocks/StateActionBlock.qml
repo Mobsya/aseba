@@ -16,7 +16,7 @@ BlockDefinition {
 			VideoOutput {
 				id: output
 				// FIXME: resolve scope
-				source: camera
+				source: vplEditor.camera
 				anchors.fill: parent
 				fillMode: Image.PreserveAspectCrop
 				focus : visible // to receive focus and capture key events when visible
