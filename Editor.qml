@@ -9,8 +9,7 @@ Item {
 
 	// whether VPL editor is minimized on top of background image
 	property bool minimized: false
-
-	property Camera camera
+	property alias mainContainerScale: mainContainer.scale
 
 	property Compiler compiler: Compiler {}
 
