@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import QtMultimedia 5.5
 import QtQuick.Controls 2.0
+import QtQuick.LocalStorage 2.0
 import "blocks"
 
 Item {
@@ -11,7 +12,25 @@ Item {
 	property bool minimized: false
 	property alias mainContainerScale: mainContainer.scale
 
-	property Compiler compiler: Compiler {}
+	property alias compiler: compiler
+	Compiler {
+		id: compiler
+	}
+
+	property list<BlockDefinition> eventDefinitions: [
+		ButtonsEventBlock {},
+		ProxEventBlock {},
+		ProxGroundEventBlock {},
+		TapEventBlock {},
+		ClapEventBlock {},
+		TimerEventBlock {}
+	]
+
+	property list<BlockDefinition> actionDefinitions: [
+		MotorActionBlock {},
+		TopColorActionBlock {},
+		BottomColorActionBlock {}
+	]
 
 	readonly property alias blocks: blockContainer.children
 	readonly property alias links: linkContainer.children
@@ -19,14 +38,14 @@ Item {
 	readonly property real repulsionMaxDist: 330
 
 	function execLink(sourceBlockIndex, targetBlockIndex) {
-		if (sourceBlockIndex >= blockContainer.children.length)
+		if (sourceBlockIndex >= blocks.length)
 			return;
-		if (targetBlockIndex >= blockContainer.children.length)
+		if (targetBlockIndex >= blocks.length)
 			return;
-		var sourceBlock = blockContainer.children[sourceBlockIndex];
-		var targetBlock = blockContainer.children[targetBlockIndex];
-		for (var i = 0; i < linkContainer.children.length; ++i) {
-			var link = linkContainer.children[i];
+		var sourceBlock = blocks[sourceBlockIndex];
+		var targetBlock = blocks[targetBlockIndex];
+		for (var i = 0; i < links.length; ++i) {
+			var link = links[i];
 			if (link.sourceBlock === sourceBlock && link.destBlock === targetBlock)
 				link.exec();
 		}
@@ -50,17 +69,140 @@ Item {
 		}
 	}
 
+	// return a JSON representation of the content of the editor
+	function serialize() {
+		var out = {};
+
+		// collect blocks and build a map of blocks to id
+		var bs = [];
+		var btoid = {};
+		for (var i = 0; i < blocks.length; ++i) {
+			var block = blocks[i];
+			var b = block.serialize();
+			btoid[block] = i;
+			b["id"] = i;
+			var blockDefinitionString = block.definition.toString();
+			b["definition"] = blockDefinitionString.substr(0, blockDefinitionString.indexOf('_'));
+			bs.push(b);
+		}
+		out["blocks"] = bs;
+
+		// collect links and resolve block references
+		var ls = [];
+		for (var i = 0; i < links.length; ++i) {
+			var link = links[i];
+			var l = link.serialize();
+			l["source"] = btoid[link.sourceBlock];
+			l["dest"] = btoid[link.destBlock];
+			ls.push(l);
+		}
+		out["links"] = ls;
+
+		return out;
+	}
+
+	// retrieve the definition of a block from a string
+	function getBlockDefinition(definitionString) {
+		for (var i = 0; i < eventDefinitions.length; ++i) {
+			var blockDefinitionString = eventDefinitions[i].toString();
+			if (blockDefinitionString.substr(0, blockDefinitionString.indexOf('_')) === definitionString)
+				return eventDefinitions[i];
+		}
+		for (var i = 0; i < actionDefinitions.length; ++i) {
+			var blockDefinitionString = actionDefinitions[i].toString();
+			if (blockDefinitionString.substr(0, blockDefinitionString.indexOf('_')) === definitionString)
+				return actionDefinitions[i];
+		}
+		return null;
+	}
+
+	// reset content from a JSON representation
+	function deserialize(data) {
+		console.log(data);
+
+		// first restore blocks
+		blocks = [];
+		for (var i = 0; i < data.blocks.length; ++i) {
+			var b = data.blocks[i];
+			blockComponent.createObject(blockContainer, {
+				x: b.x,
+				y: b.y,
+				definition: getBlockDefinition(b.definition),
+				params: b.params,
+				isStarting: b.isStarting
+			});
+		}
+
+		// add then links
+		links = [];
+		for (var i = 0; i < data.links.length; ++i) {
+			var l = data.links[i];
+			blockLinkComponent.createObject(linkContainer, {
+				sourceBlock: blocks[l.source],
+				destBlock: blocks[l.dest],
+				isElse: l.isElse
+			});
+		}
+
+		// then reset view
+		mainContainer.fitToView();
+	}
+
+	function programsDB() {
+		return LocalStorage.openDatabaseSync("Programs", "1.0", "Locally saved programs", 100000);
+	}
+
+	function saveProgram(name) {
+		programsDB().transaction(
+			function(tx) {
+				// Create the database if it doesn't already exist
+				tx.executeSql('CREATE TABLE IF NOT EXISTS Programs(name TEXT PRIMARY KEY, code TEXT)');
+				// Add (another) program
+				tx.executeSql('INSERT OR REPLACE INTO Programs VALUES(?, ?)', [ name, JSON.stringify(serialize()) ]);
+			}
+		)
+	}
+
+	function listPrograms() {
+		var programs;
+		try {
+			programsDB().readTransaction(
+				function(tx) {
+					// List existing programs
+					programs = tx.executeSql('SELECT * FROM Programs').rows;
+				}
+			)
+		}
+		catch (err) {
+			console.log("list program made an error: ", err);
+			programs = [];
+		}
+		return programs;
+	}
+
+	function loadProgram(name) {
+		var code;
+		try {
+			programsDB().readTransaction(
+				function(tx) {
+					// List existing programs
+					code = tx.executeSql('SELECT code FROM Programs WHERE name = ?', name).rows;
+				}
+			)
+		}
+		catch (err) {
+			console.log("load program made an error: ", err);
+			return;
+		}
+		if (code.length === 0)
+			return;
+		deserialize(JSON.parse(code[0].code));
+	}
+
 	BlocksPane {
 		id: eventPane
 
-		blocks: [
-			ButtonsEventBlock {},
-			ProxEventBlock {},
-			ProxGroundEventBlock {},
-			TapEventBlock {},
-			ClapEventBlock {},
-			TimerEventBlock {}
-		]
+		blocks: eventDefinitions
 		backImage: "images/eventCenter.svg"
 		x: vplEditor.minimized ? -width : 0
 
@@ -70,11 +212,7 @@ Item {
 	BlocksPane {
 		id: actionPane
 
-		blocks: [
-			MotorActionBlock {},
-			TopColorActionBlock {},
-			BottomColorActionBlock {}
-		]
+		blocks: actionDefinitions
 		backImage: "images/actionCenter.svg"
 		x: vplEditor.minimized ? parent.width : parent.width - width
 
@@ -101,6 +239,15 @@ Item {
 		Behavior on color { PropertyAnimation {} }
 		Behavior on scale { PropertyAnimation {} }
 		Behavior on anchors.rightMargin { PropertyAnimation {} }
+
+		// fit all contents to the view
+		function fitToView() {
+			if (blocks.length === 0)
+				return;
+			scene.scale = Math.min(width * 0.7 / blockContainer.childrenRect.width, height * 0.7 / blockContainer.childrenRect.height);
+			scene.x = width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
+			scene.y = height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
+		}
 
 		Image {
 			anchors.fill: parent
@@ -328,18 +475,18 @@ Item {
 						onTriggered: {
 							var i, j;
 							// move all blocks too close
-							for (i = 0; i < blockContainer.children.length; ++i) {
+							for (i = 0; i < blocks.length; ++i) {
 								for (j = 0; j < i; ++j) {
-									var dx = blockContainer.children[i].x - blockContainer.children[j].x;
-									var dy = blockContainer.children[i].y - blockContainer.children[j].y;
+									var dx = blocks[i].x - blocks[j].x;
+									var dy = blocks[i].y - blocks[j].y;
 									var dist = Math.sqrt(dx*dx + dy*dy);
 									if (dist < repulsionMaxDist) {
 										var normDist = dist;
 										var factor = 100 / (normDist+1);
-										blockContainer.children[i].x += sign(dx) * factor;
-										blockContainer.children[j].x -= sign(dx) * factor;
-										blockContainer.children[i].y += sign(dy) * factor;
-										blockContainer.children[j].y -= sign(dy) * factor;
+										blocks[i].x += sign(dx) * factor;
+										blocks[j].x -= sign(dx) * factor;
+										blocks[i].y += sign(dy) * factor;
+										blocks[j].y -= sign(dy) * factor;
 									}
 								}
 							}
@@ -402,13 +549,7 @@ Item {
 
 			MouseArea {
 				anchors.fill: parent
-				onClicked: {
-					if (blockContainer.children.length === 0)
-						return;
-					scene.scale = Math.min(mainContainer.width * 0.7 / blockContainer.childrenRect.width, mainContainer.height * 0.7 / blockContainer.childrenRect.height);
-					scene.x = mainContainer.width/2 - (blockContainer.childrenRect.x + blockContainer.childrenRect.width/2) * scene.scale;
-					scene.y = mainContainer.height/2 - (blockContainer.childrenRect.y + blockContainer.childrenRect.height/2) * scene.scale;
-				}
+				onClicked: mainContainer.fitToView();
 			}
 		}
 
@@ -426,8 +567,8 @@ Item {
 			MouseArea {
 				anchors.fill: parent
 				onClicked: {
-					linkContainer.children = [];
-					blockContainer.children = [];
+					links = [];
+					blocks = [];
 					scene.scale = 0.5;
 				}
 			}

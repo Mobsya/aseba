@@ -56,6 +56,13 @@ Canvas {
 		execHighlightTimer.highlight();
 	}
 
+	// return a JSON representation of the content of the link
+	function serialize() {
+		return {
+			"isElse": isElse
+		}
+	}
+
 	// to force images used in context2d to be loaded upon initalization
 	Image {
 		source: "images/elsePattern.png"

@@ -68,6 +68,16 @@ Item {
 		execHighlightTimer.highlight();
 	}
 
+	// return a JSON representation of the content of the block
+	function serialize() {
+		return {
+			"x": x,
+			"y": y,
+			"params": params,
+			"isStarting": isStarting
+		}
+	}
+
 	// center background
 	HDPIImage {
 		id: centerImageId
