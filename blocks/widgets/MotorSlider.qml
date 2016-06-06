@@ -7,6 +7,9 @@ Slider {
 	width: 28
 	height: 116
 	orientation: Qt.Vertical
+	snapMode: Slider.SnapAlways
+
+	//onMousePressEvent: positionAt()
 
 //	style: SliderStyle {
 //		groove: Item {}
@@ -17,6 +20,8 @@ Slider {
 //			implicitHeight: 28
 //		}
 //	}
+
+	background: null
 
 	from: -500
 	to: 500

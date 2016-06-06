@@ -8,19 +8,17 @@ Slider {
 	property color color
 
 	width: 180
-	height: 40
+	snapMode: Slider.SnapAlways
 
-	//! [handle]
-	handle: SliderHandle {
+	handle: ColoredSliderHandle {
 		x: control.leftPadding + (horizontal ? control.visualPosition * (control.availableWidth - width) : (control.availableWidth - width) / 2)
 		y: control.topPadding + (horizontal ? (control.availableHeight - height) / 2 : control.visualPosition * (control.availableHeight - height))
 		value: control.value
-		handleHasFocus: control.activeKeyFocus
+		handleHasFocus: control.visualFocus
 		handlePressed: control.pressed
+		color: control.color
 	}
-	//! [handle]
 
-	//! [background]
 	background: Rectangle {
 		x: control.leftPadding + (horizontal ? 0 : (control.availableWidth - width) / 2)
 		y: control.topPadding + (horizontal ? (control.availableHeight - height) / 2 : 0)
@@ -42,22 +40,6 @@ Slider {
 			color: control.color
 		}
 	}
-	//! [background]
-
-	// FIXME: set color
-//	background: Rectangle {
-//		implicitWidth: 180
-//		implicitHeight: 28
-//		color: slider.color
-//	}
-	//background.color: slider.color
-
-//	handle: Rectangle {
-//		anchors.centerIn: parent
-//		color: "white"
-//		implicitWidth: 20
-//		implicitHeight: 40
-//	}
 
 	from: 0
 	to: 32

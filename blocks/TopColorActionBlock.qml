@@ -5,7 +5,7 @@ import "widgets"
 BlockDefinition {
 	type: "action"
 
-	defaultParams: [ 0, 0, 0 ]
+	defaultParams: [ 32, 0, 16 ]
 
 	editor: Component {
 		Item {

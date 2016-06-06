@@ -80,5 +80,6 @@
         <file>icons/ic_gps_fixed_white_24px.svg</file>
         <file>icons/ic_clear_white_24px.svg</file>
         <file>HDPIImage.qml</file>
+        <file>blocks/widgets/ColoredSliderHandle.qml</file>
     </qresource>
 </RCC>
