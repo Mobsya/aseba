@@ -204,9 +204,11 @@ Item {
 
 		blocks: eventDefinitions
 		backImage: "images/eventCenter.svg"
-		x: vplEditor.minimized ? -width : 0
 
-		Behavior on x { PropertyAnimation {} }
+		anchors.left: parent.left
+		anchors.leftMargin: vplEditor.minimized ? -width : 0
+
+		Behavior on anchors.leftMargin { PropertyAnimation {} }
 	}
 
 	BlocksPane {
@@ -214,9 +216,11 @@ Item {
 
 		blocks: actionDefinitions
 		backImage: "images/actionCenter.svg"
-		x: vplEditor.minimized ? parent.width : parent.width - width
 
-		Behavior on x { PropertyAnimation {} }
+		anchors.right: parent.right
+		anchors.rightMargin: vplEditor.minimized ? -width : 0
+
+		Behavior on anchors.rightMargin { PropertyAnimation {} }
 	}
 
 	Rectangle {
