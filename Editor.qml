@@ -169,7 +169,7 @@ Item {
 			programsDB().readTransaction(
 				function(tx) {
 					// List existing programs
-					programs = tx.executeSql('SELECT * FROM Programs').rows;
+					programs = tx.executeSql('SELECT * FROM Programs ORDER BY name').rows;
 				}
 			)
 		}
