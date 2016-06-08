@@ -30,7 +30,7 @@ BlockDefinition {
 				rotation: -90
 				state: params[1]
 			}
-			// left
+			// bottom
 			TriangularButton {
 				id: button2
 				anchors.horizontalCenter: parent.horizontalCenter

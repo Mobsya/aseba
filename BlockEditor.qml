@@ -49,41 +49,82 @@ Rectangle {
 		// FIXME: this is binded so that when it is changed just before setting the definition it generates errors
 		property var defaultParams
 
-		property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+12+12)*2)
+		//property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+12+12)*2)
+		property real scaledWidth: Math.min(parent.width-48*2, parent.height-24)
 
 		sourceComponent: editor.definition ? editor.definition.editor : null
 	}
 
-	// buttons of the fake dialog
-	RowLayout {
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 12
-		anchors.horizontalCenter: parent.horizontalCenter
-		spacing: 24
+	property real horizontalButtonMargin: ((width - editorItemLoader.scaledWidth) - 48) / 4
 
-		Button {
-			id: cancelButton
-			text: "Cancel"
+//	// buttons of the fake dialog
+//	RowLayout {
+//		anchors.bottom: parent.bottom
+//		anchors.bottomMargin: 12
+//		anchors.horizontalCenter: parent.horizontalCenter
+//		spacing: 24
 
-	//		contentItem: Image{
-	//			source: "images/okButton.svg"
-	//		}
+//		Button {
+//			id: cancelButton
+//			text: "Cancel"
 
-			onClicked: {
-				clearBlock();
-			}
-		}
+//	//		contentItem: Image{
+//	//			source: "images/okButton.svg"
+//	//		}
 
-		Button {
-			text: "Ok"
+//			onClicked: {
+//				clearBlock();
+//			}
+//		}
 
-	//		contentItem: Image{
-	//			source: "images/okButton.svg"
-	//		}
+//		Button {
+//			text: "Ok"
 
+//	//		contentItem: Image{
+//	//			source: "images/okButton.svg"
+//	//		}
+
+//			onClicked: {
+//				block.definition = editor.definition;
+//				block.params = editorItemLoader.item.getParams();
+//				clearBlock();
+//			}
+//		}
+//	}
+
+	HDPIImage {
+		/*anchors.bottom: parent.bottom
+		anchors.bottomMargin: 12*/
+		anchors.right: parent.right
+		anchors.rightMargin: horizontalButtonMargin
+		anchors.verticalCenter: parent.verticalCenter
+		source: "icons/ic_done_white_24px.svg"
+		width: 24 // working around Qt bug with SVG and HiDPI
+		height: 24 // working around Qt bug with SVG and HiDPI
+		MouseArea {
+			anchors.fill: parent
 			onClicked: {
 				block.definition = editor.definition;
 				block.params = editorItemLoader.item.getParams();
+				clearBlock();
+			}
+		}
+	}
+
+	HDPIImage {
+		/*anchors.top: parent.top
+		anchors.topMargin: 12
+		anchors.right: parent.right
+		anchors.rightMargin: 12*/
+		anchors.left: parent.left
+		anchors.leftMargin: horizontalButtonMargin
+		anchors.verticalCenter: parent.verticalCenter
+		source: "icons/ic_cancel_white_24px.svg"
+		width: 24 // working around Qt bug with SVG and HiDPI
+		height: 24 // working around Qt bug with SVG and HiDPI
+		MouseArea {
+			anchors.fill: parent
+			onClicked: {
 				clearBlock();
 			}
 		}

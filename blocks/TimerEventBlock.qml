@@ -114,7 +114,7 @@ BlockDefinition {
 	function compile(param) {
 		return {
 			event: "timer0",
-			condition: "ages[thread] >= " + param,
+			condition: "ages[0] >= " + param,
 		};
 	}
 }

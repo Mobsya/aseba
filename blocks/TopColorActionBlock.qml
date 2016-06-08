@@ -14,7 +14,7 @@ BlockDefinition {
 			property var params: defaultParams
 
 			ThymioFront {
-				y: -80
+				y: -60
 				topColor: Qt.rgba(red.bodyValue(), green.bodyValue(), blue.bodyValue(), Math.max(red.bodyValue(), green.bodyValue(), blue.bodyValue()))
 			}
 
@@ -22,21 +22,21 @@ BlockDefinition {
 				id: red
 				color: "#ff0000"
 				x: 38
-				y: 106
+				y: 136
 				value: params[0]
 			}
 			ColorSlider {
 				id: green
 				color: "#00ff00"
 				x: 38
-				y: 106+50
+				y: 136+40
 				value: params[1]
 			}
 			ColorSlider {
 				id: blue
 				color: "#0000ff"
 				x: 38
-				y: 106+50*2
+				y: 136+40*2
 				value: params[2]
 			}
 
