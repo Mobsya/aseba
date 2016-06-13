@@ -172,9 +172,7 @@ Item {
 					var start = nodes.length;
 					nodes.push({
 						blockIndex: node.blockIndex,
-						compiled: {
-							action: "",
-						},
+						compiled: {},
 						heads: [],
 						tails: [{
 							linkIndex: -1,
@@ -207,9 +205,7 @@ Item {
 							var end = nodes.length;
 							nodes.push({
 								blockIndex: node.blockIndex,
-								compiled: {
-									action: "",
-								},
+								compiled: {},
 								heads: [{
 									linkIndex: -1,
 									negate: false,
@@ -330,7 +326,7 @@ Item {
 				source += "sub state" + index + "\n";
 				source += "states[" + thread + "] = " + index + "\n";
 				source += "ages[" + thread + "] = 0" + "\n";
-				if (node.compiled.action) {
+				if (node.compiled.action !== undefined) {
 					source += node.compiled.action + "\n";
 				}
 
