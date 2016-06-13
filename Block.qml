@@ -13,6 +13,7 @@ Item {
 	property var params
 
 	property bool isError: false // whether this block is involved in an error
+	property bool isExec: false // whether this block is currently executing
 
 	property bool highlight: false // whether this block is highlighted for link creation
 	property Item highlightedBlock: null // other block that is highlighted for link creation
@@ -45,7 +46,7 @@ Item {
 	HDPIImage {
 		source: isError ? "images/bgError.svg" :
 			(highlight ? "images/bgHighlight.svg" :
-				(execHighlightTimer.highlighted ?
+				(isExec ?
 					( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") :
 					"images/bgDefault.svg"
 				)
@@ -57,15 +58,6 @@ Item {
 	// starting indicator, show if this block is the start of its click
 	StartIndicator {
 		id: startIndicator
-	}
-
-	// highlight for a short while upon execution on the robot
-	HighlightTimer {
-		id: execHighlightTimer
-	}
-	function exec(isTrue) {
-		execTrue = isTrue;
-		execHighlightTimer.highlight();
 	}
 
 	// return a JSON representation of the content of the block

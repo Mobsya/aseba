@@ -37,38 +37,6 @@ Item {
 
 	readonly property real repulsionMaxDist: 330
 
-	function execLink(sourceBlockIndex, targetBlockIndex) {
-		if (sourceBlockIndex >= blocks.length)
-			return;
-		if (targetBlockIndex >= blocks.length)
-			return;
-		var sourceBlock = blocks[sourceBlockIndex];
-		var targetBlock = blocks[targetBlockIndex];
-		for (var i = 0; i < links.length; ++i) {
-			var link = links[i];
-			if (link.sourceBlock === sourceBlock && link.destBlock === targetBlock)
-				link.exec();
-		}
-	}
-
-	function execBlock(blockIndex, isTrue) {
-		if (blockIndex < blocks.length) {
-			blocks[blockIndex].exec(isTrue);
-		} else {
-			var threadIndex = blockIndex - blocks.length;
-			for (var i = 0; i < blocks.length; ++i) {
-				var block = blocks[i];
-				if (block.isStarting) {
-					if (threadIndex === 0) {
-						block.startIndicator.exec();
-						break;
-					}
-					threadIndex -= 1;
-				}
-			}
-		}
-	}
-
 	// return a JSON representation of the content of the editor
 	function serialize() {
 		var out = {};

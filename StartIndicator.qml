@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 HDPIImage {
 	property bool isError: false // whether this start indicator is involved in an error
+	property bool isExec: false
 
 	readonly property real xRest: -width+2
 	readonly property real yRest: (parent.height - height) / 2
@@ -11,7 +12,7 @@ HDPIImage {
 	z: 1
 	source: isError ?
 		"images/threadStartIndicatorError.svg" :
-		(execHighlightTimer.highlighted ? "images/threadStartIndicatorExec.svg" : "images/threadStartIndicator.svg")
+		(isExec ? "images/threadStartIndicatorExec.svg" : "images/threadStartIndicator.svg")
 	width: 92 // working around Qt bug with SVG and HiDPI
 	height: 92 // working around Qt bug with SVG and HiDPI
 	visible: isStarting
@@ -20,7 +21,7 @@ HDPIImage {
 	Rectangle {
 		color: isError ?
 			"#f52300" :
-			(execHighlightTimer.highlighted ? "#F5E800" : "#9478aa")
+			(isExec ? "#F5E800" : "#9478aa")
 		x: parent.width-2
 		width: 14
 		height: 10
@@ -65,14 +66,6 @@ HDPIImage {
 			}
 			privateMethods.resetPosition();
 		}
-	}
-
-	// highlight for a short while upon execution on the robot
-	HighlightTimer {
-		id: execHighlightTimer
-	}
-	function exec() {
-		execHighlightTimer.highlight();
 	}
 
 	QtObject {

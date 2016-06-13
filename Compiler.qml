@@ -1,6 +1,8 @@
 import QtQuick 2.0
 
 Item {
+	id: compiler
+	property var nodes
 	property string source
 	property string error
 
@@ -13,10 +15,13 @@ Item {
 		interval: 0
 		onTriggered: {
 			try {
-				compiler.source = compile();
+				var compiled = compile();
+				compiler.nodes = compiled.nodes;
+				compiler.source = compiled.source;
 				compiler.error = "";
 			} catch(error) {
 				if (typeof(error) === "string") {
+					compiler.nodes = [];
 					compiler.source = "";
 					compiler.error = error;
 				} else {
@@ -26,142 +31,111 @@ Item {
 		}
 
 		function compile() {
-			if (blocks.length === 0) {
-				return "";
+			function filledArray(length, value) {
+				var array = new Array(length);
+				for (var i = 0; i < length; ++i) {
+					array[i] = value;
+				}
+				return array;
 			}
 
 			var indices = {};
-			var events = {};
-			var subs = [];
+			var nodes = [];
 			var starts = [];
 			for (var i = 0; i < blocks.length; ++i) {
 				var block = blocks[i];
 				block.isError = false;
 				indices[block] = i;
-				var compiled = block.definition.compile(block.params);
-
-				var eventName = compiled.event;
-				if (eventName !== undefined) {
-					var eventSubs = events[eventName];
-					if (eventSubs === undefined) {
-						events[eventName] = [i];
-					} else {
-						eventSubs.push(i);
-					}
-				}
-
+				nodes.push({
+					blockIndex: i,
+					compiled: block.definition.compile(block.params),
+					heads: [],
+					tails: [],
+					thread: -1,
+					conditions: [],
+					transitions: [],
+					events: {},
+				});
 				if (block.isStarting) {
 					starts.push(i);
 				}
-
-				subs[i] = {
-					"compiled": compiled,
-					"parents": [],
-					"children": [],
-					"thread": -1,
-				};
 			}
+
 			for (var i = 0; i < links.length; ++i) {
 				var link = links[i];
-				var sourceIndex = indices[link.sourceBlock];
-				var destIndex = indices[link.destBlock];
-				var arrow = {
-					"head": sourceIndex,
-					"tail": destIndex,
-					"isElse": link.isElse,
-				};
-				subs[sourceIndex].children.push(arrow);
-				subs[destIndex].parents.push(arrow);
-			}
-
-			// create start states
-			starts.forEach(function(start, thread) {
-				var lastIndex = subs.length;
-				var lastSub = {
-					"compiled": {
-						"action": "",
-					},
-					"parents": [],
-					"children": [],
-					"thread": thread,
-				};
-				var arrow = {
-					"head": lastIndex,
-					"tail": start,
-					"isElse": false,
-				};
-				lastSub.children.push(arrow);
-				subs[start].parents.push(arrow);
-				scene.applyToClique(blocks[start], function(block) {
-					var index = indices[block];
-					var sub = subs[index];
-					sub.thread = thread;
-					if (sub.children.length === 0) {
-						var arrow = {
-							"head": index,
-							"tail": lastIndex,
-							"isElse": false,
-						};
-						sub.children.push(arrow);
-						lastSub.parents.push(arrow);
-					}
+				var head = indices[link.sourceBlock];
+				var tail = indices[link.destBlock];
+				var negate = link.isElse;
+				nodes[head].tails.push({
+					linkIndex: i,
+					negate: negate,
+					tail: tail,
 				});
-				subs[lastIndex] = lastSub;
-			});
-
-			function visitChildren(sub, visit) {
-				sub.children.forEach(function(arrow) {
-					var index = arrow.tail;
-					var sub = subs[index];
-					visit(sub, index);
+				nodes[tail].heads.push({
+					linkIndex: i,
+					negate: negate,
+					head: head,
 				});
 			}
 
-			subs.forEach(function(sub, head) {
-				if (sub.compiled.condition !== undefined)
+			if (blocks.length === 0) {
+				return {
+					nodes: [],
+					source: "",
+				};
+			}
+
+			function visitTails(node, visit) {
+				node.tails.forEach(function(edge) {
+					var index = edge.tail;
+					var node = nodes[index];
+					visit(node, index, edge);
+				});
+			}
+
+			// detect infinite loops
+			nodes.forEach(function(node, index) {
+				if (node.compiled.condition !== undefined)
 					return;
 
-				var conditions = [];
-				function visitConditions(sub, index) {
-					if (sub.compiled.condition === undefined) {
+				var events = [];
+				function visitEvents(node, index) {
+					if (node.compiled.condition === undefined) {
 						return;
 					}
-					if (conditions.indexOf(index) !== -1) {
-						conditions.forEach(function(index) {
+					if (events.indexOf(index) !== -1) {
+						events.forEach(function(index) {
 							var block = blocks[index];
-							if (block !== undefined) {
-								block.isError = true;
-							}
+							block.isError = true;
 						});
 						throw "Infinite loop";
 					}
-					conditions.push(index);
-					visitChildren(sub, visitConditions);
-					conditions.pop();
+					events.push(index);
+					visitTails(node, visitEvents);
+					events.pop();
 				}
-				visitChildren(sub, visitConditions);
+				visitTails(node, visitEvents);
 
 				var states = [];
-				function visitStates(sub, index) {
-					if (sub.compiled.condition !== undefined) {
+				function visitStates(node, index) {
+					if (node.compiled.condition !== undefined) {
 						return;
 					}
 					if (states.indexOf(index) !== -1) {
 						states.forEach(function(index) {
 							var block = blocks[index];
-							if (block !== undefined) {
-								block.isError = true;
-							}
+							block.isError = true;
 						});
 						throw "Infinite loop";
 					}
 					states.push(index);
-					visitChildren(sub, visitStates);
+					visitTails(node, visitStates);
 					states.pop();
 				}
-				visitChildren(sub, visitStates);
+				visitTails(node, visitStates);
 			});
 
+			// detect unreachable blocks
 			(function() {
 				var visited = [];
 				starts.forEach(function(start, thread) {
@@ -170,20 +144,17 @@ Item {
 							return;
 						}
 						visited.push(index);
-						subs[index].children.forEach(function(arrow) {
-							visit(arrow.tail);
+						nodes[index].tails.forEach(function(edge) {
+							visit(edge.tail);
 						});
 					}
-					visit(blocks.length + thread);
+					visit(start);
 				});
 				var unreachable = 0;
-				subs.forEach(function(sub, index) {
-					var block = blocks[index];
-					if (!block) {
-						return;
-					}
+				nodes.forEach(function(node, index) {
 					if (visited.indexOf(index) === -1) {
 						unreachable += 1;
+						var block = blocks[index];
 						block.isError = true;
 					}
 				});
@@ -192,91 +163,343 @@ Item {
 				}
 			})();
 
+			// create start and end states
+			starts.forEach(function(index, thread) {
+				var node = nodes[index];
+
+				if (node.compiled.condition !== undefined) {
+					// start block is an event => add a start state
+					var start = nodes.length;
+					nodes.push({
+						blockIndex: node.blockIndex,
+						compiled: {
+							action: "",
+						},
+						heads: [],
+						tails: [{
+							linkIndex: -1,
+							negate: false,
+							tail: index,
+						}],
+						thread: thread,
+						conditions: [],
+						transitions: [],
+						events: {},
+					});
+					node.heads.push({
+						linkIndex: -1,
+						negate: false,
+						head: start,
+					});
+					starts[thread] = start;
+				}
+
+				var seen = [];
+				function visit(node, index) {
+					if (seen.indexOf(index) !== -1) {
+						return;
+					}
+					seen.push(index);
+					node.thread = thread;
+					if (node.tails.length === 0) {
+						if (node.compiled.condition !== undefined) {
+							// end block is an event => add an end state
+							var end = nodes.length;
+							nodes.push({
+								blockIndex: node.blockIndex,
+								compiled: {
+									action: "",
+								},
+								heads: [{
+									linkIndex: -1,
+									negate: false,
+									head: index,
+								}],
+								tails: [],
+								thread: thread,
+								conditions: [],
+								transitions: [],
+								events: {},
+							});
+							node.tails.push({
+								linkIndex: -1,
+								negate: false,
+								tail: end,
+							});
+						}
+					} else {
+						visitTails(node, visit);
+					}
+				}
+				visit(node, index);
+			});
+
+			var eventStates = {};
+			nodes.forEach(function(node, index) {
+				if (node.compiled.condition !== undefined)
+					return;
+
+				var headIndex = index;
+				var head = node;
+
+				var edges = [];
+				var indices = [];
+				function buildTransition(node, index, edge) {
+					edges.push(edge);
+					if (node.compiled.condition === undefined) {
+						var transitionIndex = head.transitions.length;
+						head.transitions.push({
+							edges: edges.slice(),
+							indices: indices.slice(),
+							tail: index,
+						});
+						for (var i = 0; i < indices.length; ++i) {
+							var conditionIndex = indices[i];
+							var event = nodes[head.conditions[conditionIndex]].compiled.event;
+							var transitions = head.events[event].transitions;
+							if (transitions.indexOf(transitionIndex) === -1) {
+								transitions.push(transitionIndex);
+							}
+						}
+					} else {
+						var conditionIndex = head.conditions.indexOf(index);
+						if (conditionIndex === -1) {
+							// first use of this condition from this state
+							conditionIndex = head.conditions.length;
+							head.conditions.push(index);
+
+							var event = node.compiled.event;
+
+							var stateEvents = head.events[event];
+							if (stateEvents === undefined) {
+								stateEvents = {
+									conditions: [],
+									transitions: [],
+								};
+								head.events[event] = stateEvents;
+							}
+							stateEvents.conditions.push(conditionIndex);
+
+							var states = eventStates[event];
+							if (states === undefined) {
+								eventStates[event] = [headIndex];
+							} else if (states.indexOf(headIndex) === -1) {
+								states.push(headIndex);
+							}
+						}
+
+						indices.push(conditionIndex);
+						visitTails(node, buildTransition);
+						indices.pop();
+					}
+					edges.pop();
+				}
+				visitTails(node, buildTransition);
+			});
+
 			var src = "";
-			src += "var states[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
-			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return -1; }) + "]" + "\n";
+			src += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			src += "var conditions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			src += "var conditionsOld = -1" + "\n";
+			src += "var conditionsNew = -1" + "\n";
+			src += "var transitions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			src += "var transitionsOld = -1" + "\n";
+			src += "var transitionsNew = -1" + "\n";
 			src += "timer.period[0] = 10" + "\n";
-			for (var i = subs.length - starts.length; i < subs.length; ++i) {
-				src += "callsub block" + i + "\n";
+			for (var i = 0; i < starts.length; ++i) {
+				var start = starts[i];
+				src += "callsub state" + start + "\n";
 			}
-			src = subs.reduce(function(source, sub, index) {
-				var global = sub.compiled.global;
+			src = nodes.reduce(function(source, node, index) {
+				var global = node.compiled.global;
 				if (global !== undefined) {
 					source += "\n";
 					source += global + "\n";
 				}
 				return source;
 			}, src);
-			src = subs.reduce(function(source, sub, index) {
-				var condition = sub.compiled.condition;
-				var action = sub.compiled.action;
+			src = nodes.reduce(function(source, node, index) {
+				if (node.compiled.condition !== undefined) {
+					return source;
+				}
+
+				var thread = node.thread;
 
 				source += "\n";
-				source += "sub block" + index + "\n";
+				source += "sub state" + index + "\n";
+				source += "states[" + thread + "] = " + index + "\n";
+				source += "ages[" + thread + "] = 0" + "\n";
+				if (node.compiled.action) {
+					source += node.compiled.action + "\n";
+				}
 
-				if (condition !== undefined) {
+				source += "conditionsNew = 0" + "\n";
+				source = node.conditions.reduce(function (source, nodeIndex, conditionIndex) {
+					var condition = nodes[nodeIndex].compiled.condition;
+					var conditionMask = filledArray(16, "0");
+					conditionMask[conditionIndex] = "1";
 					source += "if " + condition + " then" + "\n";
-				}
+					source += "conditionsNew |= 0b" + conditionMask.join("") + "\n";
+					source += "end" + "\n";
+					return source;
+				}, source);
+				source += "conditions[" + thread + "] = conditionsNew" + "\n";
 
-				source += "emit block [" + index + ", 1]\n";
-
-				if (action !== undefined) {
-					source += "states[" + sub.thread + "] = " + index + "\n";
-					source += "ages[" + sub.thread + "] = 0\n";
-					source += action + "\n";
-				}
-
-				sub.children.forEach(function(arrow) {
-					if (arrow.isElse) {
-						return;
-					}
-					var child = subs[arrow.tail];
-					if (action === undefined || child.compiled.event === undefined) {
-						source += "emit link [" + index + ", " + arrow.tail + "]\n";
-						source += "callsub block" + arrow.tail + "\n";
-					}
-				});
-
-				if (condition !== undefined) {
-					source += "else" + "\n";
-					source += "emit block [" + index + ", 0]\n";
-					sub.children.forEach(function(arrow) {
-						if (!arrow.isElse) {
-							return;
-						}
-						var child = subs[arrow.tail];
-						if (action === undefined || child.compiled.event === undefined) {
-							source += "emit link [" + index + ", " + arrow.tail + "]\n";
-							source += "callsub block" + arrow.tail + "\n";
+				source += "transitionsNew = 0" + "\n";
+				source = node.transitions.reduce(function (source, transition, transitionIndex) {
+					var positiveMask = filledArray(16, "0");
+					var negativeMask = filledArray(16, "0");
+					transition.indices.forEach(function(conditionIndex, i) {
+						if (transition.edges[i + 1].negate) {
+							negativeMask[conditionIndex] = "1";
+						} else {
+							positiveMask[conditionIndex] = "1";
 						}
 					});
+					var positiveTest = "conditionsNew & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
+					var negativeTest = "~conditionsNew & 0b" + negativeMask.join("") + " == 0b" + negativeMask.join("");
+
+					var transitionMask = filledArray(16, "0");
+					transitionMask[transitionIndex] = "1";
+
+					source += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
+					source += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
 					source += "end" + "\n";
-				}
+					return source;
+				}, source);
+				source += "transitions[" + thread + "] = transitionsNew" + "\n";
 
 				return source;
 			}, src);
-			src = Object.keys(events).reduce(function(source, eventName) {
+			src = Object.keys(eventStates).reduce(function(source, eventName) {
 				source += "\n";
 				source += "onevent " + eventName + "\n";
 				if (eventName === "timer0") {
-					starts.forEach(function(start, thread) {
-						source += "ages[" + thread + "] += 1\n";
-					});
+					source += "ages += [" + starts.map(function() { return "1"; }) + "]" + "\n";
 				}
-				source = events[eventName].reduce(function(source, subIndex) {
-					var sub = subs[subIndex];
-					var thread = sub.thread;
-					source += "if " + sub.parents.reduce(function(expr, arrow) {
-						return expr + " or states[" + thread + "] == " + arrow.head;
-					}, "0 != 0") + " then" + "\n";
-					source += "emit link [states[" + thread + "], " + subIndex + "]\n";
-					source += "callsub block" + subIndex + "\n";
+				source = eventStates[eventName].reduce(function(source, nodeIndex) {
+					var node = nodes[nodeIndex];
+					var thread = node.thread;
+					var event = node.events[eventName];
+
+					source += "if states[" + thread + "] == " + nodeIndex + " then" + "\n";
+
+					var conditionsMask = filledArray(16, "0");
+					event.conditions.forEach(function(conditionIndex) {
+						conditionsMask[conditionIndex] = "1";
+					});
+					source += "conditionsOld = conditions[" + thread + "]" + "\n";
+					source += "conditionsNew = conditionsOld & ~0b" + conditionsMask.join("") + "\n";
+					source = event.conditions.reduce(function(source, conditionIndex) {
+						var condition = nodes[node.conditions[conditionIndex]].compiled.condition;
+						var conditionMask = filledArray(16, "0");
+						conditionMask[conditionIndex] = "1";
+						source += "if " + condition + " then" + "\n";
+						source += "conditionsNew |= 0b" + conditionMask.join("") + "\n";
+						source += "end" + "\n";
+						return source;
+					}, source);
+					source += "conditions[" + thread + "] = conditionsNew" + "\n";
+
+					var transitionsMask = filledArray(16, "0");
+					event.transitions.forEach(function(transitionIndex) {
+						transitionsMask[transitionIndex] = "1";
+					});
+					source += "transitionsOld = transitions[" + thread + "]" + "\n";
+					source += "transitionsNew = transitionsOld & ~0b" + transitionsMask.join("") + "\n";
+					source = event.transitions.reduce(function (source, transitionIndex) {
+						var transition = node.transitions[transitionIndex];
+
+						var positiveMask = filledArray(16, "0");
+						var negativeMask = filledArray(16, "0");
+						transition.indices.forEach(function(conditionIndex, i) {
+							if (transition.edges[i + 1].negate) {
+								negativeMask[conditionIndex] = "1";
+							} else {
+								positiveMask[conditionIndex] = "1";
+							}
+						});
+						var positiveTest = "conditionsNew & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
+						var negativeTest = "~conditionsNew & 0b" + negativeMask.join("") + " == 0b" + negativeMask.join("");
+
+						var transitionMask = filledArray(16, "0");
+						transitionMask[transitionIndex] = "1";
+
+						source += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
+						source += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
+						source += "if transitionsOld & 0b" + transitionMask.join("") + " == 0 then" + "\n";
+						source += "emit transition [" + nodeIndex + ", " + transitionIndex + "]" + "\n";
+						source += "callsub state" + transition.tail + "\n";
+						source += "return" + "\n";
+						source += "end" + "\n";
+						source += "end" + "\n";
+						return source;
+					}, source);
+
 					source += "end" + "\n";
+
 					return source;
 				}, source);
 				return source;
 			}, src);
-			return src;
+
+			return {
+				nodes: nodes,
+				source: src,
+			};
 		}
 	}
+
+	function execReset(playing) {
+		for (var i = 0; i < blocks.length; ++i) {
+			var block = blocks[i];
+			if (playing) {
+				var isStarting = block.isStarting;
+				var isState = nodes[i].compiled.condition === undefined;
+				block.isExec = isStarting && isState;
+				block.startIndicator.isExec = isStarting && !isState;
+			} else {
+				block.isExec = false;
+				block.startIndicator.isExec = false;
+			}
+		}
+	}
+
+	function execTransition(nodeIndex, transitionIndex) {
+		var node = nodes[nodeIndex];
+
+		var blockIndex = node.blockIndex;
+		var block = blocks[blockIndex];
+		if (nodeIndex === blockIndex) {
+			// leaving a state block
+			block.isExec = false;
+		} else {
+			// leaving a start indicator
+			block.startIndicator.isExec = false;
+		}
+
+		var edges = node.transitions[transitionIndex].edges;
+		for (var i = 0; i < edges.length; ++i) {
+			var edge = edges[i];
+			var linkIndex = edge.linkIndex;
+			if (linkIndex !== -1) {
+				var link = links[linkIndex];
+				link.exec();
+			}
+			nodeIndex = edge.tail;
+			node = nodes[nodeIndex];
+		}
+
+		var blockIndex = node.blockIndex;
+		var block = blocks[blockIndex];
+		if (nodeIndex === blockIndex) {
+			// entering a state block
+			block.isExec = true;
+		} else {
+			// end of thread
+			block.isExec = false;
+		}
+	}
+
 }
