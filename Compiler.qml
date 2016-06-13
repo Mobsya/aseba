@@ -344,6 +344,12 @@ Item {
 
 				source += "transitionsNew = 0" + "\n";
 				source = node.transitions.reduce(function (source, transition, transitionIndex) {
+					if (transition.indices.length === 0) {
+						// unconditional transition
+						source += "callsub state" + transition.tail + "\n";
+						return source;
+					}
+
 					var positiveMask = filledArray(16, "0");
 					var negativeMask = filledArray(16, "0");
 					transition.indices.forEach(function(conditionIndex, i) {
