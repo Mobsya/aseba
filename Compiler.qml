@@ -438,6 +438,7 @@ Item {
 						source += "end" + "\n";
 						return source;
 					}, source);
+					source += "transitions[" + thread + "] = transitionsNew" + "\n";
 
 					source += "end" + "\n";
 
