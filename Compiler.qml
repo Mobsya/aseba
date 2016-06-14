@@ -346,6 +346,7 @@ Item {
 				source = node.transitions.reduce(function (source, transition, transitionIndex) {
 					if (transition.indices.length === 0) {
 						// unconditional transition
+						source += "emit transition [" + index + ", " + transitionIndex + "]" + "\n";
 						source += "callsub state" + transition.tail + "\n";
 						return source;
 					}
