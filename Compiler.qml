@@ -294,6 +294,7 @@ Item {
 			});
 
 			var src = "";
+			src += "var thread = -1" + "\n";
 			src += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
 			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
 			src += "var conditions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
@@ -324,6 +325,7 @@ Item {
 
 				source += "\n";
 				source += "sub state" + index + "\n";
+				source += "thread = " + thread + "\n";
 				source += "states[" + thread + "] = " + index + "\n";
 				source += "ages[" + thread + "] = 0" + "\n";
 				if (node.compiled.action !== undefined) {
@@ -387,6 +389,7 @@ Item {
 					var event = node.events[eventName];
 
 					source += "if states[" + thread + "] == " + nodeIndex + " then" + "\n";
+					source += "thread = " + thread + "\n";
 
 					var conditionsMask = filledArray(16, "0");
 					event.conditions.forEach(function(conditionIndex) {
