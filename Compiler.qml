@@ -472,9 +472,9 @@ Item {
 
 	function execTransition(nodeIndex, transitionIndex) {
 		var node = nodes[nodeIndex];
-
 		var blockIndex = node.blockIndex;
 		var block = blocks[blockIndex];
+
 		if (nodeIndex === blockIndex) {
 			// leaving a state block
 			block.isExec = false;
@@ -492,17 +492,19 @@ Item {
 				link.exec();
 			}
 			nodeIndex = edge.tail;
+
 			node = nodes[nodeIndex];
+			blockIndex = node.blockIndex;
+			block = blocks[blockIndex];
+
+			if (i !== edges.length - 1) {
+				block.exec();
+			}
 		}
 
-		var blockIndex = node.blockIndex;
-		var block = blocks[blockIndex];
 		if (nodeIndex === blockIndex) {
 			// entering a state block
 			block.isExec = true;
-		} else {
-			// end of thread
-			block.isExec = false;
 		}
 	}
 

@@ -46,7 +46,7 @@ Item {
 	HDPIImage {
 		source: isError ? "images/bgError.svg" :
 			(highlight ? "images/bgHighlight.svg" :
-				(isExec ?
+				((isExec || execHighlightTimer.highlighted) ?
 					( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") :
 					"images/bgDefault.svg"
 				)
@@ -62,6 +62,14 @@ Item {
 
 	onIsStartingChanged: {
 		compiler.compile();
+	}
+
+	// highlight for a short while upon execution on the robot
+	HighlightTimer {
+		id: execHighlightTimer
+	}
+	function exec() {
+		execHighlightTimer.highlight();
 	}
 
 	// return a JSON representation of the content of the block
