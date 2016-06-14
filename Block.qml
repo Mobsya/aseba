@@ -60,6 +60,10 @@ Item {
 		id: startIndicator
 	}
 
+	onIsStartingChanged: {
+		compiler.compile();
+	}
+
 	// return a JSON representation of the content of the block
 	function serialize() {
 		return {
