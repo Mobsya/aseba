@@ -28,6 +28,8 @@ Item {
 
 	property list<BlockDefinition> actionDefinitions: [
 		MotorActionBlock {},
+		PaletteTopColorActionBlock {},
+		PaletteBottomColorActionBlock {},
 		TopColorActionBlock {},
 		BottomColorActionBlock {}
 	]

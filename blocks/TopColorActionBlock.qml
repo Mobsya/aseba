@@ -57,7 +57,40 @@ BlockDefinition {
 			}
 
 			ThymioFront {
+				y: -10
 				topColor: Qt.rgba(paramToColor(params[0]), paramToColor(params[1]), paramToColor(params[2]), Math.max(paramToColor(params[0]), paramToColor(params[1]), paramToColor(params[2])))
+			}
+
+			Item {
+				property color color: Qt.rgba(params[0] / 32., params[1] / 32., params[2] / 32.)
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.bottom: parent.bottom
+				anchors.bottomMargin: 45
+				width: 130
+				height: 24
+				Rectangle {
+					anchors.left: parent.left
+					anchors.verticalCenter: parent.verticalCenter
+					width: 100
+					height: 12
+					color: parent.color
+				}
+				Rectangle {
+					anchors.right: parent.right
+					anchors.verticalCenter: parent.verticalCenter
+					width: 30
+					height: 6
+					color: "white"
+				}
+				Rectangle {
+					anchors.left: parent.left
+					anchors.leftMargin: 100 - width/2
+					anchors.verticalCenter: parent.verticalCenter
+					width: 24
+					height: 24
+					radius: 12
+					color: parent.color
+				}
 			}
 		}
 	}
