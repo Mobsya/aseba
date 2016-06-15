@@ -294,7 +294,12 @@ Item {
 			});
 
 			var src = "";
+			src = Object.keys(eventStates).reduce(function(source, eventName, eventIndex) {
+				source += "const event_" + eventName + " = " + eventIndex + "\n";
+				return source;
+			}, src);
 			src += "var thread = -1" + "\n";
+			src += "var event = -1" + "\n";
 			src += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
 			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
 			src += "var conditions = -1" + "\n";
@@ -348,6 +353,7 @@ Item {
 				source = node.transitions.reduce(function (source, transition, transitionIndex) {
 					if (transition.indices.length === 0) {
 						// unconditional transition
+						source += "event = -1" + "\n";
 						source += "emit transition [" + index + ", " + transitionIndex + "]" + "\n";
 						source += "callsub enter" + transition.tail + "\n";
 						source += "return" + "\n";
@@ -381,6 +387,7 @@ Item {
 			src = Object.keys(eventStates).reduce(function(source, eventName) {
 				source += "\n";
 				source += "onevent " + eventName + "\n";
+				source += "event = event_" + eventName + "\n";
 				if (eventName === "timer0") {
 					source += "ages += [" + starts.map(function() { return "1"; }) + "]" + "\n";
 				}
@@ -421,6 +428,7 @@ Item {
 						source += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
 						source += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
 						source += "if transitionsOld & 0b" + transitionMask.join("") + " == 0 then" + "\n";
+						source += "event = -1" + "\n";
 						source += "emit transition [" + nodeIndex + ", " + transitionIndex + "]" + "\n";
 						source += "callsub enter" + transition.tail + "\n";
 						source += "return" + "\n";
