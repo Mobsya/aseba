@@ -83,5 +83,8 @@
         <file>blocks/widgets/ColoredSliderHandle.qml</file>
         <file>icons/ic_cancel_white_24px.svg</file>
         <file>icons/ic_done_white_24px.svg</file>
+        <file>blocks/PaletteTopColorActionBlock.qml</file>
+        <file>blocks/widgets/ColorPalette.qml</file>
+        <file>blocks/PaletteBottomColorActionBlock.qml</file>
     </qresource>
 </RCC>
