@@ -87,5 +87,12 @@
         <file>blocks/widgets/ColorPalette.qml</file>
         <file>blocks/PaletteBottomColorActionBlock.qml</file>
         <file>LoadSaveDialog.qml</file>
+        <file>DashelTargetDialog.qml</file>
+        <file>Aseba.qml</file>
+        <file>Thymio.qml</file>
+        <file>icons/ic_stop_white_48px.svg</file>
+        <file>icons/ic_play_white_48px.svg</file>
+        <file>icons/ic_menu_white_24px.svg</file>
+        <file>CompilationLabel.qml</file>
     </qresource>
 </RCC>

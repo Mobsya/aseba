@@ -14,6 +14,7 @@ Popup {
 
 	property bool isSave
 	property Editor vplEditor
+	property alias programName: programName.text
 
 	onVplEditorChanged: console.log('editor', vplEditor)
 

@@ -169,6 +169,12 @@ Item {
 		deserialize(JSON.parse(code[0].code));
 	}
 
+	function clearProgram() {
+		links = [];
+		blocks = [];
+		scene.scale = 0.5;
+	}
+
 	BlocksPane {
 		id: eventPane
 
@@ -516,35 +522,14 @@ Item {
 			width: 24 // working around Qt bug with SVG and HiDPI
 			height: 24 // working around Qt bug with SVG and HiDPI
 			anchors.right: parent.right
-			anchors.rightMargin: 12
+			anchors.rightMargin: 16
 			anchors.bottom: parent.bottom
-			anchors.bottomMargin: 12+24+24
+			anchors.bottomMargin: 16
 			visible: !minimized
 
 			MouseArea {
 				anchors.fill: parent
 				onClicked: mainContainer.fitToView();
-			}
-		}
-
-		// clear content
-		HDPIImage {
-			source: "icons/ic_clear_white_24px.svg"
-			width: 24 // working around Qt bug with SVG and HiDPI
-			height: 24 // working around Qt bug with SVG and HiDPI
-			anchors.right: parent.right
-			anchors.rightMargin: 12
-			anchors.bottom: parent.bottom
-			anchors.bottomMargin: 12
-			visible: !minimized
-
-			MouseArea {
-				anchors.fill: parent
-				onClicked: {
-					links = [];
-					blocks = [];
-					scene.scale = 0.5;
-				}
 			}
 		}
 

@@ -5,6 +5,6 @@
 
 void thymioVPL2Init() {
 	Dashel::initPlugins();
-	qmlRegisterType<AsebaClient>("ThymioAR", 1, 0, "AsebaClient");
-	qmlRegisterType<AsebaClient>("ThymioAR", 1, 0, "AsebaNode");
+	qmlRegisterType<AsebaClient>("Aseba", 1, 0, "AsebaClient");
+	qmlRegisterType<AsebaClient>("Aseba", 1, 0, "AsebaNode");
 }
