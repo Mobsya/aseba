@@ -30,8 +30,9 @@ BlockDefinition {
 
 	function compile(params) {
 		return {
+			global: "mic.threshold = 250",
 			event: "mic",
-			condition: "0 == 0",
+			condition: "event == event_mic",
 		};
 	}
 }
