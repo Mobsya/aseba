@@ -207,9 +207,9 @@ Item {
 				highlightedBlock.highlight = false;
 				highlightedBlock = null;
 			} else {
-				// create block
+				// create block using the last placed one
 				var pos = mapToItem(blockContainer, mouse.x, mouse.y);
-				var newBlock = scene.createBlock(pos.x, pos.y, editor.definition);
+				var newBlock = scene.createBlock(pos.x, pos.y, block.definition);
 
 				// create link
 				newBlock.isStarting = false;
@@ -217,6 +217,9 @@ Item {
 					sourceBlock: parent,
 					destBlock: newBlock
 				});
+
+				// directly edit block
+				blockEditor.setBlock(newBlock);
 			}
 		}
 	}
