@@ -30,7 +30,7 @@ BlockDefinition {
 
 	function compile(params) {
 		return {
-			event: "tap",
+			event: "mic",
 			condition: "0 == 0",
 		};
 	}
