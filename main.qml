@@ -29,7 +29,7 @@ ApplicationWindow {
 			ToolButton {
 				contentItem: Image {
 					anchors.centerIn: parent
-					source: !!thymio.node ? "images/ic_connection_on1_white_24px.svg" : "images/ic_connection_off_white_24px.svg"
+					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
 				}
 				onClicked: dashelTargetSelector.open()
 			}
@@ -52,6 +52,15 @@ ApplicationWindow {
 	Editor {
 		id: vplEditor
 		anchors.fill: parent
+
+		Text {
+			text: "developer preview pre-alpha, no design is final"
+			anchors.left: parent.left
+			anchors.leftMargin: 106
+			anchors.top: parent.top
+			anchors.topMargin: 10
+			color: Material.primaryTextColor
+		}
 	}
 
 	ListModel {
@@ -110,8 +119,6 @@ ApplicationWindow {
 						drawer.close()
 					}
 				}
-
-				ScrollIndicator.vertical: ScrollIndicator { }
 			}
 		}
 	}
