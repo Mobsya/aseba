@@ -41,7 +41,10 @@ ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
 QMAKE_CXXFLAGS += $$ASEBA_CXXFLAGS
 CONFIG += c++11
 HEADERS += $$PWD/aseba.h
-SOURCES += $$ASEBA_SOURCES $$PWD/aseba.cpp
+SOURCES += \
+	$$ASEBA_SOURCES \
+	$$PWD/aseba.cpp \
+	$$PWD/thymio-vpl2.cpp
 QT += quick svg xml
 RESOURCES += $$PWD/thymio-vpl2.qrc
 DEPENDPATH += $$ASEBA_INCLUDE
