@@ -297,17 +297,11 @@ Item {
 			src += "var thread = -1" + "\n";
 			src += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
 			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
-			src += "var conditions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
-			src += "var conditionsOld = -1" + "\n";
-			src += "var conditionsNew = -1" + "\n";
+			src += "var conditions = -1" + "\n";
 			src += "var transitions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
 			src += "var transitionsOld = -1" + "\n";
 			src += "var transitionsNew = -1" + "\n";
 			src += "timer.period[0] = 10" + "\n";
-			for (var i = 0; i < starts.length; ++i) {
-				var start = starts[i];
-				src += "callsub state" + start + "\n";
-			}
 			src = nodes.reduce(function(source, node, index) {
 				var global = node.compiled.global;
 				if (global !== undefined) {
@@ -316,6 +310,10 @@ Item {
 				}
 				return source;
 			}, src);
+			for (var i = 0; i < starts.length; ++i) {
+				var start = starts[i];
+				src += "callsub enter" + start + "\n";
+			}
 			src = nodes.reduce(function(source, node, index) {
 				if (node.compiled.condition !== undefined) {
 					return source;
@@ -324,32 +322,34 @@ Item {
 				var thread = node.thread;
 
 				source += "\n";
-				source += "sub state" + index + "\n";
+
+				source += "sub test" + index + "\n";
+				source += "conditions = 0" + "\n";
+				source = node.conditions.reduce(function (source, nodeIndex, conditionIndex) {
+					var node = nodes[nodeIndex];
+					var conditionMask = filledArray(16, "0");
+					conditionMask[conditionIndex] = "1";
+					source += "if " + node.compiled.condition + " then" + "\n";
+					source += "conditions |= 0b" + conditionMask.join("") + "\n";
+					source += "end" + "\n";
+					return source;
+				}, source);
+
+				source += "sub enter" + index + "\n";
 				source += "thread = " + thread + "\n";
 				source += "states[" + thread + "] = " + index + "\n";
 				source += "ages[" + thread + "] = 0" + "\n";
 				if (node.compiled.action !== undefined) {
 					source += node.compiled.action + "\n";
 				}
-
-				source += "conditionsNew = 0" + "\n";
-				source = node.conditions.reduce(function (source, nodeIndex, conditionIndex) {
-					var condition = nodes[nodeIndex].compiled.condition;
-					var conditionMask = filledArray(16, "0");
-					conditionMask[conditionIndex] = "1";
-					source += "if " + condition + " then" + "\n";
-					source += "conditionsNew |= 0b" + conditionMask.join("") + "\n";
-					source += "end" + "\n";
-					return source;
-				}, source);
-				source += "conditions[" + thread + "] = conditionsNew" + "\n";
+				source += "callsub test" + index + "\n";
 
 				source += "transitionsNew = 0" + "\n";
 				source = node.transitions.reduce(function (source, transition, transitionIndex) {
 					if (transition.indices.length === 0) {
 						// unconditional transition
 						source += "emit transition [" + index + ", " + transitionIndex + "]" + "\n";
-						source += "callsub state" + transition.tail + "\n";
+						source += "callsub enter" + transition.tail + "\n";
 						source += "return" + "\n";
 						return source;
 					}
@@ -363,8 +363,8 @@ Item {
 							positiveMask[conditionIndex] = "1";
 						}
 					});
-					var positiveTest = "conditionsNew & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
-					var negativeTest = "conditionsNew | ~0b" + negativeMask.join("") + " == ~0b" + negativeMask.join("");
+					var positiveTest = "conditions & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
+					var negativeTest = "conditions | ~0b" + negativeMask.join("") + " == ~0b" + negativeMask.join("");
 
 					var transitionMask = filledArray(16, "0");
 					transitionMask[transitionIndex] = "1";
@@ -392,22 +392,7 @@ Item {
 					source += "if states[" + thread + "] == " + nodeIndex + " then" + "\n";
 					source += "thread = " + thread + "\n";
 
-					var conditionsMask = filledArray(16, "0");
-					event.conditions.forEach(function(conditionIndex) {
-						conditionsMask[conditionIndex] = "1";
-					});
-					source += "conditionsOld = conditions[" + thread + "]" + "\n";
-					source += "conditionsNew = conditionsOld & ~0b" + conditionsMask.join("") + "\n";
-					source = event.conditions.reduce(function(source, conditionIndex) {
-						var condition = nodes[node.conditions[conditionIndex]].compiled.condition;
-						var conditionMask = filledArray(16, "0");
-						conditionMask[conditionIndex] = "1";
-						source += "if " + condition + " then" + "\n";
-						source += "conditionsNew |= 0b" + conditionMask.join("") + "\n";
-						source += "end" + "\n";
-						return source;
-					}, source);
-					source += "conditions[" + thread + "] = conditionsNew" + "\n";
+					source += "callsub test" + nodeIndex + "\n";
 
 					var transitionsMask = filledArray(16, "0");
 					event.transitions.forEach(function(transitionIndex) {
@@ -427,8 +412,8 @@ Item {
 								positiveMask[conditionIndex] = "1";
 							}
 						});
-						var positiveTest = "conditionsNew & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
-						var negativeTest = "conditionsNew | ~0b" + negativeMask.join("") + " == ~0b" + negativeMask.join("");
+						var positiveTest = "conditions & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
+						var negativeTest = "conditions | ~0b" + negativeMask.join("") + " == ~0b" + negativeMask.join("");
 
 						var transitionMask = filledArray(16, "0");
 						transitionMask[transitionIndex] = "1";
@@ -437,7 +422,7 @@ Item {
 						source += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
 						source += "if transitionsOld & 0b" + transitionMask.join("") + " == 0 then" + "\n";
 						source += "emit transition [" + nodeIndex + ", " + transitionIndex + "]" + "\n";
-						source += "callsub state" + transition.tail + "\n";
+						source += "callsub enter" + transition.tail + "\n";
 						source += "return" + "\n";
 						source += "end" + "\n";
 						source += "end" + "\n";
