@@ -363,7 +363,7 @@ Item {
 						}
 					});
 					var positiveTest = "conditionsNew & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
-					var negativeTest = "~conditionsNew & 0b" + negativeMask.join("") + " == 0b" + negativeMask.join("");
+					var negativeTest = "conditionsNew | ~0b" + negativeMask.join("") + " == ~0b" + negativeMask.join("");
 
 					var transitionMask = filledArray(16, "0");
 					transitionMask[transitionIndex] = "1";
@@ -427,7 +427,7 @@ Item {
 							}
 						});
 						var positiveTest = "conditionsNew & 0b" + positiveMask.join("") + " == 0b" + positiveMask.join("");
-						var negativeTest = "~conditionsNew & 0b" + negativeMask.join("") + " == 0b" + negativeMask.join("");
+						var negativeTest = "conditionsNew | ~0b" + negativeMask.join("") + " == ~0b" + negativeMask.join("");
 
 						var transitionMask = filledArray(16, "0");
 						transitionMask[transitionIndex] = "1";
