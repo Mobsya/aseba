@@ -350,6 +350,7 @@ Item {
 						// unconditional transition
 						source += "emit transition [" + index + ", " + transitionIndex + "]" + "\n";
 						source += "callsub state" + transition.tail + "\n";
+						source += "return" + "\n";
 						return source;
 					}
 
