@@ -8,7 +8,7 @@ Window {
 	height: 720
 	color: "white"
 
-	FullEditor {
+	Editor {
 		anchors.fill: parent
 	}
 }
