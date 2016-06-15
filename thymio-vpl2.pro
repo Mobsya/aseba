@@ -3,8 +3,7 @@ TEMPLATE = app
 QT += qml
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    thymio-vpl2.cpp
+SOURCES += main.cpp
 
 RESOURCES += qml.qrc
 
