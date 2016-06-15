@@ -10,6 +10,7 @@ Item {
 
 	// whether VPL editor is minimized on top of background image
 	property bool minimized: false
+	property alias blockEditorVisible: blockEditor.visible
 	property alias mainContainerScale: mainContainer.scale
 
 	property alias compiler: compiler
