@@ -63,7 +63,7 @@ BlockDefinition {
 				stepSize: 1
 				snapMode: Slider.SnapAlways
 
-				value: paramsToMinorValue(params)
+				value: paramsToMinorValue(params) - 1 ; // FIXME: work around Qt bug, the -1 should not be here
 
 				onValueChanged: updateLabel()
 			}
