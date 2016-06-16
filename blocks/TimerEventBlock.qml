@@ -58,8 +58,8 @@ BlockDefinition {
 				height: 170
 				orientation: Qt.Vertical
 
-				from: 1
-				to: 9
+				from: 0 // FIXME: work around Qt bug, should be 1
+				to: 8 // FIXME: work around Qt bug, should be 9
 				stepSize: 1
 				snapMode: Slider.SnapAlways
 
@@ -87,11 +87,11 @@ BlockDefinition {
 			function getParams() {
 				switch(majorSlider.value) {
 				case 0:
-					return 10 * minorSlider.value;
+					return 10 * (minorSlider.value + 1); // FIXME: work around Qt bug, should be minorSlider.value
 				case 1:
-					return 100 * minorSlider.value;
+					return 100 * (minorSlider.value + 1); // FIXME: work around Qt bug, should be minorSlider.value
 				default:
-					return 1000 * minorSlider.value;
+					return 1000 * (minorSlider.value + 1); // FIXME: work around Qt bug, should be minorSlider.value
 				}
 			}
 		}
