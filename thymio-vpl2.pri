@@ -27,7 +27,8 @@ win32 {
 	macx {
 		ASEBA_SOURCES += $$PWD/dashel/dashel/poll_emu.c
 		ASEBA_LIBS += -framework CoreFoundation
-	} else {
+	}
+	linux:!android {
 		ASEBA_DEFINES += USE_LIBUDEV
 		ASEBA_LIBS += -ludev
 	}
