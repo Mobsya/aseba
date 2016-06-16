@@ -148,7 +148,7 @@ void AsebaNode::setVariable(QString name, QList<int> value) {
 	parent()->send(message);
 }
 
-void AsebaNode::setProgram(QString source) {
+QString AsebaNode::setProgram(QString source) {
 	Aseba::Compiler compiler;
 	compiler.setTargetDescription(&description);
 	Aseba::CommonDefinitions commonDefinitions;
@@ -164,7 +164,7 @@ void AsebaNode::setProgram(QString source) {
 	if (!result) {
 		qWarning() << QString::fromStdWString(error.toWString());
 		qWarning() << source;
-		return;
+		return QString::fromStdWString(error.message);
 	}
 
 	std::vector<Aseba::Message*> messages;
@@ -176,4 +176,5 @@ void AsebaNode::setProgram(QString source) {
 
 	Aseba::Run run(nodeId);
 	parent()->send(run);
+	return "";
 }

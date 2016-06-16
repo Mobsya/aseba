@@ -66,7 +66,7 @@ public:
 	QString name() { return QString::fromStdWString(description.name); }
 public slots:
 	void setVariable(QString name, QList<int> value);
-	void setProgram(QString aesl);
+	QString setProgram(QString aesl);
 };
 
 #endif // ASEBA_CLIENT_H

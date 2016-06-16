@@ -4,6 +4,7 @@ import Aseba 1.0
 Item {
 	property var variables: ({})
 	property string program: ""
+	property string error: ""
 	property bool playing: false
 
 	property var node: {
@@ -36,7 +37,7 @@ Item {
 
 	function setProgram() {
 		if (node) {
-			node.setProgram(program);
+			error = node.setProgram(program);
 		}
 	}
 }
