@@ -18,13 +18,18 @@ ASEBA_SOURCES = \
 	$$PWD/aseba/compiler/tree-typecheck.cpp \
 	$$PWD/aseba/compiler/tree-optimize.cpp \
 	$$PWD/aseba/compiler/tree-emit.cpp
+ASEBA_DEFINES =
+ASEBA_LIBS =
 win32 {
 	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-win32.cpp
 } else {
 	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-posix.cpp
 	macx {
 		ASEBA_SOURCES += $$PWD/dashel/dashel/poll_emu.c
-		ASEBA_LIBS = -framework CoreFoundation
+		ASEBA_LIBS += -framework CoreFoundation
+	} else {
+		ASEBA_DEFINES += USE_LIBUDEV
+		ASEBA_LIBS += -ludev
 	}
 }
 android {
@@ -39,6 +44,7 @@ ASEBA_INCLUDE = $$PWD/dashel $$PWD
 ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
 
 QMAKE_CXXFLAGS += $$ASEBA_CXXFLAGS
+DEFINES += $$ASEBA_DEFINES
 CONFIG += c++11
 HEADERS += $$PWD/aseba.h
 SOURCES += \
