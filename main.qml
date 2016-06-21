@@ -26,6 +26,7 @@ ApplicationWindow {
 					anchors.centerIn: parent
 					source: "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg"
 				}
+				visible: !vplEditor.blockEditorVisible
 				onClicked: drawer.open()
 			}
 
@@ -34,6 +35,7 @@ ApplicationWindow {
 					anchors.centerIn: parent
 					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
 				}
+				visible: !vplEditor.blockEditorVisible
 				onClicked: dashelTargetSelector.open()
 			}
 
@@ -46,6 +48,7 @@ ApplicationWindow {
 					anchors.centerIn: parent
 					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_white_48px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_48px.svg"
 				}
+				visible: !vplEditor.blockEditorVisible
 				enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)
 				onClicked: thymio.playing = !thymio.playing
 			}
