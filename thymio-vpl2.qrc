@@ -96,5 +96,8 @@
         <file>CompilationLabel.qml</file>
         <file>icons/ic_connection_off_white_24px.svg</file>
         <file>icons/ic_connection_on_white_24px.svg</file>
+        <file>icons/ic_new_white_24px.svg</file>
+        <file>icons/ic_open_white_24px.svg</file>
+        <file>icons/ic_save_white_24px.svg</file>
     </qresource>
 </RCC>
