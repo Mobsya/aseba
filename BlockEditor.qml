@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.1
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 import "blocks"
 
 // editor
@@ -10,7 +11,7 @@ Rectangle {
 	id: editor
 
 	anchors.fill: parent
-	color: "#44285a"
+	color: Material.theme === Material.Dark ? "#44285a" : "#eaeced"
 	visible: block !== null
 
 	// FIXME: still a problem?

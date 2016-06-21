@@ -2,6 +2,8 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import QtMultimedia 5.5
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 import QtQuick.LocalStorage 2.0
 import "blocks"
 
@@ -181,6 +183,9 @@ Item {
 		blocks: eventDefinitions
 		backImage: "images/eventCenter.svg"
 
+		darkThemeColor: "#301446"
+		lightThemeColor: "#ecd2bb"
+
 		anchors.left: parent.left
 		anchors.leftMargin: vplEditor.minimized ? -width : 0
 
@@ -192,6 +197,9 @@ Item {
 
 		blocks: actionDefinitions
 		backImage: "images/actionCenter.svg"
+
+		darkThemeColor: "#301446"
+		lightThemeColor: "#b9d6e6"
 
 		anchors.right: parent.right
 		anchors.rightMargin: vplEditor.minimized ? -width : 0
@@ -214,6 +222,15 @@ Item {
 		color: vplEditor.minimized ? "#80200032" : "#ff44285a"
 		scale: vplEditor.minimized ? 0.5 : 1.0
 		transformOrigin: Item.BottomRight
+
+		RadialGradient {
+			anchors.fill: parent
+			visible: Material.theme === Material.Light
+			gradient: Gradient {
+				GradientStop { position: 0.0; color: "white" }
+				GradientStop { position: 0.5; color: "#eaeced" }
+			}
+		}
 
 		Behavior on opacity { PropertyAnimation {} }
 		Behavior on color { PropertyAnimation {} }

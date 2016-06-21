@@ -14,6 +14,9 @@ ApplicationWindow {
 	width: 960
 	height: 600
 
+	Material.primary: Material.theme === Material.Dark ? "#200032" : Material.Indigo
+	Material.accent: Material.theme === Material.Dark ? "#9478aa" : Material.Pink
+
 	header: ToolBar {
 		RowLayout {
 			anchors.fill: parent
@@ -74,6 +77,7 @@ ApplicationWindow {
 		ListElement { title: qsTr("load program"); save: false; icon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg" }
 		ListElement { title: qsTr("save program"); save: true; icon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg" }
 		ListElement { title: qsTr("new program"); newProgram: true; icon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg" }
+		ListElement { title: qsTr("switch color theme"); switchColorTheme: true; icon: "" }
 		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
@@ -116,6 +120,12 @@ ApplicationWindow {
 							// new program
 							vplEditor.clearProgram();
 							saveProgramDialog.programName = "";
+						} else if (switchColorTheme === true) {
+							if (window.Material.theme === Material.Dark) {
+								window.Material.theme = Material.Light;
+							} else {
+								window.Material.theme = Material.Dark;
+							}
 						} else {
 							// load/save dialog
 							saveProgramDialog.isSave = save;

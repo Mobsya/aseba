@@ -1,5 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 
 Pane {
 	id: pane
@@ -8,12 +9,14 @@ Pane {
 	property string backImage
 	property bool showTrash: false
 	property bool trashOpen: false
+	property color lightThemeColor
+	property color darkThemeColor
 
 	width: 96
 	height: parent.height
 
 	background: Rectangle {
-		color: "#301446"
+		color: Material.theme === Material.Dark ? darkThemeColor : lightThemeColor
 	}
 
 	BlocksList {
@@ -25,7 +28,7 @@ Pane {
 
 	Rectangle {
 		anchors.fill: parent
-		color: "#301446"
+		color: background.color
 		opacity: pane.showTrash ? 0.8 : 0.0
 		Behavior on opacity { PropertyAnimation {} }
 	}
