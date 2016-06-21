@@ -63,6 +63,11 @@ ApplicationWindow {
 		}
 	}
 
+	Connections {
+		target: vplEditor.compiler
+		onSourceChanged: thymio.playing = false
+	}
+
 	ListModel {
 		id: menuItems
 
