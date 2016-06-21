@@ -16,8 +16,6 @@ Popup {
 	property Editor vplEditor
 	property alias programName: programName.text
 
-	onVplEditorChanged: console.log('editor', vplEditor)
-
 	ListModel {
 		id: programList
 	}

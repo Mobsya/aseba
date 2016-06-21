@@ -140,7 +140,6 @@ ApplicationWindow {
 
 	Aseba {
 		id: aseba
-		onTargetChanged: console.log("target", target)
 		onUserMessage: {
 			if (type !== 0) {
 				return;

@@ -89,7 +89,6 @@ Item {
 
 	// reset content from a JSON representation
 	function deserialize(data) {
-		console.log(data);
 
 		// first restore blocks
 		blocks = [];
