@@ -56,7 +56,7 @@ Rectangle {
 		sourceComponent: editor.definition ? editor.definition.editor : null
 	}
 
-	property real horizontalButtonMargin: ((width - editorItemLoader.scaledWidth) - 48) / 4
+	property real horizontalButtonMargin: (width - editorItemLoader.scaledWidth) / 4
 
 //	// buttons of the fake dialog
 //	RowLayout {
@@ -93,15 +93,20 @@ Rectangle {
 //		}
 //	}
 
-	HDPIImage {
-		/*anchors.bottom: parent.bottom
-		anchors.bottomMargin: 12*/
+	Item {
+		width: 48
+		height: 48
 		anchors.right: parent.right
 		anchors.rightMargin: horizontalButtonMargin
 		anchors.verticalCenter: parent.verticalCenter
-		source: "icons/ic_done_white_24px.svg"
-		width: 24 // working around Qt bug with SVG and HiDPI
-		height: 24 // working around Qt bug with SVG and HiDPI
+
+		HDPIImage {
+			source: "icons/ic_done_white_24px.svg"
+			width: 24 // working around Qt bug with SVG and HiDPI
+			height: 24 // working around Qt bug with SVG and HiDPI
+			anchors.centerIn: parent
+		}
+
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
@@ -112,17 +117,20 @@ Rectangle {
 		}
 	}
 
-	HDPIImage {
-		/*anchors.top: parent.top
-		anchors.topMargin: 12
-		anchors.right: parent.right
-		anchors.rightMargin: 12*/
+	Item {
+		width: 48
+		height: 48
 		anchors.left: parent.left
 		anchors.leftMargin: horizontalButtonMargin
 		anchors.verticalCenter: parent.verticalCenter
-		source: "icons/ic_cancel_white_24px.svg"
-		width: 24 // working around Qt bug with SVG and HiDPI
-		height: 24 // working around Qt bug with SVG and HiDPI
+
+		HDPIImage {
+			source: "icons/ic_cancel_white_24px.svg"
+			width: 24 // working around Qt bug with SVG and HiDPI
+			height: 24 // working around Qt bug with SVG and HiDPI
+			anchors.centerIn: parent
+		}
+
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {

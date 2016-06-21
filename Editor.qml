@@ -534,15 +534,21 @@ Item {
 		}
 
 		// center view
-		HDPIImage {
-			source: "icons/ic_gps_fixed_white_24px.svg"
-			width: 24 // working around Qt bug with SVG and HiDPI
-			height: 24 // working around Qt bug with SVG and HiDPI
+		Item {
+			width: 48
+			height: 48
 			anchors.right: parent.right
-			anchors.rightMargin: 16
+			anchors.rightMargin: 4
 			anchors.bottom: parent.bottom
-			anchors.bottomMargin: 16
-			visible: !minimized
+			anchors.bottomMargin: 4
+
+			HDPIImage {
+				source: "icons/ic_gps_fixed_white_24px.svg"
+				width: 24 // working around Qt bug with SVG and HiDPI
+				height: 24 // working around Qt bug with SVG and HiDPI
+				anchors.centerIn: parent
+				visible: !minimized
+			}
 
 			MouseArea {
 				anchors.fill: parent
