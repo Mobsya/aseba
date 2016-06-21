@@ -54,7 +54,7 @@ ApplicationWindow {
 		anchors.fill: parent
 
 		Text {
-			text: "developer preview pre-alpha, no design is final"
+			text: "developer preview pre-alpha, no feature or design is final"
 			anchors.left: parent.left
 			anchors.leftMargin: 106
 			anchors.top: parent.top
@@ -66,10 +66,10 @@ ApplicationWindow {
 	ListModel {
 		id: menuItems
 
-		ListElement { title: qsTr("load program"); save: false; icon: "images/ic_freeplay_white_24px.svg" }
-		ListElement { title: qsTr("save program"); save: true; icon: "images/ic_freeplay_white_24px.svg" }
-		ListElement { title: qsTr("new program"); newProgram: true; icon: "images/ic_freeplay_white_24px.svg" }
-		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "images/ic_info_white_24px.svg" }
+		ListElement { title: qsTr("load program"); save: false; icon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg" }
+		ListElement { title: qsTr("save program"); save: true; icon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg" }
+		ListElement { title: qsTr("new program"); newProgram: true; icon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg" }
+		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
 	Drawer {
