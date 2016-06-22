@@ -543,7 +543,7 @@ Item {
 			anchors.bottomMargin: 4
 
 			HDPIImage {
-				source: "icons/ic_gps_fixed_white_24px.svg"
+				source: Material.theme === Material.Light ? "icons/ic_gps_fixed_black_24px.svg" : "icons/ic_gps_fixed_white_24px.svg"
 				width: 24 // working around Qt bug with SVG and HiDPI
 				height: 24 // working around Qt bug with SVG and HiDPI
 				anchors.centerIn: parent

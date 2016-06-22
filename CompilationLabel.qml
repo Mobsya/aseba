@@ -11,7 +11,7 @@ Label {
 		else  if (vplEditor.minimized)
 			return qsTr("AR Running");
 		else if (vplEditor.blockEditorVisible)
-			return qsTr("Select block and set parameters");
+			return qsTr("Choose a block and set its parameters");
 		else if (vplEditor.compiler.error === "")
 			return qsTr("Compilation success");
 		else

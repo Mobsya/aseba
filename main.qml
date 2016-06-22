@@ -77,10 +77,10 @@ ApplicationWindow {
 	ListModel {
 		id: menuItems
 
-		ListElement { title: qsTr("load program"); save: false; icon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg" }
-		ListElement { title: qsTr("save program"); save: true; icon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg" }
-		ListElement { title: qsTr("new program"); newProgram: true; icon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg" }
-		ListElement { title: qsTr("switch color theme"); switchColorTheme: true; icon: "" }
+		ListElement { title: qsTr("load program"); save: false; whiteIcon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_open_black_24px.svg"; }
+		ListElement { title: qsTr("save program"); save: true; whiteIcon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_save_black_24px.svg"; }
+		ListElement { title: qsTr("new program"); newProgram: true; whiteIcon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_new_black_24px.svg";}
+		ListElement { title: qsTr("switch color theme"); switchColorTheme: true; whiteIcon: ""; blackIcon: ""; }
 		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
@@ -88,7 +88,7 @@ ApplicationWindow {
 		id: drawer
 		edge: Qt.LeftEdge
 		position: 0
-		width: 280
+		width: 260
 		height: window.height
 
 		contentItem: Pane {
@@ -103,7 +103,7 @@ ApplicationWindow {
 					contentItem: Row {
 						spacing: 24
 						HDPIImage {
-							source: icon
+							source: Material.theme === Material.Dark ? whiteIcon : blackIcon
 							width: 24
 							height: 24
 							opacity: enabled ? 1.0 : 0.5

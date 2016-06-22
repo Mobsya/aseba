@@ -101,7 +101,7 @@ Rectangle {
 		anchors.verticalCenter: parent.verticalCenter
 
 		HDPIImage {
-			source: "icons/ic_done_white_24px.svg"
+			source: Material.theme === Material.Light ? "icons/ic_done_black_24px.svg" : "icons/ic_done_white_24px.svg"
 			width: 24 // working around Qt bug with SVG and HiDPI
 			height: 24 // working around Qt bug with SVG and HiDPI
 			anchors.centerIn: parent
@@ -125,7 +125,7 @@ Rectangle {
 		anchors.verticalCenter: parent.verticalCenter
 
 		HDPIImage {
-			source: "icons/ic_cancel_white_24px.svg"
+			source: Material.theme === Material.Light ? "icons/ic_cancel_black_24px.svg" : "icons/ic_cancel_white_24px.svg"
 			width: 24 // working around Qt bug with SVG and HiDPI
 			height: 24 // working around Qt bug with SVG and HiDPI
 			anchors.centerIn: parent
