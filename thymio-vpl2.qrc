@@ -104,5 +104,7 @@
         <file>icons/ic_new_black_24px.svg</file>
         <file>icons/ic_open_black_24px.svg</file>
         <file>icons/ic_save_black_24px.svg</file>
+        <file>icons/ic_delete_black_48px.svg</file>
+        <file>icons/ic_delete_on_black_48px.svg</file>
     </qresource>
 </RCC>
