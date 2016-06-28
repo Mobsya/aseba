@@ -166,7 +166,8 @@ ApplicationWindow {
 
 	Thymio {
 		id: thymio
-		program: playing ? vplEditor.compiler.source : ""
+		events: vplEditor ? vplEditor.compiler.events : {}
+		source: playing ? vplEditor.compiler.source : ""
 		onNodeChanged: playing = false
 		onPlayingChanged: vplEditor.compiler.execReset(playing);
 	}

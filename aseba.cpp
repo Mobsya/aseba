@@ -148,11 +148,15 @@ void AsebaNode::setVariable(QString name, QList<int> value) {
 	parent()->send(message);
 }
 
-QString AsebaNode::setProgram(QString source) {
+QString AsebaNode::setProgram(QVariantMap events, QString source) {
 	Aseba::Compiler compiler;
 	compiler.setTargetDescription(&description);
 	Aseba::CommonDefinitions commonDefinitions;
-	commonDefinitions.events.push_back(Aseba::NamedValue(L"transition", 2));
+	for (auto event(events.begin()); event != events.end(); ++event) {
+		auto name(event.key().toStdWString());
+		auto value(event.value().toInt());
+		commonDefinitions.events.push_back(Aseba::NamedValue(name, value));
+	}
 	compiler.setCommonDefinitions(&commonDefinitions);
 
 	std::wistringstream input(source.toStdWString());

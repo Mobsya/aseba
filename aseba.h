@@ -1,6 +1,7 @@
 #ifndef ASEBA_CLIENT_H
 #define ASEBA_CLIENT_H
 
+#include <QVariantMap>
 #include <QThread>
 #include <QTimer>
 #include "dashel/dashel.h"
@@ -66,7 +67,7 @@ public:
 	QString name() { return QString::fromStdWString(description.name); }
 public slots:
 	void setVariable(QString name, QList<int> value);
-	QString setProgram(QString aesl);
+	QString setProgram(QVariantMap events, QString source);
 };
 
 #endif // ASEBA_CLIENT_H
