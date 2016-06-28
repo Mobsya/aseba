@@ -166,6 +166,7 @@ ApplicationWindow {
 
 	Thymio {
 		id: thymio
+		property bool playing: false
 		events: vplEditor ? vplEditor.compiler.events : {}
 		source: playing ? vplEditor.compiler.source : ""
 		onNodeChanged: playing = false
