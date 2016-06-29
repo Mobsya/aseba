@@ -171,6 +171,7 @@ ApplicationWindow {
 		source: playing ? vplEditor.compiler.source : ""
 		onNodeChanged: playing = false
 		onPlayingChanged: vplEditor.compiler.execReset(playing);
+		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
 	}
 }
 
