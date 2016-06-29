@@ -12,11 +12,14 @@ class DashelHub: public QObject, public Dashel::Hub {
 	Q_OBJECT
 public slots:
 	void start(QString target);
+	void send(Dashel::Stream* stream, const Aseba::Message& message);
 signals:
 	void connectionCreated(Dashel::Stream* stream) Q_DECL_OVERRIDE;
 	void incomingData(Dashel::Stream* stream) Q_DECL_OVERRIDE;
 	void connectionClosed(Dashel::Stream* stream, bool abnormal) Q_DECL_OVERRIDE;
 	void error(QString source, QString reason);
+private:
+	void exception(Dashel::DashelException&);
 };
 
 class AsebaDescriptionsManager: public QObject, public Aseba::NodesManager {
@@ -48,6 +51,7 @@ public:
 public slots:
 	void start(QString target = ASEBA_DEFAULT_TARGET);
 	void send(const Aseba::Message& message);
+	void receive(Aseba::Message* message);
 signals:
 	void userMessage(unsigned type, QList<int> data);
 	void nodesChanged();

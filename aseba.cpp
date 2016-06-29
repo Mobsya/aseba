@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <sstream>
 
+Q_DECLARE_METATYPE(Aseba::Message*)
+
 std::vector<sint16> toAsebaVector(const QList<int>& values)
 {
 	return std::vector<sint16>(values.begin(), values.end());
@@ -36,29 +38,51 @@ static const char* exceptionSource(Dashel::DashelException::Source source) {
 void DashelHub::start(QString target) {
 	try {
 		auto closeStream = [this](Dashel::Stream* stream) {
+			lock();
 			if (dataStreams.find(stream) != dataStreams.end())
 				Dashel::Hub::closeStream(stream);
+			unlock();
 		};
 		std::unique_ptr<Dashel::Stream, decltype(closeStream)> stream(Dashel::Hub::connect(target.toStdString()), closeStream);
 		run();
 	} catch (Dashel::DashelException& e) {
-		const char* source(exceptionSource(e.source));
-		const char* reason(e.what());
-		qWarning("DashelException(%s, %i, %s, %s, %p)", source, e.sysError, strerror(e.sysError), reason, e.stream);
-		emit error(source, reason);
+		exception(e);
 	}
 }
 
-AsebaClient::AsebaClient() {
+void DashelHub::send(Dashel::Stream* stream, const Aseba::Message& message) {
+	try {
+		lock();
+		if (dataStreams.find(stream) != dataStreams.end()) {
+			message.serialize(stream);
+			stream->flush();
+		}
+		unlock();
+	} catch (Dashel::DashelException& e) {
+		unlock();
+		exception(e);
+		stop();
+	}
+}
+
+void DashelHub::exception(Dashel::DashelException& exception) {
+	auto source(exceptionSource(exception.source));
+	auto reason(exception.what());
+	auto sysError(exception.sysError);
+	auto stream(exception.stream);
+	qWarning() << "DashelException" << source << sysError << strerror(sysError) << reason << stream;
+	emit error(source, reason);
+}
+
+
+
+
+AsebaClient::AsebaClient(): stream(nullptr) {
 	hub.moveToThread(&thread);
-	manager.moveToThread(&thread);
 
 	QObject::connect(&hub, &DashelHub::connectionCreated, this, [this](Dashel::Stream* stream) {
 		this->stream = stream;
-		managerTimer.start(1000);
-	}, Qt::QueuedConnection);
-
-	QObject::connect(&managerTimer, &QTimer::timeout, &manager, &AsebaDescriptionsManager::pingNetwork, Qt::DirectConnection);
+	}, Qt::DirectConnection);
 
 	QObject::connect(&hub, &DashelHub::connectionClosed, this, [this](Dashel::Stream* stream, bool abnormal) {
 		emit hub.error("ConnectionClosed", abnormal ? "abnormal" : "normal");
@@ -66,26 +90,21 @@ AsebaClient::AsebaClient() {
 	}, Qt::DirectConnection);
 
 	QObject::connect(&hub, &DashelHub::incomingData, this, [this](Dashel::Stream* stream) {
-		auto message(Aseba::Message::receive(stream));
-		std::unique_ptr<Aseba::Message> ptr(message);
-		Q_UNUSED(ptr);
+		std::unique_ptr<Aseba::Message> message(Aseba::Message::receive(stream));
 
 		std::wostringstream dump;
 		message->dump(dump);
 		qDebug() << "received" << QString::fromStdWString(dump.str());
 
-		manager.processMessage(message);
-
-		Aseba::UserMessage* userMessage(dynamic_cast<Aseba::UserMessage*>(message));
-		if (userMessage)
-			emit this->userMessage(userMessage->type, fromAsebaVector(userMessage->data));
-
+		static auto asebaMessageMetaTypeId(qRegisterMetaType<Aseba::Message*>());
+		Q_UNUSED(asebaMessageMetaTypeId);
+		QMetaObject::invokeMethod(this, "receive", Qt::QueuedConnection, Q_ARG(Aseba::Message*, message.release()));
 	}, Qt::DirectConnection);
 
 	QObject::connect(&hub, &DashelHub::error, this, [this](QString source, QString reason) {
-		managerTimer.stop();
 		stream = nullptr;
-
+	}, Qt::DirectConnection);
+	QObject::connect(&hub, &DashelHub::error, this, [this](QString source, QString reason) {
 		manager.reset();
 		for (auto node: nodes) {
 			delete node;
@@ -95,11 +114,13 @@ AsebaClient::AsebaClient() {
 		emit this->connectionError(source, reason);
 	}, Qt::QueuedConnection);
 
+	QObject::connect(&managerTimer, &QTimer::timeout, &manager, &AsebaDescriptionsManager::pingNetwork, Qt::DirectConnection);
+
 	QObject::connect(&manager, &AsebaDescriptionsManager::nodeConnected, this, [this](unsigned nodeId) {
 		auto description = manager.getDescription(nodeId);
 		nodes.append(new AsebaNode(this, nodeId, description));
 		emit this->nodesChanged();
-	}, Qt::QueuedConnection);
+	}, Qt::DirectConnection);
 
 	QObject::connect(&manager, &AsebaDescriptionsManager::nodeDisconnected, this, [this](unsigned nodeId) {
 		for (auto it = nodes.begin(); it != nodes.end(); ++it) {
@@ -111,11 +132,12 @@ AsebaClient::AsebaClient() {
 				break;
 			}
 		}
-	}, Qt::QueuedConnection);
+	}, Qt::DirectConnection);
 
 	QObject::connect(&manager, &AsebaDescriptionsManager::sendMessage, this, &AsebaClient::send, Qt::DirectConnection);
 
 	thread.start();
+	managerTimer.start(1000);
 }
 
 AsebaClient::~AsebaClient() {
@@ -129,11 +151,23 @@ void AsebaClient::start(QString target) {
 }
 
 void AsebaClient::send(const Aseba::Message& message) {
-	if (stream) {
-		message.serialize(stream);
-		stream->flush();
-	}
+	hub.send(stream, message);
 }
+
+void AsebaClient::receive(Aseba::Message* message) {
+	std::unique_ptr<Aseba::Message> ptr(message);
+	Q_UNUSED(ptr);
+
+	manager.processMessage(message);
+
+	Aseba::UserMessage* userMessage(dynamic_cast<Aseba::UserMessage*>(message));
+	if (userMessage)
+		emit this->userMessage(userMessage->type, fromAsebaVector(userMessage->data));
+
+}
+
+
+
 
 AsebaNode::AsebaNode(AsebaClient* parent, unsigned nodeId, const Aseba::TargetDescription* description)
 	: QObject(parent), nodeId(nodeId), description(*description) {
