@@ -52,6 +52,7 @@ public slots:
 	void start(QString target = ASEBA_DEFAULT_TARGET);
 	void send(const Aseba::Message& message);
 	void receive(Aseba::Message* message);
+	void sendUserMessage(int eventId, QList<int> args);
 signals:
 	void userMessage(unsigned type, QList<int> data);
 	void nodesChanged();

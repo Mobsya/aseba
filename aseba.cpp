@@ -166,6 +166,12 @@ void AsebaClient::receive(Aseba::Message* message) {
 
 }
 
+void AsebaClient::sendUserMessage(int type, QList<int> data) {
+	Aseba::UserMessage::DataVector vector(data.begin(), data.end());
+	Aseba::UserMessage message(type, vector);
+	send(message);
+}
+
 
 
 

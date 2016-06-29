@@ -35,6 +35,10 @@ Item {
 		startClient();
 	}
 
+	function emit(eventId, params) {
+		client.sendUserMessage(eventId, params);
+	}
+
 	Timer {
 		id: timer
 		interval: 1000
