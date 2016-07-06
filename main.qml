@@ -29,7 +29,7 @@ ApplicationWindow {
 			ToolButton {
 				contentItem: Image {
 					anchors.centerIn: parent
-					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
+					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
 				}
 				onClicked: dashelTargetSelector.open()
 			}

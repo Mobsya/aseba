@@ -93,11 +93,10 @@ Rectangle {
 //	}
 
 	HDPIImage {
-		/*anchors.bottom: parent.bottom
-		anchors.bottomMargin: 12*/
 		anchors.right: parent.right
-		anchors.rightMargin: horizontalButtonMargin
-		anchors.verticalCenter: parent.verticalCenter
+		anchors.rightMargin: Math.min(horizontalButtonMargin,30)
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: 30
 		source: "icons/ic_done_white_24px.svg"
 		width: 24 // working around Qt bug with SVG and HiDPI
 		height: 24 // working around Qt bug with SVG and HiDPI
@@ -112,13 +111,10 @@ Rectangle {
 	}
 
 	HDPIImage {
-		/*anchors.top: parent.top
-		anchors.topMargin: 12
 		anchors.right: parent.right
-		anchors.rightMargin: 12*/
-		anchors.left: parent.left
-		anchors.leftMargin: horizontalButtonMargin
-		anchors.verticalCenter: parent.verticalCenter
+		anchors.rightMargin: Math.min(horizontalButtonMargin,30)
+		anchors.top: parent.top
+		anchors.topMargin: 30
 		source: "icons/ic_cancel_white_24px.svg"
 		width: 24 // working around Qt bug with SVG and HiDPI
 		height: 24 // working around Qt bug with SVG and HiDPI
