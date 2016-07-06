@@ -2,6 +2,8 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import QtMultimedia 5.5
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 import QtQuick.LocalStorage 2.0
 import "blocks"
 
@@ -89,7 +91,6 @@ Item {
 
 	// reset content from a JSON representation
 	function deserialize(data) {
-		console.log(data);
 
 		// first restore blocks
 		blocks = [];
@@ -182,6 +183,9 @@ Item {
 		blocks: eventDefinitions
 		backImage: "images/eventCenter.svg"
 
+		darkThemeColor: "#301446"
+		lightThemeColor: "#ecd2bb"
+
 		anchors.left: parent.left
 		anchors.leftMargin: vplEditor.minimized ? -width : 0
 
@@ -193,6 +197,9 @@ Item {
 
 		blocks: actionDefinitions
 		backImage: "images/actionCenter.svg"
+
+		darkThemeColor: "#301446"
+		lightThemeColor: "#b9d6e6"
 
 		anchors.right: parent.right
 		anchors.rightMargin: vplEditor.minimized ? -width : 0
@@ -215,6 +222,15 @@ Item {
 		color: vplEditor.minimized ? "#80200032" : "#ff44285a"
 		scale: vplEditor.minimized ? 0.5 : 1.0
 		transformOrigin: Item.BottomRight
+
+		RadialGradient {
+			anchors.fill: parent
+			visible: Material.theme === Material.Light
+			gradient: Gradient {
+				GradientStop { position: 0.0; color: "white" }
+				GradientStop { position: 0.5; color: "#eaeced" }
+			}
+		}
 
 		Behavior on opacity { PropertyAnimation {} }
 		Behavior on color { PropertyAnimation {} }
@@ -518,15 +534,21 @@ Item {
 		}
 
 		// center view
-		HDPIImage {
-			source: "icons/ic_gps_fixed_white_24px.svg"
-			width: 24 // working around Qt bug with SVG and HiDPI
-			height: 24 // working around Qt bug with SVG and HiDPI
+		Item {
+			width: 48
+			height: 48
 			anchors.right: parent.right
-			anchors.rightMargin: 16
+			anchors.rightMargin: 4
 			anchors.bottom: parent.bottom
-			anchors.bottomMargin: 16
-			visible: !minimized
+			anchors.bottomMargin: 4
+
+			HDPIImage {
+				source: Material.theme === Material.Light ? "icons/ic_gps_fixed_black_24px.svg" : "icons/ic_gps_fixed_white_24px.svg"
+				width: 24 // working around Qt bug with SVG and HiDPI
+				height: 24 // working around Qt bug with SVG and HiDPI
+				anchors.centerIn: parent
+				visible: !minimized
+			}
 
 			MouseArea {
 				anchors.fill: parent

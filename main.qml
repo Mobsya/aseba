@@ -14,6 +14,9 @@ ApplicationWindow {
 	width: 960
 	height: 600
 
+	Material.primary: Material.theme === Material.Dark ? "#200032" : Material.Indigo
+	Material.accent: Material.theme === Material.Dark ? "#9478aa" : Material.Pink
+
 	header: ToolBar {
 		RowLayout {
 			anchors.fill: parent
@@ -23,6 +26,7 @@ ApplicationWindow {
 					anchors.centerIn: parent
 					source: "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg"
 				}
+				visible: !vplEditor.blockEditorVisible
 				onClicked: drawer.open()
 			}
 
@@ -31,6 +35,7 @@ ApplicationWindow {
 					anchors.centerIn: parent
 					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
 				}
+				visible: !vplEditor.blockEditorVisible
 				onClicked: dashelTargetSelector.open()
 			}
 
@@ -43,6 +48,7 @@ ApplicationWindow {
 					anchors.centerIn: parent
 					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_white_48px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_48px.svg"
 				}
+				visible: !vplEditor.blockEditorVisible
 				enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)
 				onClicked: thymio.playing = !thymio.playing
 			}
@@ -54,7 +60,7 @@ ApplicationWindow {
 		anchors.fill: parent
 
 		Text {
-			text: "developer preview pre-alpha, no design is final"
+			text: "developer preview pre-alpha, no feature or design is final"
 			anchors.left: parent.left
 			anchors.leftMargin: 106
 			anchors.top: parent.top
@@ -63,20 +69,26 @@ ApplicationWindow {
 		}
 	}
 
+	Connections {
+		target: vplEditor.compiler
+		onSourceChanged: thymio.playing = false
+	}
+
 	ListModel {
 		id: menuItems
 
-		ListElement { title: qsTr("load program"); save: false; icon: "images/ic_freeplay_white_24px.svg" }
-		ListElement { title: qsTr("save program"); save: true; icon: "images/ic_freeplay_white_24px.svg" }
-		ListElement { title: qsTr("new program"); newProgram: true; icon: "images/ic_freeplay_white_24px.svg" }
-		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "images/ic_info_white_24px.svg" }
+		ListElement { title: qsTr("load program"); save: false; whiteIcon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_open_black_24px.svg"; }
+		ListElement { title: qsTr("save program"); save: true; whiteIcon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_save_black_24px.svg"; }
+		ListElement { title: qsTr("new program"); newProgram: true; whiteIcon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_new_black_24px.svg";}
+		ListElement { title: qsTr("switch color theme"); switchColorTheme: true; whiteIcon: ""; blackIcon: ""; }
+		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
 	Drawer {
 		id: drawer
 		edge: Qt.LeftEdge
 		position: 0
-		width: 280
+		width: 260
 		height: window.height
 
 		contentItem: Pane {
@@ -91,7 +103,7 @@ ApplicationWindow {
 					contentItem: Row {
 						spacing: 24
 						HDPIImage {
-							source: icon
+							source: Material.theme === Material.Dark ? whiteIcon : blackIcon
 							width: 24
 							height: 24
 							opacity: enabled ? 1.0 : 0.5
@@ -111,6 +123,12 @@ ApplicationWindow {
 							// new program
 							vplEditor.clearProgram();
 							saveProgramDialog.programName = "";
+						} else if (switchColorTheme === true) {
+							if (window.Material.theme === Material.Dark) {
+								window.Material.theme = Material.Light;
+							} else {
+								window.Material.theme = Material.Dark;
+							}
 						} else {
 							// load/save dialog
 							saveProgramDialog.isSave = save;
@@ -135,7 +153,6 @@ ApplicationWindow {
 
 	Aseba {
 		id: aseba
-		onTargetChanged: console.log("target", target)
 		onUserMessage: {
 			if (type !== 0) {
 				return;
@@ -149,9 +166,12 @@ ApplicationWindow {
 
 	Thymio {
 		id: thymio
-		program: playing ? vplEditor.compiler.source : ""
+		property bool playing: false
+		events: vplEditor ? vplEditor.compiler.events : {}
+		source: playing ? vplEditor.compiler.source : ""
 		onNodeChanged: playing = false
 		onPlayingChanged: vplEditor.compiler.execReset(playing);
+		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
 	}
 }
 

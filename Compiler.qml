@@ -2,6 +2,9 @@ import QtQuick 2.0
 
 Item {
 	id: compiler
+	readonly property var events: ({
+		"transition": 2,
+	})
 	property var nodes
 	property string source
 	property string error

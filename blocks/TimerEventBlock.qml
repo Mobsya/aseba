@@ -72,7 +72,7 @@ BlockDefinition {
 				x: 0
 				y: -6
 				majorValue: majorSlider.value
-				minorValue: minorSlider.value
+				minorValue: (minorSlider.value + 1) // FIXME: work around Qt bug, should be minorSlider.value
 			}
 
 			function updateLabel() {

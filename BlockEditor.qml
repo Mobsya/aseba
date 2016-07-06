@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.1
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 import "blocks"
 
 // editor
@@ -10,7 +11,7 @@ Rectangle {
 	id: editor
 
 	anchors.fill: parent
-	color: "#44285a"
+	color: Material.theme === Material.Dark ? "#44285a" : "#eaeced"
 	visible: block !== null
 
 	// FIXME: still a problem?
@@ -55,7 +56,7 @@ Rectangle {
 		sourceComponent: editor.definition ? editor.definition.editor : null
 	}
 
-	property real horizontalButtonMargin: ((width - editorItemLoader.scaledWidth) - 48) / 4
+	property real horizontalButtonMargin: (width - editorItemLoader.scaledWidth) / 4
 
 //	// buttons of the fake dialog
 //	RowLayout {
@@ -92,14 +93,21 @@ Rectangle {
 //		}
 //	}
 
-	HDPIImage {
+	Item {
+		width: 48
+		height: 48
 		anchors.right: parent.right
-		anchors.rightMargin: Math.min(horizontalButtonMargin,30)
+		anchors.rightMargin: Math.min(horizontalButtonMargin,18)
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 30
-		source: "icons/ic_done_white_24px.svg"
-		width: 24 // working around Qt bug with SVG and HiDPI
-		height: 24 // working around Qt bug with SVG and HiDPI
+		anchors.bottomMargin: 18
+
+		HDPIImage {
+			source: Material.theme === Material.Light ? "icons/ic_done_black_24px.svg" : "icons/ic_done_white_24px.svg"
+			width: 24 // working around Qt bug with SVG and HiDPI
+			height: 24 // working around Qt bug with SVG and HiDPI
+			anchors.centerIn: parent
+		}
+
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
@@ -110,14 +118,21 @@ Rectangle {
 		}
 	}
 
-	HDPIImage {
+	Item {
+		width: 48
+		height: 48
 		anchors.right: parent.right
-		anchors.rightMargin: Math.min(horizontalButtonMargin,30)
+		anchors.rightMargin: Math.min(horizontalButtonMargin,18)
 		anchors.top: parent.top
-		anchors.topMargin: 30
-		source: "icons/ic_cancel_white_24px.svg"
-		width: 24 // working around Qt bug with SVG and HiDPI
-		height: 24 // working around Qt bug with SVG and HiDPI
+		anchors.topMargin: 18
+
+		HDPIImage {
+			source: Material.theme === Material.Light ? "icons/ic_cancel_black_24px.svg" : "icons/ic_cancel_white_24px.svg"
+			width: 24 // working around Qt bug with SVG and HiDPI
+			height: 24 // working around Qt bug with SVG and HiDPI
+			anchors.centerIn: parent
+		}
+
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {

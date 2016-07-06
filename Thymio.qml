@@ -3,9 +3,9 @@ import Aseba 1.0
 
 Item {
 	property var variables: ({})
-	property string program: ""
+	property var events: ({})
+	property string source: ""
 	property string error: ""
-	property bool playing: false
 
 	property var node: {
 		for (var i = 0; i < aseba.nodes.length; ++i) {
@@ -21,7 +21,8 @@ Item {
 		setProgram();
 	}
 	onVariablesChanged: setVariables()
-	onProgramChanged: setProgram()
+	onEventsChanged: setProgram()
+	onSourceChanged: setProgram()
 
 	function setVariables() {
 		if (node) {
@@ -37,7 +38,7 @@ Item {
 
 	function setProgram() {
 		if (node) {
-			error = node.setProgram(program);
+			error = node.setProgram(events, source);
 		}
 	}
 }

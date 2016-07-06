@@ -16,8 +16,6 @@ Popup {
 	property Editor vplEditor
 	property alias programName: programName.text
 
-	onVplEditorChanged: console.log('editor', vplEditor)
-
 	ListModel {
 		id: programList
 	}
@@ -68,12 +66,17 @@ Popup {
 				text: name
 				width: parent.width
 				onClicked: {
-					programName.text = text;
 					if (!isSave) {
 						list.currentIndex = index;
 					}
 				}
 			}
+			onCurrentIndexChanged: {
+				if (currentIndex !== -1) {
+					programName.text = programList.get(currentIndex).name;
+				}
+			}
+
 			highlight: isSave ? null : listHighlight
 			ScrollIndicator.vertical: ScrollIndicator { }
 		}

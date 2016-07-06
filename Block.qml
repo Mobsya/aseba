@@ -270,7 +270,6 @@ Item {
 				blockDragPreview.opacity = 1.0;
 				blockDragPreview.params = block.params;
 				blockDragPreview.definition = definition;
-				//block.parent.z = 1; // FIXME: not working
 
 				// check whether we are hovering delete block item
 				eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
@@ -292,7 +291,6 @@ Item {
 			eventPane.clearTrash();
 			actionPane.clearTrash();
 			blockDragPreview.definition = null;
-			//block.parent.z = 0;
 		}
 
 		onClicked: {

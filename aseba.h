@@ -1,6 +1,7 @@
 #ifndef ASEBA_CLIENT_H
 #define ASEBA_CLIENT_H
 
+#include <QVariantMap>
 #include <QThread>
 #include <QTimer>
 #include "dashel/dashel.h"
@@ -11,11 +12,14 @@ class DashelHub: public QObject, public Dashel::Hub {
 	Q_OBJECT
 public slots:
 	void start(QString target);
+	void send(Dashel::Stream* stream, const Aseba::Message& message);
 signals:
 	void connectionCreated(Dashel::Stream* stream) Q_DECL_OVERRIDE;
 	void incomingData(Dashel::Stream* stream) Q_DECL_OVERRIDE;
 	void connectionClosed(Dashel::Stream* stream, bool abnormal) Q_DECL_OVERRIDE;
 	void error(QString source, QString reason);
+private:
+	void exception(Dashel::DashelException&);
 };
 
 class AsebaDescriptionsManager: public QObject, public Aseba::NodesManager {
@@ -47,6 +51,8 @@ public:
 public slots:
 	void start(QString target = ASEBA_DEFAULT_TARGET);
 	void send(const Aseba::Message& message);
+	void receive(Aseba::Message* message);
+	void sendUserMessage(int eventId, QList<int> args);
 signals:
 	void userMessage(unsigned type, QList<int> data);
 	void nodesChanged();
@@ -66,7 +72,7 @@ public:
 	QString name() { return QString::fromStdWString(description.name); }
 public slots:
 	void setVariable(QString name, QList<int> value);
-	QString setProgram(QString aesl);
+	QString setProgram(QVariantMap events, QString source);
 };
 
 #endif // ASEBA_CLIENT_H
