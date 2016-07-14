@@ -24,7 +24,7 @@ win32 {
 	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-win32.cpp
 } else {
 	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-posix.cpp
-	macx {
+        mac {
 		ASEBA_SOURCES += $$PWD/dashel/dashel/poll_emu.c
 		ASEBA_LIBS += -framework CoreFoundation
 	}
