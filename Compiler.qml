@@ -98,7 +98,7 @@ Item {
 
 			// detect infinite loops
 			nodes.forEach(function(node, index) {
-				if (node.compiled.condition !== undefined)
+				if (node.compiled.condition !== undefined && starts.indexOf(index) == -1)
 					return;
 
 				var events = [];
