@@ -107,5 +107,6 @@
         <file>icons/ic_save_black_24px.svg</file>
         <file>icons/ic_delete_black_48px.svg</file>
         <file>icons/ic_delete_on_black_48px.svg</file>
+        <file>images/arrowOption_else.svg</file>
     </qresource>
 </RCC>

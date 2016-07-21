@@ -9,13 +9,12 @@ import "qrc:/thymio-vpl2"
 ApplicationWindow {
 	id: window
 	title: qsTr("Thymio Flow")
-	visibility: Qt.platform.os === "android" ? Window.FullScreen : Window.Windowed
 	visible: true
 	width: 960
 	height: 600
 
-	Material.primary: Material.theme === Material.Dark ? "#200032" : Material.Indigo
-	Material.accent: Material.theme === Material.Dark ? "#9478aa" : Material.Pink
+	Material.primary: Material.theme === Material.Dark ? "#200032" : "#a3d9db"
+	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#59cbc8"
 
 	header: ToolBar {
 		RowLayout {
@@ -46,6 +45,7 @@ ApplicationWindow {
 			ToolButton {
 				contentItem: Image {
 					anchors.centerIn: parent
+					anchors.rightMargin: 12
 					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_white_48px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_48px.svg"
 				}
 				visible: !vplEditor.blockEditorVisible

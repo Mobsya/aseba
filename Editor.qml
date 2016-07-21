@@ -184,7 +184,7 @@ Item {
 		backImage: "images/eventCenter.svg"
 
 		darkThemeColor: "#301446"
-		lightThemeColor: "#ecd2bb"
+		lightThemeColor: "#ffead9"
 
 		anchors.left: parent.left
 		anchors.leftMargin: vplEditor.minimized ? -width : 0
@@ -199,7 +199,7 @@ Item {
 		backImage: "images/actionCenter.svg"
 
 		darkThemeColor: "#301446"
-		lightThemeColor: "#b9d6e6"
+		lightThemeColor: "#daeaf2"
 
 		anchors.right: parent.right
 		anchors.rightMargin: vplEditor.minimized ? -width : 0

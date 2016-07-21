@@ -11,7 +11,7 @@ Rectangle {
 	id: editor
 
 	anchors.fill: parent
-	color: Material.theme === Material.Dark ? "#44285a" : "#eaeced"
+	color: Material.theme === Material.Dark ? "#44285a" : "#a0b2b3"
 	visible: block !== null
 
 	// FIXME: still a problem?
