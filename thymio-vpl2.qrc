@@ -58,15 +58,18 @@
         <file>HighlightTimer.qml</file>
         <file>images/threadStartIndicatorExec.svg</file>
         <file>BlockAcceleration.qml</file>
-        <file>images/arrowOptionActive.svg</file>
+        <file>images/arrowOptionActiveTrue.svg</file>
+        <file>images/arrowOptionActiveTrueExec.svg</file>
+        <file>images/arrowOptionActiveTrueError.svg</file>
+        <file>images/arrowOptionActiveFalse.svg</file>
+        <file>images/arrowOptionActiveFalseExec.svg</file>
+        <file>images/arrowOptionActiveFalseError.svg</file>
         <file>images/arrowOptionInactive.svg</file>
+        <file>images/arrowOptionInactiveExec.svg</file>
+        <file>images/arrowOptionInactiveError.svg</file>
         <file>blocks/images/stop.svg</file>
         <file>Compiler.qml</file>
         <file>blocks/StateActionBlock.qml</file>
-        <file>images/arrowOptionActiveExec.svg</file>
-        <file>images/arrowOptionInactiveExec.svg</file>
-        <file>images/arrowOptionActiveError.svg</file>
-        <file>images/arrowOptionInactiveError.svg</file>
         <file>images/bgError.svg</file>
         <file>images/linkEndArrowError.svg</file>
         <file>images/threadStartIndicatorError.svg</file>
@@ -107,6 +110,5 @@
         <file>icons/ic_save_black_24px.svg</file>
         <file>icons/ic_delete_black_48px.svg</file>
         <file>icons/ic_delete_on_black_48px.svg</file>
-        <file>images/arrowOption_else.svg</file>
     </qresource>
 </RCC>

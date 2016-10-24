@@ -167,9 +167,14 @@ Canvas {
 
 		visible: parent.width > 228 + 96
 		source: isError ?
-			(canBeElse ? "images/arrowOptionActiveError.svg" : "images/arrowOptionInactiveError.svg") :
 			(canBeElse ?
-				(execHighlightTimer.highlighted ? "images/arrowOptionActiveExec.svg" : "images/arrowOptionActive.svg") :
+				(isElse ? "images/arrowOptionActiveFalseError.svg" : "images/arrowOptionActiveTrueError.svg") :
+				"images/arrowOptionInactiveError.svg") :
+			(canBeElse ?
+				(isElse ?
+					(execHighlightTimer.highlighted ? "images/arrowOptionActiveFalseExec.svg" : "images/arrowOptionActiveFalse.svg") :
+					(execHighlightTimer.highlighted ? "images/arrowOptionActiveTrueExec.svg" : "images/arrowOptionActiveTrue.svg")
+				) :
 				(execHighlightTimer.highlighted ? "images/arrowOptionInactiveExec.svg" : "images/arrowOptionInactive.svg")
 			)
 		width: 50 // working around Qt bug with SVG and HiDPI
