@@ -12,6 +12,8 @@ Item {
 	property BlockDefinition definition
 	property var params
 
+	property bool canGraph: true // whether this block can create links and move startIndicator
+
 	property bool isError: false // whether this block is involved in an error
 	property bool isExec: false // whether this block is currently executing
 
@@ -58,6 +60,7 @@ Item {
 	// starting indicator, show if this block is the start of its click
 	StartIndicator {
 		id: startIndicator
+		enabled: canGraph
 	}
 
 	onIsStartingChanged: {
@@ -135,6 +138,7 @@ Item {
 	// link under creation
 	MouseArea {
 		id: linkArea
+		enabled: canGraph
 		anchors.fill: parent
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
