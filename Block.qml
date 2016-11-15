@@ -235,26 +235,36 @@ Item {
 		drag.target: block
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
+		property real startX
+		property real startY
+
 		onPressed: {
 			// within inner radius?
-			mouse.accepted = function () {
-				var dx = mouse.x - 128;
-				var dy = mouse.y - 128;
-				return dx*dx+dy*dy < centerRadius*centerRadius;
-			} ();
-			// if so...
-			if (mouse.accepted) {
-				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				accelerationTimer.startEstimation(mousePos);
+			var dx = mouse.x - 128;
+			var dy = mouse.y - 128;
+			var accepted = dx*dx+dy*dy < centerRadius*centerRadius;
+			mouse.accepted = accepted;
+			if (accepted) {
+				// if so...
+				if (canGraph) {
+					var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+					accelerationTimer.startEstimation(mousePos);
+				} else {
+					startX = block.x;
+					startY = block.y;
+				}
 				bringBlockToFront();
 			}
 		}
 
 		onPositionChanged: {
 			if (drag.active) {
-				// compute and accumulate displacement for inertia
-				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				accelerationTimer.updateEstimation(mousePos);
+				if (canGraph) {
+					// compute and accumulate displacement for inertia
+					var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+					accelerationTimer.updateEstimation(mousePos);
+				}
+
 				// show trash bin
 				eventPane.showTrash = true;
 				actionPane.showTrash = true;
@@ -276,12 +286,16 @@ Item {
 			// to be deleted?
 			if (eventPane.trashOpen || actionPane.trashOpen) {
 				scene.deleteBlock(block);
-			} else {
+			} else if (canGraph) {
 				// no, compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				accelerationTimer.updateEstimation(mousePos);
 				accelerationTimer.startAcceleration();
+			} else {
+				block.x = startX;
+				block.y = startY;
 			}
+
 			// in any case, hide back the delete icons
 			eventPane.clearTrash();
 			actionPane.clearTrash();
