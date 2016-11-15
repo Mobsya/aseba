@@ -9,6 +9,7 @@ Item {
 	height: 256
 	z: 1
 
+	property string typeRestriction: "" // "", "event", "action"
 	property BlockDefinition definition
 	property var params
 
@@ -50,7 +51,7 @@ Item {
 			(highlight ? "images/bgHighlight.svg" :
 				((isExec || execHighlightTimer.highlighted) ?
 					( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") :
-					"images/bgDefault.svg"
+					( definition === null && !canGraph ? "" : "images/bgDefault.svg")
 				)
 			)
 		width: 256 // working around Qt bug with SVG and HiDPI
@@ -84,7 +85,19 @@ Item {
 	// center background
 	HDPIImage {
 		id: centerImageId
-		source: definition.type === "event" ? "images/eventCenter.svg" : "images/actionCenter.svg"
+		source: {
+			if (definition === null) {
+				switch(typeRestriction) {
+				case "event": return "images/eventPlaceholder.svg";
+				case "action": return "images/actionPlaceholder.svg";
+				}
+			} else {
+				switch(definition.type) {
+				case "event": return "images/eventCenter.svg";
+				case "action": return "images/actionCenter.svg";
+				}
+			}
+		}
 		anchors.centerIn: parent
 		scale: 0.72
 		width: 256 // working around Qt bug with SVG and HiDPI

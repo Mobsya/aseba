@@ -13,6 +13,8 @@
         <file>BlockDefinition.qml</file>
         <file>images/actionCenter.svg</file>
         <file>images/eventCenter.svg</file>
+        <file>images/actionPlaceholder.svg</file>
+        <file>images/eventPlaceholder.svg</file>
         <file>images/linkEndArrow.svg</file>
         <file>images/bgDefault.svg</file>
         <file>images/bgHighlight.svg</file>
