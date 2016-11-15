@@ -63,10 +63,6 @@ Item {
 		enabled: canGraph
 	}
 
-	onIsStartingChanged: {
-		compiler.compile();
-	}
-
 	// highlight for a short while upon execution on the robot
 	HighlightTimer {
 		id: execHighlightTimer
@@ -108,7 +104,6 @@ Item {
 	onParamsChanged: {
 		placeholder.children = [];
 		definition.miniature.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
-		compiler.compile();
 	}
 
 	function bringBlockToFront() {

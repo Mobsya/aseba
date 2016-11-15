@@ -40,7 +40,6 @@ Canvas {
 
 	onIsElseChanged: {
 		requestPaint();
-		compiler.compile();
 	}
 	onCanBeElseChanged: {
 		if (!canBeElse)

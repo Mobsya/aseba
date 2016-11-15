@@ -2,14 +2,33 @@ import QtQuick 2.0
 
 Item {
 	id: compiler
-	readonly property var events: ({
-		"transition": 2,
-	})
-	property var nodes
-	property string source
-	property string error
 
-	function compile() {
+	// input
+	property list<Block> blocks
+	property list<Link> links
+
+	// output
+	property string error
+	property var events
+	property string script
+
+	// internal
+	property var nodes
+
+	onBlocksChanged: {
+		for (var i = 0; i < blocks.length; ++i) {
+			var block = blocks[i];
+			block.paramsChanged.connect(timer.start);
+			block.isStartingChanged.connect(timer.start);
+		}
+		timer.start();
+	}
+
+	onLinksChanged: {
+		for (var i = 0; i < links.length; ++i) {
+			var link = links[i];
+			link.isElseChanged.connect(timer.start);
+		}
 		timer.start();
 	}
 
@@ -18,22 +37,24 @@ Item {
 		interval: 0
 		onTriggered: {
 			try {
-				var compiled = compile();
-				compiler.nodes = compiled.nodes;
-				compiler.source = compiled.source;
-				compiler.error = "";
-			} catch(error) {
-				if (typeof(error) === "string") {
-					compiler.nodes = [];
-					compiler.source = "";
-					compiler.error = error;
+				var compiled = compile(blocks, links);
+				error = "";
+				events = compiled.events;
+				script = compiled.script;
+				nodes = compiled.nodes;
+			} catch(err) {
+				if (typeof(err) === "string") {
+					error = err;
+					events = {};
+					script = "";
+					nodes = [];
 				} else {
-					throw error;
+					throw err;
 				}
 			}
 		}
 
-		function compile() {
+		function compile(blocks, links) {
 			function filledArray(length, value) {
 				var array = new Array(length);
 				for (var i = 0; i < length; ++i) {
@@ -83,8 +104,9 @@ Item {
 
 			if (blocks.length === 0) {
 				return {
+					events: {},
+					script: "",
 					nodes: [],
-					source: "",
 				};
 			}
 
@@ -296,71 +318,75 @@ Item {
 				visitTails(node, buildTransition);
 			});
 
-			var src = "";
-			src = Object.keys(eventStates).reduce(function(source, eventName, eventIndex) {
-				source += "const event_" + eventName + " = " + eventIndex + "\n";
-				return source;
-			}, src);
-			src += "var thread = -1" + "\n";
-			src += "var event = -1" + "\n";
-			src += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
-			src += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
-			src += "var conditions = -1" + "\n";
-			src += "var transitions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
-			src += "var transitionsOld = -1" + "\n";
-			src += "var transitionsNew = -1" + "\n";
-			src += "timer.period[0] = 10" + "\n";
-			src = nodes.reduce(function(source, node, index) {
+			var events = {
+				"transition": 2,
+			};
+
+			var script = "";
+			script = Object.keys(eventStates).reduce(function(script, eventName, eventIndex) {
+				script += "const event_" + eventName + " = " + eventIndex + "\n";
+				return script;
+			}, script);
+			script += "var thread = -1" + "\n";
+			script += "var event = -1" + "\n";
+			script += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			script += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			script += "var conditions = -1" + "\n";
+			script += "var transitions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			script += "var transitionsOld = -1" + "\n";
+			script += "var transitionsNew = -1" + "\n";
+			script += "timer.period[0] = 10" + "\n";
+			script = nodes.reduce(function(script, node, index) {
 				var global = node.compiled.global;
 				if (global !== undefined) {
-					source += "\n";
-					source += global + "\n";
+					script += "\n";
+					script += global + "\n";
 				}
-				return source;
-			}, src);
+				return script;
+			}, script);
 			for (var i = 0; i < starts.length; ++i) {
 				var start = starts[i];
-				src += "callsub enter" + start + "\n";
+				script += "callsub enter" + start + "\n";
 			}
-			src = nodes.reduce(function(source, node, index) {
+			script = nodes.reduce(function(script, node, index) {
 				if (node.compiled.condition !== undefined) {
-					return source;
+					return script;
 				}
 
 				var thread = node.thread;
 
-				source += "\n";
+				script += "\n";
 
-				source += "sub test" + index + "\n";
-				source += "conditions = 0" + "\n";
-				source = node.conditions.reduce(function (source, nodeIndex, conditionIndex) {
+				script += "sub test" + index + "\n";
+				script += "conditions = 0" + "\n";
+				script = node.conditions.reduce(function (script, nodeIndex, conditionIndex) {
 					var node = nodes[nodeIndex];
 					var conditionMask = filledArray(16, "0");
 					conditionMask[conditionIndex] = "1";
-					source += "if " + node.compiled.condition + " then" + "\n";
-					source += "conditions |= 0b" + conditionMask.join("") + "\n";
-					source += "end" + "\n";
-					return source;
-				}, source);
+					script += "if " + node.compiled.condition + " then" + "\n";
+					script += "conditions |= 0b" + conditionMask.join("") + "\n";
+					script += "end" + "\n";
+					return script;
+				}, script);
 
-				source += "sub enter" + index + "\n";
-				source += "thread = " + thread + "\n";
-				source += "states[" + thread + "] = " + index + "\n";
-				source += "ages[" + thread + "] = 0" + "\n";
+				script += "sub enter" + index + "\n";
+				script += "thread = " + thread + "\n";
+				script += "states[" + thread + "] = " + index + "\n";
+				script += "ages[" + thread + "] = 0" + "\n";
 				if (node.compiled.action !== undefined) {
-					source += node.compiled.action + "\n";
+					script += node.compiled.action + "\n";
 				}
-				source += "callsub test" + index + "\n";
+				script += "callsub test" + index + "\n";
 
-				source += "transitionsNew = 0" + "\n";
-				source = node.transitions.reduce(function (source, transition, transitionIndex) {
+				script += "transitionsNew = 0" + "\n";
+				script = node.transitions.reduce(function (script, transition, transitionIndex) {
 					if (transition.indices.length === 0) {
 						// unconditional transition
-						source += "event = -1" + "\n";
-						source += "emit transition [" + index + ", " + transitionIndex + "]" + "\n";
-						source += "callsub enter" + transition.tail + "\n";
-						source += "return" + "\n";
-						return source;
+						script += "event = -1" + "\n";
+						script += "emit transition [" + index + ", " + transitionIndex + "]" + "\n";
+						script += "callsub enter" + transition.tail + "\n";
+						script += "return" + "\n";
+						return script;
 					}
 
 					var positiveMask = filledArray(16, "0");
@@ -378,39 +404,39 @@ Item {
 					var transitionMask = filledArray(16, "0");
 					transitionMask[transitionIndex] = "1";
 
-					source += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
-					source += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
-					source += "end" + "\n";
-					return source;
-				}, source);
-				source += "transitions[" + thread + "] = transitionsNew" + "\n";
+					script += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
+					script += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
+					script += "end" + "\n";
+					return script;
+				}, script);
+				script += "transitions[" + thread + "] = transitionsNew" + "\n";
 
-				return source;
-			}, src);
-			src = Object.keys(eventStates).reduce(function(source, eventName) {
-				source += "\n";
-				source += "onevent " + eventName + "\n";
-				source += "event = event_" + eventName + "\n";
+				return script;
+			}, script);
+			script = Object.keys(eventStates).reduce(function(script, eventName) {
+				script += "\n";
+				script += "onevent " + eventName + "\n";
+				script += "event = event_" + eventName + "\n";
 				if (eventName === "timer0") {
-					source += "ages += [" + starts.map(function() { return "1"; }) + "]" + "\n";
+					script += "ages += [" + starts.map(function() { return "1"; }) + "]" + "\n";
 				}
-				source = eventStates[eventName].reduce(function(source, nodeIndex) {
+				script = eventStates[eventName].reduce(function(script, nodeIndex) {
 					var node = nodes[nodeIndex];
 					var thread = node.thread;
 					var event = node.events[eventName];
 
-					source += "if states[" + thread + "] == " + nodeIndex + " then" + "\n";
-					source += "thread = " + thread + "\n";
+					script += "if states[" + thread + "] == " + nodeIndex + " then" + "\n";
+					script += "thread = " + thread + "\n";
 
-					source += "callsub test" + nodeIndex + "\n";
+					script += "callsub test" + nodeIndex + "\n";
 
 					var transitionsMask = filledArray(16, "0");
 					event.transitions.forEach(function(transitionIndex) {
 						transitionsMask[transitionIndex] = "1";
 					});
-					source += "transitionsOld = transitions[" + thread + "]" + "\n";
-					source += "transitionsNew = transitionsOld & ~0b" + transitionsMask.join("") + "\n";
-					source = event.transitions.reduce(function (source, transitionIndex) {
+					script += "transitionsOld = transitions[" + thread + "]" + "\n";
+					script += "transitionsNew = transitionsOld & ~0b" + transitionsMask.join("") + "\n";
+					script = event.transitions.reduce(function (script, transitionIndex) {
 						var transition = node.transitions[transitionIndex];
 
 						var positiveMask = filledArray(16, "0");
@@ -428,29 +454,30 @@ Item {
 						var transitionMask = filledArray(16, "0");
 						transitionMask[transitionIndex] = "1";
 
-						source += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
-						source += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
-						source += "if transitionsOld & 0b" + transitionMask.join("") + " == 0 then" + "\n";
-						source += "event = -1" + "\n";
-						source += "emit transition [" + nodeIndex + ", " + transitionIndex + "]" + "\n";
-						source += "callsub enter" + transition.tail + "\n";
-						source += "return" + "\n";
-						source += "end" + "\n";
-						source += "end" + "\n";
-						return source;
-					}, source);
-					source += "transitions[" + thread + "] = transitionsNew" + "\n";
+						script += "if (" + positiveTest + ") and (" + negativeTest + ") then" + "\n";
+						script += "transitionsNew |= 0b" + transitionMask.join("") + "\n";
+						script += "if transitionsOld & 0b" + transitionMask.join("") + " == 0 then" + "\n";
+						script += "event = -1" + "\n";
+						script += "emit transition [" + nodeIndex + ", " + transitionIndex + "]" + "\n";
+						script += "callsub enter" + transition.tail + "\n";
+						script += "return" + "\n";
+						script += "end" + "\n";
+						script += "end" + "\n";
+						return script;
+					}, script);
+					script += "transitions[" + thread + "] = transitionsNew" + "\n";
 
-					source += "end" + "\n";
+					script += "end" + "\n";
 
-					return source;
-				}, source);
-				return source;
-			}, src);
+					return script;
+				}, script);
+				return script;
+			}, script);
 
 			return {
+				events: events,
+				script: script,
 				nodes: nodes,
-				source: src,
 			};
 		}
 	}

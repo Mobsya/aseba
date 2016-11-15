@@ -71,7 +71,7 @@ ApplicationWindow {
 
 	Connections {
 		target: vplEditor.compiler
-		onSourceChanged: thymio.playing = false
+		onScriptChanged: thymio.playing = false
 	}
 
 	ListModel {
@@ -168,7 +168,7 @@ ApplicationWindow {
 		id: thymio
 		property bool playing: false
 		events: vplEditor ? vplEditor.compiler.events : {}
-		source: playing ? vplEditor.compiler.source : ""
+		source: playing ? vplEditor.compiler.script : ""
 		onNodeChanged: playing = false
 		onPlayingChanged: vplEditor.compiler.execReset(playing);
 		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
