@@ -6,6 +6,7 @@ Timer {
 
 	property real vx: 0 // in px per second
 	property real vy: 0 // in px per second
+	property var prevMousePos // last mouse position in scene coordinates
 	property double prevTime: 0 // from Date().valueOf()
 
 	onTriggered: {
@@ -20,17 +21,22 @@ Timer {
 		}
 	}
 
-	function startEstimation() {
+	function startEstimation(mousePos) {
+		var now = new Date().valueOf();
 		vx = 0;
 		vy = 0;
-		prevTime = new Date().valueOf();
+		prevMousePos = mousePos;
+		prevTime = now;
 	}
 
-	function updateEstimation(dx, dy) {
+	function updateEstimation(mousePos) {
 		var now = new Date().valueOf();
+		var dx = mousePos.x - prevMousePos.x;
+		var dy = mousePos.y - prevMousePos.y;
 		var dt = now - prevTime;
 		vx = vx * 0.6 + dx * 0.4 * dt;
 		vy = vy * 0.6 + dy * 0.4 * dt;
+		prevMousePos = mousePos;
 		prevTime = now;
 	}
 

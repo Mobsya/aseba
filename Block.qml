@@ -235,9 +235,6 @@ Item {
 		drag.target: block
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
-		// last mouse position in scene coordinates
-		property var prevMousePos
-
 		onPressed: {
 			// within inner radius?
 			mouse.accepted = function () {
@@ -247,8 +244,8 @@ Item {
 			} ();
 			// if so...
 			if (mouse.accepted) {
-				prevMousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				accelerationTimer.startEstimation();
+				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				accelerationTimer.startEstimation(mousePos);
 				bringBlockToFront();
 			}
 		}
@@ -257,8 +254,7 @@ Item {
 			if (drag.active) {
 				// compute and accumulate displacement for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				accelerationTimer.updateEstimation(mousePos.x - prevMousePos.x, mousePos.y - prevMousePos.y);
-				prevMousePos = mousePos;
+				accelerationTimer.updateEstimation(mousePos);
 				// show trash bin
 				eventPane.showTrash = true;
 				actionPane.showTrash = true;
@@ -283,7 +279,7 @@ Item {
 			} else {
 				// no, compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-				accelerationTimer.updateEstimation(mousePos.x - prevMousePos.x, mousePos.y - prevMousePos.y);
+				accelerationTimer.updateEstimation(mousePos);
 				accelerationTimer.startAcceleration();
 			}
 			// in any case, hide back the delete icons
