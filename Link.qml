@@ -8,8 +8,8 @@ Canvas {
 	readonly property real rightRadius: 118
 	readonly property real arrowRadius: 115
 
-	property Item sourceBlock: Null
-	property Item destBlock: Null
+	property Item sourceBlock: null
+	property Item destBlock: null
 
 	property bool isError: false // whether this link is involved in an error
 
