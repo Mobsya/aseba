@@ -12,7 +12,7 @@ Rectangle {
 
 	anchors.fill: parent
 	color: Material.theme === Material.Dark ? "#44285a" : "#a0b2b3"
-	visible: block !== null
+	visible: false
 
 	// FIXME: still a problem?
 	// to block events from going to the scene
@@ -24,36 +24,55 @@ Rectangle {
 		onWheel: wheel.accepted = true;
 	}
 
-	property Block block: null
-	property BlockDefinition definition: null
+	property string typeRestriction // "", "event", "action"
+	property var callback // function called when done
+	property var params
+	property BlockDefinition definition
+
+	function open(typeRestriction, params, definition, callback) {
+		editor.typeRestriction = typeRestriction;
+		editor.params = params;
+		editor.definition = definition;
+		editor.callback = callback;
+		editor.visible = true;
+	}
 
 	function setBlock(block) {
-		editor.block = block;
-		editorItemLoader.defaultParams = block.params;
-		editor.definition = block.definition;
+		var typeRestriction = block.typeRestriction;
+		var params = block.params;
+		var definition = block.definition;
+		open(typeRestriction, params, definition, function(definition, params) {
+			block.definition = definition;
+			block.params = params;
+		});
 	}
 
 	function setBlockType(definition) {
-		editorItemLoader.defaultParams = definition.defaultParams;
+		if (typeRestriction !== "" && typeRestriction !== definition.type) {
+			return;
+		}
+		editor.params = definition.defaultParams;
 		editor.definition = definition;
 	}
 
-	function clearBlock() {
-		editor.block = null;
+	function close() {
+		editor.visible = false;
 		editor.definition = null;
+		editor.params = undefined;
+		editor.callback = undefined;
+		editor.typeRestriction = "";
 	}
 
 	Loader {
 		id: editorItemLoader
 		anchors.centerIn: parent
 		scale: Math.max(scaledWidth / 256, 0.1)
-		// FIXME: this is binded so that when it is changed just before setting the definition it generates errors
-		property var defaultParams
 
 		//property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+12+12)*2)
 		property real scaledWidth: Math.min(parent.width-48*2, parent.height-24)
 
-		sourceComponent: editor.definition ? editor.definition.editor : null
+		sourceComponent: definition !== null ? definition.editor : null
+		onLoaded: item.params = params
 	}
 
 	property real horizontalButtonMargin: (width - editorItemLoader.scaledWidth) / 4
@@ -111,9 +130,13 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				block.definition = editor.definition;
-				block.params = editorItemLoader.item.getParams();
-				clearBlock();
+				var definition = editor.definition;
+				if (definition === null) {
+					return;
+				}
+				var params = editorItemLoader.item.getParams();
+				callback(definition, params);
+				close();
 			}
 		}
 	}
@@ -136,7 +159,7 @@ Rectangle {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				clearBlock();
+				close();
 			}
 		}
 	}
