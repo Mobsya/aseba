@@ -13,6 +13,7 @@ Item {
 	property BlockDefinition definition
 	property var params
 
+	property bool canDelete: true // whether this block can be deleted
 	property bool canGraph: true // whether this block can create links and move startIndicator
 
 	property bool isError: false // whether this block is involved in an error
@@ -291,22 +292,25 @@ Item {
 				blockDragPreview.params = block.params;
 				blockDragPreview.definition = definition;
 
-				// check whether we are hovering delete block item
-				eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
-				actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
+				if (canDelete) {
+					// check whether we are hovering delete block item
+					eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
+					actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
+				}
 			}
 		}
 
 		onReleased: {
-			// to be deleted?
 			if (eventPane.trashOpen || actionPane.trashOpen) {
+				// to be deleted
 				scene.deleteBlock(block);
 			} else if (canGraph) {
-				// no, compute displacement and start timer for inertia
+				// compute displacement and start timer for inertia
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				accelerationTimer.updateEstimation(mousePos);
 				accelerationTimer.startAcceleration();
 			} else {
+				// go back to initial position
 				block.x = startX;
 				block.y = startY;
 			}
