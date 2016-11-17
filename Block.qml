@@ -116,7 +116,9 @@ Item {
 	// recreate miniature on params changed
 	onParamsChanged: {
 		placeholder.children = [];
-		definition.miniature.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
+		if (definition !== null) {
+			definition.miniature.createObject(placeholder, {"params": params, "anchors.centerIn": placeholder});
+		}
 	}
 
 	function bringBlockToFront() {
