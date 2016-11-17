@@ -18,6 +18,7 @@ Item {
 	property alias compiler: compiler
 	Compiler {
 		id: compiler
+		ast: scene.ast
 	}
 
 	property list<BlockDefinition> eventDefinitions: [

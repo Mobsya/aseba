@@ -4,8 +4,7 @@ Item {
 	id: compiler
 
 	// input
-	property list<Block> blocks
-	property list<Link> links
+	property var ast
 
 	// output
 	property string error
@@ -15,20 +14,20 @@ Item {
 	// internal
 	property var nodes
 
-	onBlocksChanged: {
+	onAstChanged: {
+		var blocks = ast.blocks;
 		for (var i = 0; i < blocks.length; ++i) {
 			var block = blocks[i];
 			block.paramsChanged.connect(timer.start);
 			block.isStartingChanged.connect(timer.start);
 		}
-		timer.start();
-	}
 
-	onLinksChanged: {
+		var links = ast.links;
 		for (var i = 0; i < links.length; ++i) {
 			var link = links[i];
 			link.isElseChanged.connect(timer.start);
 		}
+
 		timer.start();
 	}
 
@@ -37,7 +36,7 @@ Item {
 		interval: 0
 		onTriggered: {
 			try {
-				var compiled = compile(blocks, links);
+				var compiled = compile(ast.blocks, ast.links);
 				error = "";
 				events = compiled.events;
 				script = compiled.script;
