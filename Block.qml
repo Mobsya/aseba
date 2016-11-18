@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtGraphicalEffects 1.0
 import "utils.js" as Utils
 
-Item {
+DropArea {
 	id: block;
 
 	width: 256
@@ -19,7 +19,7 @@ Item {
 	property bool isError: false // whether this block is involved in an error
 	property bool isExec: false // whether this block is currently executing
 
-	property bool highlight: false // whether this block is highlighted for link creation
+	property bool highlight: containsDrag // whether this block is highlighted for link creation
 	property Item highlightedBlock: null // other block that is highlighted for link creation
 	property bool execTrue: true // whether this block execution was true
 
@@ -28,6 +28,16 @@ Item {
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
 	readonly property StartIndicator startIndicator: startIndicator
+
+	onEntered: handleDrag(drag)
+	onPositionChanged: handleDrag(drag)
+	onDropped: scene.handleBlockDrop(this, drop)
+	function handleDrag(drag) {
+		var dx = drag.x - width / 2;
+		var dy = drag.y - height / 2;
+		var dr = width / 2;
+		drag.accepted = (dx*dx + dy*dy) < (dr*dr);
+	}
 
 	// link indicator
 	Rectangle {
@@ -84,25 +94,11 @@ Item {
 	}
 
 	// center background
-	HDPIImage {
+	BlockBackground {
 		id: centerImageId
-		source: {
-			if (definition === null) {
-				switch(typeRestriction) {
-				case "event": return "images/eventPlaceholder.svg";
-				case "action": return "images/actionPlaceholder.svg";
-				}
-			} else {
-				switch(definition.type) {
-				case "event": return "images/eventCenter.svg";
-				case "action": return "images/actionCenter.svg";
-				}
-			}
-		}
+		typeRestriction: block.typeRestriction
+		definition: block.definition
 		anchors.centerIn: parent
-		scale: 0.72
-		width: 256 // working around Qt bug with SVG and HiDPI
-		height: 256 // working around Qt bug with SVG and HiDPI
 	}
 
 	// miniature
@@ -287,7 +283,6 @@ Item {
 				var extPos = mapToItem(mainContainer, 128, 128);
 				blockDragPreview.x = extPos.x - 128;
 				blockDragPreview.y = extPos.y - 128;
-				blockDragPreview.backgroundImage = centerImageId.source;
 				blockDragPreview.opacity = 1.0;
 				blockDragPreview.params = block.params;
 				blockDragPreview.definition = definition;

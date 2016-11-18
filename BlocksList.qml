@@ -16,8 +16,6 @@ ListView {
 		width: blockList.isLandscape ? blockList.width : blockList.height + 16
 		height: blockList.isLandscape ? blockList.width + 16 : blockList.height
 
-		property Item highlightedBlock: null
-
 		onClicked: {
 			// only process in block editor mode
 			if (blockEditor.visible) {
@@ -25,85 +23,41 @@ ListView {
 			}
 		}
 
+		// we start the drag when the cursor is outside the area,
+		// otherwise the list scroll does not work
 		onPositionChanged: {
 			// only process if not in block editor mode
 			if (blockEditor.visible) {
 				return;
 			}
 
+			if (this.drag.target !== null) {
+				// already dragging
+				return;
+			}
 			var pos = mapToItem(mainContainer, mouse.x, mouse.y);
-			blockDragPreview.x = pos.x - 128;
-			blockDragPreview.y = pos.y - 128;
-			if (!blockList.contains(mapToItem(blockList, mouse.x, mouse.y))) {
-				blockDragPreview.backgroundImage = backImage;
-				blockDragPreview.opacity = 0.8;
-				blockDragPreview.params = blocks[index].defaultParams;
-				blockDragPreview.definition = blocks[index];
-			}
-			var isHighlight = false;
-			if (mainContainer.contains(pos)) {
-				// find nearest block
-				var scenePos = blockDragPreview.mapToItem(blockContainer, 128, 128);
-				var minDist = Number.MAX_VALUE;
-				var minIndex = 0;
-				for (var i = 0; i < blockContainer.children.length; ++i) {
-					var child = blockContainer.children[i];
-					var destPos = child.mapToItem(blockContainer, 128, 128);
-					var dx = scenePos.x - destPos.x;
-					var dy = scenePos.y - destPos.y;
-					var dist = Math.sqrt(dx*dx + dy*dy);
-					if (dist < minDist) {
-						minDist = dist;
-						minIndex = i;
-					}
-				}
-
-				// if blocks are close
-				if (minDist < repulsionMaxDist) {
-					var destBlock = blockContainer.children[minIndex];
-					// highlight destblock
-					if (highlightedBlock && highlightedBlock !== destBlock) {
-						highlightedBlock.highlight = false;
-					}
-					destBlock.highlight = true;
-					highlightedBlock = destBlock;
-					isHighlight = true;
-				}
-			}
-			// de we need to de-highlight?
-			if (highlightedBlock && !isHighlight) {
-				highlightedBlock.highlight = false;
-				highlightedBlock = null;
-			}
-		}
-
-		onReleased: {
-			// only process if not in block editor mode
-			if (blockEditor.visible) {
+			if (!mainContainer.contains(pos)) {
+				// not inside main container
 				return;
 			}
 
-			// create block
-			var pos = mapToItem(mainContainer, mouse.x, mouse.y);
-			if (mainContainer.contains(pos)) {
-				var scenePos = mapToItem(scene, mouse.x, mouse.y);
-				var newBlock = scene.createBlock(scenePos.x, scenePos.y, blockDragPreview.definition);
+			var definition = blocks[index];
+			blockDragPreview.x = pos.x - blockDragPreview.width / 2;
+			blockDragPreview.y = pos.y - blockDragPreview.height / 2;
+			blockDragPreview.params = definition.defaultParams;
+			blockDragPreview.definition = definition;
+			blockDragPreview.Drag.active = true;
+			this.drag.target = blockDragPreview;
+		}
 
-				// create link
-				if (highlightedBlock) {
-					newBlock.isStarting = false;
-					var link = blockLinkComponent.createObject(linkContainer, {
-						sourceBlock: highlightedBlock,
-						destBlock: newBlock
-					});
-					// reset highlight
-					highlightedBlock.highlight = false;
-					highlightedBlock = null;
-				}
+		onReleased: {
+			if (this.drag.target === null) {
+				// not dragging
+				return;
 			}
 
-			// reset drop indicator
-			blockDragPreview.definition = null;
+			blockDragPreview.Drag.drop();
+			this.drag.target = null;
 		}
 
 		HDPIImage {

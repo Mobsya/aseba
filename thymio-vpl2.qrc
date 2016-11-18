@@ -78,6 +78,7 @@
         <file>images/elsePatternError.png</file>
         <file>BlocksList.qml</file>
         <file>Editor.qml</file>
+        <file>EditorAdvanced.qml</file>
         <file>images/grid.png</file>
         <file>BlocksPane.qml</file>
         <file>icons/ic_delete_white_48px.svg</file>
@@ -112,5 +113,6 @@
         <file>icons/ic_save_black_24px.svg</file>
         <file>icons/ic_delete_black_48px.svg</file>
         <file>icons/ic_delete_on_black_48px.svg</file>
+        <file>BlockBackground.qml</file>
     </qresource>
 </RCC>
