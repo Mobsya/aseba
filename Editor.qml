@@ -175,6 +175,10 @@ Item {
 			scene.y = height/2 - (rect.y + rect.height/2) * scale;
 		}
 
+		// keep the center of the scene at the center of the mainContainer
+		onWidthChanged: scene.x = width/2 - (scene.viewRect.x + scene.viewRect.width/2) * scene.scale;
+		onHeightChanged: scene.y = height/2 - (scene.viewRect.y + scene.viewRect.height/2) * scene.scale;
+
 		Image {
 			anchors.fill: parent
 			source: "images/grid.png"
