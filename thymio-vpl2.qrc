@@ -79,6 +79,7 @@
         <file>BlocksList.qml</file>
         <file>Editor.qml</file>
         <file>EditorAdvanced.qml</file>
+        <file>EditorSimple.qml</file>
         <file>images/grid.png</file>
         <file>BlocksPane.qml</file>
         <file>icons/ic_delete_white_48px.svg</file>
