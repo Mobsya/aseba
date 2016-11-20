@@ -39,55 +39,96 @@ Item {
 	]
 
 	function programsDB() {
-		return LocalStorage.openDatabaseSync("Programs", "1.0", "Locally saved programs", 100000);
+		var db = LocalStorage.openDatabaseSync("Programs", "", "Locally saved programs", 100000);
+
+		function updateDB(loadAndClearDB) {
+			db.changeVersion(db.version, "2", function(tx) {
+				var programs = loadAndClearDB(tx);
+				tx.executeSql("create table programs (name text not null primary key, code text not null)");
+				for (var i = 0; i < programs.length; ++i) {
+					var program = programs[i];
+					var args = [
+						program.name,
+						program.code,
+					];
+					tx.executeSql("insert into programs (name, code) values (?, ?, ?)", args);
+				}
+			});
+		}
+
+		switch(db.version) {
+		case "":
+			updateDB(function(tx) {
+				return [];
+			});
+			break;
+		case "1.0":
+			updateDB(function(tx) {
+				if (tx.executeSql("select 1 from sqlite_master where type = 'table' and name = 'programs'").rows.length === 0) {
+					// the programs table was not created
+					return [];
+				}
+
+				var programsOld = tx.executeSql("select name, code from programs").rows;
+				var programsNew = [];
+				for (var i = 0; i < programsOld.length; ++i) {
+					var programOld = programsOld[i];
+					var nameOld = programOld.name;
+					var codeOld = programOld.code;
+
+					var nameNew = nameOld;
+					var codeNew = "{\"mode\":\"advanced\",\"scene\":" + codeOld + "}";
+					var programNew = {
+						name: nameNew,
+						code: codeNew,
+					};
+
+					programsNew.push(programNew);
+				}
+
+				tx.executeSql("drop table programs");
+				return programsNew;
+			});
+			break;
+		}
+		return db;
 	}
 
 	function saveProgram(name) {
-		programsDB().transaction(
-			function(tx) {
-				// Create the database if it doesn't already exist
-				tx.executeSql('CREATE TABLE IF NOT EXISTS Programs(name TEXT PRIMARY KEY, code TEXT)');
-				// Add (another) program
-				tx.executeSql('INSERT OR REPLACE INTO Programs VALUES(?, ?)', [ name, JSON.stringify(serialize()) ]);
-			}
-		)
+		// Add (another) program
+		var code = {
+			mode: "advanced",
+			scene: scene.serialize(),
+		};
+		code = JSON.stringify(code);
+		programsDB().transaction(function(tx) {
+			var args = [ name, code ];
+			tx.executeSql("insert or replace into programs (name, code) values (?, ?)", args);
+		});
 	}
 
 	function listPrograms() {
-		var programs;
-		try {
-			programsDB().readTransaction(
-				function(tx) {
-					// List existing programs
-					programs = tx.executeSql('SELECT * FROM Programs ORDER BY name').rows;
-				}
-			)
-		}
-		catch (err) {
-			console.log("list program made an error: ", err);
-			programs = [];
-		}
-		return programs;
+		// List existing programs
+		var rows;
+		programsDB().readTransaction(function(tx) {
+			rows = tx.executeSql("select name from programs order by name").rows;
+		});
+		return rows;
 	}
 
 	function loadProgram(name) {
+		// Load existing program
 		var rows;
-		try {
-			programsDB().readTransaction(
-				function(tx) {
-					// List existing programs
-					rows = tx.executeSql('SELECT code FROM Programs WHERE name = ?', name).rows;
-				}
-			)
-		}
-		catch (err) {
-			console.log("load program made an error: ", err);
-			return;
-		}
+		programsDB().readTransaction(function(tx) {
+			rows = tx.executeSql("select code from programs where name = ?", name).rows;
+		});
 		if (rows.length === 0)
 			return;
 		var row = rows[0];
-		scene.deserialize(JSON.parse(row.code));
+
+		var code = JSON.parse(row.code);
+		console.log(code.mode);
+		scene.deserialize(code.scene);
 
 		// then reset view
 		mainContainer.fitToView();
