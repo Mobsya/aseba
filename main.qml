@@ -77,10 +77,33 @@ ApplicationWindow {
 	ListModel {
 		id: menuItems
 
-		ListElement { title: qsTr("load program"); save: false; whiteIcon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_open_black_24px.svg"; }
-		ListElement { title: qsTr("save program"); save: true; whiteIcon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_save_black_24px.svg"; }
-		ListElement { title: qsTr("new program"); newProgram: true; whiteIcon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_new_black_24px.svg";}
-		ListElement { title: qsTr("switch color theme"); switchColorTheme: true; whiteIcon: ""; blackIcon: ""; }
+		ListElement { title: qsTr("load program"); callback: "load"; whiteIcon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_open_black_24px.svg"; }
+		function load() {
+			saveProgramDialog.isSave = false;
+			saveProgramDialog.visible = true;
+		}
+
+		ListElement { title: qsTr("save program"); callback: "save"; whiteIcon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_save_black_24px.svg"; }
+		function save() {
+			saveProgramDialog.isSave = true;
+			saveProgramDialog.visible = true;
+		}
+
+		ListElement { title: qsTr("new program"); callback: "newProgram"; whiteIcon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_new_black_24px.svg";}
+		function newProgram() {
+			vplEditor.clearProgram();
+			saveProgramDialog.programName = "";
+		}
+
+		ListElement { title: qsTr("switch color theme"); callback: "switchColorTheme"; whiteIcon: ""; blackIcon: ""; }
+		function switchColorTheme() {
+			if (window.Material.theme === Material.Dark) {
+				window.Material.theme = Material.Light;
+			} else {
+				window.Material.theme = Material.Dark;
+			}
+		}
+
 		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
@@ -116,24 +139,8 @@ ApplicationWindow {
 							opacity: enabled ? 1.0 : 0.5
 						}
 					}
-					text: model.title
-					highlighted: ListView.isCurrentItem
 					onClicked: {
-						if (newProgram === true) {
-							// new program
-							vplEditor.clearProgram();
-							saveProgramDialog.programName = "";
-						} else if (switchColorTheme === true) {
-							if (window.Material.theme === Material.Dark) {
-								window.Material.theme = Material.Light;
-							} else {
-								window.Material.theme = Material.Dark;
-							}
-						} else {
-							// load/save dialog
-							saveProgramDialog.isSave = save;
-							saveProgramDialog.visible = true;
-						}
+						ListView.view.model[callback]();
 						drawer.close()
 					}
 				}
