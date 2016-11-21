@@ -104,6 +104,11 @@ ApplicationWindow {
 			}
 		}
 
+		ListElement { title: qsTr("switch editor mode"); callback: "switchEditorMode"; whiteIcon: ""; blackIcon: ""; }
+		function switchEditorMode() {
+			vplEditor.switchMode();
+		}
+
 		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 

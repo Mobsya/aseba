@@ -19,6 +19,16 @@ Item {
 	function deleteBlock(block) {
 	}
 
+	function serializeAdvanced() {
+		var blocks = [];
+		var links = [];
+		// TODO: fill blocks and links
+		return {
+			blocks: blocks,
+			links: links,
+		};
+	}
+
 	QtObject {
 		id: constants
 		property int rowSpacing: 60

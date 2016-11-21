@@ -14,6 +14,7 @@ Item {
 	property bool minimized: false
 	property alias blockEditorVisible: blockEditor.visible
 	property alias mainContainerScale: mainContainer.scale
+	property alias scene: sceneLoader.item
 
 	property alias compiler: compiler
 	Compiler {
@@ -97,7 +98,7 @@ Item {
 	function saveProgram(name) {
 		// Add (another) program
 		var code = {
-			mode: "advanced",
+			mode: sceneLoader.mode,
 			scene: scene.serialize(),
 		};
 		code = JSON.stringify(code);
@@ -126,17 +127,28 @@ Item {
 			return;
 		var row = rows[0];
 
-		var code = JSON.parse(row.code);
-		console.log(code.mode);
-		scene.deserialize(code.scene);
-
-		// then reset view
-		mainContainer.fitToView();
+		sceneLoader.mode = code.mode;
+		sceneLoader.scene = code.scene;
 	}
 
 	function clearProgram() {
 		scene.clear();
 		mainContainer.fitToView();
+	}
+
+	function switchMode() {
+		switch (sceneLoader.mode) {
+		case "simple":
+			var advanced = scene.serializeAdvanced();
+			sceneLoader.mode = "advanced";
+			sceneLoader.scene = advanced;
+			break;
+		case "advanced":
+			if (scene.blocks.length === 0) {
+				sceneLoader.mode = "simple";
+			}
+			break;
+		}
 	}
 
 	BlocksPane {
@@ -217,8 +229,8 @@ Item {
 		}
 
 		// keep the center of the scene at the center of the mainContainer
-		onWidthChanged: scene.x = width/2 - (scene.viewRect.x + scene.viewRect.width/2) * scene.scale;
-		onHeightChanged: scene.y = height/2 - (scene.viewRect.y + scene.viewRect.height/2) * scene.scale;
+		onWidthChanged: if (scene !== null) { scene.x = width/2 - (scene.viewRect.x + scene.viewRect.width/2) * scene.scale; }
+		onHeightChanged: if (scene !== null) { scene.y = height/2 - (scene.viewRect.y + scene.viewRect.height/2) * scene.scale; }
 
 		Image {
 			anchors.fill: parent
@@ -289,8 +301,27 @@ Item {
 				id: mainDropArea
 				anchors.fill: parent
 
-				EditorAdvanced {
-					id: scene
+				Loader {
+					id: sceneLoader
+
+					property string mode: "simple"
+					onModeChanged: scene = undefined;
+
+					property var scene: undefined
+					onSceneChanged: if (item !== null) loaded()
+
+					source: {
+						switch (mode) {
+						case "simple": return "EditorSimple.qml";
+						case "advanced": return "EditorAdvanced.qml";
+						}
+					}
+					onLoaded: {
+						if (scene !== undefined) {
+							item.deserialize(scene);
+						}
+						mainContainer.fitToView();
+					}
 				}
 			}
 		}
