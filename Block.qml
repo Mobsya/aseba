@@ -15,6 +15,7 @@ DropArea {
 
 	property bool canDelete: true // whether this block can be deleted
 	property bool canGraph: true // whether this block can create links and move startIndicator
+	property bool canDrag: canDelete || canGraph;
 
 	property bool isError: false // whether this block is involved in an error
 	property bool isExec: false // whether this block is currently executing
@@ -244,7 +245,7 @@ DropArea {
 	MouseArea {
 		id: dragArea
 		anchors.fill: parent
-		drag.target: block
+		drag.target: canDrag ? block : null
 		scrollGestureEnabled: false  // 2-finger-flick gesture should pass through to the Flickable
 
 		property real startX
@@ -256,12 +257,14 @@ DropArea {
 			var dy = mouse.y - 128;
 			var accepted = dx*dx+dy*dy < centerRadius*centerRadius;
 			mouse.accepted = accepted;
-			if (accepted) {
+
+			if (accepted && canDrag) {
 				// if so...
 				if (canGraph) {
 					var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 					accelerationTimer.startEstimation(mousePos);
-				} else {
+				}
+				if (canDelete) {
 					startX = block.x;
 					startY = block.y;
 				}
@@ -277,17 +280,10 @@ DropArea {
 					accelerationTimer.updateEstimation(mousePos);
 				}
 
-				// show trash bin
-				eventPane.showTrash = true;
-				actionPane.showTrash = true;
-				var extPos = mapToItem(mainContainer, 128, 128);
-				blockDragPreview.x = extPos.x - 128;
-				blockDragPreview.y = extPos.y - 128;
-				blockDragPreview.opacity = 1.0;
-				blockDragPreview.params = block.params;
-				blockDragPreview.definition = definition;
-
 				if (canDelete) {
+					// show trash bin
+					eventPane.showTrash = true;
+					actionPane.showTrash = true;
 					// check whether we are hovering delete block item
 					eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
 					actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
@@ -304,16 +300,16 @@ DropArea {
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				accelerationTimer.updateEstimation(mousePos);
 				accelerationTimer.startAcceleration();
-			} else {
+			}
+
+			if (canDelete) {
 				// go back to initial position
 				block.x = startX;
 				block.y = startY;
+				// in any case, hide back the delete icons
+				eventPane.clearTrash();
+				actionPane.clearTrash();
 			}
-
-			// in any case, hide back the delete icons
-			eventPane.clearTrash();
-			actionPane.clearTrash();
-			blockDragPreview.definition = null;
 		}
 
 		onClicked: {
