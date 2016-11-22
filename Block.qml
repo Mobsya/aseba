@@ -85,6 +85,29 @@ DropArea {
 		execHighlightTimer.highlight();
 	}
 
+	function serialize(id, withCoord) {
+		block.id = id;
+		var definition = block.definition.objectName;
+		var params = block.params;
+		var isStarting = block.isStarting;
+		if (withCoord) {
+			var pos = mapToItem(scene, 0, 0);
+			return {
+				x: pos.x,
+				y: pos.y,
+				definition: definition,
+				params: params,
+				isStarting: isStarting,
+			};
+		} else {
+			return {
+				definition: definition,
+				params: params,
+				isStarting: isStarting,
+			};
+		}
+	}
+
 	// center background
 	BlockBackground {
 		id: centerImageId

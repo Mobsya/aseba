@@ -23,38 +23,7 @@ Item {
 
 	// return a JSON representation of the content of the editor
 	function serialize() {
-		var out = {};
-
-		// collect blocks and build a map of blocks to id
-		var bs = [];
-		for (var i = 0; i < blocks.length; ++i) {
-			var block = blocks[i];
-			block.id = i;
-			var b = {
-				"x": block.x,
-				"y": block.y,
-				"definition": block.definition.objectName,
-				"params": block.params,
-				"isStarting": block.isStarting
-			};
-			bs.push(b);
-		}
-		out["blocks"] = bs;
-
-		// collect links and resolve block references
-		var ls = [];
-		for (var i = 0; i < links.length; ++i) {
-			var link = links[i];
-			var l = {
-				"isElse": link.isElse,
-				"source": link.sourceBlock.id,
-				"dest": link.destBlock.id,
-			};
-			ls.push(l);
-		}
-		out["links"] = ls;
-
-		return out;
+		return serializeAdvanced();
 	}
 
 	// reset content from a JSON representation

@@ -55,6 +55,14 @@ Canvas {
 		execHighlightTimer.highlight();
 	}
 
+	function serialize() {
+		return {
+			isElse: isElse,
+			source: sourceBlock.id,
+			dest: destBlock.id,
+		};
+	}
+
 	// to force images used in context2d to be loaded upon initalization
 	Image {
 		source: "images/elsePattern.png"

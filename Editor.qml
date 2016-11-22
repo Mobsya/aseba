@@ -159,9 +159,9 @@ Item {
 	function switchMode() {
 		switch (sceneLoader.mode) {
 		case "simple":
-			var advanced = scene.serializeAdvanced();
+			var sceneAdvanced = serializeAdvanced();
 			sceneLoader.mode = "advanced";
-			sceneLoader.scene = advanced;
+			sceneLoader.scene = sceneAdvanced;
 			break;
 		case "advanced":
 			if (scene.blocks.length === 0) {
@@ -169,6 +169,29 @@ Item {
 			}
 			break;
 		}
+	}
+
+	function serializeAdvanced() {
+		var blocksIn = scene.ast.blocks;
+		var blocksOut = [];
+		for (var i = 0; i < blocksIn.length; ++i) {
+			var blockIn = blocksIn[i];
+			var blockOut = blockIn.serialize(i, true);
+			blocksOut.push(blockOut);
+		}
+
+		var linksIn = scene.ast.links;
+		var linksOut = [];
+		for (var i = 0; i < linksIn.length; ++i) {
+			var linkIn = linksIn[i];
+			var linkOut = linkIn.serialize();
+			linksOut.push(linkOut);
+		}
+
+		return {
+			blocks: blocksOut,
+			links: linksOut,
+		};
 	}
 
 	BlocksPane {

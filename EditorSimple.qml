@@ -6,6 +6,7 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.2
 
 Item {
+	id: scene
 	readonly property rect viewRect: childrenRect
 
 	property var ast: ({
@@ -17,16 +18,6 @@ Item {
 	}
 
 	function deleteBlock(block) {
-	}
-
-	function serializeAdvanced() {
-		var blocks = [];
-		var links = [];
-		// TODO: fill blocks and links
-		return {
-			blocks: blocks,
-			links: links,
-		};
 	}
 
 	QtObject {
