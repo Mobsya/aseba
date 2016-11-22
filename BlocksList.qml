@@ -13,13 +13,15 @@ ListView {
 	model: blocks
 
 	delegate: MouseArea {
+		property BlockDefinition definition: blocks[index]
+
 		width: blockList.isLandscape ? blockList.width : blockList.height + 16
 		height: blockList.isLandscape ? blockList.width + 16 : blockList.height
 
 		onClicked: {
 			// only process in block editor mode
 			if (blockEditor.visible) {
-				blockEditor.setBlockType(blocks[index]);
+				blockEditor.setBlockType(definition);
 			}
 		}
 
@@ -41,7 +43,6 @@ ListView {
 				return;
 			}
 
-			var definition = blocks[index];
 			blockDragPreview.x = pos.x - blockDragPreview.width / 2;
 			blockDragPreview.y = pos.y - blockDragPreview.height / 2;
 			blockDragPreview.params = definition.defaultParams;
@@ -69,7 +70,7 @@ ListView {
 			Loader {
 				enabled: false
 				anchors.centerIn: parent
-				sourceComponent: blocks[index].miniature
+				sourceComponent: definition.miniature
 			}
 		}
 	}
