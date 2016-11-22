@@ -22,22 +22,41 @@ Item {
 		ast: scene.ast
 	}
 
-	property list<BlockDefinition> eventDefinitions: [
-		ButtonsEventBlock {},
-		ProxEventBlock {},
-		ProxGroundEventBlock {},
-		TapEventBlock {},
-		ClapEventBlock {},
-		TimerEventBlock {}
-	]
+	property list<BlockDefinition> eventDefinitions
+	property list<BlockDefinition> actionDefinitions
+	property var definitions: {
+		var definitions = {};
 
-	property list<BlockDefinition> actionDefinitions: [
-		MotorActionBlock {},
-		PaletteTopColorActionBlock {},
-		PaletteBottomColorActionBlock {},
-		TopColorActionBlock {},
-		BottomColorActionBlock {}
-	]
+		function loadBlockDefinition(name) {
+			var url = "blocks/" + name + ".qml";
+			var component = Qt.createComponent(url);
+			var properties = {
+				objectName: name,
+			};
+			var object = component.createObject(vplEditor, properties);
+			definitions[name] = object;
+			return object;
+		}
+
+		eventDefinitions = [
+			"ButtonsEventBlock",
+			"ProxEventBlock",
+			"ProxGroundEventBlock",
+			"TapEventBlock",
+			"ClapEventBlock",
+			"TimerEventBlock",
+		].map(loadBlockDefinition);
+
+		actionDefinitions = [
+			"MotorActionBlock",
+			"PaletteTopColorActionBlock",
+			"PaletteBottomColorActionBlock",
+			"TopColorActionBlock",
+			"BottomColorActionBlock",
+		].map(loadBlockDefinition);
+
+		return definitions;
+	}
 
 	function programsDB() {
 		var db = LocalStorage.openDatabaseSync("Programs", "", "Locally saved programs", 100000);
@@ -127,6 +146,7 @@ Item {
 			return;
 		var row = rows[0];
 
+		var code = JSON.parse(row.code);
 		sceneLoader.mode = code.mode;
 		sceneLoader.scene = code.scene;
 	}

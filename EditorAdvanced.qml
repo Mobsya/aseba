@@ -27,14 +27,16 @@ Item {
 
 		// collect blocks and build a map of blocks to id
 		var bs = [];
-		var btoid = {};
 		for (var i = 0; i < blocks.length; ++i) {
 			var block = blocks[i];
-			var b = block.serialize();
-			btoid[block] = i;
-			b["id"] = i;
-			var blockDefinitionString = block.definition.toString();
-			b["definition"] = blockDefinitionString.substr(0, blockDefinitionString.indexOf('_'));
+			block.id = i;
+			var b = {
+				"x": block.x,
+				"y": block.y,
+				"definition": block.definition.objectName,
+				"params": block.params,
+				"isStarting": block.isStarting
+			};
 			bs.push(b);
 		}
 		out["blocks"] = bs;
@@ -43,29 +45,16 @@ Item {
 		var ls = [];
 		for (var i = 0; i < links.length; ++i) {
 			var link = links[i];
-			var l = link.serialize();
-			l["source"] = btoid[link.sourceBlock];
-			l["dest"] = btoid[link.destBlock];
+			var l = {
+				"isElse": link.isElse,
+				"source": link.sourceBlock.id,
+				"dest": link.destBlock.id,
+			};
 			ls.push(l);
 		}
 		out["links"] = ls;
 
 		return out;
-	}
-
-	// retrieve the definition of a block from a string
-	function getBlockDefinition(definitionString) {
-		for (var i = 0; i < eventDefinitions.length; ++i) {
-			var blockDefinitionString = eventDefinitions[i].toString();
-			if (blockDefinitionString.substr(0, blockDefinitionString.indexOf('_')) === definitionString)
-				return eventDefinitions[i];
-		}
-		for (var i = 0; i < actionDefinitions.length; ++i) {
-			var blockDefinitionString = actionDefinitions[i].toString();
-			if (blockDefinitionString.substr(0, blockDefinitionString.indexOf('_')) === definitionString)
-				return actionDefinitions[i];
-		}
-		return null;
 	}
 
 	// reset content from a JSON representation
@@ -78,7 +67,7 @@ Item {
 			blockComponent.createObject(blockContainer, {
 				x: b.x,
 				y: b.y,
-				definition: getBlockDefinition(b.definition),
+				definition: definitions[b.definition],
 				params: b.params,
 				isStarting: b.isStarting
 			});

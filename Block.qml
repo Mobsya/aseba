@@ -9,6 +9,7 @@ DropArea {
 	height: 256
 	z: 1
 
+	property var id // used in serialization/deserialization
 	property string typeRestriction: "" // "", "event", "action"
 	property BlockDefinition definition
 	property var params
@@ -82,16 +83,6 @@ DropArea {
 	}
 	function exec() {
 		execHighlightTimer.highlight();
-	}
-
-	// return a JSON representation of the content of the block
-	function serialize() {
-		return {
-			"x": x,
-			"y": y,
-			"params": params,
-			"isStarting": isStarting
-		}
 	}
 
 	// center background
