@@ -115,5 +115,6 @@
         <file>icons/ic_delete_black_48px.svg</file>
         <file>icons/ic_delete_on_black_48px.svg</file>
         <file>BlockBackground.qml</file>
+        <file>LinkSimple.qml</file>
     </qresource>
 </RCC>
