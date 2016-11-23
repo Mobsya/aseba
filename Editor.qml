@@ -176,7 +176,7 @@ Item {
 		var blocksOut = [];
 		for (var i = 0; i < blocksIn.length; ++i) {
 			var blockIn = blocksIn[i];
-			var blockOut = blockIn.serialize(i, true);
+			var blockOut = blockIn.serialize(true, i);
 			blocksOut.push(blockOut);
 		}
 

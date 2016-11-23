@@ -85,25 +85,24 @@ DropArea {
 		execHighlightTimer.highlight();
 	}
 
-	function serialize(id, withCoord) {
+	function serialize(advanced, id) {
 		block.id = id;
 		var definition = block.definition.objectName;
 		var params = block.params;
 		var isStarting = block.isStarting;
-		if (withCoord) {
+		if (advanced) {
 			var pos = mapToItem(scene, 0, 0);
 			return {
 				x: pos.x,
 				y: pos.y,
+				isStarting: isStarting,
 				definition: definition,
 				params: params,
-				isStarting: isStarting,
 			};
 		} else {
 			return {
 				definition: definition,
 				params: params,
-				isStarting: isStarting,
 			};
 		}
 	}

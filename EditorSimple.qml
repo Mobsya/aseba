@@ -9,10 +9,34 @@ Item {
 	id: scene
 	readonly property rect viewRect: childrenRect
 
-	property var ast: ({
-		blocks: [],
-		links: [],
-	})
+	property var ast
+
+	Component.onCompleted: clear()
+	function clear() {
+		ast = {
+			blocks: [],
+			links: [],
+		};
+		rows.children = [];
+		rows.append(null, null);
+	}
+
+	function serialize() {
+		var data = [];
+		for (var i = 0; i < rows.children.length - 1; ++i) {
+			data.push(rows.children[i].serialize());
+		}
+		return data;
+	}
+
+	function deserialize(data) {
+		clear();
+		var row = rows.children[0];
+		data.forEach(function(data) {
+			row.deserialize(data);
+			row = row.next;
+		});
+	}
 
 	function deleteBlock(block) {
 		block.free();
@@ -31,9 +55,6 @@ Item {
 
 		spacing: constants.rowSpacing
 
-		Component.onCompleted: {
-			append(null, null);
-		}
 		function append(prev, next) {
 			var properties = {
 				prev: prev,
@@ -54,9 +75,10 @@ Item {
 				implicitHeight: layout.height + 2 * constants.rowPaddingV
 
 				function reserve() {
-					if (row.next === null) {
-						row.next = rows.append(row, null);
+					if (next === null) {
+						next = rows.append(this, null);
 					}
+					return next;
 				}
 				function free() {
 					if (prev !== null) {
@@ -67,6 +89,24 @@ Item {
 					}
 					astChanged();
 					destroy();
+				}
+				function serialize() {
+					var blocks = [];
+					for (var block = event; block.next !== event; block = block.next) {
+						var blockData = block.definition === null ? null : block.serialize(false);
+						blocks.push(blockData);
+					}
+					return blocks;
+				}
+				function deserialize(data) {
+					var block = event;
+					data.forEach(function(blockData) {
+						if (blockData !== null) {
+							block.definition = definitions[blockData.definition];
+							block.params = blockData.params;
+						}
+						block = block.next;
+					});
 				}
 
 				Rectangle {
@@ -145,8 +185,9 @@ Item {
 
 						spacing: constants.actionSpacing
 
-						Component.onCompleted: append(event, event)
-						function append(prev, next) {
+						Component.onCompleted: append(event)
+						function append(prev) {
+							var next = prev.next;
 							var properties = {
 								prev: prev,
 								next: next,
@@ -191,7 +232,7 @@ Item {
 									if (next === event) {
 										// new action
 										scene.ast.blocks.push(this);
-										actions.append(this, next);
+										actions.append(this);
 										row.reserve();
 									}
 									astChanged();
