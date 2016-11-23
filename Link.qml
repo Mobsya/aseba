@@ -36,7 +36,7 @@ Canvas {
 	property real lastPaintedWidth: 0
 
 	property bool isElse: false
-	property bool canBeElse: sourceBlock && sourceBlock.definition.type === "event"
+	property bool canBeElse: sourceBlock && sourceBlock.definition && sourceBlock.definition.type === "event"
 
 	onIsElseChanged: {
 		requestPaint();
@@ -90,8 +90,13 @@ Canvas {
 	Component.onCompleted: {
 		updatePosition();
 	}
-
+	onVisibleChanged: {
+		updatePosition();
+	}
 	function updatePosition() {
+		if (!visible) {
+			return;
+		}
 		var sourceBlockCenter = sourceBlock.mapToItem(scene, sourceBlock.width/2, sourceBlock.height/2);
 		var destBlockCenter = destBlock.mapToItem(scene, destBlock.width/2, destBlock.height/2);
 		var dx = destBlockCenter.x - sourceBlockCenter.x;
