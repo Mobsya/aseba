@@ -287,26 +287,45 @@ DropArea {
 		}
 
 		onPositionChanged: {
-			if (drag.active) {
-				if (canGraph) {
-					// compute and accumulate displacement for inertia
-					var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
-					accelerationTimer.updateEstimation(mousePos);
-				}
+			if (!drag.active) {
+				return;
+			}
 
-				if (canDelete) {
-					// show trash bin
-					eventPane.showTrash = true;
-					actionPane.showTrash = true;
-					// check whether we are hovering delete block item
-					eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
-					actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
-				}
+			if (canGraph) {
+				// compute and accumulate displacement for inertia
+				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
+				accelerationTimer.updateEstimation(mousePos);
+			}
+
+			if (canDelete) {
+				// show trash bin
+				eventPane.showTrash = true;
+				actionPane.showTrash = true;
+				// check whether we are hovering delete block item
+				eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
+				actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
 			}
 		}
 
 		onReleased: {
-			if (eventPane.trashOpen || actionPane.trashOpen) {
+			if (!drag.active) {
+				return;
+			}
+
+			var trashOpen = eventPane.trashOpen || actionPane.trashOpen;
+
+			if (!canGraph) {
+				// go back to initial position
+				block.x = startX;
+				block.y = startY;
+			}
+			if (canDelete) {
+				// hide back the delete icons
+				eventPane.clearTrash();
+				actionPane.clearTrash();
+			}
+
+			if (trashOpen) {
 				// to be deleted
 				scene.deleteBlock(block);
 			} else if (canGraph) {
@@ -314,15 +333,6 @@ DropArea {
 				var mousePos = mapToItem(blockContainer, mouse.x, mouse.y);
 				accelerationTimer.updateEstimation(mousePos);
 				accelerationTimer.startAcceleration();
-			}
-
-			if (canDelete) {
-				// go back to initial position
-				block.x = startX;
-				block.y = startY;
-				// in any case, hide back the delete icons
-				eventPane.clearTrash();
-				actionPane.clearTrash();
 			}
 		}
 
