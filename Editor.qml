@@ -121,6 +121,7 @@ Item {
 			scene: scene.serialize(),
 		};
 		code = JSON.stringify(code);
+		console.log(code);
 		programsDB().transaction(function(tx) {
 			var args = [ name, code ];
 			tx.executeSql("insert or replace into programs (name, code) values (?, ?)", args);
@@ -145,8 +146,10 @@ Item {
 		if (rows.length === 0)
 			return;
 		var row = rows[0];
-
-		var code = JSON.parse(row.code);
+		loadCode(row.code);
+	}
+	function loadCode(string) {
+		var code = JSON.parse(string);
 		sceneLoader.mode = code.mode;
 		sceneLoader.scene = code.scene;
 	}
@@ -343,6 +346,21 @@ Item {
 			DropArea {
 				id: mainDropArea
 				anchors.fill: parent
+
+				onDropped: {
+					if (drop.source === blockDragPreview) {
+						var pos = mainDropArea.mapToItem(scene, drop.x, drop.y);
+						createBlock(pos.x, pos.y, blockDragPreview.definition);
+					} else if (drop.hasText) {
+						try {
+							loadCode(drop.text);
+						} catch (e) {
+							drop.accepted = false;
+						}
+					} else {
+						drop.accepted = false;
+					}
+				}
 
 				Loader {
 					id: sceneLoader

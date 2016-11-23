@@ -239,23 +239,6 @@ Item {
 		}
 	}
 
-	Binding {
-		target: mainDropArea
-		property: "enabled"
-		value: true
-	}
-	Connections {
-		target: mainDropArea
-		onDropped: {
-			if (drop.source === blockDragPreview) {
-				var pos = mainDropArea.mapToItem(scene, drop.x, drop.y);
-				createBlock(pos.x, pos.y, blockDragPreview.definition);
-			} else {
-				drop.accepted = false;
-			}
-		}
-	}
-
 	function handleBlockDrop(source, drop) {
 		if (drop.source === blockDragPreview) {
 			drop.accepted = true;
