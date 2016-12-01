@@ -350,7 +350,11 @@ Item {
 				onDropped: {
 					if (drop.source === blockDragPreview) {
 						var pos = mainDropArea.mapToItem(scene, drop.x, drop.y);
-						createBlock(pos.x, pos.y, blockDragPreview.definition);
+						if (scene.createBlock !== undefined) {
+							scene.createBlock(pos.x, pos.y, blockDragPreview.definition);
+						} else {
+							drop.accepted = false;
+						}
 					} else if (drop.hasText) {
 						try {
 							loadCode(drop.text);
