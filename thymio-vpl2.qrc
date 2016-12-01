@@ -136,5 +136,15 @@
         <file>blocks/images/MotorSimpleActionBlock/edit-stop-off.svg</file>
         <file>blocks/images/MotorSimpleActionBlock/edit-stop-on.svg</file>
         <file>blocks/widgets/PushButton.qml</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-back.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-backLeft.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-backRight.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-front.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-frontLeft.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-frontRight.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-left.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-right.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini-stop.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/mini.svg</file>
     </qresource>
 </RCC>

@@ -144,4 +144,26 @@ BlockDefinition {
 			}
 		}
 	}
+
+	miniature: Component {
+		HDPIImage {
+			property string params
+			width: 256
+			height: 256
+			source: {
+				switch(params) {
+				case "frontLeft": return "images/MotorSimpleActionBlock/mini-frontLeft.svg";
+				case "front": return "images/MotorSimpleActionBlock/mini-front.svg";
+				case "frontRight": return "images/MotorSimpleActionBlock/mini-frontRight.svg";
+				case "right": return "images/MotorSimpleActionBlock/mini-right.svg";
+				case "backRight": return "images/MotorSimpleActionBlock/mini-backRight.svg";
+				case "back": return "images/MotorSimpleActionBlock/mini-back.svg";
+				case "backLeft": return "images/MotorSimpleActionBlock/mini-backLeft.svg";
+				case "left": return "images/MotorSimpleActionBlock/mini-left.svg";
+				case "stop": return "images/MotorSimpleActionBlock/mini-stop.svg";
+				default: return "images/MotorSimpleActionBlock/mini.svg";
+				}
+			}
+		}
+	}
 }
