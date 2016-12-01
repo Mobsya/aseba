@@ -250,4 +250,19 @@ Item {
 			}
 		}
 	}
+
+	function handleBlockDrop(source, drop) {
+		if (drop.source === blockDragPreview) {
+			drop.accepted = true;
+			var definition = blockDragPreview.definition;
+			source.definition = definition;
+			source.params = definition.defaultParams;
+		} else {
+			drop.accepted = false;
+		}
+	}
+
+	function handleSceneDrop(source, drop) {
+		drop.accepted = false;
+	}
 }

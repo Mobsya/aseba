@@ -348,21 +348,14 @@ Item {
 				anchors.fill: parent
 
 				onDropped: {
-					if (drop.source === blockDragPreview) {
-						var pos = mainDropArea.mapToItem(scene, drop.x, drop.y);
-						if (scene.createBlock !== undefined) {
-							scene.createBlock(pos.x, pos.y, blockDragPreview.definition);
-						} else {
-							drop.accepted = false;
-						}
-					} else if (drop.hasText) {
+					if (drop.hasText) {
 						try {
 							loadCode(drop.text);
 						} catch (e) {
 							drop.accepted = false;
 						}
 					} else {
-						drop.accepted = false;
+						scene.handleSceneDrop(this, drop);
 					}
 				}
 

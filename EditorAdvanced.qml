@@ -254,4 +254,14 @@ Item {
 			drop.accepted = false;
 		}
 	}
+
+	function handleSceneDrop(source, drop) {
+		if (drop.source === blockDragPreview) {
+			drop.accepted = true;
+			var pos = source.mapToItem(scene, drop.x, drop.y);
+			createBlock(pos.x, pos.y, blockDragPreview.definition);
+		} else {
+			drop.accepted = false;
+		}
+	}
 }
