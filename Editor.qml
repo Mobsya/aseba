@@ -30,6 +30,10 @@ Item {
 		function loadBlockDefinition(name) {
 			var url = "blocks/" + name + ".qml";
 			var component = Qt.createComponent(url);
+			if (component.status === Component.Error) {
+				console.log(component.errorString());
+			}
+
 			var properties = {
 				objectName: name,
 			};
