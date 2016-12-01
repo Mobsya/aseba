@@ -116,5 +116,25 @@
         <file>icons/ic_delete_on_black_48px.svg</file>
         <file>BlockBackground.qml</file>
         <file>LinkSimple.qml</file>
+        <file>blocks/MotorSimpleActionBlock.qml</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-back-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-back-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-backLeft-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-backLeft-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-backRight-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-backRight-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-front-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-front-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-frontLeft-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-frontLeft-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-frontRight-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-frontRight-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-left-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-left-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-right-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-right-on.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-stop-off.svg</file>
+        <file>blocks/images/MotorSimpleActionBlock/edit-stop-on.svg</file>
+        <file>blocks/widgets/PushButton.qml</file>
     </qresource>
 </RCC>

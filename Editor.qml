@@ -53,6 +53,7 @@ Item {
 
 		actionDefinitions = [
 			"MotorActionBlock",
+			"MotorSimpleActionBlock",
 			"PaletteTopColorActionBlock",
 			"PaletteBottomColorActionBlock",
 			"TopColorActionBlock",
