@@ -87,7 +87,6 @@ Item {
 					if (next !== null) {
 						next.prev = prev;
 					}
-					astChanged();
 					destroy();
 				}
 				function serialize() {
@@ -137,11 +136,10 @@ Item {
 						typeRestriction: "event"
 
 						function free() {
+							definition = null;
+							params = undefined;
 							if (next.definition === null) {
 								row.free();
-							} else {
-								definition = null;
-								params = undefined;
 							}
 						}
 
@@ -214,18 +212,18 @@ Item {
 								function free() {
 									console.assert(prev !== null);
 									console.assert(next !== null);
+									var index = scene.ast.blocks.indexOf(this);
+									scene.ast.blocks.splice(index, 1);
 									if (prev.definition === null && next.definition === null) {
 										// there is just me and placeholders
 										row.free();
 									} else {
 										prev.next = next;
 										next.prev = prev;
-										var index = scene.ast.blocks.indexOf(this);
-										scene.ast.blocks.splice(index, 1);
 										destroy();
 										inbound.ast = false;
-										astChanged();
 									}
+									astChanged();
 								}
 
 								onParamsChanged: {
