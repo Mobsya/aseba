@@ -212,7 +212,7 @@ Item {
 		lightThemeColor: "#ffead9"
 
 		anchors.left: parent.left
-		anchors.leftMargin: vplEditor.minimized ? -width : 0
+		anchors.leftMargin: vplEditor.minimized || (blockEditor.typeRestriction !== "" && blockEditor.typeRestriction !== "event") ? -width : 0
 
 		Behavior on anchors.leftMargin { PropertyAnimation {} }
 	}
@@ -227,7 +227,7 @@ Item {
 		lightThemeColor: "#daeaf2"
 
 		anchors.right: parent.right
-		anchors.rightMargin: vplEditor.minimized ? -width : 0
+		anchors.rightMargin: vplEditor.minimized || (blockEditor.typeRestriction !== "" && blockEditor.typeRestriction !== "action") ? -width : 0
 
 		Behavior on anchors.rightMargin { PropertyAnimation {} }
 	}
