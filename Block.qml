@@ -8,6 +8,7 @@ DropArea {
 	width: 256
 	height: 256
 	z: 1
+	keys: typeRestriction === "" ? [] : [typeRestriction]
 
 	property var id // used in serialization/deserialization
 	property string typeRestriction: "" // "", "event", "action"

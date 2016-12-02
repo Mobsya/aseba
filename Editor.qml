@@ -399,6 +399,7 @@ Item {
 			scale: scene.scale
 			Drag.hotSpot.x: width / 2
 			Drag.hotSpot.y: height / 2
+			Drag.keys: definition === null ? [] : [definition.type]
 
 			BlockBackground {
 				id: centerImageId
