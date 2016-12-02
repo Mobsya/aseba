@@ -271,12 +271,24 @@ Item {
 			if (rect.width === 0 || rect.height === 0) {
 				scale = 0.5;
 			} else {
-				scale = Math.min(0.5, width * 0.7 / rect.width, height * 0.7 / rect.height);
+				scale = Math.max(1e-1, Math.min(0.5, width * 0.7 / rect.width, height * 0.7 / rect.height));
 			}
 
 			scene.scale = scale;
 			scene.x = width/2 - (rect.x + rect.width/2) * scale;
 			scene.y = height/2 - (rect.y + rect.height/2) * scale;
+		}
+
+		function scaleDelta(scaleDelta, centerX, centerY) {
+			var scaleOld = scene.scale;
+			var scaleNew = Math.max(1e-1, Math.min(0.5, scaleOld + scaleDelta));
+			if (scaleNew === scaleOld) {
+				return;
+			}
+			// adjust content pos due to scale
+			scene.x += (scene.x - centerX) * scaleDelta / scaleOld;
+			scene.y += (scene.y - centerY) * scaleDelta / scaleOld;
+			scene.scale = scaleNew;
 		}
 
 		// keep the center of the scene at the center of the mainContainer
@@ -306,14 +318,7 @@ Item {
 			}
 
 			onPinchUpdated: {
-				var deltaScale = pinch.scale - pinch.previousScale
-
-				// adjust content pos due to scale
-				if (scene.scale + deltaScale > 1e-1) {
-					scene.x += (scene.x - pinch.center.x) * deltaScale / scene.scale;
-					scene.y += (scene.y - pinch.center.y) * deltaScale / scene.scale;
-					scene.scale += deltaScale;
-				}
+				mainContainer.scaleDelta(pinch.scale - pinch.previousScale, pinch.center.x, pinch.center.y);
 
 				// adjust content pos due to drag
 				var now = new Date().valueOf();
@@ -337,14 +342,7 @@ Item {
 				scrollGestureEnabled: false
 
 				onWheel: {
-					var deltaScale = scene.scale * wheel.angleDelta.y / 1200.;
-
-					// adjust content pos due to scale
-					if (scene.scale + deltaScale > 1e-1) {
-						scene.x += (scene.x - mainContainer.width/2) * deltaScale / scene.scale;
-						scene.y += (scene.y - mainContainer.height/2) * deltaScale / scene.scale;
-						scene.scale += deltaScale;
-					}
+					mainContainer.scaleDelta(scene.scale * wheel.angleDelta.y / 1200., mainContainer.width/2, mainContainer.height/2);
 				}
 			}
 
