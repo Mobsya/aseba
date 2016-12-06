@@ -10,14 +10,14 @@ BlockDefinition {
 	function compile(params) {
 		function getTargets() {
 			switch(params) {
-			case "frontLeft": return [0, 500];
-			case "front": return [500, 500];
-			case "frontRight": return [500, 0];
-			case "right": return [500, -500];
-			case "backRight": return [-500, 0];
-			case "back": return [-500, -500];
-			case "backLeft": return [0, -500];
-			case "left": return [-500, 500];
+			case "frontLeft": return [0, 250];
+			case "front": return [250, 250];
+			case "frontRight": return [250, 0];
+			case "right": return [250, -250];
+			case "backRight": return [-250, 0];
+			case "back": return [-250, -250];
+			case "backLeft": return [0, -250];
+			case "left": return [-250, 250];
 			case "stop": return [0, 0];
 			}
 		}
