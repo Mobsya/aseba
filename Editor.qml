@@ -338,6 +338,14 @@ Item {
 				drag.target: scene
 				scrollGestureEnabled: false
 
+				property real margin: 10
+				property real spaceX: width - (scene.viewRect.x + scene.viewRect.width) * scene.scale - margin
+				property real spaceY: height - (scene.viewRect.y + scene.viewRect.height) * scene.scale - margin
+				drag.minimumX: Math.min(margin, spaceX)
+				drag.maximumX: Math.max(margin, spaceX)
+				drag.minimumY: Math.min(margin, spaceY)
+				drag.maximumY: Math.max(margin, spaceY)
+
 				onWheel: {
 					mainContainer.scaleDelta(scene.scale * wheel.angleDelta.y / 1200., mainContainer.width/2, mainContainer.height/2);
 				}
