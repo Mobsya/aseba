@@ -36,7 +36,7 @@ Item {
 			blockComponent.createObject(blockContainer, {
 				x: b.x,
 				y: b.y,
-				definition: definitions[b.definition],
+				definition: definitionsByName[b.definition],
 				params: b.params,
 				isStarting: b.isStarting
 			});

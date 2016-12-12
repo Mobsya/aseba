@@ -22,45 +22,38 @@ Item {
 		ast: scene.ast
 	}
 
-	property list<BlockDefinition> eventDefinitions
-	property list<BlockDefinition> actionDefinitions
-	property var definitions: {
-		var definitions = {};
-
-		function loadBlockDefinition(name) {
-			var url = "blocks/" + name + ".qml";
-			var component = Qt.createComponent(url);
-			if (component.status === Component.Error) {
-				console.log(component.errorString());
-			}
-
-			var properties = {
-				objectName: name,
-			};
-			var object = component.createObject(vplEditor, properties);
-			definitions[name] = object;
-			return object;
+	property var definitions: [
+		"ButtonsEventBlock",
+		"ProxEventBlock",
+		"ProxGroundEventBlock",
+		"TapEventBlock",
+		"ClapEventBlock",
+		"TimerEventBlock",
+		"MotorActionBlock",
+		"MotorSimpleActionBlock",
+		"PaletteTopColorActionBlock",
+		"PaletteBottomColorActionBlock",
+		"TopColorActionBlock",
+		"BottomColorActionBlock",
+	].map(function(name) {
+		var url = "blocks/" + name + ".qml";
+		var component = Qt.createComponent(url);
+		if (component.status === Component.Error) {
+			throw component.errorString();
 		}
 
-		eventDefinitions = [
-			"ButtonsEventBlock",
-			"ProxEventBlock",
-			"ProxGroundEventBlock",
-			"TapEventBlock",
-			"ClapEventBlock",
-			"TimerEventBlock",
-		].map(loadBlockDefinition);
-
-		actionDefinitions = [
-			"MotorActionBlock",
-			"MotorSimpleActionBlock",
-			"PaletteTopColorActionBlock",
-			"PaletteBottomColorActionBlock",
-			"TopColorActionBlock",
-			"BottomColorActionBlock",
-		].map(loadBlockDefinition);
-
-		return definitions;
+		var properties = {
+			objectName: name,
+		};
+		var object = component.createObject(vplEditor, properties);
+		return object;
+	});
+	property var definitionsByName: {
+		var definitionsByName = {};
+		definitions.forEach(function(definition) {
+			definitionsByName[definition.objectName] = definition;
+		});
+		return definitionsByName;
 	}
 
 	function programsDB() {
@@ -205,7 +198,9 @@ Item {
 	BlocksPane {
 		id: eventPane
 
-		blocks: eventDefinitions
+		blocks: definitions.filter(function(definition) {
+			return definition.type === "event" && (sceneLoader.mode === "advanced" || !definition.advanced);
+		})
 		backImage: "images/eventCenter.svg"
 
 		darkThemeColor: "#301446"
@@ -220,7 +215,9 @@ Item {
 	BlocksPane {
 		id: actionPane
 
-		blocks: actionDefinitions
+		blocks: definitions.filter(function(definition) {
+			return definition.type === "action" && (sceneLoader.mode === "advanced" || !definition.advanced);
+		})
 		backImage: "images/actionCenter.svg"
 
 		darkThemeColor: "#301446"

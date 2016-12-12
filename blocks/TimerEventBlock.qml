@@ -7,6 +7,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "event"
+	advanced: true
 
 	defaultParams: 100
 
