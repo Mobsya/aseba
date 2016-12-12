@@ -42,7 +42,9 @@ android {
 	ASEBA_SOURCES += $$PWD/aseba/transport/dashel_plugins/none.cpp
 }
 ASEBA_INCLUDE = $$PWD/dashel $$PWD
-ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
+!msvc {
+	ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
+}
 
 QMAKE_CXXFLAGS += $$ASEBA_CXXFLAGS
 DEFINES += $$ASEBA_DEFINES
