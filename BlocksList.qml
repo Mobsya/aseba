@@ -7,6 +7,9 @@ ListView {
 	property string backImage
 	property bool isLandscape: true
 
+	// scrolling disabled for now: https://github.com/aseba-community/thymio-vpl2/issues/6
+	interactive: false
+
 	anchors.fill: parent
 	clip: true
 	orientation: isLandscape ? ListView.Vertical : ListView.Horizontal
