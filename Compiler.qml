@@ -328,10 +328,10 @@ Item {
 			}, script);
 			script += "var thread = -1" + "\n";
 			script += "var event = -1" + "\n";
-			script += "var states[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
-			script += "var ages[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			script += "var states[" + starts.length + "] = [" + starts.join(",") + "]" + "\n";
+			script += "var ages[" + starts.length + "] = [" + starts.map(function() { return "0"; }).join(",") + "]" + "\n";
 			script += "var conditions = -1" + "\n";
-			script += "var transitions[" + starts.length + "] = [" + starts.map(function() { return "-1"; }).join(",") + "]" + "\n";
+			script += "var transitions[" + starts.length + "] = [" + starts.map(function() { return "0"; }).join(",") + "]" + "\n";
 			script += "var transitionsOld = -1" + "\n";
 			script += "var transitionsNew = -1" + "\n";
 			script += "timer.period[0] = 10" + "\n";
@@ -343,10 +343,6 @@ Item {
 				}
 				return script;
 			}, script);
-			for (var i = 0; i < starts.length; ++i) {
-				var start = starts[i];
-				script += "callsub enter" + start + "\n";
-			}
 			script = nodes.reduce(function(script, node, index) {
 				if (node.compiled.condition !== undefined) {
 					return script;
