@@ -339,12 +339,19 @@ Item {
 				scrollGestureEnabled: false
 
 				property real margin: 10
-				property real spaceX: width - (scene.viewRect.x + scene.viewRect.width) * scene.scale - margin
-				property real spaceY: height - (scene.viewRect.y + scene.viewRect.height) * scene.scale - margin
-				drag.minimumX: Math.min(margin, spaceX)
-				drag.maximumX: Math.max(margin, spaceX)
-				drag.minimumY: Math.min(margin, spaceY)
-				drag.maximumY: Math.max(margin, spaceY)
+				property rect viewRect: {
+					var viewRect = scene.viewRect;
+					var scale = scene.scale;
+					var x = viewRect.x * scale;
+					var y = viewRect.y * scale;
+					var w = width - scene.viewRect.width * scene.scale - margin;
+					var h = height - scene.viewRect.height * scene.scale - margin
+					return Qt.rect(x, y, w, h);
+				}
+				drag.minimumX: Math.min(margin, viewRect.width) - viewRect.x
+				drag.maximumX: Math.max(margin, viewRect.width) - viewRect.x
+				drag.minimumY: Math.min(margin, viewRect.height) - viewRect.y
+				drag.maximumY: Math.max(margin, viewRect.height) - viewRect.y
 
 				onWheel: {
 					mainContainer.scaleDelta(scene.scale * wheel.angleDelta.y / 1200., mainContainer.width/2, mainContainer.height/2);
