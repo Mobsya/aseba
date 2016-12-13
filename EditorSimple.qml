@@ -60,7 +60,8 @@ Item {
 				prev: prev,
 				next: next,
 			};
-			return rowComponent.createObject(rows, properties);
+			var object = rowComponent.createObject(rows, properties);
+			return object;
 		}
 
 		Component {
