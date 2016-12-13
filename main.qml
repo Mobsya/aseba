@@ -184,9 +184,33 @@ ApplicationWindow {
 			anchors.fill: parent
 			clip: true
 			Text {
-				text: vplEditor.compiler.script
+				text: prettyPrintGeneratedAesl(vplEditor.compiler.script)
 				color: Material.primaryTextColor
 				font.family: "Monospace"
+				// TODO: move this somewhere
+				function prettyPrintGeneratedAesl(source) {
+					var level = 0;
+					var output = "";
+					var splitted = source.split("\n");
+					for (var i = 0; i < splitted.length; i++) {
+						var line = splitted[i].trim();
+						if ((line.indexOf("sub ") === 0) || (line.indexOf("onevent ") === 0)) {
+							output += "\n" + line + "\n";
+							level = 1;
+						} else {
+							if (line.indexOf("end") === 0) {
+								level -= 1;
+							}
+							for (var j = 0; j < level; j++)
+								output += "    ";
+							output += line + "\n";
+							if (line.indexOf("if ") === 0) {
+								level += 1;
+							}
+						}
+					}
+					return output;
+				}
 			}
 			contentWidth: contentItem.childrenRect.width;
 			contentHeight: contentItem.childrenRect.height
