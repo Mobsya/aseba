@@ -101,7 +101,7 @@ Item {
 					var block = event;
 					data.forEach(function(blockData) {
 						if (blockData !== null) {
-							block.definition = definitions[blockData.definition];
+							block.definition = definitionsByName[blockData.definition];
 							block.params = blockData.params;
 						}
 						block = block.next;
