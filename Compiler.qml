@@ -495,7 +495,7 @@ Item {
 	function execTransition(nodeIndex, transitionIndex) {
 		var node = nodes[nodeIndex];
 		var blockIndex = node.blockIndex;
-		var block = blocks[blockIndex];
+		var block = ast.blocks[blockIndex];
 
 		if (nodeIndex === blockIndex) {
 			// leaving a state block
@@ -510,14 +510,14 @@ Item {
 			var edge = edges[i];
 			var linkIndex = edge.linkIndex;
 			if (linkIndex !== -1) {
-				var link = links[linkIndex];
+				var link = ast.links[linkIndex];
 				link.exec();
 			}
 			nodeIndex = edge.tail;
 
 			node = nodes[nodeIndex];
 			blockIndex = node.blockIndex;
-			block = blocks[blockIndex];
+			block = ast.blocks[blockIndex];
 
 			if (i !== edges.length - 1) {
 				block.exec();
