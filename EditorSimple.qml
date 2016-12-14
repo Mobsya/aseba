@@ -7,9 +7,11 @@ import QtQml.Models 2.2
 
 Item {
 	id: scene
-	readonly property rect viewRect: childrenRect
 
 	property var ast
+
+	anchors.fill: parent
+	onWidthChanged: rows.updateWidth()
 
 	Component.onCompleted: clear()
 	function clear() {
@@ -17,21 +19,21 @@ Item {
 			blocks: [],
 			links: [],
 		};
-		rows.children = [];
+		rows.model.clear();
 		rows.append(null, null);
 	}
 
 	function serialize() {
 		var data = [];
-		for (var i = 0; i < rows.children.length - 1; ++i) {
-			data.push(rows.children[i].serialize());
+		for (var i = 0; i < rows.model.count - 1; ++i) {
+			data.push(rows.model.get(i).serialize());
 		}
 		return data;
 	}
 
 	function deserialize(data) {
 		clear();
-		var row = rows.children[0];
+		var row = rows.model.get(0);
 		data.forEach(function(data) {
 			row.deserialize(data);
 			row = row.next;
@@ -50,10 +52,24 @@ Item {
 		property int actionSpacing: 30
 	}
 
-	ColumnLayout {
+	ListView {
 		id: rows
 
+		anchors.centerIn: parent
+
+		leftMargin: constants.rowSpacing
+		width: leftMargin + contentWidth + rightMargin
+		rightMargin: constants.rowSpacing
+		scale: Math.min(0.5, scene.width / width)
+
+		height: parent.height / scale
+		topMargin: Math.max(constants.rowSpacing, (height - contentHeight) / 2)
+		bottomMargin: topMargin
+
 		spacing: constants.rowSpacing
+
+		model: ObjectModel {
+		}
 
 		function append(prev, next) {
 			var properties = {
@@ -64,6 +80,15 @@ Item {
 			return object;
 		}
 
+		function updateWidth() {
+			var width = 0;
+			for (var i = 0; i < model.count; ++i) {
+				var row = model.get(i);
+				width = Math.max(width, row.width);
+			}
+			contentWidth = width;
+		}
+
 		Component {
 			id: rowComponent
 			Item {
@@ -71,9 +96,22 @@ Item {
 
 				property Item prev
 				property Item next
+				property int index: prev === null ? 0 : prev.index + 1
 
-				implicitWidth: layout.width + 2 * constants.rowPaddingH
-				implicitHeight: layout.height + 2 * constants.rowPaddingV
+				width: layout.width + 2 * constants.rowPaddingH
+				height: layout.height + 2 * constants.rowPaddingV
+
+				Component.onCompleted: {
+					rows.model.append(this);
+					rows.updateWidth();
+				}
+				Component.onDestruction: {
+					if (index < rows.model.count) {
+						rows.model.remove(index, 1);
+						rows.updateWidth();
+					}
+				}
+				onWidthChanged: rows.updateWidth()
 
 				function reserve() {
 					if (next === null) {
@@ -148,13 +186,11 @@ Item {
 							var index = scene.ast.blocks.indexOf(this);
 							var astIs = index !== -1;
 							var astShould = definition !== null;
-							if (astIs != astShould) {
-								if (astShould) {
-									scene.ast.blocks.push(this);
-									row.reserve();
-								} else {
-									scene.ast.blocks.splice(index, 1);
-								}
+							if (astShould && !astIs) {
+								scene.ast.blocks.push(this);
+								row.reserve();
+							} else if (astIs && !astShould) {
+								scene.ast.blocks.splice(index, 1);
 							}
 						}
 						onParamsChanged: {

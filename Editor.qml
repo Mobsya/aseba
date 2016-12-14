@@ -154,7 +154,6 @@ Item {
 
 	function clearProgram() {
 		scene.clear();
-		mainContainer.fitToView();
 	}
 
 	function switchMode() {
@@ -259,39 +258,6 @@ Item {
 		Behavior on scale { PropertyAnimation {} }
 		Behavior on anchors.rightMargin { PropertyAnimation {} }
 
-		Component.onCompleted: fitToView()
-		// fit all contents to the view
-		function fitToView() {
-			var rect = scene.viewRect;
-
-			var scale;
-			if (rect.width === 0 || rect.height === 0) {
-				scale = 0.5;
-			} else {
-				scale = Math.max(1e-1, Math.min(0.5, width * 0.7 / rect.width, height * 0.7 / rect.height));
-			}
-
-			scene.scale = scale;
-			scene.x = width/2 - (rect.x + rect.width/2) * scale;
-			scene.y = height/2 - (rect.y + rect.height/2) * scale;
-		}
-
-		function scaleDelta(scaleDelta, centerX, centerY) {
-			var scaleOld = scene.scale;
-			var scaleNew = Math.max(1e-1, Math.min(0.5, scaleOld + scaleDelta));
-			if (scaleNew === scaleOld) {
-				return;
-			}
-			// adjust content pos due to scale
-			scene.x += (scene.x - centerX) * scaleDelta / scaleOld;
-			scene.y += (scene.y - centerY) * scaleDelta / scaleOld;
-			scene.scale = scaleNew;
-		}
-
-		// keep the center of the scene at the center of the mainContainer
-		onWidthChanged: if (scene !== null) { scene.x = width/2 - (scene.viewRect.x + scene.viewRect.width/2) * scene.scale; }
-		onHeightChanged: if (scene !== null) { scene.y = height/2 - (scene.viewRect.y + scene.viewRect.height/2) * scene.scale; }
-
 		Image {
 			anchors.fill: parent
 			source: "images/grid.png"
@@ -301,99 +267,41 @@ Item {
 			Behavior on opacity { PropertyAnimation {} }
 		}
 
-		// container for main view
-		PinchArea {
-			id: pinchArea
-
+		DropArea {
+			id: mainDropArea
 			anchors.fill: parent
-			clip: true
 
-			property double prevTime: 0
-
-			onPinchStarted: {
-				prevTime = new Date().valueOf();
-			}
-
-			onPinchUpdated: {
-				mainContainer.scaleDelta(pinch.scale - pinch.previousScale, pinch.center.x, pinch.center.y);
-
-				// adjust content pos due to drag
-				var now = new Date().valueOf();
-				var dt = now - prevTime;
-				var dx = pinch.center.x - pinch.previousCenter.x;
-				var dy = pinch.center.y - pinch.previousCenter.y;
-				scene.x += dx;
-				scene.y += dy;
-				//scene.vx = scene.vx * 0.6 + dx * 0.4 * dt;
-				//scene.vy = scene.vy * 0.6 + dy * 0.4 * dt;
-				prevTime = now;
-			}
-
-			onPinchFinished: {
-				//accelerationTimer.running = true;
-			}
-
-			MouseArea {
-				anchors.fill: parent
-				drag.target: scene
-				scrollGestureEnabled: false
-
-				property real margin: 10
-				property rect viewRect: {
-					var viewRect = scene.viewRect;
-					var scale = scene.scale;
-					var x = viewRect.x * scale;
-					var y = viewRect.y * scale;
-					var w = width - scene.viewRect.width * scene.scale - margin;
-					var h = height - scene.viewRect.height * scene.scale - margin
-					return Qt.rect(x, y, w, h);
-				}
-				drag.minimumX: Math.min(margin, viewRect.width) - viewRect.x
-				drag.maximumX: Math.max(margin, viewRect.width) - viewRect.x
-				drag.minimumY: Math.min(margin, viewRect.height) - viewRect.y
-				drag.maximumY: Math.max(margin, viewRect.height) - viewRect.y
-
-				onWheel: {
-					mainContainer.scaleDelta(scene.scale * wheel.angleDelta.y / 1200., mainContainer.width/2, mainContainer.height/2);
+			onDropped: {
+				if (drop.hasText) {
+					try {
+						loadCode(drop.text);
+					} catch (e) {
+						drop.accepted = false;
+					}
+				} else {
+					scene.handleSceneDrop(this, drop);
 				}
 			}
 
-			DropArea {
-				id: mainDropArea
+			Loader {
+				id: sceneLoader
 				anchors.fill: parent
 
-				onDropped: {
-					if (drop.hasText) {
-						try {
-							loadCode(drop.text);
-						} catch (e) {
-							drop.accepted = false;
-						}
-					} else {
-						scene.handleSceneDrop(this, drop);
+				property string mode: "simple"
+				onModeChanged: scene = undefined;
+
+				property var scene: undefined
+				onSceneChanged: if (item !== null) loaded()
+
+				source: {
+					switch (mode) {
+					case "simple": return "EditorSimple.qml";
+					case "advanced": return "EditorAdvanced.qml";
 					}
 				}
-
-				Loader {
-					id: sceneLoader
-
-					property string mode: "simple"
-					onModeChanged: scene = undefined;
-
-					property var scene: undefined
-					onSceneChanged: if (item !== null) loaded()
-
-					source: {
-						switch (mode) {
-						case "simple": return "EditorSimple.qml";
-						case "advanced": return "EditorAdvanced.qml";
-						}
-					}
-					onLoaded: {
-						if (scene !== undefined) {
-							item.deserialize(scene);
-						}
-						mainContainer.fitToView();
+				onLoaded: {
+					if (scene !== undefined) {
+						item.deserialize(scene);
 					}
 				}
 			}
@@ -425,29 +333,6 @@ Item {
 				sourceComponent: blockDragPreview.definition ? blockDragPreview.definition.miniature : null
 				scale: 0.72
 				onLoaded: loader.item.params = blockDragPreview.params
-			}
-		}
-
-		// center view
-		Item {
-			width: 48
-			height: 48
-			anchors.right: parent.right
-			anchors.rightMargin: 4
-			anchors.bottom: parent.bottom
-			anchors.bottomMargin: 4
-
-			HDPIImage {
-				source: Material.theme === Material.Light ? "icons/ic_gps_fixed_black_24px.svg" : "icons/ic_gps_fixed_white_24px.svg"
-				width: 24 // working around Qt bug with SVG and HiDPI
-				height: 24 // working around Qt bug with SVG and HiDPI
-				anchors.centerIn: parent
-				visible: !minimized
-			}
-
-			MouseArea {
-				anchors.fill: parent
-				onClicked: mainContainer.fitToView();
 			}
 		}
 
