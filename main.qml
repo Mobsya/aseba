@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
 import Qt.labs.settings 1.0
+import QtQml 2.2
 import "qrc:/thymio-vpl2"
 
 ApplicationWindow {
@@ -109,6 +110,11 @@ ApplicationWindow {
 			vplEditor.switchMode();
 		}
 
+		ListElement { title: "dev: show aesl"; callback: "showAeslSource"; whiteIcon: ""; blackIcon: ""; visible: false; }
+		function showAeslSource() {
+			aeslSourceDialog.visible = true;
+		}
+
 		//ListElement { title: qsTr("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
@@ -142,6 +148,7 @@ ApplicationWindow {
 							font.weight: Font.Medium
 							color: Material.primaryTextColor
 							opacity: enabled ? 1.0 : 0.5
+							visible: ((model.title.substring(0, 4) !== "dev:") || (Qt.application.arguments.indexOf("--developer") !== -1))
 						}
 					}
 					onClicked: {
@@ -161,6 +168,55 @@ ApplicationWindow {
 	LoadSaveDialog {
 		id: saveProgramDialog
 		vplEditor: vplEditor
+	}
+
+	// developer options for debugging
+	Popup {
+		id: aeslSourceDialog
+		x: (parent.width - width) / 2
+		y: (parent.height - height) / 2
+		width: 0.8 * parent.width
+		height: 0.8 * parent.height
+		modal: true
+		focus: true
+
+		Flickable {
+			anchors.fill: parent
+			clip: true
+			Text {
+				text: prettyPrintGeneratedAesl(vplEditor.compiler.script)
+				color: Material.primaryTextColor
+				font.family: "Monospace"
+				// TODO: move this somewhere
+				function prettyPrintGeneratedAesl(source) {
+					var level = 0;
+					var output = "";
+					var splitted = source.split("\n");
+					for (var i = 0; i < splitted.length; i++) {
+						var line = splitted[i].trim();
+						if ((line.indexOf("sub ") === 0) || (line.indexOf("onevent ") === 0)) {
+							output += "\n" + line + "\n";
+							level = 1;
+						} else {
+							if (line.indexOf("end") === 0) {
+								level -= 1;
+							}
+							for (var j = 0; j < level; j++)
+								output += "    ";
+							output += line + "\n";
+							if (line.indexOf("if ") === 0) {
+								level += 1;
+							}
+						}
+					}
+					return output;
+				}
+			}
+			contentWidth: contentItem.childrenRect.width;
+			contentHeight: contentItem.childrenRect.height
+			ScrollBar.vertical: ScrollBar { }
+			ScrollBar.horizontal: ScrollBar { }
+		}
 	}
 
 	Aseba {
