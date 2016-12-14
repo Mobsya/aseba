@@ -8,6 +8,7 @@ import QtQml.Models 2.2
 Item {
 	id: scene
 
+	property alias scale: rows.scale
 	property var ast
 
 	anchors.fill: parent
