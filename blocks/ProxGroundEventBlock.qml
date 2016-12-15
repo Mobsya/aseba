@@ -15,8 +15,6 @@ BlockDefinition {
 			width: 256
 			height: 256
 
-			property var buttons: []
-
 			// shadows
 			Rectangle {
 				id: leftShadow
@@ -26,6 +24,11 @@ BlockDefinition {
 				height: 200
 				color: "transparent"
 				clip: true
+				ProxGroundShadow {
+					x: 0
+					y: 0
+					associatedButton: leftButton
+				}
 			}
 			Rectangle {
 				id: rightShadow
@@ -35,28 +38,42 @@ BlockDefinition {
 				height: 200
 				color: "transparent"
 				clip: true
+				ProxGroundShadow {
+					x: 156-128-100
+					y: 0
+					associatedButton: rightButton
+				}
 			}
 
 			// Thymio body
 			ThymioBody {}
 
 			// sensor buttons
-			Component.onCompleted: {
-				for (var i=0; i<2; ++i) {
-					buttons.push(buttonComponent.createObject(block, {
-						"x": 100 - 16 + i*56,
-						"y": 32 - 16,
-						"state": params[i]
-					}));
+			InfraredButton {
+				id: leftButton
+				x: 100 - 16
+				y: 32 - 16
+				state: params[0]
+				InfraredLed {
+					x: -22
+					y: 4
+					associatedButton: leftButton
 				}
-				ledComponent.createObject(block, { "x": 74-12, "y": 32-12, "associatedButton": buttons[0] });
-				groundShadowComponent.createObject(leftShadow, { "x": 0, "y": 0, "associatedButton": buttons[0] });
-				ledComponent.createObject(block, { "x": 182-12, "y": 32-12, "associatedButton": buttons[1] });
-				groundShadowComponent.createObject(rightShadow, { "x": 156-128-100, "y": 0, "associatedButton": buttons[1] });
+			}
+			InfraredButton {
+				id: rightButton
+				x: 100 - 16 + 56
+				y: 32 - 16
+				state: params[1]
+				InfraredLed {
+					x: 30
+					y: 4
+					associatedButton: rightButton
+				}
 			}
 
 			function getParams() {
-				return buttons.map(function(button) { return button.state; });
+				return [leftButton.state, rightButton.state];
 			}
 		}
 	}
@@ -94,18 +111,5 @@ BlockDefinition {
 				return source;
 			}, "0 == 0"),
 		};
-	}
-
-	Component {
-		id: buttonComponent
-		InfraredButton {}
-	}
-	Component {
-		id: ledComponent
-		InfraredLed {}
-	}
-	Component {
-		id: groundShadowComponent
-		ProxGroundShadow {}
 	}
 }

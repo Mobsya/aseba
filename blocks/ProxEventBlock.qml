@@ -15,44 +15,60 @@ BlockDefinition {
 			width: 256
 			height: 256
 
-			property var buttons: []
-
 			// Thymio body
 			ThymioBody {}
 
-			// sensor buttons
-			Component.onCompleted: {
-				// front sensors
-				for (var i=0; i<5; ++i) {
-					var offset = 2.0 - i;
-					buttons.push(buttonComponent.createObject(block, {
-						"x": 128 - 16 - 150*Math.sin(0.34906585*offset),
-						"y": 172 - 16 - 150*Math.cos(0.34906585*offset),
-						"rotation": -20*offset,
-						"state": params[i]
-					}));
+			Repeater {
+				id: frontSensors
+				model: 5
+				InfraredButton {
+					id: button
+					property int offset: 2.0 - index
+					x: 128 - 16 - 150*Math.sin(0.34906585*offset)
+					y: 172 - 16 - 150*Math.cos(0.34906585*offset)
+					rotation: -20*offset
+					state: params[index]
+					InfraredLed {
+						visible: index <= 2
+						x: -20
+						y: 8
+						associatedButton: button
+					}
+					InfraredLed {
+						visible: index >= 2
+						x: 28
+						y: 8
+						associatedButton: button
+					}
 				}
-				ledComponent.createObject(block, { "x": 17-12, "y": 78-12, "associatedButton": buttons[0] });
-				ledComponent.createObject(block, { "x": 54-12, "y": 43-12, "associatedButton": buttons[1] });
-				ledComponent.createObject(block, { "x": 104-12, "y": 26-12, "associatedButton": buttons[2] });
-				ledComponent.createObject(block, { "x": 152-12, "y": 26-12, "associatedButton": buttons[2] });
-				ledComponent.createObject(block, { "x": 202-12, "y": 43-12, "associatedButton": buttons[3] });
-				ledComponent.createObject(block, { "x": 239-12, "y": 78-12, "associatedButton": buttons[4] });
+			}
 
-				// back sensors
-				for (var i=0; i<2; ++i) {
-					buttons.push(buttonComponent.createObject(block, {
-						"x": 64 - 16 + i*128,
-						"y": 234 - 16,
-						"state": params[i+5]
-					}));
+			Repeater {
+				id: backSensors
+				model: 2
+				InfraredButton {
+					id: button
+					x: 64 - 16 + index*128
+					y: 234 - 16
+					state: params[index+5]
+					InfraredLed {
+						x: -20 + index*48
+						y: 4
+						associatedButton: button
+					}
 				}
-				ledComponent.createObject(block, { "x": 40-12, "y": 234-12, "associatedButton": buttons[5] });
-				ledComponent.createObject(block, { "x": 216-12, "y": 234-12, "associatedButton": buttons[6] });
 			}
 
 			function getParams() {
-				return buttons.map(function(button) { return button.state; });
+				return [
+					frontSensors.itemAt(0).state,
+					frontSensors.itemAt(1).state,
+					frontSensors.itemAt(2).state,
+					frontSensors.itemAt(3).state,
+					frontSensors.itemAt(4).state,
+					backSensors.itemAt(0).state,
+					backSensors.itemAt(1).state,
+				];
 			}
 		}
 	}
@@ -90,14 +106,5 @@ BlockDefinition {
 				return source;
 			}, "0 == 0"),
 		};
-	}
-
-	Component {
-		id: buttonComponent
-		InfraredButton {}
-	}
-	Component {
-		id: ledComponent
-		InfraredLed {}
 	}
 }
