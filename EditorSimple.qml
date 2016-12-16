@@ -293,6 +293,7 @@ Item {
 			var definition = blockDragPreview.definition;
 			source.definition = definition;
 			source.params = definition.defaultParams;
+			blockEditor.setBlock(source);
 		} else {
 			drop.accepted = false;
 		}
