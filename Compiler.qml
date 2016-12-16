@@ -517,12 +517,14 @@ Item {
 		var blockIndex = node.blockIndex;
 		var block = ast.blocks[blockIndex];
 
-		if (nodeIndex === blockIndex) {
-			// leaving a state block
-			block.isExec = false;
-		} else {
-			// leaving a start indicator
-			block.startIndicator.isExec = false;
+		if (sceneLoader.mode === "advanced") {
+			if (nodeIndex === blockIndex) {
+				// leaving a state block
+				block.isExec = false;
+			} else {
+				// leaving a start indicator
+				block.startIndicator.isExec = false;
+			}
 		}
 
 		var edges = node.transitions[transitionIndex].edges;
@@ -544,9 +546,11 @@ Item {
 			}
 		}
 
-		if (nodeIndex === blockIndex) {
-			// entering a state block
-			block.isExec = true;
+		if (sceneLoader.mode === "advanced") {
+			if (nodeIndex === blockIndex) {
+				// entering a state block
+				block.isExec = true;
+			}
 		}
 	}
 
