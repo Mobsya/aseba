@@ -47,7 +47,7 @@ ApplicationWindow {
 				contentItem: Image {
 					anchors.centerIn: parent
 					anchors.rightMargin: 12
-					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_white_48px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_48px.svg"
+					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
 				}
 				visible: !vplEditor.blockEditorVisible
 				enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)

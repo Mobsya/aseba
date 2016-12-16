@@ -96,8 +96,6 @@
         <file>DashelTargetDialog.qml</file>
         <file>Aseba.qml</file>
         <file>Thymio.qml</file>
-        <file>icons/ic_stop_white_48px.svg</file>
-        <file>icons/ic_play_white_48px.svg</file>
         <file>icons/ic_menu_white_24px.svg</file>
         <file>CompilationLabel.qml</file>
         <file>icons/ic_connection_off_white_24px.svg</file>
@@ -147,5 +145,7 @@
         <file>blocks/images/MotorSimpleActionBlock/mini-stop.svg</file>
         <file>blocks/images/MotorSimpleActionBlock/mini.svg</file>
         <file>translations/thymio-vpl2_fr.qm</file>
+        <file>icons/ic_stop_white_24px.svg</file>
+        <file>icons/ic_play_arrow_white_24px.svg</file>
     </qresource>
 </RCC>
