@@ -54,6 +54,13 @@ SOURCES += \
 	$$ASEBA_SOURCES \
 	$$PWD/aseba.cpp \
 	$$PWD/thymio-vpl2.cpp
+lupdate_only{
+SOURCES = \
+	$$PWD/*.qml \
+	$$PWD/blocks/*.qml \
+	$$PWD/blocks/widgets/*.qml
+}
+TRANSLATIONS += translations/thymio-vpl2_fr.ts
 QT += quick svg xml
 RESOURCES += $$PWD/thymio-vpl2.qrc
 DEPENDPATH += $$ASEBA_INCLUDE

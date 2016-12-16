@@ -15,7 +15,7 @@ Label {
 		else if (vplEditor.compiler.error === "")
 			return qsTr("Compilation success");
 		else
-			return qsTr("Compilation error: ") + vplEditor.compiler.error;
+			return qsTr("Compilation error: %0").arg(vplEditor.compiler.error);
 	}
 
 	horizontalAlignment: Text.AlignHCenter

@@ -146,5 +146,6 @@
         <file>blocks/images/MotorSimpleActionBlock/mini-right.svg</file>
         <file>blocks/images/MotorSimpleActionBlock/mini-stop.svg</file>
         <file>blocks/images/MotorSimpleActionBlock/mini.svg</file>
+        <file>translations/thymio-vpl2_fr.qm</file>
     </qresource>
 </RCC>

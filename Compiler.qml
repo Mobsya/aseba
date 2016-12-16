@@ -132,7 +132,7 @@ Item {
 							var block = blocks[index];
 							block.isError = true;
 						});
-						throw "Infinite loop";
+						throw qsTr("Infinite loop");
 					}
 					events.push(index);
 					visitTails(node, visitEvents);
@@ -150,7 +150,7 @@ Item {
 							var block = blocks[index];
 							block.isError = true;
 						});
-						throw "Infinite loop";
+						throw qsTr("Infinite loop");
 					}
 					states.push(index);
 					visitTails(node, visitStates);
@@ -183,7 +183,7 @@ Item {
 					}
 				});
 				if (unreachable !== 0) {
-					throw "Unreachable blocks";
+					throw qsTr("Unreachable blocks");
 				}
 			})();
 

@@ -122,7 +122,7 @@ ApplicationWindow {
 		id: drawer
 		edge: Qt.LeftEdge
 		position: 0
-		width: 260
+		width: 300
 		height: window.height
 
 		contentItem: Pane {
