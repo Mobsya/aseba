@@ -50,6 +50,7 @@ ApplicationWindow {
 					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
 				}
 				visible: !vplEditor.blockEditorVisible
+				opacity: enabled ? 1.0 : 0.3
 				enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)
 				onClicked: thymio.playing = !thymio.playing
 			}
