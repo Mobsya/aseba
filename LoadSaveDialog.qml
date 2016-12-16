@@ -78,7 +78,7 @@ Popup {
 			}
 
 			highlight: isSave ? null : listHighlight
-			ScrollIndicator.vertical: ScrollIndicator { }
+			ScrollBar.vertical: ScrollBar { }
 		}
 
 		TextField {
