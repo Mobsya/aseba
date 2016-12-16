@@ -5,11 +5,35 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg4958"
    viewBox="0 0 256 256"
    height="256"
-   width="256">
+   width="256"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="thymioBody.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1706"
+     inkscape:window-height="910"
+     id="namedview32"
+     showgrid="false"
+     inkscape:zoom="1.84375"
+     inkscape:cx="174.7944"
+     inkscape:cy="84.938566"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg4958" />
   <defs
      id="defs4960">
     <radialGradient
@@ -162,5 +186,22 @@
        d="m 128.19,803.14216 c -46.74,0 -89.109998,18.81 -120.0799981,49.02 -0.76,0.76 -1.14,1.71 -1.14,2.66 l 0,186.77004 c 0,2.09 1.71,3.8 3.8000001,3.8 l 234.839998,0 c 2.09,0 3.8,-1.71 3.8,-3.8 l 0,-186.58004 c 0,-0.95 -0.38,-2.09 -1.14,-2.66 -30.97,-30.4 -73.34,-49.21 -120.08,-49.21 z"
        id="path98"
        style="fill:#ffffff" />
+  </g>
+  <g
+     id="g4237"
+     transform="matrix(0.9405,0,0,0.9405,7.616,11.111745)"
+     style="stroke:#eaeaea;stroke-opacity:1">
+    <polyline
+       transform="matrix(8.64,0,0,8.64,-218.032,-217.59998)"
+       class="st1"
+       points="25.1,41.4 28.6,41.4 28.6,52.2 25.1,52.2  "
+       id="polyline5125"
+       style="fill:none;stroke:#eaeaea;stroke-miterlimit:10;stroke-dasharray:1;stroke-opacity:1" />
+    <polyline
+       transform="matrix(8.64,0,0,8.64,-218.032,-217.59998)"
+       class="st1"
+       points="55,52.2 51.5,52.2 51.5,41.4 55,41.4  "
+       id="polyline5127"
+       style="fill:none;stroke:#eaeaea;stroke-miterlimit:10;stroke-dasharray:1;stroke-opacity:1" />
   </g>
 </svg>
