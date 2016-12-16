@@ -498,8 +498,8 @@ Item {
 	}
 
 	function execReset(playing) {
-		for (var i = 0; i < blocks.length; ++i) {
-			var block = blocks[i];
+		for (var i = 0; i < ast.blocks.length; ++i) {
+			var block = ast.blocks[i];
 			if (playing) {
 				var isStarting = block.isStarting;
 				var isState = nodes[i].compiled.condition === undefined;
