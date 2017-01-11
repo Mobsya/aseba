@@ -10,7 +10,6 @@ import "blocks"
 Item {
 	id: editor
 
-	anchors.fill: parent
 	visible: false
 
 	Rectangle {

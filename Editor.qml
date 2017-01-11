@@ -197,6 +197,7 @@ Item {
 
 	BlocksPane {
 		id: eventPane
+		property bool isHidden: vplEditor.minimized || (blockEditor.typeRestriction !== "" && blockEditor.typeRestriction !== "event")
 
 		blocks: definitions.filter(function(definition) {
 			return definition.type === "event" && (sceneLoader.mode === "advanced" || !definition.advanced);
@@ -207,13 +208,14 @@ Item {
 		lightThemeColor: "#ffead9"
 
 		anchors.left: parent.left
-		anchors.leftMargin: vplEditor.minimized || (blockEditor.typeRestriction !== "" && blockEditor.typeRestriction !== "event") ? -width : 0
+		anchors.leftMargin: isHidden ? -width : 0
 
-		Behavior on anchors.leftMargin { PropertyAnimation {} }
+		//Behavior on anchors.leftMargin { PropertyAnimation {} }
 	}
 
 	BlocksPane {
 		id: actionPane
+		property bool isHidden: vplEditor.minimized || (blockEditor.typeRestriction !== "" && blockEditor.typeRestriction !== "action")
 
 		blocks: definitions.filter(function(definition) {
 			return definition.type === "action" && (sceneLoader.mode === "advanced" || !definition.advanced);
@@ -224,9 +226,9 @@ Item {
 		lightThemeColor: "#daeaf2"
 
 		anchors.right: parent.right
-		anchors.rightMargin: vplEditor.minimized || (blockEditor.typeRestriction !== "" && blockEditor.typeRestriction !== "action") ? -width : 0
+		anchors.rightMargin: isHidden ? -width : 0
 
-		Behavior on anchors.rightMargin { PropertyAnimation {} }
+		//Behavior on anchors.rightMargin { PropertyAnimation {} }
 	}
 
 	Rectangle {
@@ -336,10 +338,16 @@ Item {
 				onLoaded: loader.item.params = blockDragPreview.params
 			}
 		}
+	}
 
-		// block editor
-		BlockEditor {
-			id: blockEditor
-		}
+	// block editor
+	BlockEditor {
+		id: blockEditor
+		anchors.top: parent.top
+		anchors.bottom: parent.bottom
+		x: blockEditor.typeRestriction === "event" ?  eventPane.width : 0
+		width: parent.width - eventPane.width
+		//Behavior on width { PropertyAnimation {} }
+		//Behavior on anchors.rightMargin { PropertyAnimation {} }
 	}
 }
