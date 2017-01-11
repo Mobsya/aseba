@@ -7,12 +7,17 @@ import QtQuick.Controls.Material 2.0
 import "blocks"
 
 // editor
-Rectangle {
+Item {
 	id: editor
 
 	anchors.fill: parent
-	color: Material.theme === Material.Dark ? "#44285a" : "#a0b2b3"
 	visible: false
+
+	Rectangle {
+		anchors.fill: parent
+		color: Material.theme === Material.Dark ? "#44285a" : "#a0b2b3"
+		//opacity: 0.8
+	}
 
 	// FIXME: still a problem?
 	// to block events from going to the scene
@@ -63,104 +68,24 @@ Rectangle {
 		editor.typeRestriction = "";
 	}
 
+	function accept() {
+		if (definition === null) {
+			return;
+		}
+		var params = editorItemLoader.item.getParams();
+		callback(definition, params);
+		close();
+	}
+
 	Loader {
 		id: editorItemLoader
 		anchors.centerIn: parent
 		scale: Math.max(scaledWidth / 256, 0.1)
 
 		//property real scaledWidth: Math.min(parent.width, parent.height - (cancelButton.height+12+12)*2)
-		property real scaledWidth: Math.min(parent.width-48*2, parent.height-24)
+		property real scaledWidth: Math.min(parent.width-24, parent.height-24)
 
 		sourceComponent: definition !== null ? definition.editor : null
 		onLoaded: item.params = params
-	}
-
-	property real horizontalButtonMargin: (width - editorItemLoader.scaledWidth) / 4
-
-//	// buttons of the fake dialog
-//	RowLayout {
-//		anchors.bottom: parent.bottom
-//		anchors.bottomMargin: 12
-//		anchors.horizontalCenter: parent.horizontalCenter
-//		spacing: 24
-
-//		Button {
-//			id: cancelButton
-//			text: "Cancel"
-
-//	//		contentItem: Image{
-//	//			source: "images/okButton.svg"
-//	//		}
-
-//			onClicked: {
-//				clearBlock();
-//			}
-//		}
-
-//		Button {
-//			text: "Ok"
-
-//	//		contentItem: Image{
-//	//			source: "images/okButton.svg"
-//	//		}
-
-//			onClicked: {
-//				block.definition = editor.definition;
-//				block.params = editorItemLoader.item.getParams();
-//				clearBlock();
-//			}
-//		}
-//	}
-
-	Item {
-		width: 48
-		height: 48
-		anchors.right: parent.right
-		anchors.rightMargin: Math.min(horizontalButtonMargin,18)
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 18
-
-		HDPIImage {
-			source: Material.theme === Material.Light ? "icons/ic_done_black_24px.svg" : "icons/ic_done_white_24px.svg"
-			width: 24 // working around Qt bug with SVG and HiDPI
-			height: 24 // working around Qt bug with SVG and HiDPI
-			anchors.centerIn: parent
-		}
-
-		MouseArea {
-			anchors.fill: parent
-			onClicked: {
-				var definition = editor.definition;
-				if (definition === null) {
-					return;
-				}
-				var params = editorItemLoader.item.getParams();
-				callback(definition, params);
-				close();
-			}
-		}
-	}
-
-	Item {
-		width: 48
-		height: 48
-		anchors.right: parent.right
-		anchors.rightMargin: Math.min(horizontalButtonMargin,18)
-		anchors.top: parent.top
-		anchors.topMargin: 18
-
-		HDPIImage {
-			source: Material.theme === Material.Light ? "icons/ic_cancel_black_24px.svg" : "icons/ic_cancel_white_24px.svg"
-			width: 24 // working around Qt bug with SVG and HiDPI
-			height: 24 // working around Qt bug with SVG and HiDPI
-			anchors.centerIn: parent
-		}
-
-		MouseArea {
-			anchors.fill: parent
-			onClicked: {
-				close();
-			}
-		}
 	}
 }

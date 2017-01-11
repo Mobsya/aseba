@@ -3,6 +3,7 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 import Qt.labs.settings 1.0
 import QtQml 2.2
 import "qrc:/thymio-vpl2"
@@ -17,14 +18,22 @@ ApplicationWindow {
 	Material.primary: Material.theme === Material.Dark ? "#200032" : "#a3d9db"
 	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#59cbc8"
 
-	header: ToolBar {
+	header: vplEditor.blockEditorVisible ? blockEditorTitleBar : vplEditorTitleBar
+	/*ToolBar {
+		// according to
+		// - https://developer.android.com/guide/practices/screens_support.html
+		// - https://material.io/guidelines/layout/structure.html#structure-app-bar
+		//height: Screen.width >= 600 ? 64 : 56 // Screen.primaryOrientation
 		RowLayout {
 			anchors.fill: parent
+			spacing: 0
 
 			ToolButton {
 				contentItem: Image {
-					anchors.centerIn: parent
-					source: "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg"
+					fillMode: Image.Pad
+					horizontalAlignment: Image.AlignHCenter
+					verticalAlignment: Image.AlignVCenter
+					source: "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg"				
 				}
 				visible: !vplEditor.blockEditorVisible
 				onClicked: drawer.open()
@@ -32,7 +41,9 @@ ApplicationWindow {
 
 			ToolButton {
 				contentItem: Image {
-					anchors.centerIn: parent
+					fillMode: Image.Pad
+					horizontalAlignment: Image.AlignHCenter
+					verticalAlignment: Image.AlignVCenter
 					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
 				}
 				visible: !vplEditor.blockEditorVisible
@@ -45,8 +56,9 @@ ApplicationWindow {
 
 			ToolButton {
 				contentItem: Image {
-					anchors.centerIn: parent
-					anchors.rightMargin: 12
+					fillMode: Image.Pad
+					horizontalAlignment: Image.AlignHCenter
+					verticalAlignment: Image.AlignVCenter
 					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
 				}
 				visible: !vplEditor.blockEditorVisible
@@ -55,20 +67,49 @@ ApplicationWindow {
 				onClicked: thymio.playing = !thymio.playing
 			}
 		}
+	}*/
+
+	EditorTitleBar {
+		id: vplEditorTitleBar
+		visible: !vplEditor.blockEditorVisible
+		vplEditor: vplEditor
+		isThymioConnected: !!thymio.node
+		onOpenDrawer: drawer.open()
+		onOpenDashelTargetSelector: dashelTargetSelector.open()
+	}
+
+	BlockEditorTitleBar {
+		id: blockEditorTitleBar
+		visible: vplEditor.blockEditorVisible
+		onCancel: vplEditor.blockEditor.close()
+		onAccept: vplEditor.blockEditor.accept()
 	}
 
 	Editor {
 		id: vplEditor
 		anchors.fill: parent
 
-		Text {
-			text: "developer preview pre-alpha, no feature or design is final"
-			anchors.left: parent.left
-			anchors.leftMargin: 106
-			anchors.top: parent.top
-			anchors.topMargin: 10
-			color: Material.primaryTextColor
-		}
+//		Text {
+//			text: "developer preview pre-alpha, no feature or design is final"
+//			anchors.left: parent.left
+//			anchors.leftMargin: 106
+//			anchors.top: parent.top
+//			anchors.topMargin: 10
+//			color: Material.primaryTextColor
+//		}
+	}
+
+	// improve using: https://appbus.wordpress.com/2016/05/20/one-page-sample-app/
+	FloatingActionButton {
+		anchors.right: parent.right
+		anchors.rightMargin: 96+24
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: 24
+		imageSource: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
+		visible: !vplEditor.blockEditorVisible
+		onClicked: thymio.playing = !thymio.playing
+		enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)
+		opacity: enabled ? 1.0 : 0.38
 	}
 
 	Connections {
@@ -239,7 +280,7 @@ ApplicationWindow {
 		events: vplEditor ? vplEditor.compiler.events : {}
 		source: playing ? vplEditor.compiler.script : ""
 		onNodeChanged: playing = false
-		onPlayingChanged: vplEditor.compiler.execReset(playing);
+		onPlayingChanged: { vplEditor.compiler.execReset(playing); console.log("playing" + playing); }
 		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
 	}
 }

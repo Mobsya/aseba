@@ -7,7 +7,7 @@ Label {
 
 	text: {
 		if (!vplEditor)
-			return "";
+			return "!Error no VPL editor defined!";
 		else  if (vplEditor.minimized)
 			return qsTr("AR Running");
 		else if (vplEditor.blockEditorVisible)
@@ -18,9 +18,11 @@ Label {
 			return qsTr("Compilation error: %0").arg(vplEditor.compiler.error);
 	}
 
-	horizontalAlignment: Text.AlignHCenter
-	font.pixelSize: 20
-	elide: Label.ElideRight
+	horizontalAlignment: Text.AlignLeft
 	verticalAlignment: Text.AlignVCenter
+	font.pixelSize: 20
+	//font.weight: Font.Medium
+	elide: Label.ElideRight
+	wrapMode: Text.Wrap
 	Layout.fillWidth: true
 }

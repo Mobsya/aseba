@@ -147,5 +147,8 @@
         <file>translations/thymio-vpl2_fr.qm</file>
         <file>icons/ic_stop_white_24px.svg</file>
         <file>icons/ic_play_arrow_white_24px.svg</file>
+        <file>BlockEditorTitleBar.qml</file>
+        <file>EditorTitleBar.qml</file>
+        <file>FloatingActionButton.qml</file>
     </qresource>
 </RCC>
