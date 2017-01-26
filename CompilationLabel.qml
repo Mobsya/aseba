@@ -8,10 +8,6 @@ Label {
 	text: {
 		if (!vplEditor)
 			return "!Error no VPL editor defined!";
-		else  if (vplEditor.minimized)
-			return qsTr("AR Running");
-		else if (vplEditor.blockEditorVisible)
-			return qsTr("Choose a block and set its parameters");
 		else if (vplEditor.compiler.error === "")
 			return qsTr("Compilation success");
 		else

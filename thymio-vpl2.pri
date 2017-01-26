@@ -60,7 +60,7 @@ SOURCES = \
 	$$PWD/blocks/*.qml \
 	$$PWD/blocks/widgets/*.qml
 }
-TRANSLATIONS += translations/thymio-vpl2_fr.ts
+TRANSLATIONS += translations/thymio-vpl2_fr.ts translations/thymio-vpl2_de.ts
 QT += quick svg xml
 RESOURCES += $$PWD/thymio-vpl2.qrc
 DEPENDPATH += $$ASEBA_INCLUDE

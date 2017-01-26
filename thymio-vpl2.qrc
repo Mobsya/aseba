@@ -146,6 +146,7 @@
         <file>blocks/images/MotorSimpleActionBlock/mini-stop.svg</file>
         <file>blocks/images/MotorSimpleActionBlock/mini.svg</file>
         <file>translations/thymio-vpl2_fr.qm</file>
+        <file>translations/thymio-vpl2_de.qm</file>
         <file>icons/ic_stop_white_24px.svg</file>
         <file>icons/ic_play_arrow_white_24px.svg</file>
         <file>BlockEditorTitleBar.qml</file>
