@@ -280,7 +280,13 @@ ApplicationWindow {
 		events: vplEditor ? vplEditor.compiler.events : {}
 		source: playing ? vplEditor.compiler.script : ""
 		onNodeChanged: playing = false
-		onPlayingChanged: { vplEditor.compiler.execReset(playing); console.log("playing" + playing); }
+		onPlayingChanged: {
+			vplEditor.compiler.execReset(playing);
+			if (!playing) {
+				setVariable("motor.left.target", 0);
+				setVariable("motor.right.target", 0);
+			}
+		}
 		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
 	}
 }

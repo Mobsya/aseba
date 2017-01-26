@@ -36,6 +36,15 @@ Item {
 		}
 	}
 
+	function setVariable(name, value) {
+		if (node) {
+			if (typeof value === "number") {
+				value = [value];
+			}
+			node.setVariable(name, value);
+		}
+	}
+
 	function setProgram() {
 		if (node) {
 			error = node.setProgram(events, source);
