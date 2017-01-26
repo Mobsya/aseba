@@ -30,7 +30,8 @@
         <file>blocks/images/clap.svg</file>
         <file>blocks/ClapEventBlock.qml</file>
         <file>blocks/widgets/images/thymioBody.svg</file>
-        <file>blocks/images/motorBackground.svg</file>
+        <file>blocks/widgets/images/motorBackgroundEdit.svg</file>
+        <file>blocks/widgets/images/motorBackgroundMini.svg</file>
         <file>blocks/ProxGroundEventBlock.qml</file>
         <file>blocks/widgets/ProxGroundShadow.qml</file>
         <file>utils.js</file>
@@ -150,5 +151,6 @@
         <file>BlockEditorTitleBar.qml</file>
         <file>EditorTitleBar.qml</file>
         <file>FloatingActionButton.qml</file>
+        <file>blocks/widgets/MotorSliders.qml</file>
     </qresource>
 </RCC>

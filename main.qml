@@ -19,55 +19,6 @@ ApplicationWindow {
 	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#59cbc8"
 
 	header: vplEditor.blockEditorVisible ? blockEditorTitleBar : vplEditorTitleBar
-	/*ToolBar {
-		// according to
-		// - https://developer.android.com/guide/practices/screens_support.html
-		// - https://material.io/guidelines/layout/structure.html#structure-app-bar
-		//height: Screen.width >= 600 ? 64 : 56 // Screen.primaryOrientation
-		RowLayout {
-			anchors.fill: parent
-			spacing: 0
-
-			ToolButton {
-				contentItem: Image {
-					fillMode: Image.Pad
-					horizontalAlignment: Image.AlignHCenter
-					verticalAlignment: Image.AlignVCenter
-					source: "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg"				
-				}
-				visible: !vplEditor.blockEditorVisible
-				onClicked: drawer.open()
-			}
-
-			ToolButton {
-				contentItem: Image {
-					fillMode: Image.Pad
-					horizontalAlignment: Image.AlignHCenter
-					verticalAlignment: Image.AlignVCenter
-					source: !!thymio.node ? "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
-				}
-				visible: !vplEditor.blockEditorVisible
-				onClicked: dashelTargetSelector.open()
-			}
-
-			CompilationLabel {
-				vplEditor: vplEditor
-			}
-
-			ToolButton {
-				contentItem: Image {
-					fillMode: Image.Pad
-					horizontalAlignment: Image.AlignHCenter
-					verticalAlignment: Image.AlignVCenter
-					source: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
-				}
-				visible: !vplEditor.blockEditorVisible
-				opacity: enabled ? 1.0 : 0.3
-				enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)
-				onClicked: thymio.playing = !thymio.playing
-			}
-		}
-	}*/
 
 	EditorTitleBar {
 		id: vplEditorTitleBar
