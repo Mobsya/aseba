@@ -15,7 +15,7 @@ BlockDefinition {
 
 			ThymioFront {
 				y: -60
-				topColor: Qt.rgba(red.bodyValue(), green.bodyValue(), blue.bodyValue(), Math.max(red.bodyValue(), green.bodyValue(), blue.bodyValue()))
+				topColor: Qt.rgba(red.bodyValue, green.bodyValue, blue.bodyValue, Math.max(red.bodyValue, green.bodyValue, blue.bodyValue))
 			}
 
 			ColorSlider {

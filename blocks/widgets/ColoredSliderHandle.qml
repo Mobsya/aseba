@@ -1,6 +1,5 @@
 import QtQuick 2.6
 import QtQuick.Controls.Material 2.0
-import QtQuick.Controls.Material.impl 2.0
 
 
 Item {
@@ -30,13 +29,5 @@ Item {
 				duration: 250
 			}
 		}
-	}
-
-	Ripple {
-		width: parent.width
-		height: width
-		control: root.control
-		colored: true
-		opacity: root.handleHasFocus && !root.handlePressed ? 1 : 0
 	}
 }

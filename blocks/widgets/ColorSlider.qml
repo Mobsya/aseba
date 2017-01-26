@@ -1,11 +1,12 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.0
-import QtQuick.Controls.Material 2.0
-import QtQuick.Controls.Material.impl 2.0
+import QtQuick.Controls.Material 2.1
 
 Slider {
 	id: control
+
 	property color color
+	property double bodyValue: (position*32*5.46875+80) / 255.
 
 	width: 180
 	snapMode: Slider.SnapAlways
@@ -22,11 +23,11 @@ Slider {
 	background: Rectangle {
 		x: control.leftPadding + (horizontal ? 0 : (control.availableWidth - width) / 2)
 		y: control.topPadding + (horizontal ? (control.availableHeight - height) / 2 : 0)
-		implicitWidth: horizontal ? 200 : 1
-		implicitHeight: horizontal ? 1 : 200
+		implicitWidth: horizontal ? 200 : 4
+		implicitHeight: horizontal ? 4 : 200
 		width: horizontal ? control.availableWidth : implicitWidth
 		height: horizontal ? implicitHeight : control.availableHeight
-		color: control.Material.primaryTextColor
+		color: "#b0b0b0"
 		scale: horizontal && control.mirrored ? -1 : 1
 
 		readonly property bool horizontal: control.orientation === Qt.Horizontal
@@ -34,8 +35,8 @@ Slider {
 		Rectangle {
 			x: parent.horizontal ? 0 : (parent.width - width) / 2
 			y: parent.horizontal ? (parent.height - height) / 2 : control.visualPosition * parent.height
-			width: parent.horizontal ? control.position * parent.width : 3
-			height: parent.horizontal ? 3 : control.position * parent.height
+			width: parent.horizontal ? control.position * parent.width : 4
+			height: parent.horizontal ? 4 : control.position * parent.height
 
 			color: control.color
 		}
@@ -44,8 +45,4 @@ Slider {
 	from: 0
 	to: 32
 	stepSize: 1
-
-	function bodyValue() {
-		return (value*5.46875+80) / 255.;
-	}
 }
