@@ -28,7 +28,7 @@ ToolBar {
 			focusPolicy: Qt.NoFocus
 			Image {
 				anchors.centerIn: parent
-				source: "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg"
+				source: Material.theme === Material.Dark ? "qrc:/thymio-vpl2/icons/ic_menu_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_menu_black_24px.svg"
 			}
 			onClicked: openDrawer()
 		}
@@ -37,7 +37,9 @@ ToolBar {
 			focusPolicy: Qt.NoFocus
 			Image {
 				anchors.centerIn: parent
-				source: isThymioConnected ? "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg"
+				source: isThymioConnected ?
+					(Material.theme === Material.Dark ? "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_on_nonAR_black_24px.svg" ) :
+					(Material.theme === Material.Dark ? "qrc:/thymio-vpl2/icons/ic_connection_off_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_connection_off_black_24px.svg" )
 			}
 			onClicked: openDashelTargetSelector()
 		}

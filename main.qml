@@ -15,8 +15,8 @@ ApplicationWindow {
 	width: 960
 	height: 600
 
-	Material.primary: Material.theme === Material.Dark ? "#200032" : "#a3d9db"
-	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#59cbc8"
+	Material.primary: Material.theme === Material.Dark ? "#200032" : Material.background // "#a3d9db"
+	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#B290CC" // "#59cbc8"
 
 	header: vplEditor.blockEditorVisible ? blockEditorTitleBar : vplEditorTitleBar
 
@@ -71,25 +71,45 @@ ApplicationWindow {
 	ListModel {
 		id: menuItems
 
-		ListElement { title: QT_TR_NOOP("load program"); callback: "load"; whiteIcon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_open_black_24px.svg"; }
+		ListElement {
+			title: QT_TR_NOOP("load program");
+			callback: "load";
+			whiteIcon: "qrc:/thymio-vpl2/icons/ic_open_white_24px.svg";
+			blackIcon: "qrc:/thymio-vpl2/icons/ic_open_black_24px.svg";
+		}
 		function load() {
 			saveProgramDialog.isSave = false;
 			saveProgramDialog.visible = true;
 		}
 
-		ListElement { title: QT_TR_NOOP("save program"); callback: "save"; whiteIcon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_save_black_24px.svg"; }
+		ListElement {
+			title: QT_TR_NOOP("save program");
+			callback: "save";
+			whiteIcon: "qrc:/thymio-vpl2/icons/ic_save_white_24px.svg";
+			blackIcon: "qrc:/thymio-vpl2/icons/ic_save_black_24px.svg";
+		}
 		function save() {
 			saveProgramDialog.isSave = true;
 			saveProgramDialog.visible = true;
 		}
 
-		ListElement { title: QT_TR_NOOP("new program"); callback: "newProgram"; whiteIcon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg"; blackIcon: "qrc:/thymio-vpl2/icons/ic_new_black_24px.svg";}
+		ListElement {
+			title: QT_TR_NOOP("new program");
+			callback: "newProgram";
+			whiteIcon: "qrc:/thymio-vpl2/icons/ic_new_white_24px.svg";
+			blackIcon: "qrc:/thymio-vpl2/icons/ic_new_black_24px.svg";
+		}
 		function newProgram() {
 			vplEditor.clearProgram();
 			saveProgramDialog.programName = "";
 		}
 
-		ListElement { title: QT_TR_NOOP("switch color theme"); callback: "switchColorTheme"; whiteIcon: ""; blackIcon: ""; }
+		ListElement {
+			title: QT_TR_NOOP("switch color theme");
+			callback: "switchColorTheme";
+			whiteIcon: "";
+			blackIcon: "";
+		}
 		function switchColorTheme() {
 			if (window.Material.theme === Material.Dark) {
 				window.Material.theme = Material.Light;
@@ -98,12 +118,23 @@ ApplicationWindow {
 			}
 		}
 
-		ListElement { title: QT_TR_NOOP("switch editor mode"); callback: "switchEditorMode"; whiteIcon: ""; blackIcon: ""; }
+		ListElement {
+			title: QT_TR_NOOP("switch editor mode");
+			callback: "switchEditorMode";
+			whiteIcon: "";
+			blackIcon: "";
+		}
 		function switchEditorMode() {
 			vplEditor.switchMode();
 		}
 
-		ListElement { title: "dev: show aesl"; callback: "showAeslSource"; whiteIcon: ""; blackIcon: ""; visible: false; }
+		ListElement {
+			title: "dev: show aesl";
+			callback: "showAeslSource";
+			whiteIcon: "";
+			blackIcon: "";
+			visible: false;
+		}
 		function showAeslSource() {
 			aeslSourceDialog.visible = true;
 		}

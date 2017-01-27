@@ -205,7 +205,7 @@ Item {
 		backImage: "images/eventCenter.svg"
 
 		darkThemeColor: "#301446"
-		lightThemeColor: "#ffead9"
+		lightThemeColor: Material.background // "#ffead9"
 
 		anchors.left: parent.left
 		anchors.leftMargin: isHidden ? -width : 0
@@ -223,7 +223,7 @@ Item {
 		backImage: "images/actionCenter.svg"
 
 		darkThemeColor: "#301446"
-		lightThemeColor: "#daeaf2"
+		lightThemeColor: Material.background // "#daeaf2"
 
 		anchors.right: parent.right
 		anchors.rightMargin: isHidden ? -width : 0
@@ -243,32 +243,36 @@ Item {
 		width: foregroundWidth
 		height: parent.height
 		//opacity: vplEditor.minimized ? 0.5 : 1.0
-		color: vplEditor.minimized ? "#80200032" : "#ff44285a"
+		color: Material.theme === Material.Dark ?
+				   "#ff44285a" : //vplEditor.minimized ? "#80200032" : "#ff44285a" // different color for AR, to adapt when reused
+				   Qt.darker(Material.background, 1.2)
 		scale: vplEditor.minimized ? 0.5 : 1.0
 		transformOrigin: Item.BottomRight
 
-		RadialGradient {
+		// disabled as we look for a flatter theme
+		/*RadialGradient {
 			anchors.fill: parent
 			visible: Material.theme === Material.Light
 			gradient: Gradient {
 				GradientStop { position: 0.0; color: "white" }
 				GradientStop { position: 0.5; color: "#eaeced" }
 			}
-		}
+		}*/
 
 		Behavior on opacity { PropertyAnimation {} }
-		Behavior on color { PropertyAnimation {} }
+		//Behavior on color { PropertyAnimation {} }
 		Behavior on scale { PropertyAnimation {} }
 		Behavior on anchors.rightMargin { PropertyAnimation {} }
 
-		Image {
+		// disabled as we look for a flatter theme
+		/*Image {
 			anchors.fill: parent
 			source: "images/grid.png"
 			fillMode: Image.Tile
 			opacity: vplEditor.minimized ? 0 : 1
 
 			Behavior on opacity { PropertyAnimation {} }
-		}
+		}*/
 
 		DropArea {
 			id: mainDropArea

@@ -26,7 +26,7 @@ Button {
 		id: buttonBackground
 		implicitWidth: 56
 		implicitHeight: 56
-		color: Material.accentColor
+		color: button.enabled ? Material.accentColor : Material.background
 		radius: width / 2
 		opacity: button.pressed ? 0.75 : 1.0
 		layer.enabled: button.showShadow

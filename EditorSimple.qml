@@ -151,7 +151,7 @@ Item {
 				Rectangle {
 					id: rowBackground
 					anchors.fill: parent
-					color: Material.theme === Material.Dark ? "#301446" : "#ffead9"
+					color: Material.theme === Material.Dark ? "#301446" : Material.background // "#ffead9"
 					radius: height
 				}
 				RowLayout {
@@ -210,7 +210,7 @@ Item {
 							model: 2
 							delegate: Rectangle {
 								radius: 15
-								color: "#9478aa"
+								color: Material.theme === Material.Dark ? "#9478aa" : "#72000000"
 								height: radius
 								width: radius
 							}

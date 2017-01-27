@@ -25,7 +25,7 @@ ToolBar {
 				fillMode: Image.Pad
 				horizontalAlignment: Image.AlignHCenter
 				verticalAlignment: Image.AlignVCenter
-				source: "qrc:/thymio-vpl2/icons/ic_cancel_white_24px.svg"
+				source: Material.theme === Material.Dark ? "qrc:/thymio-vpl2/icons/ic_cancel_white_24px.svg" :  "qrc:/thymio-vpl2/icons/ic_cancel_black_24px.svg"
 			}
 			onClicked: cancel()
 		}
@@ -48,7 +48,7 @@ ToolBar {
 				fillMode: Image.Pad
 				horizontalAlignment: Image.AlignHCenter
 				verticalAlignment: Image.AlignVCenter
-				source: "qrc:/thymio-vpl2/icons/ic_done_white_24px.svg"
+				source: Material.theme === Material.Dark ? "qrc:/thymio-vpl2/icons/ic_done_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_done_black_24px.svg"
 			}
 			onClicked: accept()
 		}

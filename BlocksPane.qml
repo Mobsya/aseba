@@ -19,6 +19,9 @@ Pane {
 		color: Material.theme === Material.Dark ? darkThemeColor : lightThemeColor
 	}
 
+	// FIXME: this is not working on Qt5.8 Mac ? even with the back
+	//Material.elevation: 30
+
 	BlocksList {
 		id: blocksList
 		blocks: pane.blocks

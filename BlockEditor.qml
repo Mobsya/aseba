@@ -14,7 +14,7 @@ Item {
 
 	Rectangle {
 		anchors.fill: parent
-		color: Material.theme === Material.Dark ? "#44285a" : "#a0b2b3"
+		color: Material.theme === Material.Dark ? "#44285a" : Qt.darker(Material.background) // "#a0b2b3"
 		//opacity: 0.8
 	}
 
