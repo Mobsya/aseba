@@ -10,7 +10,7 @@ import "qrc:/thymio-vpl2"
 
 ApplicationWindow {
 	id: window
-	title: qsTr("Thymio Flow")
+	title: qsTr("Thymio VPL Mobile Preview")
 	visible: true
 	width: 960
 	height: 600
