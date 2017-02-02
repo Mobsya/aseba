@@ -7,9 +7,9 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QGuiApplication app(argc, argv);
-	app.setOrganizationName("Thymio");
-	app.setOrganizationDomain("thymio.org");
-	app.setApplicationName("Thymio Flow");
+	app.setOrganizationName("Mobsya");
+	app.setOrganizationDomain("mobsya.org");
+	app.setApplicationName("Thymio VPL Mobile Preview");
 
 	QTranslator qtTranslator;
 	QLocale::system().name();
