@@ -17,7 +17,7 @@ Label {
 	horizontalAlignment: Text.AlignLeft
 	verticalAlignment: Text.AlignVCenter
 	font.pixelSize: 20
-	//font.weight: Font.Medium
+	font.weight: Font.Medium
 	elide: Label.ElideRight
 	wrapMode: Text.Wrap
 	Layout.fillWidth: true

@@ -11,6 +11,7 @@ ToolBar {
 	TextMetrics {
 		id: textMetrics
 		font.pixelSize: 20
+		font.weight: Font.Medium
 		text: qsTr("Choose a block and set its parameters")
 	}
 
@@ -37,6 +38,7 @@ ToolBar {
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
 			font.pixelSize: 20
+			font.weight: Font.Medium
 			elide: Label.ElideRight
 			Layout.fillWidth: true
 		}

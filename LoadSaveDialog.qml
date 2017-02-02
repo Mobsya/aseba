@@ -42,8 +42,8 @@ Popup {
 
 		Label {
 			text: isSave ? qsTr("Save the program?") : qsTr("Load a program?")
+			font.pixelSize: 20
 			font.weight: Font.Medium
-			font.pointSize: 21
 		}
 
 		Component {

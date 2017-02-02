@@ -57,6 +57,10 @@
 		<file>icons/ic_stop_black_24px.svg</file>
 		<file>icons/ic_play_arrow_white_24px.svg</file>
 		<file>icons/ic_play_arrow_black_24px.svg</file>
+		<file>icons/ic_invert_colors_white_24px.svg</file>
+		<file>icons/ic_invert_colors_black_24px.svg</file>
+		<file>icons/ic_info_white_24px.svg</file>
+		<file>icons/ic_info_black_24px.svg</file>
 		
 		<file>images/actionCenter.svg</file>
 		<file>images/eventCenter.svg</file>

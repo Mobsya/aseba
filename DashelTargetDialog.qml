@@ -23,8 +23,8 @@ Popup {
 
 		Label {
 			text: qsTr("Set Dashel target")
+			font.pixelSize: 20
 			font.weight: Font.Medium
-			font.pointSize: 21
 		}
 
 		TextField {

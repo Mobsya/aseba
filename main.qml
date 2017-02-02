@@ -107,8 +107,8 @@ ApplicationWindow {
 		ListElement {
 			title: QT_TR_NOOP("switch color theme");
 			callback: "switchColorTheme";
-			whiteIcon: "";
-			blackIcon: "";
+			whiteIcon: "qrc:/thymio-vpl2/icons/ic_invert_colors_white_24px.svg";
+			blackIcon: "qrc:/thymio-vpl2/icons/ic_invert_colors_black_24px.svg";
 		}
 		function switchColorTheme() {
 			if (window.Material.theme === Material.Dark) {
@@ -118,7 +118,7 @@ ApplicationWindow {
 			}
 		}
 
-		ListElement {
+		/*ListElement {
 			title: QT_TR_NOOP("switch editor mode");
 			callback: "switchEditorMode";
 			whiteIcon: "";
@@ -126,6 +126,16 @@ ApplicationWindow {
 		}
 		function switchEditorMode() {
 			vplEditor.switchMode();
+		}*/
+
+		ListElement {
+			title: QT_TR_NOOP("about");
+			callback: "showAboutBox";
+			whiteIcon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg";
+			blackIcon: "qrc:/thymio-vpl2/icons/ic_info_black_24px.svg";
+		}
+		function showAboutBox() {
+			aboutDialog.visible = true;
 		}
 
 		ListElement {
@@ -138,8 +148,6 @@ ApplicationWindow {
 		function showAeslSource() {
 			aeslSourceDialog.visible = true;
 		}
-
-		//ListElement { title: QT_TR_NOOP("about"); source: "About.qml" ; icon: "qrc:/thymio-vpl2/icons/ic_info_white_24px.svg" }
 	}
 
 	Drawer {
@@ -192,6 +200,37 @@ ApplicationWindow {
 	LoadSaveDialog {
 		id: saveProgramDialog
 		vplEditor: vplEditor
+	}
+
+	Popup {
+		id: aboutDialog
+		x: (parent.width - width) / 2
+		y: (parent.height - height) / 2
+		modal: true
+		padding: 24
+
+		Column {
+			spacing: 20
+			padding: 0
+			Label {
+				text: qsTr("Thymio VPL Mobile Preview")
+				font.pixelSize: 20
+				font.weight: Font.Medium
+			}
+			Text {
+				text:
+					qsTr("<p>Stéphane Magnenat, Martin Voelkle<br/>and Maria Beltran</p>") +
+					qsTr("<p>(c) 2015–2017 EPFL and ETH Zürich</p>") +
+					qsTr("<p>This project is open source under a <a href=\"https://github.com/aseba-community/thymio-vpl2/LICENSE.txt\">LGPL</a></p>") +
+					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
+					qsTr("for a detailed list of contributions.</p>")
+				font.pixelSize: 14
+				font.weight: Font.Normal
+				lineHeight: 20
+				lineHeightMode: Text.FixedHeight
+				onLinkActivated: Qt.openUrlExternally(link)
+			}
+		}
 	}
 
 	// developer options for debugging
