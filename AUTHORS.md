@@ -7,6 +7,7 @@ The authors are:
 During early testing, this project received feedback from:
 
 * [Prof. Moti Ben-Ari](http://www.weizmann.ac.il/sci-tea/benari/home)
+* [Bernhard Suter](http://www.google.com)
 * [Prof. Francesco Mondada](https://people.epfl.ch/francesco.mondada)
 * [Morgane Chevalier](https://www.hepl.ch/cms/accueil/formation/unites-enseignement-et-recherche/medias-et-tic-dans-lenseignement/equipe-et-contacts/morgane-chevalier.html)
 * [Dawn Onufrak-Suter](http://technologyinlearning.ch)
