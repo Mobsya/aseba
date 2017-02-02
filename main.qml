@@ -219,10 +219,10 @@ ApplicationWindow {
 			}
 			Text {
 				text:
-					qsTr("<p>Stéphane Magnenat, Martin Voelkle<br/>and Maria Beltran</p>") +
+					qsTr("<p><a href=\"http://stephane.magnenat.net\">Stéphane Magnenat</a>, <a href=\"http://sampla.ch\">Martin Voelkle</a><br/>and <a href=\"http://mariamari-a.com\">Maria Beltran</a></p>") +
 					qsTr("<p>(c) 2015–2017 EPFL and ETH Zürich</p>") +
-					qsTr("<p>This project is open source under a <a href=\"https://github.com/aseba-community/thymio-vpl2/LICENSE.txt\">LGPL</a></p>") +
-					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
+					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a></p>") +
+					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
 					qsTr("for a detailed list of contributions.</p>")
 				font.pixelSize: 14
 				font.weight: Font.Normal
