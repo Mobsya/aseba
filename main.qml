@@ -20,6 +20,8 @@ ApplicationWindow {
 
 	header: vplEditor.blockEditorVisible ? blockEditorTitleBar : vplEditorTitleBar
 
+	readonly property string autosaveName: qsTr("autosave");
+
 	EditorTitleBar {
 		id: vplEditorTitleBar
 		visible: !vplEditor.blockEditorVisible
@@ -306,9 +308,15 @@ ApplicationWindow {
 			if (!playing) {
 				setVariable("motor.left.target", 0);
 				setVariable("motor.right.target", 0);
+			} else {
+				vplEditor.saveProgram(autosaveName);
 			}
 		}
 		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
+	}
+
+	Component.onCompleted: {
+		vplEditor.loadProgram(autosaveName);
 	}
 }
 
