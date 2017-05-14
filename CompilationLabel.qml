@@ -8,10 +8,10 @@ Label {
 	text: {
 		if (!vplEditor)
 			return "!Error no VPL editor defined!";
-		else if (vplEditor.compiler.error === "")
+		else if (vplEditor.compiler.output.error === undefined)
 			return qsTr("Compilation success");
 		else
-			return qsTr("Compilation error: %0").arg(vplEditor.compiler.error);
+			return qsTr("Compilation error: %0").arg(vplEditor.compiler.output.error);
 	}
 
 	horizontalAlignment: Text.AlignLeft

@@ -7,9 +7,7 @@ Item {
 	property var ast
 
 	// output
-	property string error
-	property var events
-	property string script
+	property var output
 
 	// internal
 	property var nodes
@@ -36,17 +34,15 @@ Item {
 		interval: 0
 		onTriggered: {
 			try {
-				var compiled = compile(ast.blocks, ast.links);
-				error = "";
-				events = compiled.events;
-				script = compiled.script;
-				nodes = compiled.nodes;
+				output = compile(ast.blocks, ast.links);
 			} catch(err) {
 				if (typeof(err) === "string") {
-					error = err;
-					events = {};
-					script = "";
-					nodes = [];
+					output = {
+						error: error,
+						events: {},
+						script: "",
+						nodes: [],
+					};
 				} else {
 					throw err;
 				}
@@ -490,6 +486,7 @@ Item {
 			}, script);
 
 			return {
+				error: undefined,
 				events: events,
 				script: script,
 				nodes: nodes,

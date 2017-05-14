@@ -61,13 +61,13 @@ ApplicationWindow {
 		imageSource: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
 		visible: !vplEditor.blockEditorVisible
 		onClicked: thymio.playing = !thymio.playing
-		enabled: (vplEditor.compiler.error === "") && (thymio.node !== undefined)
+		enabled: (vplEditor.compiler.output.error === undefined) && (thymio.node !== undefined)
 		opacity: enabled ? 1.0 : 0.38
 	}
 
 	Connections {
 		target: vplEditor.compiler
-		onScriptChanged: thymio.playing = false
+		onOutputChanged: thymio.playing = false
 	}
 
 	ListModel {
@@ -249,7 +249,7 @@ ApplicationWindow {
 			anchors.fill: parent
 			clip: true
 			Text {
-				text: prettyPrintGeneratedAesl(vplEditor.compiler.script)
+				text: prettyPrintGeneratedAesl(vplEditor.compiler.output.script)
 				color: Material.primaryTextColor
 				font.family: "Monospace"
 				// TODO: move this somewhere
@@ -300,8 +300,8 @@ ApplicationWindow {
 	Thymio {
 		id: thymio
 		property bool playing: false
-		events: vplEditor ? vplEditor.compiler.events : {}
-		source: playing ? vplEditor.compiler.script : ""
+		events: vplEditor ? vplEditor.compiler.output.events : {}
+		source: playing ? vplEditor.compiler.output.script : ""
 		onNodeChanged: playing = false
 		onPlayingChanged: {
 			vplEditor.compiler.execReset(playing);
@@ -312,7 +312,7 @@ ApplicationWindow {
 				vplEditor.saveProgram(autosaveName);
 			}
 		}
-		onErrorChanged: if (error !== "") { vplEditor.compiler.error = error; }
+		onErrorChanged: if (error !== "") { vplEditor.compiler.output.error = error; }
 	}
 
 	Component.onCompleted: {
