@@ -293,7 +293,7 @@ ApplicationWindow {
 			if (vplEditor === undefined) {
 				return;
 			}
-			vplEditor.compiler.execTransition(data[0], data[1]);
+			vplEditor.compiler.execTransition(data[0]);
 		}
 	}
 

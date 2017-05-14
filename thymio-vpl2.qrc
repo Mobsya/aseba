@@ -22,7 +22,6 @@
 		<file>Aseba.qml</file>
 		<file>Thymio.qml</file>
 		<file>BlockBackground.qml</file>
-		<file>LinkSimple.qml</file>
 		<file>CompilationLabel.qml</file>
 		<file>BlockEditorTitleBar.qml</file>
 		<file>EditorTitleBar.qml</file>

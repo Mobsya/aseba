@@ -9,6 +9,8 @@ Item {
 	id: scene
 
 	property alias scale: rows.scale
+	property var astTransitions
+	property var astState
 	property var ast
 
 	anchors.fill: parent
@@ -16,10 +18,12 @@ Item {
 
 	Component.onCompleted: clear()
 	function clear() {
-		ast = {
-			blocks: [],
-			links: [],
+		astTransitions = [];
+		astState = {
+			transitions: astTransitions,
+			active: false,
 		};
+		ast = [ astState ];
 		rows.model.clear();
 		rows.append(null, null);
 	}
@@ -95,6 +99,18 @@ Item {
 			Item {
 				id: row
 
+				property var astTransition: ({
+					events: [event],
+					actions: [],
+					next: astState,
+					trigger: function() {
+						function exec(block) {
+							block.exec();
+						}
+						astTransition.events.forEach(exec);
+						astTransition.actions.forEach(exec);
+					}
+				})
 				property Item prev
 				property Item next
 				property int index: prev === null ? 0 : prev.index + 1
@@ -184,24 +200,18 @@ Item {
 						}
 
 						onDefinitionChanged: {
-							var index = scene.ast.blocks.indexOf(this);
+							var index = astTransitions.indexOf(astTransition);
 							var astIs = index !== -1;
 							var astShould = definition !== null;
 							if (astShould && !astIs) {
-								scene.ast.blocks.push(this);
+								astTransitions.push(astTransition);
 								row.reserve();
 							} else if (astIs && !astShould) {
-								scene.ast.blocks.splice(index, 1);
+								astTransitions.splice(index, 1);
 							}
 						}
 						onParamsChanged: {
 							astChanged();
-						}
-
-						LinkSimple {
-							id: inbound
-							sourceBlock: event.prev.prev
-							destBlock: event
 						}
 					}
 					ColumnLayout {
@@ -250,8 +260,8 @@ Item {
 								function free() {
 									console.assert(prev !== null);
 									console.assert(next !== null);
-									var index = scene.ast.blocks.indexOf(this);
-									scene.ast.blocks.splice(index, 1);
+									var index = astTransition.actions.indexOf(this);
+									astTransition.actions.splice(index, 1);
 									if (prev.definition === null && next.definition === null) {
 										// there is just me and placeholders
 										row.free();
@@ -259,7 +269,6 @@ Item {
 										prev.next = next;
 										next.prev = prev;
 										destroy();
-										inbound.ast = false;
 									}
 									astChanged();
 								}
@@ -267,17 +276,11 @@ Item {
 								onParamsChanged: {
 									if (next === event) {
 										// new action
-										scene.ast.blocks.push(this);
+										astTransition.actions.push(this);
 										actions.append(this);
 										row.reserve();
 									}
 									astChanged();
-								}
-
-								LinkSimple {
-									id: inbound
-									sourceBlock: action.prev
-									destBlock: action
 								}
 							}
 						}
