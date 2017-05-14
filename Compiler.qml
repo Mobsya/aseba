@@ -67,7 +67,7 @@ Item {
 				indices[block] = i;
 				nodes.push({
 					blockIndex: i,
-					compiled: block.definition.compile(block.params),
+					compiled: block.compile(),
 					heads: [],
 					tails: [],
 					thread: -1,

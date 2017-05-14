@@ -133,6 +133,10 @@ DropArea {
 		}
 	}
 
+	function compile() {
+		return definition.compile(params);
+	}
+
 	function bringBlockToFront() {
 		// make this element visible
 		if (block.z < scene.highestZ) {
