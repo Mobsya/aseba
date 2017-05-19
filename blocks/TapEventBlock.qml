@@ -31,7 +31,7 @@ BlockDefinition {
 	function compile(params) {
 		return {
 			event: "tap",
-			condition: "event == event_tap",
+			condition: "currentEvent == event_tap",
 		};
 	}
 }
