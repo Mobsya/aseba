@@ -9,6 +9,11 @@ Item {
 	id: scene
 
 	property alias scale: rows.scale
+
+	/*
+		In simple mode, there is only one thread with only one state.
+		Each transition (row in the UI) goes from this only state to that same state.
+	*/
 	property var astTransitions
 	property var astState
 	property var ast
