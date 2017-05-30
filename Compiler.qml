@@ -13,6 +13,7 @@ import QtQuick 2.0
 	This rule does not hold for a thread's initial state.
 
 	Each transition has a set of actions which are executed when the transition is taken.
+	These actions are instantaneous, they do not block the execution of any thread.
 
 	The generated code has an AESL event handler for each thread,
 	which tests all the possible transitions for the thread's current state.
