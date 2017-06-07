@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtMultimedia 5.5
+import QtQuick 2.7
+import QtMultimedia 5.8
 import ".."
 
 BlockDefinition {

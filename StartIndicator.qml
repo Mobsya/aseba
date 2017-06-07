@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.7
 
 HDPIImage {
 	property bool isError: false // whether this start indicator is involved in an error

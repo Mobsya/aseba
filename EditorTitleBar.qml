@@ -1,7 +1,7 @@
-import QtQuick 2.6
+import QtQuick 2.7
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.0
-import QtQuick.Controls.Material 2.0
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 
 // constants in this files are set according to Material's guidelines
 // from https://material.io/guidelines/layout/structure.html#structure-app-bar
