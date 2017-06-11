@@ -1,9 +1,10 @@
 import QtQuick 2.7
 
 /*
-	The execution model is specified by Threads, which execute concurrently.
-	Each thread executes a state machine, so it has a start state.
-	A thread can transiton from its current state to an other state.
+	The execution model is specified by threads, which execute concurrently.
+	Each thread executes its own state machine with states and transitions between states.
+	When it starts, the thread's current state is the initial state of the state machine.
+	When a transition is taken, the current state changes to the target state of the transition.
 
 	Each transition has a set of conditions (events),
 	which must all become true for the transition to happen.
