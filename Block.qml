@@ -16,7 +16,7 @@ DropArea {
 	property var params
 
 	property bool canDelete: true // whether this block can be deleted
-	property bool canGraph: true // whether this block can create links and move startIndicator
+	property bool canGraph: true // whether this block can create links
 	property bool canDrag: canDelete || canGraph;
 
 	property bool isError: false // whether this block is involved in an error
@@ -26,11 +26,8 @@ DropArea {
 	property Item highlightedBlock: null // other block that is highlighted for link creation
 	property bool execTrue: true // whether this block execution was true
 
-	property bool isStarting: true // whether this block is a starting block
-
 	readonly property real centerRadius: 93
 	readonly property Item linkingArrow: linkingArrow
-	readonly property StartIndicator startIndicator: startIndicator
 
 	onEntered: handleDrag(drag)
 	onPositionChanged: handleDrag(drag)
@@ -72,12 +69,6 @@ DropArea {
 		height: 256 // working around Qt bug with SVG and HiDPI
 	}
 
-	// starting indicator, show if this block is the start of its click
-	StartIndicator {
-		id: startIndicator
-		enabled: canGraph
-	}
-
 	// highlight for a short while upon execution on the robot
 	HighlightTimer {
 		id: execHighlightTimer
@@ -90,13 +81,11 @@ DropArea {
 		block.id = id;
 		var definition = block.definition.objectName;
 		var params = block.params;
-		var isStarting = block.isStarting;
 		if (advanced) {
 			var pos = mapToItem(scene, 0, 0);
 			return {
 				x: pos.x,
 				y: pos.y,
-				isStarting: isStarting,
 				definition: definition,
 				params: params,
 			};
@@ -242,7 +231,6 @@ DropArea {
 				var newBlock = scene.createBlock(pos.x, pos.y, block.definition);
 
 				// create link
-				newBlock.isStarting = false;
 				var link = blockLinkComponent.createObject(linkContainer, {
 					sourceBlock: parent,
 					destBlock: newBlock

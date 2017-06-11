@@ -182,9 +182,6 @@ Item {
 					y: constants.rowPaddingV
 					spacing: constants.actionSpacing
 
-					Item {
-						width: event.startIndicator.width
-					}
 					Block {
 						id: event
 
@@ -193,7 +190,6 @@ Item {
 
 						canDelete: definition !== null
 						canGraph: false
-						isStarting: true
 						typeRestriction: "event"
 
 						function free() {
@@ -259,7 +255,6 @@ Item {
 
 								canDelete: definition !== null
 								canGraph: false
-								isStarting: false
 								typeRestriction: "action"
 
 								function free() {
