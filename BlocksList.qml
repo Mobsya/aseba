@@ -7,7 +7,8 @@ ListView {
 	property string backImage
 	property bool isLandscape: true
 
-	// scrolling disabled for now: https://github.com/aseba-community/thymio-vpl2/issues/6
+	// scrolling is implemented by hand
+	// otherwise, it prevents block drag and drop from working
 	interactive: false
 
 	anchors.fill: parent
@@ -20,6 +21,11 @@ ListView {
 
 		width: blockList.isLandscape ? blockList.width : blockList.height + 16
 		height: blockList.isLandscape ? blockList.width + 16 : blockList.height
+
+		property int startPos
+		onPressed: {
+			startPos = blockList.isLandscape ? y + mouse.y : x + mouse.x;
+		}
 
 		onClicked: {
 			// only process in block editor mode
@@ -40,21 +46,34 @@ ListView {
 				// already dragging
 				return;
 			}
-			var pos = mapToItem(mainContainer, mouse.x, mouse.y);
-			if (!mainContainer.contains(pos)) {
-				// not inside main container
-				return;
+
+			var blockListPos = mapToItem(blockList, mouse.x, mouse.y);
+			if (blockList.contains(blockListPos)) {
+				if (blockList.isLandscape) {
+					blockList.contentY = startPos - blockListPos.y;
+				} else {
+					blockList.contentX = startPos - blockListPos.x;
+				}
 			}
 
-			blockDragPreview.x = pos.x - blockDragPreview.width / 2;
-			blockDragPreview.y = pos.y - blockDragPreview.height / 2;
-			blockDragPreview.params = definition.defaultParams;
-			blockDragPreview.definition = definition;
-			blockDragPreview.Drag.active = true;
-			this.drag.target = blockDragPreview;
+			var mainContainerPos = mapToItem(mainContainer, mouse.x, mouse.y);
+			if (mainContainer.contains(mainContainerPos)) {
+				blockDragPreview.x = mainContainerPos.x - blockDragPreview.width / 2;
+				blockDragPreview.y = mainContainerPos.y - blockDragPreview.height / 2;
+				blockDragPreview.params = definition.defaultParams;
+				blockDragPreview.definition = definition;
+				blockDragPreview.Drag.active = true;
+				this.drag.target = blockDragPreview;
+			}
+		}
+
+		onExited: {
+			blockList.returnToBounds();
 		}
 
 		onReleased: {
+			blockList.returnToBounds();
+
 			if (this.drag.target === null) {
 				// not dragging
 				return;

@@ -31,7 +31,7 @@ Item {
 		"ClapEventBlock",
 		"TimerEventBlock",
 		"MotorActionBlock",
-		//"MotorSimpleActionBlock",
+		"MotorSimpleActionBlock",
 		"PaletteTopColorActionBlock",
 		"PaletteBottomColorActionBlock",
 		"TopColorActionBlock",
