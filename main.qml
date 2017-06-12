@@ -61,7 +61,7 @@ ApplicationWindow {
 		anchors.bottomMargin: 24*/
 		anchors.top: parent.top
 		anchors.topMargin: -height/2
-		z: 1
+		z: 2
 		imageSource: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
 		visible: !vplEditor.blockEditorVisible
 		onClicked: thymio.playing = !thymio.playing
