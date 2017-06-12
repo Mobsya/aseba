@@ -10,11 +10,7 @@ Item {
 		actions: [],
 		next: astState,
 		trigger: function() {
-			function exec(block) {
-				block.exec();
-			}
-			astTransition.events.forEach(exec);
-			astTransition.actions.forEach(exec);
+			highlightTimer.highlight();
 		}
 	})
 	property Item prev
@@ -75,6 +71,11 @@ Item {
 		anchors.fill: parent
 		color: Material.theme === Material.Dark ? "#301446" : Material.background // "#ffead9"
 		radius: height
+		border.color: "#F5E800"
+		border.width: highlightTimer.highlighted ? 10 : 0
+		HighlightTimer {
+			id: highlightTimer
+		}
 	}
 	RowLayout {
 		id: layout

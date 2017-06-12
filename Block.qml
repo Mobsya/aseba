@@ -60,21 +60,13 @@ DropArea {
 	HDPIImage {
 		source: isError ? "images/bgError.svg" :
 			(highlight ? "images/bgHighlight.svg" :
-				((isExec || execHighlightTimer.highlighted) ?
+				(isExec ?
 					( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") :
 					""
 				)
 			)
 		width: 256 // working around Qt bug with SVG and HiDPI
 		height: 256 // working around Qt bug with SVG and HiDPI
-	}
-
-	// highlight for a short while upon execution on the robot
-	HighlightTimer {
-		id: execHighlightTimer
-	}
-	function exec() {
-		execHighlightTimer.highlight();
 	}
 
 	function serialize(advanced, id) {
