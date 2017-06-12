@@ -204,9 +204,6 @@ Item {
 		})
 		backImage: "images/eventCenter.svg"
 
-		darkThemeColor: "#301446"
-		lightThemeColor: Material.background // "#ffead9"
-
 		anchors.left: parent.left
 		anchors.leftMargin: isHidden ? -width : 0
 
@@ -222,17 +219,15 @@ Item {
 		})
 		backImage: "images/actionCenter.svg"
 
-		darkThemeColor: "#301446"
-		lightThemeColor: Material.background // "#daeaf2"
-
 		anchors.right: parent.right
 		anchors.rightMargin: isHidden ? -width : 0
 
 		//Behavior on anchors.rightMargin { PropertyAnimation {} }
 	}
 
-	Rectangle {
+	Item {
 		id: mainContainer
+		//visible: false
 
 		property real foregroundWidth: parent.width - eventPane.width - actionPane.width
 
@@ -242,10 +237,9 @@ Item {
 
 		width: foregroundWidth
 		height: parent.height
+
 		//opacity: vplEditor.minimized ? 0.5 : 1.0
-		color: Material.theme === Material.Dark ?
-				   "#ff44285a" : //vplEditor.minimized ? "#80200032" : "#ff44285a" // different color for AR, to adapt when reused
-				   Qt.darker(Material.background, 1.2)
+
 		scale: vplEditor.minimized ? 0.5 : 1.0
 		transformOrigin: Item.BottomRight
 

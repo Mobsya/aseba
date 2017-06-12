@@ -17,6 +17,7 @@ ApplicationWindow {
 
 	Material.primary: Material.theme === Material.Dark ? "#200032" : Material.background // "#a3d9db"
 	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#B290CC" // "#59cbc8"
+	Material.background: Material.theme === Material.Dark ? "#ff44285a" : "white"
 
 	header: vplEditor.blockEditorVisible ? blockEditorTitleBar : vplEditorTitleBar
 

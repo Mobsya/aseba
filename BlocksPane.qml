@@ -9,18 +9,10 @@ Pane {
 	property string backImage
 	property bool showTrash: false
 	property bool trashOpen: false
-	property color lightThemeColor
-	property color darkThemeColor
 
 	width: 96
 	height: parent.height
-
-	background: Rectangle {
-		color: Material.theme === Material.Dark ? darkThemeColor : lightThemeColor
-	}
-
-	// FIXME: this is not working on Qt5.8 Mac ? even with the back
-	//Material.elevation: 30
+	Material.elevation: 6
 
 	BlocksList {
 		id: blocksList

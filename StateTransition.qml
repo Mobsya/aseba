@@ -69,7 +69,7 @@ Item {
 	Rectangle {
 		id: rowBackground
 		anchors.fill: parent
-		color: Material.theme === Material.Dark ? "#301446" : Material.background // "#ffead9"
+		color: Material.theme === Material.Dark ? "#301446" : "#eaeaea"
 		radius: height
 		border.color: "#F5E800"
 		border.width: highlightTimer.highlighted ? 10 : 0
