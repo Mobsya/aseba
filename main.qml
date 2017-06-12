@@ -57,13 +57,16 @@ ApplicationWindow {
 	FloatingActionButton {
 		anchors.right: parent.right
 		anchors.rightMargin: 96+24
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 24
+		/*anchors.bottom: parent.bottom
+		anchors.bottomMargin: 24*/
+		anchors.top: parent.top
+		anchors.topMargin: -height/2
+		z: 1
 		imageSource: !thymio.playing ? "qrc:/thymio-vpl2/icons/ic_play_arrow_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_stop_white_24px.svg"
 		visible: !vplEditor.blockEditorVisible
 		onClicked: thymio.playing = !thymio.playing
 		enabled: (vplEditor.compiler.output.error === undefined) && (thymio.node !== undefined)
-		opacity: enabled ? 1.0 : 0.38
+		//opacity: enabled ? 1.0 : 0.38
 	}
 
 	Connections {
