@@ -27,6 +27,7 @@
 		<file>EditorTitleBar.qml</file>
 		<file>FloatingActionButton.qml</file>
 		<file>HDPIImage.qml</file>
+		<file>StateTransition.qml</file>
 		
 		<file>icons/ic_delete_white_48px.svg</file>
 		<file>icons/ic_delete_on_white_48px.svg</file>
