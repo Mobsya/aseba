@@ -62,7 +62,7 @@ DropArea {
 			(highlight ? "images/bgHighlight.svg" :
 				((isExec || execHighlightTimer.highlighted) ?
 					( execTrue ? "images/bgExec.svg" : "images/bgExecFalse.svg") :
-					( definition === null && !canGraph ? "" : "images/bgDefault.svg")
+					""
 				)
 			)
 		width: 256 // working around Qt bug with SVG and HiDPI
