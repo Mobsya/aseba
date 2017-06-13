@@ -118,14 +118,14 @@ Item {
 			}
 		}
 		ColumnLayout {
-			spacing: constants.actionSpacing
+			spacing: constants.columnSignSpacing
 			Repeater {
 				model: 2
 				delegate: Rectangle {
-					radius: 15
-					color: Material.theme === Material.Dark ? "#9478aa" : "#72000000"
-					height: radius
-					width: radius
+					radius: constants.columnSignRadius
+					color: Material.theme === Material.Dark ? "#9478aa" : "#cccccc"
+					height: radius * 2
+					width: radius * 2
 				}
 			}
 		}
