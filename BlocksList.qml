@@ -12,7 +12,7 @@ ListView {
 	interactive: false
 
 	anchors.fill: parent
-	clip: true
+	//clip: true
 	orientation: isLandscape ? ListView.Vertical : ListView.Horizontal
 	model: blocks
 
