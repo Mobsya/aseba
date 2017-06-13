@@ -232,6 +232,8 @@ ApplicationWindow {
 					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a></p>") +
 					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
 					qsTr("for a detailed list of contributions.</p>")
+				color: Material.foreground
+				linkColor: Material.foreground
 				font.pixelSize: 14
 				font.weight: Font.Normal
 				lineHeight: 20
