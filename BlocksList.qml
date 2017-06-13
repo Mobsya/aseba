@@ -23,11 +23,17 @@ ListView {
 		height: blockList.isLandscape ? blockList.width + 16 : blockList.height
 
 		property int startPos
+		property bool moved
 		onPressed: {
 			startPos = blockList.isLandscape ? y + mouse.y : x + mouse.x;
+			moved = false;
 		}
 
 		onClicked: {
+			if (moved) {
+				return;
+			}
+
 			// only process in block editor mode
 			if (blockEditor.visible) {
 				blockEditor.setBlockType(definition);
@@ -44,6 +50,7 @@ ListView {
 
 			var blockListPos = mapToItem(blockList, mouse.x, mouse.y);
 			if (blockList.contains(blockListPos)) {
+				moved = true;
 				if (blockList.isLandscape) {
 					blockList.contentY = startPos - blockListPos.y;
 				} else {
