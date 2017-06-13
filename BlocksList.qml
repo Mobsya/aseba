@@ -76,10 +76,6 @@ ListView {
 			}
 		}
 
-		onExited: {
-			blockList.returnToBounds();
-		}
-
 		onReleased: {
 			blockList.returnToBounds();
 
