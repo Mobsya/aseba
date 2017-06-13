@@ -16,12 +16,9 @@ Button {
 	property bool showShadow: true
 	property bool isMini: Screen.width <= 460
 
-	onIsMiniChanged: console.log(isMini)
-
 	focusPolicy: Qt.NoFocus
+
 	contentItem: Item {
-		implicitHeight: 24
-		implicitWidth: 24
 		Image {
 			id: contentImage
 			anchors.centerIn: parent
@@ -37,8 +34,8 @@ Button {
 		//opacity: button.pressed ? 0.75 : 1.0
 		layer.enabled: button.showShadow
 		layer.effect: DropShadow {
-			verticalOffset: 3
-			horizontalOffset: 1
+			verticalOffset: isMini ? 2 : 3
+			horizontalOffset: isMini ? 0.7 : 1
 			color: Material.dropShadowColor
 			samples: button.pressed ? 20 : 10
 			spread: 0.5
