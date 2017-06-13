@@ -9,8 +9,9 @@ Pane {
 	property string backImage
 	property bool showTrash: false
 	property bool trashOpen: false
+	property bool isMini
 
-	width: 96
+	width: isMini ? 64 : 96
 	height: parent.height
 	Material.elevation: 6
 

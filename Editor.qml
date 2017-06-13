@@ -207,6 +207,8 @@ Item {
 		anchors.left: parent.left
 		anchors.leftMargin: isHidden ? -width : 0
 
+		isMini: vplEditor.width <= 460
+
 		//Behavior on anchors.leftMargin { PropertyAnimation {} }
 	}
 
@@ -221,6 +223,8 @@ Item {
 
 		anchors.right: parent.right
 		anchors.rightMargin: isHidden ? -width : 0
+
+		isMini: vplEditor.width <= 460
 
 		//Behavior on anchors.rightMargin { PropertyAnimation {} }
 	}

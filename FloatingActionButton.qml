@@ -14,7 +14,7 @@ Button {
 	// default: primaryColor
 	property alias backgroundColor: buttonBackground.color
 	property bool showShadow: true
-	property bool isMini: Screen.width <= 460
+	property bool isMini: false
 
 	focusPolicy: Qt.NoFocus
 

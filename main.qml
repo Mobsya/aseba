@@ -57,9 +57,10 @@ ApplicationWindow {
 	FloatingActionButton {
 		property int distToBorders: isMini ? 16 : 24
 		anchors.right: parent.right
-		anchors.rightMargin: 96 + distToBorders
+		anchors.rightMargin: (isMini ? 64 : 96) + distToBorders
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: distToBorders
+		isMini: window.width <= 460
 		/*anchors.top: parent.top
 		anchors.topMargin: -height/2
 		z: 2*/
