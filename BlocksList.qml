@@ -37,11 +37,6 @@ ListView {
 		// we start the drag when the cursor is outside the area,
 		// otherwise the list scroll does not work
 		onPositionChanged: {
-			// only process if not in block editor mode
-			if (blockEditor.visible) {
-				return;
-			}
-
 			if (this.drag.target !== null) {
 				// already dragging
 				return;
@@ -56,14 +51,17 @@ ListView {
 				}
 			}
 
-			var mainContainerPos = mapToItem(mainContainer, mouse.x, mouse.y);
-			if (mainContainer.contains(mainContainerPos)) {
-				blockDragPreview.x = mainContainerPos.x - blockDragPreview.width / 2;
-				blockDragPreview.y = mainContainerPos.y - blockDragPreview.height / 2;
-				blockDragPreview.params = definition.defaultParams;
-				blockDragPreview.definition = definition;
-				blockDragPreview.Drag.active = true;
-				this.drag.target = blockDragPreview;
+			if (!blockEditor.visible) {
+				// only process if not in block editor mode
+				var mainContainerPos = mapToItem(mainContainer, mouse.x, mouse.y);
+				if (mainContainer.contains(mainContainerPos)) {
+					blockDragPreview.x = mainContainerPos.x - blockDragPreview.width / 2;
+					blockDragPreview.y = mainContainerPos.y - blockDragPreview.height / 2;
+					blockDragPreview.params = definition.defaultParams;
+					blockDragPreview.definition = definition;
+					blockDragPreview.Drag.active = true;
+					this.drag.target = blockDragPreview;
+				}
 			}
 		}
 
