@@ -52,9 +52,13 @@ ListView {
 			if (blockList.contains(blockListPos)) {
 				moved = true;
 				if (blockList.isLandscape) {
-					blockList.contentY = startPos - blockListPos.y;
+					if (blockList.contentItem.height > blockList.height) {
+						blockList.contentY = startPos - blockListPos.y;
+					}
 				} else {
-					blockList.contentX = startPos - blockListPos.x;
+					if (blockList.contentItem.width > blockList.width) {
+						blockList.contentX = startPos - blockListPos.x;
+					}
 				}
 			}
 
