@@ -227,11 +227,11 @@ ApplicationWindow {
 			}
 			Text {
 				text:
-					qsTr("<p><a href=\"http://stephane.magnenat.net\">Stéphane Magnenat</a>, <a href=\"http://sampla.ch\">Martin Voelkle</a><br/>and <a href=\"http://mariamari-a.com\">Maria Beltran</a></p>") +
-					qsTr("<p>(c) 2015–2017 EPFL and ETH Zürich</p>") +
-					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a></p>") +
+					qsTr("<p><a href=\"http://stephane.magnenat.net\">Stéphane Magnenat</a>, <a href=\"http://sampla.ch\">Martin Voelkle</a>,<br/><a href=\"http://mariamari-a.com\">Maria Beltran</a> and contributors.</p>") +
+					qsTr("<p>© 2015–2017 EPFL, ETH Zürich and Mobsya</p>") +
+					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a>.</p>") +
 					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
-					qsTr("for a detailed list of contributions.</p>")
+					qsTr("for a detailed list of contributions.")
 				color: Material.foreground
 				linkColor: Material.foreground
 				font.pixelSize: 14
@@ -239,6 +239,60 @@ ApplicationWindow {
 				lineHeight: 20
 				lineHeightMode: Text.FixedHeight
 				onLinkActivated: Qt.openUrlExternally(link)
+			}
+			Row {
+				anchors.horizontalCenter: parent.horizontalCenter
+				Rectangle {
+					width: 100
+					height: 50
+					color: "white"
+					anchors.verticalCenter: parent.verticalCenter
+					HDPIImage {
+						width: 80
+						height: width * 0.5
+						fillMode: Image.PreserveAspectFit
+						source: "qrc:/thymio-vpl2/images/logoEPFL.svg"
+						anchors.centerIn: parent
+					}
+					MouseArea {
+						anchors.fill: parent
+						onClicked: { Qt.openUrlExternally("http://mobots.epfl.ch"); }
+					}
+				}
+				Rectangle {
+					width: 100
+					height: 50
+					color: "white"
+					anchors.verticalCenter: parent.verticalCenter
+					HDPIImage {
+						width: 80
+						height: width * 0.48 // 0.38753
+						fillMode: Image.PreserveAspectFit
+						source: "qrc:/thymio-vpl2/images/logoETHGTC.svg"
+						anchors.centerIn: parent
+					}
+					MouseArea {
+						anchors.fill: parent
+						onClicked: { Qt.openUrlExternally("http://www.gtc.inf.ethz.ch"); }
+					}
+				}
+				Rectangle {
+					width: 100
+					height: 50
+					color: "white"
+					anchors.verticalCenter: parent.verticalCenter
+					HDPIImage {
+						width: 80
+						height: width * 0.27348
+						fillMode: Image.PreserveAspectFit
+						source: "qrc:/thymio-vpl2/images/logoMobsya.svg"
+						anchors.centerIn: parent
+					}
+					MouseArea {
+						anchors.fill: parent
+						onClicked: { Qt.openUrlExternally("http://www.mobsya.org"); }
+					}
+				}
 			}
 		}
 	}
