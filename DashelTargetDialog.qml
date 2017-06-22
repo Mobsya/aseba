@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 
 Popup {
@@ -30,6 +31,12 @@ Popup {
 		TextField {
 			id: textInput
 			implicitWidth: 280
+		}
+
+		Label {
+			textFormat: Text.RichText;
+			text: linkRichTextStyle + qsTr("<a href=\"http://aseba-community.github.io/dashel/\">Learn more about Dashel targets...</a>")
+			onLinkActivated: Qt.openUrlExternally(link)
 		}
 
 		RowLayout {

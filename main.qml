@@ -16,6 +16,9 @@ ApplicationWindow {
 	height: 600
 
 	Material.primary: Material.theme === Material.Dark ? "#200032" : Material.background // "#a3d9db"
+	property string linkRichTextStyle: Material.theme === Material.Dark ?
+		"<style>a:link { text-decoration: none; color: \"#90CAF9\" }</style>" :
+		"<style>a:link { text-decoration: none; color: \"#3F51B5\" }</style>"
 	Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#B290CC" // "#59cbc8"
 	Material.background: Material.theme === Material.Dark ? "#ff44285a" : "white"
 
@@ -225,15 +228,15 @@ ApplicationWindow {
 				font.pixelSize: 20
 				font.weight: Font.Medium
 			}
-			Text {
+			Label {
+				textFormat: Text.RichText;
 				text:
+					linkRichTextStyle +
 					qsTr("<p><a href=\"http://stephane.magnenat.net\">Stéphane Magnenat</a>, <a href=\"http://sampla.ch\">Martin Voelkle</a>,<br/><a href=\"http://mariamari-a.com\">Maria Beltran</a> and contributors.</p>") +
 					qsTr("<p>© 2015–2017 EPFL, ETH Zürich and Mobsya</p>") +
 					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a>.</p>") +
 					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
 					qsTr("for a detailed list of contributions.")
-				color: Material.foreground
-				linkColor: Material.foreground
 				font.pixelSize: 14
 				font.weight: Font.Normal
 				lineHeight: 20
