@@ -4,6 +4,7 @@ import ".."
 
 BlockDefinition {
 	type: "action"
+	category: "state"
 
 	defaultParams: { "image": "images/nop.svg" }
 

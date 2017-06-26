@@ -3,6 +3,7 @@ import ".."
 
 BlockDefinition {
 	type: "action"
+	category: "nop"
 
 	defaultParams: null
 

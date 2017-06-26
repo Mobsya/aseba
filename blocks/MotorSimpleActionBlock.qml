@@ -4,6 +4,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "action"
+	category: "motor"
 
 	defaultParams: "stop"
 

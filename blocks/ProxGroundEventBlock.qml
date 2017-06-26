@@ -4,6 +4,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "event"
+	category: "ground"
 
 	defaultParams: [ "DISABLED", "DISABLED"]
 

@@ -5,6 +5,8 @@ import "widgets"
 
 BlockDefinition {
 	type: "event"
+	category: "timer"
+
 	advanced: true
 
 	defaultParams: 100

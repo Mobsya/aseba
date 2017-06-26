@@ -6,6 +6,7 @@ Item {
 	property Component editor
 	property Component miniature: editor
 	property string type
+	property string category
 	function compile(params) {
 		return {};
 	}

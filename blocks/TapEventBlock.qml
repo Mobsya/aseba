@@ -3,6 +3,7 @@ import ".."
 
 BlockDefinition {
 	type: "event"
+	category: "tapClap"
 
 	defaultParams: null
 

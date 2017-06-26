@@ -4,6 +4,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "event"
+	category: "prox"
 
 	defaultParams: [ "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED", "DISABLED" ]
 

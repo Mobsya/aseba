@@ -4,6 +4,7 @@ import "widgets"
 
 BlockDefinition {
 	type: "action"
+	category: "topColor"
 
 	defaultParams: [ 32, 0, 16 ]
 
