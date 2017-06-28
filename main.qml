@@ -234,8 +234,8 @@ ApplicationWindow {
 					linkRichTextStyle +
 					qsTr("<p><a href=\"http://stephane.magnenat.net\">Stéphane Magnenat</a>, <a href=\"http://sampla.ch\">Martin Voelkle</a>,<br/><a href=\"http://mariamari-a.com\">Maria Beltran</a> and contributors.</p>") +
 					qsTr("<p>© 2015–2017 EPFL, ETH Zürich and Mobsya</p>") +
-					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a>.</p>") +
-					qsTr("<p>See file <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
+					qsTr("<p>This project is open source under <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/LICENSE.txt\">LGPL</a>.<br/>") +
+					qsTr("See file <a href=\"https://github.com/aseba-community/thymio-vpl2/blob/master/AUTHORS.md\">AUTHORS.md</a> in the <a href=\"https://github.com/aseba-community/thymio-vpl2\">source code</a><br/>") +
 					qsTr("for a detailed list of contributions.")
 				font.pixelSize: 14
 				font.weight: Font.Normal
