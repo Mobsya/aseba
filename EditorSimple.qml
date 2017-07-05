@@ -105,9 +105,8 @@ Item {
 		if (drop.source === blockDragPreview) {
 			drop.accepted = true;
 			var definition = blockDragPreview.definition;
-			source.definition = definition;
-			source.params = definition.defaultParams;
-			blockEditor.setBlock(source);
+			var params = definition.defaultParams;
+			blockEditor.openBlock(source, definition, params);
 		} else {
 			drop.accepted = false;
 		}

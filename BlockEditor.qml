@@ -41,11 +41,8 @@ Item {
 		editor.visible = true;
 	}
 
-	function setBlock(block) {
-		var typeRestriction = block.typeRestriction;
-		var params = block.params;
-		var definition = block.definition;
-		open(typeRestriction, params, definition, function(definition, params) {
+	function openBlock(block, definition, params) {
+		open(block.typeRestriction, params, definition, function(definition, params) {
 			block.definition = definition;
 			block.params = params;
 		});

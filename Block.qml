@@ -229,7 +229,7 @@ DropArea {
 				});
 
 				// directly edit block
-				blockEditor.setBlock(newBlock);
+				blockEditor.openBlock(newBlock, newBlock.definition, newBlock.params);
 			}
 		}
 	}
@@ -321,7 +321,7 @@ DropArea {
 		}
 
 		onClicked: {
-			blockEditor.setBlock(block);
+			blockEditor.openBlock(block, block.definition, block.params);
 		}
 	}
 }
