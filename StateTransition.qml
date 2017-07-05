@@ -66,13 +66,15 @@ Item {
 	}
 	function deserialize(data) {
 		var block = event;
-		data.forEach(function(blockData) {
+		function deserializeBlock(blockData) {
 			if (blockData !== null) {
 				block.definition = definitionsByName[blockData.definition];
 				block.params = blockData.params;
 			}
 			block = block.next;
-		});
+		};
+		data[0].forEach(deserializeBlock);
+		data[1].forEach(deserializeBlock);
 	}
 
 	Rectangle {

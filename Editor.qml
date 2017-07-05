@@ -61,7 +61,7 @@ Item {
 		var db = LocalStorage.openDatabaseSync("Programs", "", "Locally saved programs", 100000);
 
 		function updateDB(loadAndClearDB) {
-			db.changeVersion(db.version, "2", function(tx) {
+			db.changeVersion(db.version, "3", function(tx) {
 				var programs = loadAndClearDB(tx);
 				tx.executeSql("create table programs (name text not null primary key, code text not null)");
 				for (var i = 0; i < programs.length; ++i) {
@@ -70,7 +70,7 @@ Item {
 						program.name,
 						program.code,
 					];
-					tx.executeSql("insert into programs (name, code) values (?, ?, ?)", args);
+					tx.executeSql("insert into programs (name, code) values (?, ?)", args);
 				}
 			});
 		}
@@ -99,6 +99,38 @@ Item {
 					var codeNew = "{\"mode\":\"advanced\",\"scene\":" + codeOld + "}";
 					var programNew = {
 						name: nameNew,
+						code: codeNew,
+					};
+
+					programsNew.push(programNew);
+				}
+
+				tx.executeSql("drop table programs");
+				return programsNew;
+			});
+			break;
+		case "2":
+			updateDB(function(tx) {
+				var programsOld = tx.executeSql("select name, code from programs").rows;
+				var programsNew = [];
+				for (var i = 0; i < programsOld.length; ++i) {
+					var programOld = programsOld[i];
+					var name = programOld.name;
+
+					var codeOld = programOld.code;
+					var code = JSON.parse(codeOld);
+
+					var codeNew;
+					if(code.mode === "simple") {
+						code.scene = code.scene.map(function(row) {
+							return [row.splice(0, 1), row];
+						});
+						codeNew = JSON.stringify(code);
+					} else {
+						codeNew = codeOld;
+					}
+					var programNew = {
+						name: name,
 						code: codeNew,
 					};
 
