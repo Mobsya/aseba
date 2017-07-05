@@ -55,11 +55,6 @@ Item {
 	QtObject {
 		id: constants
 		property int rowSpacing: 60
-		property int rowPaddingV: 8
-		property int rowPaddingH: 14
-		property int actionSpacing: 0
-		property int columnSignRadius: 9
-		property int columnSignSpacing: 48
 	}
 
 	ListView {

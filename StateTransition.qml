@@ -17,6 +17,15 @@ Item {
 	property Item next
 	property int index: prev === null ? 0 : prev.index + 1
 
+	QtObject {
+		id: constants
+		property int rowPaddingV: 8
+		property int rowPaddingH: 14
+		property int blockSpacing: 0
+		property int columnSignRadius: 9
+		property int columnSignSpacing: 48
+	}
+
 	width: layout.width + 2 * constants.rowPaddingH
 	height: layout.height + 2 * constants.rowPaddingV
 
@@ -82,7 +91,7 @@ Item {
 
 		x: constants.rowPaddingH
 		y: constants.rowPaddingV
-		spacing: constants.actionSpacing
+		spacing: constants.blockSpacing
 
 		Block {
 			id: event
@@ -132,7 +141,7 @@ Item {
 		RowLayout {
 			id: actions
 
-			spacing: constants.actionSpacing
+			spacing: constants.blockSpacing
 
 			Component.onCompleted: append(event)
 			function append(prev) {
