@@ -120,12 +120,16 @@ Item {
 					var empty = ast.events.length === 0 && ast.actions.length === 0;
 					if (last && !empty) {
 						next = rows.append(this, null);
+						astTransitions.splice(index, 0, ast);
+						scene.astChanged();
 					} else if (empty && !last) {
 						if (prev !== null) {
 							prev.next = next;
 						}
 						next.prev = prev;
 						destroy();
+						astTransitions.splice(index, 1);
+						scene.astChanged();
 					}
 				}
 			}
