@@ -6,3 +6,7 @@
 	path = dashel
 	url = https://github.com/aseba-community/dashel.git
 	branch = master
+[submodule "enki"]
+	path = enki
+	url = https://github.com/enki-community/enki.git
+	branch = master
