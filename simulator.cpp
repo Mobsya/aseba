@@ -210,6 +210,8 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 		sensor.append(thymio->infraredSensor2.getValue());
 		sensor.append(thymio->infraredSensor3.getValue());
 		sensor.append(thymio->infraredSensor4.getValue());
+		sensor.append(thymio->groundSensor0.getValue());
+		sensor.append(thymio->groundSensor1.getValue());
 		sensorLog.append(sensor);
 	}
 
