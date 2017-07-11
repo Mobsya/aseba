@@ -84,7 +84,7 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 	for (auto&& wall : as_const(walls)) // need this cast to prevent copy as walls is non-const
 	{
 		// read from description
-		const auto context { QString("Wall %1").arg(i) };
+		const auto context(QString("Wall %1").arg(i));
 		if (!wall.canConvert<QVariantMap>())
 			return QString("Wall %1 is not an object").arg(i);
 		const auto& description(wall.value<QVariantMap>());
@@ -102,7 +102,7 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 		if (!error.isEmpty()) return error;
 
 		// set to object
-		auto wallObject{new Enki::PhysicalObject()};
+		auto wallObject(new Enki::PhysicalObject());
 		wallObject->pos = { position.x(), position.y() };
 		wallObject->angle = angle;
 		wallObject->setRectangular(size[0], size[1], size[2], 0);
