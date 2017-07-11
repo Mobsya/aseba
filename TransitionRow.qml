@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.3
 
 Item {
 	id: row
-	property int eventCountMax: 5
-	property int actionCountMax: 5
+	property int eventCountMax
+	property int actionCountMax
 
 	property var nextState
 	property var ast: ({

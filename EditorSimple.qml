@@ -7,6 +7,8 @@ Item {
 	id: scene
 
 	property alias scale: rows.scale
+	property int eventCountMax: 5
+	property int actionCountMax: 5
 
 	/*
 		In simple mode, there is only one thread with only one state.
@@ -98,6 +100,8 @@ Item {
 			id: rowComponent
 			TransitionRow {
 				nextState: astState
+				eventCountMax: scene.eventCountMax
+				actionCountMax: scene.actionCountMax
 
 				property Item prev
 				property Item next
