@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.3
 
 Item {
 	id: row
-	property int eventCountMax: -1
-	property int actionCountMax: -1
+	property int eventCountMax: 5
+	property int actionCountMax: 5
 
 	property var nextState
 	property var ast: ({
@@ -73,6 +73,7 @@ Item {
 		spacing: constants.blockSpacing
 
 		Block {
+			visible: eventCountMax === -1 || eventCountMax > events.ast.length
 			canDelete: false
 			typeRestriction: "event"
 			onParamsChanged: {
@@ -107,6 +108,7 @@ Item {
 			typeRestriction: "action"
 		}
 		Block {
+			visible: actionCountMax === -1 || actionCountMax > actions.ast.length
 			canDelete: false
 			typeRestriction: "action"
 			onParamsChanged: {
