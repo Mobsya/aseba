@@ -72,10 +72,6 @@ Item {
 		y: constants.rowPaddingV
 		spacing: constants.blockSpacing
 
-		TransitionBlocks {
-			id: events
-			typeRestriction: "event"
-		}
 		Block {
 			canDelete: false
 			typeRestriction: "event"
@@ -88,6 +84,11 @@ Item {
 				definition = null;
 				params = undefined;
 			}
+		}
+		TransitionBlocks {
+			id: events
+			typeRestriction: "event"
+			layoutDirection: Qt.RightToLeft
 		}
 		ColumnLayout {
 			spacing: constants.columnSignSpacing
