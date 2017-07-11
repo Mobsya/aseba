@@ -7,6 +7,8 @@ Item {
 	property int eventCountMax
 	property int actionCountMax
 
+	property alias eventWidth: events.width
+
 	property var nextState
 	property var ast: ({
 		events: events.ast,
