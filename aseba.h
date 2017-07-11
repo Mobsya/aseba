@@ -70,6 +70,7 @@ public:
 	AsebaClient* parent() const { return static_cast<AsebaClient*>(QObject::parent()); }
 	unsigned id() const { return nodeId; }
 	QString name() { return QString::fromStdWString(description.name); }
+	static Aseba::CommonDefinitions commonDefinitionsFromEvents(QVariantMap events);
 public slots:
 	void setVariable(QString name, QList<int> value);
 	QString setProgram(QVariantMap events, QString source);
