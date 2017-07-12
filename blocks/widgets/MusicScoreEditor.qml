@@ -33,10 +33,9 @@ Item {
 	ListModel {
 		id: notes
 	}
-	property var params: defaultParams
+	property var params
 	// copy from JSON to model
 	onParamsChanged: {
-		console.log("params changed");
 		notes.clear();
 		params.notes.forEach(function (note) {
 			// Note: we have to recreate the array, otherwise if we extract it from the model we can a segfault

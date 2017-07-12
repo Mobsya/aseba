@@ -82,10 +82,6 @@ Item {
 		property real scaledWidth: Math.min(parent.width-24, parent.height-24)
 
 		sourceComponent: definition !== null ? definition.editor : null
-		onLoaded: {
-			console.log("editor component loaded");
-			console.log(JSON.stringify(params))
-			item.params = params;
-		}
+		onLoaded: item.params = params
 	}
 }
