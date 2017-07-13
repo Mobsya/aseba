@@ -67,8 +67,6 @@ BlockDefinition {
 		}
 		var notesCopyText = "call math.copy(notes[0:" + (notesCopy.length-1) + "], [" + notesCopy.toString() + "])\n";
 		var durationsCopyText = "call math.copy(durations[0:" + (durationsCopy.length-1) + "], [" + durationsCopy.toString() + "])\n";
-		console.log("notes " + notesCopyText);
-		console.log("durations " + durationsCopyText);
 		return notesCopyText + durationsCopyText + "note_index = 1\nnote_count = " + notesCopy.length + "\ncall sound.freq(notes[0], durations[0])";
 	}
 
