@@ -96,7 +96,7 @@ Item {
 		value: params.speed
 		from: 2
 		to: 20
-		stepSize: 20
+		stepSize: 2
 		snapMode: Slider.SnapAlways
 		onValueChanged: params.speed = value
 	}
