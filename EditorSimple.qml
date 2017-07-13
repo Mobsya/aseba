@@ -65,6 +65,7 @@ Item {
 		anchors.centerIn: parent
 
 		property int maxEventWidth: 0
+
 		leftMargin: constants.rowSpacing
 		width: leftMargin + contentWidth + rightMargin
 		rightMargin: constants.rowSpacing
@@ -92,7 +93,7 @@ Item {
 			var width = 0;
 			for (var i = 0; i < model.count; ++i) {
 				var row = model.get(i);
-				width = Math.max(width, row.width);
+				width = Math.max(width, row.width + row.leftMargin);
 			}
 			contentWidth = width;
 		}
@@ -113,6 +114,7 @@ Item {
 				eventCountMax: scene.eventCountMax
 				actionCountMax: scene.actionCountMax
 				anchors.left: parent ? parent.left : undefined
+				property int leftMargin: anchors.leftMargin
 				anchors.leftMargin: rows.maxEventWidth - eventWidth
 
 				property Item prev
@@ -121,23 +123,19 @@ Item {
 
 				Component.onCompleted: {
 					rows.model.append(this);
-					rows.updateWidth();
 					rows.updateMaxEventWidth();
+					rows.updateWidth();
 				}
 				Component.onDestruction: {
 					if (index < rows.model.count) {
 						rows.model.remove(index, 1);
-						rows.updateWidth();
 						rows.updateMaxEventWidth();
+						rows.updateWidth();
 					}
 				}
-				onEventWidthChanged: {
-					rows.updateMaxEventWidth();
-				}
 
-				onWidthChanged: {
-					rows.updateWidth();
-				}
+				onEventWidthChanged: rows.updateMaxEventWidth()
+				onWidthChanged:	rows.updateWidth()
 
 				onAstChanged: {
 					var last = next === null;

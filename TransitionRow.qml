@@ -2,12 +2,13 @@ import QtQuick 2.7
 import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 
-Item {
+Rectangle {
 	id: row
 	property int eventCountMax
 	property int actionCountMax
 
 	property alias eventWidth: events.width
+	property alias actionWidth: actions.width
 
 	property var nextState
 	property var ast: ({
@@ -26,6 +27,15 @@ Item {
 		property int blockSpacing: 0
 		property int columnSignRadius: 9
 		property int columnSignSpacing: 48
+	}
+
+	color: Material.theme === Material.Dark ? "#301446" : "#eaeaea"
+	radius: height
+	border.color: "#F5E800"
+	border.width: highlightTimer.highlighted ? 10 : 0
+
+	HighlightTimer {
+		id: highlightTimer
 	}
 
 	width: layout.width + 2 * constants.rowPaddingH
@@ -56,22 +66,12 @@ Item {
 		}
 	}
 
-	Rectangle {
-		id: rowBackground
-		anchors.fill: parent
-		color: Material.theme === Material.Dark ? "#301446" : "#eaeaea"
-		radius: height
-		border.color: "#F5E800"
-		border.width: highlightTimer.highlighted ? 10 : 0
-		HighlightTimer {
-			id: highlightTimer
-		}
-	}
-	RowLayout {
+	Row {
 		id: layout
 
 		x: constants.rowPaddingH
 		y: constants.rowPaddingV
+
 		spacing: constants.blockSpacing
 
 		Block {
@@ -94,6 +94,7 @@ Item {
 			layoutDirection: Qt.RightToLeft
 		}
 		ColumnLayout {
+			anchors.verticalCenter: parent.verticalCenter
 			spacing: constants.columnSignSpacing
 			Repeater {
 				model: 2
