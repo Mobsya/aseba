@@ -97,13 +97,13 @@
         <file>blocks/BottomColorActionBlock.qml</file>
         <file>blocks/TapEventBlock.qml</file>
         <file>blocks/TimerEventBlock.qml</file>
-        <file>blocks/StateActionBlock.qml</file>
         <file>blocks/PaletteTopColorActionBlock.qml</file>
         <file>blocks/widgets/ColorPalette.qml</file>
         <file>blocks/PaletteBottomColorActionBlock.qml</file>
         <file>blocks/MotorSimpleActionBlock.qml</file>
         <file>blocks/MusicScoreBlock.qml</file>
         <file>blocks/NopActionBlock.qml</file>
+		<file>blocks/ImageStateActionBlock.qml</file>
         <file>blocks/images/nop.svg</file>
         <file>blocks/images/stop.svg</file>
         <file>blocks/images/clap.svg</file>
