@@ -94,8 +94,8 @@ Item {
 		y: 200
 		width: 232
 		value: params.speed
-		from: 2
-		to: 20
+		from: 20
+		to: 2
 		stepSize: 2
 		snapMode: Slider.SnapAlways
 		onValueChanged: params.speed = value
