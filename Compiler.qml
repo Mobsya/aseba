@@ -162,7 +162,7 @@ Item {
 
 					transition.events.forEach(function (event) {
 						var compiled = event.compile();
-						if (transitionData.events.indexOf(compiled.event) === -1) {
+						if (compiled.event && transitionData.events.indexOf(compiled.event) === -1) {
 							// add the AESL event to the list of events
 							// where the transition must be tested again
 							transitionData.events.push(compiled.event);
