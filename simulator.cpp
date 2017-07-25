@@ -16,6 +16,9 @@ using namespace Aseba;
 using namespace Enki;
 using namespace std;
 
+//! Make sure only one program runs at a time, because of global world pointer for Aseba C native functions
+static std::mutex simulationMutex;
+
 struct SimulatorNodesManager: NodesManager
 {
 	DirectAsebaThymio2* thymio;

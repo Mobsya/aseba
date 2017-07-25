@@ -20,10 +20,6 @@ public slots:
 	//! Run the simulation.
 	//! If there is an error in the arguments, it is returned, otherwise "" is returned.
 	QString runProgram(const QVariantMap& scenario, const QVariantMap& events, const QString& source) const;
-
-protected:
-	//! Make sure only one program runs at a time, because of global world pointer for Aseba C native functions
-	mutable std::mutex simulationMutex;
 };
 
 #endif // SIMULATOR_H
