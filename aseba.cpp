@@ -6,12 +6,12 @@
 
 Q_DECLARE_METATYPE(Aseba::Message*)
 
-std::vector<sint16> toAsebaVector(const QList<int>& values)
+std::vector<int16_t> toAsebaVector(const QList<int>& values)
 {
-	return std::vector<sint16>(values.begin(), values.end());
+	return std::vector<int16_t>(values.begin(), values.end());
 }
 
-QList<int> fromAsebaVector(const std::vector<sint16>& values)
+QList<int> fromAsebaVector(const std::vector<int16_t>& values)
 {
 	QList<int> data;
 	data.reserve(values.size());
@@ -182,7 +182,7 @@ AsebaNode::AsebaNode(AsebaClient* parent, unsigned nodeId, const Aseba::TargetDe
 }
 
 void AsebaNode::setVariable(QString name, QList<int> value) {
-	uint16 start = variablesMap[name.toStdWString()].first;
+	uint16_t start = variablesMap[name.toStdWString()].first;
 	Aseba::SetVariables::VariablesVector variablesVector(value.begin(), value.end());
 	Aseba::SetVariables message(nodeId, start, variablesVector);
 	parent()->send(message);
@@ -216,11 +216,10 @@ QString AsebaNode::setProgram(QVariantMap events, QString source) {
 		return QString::fromStdWString(error.message);
 	}
 
-	std::vector<Aseba::Message*> messages;
-	Aseba::sendBytecode(messages, nodeId, std::vector<uint16>(bytecode.begin(), bytecode.end()));
-	foreach (auto message, messages) {
+	std::vector<std::unique_ptr<Aseba::Message>> messages;
+	Aseba::sendBytecode(messages, nodeId, std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
+	for (auto& message: messages) {
 		parent()->send(*message);
-		delete message;
 	}
 
 	Aseba::Run run(nodeId);

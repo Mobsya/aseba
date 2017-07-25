@@ -19,7 +19,8 @@ Item {
 
 	Simulator {
 		id: simulator
-		onSimulationCompleted: console.log(positionLog + " " + sensorLog);
+		onSimulationCompleted: console.log(JSON.stringify(log));
+		onNotify: console.log("Thymio said: " + level + " " + description + " " + arguments)
 	}
 
 	onNodeChanged: {

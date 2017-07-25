@@ -25,7 +25,7 @@ private:
 class AsebaDescriptionsManager: public QObject, public Aseba::NodesManager {
 	Q_OBJECT
 signals:
-	void nodeProtocolVersionMismatch(unsigned nodeId, const std::wstring &nodeName, uint16 protocolVersion) Q_DECL_OVERRIDE;
+	void nodeProtocolVersionMismatch(unsigned nodeId, const std::wstring &nodeName, uint16_t protocolVersion) Q_DECL_OVERRIDE;
 	void nodeDescriptionReceived(unsigned nodeId) Q_DECL_OVERRIDE;
 	void nodeConnected(unsigned nodeId) Q_DECL_OVERRIDE;
 	void nodeDisconnected(unsigned nodeId) Q_DECL_OVERRIDE;

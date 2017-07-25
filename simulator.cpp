@@ -8,6 +8,9 @@
 #include <QVector2D>
 #include <QVector3D>
 #include <QColor>
+#include <QStandardPaths>
+#include <QFileInfo>
+#include <QDir>
 
 using namespace Aseba;
 using namespace Enki;
@@ -34,6 +37,55 @@ struct SimulatorNodesManager: NodesManager
 	}
 };
 
+//! An environment for this simulation
+struct QtSimulatorEnvironment: SimulatorEnvironment
+{
+	const Simulator* parent;
+	World* world;
+
+	QtSimulatorEnvironment(const Simulator* parent, World* world): parent(parent), world(world) {}
+
+	virtual void notify(const EnvironmentNotificationType type, const std::string& description, const strings& arguments) override
+	{
+		QString level;
+		switch (type)
+		{
+			case EnvironmentNotificationType::DISPLAY_INFO: level = "display";
+			case EnvironmentNotificationType::LOG_INFO: level = "info";
+			case EnvironmentNotificationType::LOG_WARNING: level = "warning";
+			case EnvironmentNotificationType::LOG_ERROR: level = "error";
+			case EnvironmentNotificationType::FATAL_ERROR: level = "error";
+		}
+		QStringList qArguments;
+		transform(arguments.begin(), arguments.end(), back_inserter(qArguments), [] (const string& stdString) { return QString::fromStdString(stdString); });
+		emit parent->notify(level, QString::fromStdString(description), qArguments);
+	}
+
+	virtual std::string getSDFilePath(const std::string& robotName, unsigned fileNumber) const override
+	{
+		auto fileName(QString("%1/%2/U%3.DAT")
+			.arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation))
+			.arg(QString::fromStdString(robotName))
+			.arg(fileNumber)
+		);
+		QDir().mkpath(QFileInfo(fileName).absolutePath());
+		return fileName.toStdString();
+	}
+
+	virtual World* getWorld() const override
+	{
+		return world;
+	}
+};
+
+struct SimulatorEnvironmentLifeSpanManager
+{
+	~SimulatorEnvironmentLifeSpanManager()
+	{
+		simulatorEnvironment.reset();
+	}
+};
+
 template<typename T>
 std::tuple<QString, T> getValue(const QVariantMap& v, const QString& name, const QString& context = "Scenario")
 {
@@ -50,8 +102,10 @@ std::remove_reference_t<T> const& as_const(T&&t) { return t; }
 
 QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& events, const QString& source) const
 {
+	std::lock_guard<std::mutex> guard(simulationMutex);
+
 	// Parameters
-	const double dt(0.2);
+	const double dt(0.1);
 
 	// validate events
 	unsigned i = 0;
@@ -74,7 +128,10 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 	tie(error, worldSize) = getValue<QVector2D>(scenario, "worldSize");
 	if (!error.isEmpty()) return error;
 	World world(worldSize.x(), worldSize.y());
-	Enki::getWorld = [&]() { return &world; };
+	// Make sure that the global Enki pointer to the world is reset when this function is exited
+	// this is not clean and is a work-around through the non-reentrant World lookup interface
+	SimulatorEnvironmentLifeSpanManager simulatorEnvironmentLifeSpanManager;
+	simulatorEnvironment.reset(new QtSimulatorEnvironment(this, &world));
 
 	// walls
 	QVariantList walls;
@@ -123,7 +180,8 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 	tie(error, initialAngle) = getValue<double>(thymioDescription, "angle", "Thymio");
 	if (!error.isEmpty()) return error;
 	// set to Thymio
-	DirectAsebaThymio2* thymio(new DirectAsebaThymio2());
+	DirectAsebaThymio2* thymio(new DirectAsebaThymio2("thymio"));
+	thymio->logThymioNativeCalls = true;
 	thymio->pos = { initialPosition.x(), initialPosition.y() };
 	thymio->angle = initialAngle;
 	world.addObject(thymio);
@@ -185,36 +243,55 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 	}
 
 	// Fill the bytecode messages
-	vector<Message*> setBytecodeMessages;
-	sendBytecode(setBytecodeMessages, nodeId, vector<uint16>(bytecode.begin(), bytecode.end()));
-	for_each(setBytecodeMessages.begin(), setBytecodeMessages.end(), [=](Message* message){ thymio->inQueue.emplace(message); });
+	vector<unique_ptr<Message>> setBytecodeMessages;
+	sendBytecode(setBytecodeMessages, nodeId, vector<uint16_t>(bytecode.begin(), bytecode.end()));
+	for_each(setBytecodeMessages.begin(), setBytecodeMessages.end(), [=](unique_ptr<Message>& message) { thymio->inQueue.emplace(message.release()); });
 
 	// Run the code and log needed information
-	QVariantList positionLog;
-	QVariantList sensorLog;
+	QVariantList log;
 	thymio->inQueue.emplace(new Run(nodeId));
+	double currentTime(0);
 	for (uint64_t i = 0; i < uint64_t(duration/dt); ++i)
 	{
 		// do step
 		step();
+		// log time
+		QVariantMap logEntry;
+		logEntry["time"] = currentTime;
 		// log position
 		QVariantList position;
 		position.append(thymio->pos.x);
 		position.append(thymio->pos.y);
 		position.append(thymio->angle);
-		positionLog.append(position);
+		logEntry["position"] = position;
 		// log sensors
-		QVariantList sensor;
-		sensor.append(thymio->infraredSensor0.getValue());
-		sensor.append(thymio->infraredSensor1.getValue());
-		sensor.append(thymio->infraredSensor2.getValue());
-		sensor.append(thymio->infraredSensor3.getValue());
-		sensor.append(thymio->infraredSensor4.getValue());
-		sensor.append(thymio->groundSensor0.getValue());
-		sensor.append(thymio->groundSensor1.getValue());
-		sensorLog.append(sensor);
+		QVariantList sensors;
+		sensors.append(thymio->infraredSensor0.getValue());
+		sensors.append(thymio->infraredSensor1.getValue());
+		sensors.append(thymio->infraredSensor2.getValue());
+		sensors.append(thymio->infraredSensor3.getValue());
+		sensors.append(thymio->infraredSensor4.getValue());
+		sensors.append(thymio->groundSensor0.getValue());
+		sensors.append(thymio->groundSensor1.getValue());
+		logEntry["sensors"] = sensors;
+		qDebug() << thymio->thymioNativeCallLog.size();
+		// log native calls
+		QVariantList nativeCalls;
+		for (const auto& nativeCallEntry: thymio->thymioNativeCallLog)
+		{
+			QVariantMap nativeCall;
+			nativeCall["id"] = nativeCallEntry.first;
+			QVariantList qValues;
+			transform(nativeCallEntry.second.begin(), nativeCallEntry.second.end(), back_inserter(qValues), [] (int16_t value) { return QVariant(value); } );
+			nativeCall["values"] = qValues;
+			nativeCalls.append(nativeCall);
+		}
+		thymio->thymioNativeCallLog.clear();
+		logEntry["nativeCalls"] = nativeCalls;
+		log.append(logEntry);
+		currentTime += dt;
 	}
 
-	emit simulationCompleted(positionLog, sensorLog);
+	emit simulationCompleted(log);
 	return "";
 }
