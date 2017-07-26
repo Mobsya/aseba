@@ -65,7 +65,7 @@ Item {
 		}
 		var simError = simulator.runProgram(scenario, events, source, function() {
 			if (this.currentTime === 0) {
-				this.simulatedThymio.executeLocalEvent(8);
+				this.simulatedThymio.tap();
 			}
 			console.log(this.currentTime + ": " + this.simulatedThymio.position.x + " : " + this.simulatedThymio.horizontalSensors[2]);
 		});

@@ -51,7 +51,7 @@ public:
 	QVariantList groundSensors() const;
 	QVariantList nativeCalls() const;
 
-	Q_INVOKABLE void top();
+	Q_INVOKABLE void tap();
 	Q_INVOKABLE void clap();
 	Q_INVOKABLE void pressBackwardButton();
 	Q_INVOKABLE void releaseBackwardButton();

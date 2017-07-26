@@ -159,7 +159,7 @@ QVariantList ThymioRobotInterface::nativeCalls() const
 	return nativeCalls;
 }
 
-void ThymioRobotInterface::top()
+void ThymioRobotInterface::tap()
 {
 	thymio.execLocalEvent(8);
 }
