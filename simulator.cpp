@@ -432,10 +432,15 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 		{
 			QJSValue result(callback.callWithInstance(callbackContext));
 			if (result.isError())
-				qWarning()
-					<< "Callback to simulator returned an error at"
-					<< QString("%1:%2").arg(result.property("fileName").toString()).arg(result.property("lineNumber").toInt())
-					<< result.toString();
+			{
+				const QString errorString =
+					QString("Callback to simulator returned an error at %1:%2 %3")
+					.arg(result.property("fileName").toString())
+					.arg(result.property("lineNumber").toInt())
+					.arg(result.toString());
+				qWarning() << errorString;
+				return errorString;
+			}
 		}
 
 		// log time
