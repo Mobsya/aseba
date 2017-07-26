@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QJSEngine>
 #include <QQmlEngine>
+#include <QImage>
 
 using namespace Aseba;
 using namespace Enki;
@@ -287,7 +288,32 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 	QVector2D worldSize;
 	tie(error, worldSize) = getValue<QVector2D>(scenario, "worldSize");
 	if (!error.isEmpty()) return error;
-	World world(worldSize.x(), worldSize.y());
+	World::GroundTexture groundTexture;
+	if (scenario.contains("groundTexture"))
+	{
+		QString groundTextureFileName;
+		tie(error, groundTextureFileName) = getValue<QString>(scenario, "groundTexture");
+		QImage image(groundTextureFileName);
+		if (!image.isNull())
+		{
+			// flip vertically as y-coordinate is inverted in an image
+			image = image.mirrored();
+			// convert to a specific format and copy the underlying data to Enki
+			image = image.convertToFormat(QImage::Format_ARGB32);
+			groundTexture.width = image.width();
+			groundTexture.height = image.height();
+			const uint32_t* imageData(reinterpret_cast<const uint32_t*>(image.constBits()));
+			std::copy(imageData, imageData+image.width()*image.height(), std::back_inserter(groundTexture.data));
+			// Note: this works in little endian, in big endian data should be swapped
+		}
+		else
+		{
+			return QString("Could not load ground texture file %1").arg(groundTextureFileName);
+		}
+	}
+	Enki::Color worldColor(Enki::Color::gray);
+	World world(worldSize.x(), worldSize.y(), worldColor, groundTexture);
+
 	// Make sure that the global Enki pointer to the world is reset when this function is exited
 	// this is not clean and is a work-around through the non-reentrant World lookup interface
 	SimulatorEnvironmentLifeSpanManager simulatorEnvironmentLifeSpanManager;
@@ -314,9 +340,12 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 		QVector3D size;
 		tie(error, size) = getValue<QVector3D>(description, "size", context);
 		if (!error.isEmpty()) return error;
-		QColor color;
-		tie(error, color) = getValue<QColor>(description, "color", context);
-		if (!error.isEmpty()) return error;
+		QColor color(127, 127, 127);
+		if (description.contains("color"))
+		{
+			tie(error, color) = getValue<QColor>(description, "color", context);
+			if (!error.isEmpty()) return error;
+		}
 
 		// set to object
 		auto wallObject(new Enki::PhysicalObject());
@@ -400,9 +429,7 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 
 	if (!compilationResult)
 	{
-		qWarning() << "compilation error: " << QString::fromStdWString(compilationError.toWString());
-		qWarning() << source;
-		return QString::fromStdWString(compilationError.message);
+		return QString("Compilation error: %1").arg(QString::fromStdWString(compilationError.message));
 	}
 
 	// Fill the bytecode messages
@@ -433,13 +460,10 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 			QJSValue result(callback.callWithInstance(callbackContext));
 			if (result.isError())
 			{
-				const QString errorString =
-					QString("Callback to simulator returned an error at %1:%2 %3")
+				return QString("Callback to simulator returned an error at %1:%2 %3")
 					.arg(result.property("fileName").toString())
 					.arg(result.property("lineNumber").toInt())
 					.arg(result.toString());
-				qWarning() << errorString;
-				return errorString;
 			}
 		}
 
