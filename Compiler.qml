@@ -177,7 +177,7 @@ Item {
 						// collect additional code
 						collectAdditionalCode(event, compiled);
 						// check the category
-						var category = event.category;
+						var category = event.definition.category;
 						if (category !== "") {
 							if (eventCategories[category] === undefined) {
 								eventCategories[category] = true;
@@ -196,7 +196,7 @@ Item {
 						// collect additional code
 						collectAdditionalCode(action, compiled);
 						// check the category
-						var category = action.category;
+						var category = action.definition.category;
 						if (category !== "") {
 							if (actionCategories[category] === undefined) {
 								actionCategories[category] = true;
