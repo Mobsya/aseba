@@ -272,6 +272,17 @@ Item {
 				visitThread(startState);
 			}
 
+			transitionDatas.forEach(function(transition) {
+				if (transition.events.length === 0) {
+					transition.transition.setError(true);
+					throw qsTr("Missing event");
+				}
+				if (transition.actions.length === 0) {
+					transition.transition.setError(true);
+					throw qsTr("Missing action");
+				}
+			});
+
 			// AESL custom events
 			var events = {
 				// "transition" AESL event, triggered when a transition is triggered
@@ -344,14 +355,6 @@ Item {
 
 				// this procedure gets called when the state is entered from any transition
 				script += "sub state" + state.index + "Enter" + "\n";
-				script = state.transitions.reduce(function (script, transition) {
-					if (transition.events.length === 0) {
-						// unconditional transitions exit the state immediately
-						script += "callsub transition" + transition.index + "Trigger" + "\n";
-						script += "return" + "\n";
-					}
-					return script;
-				}, script);
 				// set the thread's current state
 				script += "threadStates[currentThread] = " + state.index + "\n";
 				// reset the thread's current state's age
