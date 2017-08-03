@@ -164,6 +164,7 @@ Item {
 
 					transition.setError(false);
 
+					var eventCategories = {};
 					transition.events.forEach(function (event) {
 						var compiled = event.compile();
 						if (compiled.event && transitionData.events.indexOf(compiled.event) === -1) {
@@ -175,14 +176,35 @@ Item {
 						transitionData.condition += " and (" + compiled.condition + ")";
 						// collect additional code
 						collectAdditionalCode(event, compiled);
+						// check the category
+						var category = event.category;
+						if (category !== "") {
+							if (eventCategories[category] === undefined) {
+								eventCategories[category] = true;
+							} else {
+								transition.setError(true);
+								throw qsTr("Duplicate events");
+							}
+						}
 					});
 
+					var actionCategories = {};
 					transition.actions.forEach(function (action) {
 						var compiled = action.compile();
 						// for each action, add the AESL statements
 						transitionData.actions += compiled.action + "\n";
 						// collect additional code
 						collectAdditionalCode(action, compiled);
+						// check the category
+						var category = action.category;
+						if (category !== "") {
+							if (actionCategories[category] === undefined) {
+								actionCategories[category] = true;
+							} else {
+								transition.setError(true);
+								throw qsTr("Duplicate actions");
+							}
+						}
 					});
 
 					transitionData.next = visitState(thread, transition.next);
