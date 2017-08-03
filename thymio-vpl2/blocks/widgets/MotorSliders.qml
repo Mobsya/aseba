@@ -9,7 +9,7 @@ Item {
 	property real animationValue: 0
 
 	HDPIImage {
-		source: miniature ? "images/motorBackgroundMini.svg" : "images/motorBackgroundEdit.svg"
+		source: miniature ? "MotorSlidersMini.svg" : "MotorSlidersEdit.svg"
 		width: 256 // working around Qt bug with SVG and HiDPI
 		height: 256 // working around Qt bug with SVG and HiDPI
 	}
@@ -79,7 +79,7 @@ Item {
 		y: wheelsDiff === 0 ? factorYStraight * animationValue : factorYTurn * Math.sin(-rotation * Math.PI / 180)
 		Image {
 			id: miniThymio
-			source: "images/thymioBody.svg"
+			source: "ThymioBody.svg"
 			x: 0
 			y: -55
 		}

@@ -52,8 +52,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "frontLeft"
 				onClicked: parent.state = "frontLeft"
-				imageOn: "images/MotorSimpleActionBlock/edit-frontLeft-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-frontLeft-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-frontLeft-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-frontLeft-off.svg"
 			}
 
 			PushButton {
@@ -63,8 +63,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "front"
 				onClicked: parent.state = "front"
-				imageOn: "images/MotorSimpleActionBlock/edit-front-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-front-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-front-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-front-off.svg"
 			}
 
 			PushButton {
@@ -74,8 +74,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "frontRight"
 				onClicked: parent.state = "frontRight"
-				imageOn: "images/MotorSimpleActionBlock/edit-frontRight-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-frontRight-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-frontRight-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-frontRight-off.svg"
 			}
 
 			PushButton {
@@ -85,8 +85,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "right"
 				onClicked: parent.state = "right"
-				imageOn: "images/MotorSimpleActionBlock/edit-right-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-right-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-right-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-right-off.svg"
 			}
 
 			PushButton {
@@ -96,8 +96,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "backRight"
 				onClicked: parent.state = "backRight"
-				imageOn: "images/MotorSimpleActionBlock/edit-backRight-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-backRight-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-backRight-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-backRight-off.svg"
 			}
 
 			PushButton {
@@ -107,8 +107,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "back"
 				onClicked: parent.state = "back"
-				imageOn: "images/MotorSimpleActionBlock/edit-back-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-back-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-back-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-back-off.svg"
 			}
 
 			PushButton {
@@ -118,8 +118,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "backLeft"
 				onClicked: parent.state = "backLeft"
-				imageOn: "images/MotorSimpleActionBlock/edit-backLeft-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-backLeft-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-backLeft-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-backLeft-off.svg"
 			}
 
 			PushButton {
@@ -129,8 +129,8 @@ BlockDefinition {
 				height: 51.6
 				pushed: parent.state === "left"
 				onClicked: parent.state = "left"
-				imageOn: "images/MotorSimpleActionBlock/edit-left-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-left-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-left-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-left-off.svg"
 			}
 
 			PushButton {
@@ -140,8 +140,8 @@ BlockDefinition {
 				height: 91.5
 				pushed: parent.state === "stop"
 				onClicked: parent.state = "stop"
-				imageOn: "images/MotorSimpleActionBlock/edit-stop-on.svg"
-				imageOff: "images/MotorSimpleActionBlock/edit-stop-off.svg"
+				imageOn: "MotorSimpleActionBlock/edit-stop-on.svg"
+				imageOff: "MotorSimpleActionBlock/edit-stop-off.svg"
 			}
 		}
 	}
@@ -153,16 +153,16 @@ BlockDefinition {
 			height: 256
 			source: {
 				switch(params) {
-				case "frontLeft": return "images/MotorSimpleActionBlock/mini-frontLeft.svg";
-				case "front": return "images/MotorSimpleActionBlock/mini-front.svg";
-				case "frontRight": return "images/MotorSimpleActionBlock/mini-frontRight.svg";
-				case "right": return "images/MotorSimpleActionBlock/mini-right.svg";
-				case "backRight": return "images/MotorSimpleActionBlock/mini-backRight.svg";
-				case "back": return "images/MotorSimpleActionBlock/mini-back.svg";
-				case "backLeft": return "images/MotorSimpleActionBlock/mini-backLeft.svg";
-				case "left": return "images/MotorSimpleActionBlock/mini-left.svg";
-				case "stop": return "images/MotorSimpleActionBlock/mini-stop.svg";
-				default: return "images/MotorSimpleActionBlock/mini.svg";
+				case "frontLeft": return "MotorSimpleActionBlock/mini-frontLeft.svg";
+				case "front": return "MotorSimpleActionBlock/mini-front.svg";
+				case "frontRight": return "MotorSimpleActionBlock/mini-frontRight.svg";
+				case "right": return "MotorSimpleActionBlock/mini-right.svg";
+				case "backRight": return "MotorSimpleActionBlock/mini-backRight.svg";
+				case "back": return "MotorSimpleActionBlock/mini-back.svg";
+				case "backLeft": return "MotorSimpleActionBlock/mini-backLeft.svg";
+				case "left": return "MotorSimpleActionBlock/mini-left.svg";
+				case "stop": return "MotorSimpleActionBlock/mini-stop.svg";
+				default: return "MotorSimpleActionBlock/mini.svg";
 				}
 			}
 		}

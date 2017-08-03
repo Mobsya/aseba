@@ -104,38 +104,37 @@
         <file>thymio-vpl2/blocks/MusicScoreBlock.qml</file>
         <file>thymio-vpl2/blocks/NopActionBlock.qml</file>
 		<file>thymio-vpl2/blocks/ImageStateActionBlock.qml</file>
-        <file>thymio-vpl2/blocks/images/nop.svg</file>
-        <file>thymio-vpl2/blocks/images/stop.svg</file>
-        <file>thymio-vpl2/blocks/images/clap.svg</file>
-        <file>thymio-vpl2/blocks/images/tap.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-back-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-back-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-backLeft-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-backLeft-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-backRight-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-backRight-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-front-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-front-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-frontLeft-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-frontLeft-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-frontRight-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-frontRight-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-left-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-left-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-right-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-right-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-stop-off.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/edit-stop-on.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-back.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-backLeft.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-backRight.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-front.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-frontLeft.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-frontRight.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-left.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-right.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini-stop.svg</file>
-        <file>thymio-vpl2/blocks/images/MotorSimpleActionBlock/mini.svg</file>
+        <file>thymio-vpl2/blocks/NopActionBlock.svg</file>
+        <file>thymio-vpl2/blocks/ClapEventBlock.svg</file>
+        <file>thymio-vpl2/blocks/TapEventBlock.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-back-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-back-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-backLeft-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-backLeft-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-backRight-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-backRight-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-front-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-front-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-frontLeft-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-frontLeft-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-frontRight-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-frontRight-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-left-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-left-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-right-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-right-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-stop-off.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/edit-stop-on.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-back.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-backLeft.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-backRight.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-front.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-frontLeft.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-frontRight.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-left.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-right.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini-stop.svg</file>
+        <file>thymio-vpl2/blocks/MotorSimpleActionBlock/mini.svg</file>
         <file>thymio-vpl2/blocks/widgets/MotorSlider.qml</file>
         <file>thymio-vpl2/blocks/widgets/ThymioBody.qml</file>
         <file>thymio-vpl2/blocks/widgets/InfraredLed.qml</file>
@@ -150,20 +149,20 @@
         <file>thymio-vpl2/blocks/widgets/PushButton.qml</file>
         <file>thymio-vpl2/blocks/widgets/MotorSliders.qml</file>
         <file>thymio-vpl2/blocks/widgets/MusicScoreEditor.qml</file>
-        <file>thymio-vpl2/blocks/widgets/images/triangularButtonOff.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/triangularButtonOn.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/circularButtonOff.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/circularButtonOn.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/thymioBody.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/motorBackgroundEdit.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/motorBackgroundMini.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/thymioFront.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/timerLongFill.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/timerLongStroke.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/timerMiddleFill.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/timerMiddleStroke.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/timerShortFill.svg</file>
-        <file>thymio-vpl2/blocks/widgets/images/timerShortStroke.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TriangularButtonOff.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TriangularButtonOn.svg</file>
+        <file>thymio-vpl2/blocks/widgets/CircularButtonOff.svg</file>
+        <file>thymio-vpl2/blocks/widgets/CircularButtonOn.svg</file>
+        <file>thymio-vpl2/blocks/widgets/ThymioBody.svg</file>
+        <file>thymio-vpl2/blocks/widgets/MotorSlidersEdit.svg</file>
+        <file>thymio-vpl2/blocks/widgets/MotorSlidersMini.svg</file>
+        <file>thymio-vpl2/blocks/widgets/ThymioFront.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TimerGlass/longFill.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TimerGlass/longStroke.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TimerGlass/middleFill.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TimerGlass/middleStroke.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TimerGlass/shortFill.svg</file>
+        <file>thymio-vpl2/blocks/widgets/TimerGlass/shortStroke.svg</file>
         <file>thymio-vpl2/translations/thymio-vpl2_fr.qm</file>
         <file>thymio-vpl2/translations/thymio-vpl2_de.qm</file>
         <file>thymio-vpl2/images/logoEPFL.svg</file>

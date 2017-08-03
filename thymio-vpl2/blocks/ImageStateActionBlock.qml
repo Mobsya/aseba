@@ -6,7 +6,7 @@ BlockDefinition {
 	type: "action"
 	category: "state"
 
-	defaultParams: { "image": "images/nop.svg" }
+	defaultParams: { "image": "NopActionBlock.svg" }
 
 	editor: Component {
 		Item {

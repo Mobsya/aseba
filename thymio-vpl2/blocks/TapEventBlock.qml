@@ -17,7 +17,7 @@ BlockDefinition {
 			property var params: defaultParams
 
 			Image {
-				source: "images/tap.svg"
+				source: "TapEventBlock.svg"
 				width: 256 // working around Qt bug with SVG and HiDPI
 				height: 256 // working around Qt bug with SVG and HiDPI
 				anchors.centerIn: parent

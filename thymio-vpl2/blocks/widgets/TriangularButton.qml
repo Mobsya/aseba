@@ -3,7 +3,7 @@ import "../.."
 
 HDPIImage {
 	state: "DISABLED"
-	source: state === "DISABLED" ? "images/triangularButtonOff.svg" : "images/triangularButtonOn.svg"
+	source: state === "DISABLED" ? "TriangularButtonOff.svg" : "TriangularButtonOn.svg"
 	width: 58 // working around Qt bug with SVG and HiDPI
 	height: 58 // working around Qt bug with SVG and HiDPI
 

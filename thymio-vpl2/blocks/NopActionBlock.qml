@@ -11,7 +11,7 @@ BlockDefinition {
 		HDPIImage {
 			property var params: defaultParams
 
-			source: "images/nop.svg"
+			source: "NopActionBlock.svg"
 			width: 256 // working around Qt bug with SVG and HiDPI
 			height: 256 // working around Qt bug with SVG and HiDPI
 
