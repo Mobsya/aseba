@@ -62,16 +62,27 @@ BlockDefinition {
 	}
 
 	function compile(params) {
+		var condition = params.reduce(function(source, param, index) {
+			if (param === "DISABLED") {
+				return source;
+			}
+
+			var names = ["forward", "left", "backward", "right", "center"];
+			var condition = "button." + names[index] + " == 1";
+
+			if (source === "") {
+				return condition;
+			}
+			return source + " and " + condition;
+		}, "");
+
+		if (condition === "") {
+			throw qsTr("No button selected");
+		}
+
 		return {
 			event: "buttons",
-			condition: params.reduce(function(source, param, index) {
-				var names = ["forward", "left", "backward", "right", "center"];
-				if (param === "DISABLED") {
-					return source;
-				} else {
-					return source + " and button." + names[index] + " == 1";
-				}
-			}, "0 == 0"),
+			condition: condition,
 		};
 	}
 }

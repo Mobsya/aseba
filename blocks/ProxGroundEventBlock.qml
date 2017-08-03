@@ -97,20 +97,31 @@ BlockDefinition {
 	}
 
 	function compile(params) {
+		var condition = params.reduce(function(source, param, index) {
+			if (param === "DISABLED") {
+				return source;
+			}
+
+			var condition = "prox.ground.delta[" + index + "] ";
+			if (param === "CLOSE") {
+				condition += "> 450";
+			} else {
+				condition += "< 400";
+			}
+
+			if (source === "") {
+				return condition;
+			}
+			return source + " and " + condition;
+		}, "");
+
+		if (condition === "") {
+			throw qsTr("No sensor selected");
+		}
+
 		return {
 			event: "prox",
-			condition: params.reduce(function(source, param, index) {
-				if (param === "DISABLED") {
-					return source;
-				}
-				source += " and prox.ground.delta[" + index + "] "
-				if (param === "CLOSE") {
-					source += "> 450";
-				} else {
-					source += "< 400";
-				}
-				return source;
-			}, "0 == 0"),
+			condition: condition,
 		};
 	}
 }

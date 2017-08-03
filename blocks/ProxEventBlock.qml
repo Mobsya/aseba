@@ -92,20 +92,31 @@ BlockDefinition {
 	}
 
 	function compile(params) {
+		var condition = params.reduce(function(source, param, index) {
+			if (param === "DISABLED") {
+				return source;
+			}
+
+			var condition = "prox.horizontal[" + index + "] ";
+			if (param === "CLOSE") {
+				condition += "> 2000";
+			} else {
+				condition += "< 1000";
+			}
+
+			if (source === "") {
+				return condition;
+			}
+			return source + " and " + condition;
+		}, "");
+
+		if (condition === "") {
+			throw qsTr("No sensor selected");
+		}
+
 		return {
 			event: "prox",
-			condition: params.reduce(function(source, param, index) {
-				if (param === "DISABLED") {
-					return source;
-				}
-				source += " and prox.horizontal[" + index + "] "
-				if (param === "CLOSE") {
-					source += "> 2000";
-				} else {
-					source += "< 1000";
-				}
-				return source;
-			}, "0 == 0"),
+			condition: condition,
 		};
 	}
 }
