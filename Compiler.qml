@@ -40,6 +40,8 @@ Item {
 			actions: Action[]
 			// destination state
 			next: State
+			// called during compilation to indicate that the transition has an error
+			setError(error: boolean): void
 			// called during program execution when the transition is taken
 			trigger(): void
 		}
@@ -159,6 +161,8 @@ Item {
 					};
 					transitionDatas.push(transitionData);
 					transition.compilationData = transitionData;
+
+					transition.setError(false);
 
 					transition.events.forEach(function (event) {
 						var compiled = event.compile();

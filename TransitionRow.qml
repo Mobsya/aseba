@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 
 Rectangle {
 	id: row
+	property bool error: false
 	property int eventCountMax
 	property int actionCountMax
 
@@ -17,6 +18,9 @@ Rectangle {
 		next: nextState,
 		trigger: function() {
 			highlightTimer.highlight();
+		},
+		setError: function(error) {
+			row.error = error;
 		}
 	})
 
@@ -31,8 +35,8 @@ Rectangle {
 
 	color: Material.theme === Material.Dark ? "#301446" : "#eaeaea"
 	radius: height
-	border.color: "#F5E800"
-	border.width: highlightTimer.highlighted ? 10 : 0
+	border.color: error ? "#F52300" : "#F5E800"
+	border.width: error || highlightTimer.highlighted ? 10 : 0
 
 	HighlightTimer {
 		id: highlightTimer
