@@ -115,7 +115,13 @@ DropArea {
 	}
 
 	function compile() {
-		return definition.compile(params);
+		try {
+			isError = false;
+			return definition.compile(params);
+		} catch (error) {
+			isError = true;
+			throw error;
+		}
 	}
 
 	function bringBlockToFront() {
