@@ -151,6 +151,7 @@ Item {
 						destroy();
 						astTransitions.splice(index, 1);
 					}
+					rows.positionViewAtIndex(index, ListView.Contain);
 					scene.astChanged();
 				}
 			}
