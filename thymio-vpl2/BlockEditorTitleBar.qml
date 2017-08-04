@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 
 ToolBar {
+	property alias okEnabled: okButton.enabled
 
 	signal cancel()
 	signal accept()
@@ -50,11 +51,13 @@ ToolBar {
 			width: 16
 		}
 		ToolButton {
+			id: okButton
 			contentItem: Image {
 				fillMode: Image.Pad
 				horizontalAlignment: Image.AlignHCenter
 				verticalAlignment: Image.AlignVCenter
 				source: Material.theme === Material.Dark ? "qrc:/thymio-vpl2/icons/ic_done_white_24px.svg" : "qrc:/thymio-vpl2/icons/ic_done_black_24px.svg"
+				opacity: enabled ? 1.0 : 0.5
 			}
 			onClicked: accept()
 			Shortcut {

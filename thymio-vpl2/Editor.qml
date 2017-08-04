@@ -13,6 +13,7 @@ Item {
 	// whether VPL editor is minimized on top of background image
 	property bool minimized: false
 	property alias blockEditorVisible: blockEditor.visible
+	property alias blockEditorDefinition: blockEditor.definition
 	property BlockEditor blockEditor: blockEditor
 	property alias mainContainerScale: mainContainer.scale
 	property alias scene: sceneLoader.item

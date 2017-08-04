@@ -40,6 +40,7 @@ ApplicationWindow {
 		visible: vplEditor.blockEditorVisible
 		onCancel: vplEditor.blockEditor.close()
 		onAccept: vplEditor.blockEditor.accept()
+		okEnabled: vplEditor.blockEditorDefinition
 	}
 
 	Editor {
