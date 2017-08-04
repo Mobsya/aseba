@@ -84,4 +84,50 @@ Item {
 		sourceComponent: definition !== null ? definition.editor : null
 		onLoaded: item.params = params
 	}
+
+	// animation showing blocks
+	Canvas {
+		scale: Math.max(editorItemLoader.scaledWidth / 256, 0.1)
+		width: 64
+		height: 128
+		property double xShift: 48
+
+		anchors.verticalCenter: parent.verticalCenter
+		anchors.left: typeRestriction === "event" ? parent.left : undefined
+		anchors.leftMargin: (scale * 32 - 32) + (scale * xShift)
+		anchors.right: typeRestriction === "action" ? parent.right : undefined
+		anchors.rightMargin: (scale * 32 - 32) + (scale * xShift)
+		rotation: typeRestriction === "event" ? 0 : 180
+
+		visible: definition === null
+		onPaint: {
+			// get context to draw with
+			var ctx = getContext("2d");
+			// setup the style
+			ctx.fillStyle = "#80ffffff";
+			// begin a new path to draw
+			ctx.beginPath();
+			// top-left start point
+			ctx.moveTo(0, 64);
+			ctx.lineTo(64, 0);
+			ctx.lineTo(64, 128);
+			ctx.lineTo(0, 64);
+			// draw
+			ctx.fill();
+		}
+
+		SequentialAnimation on xShift {
+			loops: Animation.Infinite
+			NumberAnimation {
+				to: 8
+				duration: 1000
+				easing.type: Easing.InSine
+			}
+			NumberAnimation {
+				to: 48
+				duration: 1000
+				easing.type: Easing.OutSine
+			}
+		}
+	}
 }
