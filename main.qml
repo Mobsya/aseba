@@ -314,10 +314,12 @@ ApplicationWindow {
 		Flickable {
 			anchors.fill: parent
 			clip: true
-			Text {
+			TextEdit {
+				id: aeslSourceText
 				text: prettyPrintGeneratedAesl(vplEditor.compiler.output.script)
 				color: Material.primaryTextColor
 				font.family: "Monospace"
+				readOnly: true
 				// TODO: move this somewhere
 				function prettyPrintGeneratedAesl(source) {
 					var level = 0;
@@ -342,9 +344,17 @@ ApplicationWindow {
 					}
 					return output;
 				}
+				MouseArea {
+					anchors.fill: parent
+					onClicked: {
+						parent.selectAll()
+						parent.copy()
+						parent.deselect()
+					}
+				}
 			}
-			contentWidth: contentItem.childrenRect.width;
-			contentHeight: contentItem.childrenRect.height
+			contentWidth: aeslSourceText.paintedWidth
+			contentHeight: aeslSourceText.paintedHeight
 			ScrollBar.vertical: ScrollBar { }
 			ScrollBar.horizontal: ScrollBar { }
 		}
