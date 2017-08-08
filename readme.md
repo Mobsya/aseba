@@ -7,7 +7,7 @@ This program is open-source under [LGPL-3.0](LICENSE.txt).
 ## Understanding the source tree
 
 This program is built using [Qt5/QML](https://www.qt.io/), on top of a C++14 core.
-Its dependencies, namely the [Aseba](https://github.com/aseba-community/aseba/) framework and the [Dashel](https://github.com/aseba-community/dashel) communication libraries, are available as [git submodules](https://git-scm.com/docs/git-submodule).
+Its dependencies, namely the [Aseba](https://github.com/aseba-community/aseba/) framework and the [Dashel](https://github.com/aseba-community/dashel) communication libraries, and the [Enki](https://github.com/enki-community/enki/) robot simulator, are available as [git submodules](https://git-scm.com/docs/git-submodule).
 
 ## Compilation instructions
 
