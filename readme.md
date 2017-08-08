@@ -1,6 +1,6 @@
 # Thymio VPL Mobile
 
-A phone and tablet Visual Programming Environment for the Thymio II robot, by [Stéphane Magnenat](http://stephane.magnenat.net), Martin Voelkle and Maria Beltrán and contributors.
+A phone and tablet Visual Programming Environment for the Thymio II robot, by [Stéphane Magnenat](http://stephane.magnenat.net), [Martin Voelkle](https://sampla.ch/) and Maria Beltrán and contributors.
 See the [authors file](AUTHORS.md) for a full list of contributions.
 This program is open-source under [LGPL-3.0](LICENSE.txt).
 
