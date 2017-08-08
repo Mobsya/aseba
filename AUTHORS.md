@@ -16,6 +16,14 @@ During early testing, this project received feedback from:
 * [Dr. Michael Bonani](http://mobsya.org)<sup>[3](#mobsya)</sup>
 * [Christophe Barraud](http://mobsya.org)<sup>[3](#mobsya)</sup>
 
+## Dependencies
+
+Thymio VPL mobile builds on the following libraries:
+* [Aseba](https://github.com/aseba-community/aseba)
+* [Enki](https://github.com/enki-community/enki/)
+* [Dashel](http://aseba-community.github.io/dashel/)
+* [Qt 5](http://doc.qt.io/qt-5/)
+
 ## Institutions
 
 <a name="mobots">1</a>:  [Mobots group](http://mobots.epfl.ch/), Laboratoire de Systèmes Robotiques, [EPFL](http://www.epfl.ch/).
