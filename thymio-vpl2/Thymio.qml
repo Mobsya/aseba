@@ -3,11 +3,6 @@ import Aseba 1.0
 import Simulator 1.0
 
 Item {
-	property var variables: ({})
-	property var events: ({})
-	property string source: ""
-	property string error: ""
-
 	property var node: {
 		for (var i = 0; i < aseba.nodes.length; ++i) {
 			var node = aseba.nodes[i];
@@ -17,6 +12,13 @@ Item {
 		}
 	}
 
+	property var variables: ({})
+	property var program: ({
+		"events": {},
+		"source": "",
+	})
+	property string error: ""
+
 	Simulator {
 		id: simulator
 		onSimulationCompleted: console.log(JSON.stringify(log));
@@ -24,12 +26,13 @@ Item {
 	}
 
 	onNodeChanged: {
-		setVariables();
-		setProgram();
+		if (node) {
+			setVariables();
+			setProgram();
+		}
 	}
 	onVariablesChanged: setVariables()
-	onEventsChanged: setProgram()
-	onSourceChanged: setProgram()
+	onProgramChanged: setProgram()
 
 	function setVariables() {
 		if (node) {
