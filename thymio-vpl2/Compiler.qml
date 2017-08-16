@@ -105,12 +105,12 @@ Item {
 		}
 
 		function compile(startStates) {
-			function filledArray(length, value) {
-				var array = new Array(length);
-				for (var i = 0; i < length; ++i) {
-					array[i] = value;
+			function bitMask(index) {
+				var mask = "0b1";
+				for (var i = 0; i < index; ++i) {
+					mask += "0";
 				}
-				return array;
+				return mask;
 			}
 
 			// a unique token for each compilation pass
@@ -365,12 +365,11 @@ Item {
 				script += "sub state" + state.index + "Test" + "\n";
 				script += "transitionsNew = 0" + "\n";
 				script = state.transitions.reduce(function (script, transitionData, transitionIndex) {
-					var transitionsMask = filledArray(16, "0");
-					transitionsMask[transitionIndex] = "1";
+					var transitionsMask = bitMask(transitionIndex);
 					// for each transition, test all its conditions
 					script += "if " + transitionData.condition + " then" + "\n";
 					// if all the conditions for this transition are true, set a bit in transitionsNew
-					script += "transitionsNew |= 0b" + transitionsMask.join("") + "\n";
+					script += "transitionsNew |= " + transitionsMask + "\n";
 					script += "end" + "\n";
 					return script;
 				}, script);
@@ -406,11 +405,10 @@ Item {
 
 						script = state.events[event].reduce(function(script, transition) {
 							var transitionIndex = state.transitions.indexOf(transition);
-							var transitionsMask = filledArray(16, "0");
-							transitionsMask[transitionIndex] = "1";
+							var transitionsMask = bitMask(transitionIndex);
 							// for each transition that is possible in this state and on this event,
 							// test whether it has become true right now
-							script += "if transitionsOld & 0b" + transitionsMask.join("") + " == 0 and transitionsNew & 0b" + transitionsMask.join("") + " == 0b" + transitionsMask.join("") + " then" + "\n";
+							script += "if transitionsOld & " + transitionsMask + " == 0 and transitionsNew & " + transitionsMask + " == " + transitionsMask + " then" + "\n";
 							// run the transition
 							script += "callsub transition" + transition.index + "Trigger" + "\n";
 							// exit the thread's event handler, don't test the other transitions
