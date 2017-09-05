@@ -42,6 +42,7 @@ macx {
 ASEBA_LIBS =
 win32 {
 	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-win32.cpp
+	ASEBA_LIBS += -lwinspool -lws2_32 -lSetupapi
 } else {
 	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-posix.cpp
         mac {
