@@ -106,11 +106,13 @@ AsebaClient::AsebaClient(): stream(nullptr) {
 	}, Qt::DirectConnection);
 	QObject::connect(&hub, &DashelHub::error, this, [this](QString source, QString reason) {
 		manager.reset();
-		for (auto node: nodes) {
-			delete node;
+		if (!nodes.empty()) {
+			for (auto node: nodes) {
+				delete node;
+			}
+			nodes.clear();
+			emit this->nodesChanged();
 		}
-		nodes.clear();
-		emit this->nodesChanged();
 		emit this->connectionError(source, reason);
 	}, Qt::QueuedConnection);
 

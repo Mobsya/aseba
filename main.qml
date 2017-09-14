@@ -375,18 +375,32 @@ ApplicationWindow {
 
 	Thymio {
 		id: thymio
+		property bool playingOld : false
 		property bool playing: false
-		events: vplEditor ? vplEditor.compiler.output.events : {}
-		source: playing ? vplEditor.compiler.output.script : ""
 		onNodeChanged: playing = false
 		onPlayingChanged: {
-			vplEditor.compiler.execReset(playing);
-			if (!playing) {
-				setVariable("motor.left.target", 0);
-				setVariable("motor.right.target", 0);
-			} else {
-				vplEditor.saveProgram(autosaveName);
+			if (playing && !playingOld) {
+				start();
+			} else if (!playing && playingOld) {
+				stop();
 			}
+			playingOld = playing;
+		}
+		function start() {
+			vplEditor.saveProgram(autosaveName);
+			vplEditor.compiler.execReset(true);
+			var output = vplEditor.compiler.output;
+			program = {
+				events: output.events,
+				source: output.script,
+			};
+		}
+		function stop() {
+			vplEditor.compiler.execReset(false);
+			program = {
+				events: {},
+				source: "",
+			};
 		}
 		onErrorChanged: if (error !== "") { vplEditor.compiler.output.error = error; }
 	}
