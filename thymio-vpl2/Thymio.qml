@@ -67,7 +67,7 @@ Item {
 			walls: [ { position: Qt.vector2d(80, 50), angle: Math.pi / 2, size: Qt.vector3d(20, 2, 10), color: "Blue" } ],
 			groundTexture: "/tmp/test.png"
 		}
-		var simError = simulator.runProgram(scenario, events, source, function() {
+		var simError = simulator.runProgram(scenario, program.events, program.source, function() {
 			if (this.currentTime === 0) {
 				this.simulatedThymio.tap();
 			}
@@ -77,7 +77,7 @@ Item {
 			console.log("Simulation error: " + simError)
 		*/
 		if (node) {
-			error = node.setProgram(events, source);
+			error = node.setProgram(program.events, program.source);
 		}
 	}
 }
