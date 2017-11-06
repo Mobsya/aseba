@@ -58,9 +58,13 @@ Item {
 		}
 		Action: {
 			// returns the AESL statements that execute the action
-			compile(): string
+			compile(): ActionCode
 			// called during compilation to indicate that the action has an error
 			setError(error: boolean): void
+		}
+		ActionCode: {
+			// the AESL statements that implement this action
+			action: string
 		}
 	  */
 	property var ast
