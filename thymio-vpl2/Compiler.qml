@@ -47,6 +47,8 @@ Item {
 		}
 		Event: {
 			compile(): EventCode
+			// called during compilation to indicate that the event has an error
+			setError(error: boolean): void
 		}
 		EventCode: {
 			// the event name when the condition can change
@@ -57,6 +59,8 @@ Item {
 		Action: {
 			// returns the AESL statements that execute the action
 			compile(): string
+			// called during compilation to indicate that the action has an error
+			setError(error: boolean): void
 		}
 	  */
 	property var ast
@@ -163,6 +167,12 @@ Item {
 					transition.compilationData = transitionData;
 
 					transition.setError(false);
+					transition.events.forEach(function (event) {
+						event.setError(false);
+					});
+					transition.actions.forEach(function (action) {
+						action.setError(false);
+					});
 
 					var eventCategories = {};
 					transition.events.forEach(function (event) {
@@ -180,9 +190,10 @@ Item {
 						var category = event.definition.category;
 						if (category !== "") {
 							if (eventCategories[category] === undefined) {
-								eventCategories[category] = true;
+								eventCategories[category] = event;
 							} else {
-								transition.setError(true);
+								eventCategories[category].setError(true);
+								event.setError(true);
 								throw qsTr("Duplicate events");
 							}
 						}
@@ -199,9 +210,10 @@ Item {
 						var category = action.definition.category;
 						if (category !== "") {
 							if (actionCategories[category] === undefined) {
-								actionCategories[category] = true;
+								actionCategories[category] = action;
 							} else {
-								transition.setError(true);
+								actionCategories[category].setError(true);
+								action.setError(true);
 								throw qsTr("Duplicate actions");
 							}
 						}

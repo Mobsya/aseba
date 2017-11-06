@@ -114,6 +114,10 @@ DropArea {
 		}
 	}
 
+	function setError(error) {
+		isError = error;
+	}
+
 	function compile() {
 		try {
 			isError = false;
