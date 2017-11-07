@@ -36,7 +36,8 @@ Item {
 	function serialize() {
 		var data = [];
 		for (var i = 0; i < rows.model.count - 1; ++i) {
-			data.push(rows.model.get(i).serialize());
+			var row = rows.model.get(i);
+			data.push(row.serialize());
 		}
 		return data;
 	}
