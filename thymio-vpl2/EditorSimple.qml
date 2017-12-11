@@ -37,7 +37,7 @@ Item {
 		var data = [];
 		for (var i = 0; i < rows.model.count - 1; ++i) {
 			var row = rows.model.get(i);
-			data.push(row.serialize());
+			data.push(row.content.serialize());
 		}
 		return data;
 	}
@@ -46,7 +46,7 @@ Item {
 		clear();
 		var row = rows.model.get(0);
 		data.forEach(function(data) {
-			row.deserialize(data);
+			row.content.deserialize(data);
 			row = row.next;
 		});
 	}
@@ -103,24 +103,36 @@ Item {
 			var newMaxEventWidth = 0;
 			for (var i = 0; i < model.count; ++i) {
 				var row = model.get(i);
-				newMaxEventWidth = Math.max(newMaxEventWidth, row.eventWidth);
+				newMaxEventWidth = Math.max(newMaxEventWidth, row.content.eventWidth);
 			}
 			maxEventWidth = newMaxEventWidth;
 		}
 
 		Component {
 			id: rowComponent
-			TransitionRow {
-				nextState: astState
-				eventCountMax: scene.eventCountMax
-				actionCountMax: scene.actionCountMax
+			MouseArea {
+				id: row
 				anchors.left: parent ? parent.left : undefined
 				property int leftMargin: anchors.leftMargin
-				anchors.leftMargin: rows.maxEventWidth - eventWidth
+				anchors.leftMargin: rows.maxEventWidth - content.eventWidth
+				width: content.width
+				height: content.height
+				onWidthChanged:	rows.updateWidth()
 
 				property Item prev
 				property Item next
 				property int index: prev === null ? 0 : prev.index + 1
+
+				property bool held: false
+				onPressAndHold: if (next !== null) held = true
+				onReleased: {
+					if (eventPane.trashOpen || actionPane.trashOpen) {
+						row.remove();
+						scene.astChanged();
+					}
+					held = false;
+				}
+				drag.target: held ? content : undefined
 
 				Component.onCompleted: {
 					rows.model.append(this);
@@ -135,25 +147,71 @@ Item {
 					}
 				}
 
-				onEventWidthChanged: rows.updateMaxEventWidth()
-				onWidthChanged:	rows.updateWidth()
+				onPositionChanged: {
+					// check whether we are hovering delete block item
+					eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
+					actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
+				}
 
-				onAstChanged: {
-					var last = next === null;
-					var empty = ast.events.length === 0 && ast.actions.length === 0;
-					if (last && !empty) {
-						next = rows.append(this, null);
-						astTransitions.splice(index, 0, ast);
-					} else if (empty && !last) {
-						if (prev !== null) {
-							prev.next = next;
-						}
-						next.prev = prev;
-						destroy();
-						astTransitions.splice(index, 1);
+				function remove() {
+					if (prev !== null) {
+						prev.next = next;
 					}
-					rows.positionViewAtIndex(index, ListView.Contain);
-					scene.astChanged();
+					next.prev = prev;
+					destroy();
+					astTransitions.splice(index, 1);
+				}
+
+				property TransitionRow content: TransitionRow {
+					id: content
+					nextState: astState
+					eventCountMax: scene.eventCountMax
+					actionCountMax: scene.actionCountMax
+
+					parent: row
+					anchors {
+						horizontalCenter: parent.horizontalCenter
+						verticalCenter: parent.verticalCenter
+					}
+					onEventWidthChanged: rows.updateMaxEventWidth()
+
+					Drag.source: row
+					Drag.active: row.held
+					states: State {
+						when: row.held
+						ParentChange {
+							target: content
+							parent: scene
+						}
+						AnchorChanges {
+							target: content
+							anchors {
+								horizontalCenter: undefined
+								verticalCenter: undefined
+							}
+						}
+						PropertyChanges {
+							target: eventPane
+							showTrash: true
+						}
+						PropertyChanges {
+							target: actionPane
+							showTrash: true
+						}
+					}
+
+					onAstChanged: {
+						var last = next === null;
+						var empty = ast.events.length === 0 && ast.actions.length === 0;
+						if (last && !empty) {
+							next = rows.append(row, null);
+							astTransitions.splice(index, 0, ast);
+						} else if (empty && !last) {
+							remove();
+						}
+						rows.positionViewAtIndex(index, ListView.Contain);
+						scene.astChanged();
+					}
 				}
 			}
 		}
