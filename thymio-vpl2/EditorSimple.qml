@@ -172,6 +172,7 @@ Item {
 
 					Drag.source: row
 					Drag.active: row.held
+					Drag.keys: ["row"]
 					states: State {
 						when: row.held
 						ParentChange {
@@ -215,6 +216,15 @@ Item {
 						}
 						rows.positionViewAtIndex(row.ObjectModel.index, ListView.Contain);
 						scene.updateAst();
+					}
+				}
+
+				DropArea {
+					anchors { fill: parent; }
+					keys: ["row"]
+
+					onEntered: {
+						rows.model.move(drag.source.ObjectModel.index, row.ObjectModel.index);
 					}
 				}
 			}
