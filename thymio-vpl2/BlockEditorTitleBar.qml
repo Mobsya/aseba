@@ -4,17 +4,11 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 
 ToolBar {
+	id: toolBar
 	property alias okEnabled: okButton.enabled
 
 	signal cancel()
 	signal accept()
-
-	TextMetrics {
-		id: textMetrics
-		font.pixelSize: 20
-		font.weight: Font.Medium
-		text: qsTr("Choose a block and set its parameters")
-	}
 
 	RowLayout {
 		anchors.fill: parent
@@ -39,6 +33,13 @@ ToolBar {
 			width: 16
 		}
 		Label {
+			id: titleLabel
+			TextMetrics {
+				id: textMetrics
+				font.pixelSize: titleLabel.font.pixelSize
+				font.weight: titleLabel.font.weight
+				text: qsTr("Choose a block and set its parameters")
+			}
 			text: textMetrics.width > width ? qsTr("Edit block") : textMetrics.text
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
