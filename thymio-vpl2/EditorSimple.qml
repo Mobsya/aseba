@@ -191,6 +191,10 @@ Item {
 							}
 						}
 						PropertyChanges {
+							target: rows
+							interactive: false
+						}
+						PropertyChanges {
 							target: eventPane
 							showTrash: true
 						}
