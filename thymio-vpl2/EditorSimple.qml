@@ -14,23 +14,29 @@ Item {
 		In simple mode, there is only one thread with only one state.
 		Each transition (row in the UI) goes from this only state to that same state.
 	*/
-	property var astTransitions
-	property var astState
+	property var astState: ({
+		transitions: [],
+		active: false,
+	});
 	property var ast
+	function updateAst() {
+		var astTransitions = [];
+		for (var i = 0; i < rows.model.count - 1; ++i) {
+			var row = rows.model.get(i);
+			astTransitions.push(row.content.ast);
+		}
+		astState.transitions = astTransitions;
+		ast = [ astState ];
+	}
 
 	anchors.fill: parent
 	onWidthChanged: rows.updateWidth()
 
 	Component.onCompleted: clear()
 	function clear() {
-		astTransitions = [];
-		astState = {
-			transitions: astTransitions,
-			active: false,
-		};
-		ast = [ astState ];
 		rows.model.clear();
-		rows.append(null, null);
+		rows.appendEmpty();
+		scene.updateAst();
 	}
 
 	function serialize() {
@@ -43,12 +49,12 @@ Item {
 	}
 
 	function deserialize(data) {
-		clear();
-		var row = rows.model.get(0);
+		rows.model.clear();
 		data.forEach(function(data) {
-			row.content.deserialize(data);
-			row = row.next;
+			rows.append(data);
 		});
+		rows.appendEmpty();
+		scene.updateAst();
 	}
 
 	function deleteBlock(block) {
@@ -81,13 +87,23 @@ Item {
 		model: ObjectModel {
 		}
 
-		function append(prev, next) {
-			var properties = {
-				prev: prev,
-				next: next,
-			};
-			var object = rowComponent.createObject(rows, properties);
-			return object;
+		function append(data) {
+			var row = rowComponent.createObject(rows.model);
+			if (data !== undefined) {
+				row.content.deserialize(data);
+			}
+			rows.model.append(row);
+			rows.updateMaxEventWidth();
+			rows.updateWidth();
+		}
+		function appendEmpty() {
+			append(undefined);
+		}
+
+		function remove(row) {
+			rows.model.remove(row.ObjectModel.index);
+			rows.updateMaxEventWidth();
+			rows.updateWidth();
 		}
 
 		function updateWidth() {
@@ -119,48 +135,26 @@ Item {
 				height: content.height
 				onWidthChanged:	rows.updateWidth()
 
-				property Item prev
-				property Item next
-				property int index: prev === null ? 0 : prev.index + 1
-
 				property bool held: false
-				onPressAndHold: if (next !== null) held = true
+				onPressAndHold: if (!isLast()) held = true
 				onReleased: {
 					if (eventPane.trashOpen || actionPane.trashOpen) {
-						row.remove();
-						scene.astChanged();
+						rows.remove(row);
+						scene.updateAst();
 					}
 					held = false;
 				}
 
 				drag.target: held ? content : undefined
 
-				Component.onCompleted: {
-					rows.model.append(this);
-					rows.updateMaxEventWidth();
-					rows.updateWidth();
-				}
-				Component.onDestruction: {
-					if (index < rows.model.count) {
-						rows.model.remove(index, 1);
-						rows.updateMaxEventWidth();
-						rows.updateWidth();
-					}
+				function isLast() {
+					return row.ObjectModel.index === rows.model.count - 1;
 				}
 
 				onPositionChanged: {
 					// check whether we are hovering delete block item
 					eventPane.trashOpen = eventPane.contains(mapToItem(eventPane, mouse.x, mouse.y));
 					actionPane.trashOpen = actionPane.contains(mapToItem(actionPane, mouse.x, mouse.y));
-				}
-
-				function remove() {
-					if (prev !== null) {
-						prev.next = next;
-					}
-					next.prev = prev;
-					destroy();
-					astTransitions.splice(index, 1);
 				}
 
 				property TransitionRow content: TransitionRow {
@@ -210,16 +204,17 @@ Item {
 					}
 
 					onAstChanged: {
-						var last = next === null;
+						if (row.ObjectModel.index === -1)
+							return;
+						var last = row.isLast();
 						var empty = ast.events.length === 0 && ast.actions.length === 0;
 						if (last && !empty) {
-							next = rows.append(row, null);
-							astTransitions.splice(index, 0, ast);
+							rows.appendEmpty();
 						} else if (empty && !last) {
-							remove();
+							rows.remove(row);
 						}
-						rows.positionViewAtIndex(index, ListView.Contain);
-						scene.astChanged();
+						rows.positionViewAtIndex(row.ObjectModel.index, ListView.Contain);
+						scene.updateAst();
 					}
 				}
 			}
