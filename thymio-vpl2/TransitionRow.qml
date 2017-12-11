@@ -11,6 +11,8 @@ Rectangle {
 	property alias eventWidth: events.width
 	property alias actionWidth: actions.width
 
+	property alias highlighted: highlightTimer.highlighted
+
 	property var nextState
 	property var ast: ({
 		events: events.ast,
@@ -36,7 +38,7 @@ Rectangle {
 	color: Material.theme === Material.Dark ? "#301446" : "#eaeaea"
 	radius: height
 	border.color: error ? "#F52300" : "#F5E800"
-	border.width: error || highlightTimer.highlighted ? 10 : 0
+	border.width: error || highlighted ? 10 : 0
 
 	HighlightTimer {
 		id: highlightTimer

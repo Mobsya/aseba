@@ -132,6 +132,7 @@ Item {
 					}
 					held = false;
 				}
+
 				drag.target: held ? content : undefined
 
 				Component.onCompleted: {
@@ -189,6 +190,10 @@ Item {
 								horizontalCenter: undefined
 								verticalCenter: undefined
 							}
+						}
+						PropertyChanges {
+							target: content
+							highlighted: true
 						}
 						PropertyChanges {
 							target: rows
