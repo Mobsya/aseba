@@ -172,6 +172,8 @@ Item {
 
 					Drag.source: row
 					Drag.active: row.held
+					Drag.hotSpot.x: width / 2
+					Drag.hotSpot.y: height / 2
 					Drag.keys: ["row"]
 					states: State {
 						when: row.held
