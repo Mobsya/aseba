@@ -224,6 +224,10 @@ Item {
 					keys: ["row"]
 
 					onEntered: {
+						if (row.isLast()) {
+							drag.accepted = false;
+							return;
+						}
 						rows.model.move(drag.source.ObjectModel.index, row.ObjectModel.index);
 					}
 				}
