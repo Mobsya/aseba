@@ -37,7 +37,7 @@ Rectangle {
 
 	color: Material.theme === Material.Dark ? "#301446" : "#eaeaea"
 	radius: height
-	border.color: error ? "#F52300" : "#F5E800"
+	border.color: error ? "#F52300" : ( Material.theme === Material.Dark ? "#F5E800" : "#37a348")
 	border.width: error || highlighted ? 10 : 0
 
 	HighlightTimer {
