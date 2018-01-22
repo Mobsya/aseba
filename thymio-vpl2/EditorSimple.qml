@@ -71,14 +71,15 @@ Item {
 
 		anchors.centerIn: parent
 
+		property int listWidth
+		property int leftOffset: scene.width - listWidth * scale
 		property int maxEventWidth: 0
 
-		leftMargin: constants.rowSpacing
-		width: leftMargin + contentWidth + rightMargin
-		rightMargin: constants.rowSpacing
-		scale: Math.min(0.5, scene.width / width)
-
 		height: parent.height / scale
+		width: parent.width / scale
+		leftMargin: constants.rowSpacing
+		rightMargin: constants.rowSpacing
+		scale: Math.min(0.5, scene.width / listWidth)
 		topMargin: Math.max(constants.rowSpacing, (height - contentHeight) / 2)
 		bottomMargin: topMargin
 
@@ -110,9 +111,9 @@ Item {
 			var width = 0;
 			for (var i = 0; i < model.count; ++i) {
 				var row = model.get(i);
-				width = Math.max(width, row.width + row.leftMargin);
+				width = Math.max(width, maxEventWidth - row.content.eventWidth + row.width);
 			}
-			contentWidth = width;
+			listWidth = leftMargin + width + rightMargin;
 		}
 
 		function updateMaxEventWidth() {
@@ -129,11 +130,10 @@ Item {
 			MouseArea {
 				id: row
 				anchors.left: parent ? parent.left : undefined
-				property int leftMargin: anchors.leftMargin
-				anchors.leftMargin: rows.maxEventWidth - content.eventWidth
+				anchors.leftMargin: rows.leftOffset + rows.maxEventWidth - content.eventWidth
 				width: content.width
 				height: content.height
-				onWidthChanged:	rows.updateWidth()
+				onWidthChanged: rows.updateWidth()
 
 				property bool held: false
 				onPressAndHold: if (!isLast()) held = true
