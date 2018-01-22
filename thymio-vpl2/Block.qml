@@ -128,6 +128,11 @@ DropArea {
 		}
 	}
 
+	function isSame(that) {
+		return this.definition === that.definition
+		&& JSON.stringify(this.params) === JSON.stringify(that.params)
+	}
+
 	function bringBlockToFront() {
 		// make this element visible
 		if (block.z < scene.highestZ) {

@@ -148,7 +148,7 @@ Item {
 				}
 			}
 
-			function visitTransition(thread, transition) {
+			function visitTransition(thread, state, transition) {
 				var transitionData = transition.compilationData;
 				if (transitionData === undefined || transitionData.version !== version) {
 					var index = transitionDatas.length;
@@ -223,6 +223,37 @@ Item {
 						}
 					});
 
+					state.transitions.forEach(function (otherTransition) {
+						if (transition === otherTransition) {
+							return;
+						}
+						var differences = transition.events.length;
+						if (differences !== otherTransition.events.length) {
+							return;
+						}
+						transition.events.forEach(function (event) {
+							otherTransition.events.forEach(function (otherEvent) {
+								if (event.isSame(otherEvent)) {
+									differences -= 1;
+								}
+							});
+						});
+						if (differences === 0) {
+							// both transitions have the same events
+							transition.actions.forEach(function (action) {
+								var category = action.definition.category;
+								otherTransition.actions.forEach(function (otherAction) {
+									if (category === otherAction.definition.category) {
+										// both actions have the same category
+										action.setError(true);
+										otherAction.setError(true);
+										throw qsTr("Duplicate actions");
+									}
+								});
+							});
+						}
+					});
+
 					transitionData.next = visitState(thread, transition.next);
 				}
 				return transitionData;
@@ -251,7 +282,7 @@ Item {
 					var transitions = state.transitions;
 					for (var i = 0; i < transitions.length; ++i) {
 						var transition = transitions[i];
-						var transitionData = visitTransition(thread, transition);
+						var transitionData = visitTransition(thread, state, transition);
 						stateData.transitions.push(transitionData);
 
 						// for each transition, collect the AESL events where they can trigger
