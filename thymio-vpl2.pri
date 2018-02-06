@@ -1,3 +1,9 @@
+ASEBA_DIR=$$PWD/aseba/aseba
+!exists($${ASEBA_DIR}/CMakeLists.txt) {
+	ASEBA_DIR=$$PWD/aseba
+}
+
+
 ASEBA_SOURCES = \
 	$$PWD/enki/enki/Types.cpp \
 	$$PWD/enki/enki/Geometry.cpp \
@@ -8,33 +14,33 @@ ASEBA_SOURCES = \
 	$$PWD/enki/enki/robots/DifferentialWheeled.cpp \
 	$$PWD/enki/enki/robots/thymio2/Thymio2.cpp \
 	$$PWD/dashel/dashel/dashel-common.cpp \
-	$$PWD/aseba/common/utils/FormatableString.cpp \
-	$$PWD/aseba/common/utils/utils.cpp \
-	$$PWD/aseba/common/utils/HexFile.cpp \
-	$$PWD/aseba/common/utils/BootloaderInterface.cpp \
-	$$PWD/aseba/common/msg/msg.cpp \
-	$$PWD/aseba/common/msg/NodesManager.cpp \
-	$$PWD/aseba/compiler/compiler.cpp \
-	$$PWD/aseba/compiler/errors.cpp \
-	$$PWD/aseba/compiler/identifier-lookup.cpp \
-	$$PWD/aseba/compiler/lexer.cpp \
-	$$PWD/aseba/compiler/parser.cpp \
-	$$PWD/aseba/compiler/analysis.cpp \
-	$$PWD/aseba/compiler/tree-build.cpp \
-	$$PWD/aseba/compiler/tree-expand.cpp \
-	$$PWD/aseba/compiler/tree-dump.cpp \
-	$$PWD/aseba/compiler/tree-typecheck.cpp \
-	$$PWD/aseba/compiler/tree-optimize.cpp \
-	$$PWD/aseba/compiler/tree-emit.cpp \
-	$$PWD/aseba/vm/vm.c \
-	$$PWD/aseba/vm/natives.c \
-	$$PWD/aseba/transport/buffer/vm-buffer.c \
-	$$PWD/aseba/targets/playground/EnkiGlue.cpp \
-	$$PWD/aseba/targets/playground/AsebaGlue.cpp \
-	$$PWD/aseba/targets/playground/DirectAsebaGlue.cpp \
-	$$PWD/aseba/targets/playground/Thymio2.cpp \
-	$$PWD/aseba/targets/playground/Thymio2-natives.cpp \
-	$$PWD/aseba/targets/playground/Thymio2-descriptions.c
+	$$ASEBA_DIR/common/utils/FormatableString.cpp \
+	$$ASEBA_DIR/common/utils/utils.cpp \
+	$$ASEBA_DIR/common/utils/HexFile.cpp \
+	$$ASEBA_DIR/common/utils/BootloaderInterface.cpp \
+	$$ASEBA_DIR/common/msg/msg.cpp \
+	$$ASEBA_DIR/common/msg/NodesManager.cpp \
+	$$ASEBA_DIR/compiler/compiler.cpp \
+	$$ASEBA_DIR/compiler/errors.cpp \
+	$$ASEBA_DIR/compiler/identifier-lookup.cpp \
+	$$ASEBA_DIR/compiler/lexer.cpp \
+	$$ASEBA_DIR/compiler/parser.cpp \
+	$$ASEBA_DIR/compiler/analysis.cpp \
+	$$ASEBA_DIR/compiler/tree-build.cpp \
+	$$ASEBA_DIR/compiler/tree-expand.cpp \
+	$$ASEBA_DIR/compiler/tree-dump.cpp \
+	$$ASEBA_DIR/compiler/tree-typecheck.cpp \
+	$$ASEBA_DIR/compiler/tree-optimize.cpp \
+	$$ASEBA_DIR/compiler/tree-emit.cpp \
+	$$ASEBA_DIR/vm/vm.c \
+	$$ASEBA_DIR/vm/natives.c \
+	$$ASEBA_DIR/transport/buffer/vm-buffer.c \
+	$$ASEBA_DIR/targets/playground/EnkiGlue.cpp \
+	$$ASEBA_DIR/targets/playground/AsebaGlue.cpp \
+	$$ASEBA_DIR/targets/playground/DirectAsebaGlue.cpp \
+	$$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2.cpp \
+	$$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-natives.cpp \
+	$$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-descriptions.c
 ASEBA_DEFINES =
 macx {
 	ASEBA_DEFINES += DISABLE_WEAK_CALLBACKS
@@ -55,14 +61,14 @@ win32 {
 	}
 }
 android {
-	ASEBA_SOURCES += $$PWD/aseba/transport/dashel_plugins/android.cpp
+	ASEBA_SOURCES += $$ASEBA_DIR/transport/dashel_plugins/android.cpp
 	aseba_android.files = $$PWD/android/*
 	aseba_android.path = /
 	INSTALLS += aseba_android
 } else {
-	ASEBA_SOURCES += $$PWD/aseba/transport/dashel_plugins/none.cpp
+	ASEBA_SOURCES += $$ASEBA_DIR/transport/dashel_plugins/none.cpp
 }
-ASEBA_INCLUDE = $$PWD/dashel $$PWD/enki $$PWD
+ASEBA_INCLUDE = $$PWD/dashel $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
 !msvc {
 	ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
 }
