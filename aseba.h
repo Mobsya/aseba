@@ -7,6 +7,7 @@
 #include "dashel/dashel.h"
 #include "aseba/common/msg/msg.h"
 #include "aseba/common/msg/NodesManager.h"
+#include "aseba/compiler/compiler.h"
 
 class DashelHub: public QObject, public Dashel::Hub {
 	Q_OBJECT

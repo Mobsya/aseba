@@ -1,5 +1,6 @@
 #include "aseba/targets/playground/EnkiGlue.h"
 #include "aseba/targets/playground/DirectAsebaGlue.h"
+#include "aseba/targets/playground/robots/thymio2/Thymio2.h"
 #include "aseba/common/msg/NodesManager.h"
 #include "aseba.h"
 #include "simulator.h"
@@ -369,7 +370,7 @@ QString Simulator::runProgram(const QVariantMap& scenario, const QVariantMap& ev
 	tie(error, initialAngle) = getValue<double>(thymioDescription, "angle", "Thymio");
 	if (!error.isEmpty()) return error;
 	// set to Thymio
-	DirectAsebaThymio2* thymio(new DirectAsebaThymio2("thymio"));
+	DirectAsebaThymio2* thymio(new DirectAsebaThymio2("thymio", 1));
 	thymio->logThymioNativeCalls = true;
 	thymio->pos = { initialPosition.x(), initialPosition.y() };
 	thymio->angle = initialAngle;

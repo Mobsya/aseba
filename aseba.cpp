@@ -169,7 +169,7 @@ void AsebaClient::receive(Aseba::Message* message) {
 }
 
 void AsebaClient::sendUserMessage(int type, QList<int> data) {
-	Aseba::UserMessage::DataVector vector(data.begin(), data.end());
+	Aseba::VariablesDataVector vector(data.begin(), data.end());
 	Aseba::UserMessage message(type, vector);
 	send(message);
 }
@@ -185,7 +185,7 @@ AsebaNode::AsebaNode(AsebaClient* parent, unsigned nodeId, const Aseba::TargetDe
 
 void AsebaNode::setVariable(QString name, QList<int> value) {
 	uint16_t start = variablesMap[name.toStdWString()].first;
-	Aseba::SetVariables::VariablesVector variablesVector(value.begin(), value.end());
+	Aseba::VariablesDataVector variablesVector(value.begin(), value.end());
 	Aseba::SetVariables message(nodeId, start, variablesVector);
 	parent()->send(message);
 }

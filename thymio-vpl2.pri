@@ -20,6 +20,7 @@ ASEBA_SOURCES = \
 	$$ASEBA_DIR/common/utils/BootloaderInterface.cpp \
 	$$ASEBA_DIR/common/msg/msg.cpp \
 	$$ASEBA_DIR/common/msg/NodesManager.cpp \
+	$$ASEBA_DIR/common/msg/TargetDescription.cpp \
 	$$ASEBA_DIR/compiler/compiler.cpp \
 	$$ASEBA_DIR/compiler/errors.cpp \
 	$$ASEBA_DIR/compiler/identifier-lookup.cpp \
