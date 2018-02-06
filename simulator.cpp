@@ -58,11 +58,11 @@ struct QtSimulatorEnvironment: SimulatorEnvironment
 		QString level;
 		switch (type)
 		{
-			case EnvironmentNotificationType::DISPLAY_INFO: level = "display";
-			case EnvironmentNotificationType::LOG_INFO: level = "info";
-			case EnvironmentNotificationType::LOG_WARNING: level = "warning";
-			case EnvironmentNotificationType::LOG_ERROR: level = "error";
-			case EnvironmentNotificationType::FATAL_ERROR: level = "error";
+			case EnvironmentNotificationType::DISPLAY_INFO: level = "display"; break;
+			case EnvironmentNotificationType::LOG_INFO: level = "info"; break;
+			case EnvironmentNotificationType::LOG_WARNING: level = "warning"; break;
+			case EnvironmentNotificationType::LOG_ERROR: level = "error"; break;
+			case EnvironmentNotificationType::FATAL_ERROR: level = "error"; break;
 		}
 		QStringList qArguments;
 		transform(arguments.begin(), arguments.end(), back_inserter(qArguments), [] (const string& stdString) { return QString::fromStdString(stdString); });
