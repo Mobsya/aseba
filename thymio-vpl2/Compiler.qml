@@ -402,8 +402,10 @@ Item {
 				script += "emit transition [" + transition.index + "]" + "\n";
 				// execute the transition's actions
 				script += transition.actions + "\n";
-				// call the procedure that will initialise the target state
-				script += "callsub state" + transition.next.index + "Enter\n";
+				if (state.index !== transition.next.index) {
+					// if we change state, call the procedure that will initialise the target state
+					script += "callsub state" + transition.next.index + "Enter\n";
+				}
 				return script;
 			}, script);
 			script = stateDatas.reduce(function(script, state) {
@@ -458,8 +460,10 @@ Item {
 							script += "if transitionsOld & " + transitionsMask + " == 0 and transitionsNew & " + transitionsMask + " == " + transitionsMask + " then" + "\n";
 							// run the transition
 							script += "callsub transition" + transition.index + "Trigger" + "\n";
-							// exit the thread's event handler, don't test the other transitions
-							script += "return" + "\n";
+							if (state.index !== transition.next.index) {
+								// if we have changed state, don't test the other transitions
+								script += "return" + "\n";
+							}
 							script += "end" + "\n";
 							return script;
 						}, script);
