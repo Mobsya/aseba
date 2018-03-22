@@ -3,4 +3,4 @@
 
 void thymioVPL2Init();
 
-#endif // THYMIO_VPL2_H
+#endif    // THYMIO_VPL2_H

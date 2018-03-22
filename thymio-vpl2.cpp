@@ -5,8 +5,8 @@
 #include <QtQml>
 
 void thymioVPL2Init() {
-	Dashel::initPlugins();
-	qmlRegisterType<AsebaClient>("Aseba", 1, 0, "AsebaClient");
-	qmlRegisterType<AsebaClient>("Aseba", 1, 0, "AsebaNode");
-	qmlRegisterType<Simulator>("Simulator", 1, 0, "Simulator");
+    Dashel::initPlugins();
+    qmlRegisterType<AsebaClient>("Aseba", 1, 0, "AsebaClient");
+    qmlRegisterType<AsebaClient>("Aseba", 1, 0, "AsebaNode");
+    qmlRegisterType<Simulator>("Simulator", 1, 0, "Simulator");
 }
