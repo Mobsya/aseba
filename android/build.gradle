@@ -1,19 +1,25 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
+
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
 }
-
 apply plugin: 'com.android.application'
 
 dependencies {
@@ -54,4 +60,12 @@ android {
     lintOptions {
         abortOnError false
     }
+
+defaultConfig {
+         minSdkVersion 14 //lower than 14 doesn't support multidex
+         targetSdkVersion 22
+
+         // Enabling multidex support.
+         multiDexEnabled true
+     }
 }

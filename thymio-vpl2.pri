@@ -13,7 +13,6 @@ ASEBA_SOURCES = \
 	$$PWD/enki/enki/interactions/IRSensor.cpp \
 	$$PWD/enki/enki/robots/DifferentialWheeled.cpp \
 	$$PWD/enki/enki/robots/thymio2/Thymio2.cpp \
-	$$PWD/dashel/dashel/dashel-common.cpp \
 	$$ASEBA_DIR/common/utils/FormatableString.cpp \
 	$$ASEBA_DIR/common/utils/utils.cpp \
 	$$ASEBA_DIR/common/utils/HexFile.cpp \
@@ -48,12 +47,9 @@ macx {
 }
 ASEBA_LIBS =
 win32 {
-	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-win32.cpp
-	ASEBA_LIBS += -lwinspool -lws2_32 -lSetupapi
+    ASEBA_LIBS += -lwinspool -lws2_32 -lSetupapi
 } else {
-	ASEBA_SOURCES += $$PWD/dashel/dashel/dashel-posix.cpp
-        mac {
-		ASEBA_SOURCES += $$PWD/dashel/dashel/poll_emu.c
+		mac {
 		ASEBA_LIBS += -framework CoreFoundation
 	}
 	linux:!android {
@@ -61,15 +57,9 @@ win32 {
 		ASEBA_LIBS += -ludev
 	}
 }
-android {
-	ASEBA_SOURCES += $$ASEBA_DIR/transport/dashel_plugins/android.cpp
-	aseba_android.files = $$PWD/android/*
-	aseba_android.path = /
-	INSTALLS += aseba_android
-} else {
-	ASEBA_SOURCES += $$ASEBA_DIR/transport/dashel_plugins/none.cpp
-}
-ASEBA_INCLUDE = $$PWD/dashel $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
+
+ASEBA_INCLUDE = $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
+
 !msvc {
 	ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
 }

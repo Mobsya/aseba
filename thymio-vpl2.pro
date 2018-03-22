@@ -18,7 +18,13 @@ include(deployment.pri)
 DISTFILES += \
     android/AndroidManifest.xml \
     android/res/values/libs.xml \
-    android/build.gradle
+    android/res/xml/device_filter.xml \
+    android/build.gradle \
+    android/settings.gradle \
+    android/gradle/**/*
+
+DISTFILES += $$files(*.java, true)
+
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 

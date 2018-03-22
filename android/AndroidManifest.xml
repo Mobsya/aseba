@@ -1,11 +1,20 @@
 <?xml version="1.0"?>
 <manifest package="org.mobsya.thymiovpl2" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="0.1.3" android:versionCode="4" android:installLocation="auto">
-        <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Thymio VPL" android:icon="@drawable/icon">
-                <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.qtproject.qt5.android.bindings.QtActivity" android:label="Thymio VPL" android:screenOrientation="unspecified" android:launchMode="singleTop">
+        <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Thymio VPL" android:icon="@drawable/icon" android:debuggable="true">
+
+                 <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
+                 android:name="org.mobsya.thymiovpl.ThymioVPLActivity" android:label="Thymio VPL" android:screenOrientation="unspecified" android:launchMode="singleTop">
                         <intent-filter>
                                 <action android:name="android.intent.action.MAIN"/>
                                 <category android:name="android.intent.category.LAUNCHER"/>
                         </intent-filter>
+                        <intent-filter>
+                             <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
+                             <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
+                        </intent-filter>
+                        <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter"/>
+                        <meta-data android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" android:resource="@xml/device_filter"/>
+                        <!-- Qt configuration  -->
                         <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
                         <meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
                         <meta-data android:name="android.app.repository" android:value="default"/>
@@ -44,6 +53,9 @@
         </application>
         <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="21"/>
         <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
+
+        <uses-feature android:name="android.hardware.usb.host"/>
+        <uses-permission android:name="android.permission.USB_PERMISSION"/>
 
         <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
                  Remove the comment if you do not require these default permissions. -->
