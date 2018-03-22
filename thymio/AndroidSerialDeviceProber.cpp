@@ -2,8 +2,10 @@
 #include <QtDebug>
 #include <QtAndroidExtras/QtAndroidExtras>
 
+
 namespace mobsya {
 
+const char* ACTIVITY_CLASS_NAME = "org/mobsya/thymiovpl/ThymioVPLActivity";
 
 class AndroidSerialThymioInfo : public AbstractThymioInfoPrivate {
 public:
@@ -35,8 +37,29 @@ AndroidSerialDeviceProber* AndroidSerialDeviceProber::instance() {
     return &the_instance;
 }
 
+auto fromJni(QAndroidJniObject& device) {
+    QAndroidJniObject deviceName = device.callObjectMethod<jstring>("getDeviceName");
+    QAndroidJniObject productName = device.callObjectMethod<jstring>("getProductName");
+    qDebug() << deviceName.toString() << productName.toString();
+    return std::make_unique<AndroidSerialThymioInfo>(deviceName.toString().trimmed(),
+                                                     productName.toString().trimmed());
+}
+
 std::vector<ThymioInfo> AndroidSerialDeviceProber::getThymios() {
+    QAndroidJniEnvironment qjniEnv;
+
+    QAndroidJniObject jDevices = QAndroidJniObject::callStaticObjectMethod(
+        ACTIVITY_CLASS_NAME, "listDevices", "()[Landroid/hardware/usb/UsbDevice;");
+    jobjectArray objectArray = jDevices.object<jobjectArray>();
+    if(!objectArray)
+        return {};
+
     std::vector<ThymioInfo> compatible_ports;
+    const int n = qjniEnv->GetArrayLength(objectArray);
+    for(int i = 0; i < n; ++i) {
+        auto elem = QAndroidJniObject::fromLocalRef(qjniEnv->GetObjectArrayElement(objectArray, i));
+        compatible_ports.emplace_back(fromJni(elem));
+    }
     return compatible_ports;
 }
 
