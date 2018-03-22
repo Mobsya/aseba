@@ -17,67 +17,8 @@ QList<int> fromAsebaVector(const std::vector<int16_t>& values) {
         data.push_back(*value);
     return data;
 }
-
-static const char* exceptionSource(Dashel::DashelException::Source source) {
-    switch(source) {
-        case Dashel::DashelException::SyncError: return "SyncError";
-        case Dashel::DashelException::InvalidTarget: return "InvalidTarget";
-        case Dashel::DashelException::InvalidOperation: return "InvalidOperation";
-        case Dashel::DashelException::ConnectionLost: return "ConnectionLost";
-        case Dashel::DashelException::IOError: return "IOError";
-        case Dashel::DashelException::ConnectionFailed: return "ConnectionFailed";
-        case Dashel::DashelException::EnumerationError: return "EnumerationError";
-        case Dashel::DashelException::PreviousIncomingDataNotRead:
-            return "PreviousIncomingDataNotRead";
-        case Dashel::DashelException::Unknown: return "Unknown";
-    }
-    qFatal("undeclared dashel exception source %i", source);
-}
-
-void DashelHub::start(QString target) {
-    try {
-        auto closeStream = [this](Dashel::Stream* stream) {
-            lock();
-            if(dataStreams.find(stream) != dataStreams.end())
-                Dashel::Hub::closeStream(stream);
-            unlock();
-        };
-        std::unique_ptr<Dashel::Stream, decltype(closeStream)> stream(
-            Dashel::Hub::connect(target.toStdString()), closeStream);
-        run();
-    } catch(Dashel::DashelException& e) {
-        exception(e);
-    }
-}
-
-void DashelHub::send(Dashel::Stream* stream, const Aseba::Message& message) {
-    try {
-        lock();
-        if(dataStreams.find(stream) != dataStreams.end()) {
-            message.serialize(stream);
-            stream->flush();
-        }
-        unlock();
-    } catch(Dashel::DashelException& e) {
-        unlock();
-        exception(e);
-        stop();
-    }
-}
-
-void DashelHub::exception(Dashel::DashelException& exception) {
-    auto source(exceptionSource(exception.source));
-    auto reason(exception.what());
-    auto sysError(exception.sysError);
-    auto stream(exception.stream);
-    qWarning() << "DashelException" << source << sysError << strerror(sysError) << reason << stream;
-    emit error(source, reason);
-}
-
-
-AsebaClient::AsebaClient() : stream(nullptr) {
-    hub.moveToThread(&thread);
-
+AsebaClient::AsebaClient() {
+/*
     QObject::connect(&hub, &DashelHub::connectionCreated, this,
                      [this](Dashel::Stream* stream) { this->stream = stream; },
                      Qt::DirectConnection);
@@ -120,6 +61,7 @@ AsebaClient::AsebaClient() : stream(nullptr) {
                          emit this->connectionError(source, reason);
                      },
                      Qt::QueuedConnection);
+    */
 
     QObject::connect(&managerTimer, &QTimer::timeout, &manager,
                      &AsebaDescriptionsManager::pingNetwork, Qt::DirectConnection);
@@ -154,17 +96,16 @@ AsebaClient::AsebaClient() : stream(nullptr) {
 }
 
 AsebaClient::~AsebaClient() {
-    hub.stop();
     thread.quit();
     thread.wait();
 }
 
 void AsebaClient::start(QString target) {
-    QMetaObject::invokeMethod(&hub, "start", Qt::QueuedConnection, Q_ARG(QString, target));
+    //QMetaObject::invokeMethod(&hub, "start", Qt::QueuedConnection, Q_ARG(QString, target));
 }
 
 void AsebaClient::send(const Aseba::Message& message) {
-    hub.send(stream, message);
+    //hub.send(stream, message);
 }
 
 void AsebaClient::receive(Aseba::Message* message) {

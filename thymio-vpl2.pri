@@ -1,53 +1,53 @@
 ASEBA_DIR=$$PWD/aseba/aseba
 !exists($${ASEBA_DIR}/CMakeLists.txt) {
-	ASEBA_DIR=$$PWD/aseba
+    ASEBA_DIR=$$PWD/aseba
 }
 
 
 ASEBA_SOURCES = \
-	$$PWD/enki/enki/Types.cpp \
-	$$PWD/enki/enki/Geometry.cpp \
-	$$PWD/enki/enki/PhysicalEngine.cpp \
-	$$PWD/enki/enki/BluetoothBase.cpp \
-	$$PWD/enki/enki/interactions/GroundSensor.cpp \
-	$$PWD/enki/enki/interactions/IRSensor.cpp \
-	$$PWD/enki/enki/robots/DifferentialWheeled.cpp \
-	$$PWD/enki/enki/robots/thymio2/Thymio2.cpp \
-	$$ASEBA_DIR/common/utils/FormatableString.cpp \
-	$$ASEBA_DIR/common/utils/utils.cpp \
-	$$ASEBA_DIR/common/utils/HexFile.cpp \
-	$$ASEBA_DIR/common/utils/BootloaderInterface.cpp \
-	$$ASEBA_DIR/common/msg/msg.cpp \
-	$$ASEBA_DIR/common/msg/NodesManager.cpp \
-	$$ASEBA_DIR/common/msg/TargetDescription.cpp \
-	$$ASEBA_DIR/compiler/compiler.cpp \
-	$$ASEBA_DIR/compiler/errors.cpp \
-	$$ASEBA_DIR/compiler/identifier-lookup.cpp \
-	$$ASEBA_DIR/compiler/lexer.cpp \
-	$$ASEBA_DIR/compiler/parser.cpp \
-	$$ASEBA_DIR/compiler/analysis.cpp \
-	$$ASEBA_DIR/compiler/tree-build.cpp \
-	$$ASEBA_DIR/compiler/tree-expand.cpp \
-	$$ASEBA_DIR/compiler/tree-dump.cpp \
-	$$ASEBA_DIR/compiler/tree-typecheck.cpp \
-	$$ASEBA_DIR/compiler/tree-optimize.cpp \
-	$$ASEBA_DIR/compiler/tree-emit.cpp \
-	$$ASEBA_DIR/vm/vm.c \
-	$$ASEBA_DIR/vm/natives.c \
-	$$ASEBA_DIR/transport/buffer/vm-buffer.c \
-	$$ASEBA_DIR/targets/playground/EnkiGlue.cpp \
-	$$ASEBA_DIR/targets/playground/AsebaGlue.cpp \
-	$$ASEBA_DIR/targets/playground/DirectAsebaGlue.cpp \
-	$$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2.cpp \
-	$$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-natives.cpp \
-	$$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-descriptions.c
+    $$PWD/enki/enki/Types.cpp \
+    $$PWD/enki/enki/Geometry.cpp \
+    $$PWD/enki/enki/PhysicalEngine.cpp \
+    $$PWD/enki/enki/BluetoothBase.cpp \
+    $$PWD/enki/enki/interactions/GroundSensor.cpp \
+    $$PWD/enki/enki/interactions/IRSensor.cpp \
+    $$PWD/enki/enki/robots/DifferentialWheeled.cpp \
+    $$PWD/enki/enki/robots/thymio2/Thymio2.cpp \
+    $$ASEBA_DIR/common/utils/FormatableString.cpp \
+    $$ASEBA_DIR/common/utils/utils.cpp \
+    $$ASEBA_DIR/common/utils/HexFile.cpp \
+    #$$ASEBA_DIR/common/utils/BootloaderInterface.cpp \
+    $$ASEBA_DIR/common/msg/msg.cpp \
+    $$ASEBA_DIR/common/msg/NodesManager.cpp \
+    $$ASEBA_DIR/common/msg/TargetDescription.cpp \
+    $$ASEBA_DIR/compiler/compiler.cpp \
+    $$ASEBA_DIR/compiler/errors.cpp \
+    $$ASEBA_DIR/compiler/identifier-lookup.cpp \
+    $$ASEBA_DIR/compiler/lexer.cpp \
+    $$ASEBA_DIR/compiler/parser.cpp \
+    $$ASEBA_DIR/compiler/analysis.cpp \
+    $$ASEBA_DIR/compiler/tree-build.cpp \
+    $$ASEBA_DIR/compiler/tree-expand.cpp \
+    $$ASEBA_DIR/compiler/tree-dump.cpp \
+    $$ASEBA_DIR/compiler/tree-typecheck.cpp \
+    $$ASEBA_DIR/compiler/tree-optimize.cpp \
+    $$ASEBA_DIR/compiler/tree-emit.cpp \
+    $$ASEBA_DIR/vm/vm.c \
+    $$ASEBA_DIR/vm/natives.c \
+    $$ASEBA_DIR/transport/buffer/vm-buffer.c \
+    $$ASEBA_DIR/targets/playground/EnkiGlue.cpp \
+    $$ASEBA_DIR/targets/playground/AsebaGlue.cpp \
+    $$ASEBA_DIR/targets/playground/DirectAsebaGlue.cpp \
+    $$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2.cpp \
+    $$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-natives.cpp \
+    $$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-descriptions.c
 ASEBA_DEFINES =
 macx {
-	ASEBA_DEFINES += DISABLE_WEAK_CALLBACKS
+    ASEBA_DEFINES += DISABLE_WEAK_CALLBACKS
 }
 ASEBA_LIBS =
 win32 {
-    ASEBA_LIBS += -lwinspool -lws2_32 -lSetupapi
+	ASEBA_LIBS += -lwinspool -lws2_32 -lSetupapi
 } else {
 		mac {
 		ASEBA_LIBS += -framework CoreFoundation
@@ -60,11 +60,32 @@ win32 {
 
 ASEBA_INCLUDE = $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
 
-!msvc {
-	ASEBA_CXXFLAGS = -Wno-unused-parameter -Wno-deprecated-declarations
+
+SOURCES += \
+    $$PWD/thymio/ThymioInfo.cpp \
+    $$PWD/thymio/ThymioManager.cpp
+
+HEADERS += \
+    $$PWD/thymio/ThymioInfo.h \
+    $$PWD/thymio/ThymioManager.h
+
+!android:!ios {
+   SOURCES += $$PWD/thymio/UsbSerialDeviceProber.cpp
+   HEADERS += $$PWD/thymio/UsbSerialDeviceProber.h
+   QT += serialport
 }
 
-QMAKE_CXXFLAGS += $$ASEBA_CXXFLAGS
+android {
+   SOURCES += $$PWD/thymio/AndroidSerialDeviceProber.cpp
+   HEADERS += $$PWD/thymio/AndroidSerialDeviceProber.h
+   INCLUDEPATH += $$PWD/third_party/jni.hpp/include/
+   QT += androidextras
+}
+
+!msvc {
+    QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-deprecated-declarations
+}
+
 DEFINES += $$ASEBA_DEFINES
 CONFIG += c++14 object_parallel_to_source
 HEADERS += $$PWD/aseba.h \

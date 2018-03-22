@@ -11,6 +11,7 @@
 class Simulator : public QObject {
     Q_OBJECT
 
+
 signals:
     //! The simulation is finished.
     void simulationCompleted(const QVariantList& log) const;

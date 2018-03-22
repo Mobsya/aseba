@@ -22,6 +22,9 @@ import android.os.AsyncTask;
 
 public class ThymioVPLActivity extends QtActivity {
 
+    native void onDeviceAvailabilityChanged();
+
+
     private UsbManager m_usb_manager;
 
     @Override
@@ -31,6 +34,11 @@ public class ThymioVPLActivity extends QtActivity {
             public void onReceive(Context context, Intent intent) {
                 if(intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)){
                     System.out.println("device detached");
+                    onDeviceAvailabilityChanged();
+                }
+                if(intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+                    System.out.println("device attached");
+                    onDeviceAvailabilityChanged();
                 }
             };
         };
@@ -46,9 +54,8 @@ public class ThymioVPLActivity extends QtActivity {
         super.onNewIntent(intent);
         if(intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
             System.out.println("device attached");
+            onDeviceAvailabilityChanged();
         }
-        else if(intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
-            System.out.println("device detached");
-        }
+
     }
 }

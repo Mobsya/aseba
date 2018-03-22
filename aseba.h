@@ -4,25 +4,10 @@
 #include <QVariantMap>
 #include <QThread>
 #include <QTimer>
-#include "dashel/dashel.h"
 #include "aseba/common/msg/msg.h"
 #include "aseba/common/msg/NodesManager.h"
 #include "aseba/compiler/compiler.h"
-
-class DashelHub : public QObject, public Dashel::Hub {
-    Q_OBJECT
-public slots:
-    void start(QString target);
-    void send(Dashel::Stream* stream, const Aseba::Message& message);
-signals:
-    void connectionCreated(Dashel::Stream* stream) Q_DECL_OVERRIDE;
-    void incomingData(Dashel::Stream* stream) Q_DECL_OVERRIDE;
-    void connectionClosed(Dashel::Stream* stream, bool abnormal) Q_DECL_OVERRIDE;
-    void error(QString source, QString reason);
-
-private:
-    void exception(Dashel::DashelException&);
-};
+#include "thymio/ThymioManager.h"
 
 class AsebaDescriptionsManager : public QObject, public Aseba::NodesManager {
     Q_OBJECT
@@ -45,10 +30,10 @@ class AsebaClient : public QObject {
     Q_OBJECT
     Q_PROPERTY(const QList<QObject*> nodes MEMBER nodes NOTIFY nodesChanged)
     QThread thread;
-    DashelHub hub;
     AsebaDescriptionsManager manager;
     QTimer managerTimer;
-    Dashel::Stream* stream;
+    mobsya::ThymioManager m_manager;
+
     QList<QObject*> nodes;
 
 public:
