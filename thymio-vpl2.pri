@@ -63,11 +63,13 @@ ASEBA_INCLUDE = $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
 
 SOURCES += \
     $$PWD/thymio/ThymioInfo.cpp \
-    $$PWD/thymio/ThymioManager.cpp
+    $$PWD/thymio/ThymioManager.cpp \
+    $$PWD/thymio/DeviceQtConnection.cpp
 
 HEADERS += \
     $$PWD/thymio/ThymioInfo.h \
-    $$PWD/thymio/ThymioManager.h
+    $$PWD/thymio/ThymioManager.h \
+    $$PWD/thymio/DeviceQtConnection.h
 
 !android:!ios {
    SOURCES += $$PWD/thymio/UsbSerialDeviceProber.cpp
@@ -76,8 +78,13 @@ HEADERS += \
 }
 
 android {
-   SOURCES += $$PWD/thymio/AndroidSerialDeviceProber.cpp
-   HEADERS += $$PWD/thymio/AndroidSerialDeviceProber.h
+   SOURCES += $$PWD/thymio/AndroidSerialDeviceProber.cpp \
+              $$PWD/thymio/AndroidUsbSerialDevice.cpp
+
+   HEADERS += $$PWD/thymio/AndroidSerialDeviceProber.h \
+              $$PWD/thymio/AndroidUsbSerialDevice.h
+
+
    INCLUDEPATH += $$PWD/third_party/jni.hpp/include/
    QT += androidextras
 }
@@ -86,7 +93,7 @@ android {
     QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-deprecated-declarations
 }
 
-DEFINES += $$ASEBA_DEFINES
+DEFINES += $$ASEBA_DEFINES ASEBA_NO_DASHEL
 CONFIG += c++14 object_parallel_to_source
 HEADERS += $$PWD/aseba.h \
 	$$PWD/simulator.h

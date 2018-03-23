@@ -30,10 +30,10 @@ class AsebaClient : public QObject {
     Q_OBJECT
     Q_PROPERTY(const QList<QObject*> nodes MEMBER nodes NOTIFY nodesChanged)
     QThread thread;
-    AsebaDescriptionsManager manager;
+    AsebaDescriptionsManager m_nodesManager;
+    mobsya::ThymioManager m_thymioManager;
     QTimer managerTimer;
-    mobsya::ThymioManager m_manager;
-
+    std::unique_ptr<mobsya::DeviceQtConnection> m_connection;
     QList<QObject*> nodes;
 
 public:
@@ -42,12 +42,15 @@ public:
 public slots:
     void start(QString target = ASEBA_DEFAULT_TARGET);
     void send(const Aseba::Message& message);
-    void receive(Aseba::Message* message);
+    void messageReceived(std::shared_ptr<Aseba::Message>);
     void sendUserMessage(int eventId, QList<int> args);
 signals:
     void userMessage(unsigned type, QList<int> data);
     void nodesChanged();
     void connectionError(QString source, QString reason);
+
+private:
+    void connect(const mobsya::ThymioInfo& thymio);
 };
 
 class AsebaNode : public QObject {

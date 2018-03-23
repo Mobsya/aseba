@@ -24,8 +24,9 @@ class UsbSerialDeviceProber : public AbstractDeviceProber {
     Q_OBJECT
 public:
     UsbSerialDeviceProber(QObject* parent = nullptr);
-    std::vector<ThymioInfo> getThymios() override;
     ~UsbSerialDeviceProber();
+    std::vector<ThymioInfo> getThymios() override;
+    std::unique_ptr<QIODevice> openConnection(const ThymioInfo& thymio) override;
 
 private:
     void scan();

@@ -11,7 +11,7 @@ class ThymioInfo {
 
 public:
     enum class DeviceProvider { Serial, Tcp, AndroidSerial };
-    ThymioInfo(std::unique_ptr<AbstractThymioInfoPrivate>&& data);
+    ThymioInfo(std::shared_ptr<AbstractThymioInfoPrivate>&& data);
     QString name() const;
     DeviceProvider provider() const;
     bool operator==(const ThymioInfo& other) const;
@@ -20,7 +20,7 @@ public:
     const AbstractThymioInfoPrivate* data() const;
 
 private:
-    std::unique_ptr<AbstractThymioInfoPrivate> m_data;
+    std::shared_ptr<AbstractThymioInfoPrivate> m_data;
 };
 
 

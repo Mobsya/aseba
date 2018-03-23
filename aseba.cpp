@@ -18,63 +18,19 @@ QList<int> fromAsebaVector(const std::vector<int16_t>& values) {
     return data;
 }
 AsebaClient::AsebaClient() {
-/*
-    QObject::connect(&hub, &DashelHub::connectionCreated, this,
-                     [this](Dashel::Stream* stream) { this->stream = stream; },
-                     Qt::DirectConnection);
-
-    QObject::connect(&hub, &DashelHub::connectionClosed, this,
-                     [this](Dashel::Stream* stream, bool abnormal) {
-                         emit hub.error("ConnectionClosed", abnormal ? "abnormal" : "normal");
-                         hub.stop();
-                     },
-                     Qt::DirectConnection);
-
-    QObject::connect(&hub, &DashelHub::incomingData, this,
-                     [this](Dashel::Stream* stream) {
-                         std::unique_ptr<Aseba::Message> message(Aseba::Message::receive(stream));
-
-                         std::wostringstream dump;
-                         message->dump(dump);
-                         qDebug() << "received" << QString::fromStdWString(dump.str());
-
-                         static auto asebaMessageMetaTypeId(qRegisterMetaType<Aseba::Message*>());
-                         Q_UNUSED(asebaMessageMetaTypeId);
-                         QMetaObject::invokeMethod(this, "receive", Qt::QueuedConnection,
-                                                   Q_ARG(Aseba::Message*, message.release()));
-                     },
-                     Qt::DirectConnection);
-
-    QObject::connect(&hub, &DashelHub::error, this,
-                     [this](QString source, QString reason) { stream = nullptr; },
-                     Qt::DirectConnection);
-    QObject::connect(&hub, &DashelHub::error, this,
-                     [this](QString source, QString reason) {
-                         manager.reset();
-                         if(!nodes.empty()) {
-                             for(auto node : nodes) {
-                                 delete node;
-                             }
-                             nodes.clear();
-                             emit this->nodesChanged();
-                         }
-                         emit this->connectionError(source, reason);
-                     },
-                     Qt::QueuedConnection);
-    */
-
-    QObject::connect(&managerTimer, &QTimer::timeout, &manager,
+    // Isn't that a bit backward ?
+    QObject::connect(&managerTimer, &QTimer::timeout, &m_nodesManager,
                      &AsebaDescriptionsManager::pingNetwork, Qt::DirectConnection);
-
-    QObject::connect(&manager, &AsebaDescriptionsManager::nodeConnected, this,
+    QObject::connect(&m_nodesManager, &AsebaDescriptionsManager::sendMessage, this,
+                     &AsebaClient::send, Qt::DirectConnection);
+    QObject::connect(&m_nodesManager, &AsebaDescriptionsManager::nodeConnected, this,
                      [this](unsigned nodeId) {
-                         auto description = manager.getDescription(nodeId);
+                         auto description = m_nodesManager.getDescription(nodeId);
                          nodes.append(new AsebaNode(this, nodeId, description));
                          emit this->nodesChanged();
                      },
                      Qt::DirectConnection);
-
-    QObject::connect(&manager, &AsebaDescriptionsManager::nodeDisconnected, this,
+    QObject::connect(&m_nodesManager, &AsebaDescriptionsManager::nodeDisconnected, this,
                      [this](unsigned nodeId) {
                          for(auto it = nodes.begin(); it != nodes.end(); ++it) {
                              auto node = qobject_cast<AsebaNode*>(*it);
@@ -87,12 +43,18 @@ AsebaClient::AsebaClient() {
                          }
                      },
                      Qt::DirectConnection);
-
-    QObject::connect(&manager, &AsebaDescriptionsManager::sendMessage, this, &AsebaClient::send,
-                     Qt::DirectConnection);
-
-    thread.start();
     managerTimer.start(1000);
+}
+
+
+void AsebaClient::connect(const mobsya::ThymioInfo& thymio) {
+    m_connection = m_thymioManager.openConnection(thymio);
+    if(!m_connection) {
+        return;
+    }
+    QObject::connect(m_connection.get(), &mobsya::DeviceQtConnection::messageReceived, this,
+                     &AsebaClient::messageReceived);
+    // m_nodesManager.pingNetwork();
 }
 
 AsebaClient::~AsebaClient() {
@@ -101,20 +63,23 @@ AsebaClient::~AsebaClient() {
 }
 
 void AsebaClient::start(QString target) {
-    //QMetaObject::invokeMethod(&hub, "start", Qt::QueuedConnection, Q_ARG(QString, target));
+    if(!m_connection) {
+        connect(m_thymioManager.first());
+    }
 }
 
 void AsebaClient::send(const Aseba::Message& message) {
-    //hub.send(stream, message);
+    if(!m_connection || !m_connection->isOpen()) {
+        qDebug() << "Not connected";
+        return;
+    }
+    m_connection->sendMessage(message);
 }
 
-void AsebaClient::receive(Aseba::Message* message) {
-    std::unique_ptr<Aseba::Message> ptr(message);
-    Q_UNUSED(ptr);
+void AsebaClient::messageReceived(std::shared_ptr<Aseba::Message> message) {
+    m_nodesManager.processMessage(message.get());
 
-    manager.processMessage(message);
-
-    Aseba::UserMessage* userMessage(dynamic_cast<Aseba::UserMessage*>(message));
+    Aseba::UserMessage* userMessage(dynamic_cast<Aseba::UserMessage*>(message.get()));
     if(userMessage)
         emit this->userMessage(userMessage->type, fromAsebaVector(userMessage->data));
 }
@@ -127,10 +92,10 @@ void AsebaClient::sendUserMessage(int type, QList<int> data) {
 
 
 AsebaNode::AsebaNode(AsebaClient* parent, unsigned nodeId,
-                     const Aseba::TargetDescription* description) :
-    QObject(parent),
-    nodeId(nodeId),
-    description(*description) {
+                     const Aseba::TargetDescription* description)
+    : QObject(parent)
+    , nodeId(nodeId)
+    , description(*description) {
     unsigned dummy;
     variablesMap = description->getVariablesMap(dummy);
 }

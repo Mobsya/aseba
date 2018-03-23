@@ -1,5 +1,6 @@
 #include "ThymioManager.h"
 #include <QDebug>
+#include <vector>
 
 #ifdef Q_OS_ANDROID
 #    include "AndroidSerialDeviceProber.h"
@@ -61,6 +62,19 @@ void ThymioManager::scanDevices() {
         qDebug() << thymio.name() << (int)thymio.provider();
     }
     qDebug() << "<<<-----";
+}
+
+std::unique_ptr<DeviceQtConnection> ThymioManager::openConnection(const ThymioInfo& thymio) {
+    for(auto&& probe : m_probes) {
+        auto iod = probe->openConnection(thymio);
+        if(iod)
+            return std::make_unique<DeviceQtConnection>(iod.release());
+    }
+    return {};
+}
+
+ThymioInfo ThymioManager::first() const {
+    return m_thymios.front();
 }
 
 }    // namespace mobsya

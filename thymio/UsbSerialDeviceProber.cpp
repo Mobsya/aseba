@@ -1,6 +1,7 @@
 #include "UsbSerialDeviceProber.h"
 #include <QThread>
 #include <QSerialPortInfo>
+#include <QtSerialPort>
 #include <QtDebug>
 
 namespace mobsya {
@@ -92,6 +93,24 @@ std::vector<ThymioInfo> UsbSerialDeviceProber::getThymios() {
     }
     return compatible_ports;
 }
+
+std::unique_ptr<QIODevice> UsbSerialDeviceProber::openConnection(const ThymioInfo& thymio) {
+    if(thymio.provider() != ThymioInfo::DeviceProvider::Serial)
+        return nullptr;
+    auto port = static_cast<const UsbSerialThymioInfo*>(thymio.data())->m_portName;
+    auto connection = std::make_unique<QSerialPort>(port);
+    if(!connection->open(QIODevice::ReadWrite)) {
+        return {};
+    }
+    connection->setBaudRate(QSerialPort::Baud115200);
+    connection->setParity(QSerialPort::NoParity);
+    connection->setStopBits(QSerialPort::OneStop);
+    connection->setFlowControl(QSerialPort::NoFlowControl);
+    connection->setDataTerminalReady(true);
+    qDebug() << "Serial error: " << connection->error();
+    qDebug() << "Serial errorString: " << connection->errorString();
+    return connection;
+}    // namespace mobsya
 
 UsbSerialDeviceProber::~UsbSerialDeviceProber() {
     m_thread.requestInterruption();

@@ -2,7 +2,7 @@
 
 namespace mobsya {
 
-ThymioInfo::ThymioInfo(std::unique_ptr<AbstractThymioInfoPrivate>&& data)
+ThymioInfo::ThymioInfo(std::shared_ptr<AbstractThymioInfoPrivate>&& data)
     : m_data(std::move(data)) {
 }
 
