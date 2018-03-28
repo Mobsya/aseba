@@ -19,7 +19,7 @@ QList<int> fromAsebaVector(const std::vector<int16_t>& values) {
 }
 AsebaClient::AsebaClient() {
     // Isn't that a bit backward ?
-    QObject::connect(&managerTimer, &QTimer::timeout, &m_nodesManager,
+    /*QObject::connect(&managerTimer, &QTimer::timeout, &m_nodesManager,
                      &AsebaDescriptionsManager::pingNetwork);
     QObject::connect(&m_nodesManager, &AsebaDescriptionsManager::sendMessage, this,
                      &AsebaClient::send);
@@ -41,17 +41,17 @@ AsebaClient::AsebaClient() {
                              }
                          }
                      });
-    managerTimer.start(200);
+    managerTimer.start(200);*/
 }
 
 
-void AsebaClient::connect(const mobsya::ThymioInfo& thymio) {
-    m_connection = m_thymioManager.openConnection(thymio);
+void AsebaClient::connect(const mobsya::ThymioProviderInfo& thymio) {
+    // m_connection = m_thymioManager.openConnection(thymio);
     if(!m_connection) {
         return;
     }
-    QObject::connect(m_connection.get(), &mobsya::DeviceQtConnection::messageReceived, this,
-                     &AsebaClient::messageReceived);
+    // QObject::connect(m_connection.get(), &mobsya::DeviceQtConnection::messageReceived, this,
+    //                  &AsebaClient::messageReceived);
     // m_nodesManager.pingNetwork();
 }
 
@@ -61,9 +61,9 @@ AsebaClient::~AsebaClient() {
 }
 
 void AsebaClient::start(QString target) {
-    if(!m_connection && m_thymioManager.hasDevice()) {
-        connect(m_thymioManager.first());
-    }
+    // if(!m_connection && m_thymioManager.hasDevice()) {
+    //    connect(m_thymioManager.first());
+    //}
 }
 
 void AsebaClient::send(const Aseba::Message& message) {

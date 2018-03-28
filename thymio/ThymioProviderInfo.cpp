@@ -10,7 +10,7 @@ QString ThymioProviderInfo::name() const {
     return m_data->name();
 }
 
-ThymioProviderInfo::DeviceProvider ThymioProviderInfo::type() const {
+ThymioProviderInfo::ProviderType ThymioProviderInfo::type() const {
     return m_data->type();
 }
 
@@ -24,15 +24,22 @@ bool ThymioProviderInfo::operator==(const ThymioProviderInfo& other) const {
     return m_data->equals(other);
 }
 
+bool ThymioProviderInfo::operator<(const ThymioProviderInfo& other) const {
+    if(this->type() != other.type()) {
+        return this->type() < other.type();
+    }
+    return m_data->lt(other);
+}
+
 AbstractThymioProviderInfoPrivate::AbstractThymioProviderInfoPrivate(
-    ThymioProviderInfo::DeviceProvider type)
+    ThymioProviderInfo::ProviderType type)
     : m_type(type) {
 }
 
 AbstractThymioProviderInfoPrivate::~AbstractThymioProviderInfoPrivate() {
 }
 
-ThymioProviderInfo::DeviceProvider AbstractThymioProviderInfoPrivate::type() const {
+ThymioProviderInfo::ProviderType AbstractThymioProviderInfoPrivate::type() const {
     return m_type;
 }
 

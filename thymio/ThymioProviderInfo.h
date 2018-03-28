@@ -10,11 +10,12 @@ class ThymioProviderInfo {
     Q_GADGET
 
 public:
-    enum class DeviceProvider { Serial, Tcp, AndroidSerial };
+    enum class ProviderType { Serial, Tcp, AndroidSerial };
     ThymioProviderInfo(std::shared_ptr<AbstractThymioProviderInfoPrivate>&& data);
     QString name() const;
-    DeviceProvider type() const;
+    ProviderType type() const;
     bool operator==(const ThymioProviderInfo& other) const;
+    bool operator<(const ThymioProviderInfo& other) const;
 
 
     const AbstractThymioProviderInfoPrivate* data() const;
@@ -26,15 +27,16 @@ private:
 
 class AbstractThymioProviderInfoPrivate {
 public:
-    AbstractThymioProviderInfoPrivate(ThymioProviderInfo::DeviceProvider type);
+    AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType type);
     virtual ~AbstractThymioProviderInfoPrivate();
 
     virtual QString name() const = 0;
-    ThymioProviderInfo::DeviceProvider type() const;
+    ThymioProviderInfo::ProviderType type() const;
     virtual bool equals(const ThymioProviderInfo& other) = 0;
+    virtual bool lt(const ThymioProviderInfo& other) = 0;
 
 private:
-    ThymioProviderInfo::DeviceProvider m_type;
+    ThymioProviderInfo::ProviderType m_type;
 };
 
 }    // namespace mobsya

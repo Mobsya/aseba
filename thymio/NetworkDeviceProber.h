@@ -10,14 +10,14 @@ class NetworkDeviceProber : public AbstractDeviceProber {
 public:
     NetworkDeviceProber(QObject* parent = nullptr);
     ~NetworkDeviceProber();
-    std::vector<ThymioProviderInfo> getThymios() override;
+    std::vector<ThymioProviderInfo> getDevices() override;
     std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& thymio) override;
 
 private:
-    void updateService(QZeroConfService service);
     void onServiceAdded(QZeroConfService);
     void onServiceUpdated(QZeroConfService);
     void onServiceRemoved(QZeroConfService);
+    QVector<QZeroConfService> m_services;
     QZeroConf* m_register;
 };
 

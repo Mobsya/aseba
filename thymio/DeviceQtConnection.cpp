@@ -6,10 +6,12 @@
 
 namespace mobsya {
 
-DeviceQtConnection::DeviceQtConnection(QIODevice* device, QObject* parent)
+DeviceQtConnection::DeviceQtConnection(const ThymioProviderInfo& provider, QIODevice* device,
+                                       QObject* parent)
     : QObject(parent)
     , m_device(device)
-    , m_messageSize(0) {
+    , m_messageSize(0)
+    , m_provider(provider) {
     device->setParent(this);
 
     connect(m_device, &QIODevice::readyRead, this, &DeviceQtConnection::onDataAvailable);
@@ -73,7 +75,7 @@ void DeviceQtConnection::onDataAvailable() {
     std::wstringstream s;
     msg->dump(s);
     qDebug() << QString::fromStdWString(s.str());
-    Q_EMIT messageReceived(std::move(msg));
+    Q_EMIT messageReceived(m_provider, std::move(msg));
 }
 
 

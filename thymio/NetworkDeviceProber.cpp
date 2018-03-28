@@ -1,7 +1,37 @@
 #include "NetworkDeviceProber.h"
+#include <QTcpSocket>
 
 
 namespace mobsya {
+
+
+class NetworkThymioProviderInfo : public AbstractThymioProviderInfoPrivate {
+public:
+    NetworkThymioProviderInfo(QZeroConfService service)
+        : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType::Tcp)
+        , m_service(service) {
+    }
+
+    QString name() const override {
+        return m_service.name();
+    }
+    bool equals(const ThymioProviderInfo& other) override {
+        if(other.type() != ThymioProviderInfo::ProviderType::Tcp)
+            return false;
+        auto port = static_cast<const NetworkThymioProviderInfo*>(other.data())->m_service;
+        return port == m_service;
+    }
+    bool lt(const ThymioProviderInfo& other) override {
+        if(other.type() != ThymioProviderInfo::ProviderType::Tcp)
+            return false;
+        auto service = static_cast<const NetworkThymioProviderInfo*>(other.data())->m_service;
+        if(m_service.ip().toIPv4Address() == service.ip().toIPv4Address())
+            return m_service.port() < service.port();
+        return m_service.ip().toIPv4Address() < service.ip().toIPv4Address();
+    }
+
+    QZeroConfService m_service;
+};
 
 NetworkDeviceProber::NetworkDeviceProber(QObject* parent)
     : AbstractDeviceProber(parent)
@@ -16,29 +46,35 @@ NetworkDeviceProber::NetworkDeviceProber(QObject* parent)
 NetworkDeviceProber::~NetworkDeviceProber() {
 }
 
-std::vector<ThymioProviderInfo> NetworkDeviceProber::getThymios() {
-    return {};
+std::vector<ThymioProviderInfo> NetworkDeviceProber::getDevices() {
+    std::vector<ThymioProviderInfo> info;
+    for(auto&& service : m_services) {
+        info.emplace_back(std::make_shared<NetworkThymioProviderInfo>(service));
+    }
+    return info;
 }
 std::unique_ptr<QIODevice> NetworkDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
-    return {};
+    if(thymio.type() != ThymioProviderInfo::ProviderType::Tcp)
+        return {};
+    auto& service = static_cast<const NetworkThymioProviderInfo*>(thymio.data())->m_service;
+
+    QTcpSocket* s = new QTcpSocket;
+    s->connectToHost(service.ip(), service.port());
+    return std::unique_ptr<QIODevice>(s);
 }
 
 
 void NetworkDeviceProber::onServiceAdded(QZeroConfService service) {
-    updateService(service);
+    m_services.append(service);
+    Q_EMIT availabilityChanged();
 }
 
-void NetworkDeviceProber::onServiceUpdated(QZeroConfService service) {
-    updateService(service);
+void NetworkDeviceProber::onServiceUpdated(QZeroConfService) {
+    Q_EMIT availabilityChanged();
 }
 
 void NetworkDeviceProber::onServiceRemoved(QZeroConfService service) {
-    updateService(service);
+    m_services.removeAll(service);
+    Q_EMIT availabilityChanged();
 }
-
-void NetworkDeviceProber::updateService(QZeroConfService service) {
-    qDebug() << service.domain() << service.host() << service.port() << service.name();
-    qDebug() << service.txt();
-}
-
 }    // namespace mobsya

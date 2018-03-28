@@ -9,7 +9,7 @@ namespace mobsya {
 class AndroidSerialDeviceProber : public AbstractDeviceProber {
     Q_OBJECT
 public:
-    std::vector<ThymioProviderInfo> getThymios() override;
+    std::vector<ThymioProviderInfo> getDevices() override;
     ~AndroidSerialDeviceProber();
     static AndroidSerialDeviceProber* instance();
     std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& info) override;

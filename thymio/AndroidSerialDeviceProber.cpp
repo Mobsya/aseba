@@ -12,7 +12,7 @@ class AndroidSerialThymioProviderInfo : public AbstractThymioProviderInfoPrivate
 public:
     AndroidSerialThymioProviderInfo(QString portName, QString deviceName,
                                     const QAndroidJniObject& device)
-        : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::DeviceProvider::AndroidSerial)
+        : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType::AndroidSerial)
         , m_portName(portName)
         , m_deviceName(deviceName)
         , m_device(device) {
@@ -21,12 +21,19 @@ public:
     QString name() const {
         return m_deviceName;
     }
-    virtual bool equals(const ThymioProviderInfo& other) {
-        if(other.type() != ThymioProviderInfo::DeviceProvider::Serial)
+    bool equals(const ThymioProviderInfo& other) override {
+        if(other.type() != ThymioProviderInfo::ProviderType::Serial)
             return false;
         auto port = static_cast<const AndroidSerialThymioProviderInfo*>(other.data())->m_portName;
         return port == m_portName;
     }
+    bool lt(const ThymioProviderInfo& other) override {
+        if(other.type() != ThymioProviderInfo::ProviderType::Serial)
+            return false;
+        auto port = static_cast<const AndroidSerialThymioProviderInfo*>(other.data())->m_portName;
+        return port < m_portName;
+    }
+
     QString m_portName;
     QString m_deviceName;
     QAndroidJniObject m_device;
@@ -49,7 +56,7 @@ auto fromJni(QAndroidJniObject device) {
         deviceName.toString().trimmed(), productName.toString().trimmed(), device);
 }
 
-std::vector<ThymioProviderInfo> AndroidSerialDeviceProber::getThymios() {
+std::vector<ThymioProviderInfo> AndroidSerialDeviceProber::getDevices() {
     QAndroidJniEnvironment qjniEnv;
 
     QAndroidJniObject jDevices = QAndroidJniObject::callStaticObjectMethod(
@@ -80,7 +87,7 @@ void onDeviceAvailabilityChanged(JNIEnv*, jobject) {
 
 std::unique_ptr<QIODevice>
 AndroidSerialDeviceProber::openConnection(const ThymioProviderInfo& info) {
-    if(info.type() != ThymioProviderInfo::DeviceProvider::AndroidSerial)
+    if(info.type() != ThymioProviderInfo::ProviderType::AndroidSerial)
         return {};
 
     auto connection = std::make_unique<AndroidUsbSerialDevice>(
