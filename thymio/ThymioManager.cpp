@@ -9,6 +9,8 @@
 #    include "UsbSerialDeviceProber.h"
 #endif
 
+#include "NetworkDeviceProber.h"
+
 
 namespace mobsya {
 
@@ -20,19 +22,25 @@ AbstractDeviceProber::AbstractDeviceProber(QObject* parent)
 ThymioManager::ThymioManager(QObject* parent)
     : QObject(parent) {
 
-// Thymio using the system-level serial driver only works on desktop OSes
-#if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) || defined(Q_OS_WIN)
-    auto desktopProbe = new UsbSerialDeviceProber(this);
-    connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this,
+    // Thymio using the system-level serial driver only works on desktop OSes
+    /*#if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) || defined(Q_OS_WIN)
+        auto desktopProbe = new UsbSerialDeviceProber(this);
+        connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this,
+                &ThymioManager::scanDevices);
+        m_probes.push_back(desktopProbe);
+    #endif
+    #ifdef Q_OS_ANDROID
+        auto androidProbe = AndroidSerialDeviceProber::instance();
+        connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this,
+                &ThymioManager::scanDevices);
+        m_probes.push_back(androidProbe);
+    #endif
+    */
+    auto networkProbe = new NetworkDeviceProber(this);
+    connect(networkProbe, &NetworkDeviceProber::availabilityChanged, this,
             &ThymioManager::scanDevices);
-    m_probes.push_back(desktopProbe);
-#endif
-#ifdef Q_OS_ANDROID
-    auto androidProbe = AndroidSerialDeviceProber::instance();
-    connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this,
-            &ThymioManager::scanDevices);
-    m_probes.push_back(androidProbe);
-#endif
+    m_probes.push_back(networkProbe);
+
     scanDevices();
 }
 

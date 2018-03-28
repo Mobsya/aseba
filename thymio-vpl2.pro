@@ -9,6 +9,7 @@ RESOURCES += qml.qrc
 
 include(third_party/libusb/libusb.pri)
 include(thymio-vpl2.pri)
+include(third_party/QtZeroConf/qtzeroconf.pri)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

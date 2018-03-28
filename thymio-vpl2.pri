@@ -64,11 +64,13 @@ ASEBA_INCLUDE = $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
 SOURCES += \
     $$PWD/thymio/ThymioInfo.cpp \
     $$PWD/thymio/ThymioManager.cpp \
+    $$PWD/thymio/NetworkDeviceProber.cpp \
     $$PWD/thymio/DeviceQtConnection.cpp
 
 HEADERS += \
     $$PWD/thymio/ThymioInfo.h \
     $$PWD/thymio/ThymioManager.h \
+    $$PWD/thymio/NetworkDeviceProber.h \
     $$PWD/thymio/DeviceQtConnection.h
 
 !android:!ios {
@@ -94,6 +96,7 @@ android {
 }
 
 DEFINES += $$ASEBA_DEFINES ASEBA_NO_DASHEL
+DEFINES += QZEROCONF_STATIC
 CONFIG += c++14 object_parallel_to_source
 HEADERS += $$PWD/aseba.h \
 	$$PWD/simulator.h
