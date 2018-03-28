@@ -16,10 +16,10 @@ NetworkDeviceProber::NetworkDeviceProber(QObject* parent)
 NetworkDeviceProber::~NetworkDeviceProber() {
 }
 
-std::vector<ThymioInfo> NetworkDeviceProber::getThymios() {
+std::vector<ThymioProviderInfo> NetworkDeviceProber::getThymios() {
     return {};
 }
-std::unique_ptr<QIODevice> NetworkDeviceProber::openConnection(const ThymioInfo& thymio) {
+std::unique_ptr<QIODevice> NetworkDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
     return {};
 }
 

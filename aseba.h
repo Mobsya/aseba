@@ -50,7 +50,7 @@ signals:
     void connectionError(QString source, QString reason);
 
 private:
-    void connect(const mobsya::ThymioInfo& thymio);
+    void connect(const mobsya::ThymioProviderInfo& thymio);
 };
 
 class AsebaNode : public QObject {

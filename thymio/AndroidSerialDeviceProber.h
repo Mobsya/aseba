@@ -1,6 +1,6 @@
 #pragma once
 #include "ThymioManager.h"
-#include "ThymioInfo.h"
+#include "ThymioProviderInfo.h"
 #include <vector>
 
 namespace mobsya {
@@ -9,10 +9,10 @@ namespace mobsya {
 class AndroidSerialDeviceProber : public AbstractDeviceProber {
     Q_OBJECT
 public:
-    std::vector<ThymioInfo> getThymios() override;
+    std::vector<ThymioProviderInfo> getThymios() override;
     ~AndroidSerialDeviceProber();
     static AndroidSerialDeviceProber* instance();
-    std::unique_ptr<QIODevice> openConnection(const ThymioInfo& info) override;
+    std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& info) override;
 
 private:
     AndroidSerialDeviceProber(QObject* parent = nullptr);

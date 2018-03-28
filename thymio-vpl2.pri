@@ -62,16 +62,16 @@ ASEBA_INCLUDE = $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
 
 
 SOURCES += \
-    $$PWD/thymio/ThymioInfo.cpp \
     $$PWD/thymio/ThymioManager.cpp \
     $$PWD/thymio/NetworkDeviceProber.cpp \
-    $$PWD/thymio/DeviceQtConnection.cpp
+    $$PWD/thymio/DeviceQtConnection.cpp \
+    $$PWD/thymio/ThymioProviderInfo.cpp
 
 HEADERS += \
-    $$PWD/thymio/ThymioInfo.h \
     $$PWD/thymio/ThymioManager.h \
     $$PWD/thymio/NetworkDeviceProber.h \
-    $$PWD/thymio/DeviceQtConnection.h
+    $$PWD/thymio/DeviceQtConnection.h \
+    $$PWD/thymio/ThymioProviderInfo.h
 
 !android:!ios {
    SOURCES += $$PWD/thymio/UsbSerialDeviceProber.cpp

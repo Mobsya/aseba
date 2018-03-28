@@ -1,7 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QVector>
-#include "ThymioInfo.h"
+#include "ThymioProviderInfo.h"
 #include "DeviceQtConnection.h"
 
 namespace mobsya {
@@ -12,26 +12,26 @@ class AbstractDeviceProber : public QObject {
     Q_OBJECT
 public:
     AbstractDeviceProber(QObject* parent = nullptr);
-    virtual std::vector<ThymioInfo> getThymios() = 0;
+    virtual std::vector<ThymioProviderInfo> getThymios() = 0;
 Q_SIGNALS:
     void availabilityChanged();
 
 public:
-    virtual std::unique_ptr<QIODevice> openConnection(const ThymioInfo& thymio) = 0;
+    virtual std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& thymio) = 0;
 };
 
 class ThymioManager : public QObject {
     Q_OBJECT
 public:
     ThymioManager(QObject* parent = nullptr);
-    std::unique_ptr<DeviceQtConnection> openConnection(const ThymioInfo& info);
-    ThymioInfo first() const;
+    std::unique_ptr<DeviceQtConnection> openConnection(const ThymioProviderInfo& info);
+    ThymioProviderInfo first() const;
     bool hasDevice() const;
 public Q_SLOTS:
     void scanDevices();
 
 private:
-    std::vector<ThymioInfo> m_thymios;
+    std::vector<ThymioProviderInfo> m_thymios;
     QVector<AbstractDeviceProber*> m_probes;
 };
 

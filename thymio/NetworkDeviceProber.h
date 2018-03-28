@@ -10,8 +10,8 @@ class NetworkDeviceProber : public AbstractDeviceProber {
 public:
     NetworkDeviceProber(QObject* parent = nullptr);
     ~NetworkDeviceProber();
-    std::vector<ThymioInfo> getThymios() override;
-    std::unique_ptr<QIODevice> openConnection(const ThymioInfo& thymio) override;
+    std::vector<ThymioProviderInfo> getThymios() override;
+    std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& thymio) override;
 
 private:
     void updateService(QZeroConfService service);

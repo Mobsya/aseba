@@ -46,13 +46,13 @@ ThymioManager::ThymioManager(QObject* parent)
 
 
 void ThymioManager::scanDevices() {
-    std::vector<ThymioInfo> new_thymios;
+    std::vector<ThymioProviderInfo> new_thymios;
     for(auto&& probe : m_probes) {
         auto thymios = probe->getThymios();
         std::move(std::begin(thymios), std::end(thymios), std::back_inserter(new_thymios));
     }
     m_thymios.erase(std::remove_if(std::begin(m_thymios), std::end(m_thymios),
-                                   [&new_thymios](const ThymioInfo& thymio) {
+                                   [&new_thymios](const ThymioProviderInfo& thymio) {
                                        return std::find(std::begin(new_thymios),
                                                         std::end(new_thymios),
                                                         thymio) == std::end(new_thymios);
@@ -60,19 +60,20 @@ void ThymioManager::scanDevices() {
                     std::end(m_thymios));
     std::copy_if(std::make_move_iterator(std::begin(new_thymios)),
                  std::make_move_iterator(std::end(new_thymios)), std::back_inserter(m_thymios),
-                 [this](const ThymioInfo& thymio) {
+                 [this](const ThymioProviderInfo& thymio) {
                      return std::find(std::begin(m_thymios), std::end(m_thymios), thymio) ==
                             std::end(m_thymios);
                  });
 
     qDebug() << ">>>-----";
     for(auto&& thymio : m_thymios) {
-        qDebug() << thymio.name() << (int)thymio.provider();
+        qDebug() << thymio.name() << (int)thymio.type();
     }
     qDebug() << "<<<-----";
 }
 
-std::unique_ptr<DeviceQtConnection> ThymioManager::openConnection(const ThymioInfo& thymio) {
+std::unique_ptr<DeviceQtConnection>
+ThymioManager::openConnection(const ThymioProviderInfo& thymio) {
     for(auto&& probe : m_probes) {
         auto iod = probe->openConnection(thymio);
         if(iod)
@@ -81,7 +82,7 @@ std::unique_ptr<DeviceQtConnection> ThymioManager::openConnection(const ThymioIn
     return {};
 }
 
-ThymioInfo ThymioManager::first() const {
+ThymioProviderInfo ThymioManager::first() const {
     return m_thymios.front();
 }
 

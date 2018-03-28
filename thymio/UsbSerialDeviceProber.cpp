@@ -18,10 +18,10 @@ public:
 static LibUSB lib_usb_handle;
 
 
-class UsbSerialThymioInfo : public AbstractThymioInfoPrivate {
+class UsbSerialThymioProviderInfo : public AbstractThymioProviderInfoPrivate {
 public:
-    UsbSerialThymioInfo(QString portName, QString deviceName)
-        : AbstractThymioInfoPrivate(ThymioInfo::DeviceProvider::Serial)
+    UsbSerialThymioProviderInfo(QString portName, QString deviceName)
+        : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::DeviceProvider::Serial)
         , m_portName(portName)
         , m_deviceName(deviceName) {
     }
@@ -29,10 +29,10 @@ public:
     QString name() const {
         return m_deviceName;
     }
-    virtual bool equals(const ThymioInfo& other) {
-        if(other.provider() != ThymioInfo::DeviceProvider::Serial)
+    virtual bool equals(const ThymioProviderInfo& other) {
+        if(other.type() != ThymioProviderInfo::DeviceProvider::Serial)
             return false;
-        auto port = static_cast<const UsbSerialThymioInfo*>(other.data())->m_portName;
+        auto port = static_cast<const UsbSerialThymioProviderInfo*>(other.data())->m_portName;
         return port == m_portName;
     }
     QString m_portName;
@@ -80,24 +80,24 @@ UsbSerialDeviceProber::UsbSerialDeviceProber(QObject* parent)
     m_thread.start();
 }
 
-std::vector<ThymioInfo> UsbSerialDeviceProber::getThymios() {
-    std::vector<ThymioInfo> compatible_ports;
+std::vector<ThymioProviderInfo> UsbSerialDeviceProber::getThymios() {
+    std::vector<ThymioProviderInfo> compatible_ports;
     const auto serial_ports = QSerialPortInfo::availablePorts();
     for(auto&& port : qAsConst(serial_ports)) {
         if(!port.hasProductIdentifier())
             continue;
         if(port.vendorIdentifier() == EPFL_VENDOR_ID) {
-            compatible_ports.emplace_back(std::move(
-                std::make_unique<UsbSerialThymioInfo>(port.portName(), port.description())));
+            compatible_ports.emplace_back(std::move(std::make_unique<UsbSerialThymioProviderInfo>(
+                port.portName(), port.description())));
         }
     }
     return compatible_ports;
 }
 
-std::unique_ptr<QIODevice> UsbSerialDeviceProber::openConnection(const ThymioInfo& thymio) {
-    if(thymio.provider() != ThymioInfo::DeviceProvider::Serial)
+std::unique_ptr<QIODevice> UsbSerialDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
+    if(thymio.type() != ThymioProviderInfo::DeviceProvider::Serial)
         return nullptr;
-    auto port = static_cast<const UsbSerialThymioInfo*>(thymio.data())->m_portName;
+    auto port = static_cast<const UsbSerialThymioProviderInfo*>(thymio.data())->m_portName;
     auto connection = std::make_unique<QSerialPort>(port);
     if(!connection->open(QIODevice::ReadWrite)) {
         return {};
