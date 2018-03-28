@@ -7,18 +7,18 @@ import android.content.Context;
 import android.content.BroadcastReceiver;
 
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+
+import java.io.IOException;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import com.hoho.android.usbserial.driver.UsbSerialDriver;
-import com.hoho.android.usbserial.driver.UsbSerialPort;
 
 import android.os.AsyncTask;
 
@@ -56,6 +56,7 @@ public class ThymioVPLActivity extends QtActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        System.out.println(intent.getAction());
         super.onNewIntent(intent);
         if(intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
             System.out.println("device attached");
@@ -87,4 +88,44 @@ public class ThymioVPLActivity extends QtActivity {
         List<UsbDevice> devices = m_instance.doListDevices();
         return devices.toArray(new UsbDevice[devices.size()]);
     }
+
+    public static ThymioSerialConnection openUsbDevice(int address, UsbDevice d) throws IOException {
+        UsbManager manager = (UsbManager) m_instance.getSystemService(Context.USB_SERVICE);
+        UsbDeviceConnection connection = manager.openDevice(d);
+        ThymioSerialConnection thymioSerialConnection = new ThymioSerialConnection(address, d, connection);
+        return thymioSerialConnection;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

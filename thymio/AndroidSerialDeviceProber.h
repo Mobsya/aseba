@@ -12,6 +12,7 @@ public:
     std::vector<ThymioInfo> getThymios() override;
     ~AndroidSerialDeviceProber();
     static AndroidSerialDeviceProber* instance();
+    std::unique_ptr<QIODevice> openConnection(const ThymioInfo& info) override;
 
 private:
     AndroidSerialDeviceProber(QObject* parent = nullptr);

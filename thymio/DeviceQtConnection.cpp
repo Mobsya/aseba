@@ -1,6 +1,8 @@
 #include "DeviceQtConnection.h"
 #include <QDataStream>
 #include <iostream>
+#include <sstream>
+#include <QDebug>
 
 namespace mobsya {
 
@@ -14,7 +16,6 @@ DeviceQtConnection::DeviceQtConnection(QIODevice* device, QObject* parent)
 }
 
 void DeviceQtConnection::sendMessage(const Aseba::Message& message) {
-
 
     Aseba::Message::SerializationBuffer buffer;
     message.serializeSpecific(buffer);
@@ -52,7 +53,7 @@ void DeviceQtConnection::onDataAvailable() {
             return;
         stream >> m_messageSize;
     }
-    const int available = m_device->bytesAvailable();
+    const auto available = m_device->bytesAvailable();
     if(available < m_messageSize + 4)
         return;
     quint16 source, type;
@@ -69,8 +70,9 @@ void DeviceQtConnection::onDataAvailable() {
 
     // deserialize message
     auto msg = std::shared_ptr<Aseba::Message>(Aseba::Message::create(source, type, buffer));
-    msg->dump(std::wcerr);
-    std::cerr << L"\n";
+    std::wstringstream s;
+    msg->dump(s);
+    qDebug() << QString::fromStdWString(s.str());
     Q_EMIT messageReceived(std::move(msg));
 }
 

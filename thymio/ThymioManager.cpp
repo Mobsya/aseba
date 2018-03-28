@@ -77,4 +77,8 @@ ThymioInfo ThymioManager::first() const {
     return m_thymios.front();
 }
 
+bool ThymioManager::hasDevice() const {
+    return m_thymios.size() > 0;
+}
+
 }    // namespace mobsya

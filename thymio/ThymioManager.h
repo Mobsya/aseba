@@ -26,6 +26,7 @@ public:
     ThymioManager(QObject* parent = nullptr);
     std::unique_ptr<DeviceQtConnection> openConnection(const ThymioInfo& info);
     ThymioInfo first() const;
+    bool hasDevice() const;
 public Q_SLOTS:
     void scanDevices();
 
