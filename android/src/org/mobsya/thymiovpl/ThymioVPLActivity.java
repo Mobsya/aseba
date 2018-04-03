@@ -89,11 +89,21 @@ public class ThymioVPLActivity extends QtActivity {
         return devices.toArray(new UsbDevice[devices.size()]);
     }
 
-    public static ThymioSerialConnection openUsbDevice(int address, UsbDevice d) throws IOException {
+   /* public static ThymioSerialConnection openUsbDevice(int address, UsbDevice d) throws IOException, Exception {
         UsbManager manager = (UsbManager) m_instance.getSystemService(Context.USB_SERVICE);
         UsbDeviceConnection connection = manager.openDevice(d);
         ThymioSerialConnection thymioSerialConnection = new ThymioSerialConnection(address, d, connection);
         return thymioSerialConnection;
+    }
+    */
+
+    public static UsbDeviceConnection openUsbDevice(UsbDevice d) throws IOException, Exception {
+        UsbManager manager = (UsbManager) m_instance.getSystemService(Context.USB_SERVICE);
+        UsbDeviceConnection connection = manager.openDevice(d);
+        for(int i = 0; i < d.getInterfaceCount(); i++) {
+            connection.claimInterface(d.getInterface(i), true);
+        }
+        return connection;
     }
 }
 

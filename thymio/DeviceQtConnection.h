@@ -25,7 +25,7 @@ private Q_SLOTS:
 
 private:
     QIODevice* m_device;
-    quint16 m_messageSize;
+    int m_messageSize;
     ThymioProviderInfo m_provider;
 };
 

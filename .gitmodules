@@ -6,9 +6,6 @@
 	path = enki
 	url = https://github.com/enki-community/enki.git
 	branch = master
-[submodule "third_party/jni.hpp"]
-	path = third_party/jni.hpp
-	url = https://github.com/mapbox/jni.hpp
 [submodule "third_party/QtZeroConf"]
 	path = third_party/QtZeroConf
 	url = https://github.com/Mobsya/QtZeroConf

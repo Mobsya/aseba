@@ -10,7 +10,7 @@ DeviceQtConnection::DeviceQtConnection(const ThymioProviderInfo& provider, QIODe
                                        QObject* parent)
     : QObject(parent)
     , m_device(device)
-    , m_messageSize(0)
+    , m_messageSize(-1)
     , m_provider(provider) {
     device->setParent(this);
 
@@ -50,10 +50,12 @@ bool DeviceQtConnection::isOpen() const {
 void DeviceQtConnection::onDataAvailable() {
     QDataStream stream(m_device);
     stream.setByteOrder(QDataStream::LittleEndian);
-    if(m_messageSize == 0) {
-        if(m_device->bytesAvailable() < 6)
+    if(m_messageSize == -1) {
+        if(m_device->bytesAvailable() < 2)
             return;
-        stream >> m_messageSize;
+        quint16 len;
+        stream >> len;
+        m_messageSize = len;
     }
     const auto available = m_device->bytesAvailable();
     if(available < m_messageSize + 4)
@@ -64,11 +66,11 @@ void DeviceQtConnection::onDataAvailable() {
 
     // read content
     Aseba::Message::SerializationBuffer buffer;
-    buffer.rawData.resize(m_messageSize);
+    buffer.rawData.resize(std::size_t(m_messageSize));
     if(m_messageSize) {
         stream.readRawData(reinterpret_cast<char*>(buffer.rawData.data()), m_messageSize);
     }
-    m_messageSize = 0;
+    m_messageSize = -1;
 
     // deserialize message
     auto msg = std::shared_ptr<Aseba::Message>(Aseba::Message::create(source, type, buffer));

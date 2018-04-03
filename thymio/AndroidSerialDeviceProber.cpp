@@ -22,13 +22,13 @@ public:
         return m_deviceName;
     }
     bool equals(const ThymioProviderInfo& other) override {
-        if(other.type() != ThymioProviderInfo::ProviderType::Serial)
+        if(other.type() != ThymioProviderInfo::ProviderType::AndroidSerial)
             return false;
         auto port = static_cast<const AndroidSerialThymioProviderInfo*>(other.data())->m_portName;
         return port == m_portName;
     }
     bool lt(const ThymioProviderInfo& other) override {
-        if(other.type() != ThymioProviderInfo::ProviderType::Serial)
+        if(other.type() != ThymioProviderInfo::ProviderType::AndroidSerial)
             return false;
         auto port = static_cast<const AndroidSerialThymioProviderInfo*>(other.data())->m_portName;
         return port < m_portName;
@@ -108,13 +108,13 @@ static void RegisterAndroidSerialDeviceProber(JavaVM*) {
     env->RegisterNatives(class_ThymioVPLActivity, methods, sizeof(methods) / sizeof(methods[0]));
 }
 
-extern void RegisterAndroidUsbSerialDevice(JavaVM*);
+// extern void RegisterAndroidUsbSerialDevice(JavaVM*);
 
 }    // namespace mobsya
 
 
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
     mobsya::RegisterAndroidSerialDeviceProber(vm);
-    mobsya::RegisterAndroidUsbSerialDevice(vm);
+    // mobsya::RegisterAndroidUsbSerialDevice(vm);
     return JNI_VERSION_1_6;
 }
