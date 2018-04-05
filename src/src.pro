@@ -9,6 +9,14 @@ include(../third_party/libusb/libusb_lib.pri)
 include(thymio-vpl2.pri)
 include(../third_party/qtzeroconf/qtzeroconf_lib.pri)
 
+CONFIG(debug) {
+   include(../third_party/qmllive/src/src.pri)
+   DEFINES += QMLLIVE_ENABLED
+   DEFINES += QML_ROOT_FILE=\"\\\"$$PWD/qml/thymio-vpl2/main.qml\\\"\"
+} else {
+   DEFINES += QML_ROOT_FILE=\"\\\"qrc:/thymio-vpl2/main.qml\\\"\"
+}
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 

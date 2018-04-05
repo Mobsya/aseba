@@ -2,7 +2,6 @@ TEMPLATE = subdirs
 
 
 SUBDIRS =    \
-  qmllive    \
   libusb     \
   qtzeroconf \
   app
@@ -12,4 +11,4 @@ libusb.subdir     = third_party/libusb
 qtzeroconf.subdir = third_party/qtzeroconf
 app.subdir        = src
 
-app.depends = qmllive libusb qtzeroconf
+app.depends = libusb qtzeroconf
