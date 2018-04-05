@@ -9,3 +9,6 @@
 [submodule "third_party/QtZeroConf"]
 	path = third_party/QtZeroConf
 	url = https://github.com/Mobsya/QtZeroConf
+[submodule "third_party/qmllive"]
+	path = third_party/qmllive
+	url = git://code.qt.io/qt-apps/qmllive.git
