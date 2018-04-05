@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <QDebug>
+#include <QBuffer>
 
 namespace mobsya {
 
@@ -34,13 +35,16 @@ void DeviceQtConnection::sendMessage(const Aseba::Message& message) {
         std::terminate();
     }
 
-    QDataStream stream(m_device);
+    QByteArray data;
+    data.reserve(len + 6);
+    QDataStream stream(&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
     stream << (quint16)len;
     stream << (quint16)message.source;
     stream << (quint16)message.type;
     if(buffer.rawData.size())
         stream.writeRawData(reinterpret_cast<char*>(&buffer.rawData[0]), buffer.rawData.size());
+    m_device->write(data.data(), data.size());
 }
 
 bool DeviceQtConnection::isOpen() const {

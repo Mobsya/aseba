@@ -1,3 +1,7 @@
+include(../../third_party/libusb/libusb_lib.pri)
+include(../../third_party/qtzeroconf/qtzeroconf_lib.pri)
+
+
 ASEBA_DIR=$$PWD/aseba/aseba
 !exists($${ASEBA_DIR}/CMakeLists.txt) {
     ASEBA_DIR=$$PWD/aseba
@@ -5,20 +9,10 @@ ASEBA_DIR=$$PWD/aseba/aseba
 
 
 ASEBA_SOURCES = \
-    $$PWD/enki/enki/Types.cpp \
-    $$PWD/enki/enki/Geometry.cpp \
-    $$PWD/enki/enki/PhysicalEngine.cpp \
-    $$PWD/enki/enki/BluetoothBase.cpp \
-    $$PWD/enki/enki/interactions/GroundSensor.cpp \
-    $$PWD/enki/enki/interactions/IRSensor.cpp \
-    $$PWD/enki/enki/robots/DifferentialWheeled.cpp \
-    $$PWD/enki/enki/robots/thymio2/Thymio2.cpp \
     $$ASEBA_DIR/common/utils/FormatableString.cpp \
     $$ASEBA_DIR/common/utils/utils.cpp \
     $$ASEBA_DIR/common/utils/HexFile.cpp \
-    #$$ASEBA_DIR/common/utils/BootloaderInterface.cpp \
     $$ASEBA_DIR/common/msg/msg.cpp \
-    $$ASEBA_DIR/common/msg/NodesManager.cpp \
     $$ASEBA_DIR/common/msg/TargetDescription.cpp \
     $$ASEBA_DIR/compiler/compiler.cpp \
     $$ASEBA_DIR/compiler/errors.cpp \
@@ -32,15 +26,11 @@ ASEBA_SOURCES = \
     $$ASEBA_DIR/compiler/tree-typecheck.cpp \
     $$ASEBA_DIR/compiler/tree-optimize.cpp \
     $$ASEBA_DIR/compiler/tree-emit.cpp \
-    $$ASEBA_DIR/vm/vm.c \
-    $$ASEBA_DIR/vm/natives.c \
-    $$ASEBA_DIR/transport/buffer/vm-buffer.c \
-    $$ASEBA_DIR/targets/playground/EnkiGlue.cpp \
-    $$ASEBA_DIR/targets/playground/AsebaGlue.cpp \
-    $$ASEBA_DIR/targets/playground/DirectAsebaGlue.cpp \
-    $$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2.cpp \
-    $$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-natives.cpp \
-    $$ASEBA_DIR/targets/playground/robots/thymio2/Thymio2-descriptions.c
+
+    #$$ASEBA_DIR/vm/vm.c \
+    #$$ASEBA_DIR/vm/natives.c \
+    #$$ASEBA_DIR/transport/buffer/vm-buffer.c
+
 ASEBA_DEFINES =
 macx {
     ASEBA_DEFINES += DISABLE_WEAK_CALLBACKS
@@ -58,10 +48,12 @@ win32 {
 	}
 }
 
-ASEBA_INCLUDE = $$PWD/enki $$PWD/aseba $$PWD/aseba/aseba
+ASEBA_INCLUDE = $$PWD/aseba $$PWD/aseba/aseba
 
 
 SOURCES += \
+    $$ASEBA_SOURCES \
+    $$PWD/aseba.cpp \
     $$PWD/thymio/ThymioManager.cpp \
     $$PWD/thymio/NetworkDeviceProber.cpp \
     $$PWD/thymio/DeviceQtConnection.cpp \
@@ -70,6 +62,7 @@ SOURCES += \
 
 
 HEADERS += \
+    $$PWD/aseba.h \
     $$PWD/thymio/ThymioManager.h \
     $$PWD/thymio/NetworkDeviceProber.h \
     $$PWD/thymio/DeviceQtConnection.h \
@@ -99,22 +92,31 @@ android {
 DEFINES += $$ASEBA_DEFINES ASEBA_NO_DASHEL
 DEFINES += QZEROCONF_STATIC
 CONFIG += c++14 object_parallel_to_source
-HEADERS += $$PWD/aseba.h \
-	$$PWD/simulator.h
-SOURCES += \
-	$$ASEBA_SOURCES \
-	$$PWD/aseba.cpp \
-	$$PWD/thymio-vpl2.cpp \
-	$$PWD/simulator.cpp
+
+HEADERS += $$PWD/aseba.h
+
 lupdate_only{
-SOURCES = \
+SOURCES += \
 	$$PWD/*.qml \
 	$$PWD/blocks/*.qml \
 	$$PWD/blocks/widgets/*.qml
 }
 TRANSLATIONS += ../translations/thymio-vpl2_fr.ts ../translations/thymio-vpl2_de.ts
 QT += quick svg xml
-RESOURCES += qml/thymio-vpl2.qrc
-DEPENDPATH += $$ASEBA_INCLUDE
-INCLUDEPATH += $$ASEBA_INCLUDE
+RESOURCES += ../qml/thymio-vpl2.qrc
+DEPENDPATH += $$ASEBA_INCLUDE $$PWD
+INCLUDEPATH += $$ASEBA_INCLUDE $$PWD
 LIBS += $$ASEBA_LIBS
+
+DISTFILES += \
+    ../../android/AndroidManifest.xml \
+    ../../android/res/values/libs.xml \
+    ../../android/res/xml/device_filter.xml \
+    ../../android/build.gradle \
+    ../../android/settings.gradle \
+    ../../android/gradle/**/*
+
+DISTFILES += $$files(../android/*.java, true)
+
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../../android

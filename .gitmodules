@@ -1,10 +1,6 @@
 [submodule "aseba"]
-	path = src/aseba
+	path = src/common/aseba
 	url = https://github.com/aseba-community/aseba.git
-	branch = master
-[submodule "enki"]
-	path = src/enki
-	url = https://github.com/enki-community/enki.git
 	branch = master
 [submodule "third_party/QtZeroConf"]
 	path = third_party/qtzeroconf

@@ -1,2 +1,2 @@
 INCLUDEPATH += $$PWD/libusb $$PWD/include
-LIBS += -L.. -lusb
+LIBS += -L../.. -lusb

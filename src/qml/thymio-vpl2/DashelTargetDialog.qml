@@ -3,62 +3,46 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 
+
 Popup {
-	id: dialog
-	x: (window.width - width) / 2
-	y: window.height / 6
-	modal: true
-	focus: true
-	closePolicy: Popup.OnEscape | Popup.OnPressOutside
+    id: dialog
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
 
-	property Aseba aseba
+    height: parent.height * 0.9
+    width: parent.width * 0.9
+    topMargin: 0
 
-	onVisibleChanged: {
-		if (visible) {
-			textInput.text = aseba.target;
-		}
-	}
+    modal: true
+    focus: true
+    closePolicy: Popup.OnEscape | Popup.OnPressOutside
 
-	ColumnLayout {
-		spacing: 20
+    property Aseba aseba
 
-		Label {
-			text: qsTr("Set Dashel target")
-			font.pixelSize: 20
-			font.weight: Font.Medium
-		}
+    onVisibleChanged: {
 
-		TextField {
-			id: textInput
-			implicitWidth: 280
-		}
+    }
+    background: Rectangle {
+        color: "#3b3b3b"
+        opacity: 0
+    }
 
-		Label {
-			textFormat: Text.RichText;
-			text: linkRichTextStyle + qsTr("<a href=\"http://aseba-community.github.io/dashel/\">Learn more about Dashel targets...</a>")
-			onLinkActivated: Qt.openUrlExternally(link)
-		}
+    contentItem: GridView {
 
-		RowLayout {
-			spacing: 16
-			Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+        model: aseba.model
+        delegate: Column {
+            Image {
+                source: "file://home/cor3ntin/dev/mobsya/thymio-vpl2/src/qml/thymio-vpl2/images/icon-thymio.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 100
+                fillMode: Image.PreserveAspectFit
 
-			Button {
-				id: cancelButton
-				text: qsTr("Cancel")
-				onClicked: {
-					dialog.close();
-				}
-			}
-
-			Button {
-				id: okButton
-				text: qsTr("Ok")
-				onClicked: {
-					aseba.target = textInput.text;
-					dialog.close();
-				}
-			}
-		}
-	}
+            }
+            Text {
+                text: name;
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#FFFFFF"
+            }
+        }
+    }
 }
