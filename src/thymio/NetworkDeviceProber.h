@@ -1,6 +1,6 @@
 #pragma once
 #include "ThymioManager.h"
-#include "third_party/QtZeroConf/qzeroconf.h"
+#include <qzeroconf.h>
 
 class QZeroConf;
 

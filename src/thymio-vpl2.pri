@@ -89,8 +89,6 @@ android {
    HEADERS += $$PWD/thymio/AndroidSerialDeviceProber.h \
               $$PWD/thymio/AndroidUsbSerialDevice.h
 
-
-   INCLUDEPATH += $$PWD/third_party/jni.hpp/include/
    QT += androidextras
 }
 
@@ -114,9 +112,9 @@ SOURCES = \
 	$$PWD/blocks/*.qml \
 	$$PWD/blocks/widgets/*.qml
 }
-TRANSLATIONS += translations/thymio-vpl2_fr.ts translations/thymio-vpl2_de.ts
+TRANSLATIONS += ../translations/thymio-vpl2_fr.ts ../translations/thymio-vpl2_de.ts
 QT += quick svg xml
-RESOURCES += $$PWD/thymio-vpl2.qrc
+RESOURCES += qml/thymio-vpl2.qrc
 DEPENDPATH += $$ASEBA_INCLUDE
 INCLUDEPATH += $$ASEBA_INCLUDE
 LIBS += $$ASEBA_LIBS

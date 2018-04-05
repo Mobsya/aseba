@@ -1,7 +1,7 @@
 #pragma once
 #include "ThymioManager.h"
 #include <QThread>
-#include <libusb.h>
+#include <libusb/libusb.h>
 
 namespace mobsya {
 

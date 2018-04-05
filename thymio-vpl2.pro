@@ -1,32 +1,15 @@
-TEMPLATE = app
-
-QT += qml
-CONFIG += c++14
-
-SOURCES += main.cpp
-
-RESOURCES += qml.qrc
-
-include(third_party/libusb/libusb.pri)
-include(thymio-vpl2.pri)
-include(third_party/QtZeroConf/qtzeroconf.pri)
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
-# Default rules for deployment.
-include(deployment.pri)
-
-DISTFILES += \
-    android/AndroidManifest.xml \
-    android/res/values/libs.xml \
-    android/res/xml/device_filter.xml \
-    android/build.gradle \
-    android/settings.gradle \
-    android/gradle/**/*
-
-DISTFILES += $$files(android/*.java, true)
+TEMPLATE = subdirs
 
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+SUBDIRS =    \
+  qmllive    \
+  libusb     \
+  qtzeroconf \
+  app
 
+qmllive.subdir    = third_party/qmllive
+libusb.subdir     = third_party/libusb
+qtzeroconf.subdir = third_party/qtzeroconf
+app.subdir        = src
+
+app.depends = qmllive libusb qtzeroconf

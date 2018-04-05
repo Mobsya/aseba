@@ -1,6 +1,6 @@
 #include "AndroidUsbSerialDevice.h"
 #include <cstring>
-#include <libusb.h>
+#include <libusb/libusb.h>
 
 namespace mobsya {
 

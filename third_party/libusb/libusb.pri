@@ -1,3 +1,5 @@
+TARGET = usb
+
 # Input
 SOURCES += \
   $$PWD/libusb/libusb/core.c \

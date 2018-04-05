@@ -1,5 +1,6 @@
 <RCC>
-    <qresource>
+    <qresource prefix="/">
+        <file>thymio-vpl2/main.qml</file>
         <file>thymio-vpl2/utils.js</file>
         <file>thymio-vpl2/Link.qml</file>
         <file>thymio-vpl2/BlockLinkArrow.qml</file>
@@ -103,7 +104,7 @@
         <file>thymio-vpl2/blocks/MotorSimpleActionBlock.qml</file>
         <file>thymio-vpl2/blocks/MusicScoreBlock.qml</file>
         <file>thymio-vpl2/blocks/NopActionBlock.qml</file>
-		<file>thymio-vpl2/blocks/ImageStateActionBlock.qml</file>
+        <file>thymio-vpl2/blocks/ImageStateActionBlock.qml</file>
         <file>thymio-vpl2/blocks/NopActionBlock.svg</file>
         <file>thymio-vpl2/blocks/ClapEventBlock.svg</file>
         <file>thymio-vpl2/blocks/TapEventBlock.svg</file>
