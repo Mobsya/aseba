@@ -33,6 +33,12 @@ public:
     QZeroConfService m_service;
 };
 
+QZeroConfService dns_service_for_provider(const ThymioProviderInfo& info) {
+    if(info.type() != ThymioProviderInfo::ProviderType::Tcp)
+        return {};
+    return static_cast<const NetworkThymioProviderInfo*>(info.data())->m_service;
+}
+
 NetworkDeviceProber::NetworkDeviceProber(QObject* parent)
     : AbstractDeviceProber(parent)
     , m_register(new QZeroConf(this)) {

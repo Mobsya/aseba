@@ -11,7 +11,6 @@ int main(int argc, char* argv[]) {
     app.setApplicationName("Thymio VPL Mobile Preview");
 
     QTranslator qtTranslator;
-    QLocale::system().name();
     qtTranslator.load("thymio-vpl2_" + QLocale::system().name(), ":/thymio-vpl2/translations/");
     app.installTranslator(&qtTranslator);
 

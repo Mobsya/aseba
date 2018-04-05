@@ -65,13 +65,16 @@ SOURCES += \
     $$PWD/thymio/ThymioManager.cpp \
     $$PWD/thymio/NetworkDeviceProber.cpp \
     $$PWD/thymio/DeviceQtConnection.cpp \
-    $$PWD/thymio/ThymioProviderInfo.cpp
+    $$PWD/thymio/ThymioProviderInfo.cpp \
+    $$PWD/thymio/ThymioListModel.cpp
+
 
 HEADERS += \
     $$PWD/thymio/ThymioManager.h \
     $$PWD/thymio/NetworkDeviceProber.h \
     $$PWD/thymio/DeviceQtConnection.h \
-    $$PWD/thymio/ThymioProviderInfo.h
+    $$PWD/thymio/ThymioProviderInfo.h \
+    $$PWD/thymio/ThymioListModel.h
 
 !android:!ios {
    SOURCES += $$PWD/thymio/UsbSerialDeviceProber.cpp

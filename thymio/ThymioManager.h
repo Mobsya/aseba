@@ -15,6 +15,7 @@ public:
     void setVariable(QString name, const QList<int>& value);
     const ThymioProviderInfo& provider() const;
     uint16_t id() const;
+    QString name() const;
 
 private:
     friend class ThymioManager;
@@ -52,7 +53,15 @@ public:
 class ThymioManager : public QObject {
     Q_OBJECT
 public:
+    using Robot = std::shared_ptr<ThymioNodeData>;
+
     ThymioManager(QObject* parent = nullptr);
+    std::size_t robotsCount() const;
+    const Robot& at(std::size_t index) const;
+
+Q_SIGNALS:
+    void robotAdded(const Robot& robot);
+    void robotRemoved(const Robot& robot);
 
 public Q_SLOTS:
     void scanDevices();
@@ -70,7 +79,7 @@ private:
 
     std::map<ThymioProviderInfo, std::shared_ptr<DeviceQtConnection>> m_providers;
     std::vector<AbstractDeviceProber*> m_probes;
-    std::vector<std::shared_ptr<ThymioNodeData>> m_thymios;
+    std::vector<Robot> m_thymios;
 };
 
 }    // namespace mobsya

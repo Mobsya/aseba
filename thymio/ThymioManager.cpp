@@ -1,6 +1,7 @@
 #include "ThymioManager.h"
 #include <QDebug>
 #include <vector>
+#include <QTimer>
 
 #ifdef Q_OS_ANDROID
 #    include "AndroidSerialDeviceProber.h"
@@ -85,6 +86,18 @@ uint16_t ThymioNodeData::id() const {
     return m_nodeId;
 }
 
+QString ThymioNodeData::name() const {
+    if(provider().type() == ThymioProviderInfo::ProviderType::Serial ||
+       provider().type() == ThymioProviderInfo::ProviderType::AndroidSerial) {
+        return provider().name();
+    }
+    if(!m_description.name.empty()) {
+        return QString::fromStdWString(m_description.name);
+    }
+    // This is so not useful !
+    return QString::number(id());
+}
+
 void ThymioNodeData::updateReadyness() {
     if(!m_ready)
         m_ready = !m_description.name.empty() &&
@@ -96,26 +109,30 @@ void ThymioNodeData::updateReadyness() {
 ThymioManager::ThymioManager(QObject* parent)
     : QObject(parent) {
 
-    // Thymio using the system-level serial driver only works on desktop OSes
-    /*#if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) ||
-    defined(Q_OS_WIN) auto desktopProbe = new UsbSerialDeviceProber(this);
-        connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this,
-                &ThymioManager::scanDevices);
-        m_probes.push_back(desktopProbe);
-    #endif
-    #ifdef Q_OS_ANDROID
-        auto androidProbe = AndroidSerialDeviceProber::instance();
-        connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this,
-                &ThymioManager::scanDevices);
-        m_probes.push_back(androidProbe);
-    #endif
-    */
+// Thymio using the system-level serial driver only works on desktop OSes
+#if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) || defined(Q_OS_WIN)
+
+    auto desktopProbe = new UsbSerialDeviceProber(this);
+    connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this,
+            &ThymioManager::scanDevices);
+    m_probes.push_back(desktopProbe);
+
+#endif
+
+#ifdef Q_OS_ANDROID
+    auto androidProbe = AndroidSerialDeviceProber::instance();
+    connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this,
+            &ThymioManager::scanDevices);
+    m_probes.push_back(androidProbe);
+#endif
     auto networkProbe = new NetworkDeviceProber(this);
     connect(networkProbe, &NetworkDeviceProber::availabilityChanged, this,
             &ThymioManager::scanDevices);
     m_probes.push_back(networkProbe);
 
-    scanDevices();
+    QTimer* t = new QTimer(this);
+    connect(t, &QTimer::timeout, this, &ThymioManager::scanDevices);
+    t->start(1000);
 }
 
 
@@ -179,36 +196,37 @@ void ThymioManager::requestNodesList() {
 
 void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider,
                                       std::shared_ptr<Aseba::Message> message) {
-    if(message->type == ASEBA_MESSAGE_NODE_PRESENT) {
+
+    auto it = std::find_if(std::begin(m_thymios), std::end(m_thymios),
+                           [&provider, &message](const std::shared_ptr<ThymioNodeData>& node) {
+                               return node->provider() == provider && node->id() == message->source;
+                           });
+
+    if(it == std::end(m_thymios) && message->type == ASEBA_MESSAGE_NODE_PRESENT) {
         auto providerIt = m_providers.find(provider);
         if(providerIt == std::end(m_providers))
             return;
         providerIt->second->sendMessage(Aseba::GetNodeDescription(message->source));
-        return;
-    }
-
-    if(message->type != ASEBA_MESSAGE_DESCRIPTION) {
-        return;
-    }
-
-
-    auto it = std::find_if(std::begin(m_thymios), std::end(m_thymios),
-                           [&provider, &message](const std::shared_ptr<ThymioNodeData>& node) {
-                               return node->provider() == provider && node->id();
-                           });
-
-    if(it == std::end(m_thymios)) {
-        auto providerIt = m_providers.find(provider);
-        if(providerIt == std::end(m_providers))
-            return;
         it = m_thymios.insert(it, std::make_shared<ThymioNodeData>(
                                       providerIt->second, providerIt->first, message->source));
+        Q_EMIT robotAdded(*it);
     }
-    (*it)->onMessageReceived(message);
+
+    if(it != std::end(m_thymios)) {
+        (*it)->onMessageReceived(message);
+    }
 }
 
 ThymioProviderInfo ThymioManager::first() const {
     // return m_providers.front();
+}
+
+const ThymioManager::Robot& ThymioManager::at(std::size_t index) const {
+    return m_thymios.at(index);
+}
+
+std::size_t ThymioManager::robotsCount() const {
+    return m_thymios.size();
 }
 
 bool ThymioManager::hasDevice() const {

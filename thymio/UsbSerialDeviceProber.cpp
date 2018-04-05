@@ -27,7 +27,7 @@ public:
         , m_deviceName(deviceName) {
     }
 
-    QString name() const {
+    QString name() const override {
         return m_deviceName;
     }
     bool equals(const ThymioProviderInfo& other) override {
@@ -57,7 +57,7 @@ void UsbSerialDeviceProberThread::run() {
     libusb_hotplug_callback_handle handle;
 
     int rc = libusb_hotplug_register_callback(
-        NULL,
+        nullptr,
         libusb_hotplug_event(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED |
                              LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT),
         libusb_hotplug_flag(0), EPFL_VENDOR_ID, LIBUSB_HOTPLUG_MATCH_ANY, LIBUSB_HOTPLUG_MATCH_ANY,
@@ -68,10 +68,10 @@ void UsbSerialDeviceProberThread::run() {
     }
 
     while(!this->isInterruptionRequested()) {
-        libusb_handle_events_completed(NULL, NULL);
+        libusb_handle_events_completed(nullptr, nullptr);
     }
 
-    libusb_hotplug_deregister_callback(NULL, handle);
+    libusb_hotplug_deregister_callback(nullptr, handle);
 }
 
 int UsbSerialDeviceProberThread::hotplug_callback(struct libusb_context*, struct libusb_device*,
@@ -95,8 +95,8 @@ std::vector<ThymioProviderInfo> UsbSerialDeviceProber::getDevices() {
         if(!port.hasProductIdentifier())
             continue;
         if(port.vendorIdentifier() == EPFL_VENDOR_ID) {
-            compatible_ports.emplace_back(std::move(std::make_unique<UsbSerialThymioProviderInfo>(
-                port.portName(), port.description())));
+            compatible_ports.emplace_back(
+                std::make_unique<UsbSerialThymioProviderInfo>(port.portName(), port.description()));
         }
     }
     return compatible_ports;

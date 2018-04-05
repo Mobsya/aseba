@@ -5,6 +5,9 @@
 class QZeroConf;
 
 namespace mobsya {
+
+QZeroConfService dns_service_for_provider(const ThymioProviderInfo& info);
+
 class NetworkDeviceProber : public AbstractDeviceProber {
     Q_OBJECT
 public:
