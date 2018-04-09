@@ -52,6 +52,8 @@ AsebaClient::~AsebaClient() {
 AsebaNode::AsebaNode(mobsya::ThymioManager::Robot robot)
     : m_robot(robot) {
     connect(m_robot.get(), &mobsya::ThymioNode::ready, this, &AsebaNode::readyChanged);
+    connect(m_robot.get(), &mobsya::ThymioNode::userMessageReceived, this,
+            &AsebaNode::userMessageReceived);
 }
 QString AsebaNode::name() {
     return m_robot->name();

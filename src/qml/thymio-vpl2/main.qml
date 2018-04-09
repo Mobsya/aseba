@@ -415,6 +415,16 @@ Rectangle {
             }
             playingOld = playing;
         }
+        onUserMessageReceived: {
+            if (type !== 0) {
+                return;
+            }
+            if (vplEditor === undefined) {
+                return;
+            }
+            vplEditor.compiler.execTransition(data[0]);
+        }
+
         function start() {
             vplEditor.saveProgram(autosaveName);
             vplEditor.compiler.execReset(true);

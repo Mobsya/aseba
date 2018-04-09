@@ -48,6 +48,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void readyChanged();
+    void userMessageReceived(int type, QList<int>);
 
 
 private:

@@ -30,6 +30,7 @@ public:
 
 Q_SIGNALS:
     void ready();
+    void userMessageReceived(int type, QList<int>);
 
 
 private:
@@ -40,6 +41,7 @@ private:
     void onVariableDescriptionReceived(const Aseba::NamedVariableDescription& description);
     void onFunctionDescriptionReceived(const Aseba::NativeFunctionDescription& description);
     void onEventDescriptionReceived(const Aseba::LocalEventDescription& description);
+    void onUserMessageReceived(const Aseba::UserMessage& userMessage);
     void updateReadyness();
 
     std::shared_ptr<DeviceQtConnection> m_connection;

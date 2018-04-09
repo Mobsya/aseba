@@ -54,12 +54,10 @@ void ThymioNode::onMessageReceived(const std::shared_ptr<Aseba::Message>& messag
             onFunctionDescriptionReceived(
                 *static_cast<const Aseba::NativeFunctionDescription*>(message.get()));
             break;
-        case ASEBA_MESSAGE_EXECUTION_STATE_CHANGED:
-
         default:
-            if(auto um = dynamic_cast<Aseba::UserMessage*>(message.get())) {
-                // Do smth
-                qDebug() << um->type;
+            if(auto um =
+                   dynamic_cast<Aseba::UserMessage*>(message.get())) {    // This is so terrible...
+                onUserMessageReceived(*um);
             }
     }
 }
@@ -83,6 +81,13 @@ void ThymioNode::onFunctionDescriptionReceived(
 void ThymioNode::onEventDescriptionReceived(const Aseba::LocalEventDescription& description) {
     m_description.localEvents[m_message_counter.event++] = description;
     updateReadyness();
+}
+
+void ThymioNode::onUserMessageReceived(const Aseba::UserMessage& userMessage) {
+    QList<int> data;
+    data.reserve(int(userMessage.data.size()));
+    std::copy(std::begin(userMessage.data), std::end(userMessage.data), std::back_inserter(data));
+    Q_EMIT userMessageReceived(userMessage.type, data);
 }
 
 const ThymioProviderInfo& ThymioNode::provider() const {

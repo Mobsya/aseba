@@ -10,11 +10,13 @@ Item {
         "source": "",
     })
     property string error: ""
+    signal userMessageReceived(int type, variant data)
 
     onNodeChanged: {
         if (node) {
             setVariables();
             setProgram();
+            node.userMessageReceived.connect(userMessageReceived)
         }
     }
     onReadyChanged: {
