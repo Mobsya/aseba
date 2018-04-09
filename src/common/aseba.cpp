@@ -2,6 +2,7 @@
 #include <memory>
 
 #include <QDebug>
+#include <QQmlEngine>
 #include <sstream>
 
 Q_DECLARE_METATYPE(Aseba::Message*)
@@ -18,71 +19,6 @@ QList<int> fromAsebaVector(const std::vector<int16_t>& values) {
     return data;
 }
 
-AsebaClient::AsebaClient()
-    : m_robots(&m_thymioManager) {
-}
-
-
-/*void AsebaClient::connect(const mobsya::ThymioProviderInfo& thymio) {
-    // m_connection = m_thymioManager.openConnection(thymio);
-    if(!m_connection) {
-        return;
-    }
-    // QObject::connect(m_connection.get(), &mobsya::DeviceQtConnection::messageReceived, this,
-    //                  &AsebaClient::messageReceived);
-    // m_nodesManager.pingNetwork();
-}*/
-
-AsebaClient::~AsebaClient() {
-    //  thread.quit();
-    //  thread.wait();
-}
-
-// void AsebaClient::start(QString target) {
-// if(!m_connection && m_thymioManager.hasDevice()) {
-//    connect(m_thymioManager.first());
-//}
-//}
-
-/*void AsebaClient::send(const Aseba::Message& message) {
-    if(!m_connection || !m_connection->isOpen()) {
-        qDebug() << "Not connected";
-        return;
-    }
-    m_connection->sendMessage(message);
-}
-
-void AsebaClient::messageReceived(std::shared_ptr<Aseba::Message> message) {
-    m_nodesManager.processMessage(message.get());
-
-    Aseba::UserMessage* userMessage(dynamic_cast<Aseba::UserMessage*>(message.get()));
-    if(userMessage)
-        emit this->userMessage(userMessage->type, fromAsebaVector(userMessage->data));
-}
-
-void AsebaClient::sendUserMessage(int type, QList<int> data) {
-    Aseba::VariablesDataVector vector(data.begin(), data.end());
-    Aseba::UserMessage message(type, vector);
-    send(message);
-}*/
-
-
-AsebaNode::AsebaNode(AsebaClient* parent, unsigned nodeId,
-                     const Aseba::TargetDescription* description)
-    : QObject(parent)
-    , nodeId(nodeId)
-    , description(*description) {
-    unsigned dummy;
-    variablesMap = description->getVariablesMap(dummy);
-}
-
-void AsebaNode::setVariable(QString name, QList<int> value) {
-    uint16_t start = variablesMap[name.toStdWString()].first;
-    Aseba::VariablesDataVector variablesVector(value.begin(), value.end());
-    Aseba::SetVariables message(nodeId, start, variablesVector);
-    //  parent()->send(message);
-}
-
 Aseba::CommonDefinitions AsebaNode::commonDefinitionsFromEvents(QVariantMap events) {
     Aseba::CommonDefinitions commonDefinitions;
     for(auto event(events.begin()); event != events.end(); ++event) {
@@ -93,10 +29,47 @@ Aseba::CommonDefinitions AsebaNode::commonDefinitionsFromEvents(QVariantMap even
     return commonDefinitions;
 }
 
+
+AsebaClient::AsebaClient()
+    : m_robots(&m_thymioManager) {
+}
+
+
+AsebaNode* AsebaClient::createNode(int nodeId) {
+    auto r = m_thymioManager.robotFromId(uint16_t(nodeId));
+    if(!r) {
+        return nullptr;
+    }
+    auto node = new AsebaNode(r);
+    QQmlEngine::setObjectOwnership(node, QQmlEngine::JavaScriptOwnership);
+    return node;
+}
+
+
+AsebaClient::~AsebaClient() {
+}
+
+AsebaNode::AsebaNode(mobsya::ThymioManager::Robot robot)
+    : m_robot(robot) {
+    connect(m_robot.get(), &mobsya::ThymioNode::ready, this, &AsebaNode::readyChanged);
+}
+QString AsebaNode::name() {
+    return m_robot->name();
+}
+
+bool AsebaNode::isReady() const {
+    return m_robot->isReady();
+}
+
+
+void AsebaNode::setVariable(QString name, QList<int> value) {
+    m_robot->setVariable(name, value);
+}
+
 QString AsebaNode::setProgram(QVariantMap events, QString source) {
     Aseba::Compiler compiler;
     Aseba::CommonDefinitions commonDefinitions(commonDefinitionsFromEvents(events));
-    compiler.setTargetDescription(&description);
+    compiler.setTargetDescription(m_robot->description());
     compiler.setCommonDefinitions(&commonDefinitions);
 
     std::wistringstream input(source.toStdWString());
@@ -112,12 +85,13 @@ QString AsebaNode::setProgram(QVariantMap events, QString source) {
     }
 
     std::vector<std::unique_ptr<Aseba::Message>> messages;
-    Aseba::sendBytecode(messages, nodeId, std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
+    Aseba::sendBytecode(messages, m_robot->id(),
+                        std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
     for(auto& message : messages) {
-        //        parent()->send(*message);
+        m_robot->sendMessage(*message);
     }
 
-    Aseba::Run run(nodeId);
-    //    parent()->send(run);
+    Aseba::Run run(m_robot->id());
+    m_robot->sendMessage(run);
     return "";
 }

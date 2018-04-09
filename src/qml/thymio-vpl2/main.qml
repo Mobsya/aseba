@@ -6,14 +6,15 @@ import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import Qt.labs.settings 1.0
 import QtQml 2.2
+import Thymio 1.0
 import "."
 
-ApplicationWindow {
+Rectangle {
     id: window
-    title: qsTr("Thymio VPL Mobile Preview")
+    //title: qsTr("Thymio VPL Mobile Preview")
     visible: true
-    width: 960
-    height: 600
+  //  width: 960
+  //  height: 600
 
     Material.primary: Material.theme === Material.Dark ? "#200032" : Material.background // "#a3d9db"
     property string linkRichTextStyle: Material.theme === Material.Dark ?
@@ -22,57 +23,76 @@ ApplicationWindow {
     Material.accent: Material.theme === Material.Dark ? "#9478aa" : "#B290CC" // "#59cbc8"
     Material.background: Material.theme === Material.Dark ? "#ff44285a" : "white"
 
-    header: vplEditor.blockEditorVisible ? blockEditorTitleBar : vplEditorTitleBar
-
     readonly property string autosaveName: qsTr("autosave");
 
-    EditorTitleBar {
-        id: vplEditorTitleBar
-        visible: !vplEditor.blockEditorVisible
-        vplEditor: vplEditor
-        isThymioConnected: !!thymio.node
-        onOpenDrawer: drawer.open()
-        onOpenDashelTargetSelector: dashelTargetSelector.open()
-    }
 
-    BlockEditorTitleBar {
-        id: blockEditorTitleBar
-        visible: vplEditor.blockEditorVisible
-        onCancel: vplEditor.blockEditor.close()
-        onAccept: vplEditor.blockEditor.accept()
-        okEnabled: vplEditor.blockEditorDefinition
-    }
-
-    Editor {
-        id: vplEditor
-        anchors.fill: parent
-
-//		Text {
-//			text: "developer preview pre-alpha, no feature or design is final"
-//			anchors.left: parent.left
-//			anchors.leftMargin: 106
-//			anchors.top: parent.top
-//			anchors.topMargin: 10
-//			color: Material.primaryTextColor
-//		}
-    }
-
-    // improve using: https://appbus.wordpress.com/2016/05/20/one-page-sample-app/
-    FloatingActionButton {
-        property int distToBorders: isMini ? 16 : 24
+    Item {
+        z  :10000
+        id : header
+        anchors.left: parent.left
         anchors.right: parent.right
-        anchors.rightMargin: (isMini ? 64 : 96) + distToBorders
+        anchors.top  : parent.top
+        height: vplEditorTitleBar.height
+
+        EditorTitleBar {
+            id: vplEditorTitleBar
+            visible: !vplEditor.blockEditorVisible
+            vplEditor: vplEditor
+            isThymioConnected: !!thymio.node
+            onOpenDrawer: drawer.open()
+            onOpenDashelTargetSelector: dashelTargetSelector.open()
+            anchors.fill: parent
+        }
+
+        BlockEditorTitleBar {
+            id: blockEditorTitleBar
+            visible: vplEditor.blockEditorVisible
+            onCancel: vplEditor.blockEditor.close()
+            onAccept: vplEditor.blockEditor.accept()
+            okEnabled: vplEditor.blockEditorDefinition
+            anchors.fill: parent
+        }
+    }
+
+    Item {
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: distToBorders
-        isMini: window.width <= 460
-        /*anchors.top: parent.top
-        anchors.topMargin: -height/2
-        z: 2*/
-        imageSource: !thymio.playing ? "icons/ic_play_arrow_white_24px.svg" : "icons/ic_stop_white_24px.svg"
-        visible: !vplEditor.blockEditorVisible
-        onClicked: thymio.playing = !thymio.playing
-        enabled: (vplEditor.compiler.output.error === undefined) && (thymio.node !== undefined)
-        //opacity: enabled ? 1.0 : 0.38
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: header.bottom
+
+        Editor {
+            id: vplEditor
+            anchors.fill: parent
+
+            // improve using: https://appbus.wordpress.com/2016/05/20/one-page-sample-app/
+            FloatingActionButton {
+                id:runButton
+                property int distToBorders: isMini ? 16 : 24
+                anchors.right: parent.right
+                anchors.rightMargin: (isMini ? 64 : 96) + distToBorders
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: distToBorders
+                isMini: window.width <= 460
+                imageSource: !thymio.playing ? "icons/ic_play_arrow_white_24px.svg" : "icons/ic_stop_white_24px.svg"
+                visible: !vplEditor.blockEditorVisible
+                onClicked: thymio.playing = !thymio.playing
+                enabled: (vplEditor.compiler.output.error === undefined || !vplEditor.compiler.output.error) && thymio.node !== undefined
+                opacity: enabled ? 1.0 : 0.38
+            }
+        }
+        ThymioSelectionPane {
+            id:thymioselectionpane
+            anchors.fill: parent
+            visible : true
+            aseba: aseba
+            onSelectedChanged: {
+                visible = false
+                thymio.node = aseba.createNode(thymioselectionpane.selected)
+            }
+            onItemSelected: {
+                visible = false
+            }
+        }
     }
 
     Connections {
@@ -204,11 +224,11 @@ ApplicationWindow {
         }
     }
 
-    DashelTargetDialog {
+    /*DashelTargetDialog {
         id: dashelTargetSelector
         aseba: aseba
         visible: false
-    }
+    }*/
 
     LoadSaveDialog {
         id: saveProgramDialog
@@ -361,7 +381,15 @@ ApplicationWindow {
         }
     }
 
-    Aseba {
+    AsebaClient {
+        id: aseba
+        /*onConnectionError: {
+            timer.start();
+        }*/
+    }
+
+
+    /*Aseba {
         id: aseba
         onUserMessage: {
             if (type !== 0) {
@@ -372,7 +400,7 @@ ApplicationWindow {
             }
             vplEditor.compiler.execTransition(data[0]);
         }
-    }
+    }*/
 
     Thymio {
         id: thymio
@@ -403,7 +431,11 @@ ApplicationWindow {
                 source: "",
             };
         }
-        onErrorChanged: if (error !== "") { vplEditor.compiler.output.error = error; }
+        onErrorChanged: vplEditor.compiler.output.error = error;
+
+        onReadyChanged: {
+           runButton.enabled = (vplEditor.compiler.output.error === undefined || !vplEditor.compiler.output.error) && thymio.node !== undefined
+        }
     }
 
     Component.onCompleted: {

@@ -17,8 +17,6 @@
         <file>thymio-vpl2/EditorSimple.qml</file>
         <file>thymio-vpl2/BlocksPane.qml</file>
         <file>thymio-vpl2/LoadSaveDialog.qml</file>
-        <file>thymio-vpl2/DashelTargetDialog.qml</file>
-        <file>thymio-vpl2/Aseba.qml</file>
         <file>thymio-vpl2/Thymio.qml</file>
         <file>thymio-vpl2/BlockBackground.qml</file>
         <file>thymio-vpl2/CompilationLabel.qml</file>
@@ -169,5 +167,6 @@
         <file>thymio-vpl2/images/logoEPFL.svg</file>
         <file>thymio-vpl2/images/logoETHGTC.svg</file>
         <file>thymio-vpl2/images/logoMobsya.svg</file>
+        <file>thymio-vpl2/ThymioSelectionPane.qml</file>
     </qresource>
 </RCC>

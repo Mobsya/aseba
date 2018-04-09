@@ -13,9 +13,12 @@ class QExampleQmlPlugin : public QQmlExtensionPlugin {
 
 public:
     void registerTypes(const char* uri) {
+        qDebug(uri);
         qmlRegisterUncreatableType<AsebaClient::ThymioModel>("Thymio", 1, 0, "Model", "");
         qRegisterMetaType<AsebaClient::ThymioModel*>("Model");
         qmlRegisterType<AsebaClient>("Thymio", 1, 0, "AsebaClient");
         qmlRegisterType<AsebaClient>("Thymio", 1, 0, "AsebaNode");
     }
 };
+
+#include "thymioqmlplugin.moc"

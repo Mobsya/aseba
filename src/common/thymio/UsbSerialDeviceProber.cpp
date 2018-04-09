@@ -68,7 +68,10 @@ void UsbSerialDeviceProberThread::run() {
     }
 
     while(!this->isInterruptionRequested()) {
-        libusb_handle_events_completed(nullptr, nullptr);
+        struct timeval tv;
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
+        libusb_handle_events_timeout_completed(nullptr, &tv, nullptr);
     }
 
     libusb_hotplug_deregister_callback(nullptr, handle);

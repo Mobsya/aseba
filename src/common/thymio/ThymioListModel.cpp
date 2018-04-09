@@ -60,4 +60,12 @@ QHash<int, QByteArray> ThymioListModel::roleNames() const {
     };
 }
 
+Q_INVOKABLE QVariantMap ThymioListModel::get(int index) const {
+    return QVariantMap{
+        {"nodeId", data(this->index(index), int(Role::NodeId))},
+        {"name", data(this->index(index), int(Role::RobotName))},
+    };
+}
+
+
 }    // namespace mobsya

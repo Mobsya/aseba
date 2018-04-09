@@ -25,45 +25,33 @@ public Q_SLOTS:
     ThymioModel* model() {
         return &m_robots;
     }
+    AsebaNode* createNode(int nodeId);
 
-    /*    void start(QString target = ASEBA_DEFAULT_TARGET);
-        void send(const Aseba::Message& message);
-        void messageReceived(std::shared_ptr<Aseba::Message>);
-        void sendUserMessage(int eventId, QList<int> args);
-    Q_SIGNALS:
-        void userMessage(unsigned type, QList<int> data);
-        void nodesChanged();
-        void connectionError(QString source, QString reason);
-    */
 private:
     mobsya::ThymioManager m_thymioManager;
     mobsya::ThymioListModel m_robots;
-    // void connect(const mobsya::ThymioProviderInfo& thymio);
 };
 
 class AsebaNode : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString name READ name CONSTANT)
-    unsigned nodeId;
-    Aseba::TargetDescription description;
-    Aseba::VariablesMap variablesMap;
+    Q_PROPERTY(bool ready READ isReady NOTIFY readyChanged)
 
 public:
-    explicit AsebaNode(AsebaClient* parent, unsigned nodeId,
-                       const Aseba::TargetDescription* description);
-    AsebaClient* parent() const {
-        return static_cast<AsebaClient*>(QObject::parent());
-    }
-    unsigned id() const {
-        return nodeId;
-    }
-    QString name() {
-        return QString::fromStdWString(description.name);
-    }
+    AsebaNode(mobsya::ThymioManager::Robot robot);
+    QString name();
     static Aseba::CommonDefinitions commonDefinitionsFromEvents(QVariantMap events);
-public slots:
+public Q_SLOTS:
     void setVariable(QString name, QList<int> value);
     QString setProgram(QVariantMap events, QString source);
+    bool isReady() const;
+
+Q_SIGNALS:
+    void readyChanged();
+
+
+private:
+    mobsya::ThymioManager::Robot m_robot;
 };
 
 #endif    // ASEBA_CLIENT_H

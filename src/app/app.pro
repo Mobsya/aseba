@@ -18,4 +18,8 @@ include(../common/common.pri)
 
 SOURCES += \
 	$$PWD/main.cpp \
-	$$PWD/thymio-vpl2.cpp
+	$$PWD/thymio-vpl2.cpp \
+    liveqmlreloadingengine.cpp
+
+HEADERS += \
+    liveqmlreloadingengine.h

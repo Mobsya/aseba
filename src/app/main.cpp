@@ -2,12 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QTranslator>
 #include "thymio-vpl2.h"
-
-
-#ifdef QMLLIVE_ENABLED
-#    include "livenodeengine.h"
-#    include "remotereceiver.h"
-#endif
+#include "liveqmlreloadingengine.h"
 
 int main(int argc, char* argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -22,8 +17,13 @@ int main(int argc, char* argv[]) {
 
     thymioVPL2Init();
 
+#ifdef QT_DEBUG
+    LiveQmlReloadingEngine engine;
+    engine.load(QML_ROOT_FILE);
+#else
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral(QML_ROOT_FILE)));
+#endif
 
     return app.exec();
 }

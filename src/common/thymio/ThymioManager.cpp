@@ -21,23 +21,24 @@ AbstractDeviceProber::AbstractDeviceProber(QObject* parent)
 }
 
 
-ThymioNodeData::ThymioNodeData(std::shared_ptr<DeviceQtConnection> connection,
-                               ThymioProviderInfo provider, uint16_t node)
+ThymioNode::ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider,
+                       uint16_t node)
     : m_connection(connection)
     , m_provider(provider)
     , m_nodeId(node)
     , m_ready(false) {
 }
 
-void ThymioNodeData::setVariable(QString name, const QList<int>& value) {
+void ThymioNode::setVariable(QString name, const QList<int>& value) {
     uint16_t start = uint16_t(m_variablesMap[name.toStdWString()].first);
     Aseba::VariablesDataVector variablesVector(value.begin(), value.end());
     Aseba::SetVariables message(m_nodeId, start, variablesVector);
     m_connection->sendMessage(message);
 }
 
-void ThymioNodeData::onMessageReceived(const std::shared_ptr<Aseba::Message>& message) {
+void ThymioNode::onMessageReceived(const std::shared_ptr<Aseba::Message>& message) {
     switch(message->type) {
+        case ASEBA_MESSAGE_NODE_PRESENT: break;
         case ASEBA_MESSAGE_DESCRIPTION:
             onDescriptionReceived(*static_cast<const Aseba::Description*>(message.get()));
             break;
@@ -53,40 +54,46 @@ void ThymioNodeData::onMessageReceived(const std::shared_ptr<Aseba::Message>& me
             onFunctionDescriptionReceived(
                 *static_cast<const Aseba::NativeFunctionDescription*>(message.get()));
             break;
+        case ASEBA_MESSAGE_EXECUTION_STATE_CHANGED:
+
+        default:
+            if(auto um = dynamic_cast<Aseba::UserMessage*>(message.get())) {
+                // Do smth
+                qDebug() << um->type;
+            }
     }
 }
 
-void ThymioNodeData::onDescriptionReceived(const Aseba::Description& description) {
+void ThymioNode::onDescriptionReceived(const Aseba::Description& description) {
     m_description = description;
     updateReadyness();
 }
 
-void ThymioNodeData::onVariableDescriptionReceived(
-    const Aseba::NamedVariableDescription& description) {
+void ThymioNode::onVariableDescriptionReceived(const Aseba::NamedVariableDescription& description) {
     m_description.namedVariables[m_message_counter.variables++] = description;
     updateReadyness();
 }
-void ThymioNodeData::onFunctionDescriptionReceived(
+void ThymioNode::onFunctionDescriptionReceived(
     const Aseba::NativeFunctionDescription& description) {
 
     m_description.nativeFunctions[m_message_counter.functions++] = description;
     updateReadyness();
 }
 
-void ThymioNodeData::onEventDescriptionReceived(const Aseba::LocalEventDescription& description) {
+void ThymioNode::onEventDescriptionReceived(const Aseba::LocalEventDescription& description) {
     m_description.localEvents[m_message_counter.event++] = description;
     updateReadyness();
 }
 
-const ThymioProviderInfo& ThymioNodeData::provider() const {
+const ThymioProviderInfo& ThymioNode::provider() const {
     return m_provider;
 }
 
-uint16_t ThymioNodeData::id() const {
+uint16_t ThymioNode::id() const {
     return m_nodeId;
 }
 
-QString ThymioNodeData::name() const {
+QString ThymioNode::name() const {
     if(provider().type() == ThymioProviderInfo::ProviderType::Serial ||
        provider().type() == ThymioProviderInfo::ProviderType::AndroidSerial) {
         return provider().name();
@@ -98,12 +105,20 @@ QString ThymioNodeData::name() const {
     return QString::number(id());
 }
 
-void ThymioNodeData::updateReadyness() {
-    if(!m_ready)
-        m_ready = !m_description.name.empty() &&
-                  m_message_counter.variables == m_description.namedVariables.size() &&
-                  m_message_counter.event == m_description.localEvents.size() &&
-                  m_message_counter.functions == m_description.nativeFunctions.size();
+bool ThymioNode::isReady() const {
+    return m_ready;
+}
+
+void ThymioNode::updateReadyness() {
+    if(m_ready)
+        return;
+    m_ready = !m_description.name.empty() &&
+              m_message_counter.variables == m_description.namedVariables.size() &&
+              m_message_counter.event == m_description.localEvents.size() &&
+              m_message_counter.functions == m_description.nativeFunctions.size();
+    if(m_ready) {
+        Q_EMIT ready();
+    }
 }
 
 ThymioManager::ThymioManager(QObject* parent)
@@ -132,7 +147,8 @@ ThymioManager::ThymioManager(QObject* parent)
 
     QTimer* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, &ThymioManager::scanDevices);
-    t->start(1000);
+    scanDevices();
+    t->start(100);
 }
 
 
@@ -151,12 +167,11 @@ void ThymioManager::scanDevices() {
             m_providers.erase(provider.first);
 
             // Remove the thymios associated to a given device
-            m_thymios.erase(
-                std::remove_if(std::begin(m_thymios), std::end(m_thymios),
-                               [&provider](const std::shared_ptr<ThymioNodeData>& data) {
-                                   return data->provider() == provider.first;
-                               }),
-                std::end(m_thymios));
+            m_thymios.erase(std::remove_if(std::begin(m_thymios), std::end(m_thymios),
+                                           [&provider](const std::shared_ptr<ThymioNode>& data) {
+                                               return data->provider() == provider.first;
+                                           }),
+                            std::end(m_thymios));
         }
     }
 
@@ -198,7 +213,7 @@ void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider,
                                       std::shared_ptr<Aseba::Message> message) {
 
     auto it = std::find_if(std::begin(m_thymios), std::end(m_thymios),
-                           [&provider, &message](const std::shared_ptr<ThymioNodeData>& node) {
+                           [&provider, &message](const std::shared_ptr<ThymioNode>& node) {
                                return node->provider() == provider && node->id() == message->source;
                            });
 
@@ -207,8 +222,8 @@ void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider,
         if(providerIt == std::end(m_providers))
             return;
         providerIt->second->sendMessage(Aseba::GetNodeDescription(message->source));
-        it = m_thymios.insert(it, std::make_shared<ThymioNodeData>(
-                                      providerIt->second, providerIt->first, message->source));
+        it = m_thymios.insert(it, std::make_shared<ThymioNode>(providerIt->second,
+                                                               providerIt->first, message->source));
         Q_EMIT robotAdded(*it);
     }
 
@@ -217,12 +232,15 @@ void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider,
     }
 }
 
-ThymioProviderInfo ThymioManager::first() const {
-    // return m_providers.front();
-}
-
 const ThymioManager::Robot& ThymioManager::at(std::size_t index) const {
     return m_thymios.at(index);
+}
+
+ThymioManager::Robot ThymioManager::robotFromId(unsigned id) const {
+    for(auto&& r : m_thymios)
+        if(r->id() == id)
+            return r;
+    return {};
 }
 
 std::size_t ThymioManager::robotsCount() const {

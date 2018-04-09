@@ -7,18 +7,34 @@
 
 namespace mobsya {
 
-class ThymioNodeData {
+class ThymioNode : public QObject {
+    Q_OBJECT
 public:
-    ThymioNodeData(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider,
-                   uint16_t node);
+    ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider,
+               uint16_t node);
 
     void setVariable(QString name, const QList<int>& value);
     const ThymioProviderInfo& provider() const;
-    uint16_t id() const;
-    QString name() const;
+
+    Q_INVOKABLE uint16_t id() const;
+    Q_INVOKABLE QString name() const;
+    bool isReady() const;
+
+    auto description() {
+        return &m_description;
+    }
+
+    void sendMessage(const Aseba::Message& message) const {
+        m_connection->sendMessage(message);
+    }
+
+Q_SIGNALS:
+    void ready();
+
 
 private:
     friend class ThymioManager;
+    friend class AsebaNode;
     void onMessageReceived(const std::shared_ptr<Aseba::Message>& message);
     void onDescriptionReceived(const Aseba::Description& description);
     void onVariableDescriptionReceived(const Aseba::NamedVariableDescription& description);
@@ -53,11 +69,12 @@ public:
 class ThymioManager : public QObject {
     Q_OBJECT
 public:
-    using Robot = std::shared_ptr<ThymioNodeData>;
+    using Robot = std::shared_ptr<ThymioNode>;
 
     ThymioManager(QObject* parent = nullptr);
     std::size_t robotsCount() const;
     const Robot& at(std::size_t index) const;
+    Robot robotFromId(unsigned id) const;
 
 Q_SIGNALS:
     void robotAdded(const Robot& robot);

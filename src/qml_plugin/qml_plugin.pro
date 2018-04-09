@@ -2,13 +2,13 @@ TEMPLATE = lib
 CONFIG += qt plugin
 QT += qml
 
-DESTDIR  = imports/Thymio
+DESTDIR  = import/Thymio
 TARGET   = qmlthymioplugin
 SOURCES += thymioqmlplugin.cpp
 
 pluginfiles.files += qmldir
 
-target.path += imports/Thymio
+target.path += import/Thymio
 pluginfiles.path = $$DESTDIR
 
 INSTALLS += target pluginfiles
