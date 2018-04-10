@@ -97,26 +97,12 @@ HEADERS += $$PWD/aseba.h
 
 lupdate_only{
 SOURCES += \
-	$$PWD/*.qml \
-	$$PWD/blocks/*.qml \
-	$$PWD/blocks/widgets/*.qml
+  $$PWD/../qml/thymio-vpl2/*.qml \
+  $$PWD/../qml/thymio-vpl2/blocks/*.qml \
+  $$PWD/../qml/thymio-vpl2/blocks/widgets/*.qml
 }
-TRANSLATIONS += ../translations/thymio-vpl2_fr.ts ../translations/thymio-vpl2_de.ts
+
 QT += quick svg xml
-RESOURCES += ../qml/thymio-vpl2.qrc
 DEPENDPATH += $$ASEBA_INCLUDE $$PWD
 INCLUDEPATH += $$ASEBA_INCLUDE $$PWD
 LIBS += $$ASEBA_LIBS
-
-DISTFILES += \
-    ../../android/AndroidManifest.xml \
-    ../../android/res/values/libs.xml \
-    ../../android/res/xml/device_filter.xml \
-    ../../android/build.gradle \
-    ../../android/settings.gradle \
-    ../../android/gradle/**/*
-
-DISTFILES += $$files(../android/*.java, true)
-
-
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../../android

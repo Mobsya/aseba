@@ -17,12 +17,16 @@ int main(int argc, char* argv[]) {
 
     thymioVPL2Init();
 
-#ifdef QT_DEBUG
+#if defined(QT_DEBUG) && !defined(Q_OS_ANDROID)
     LiveQmlReloadingEngine engine;
     engine.load(QML_ROOT_FILE);
 #else
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral(QML_ROOT_FILE)));
+    QQuickView v;
+    v.setResizeMode(QQuickView::SizeRootObjectToView);
+    v.setSource(QUrl(QStringLiteral(QML_ROOT_FILE)));
+    v.setMinimumSize({800, 600});
+    v.show();
 #endif
 
     return app.exec();
