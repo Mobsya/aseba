@@ -170,17 +170,25 @@ void ThymioManager::scanDevices() {
     }
 
     // Remove the one that disappeared
-    for(auto&& provider : m_providers) {
-        if(std::find(std::begin(new_providers), std::end(new_providers), provider.first) ==
-           std::end(new_providers)) {
-            m_providers.erase(provider.first);
+    for(auto providerIt = std::begin(m_providers); providerIt != std::end(m_providers);) {
+        const auto& provider = *providerIt;
 
-            // Remove the thymios associated to a given device
-            m_thymios.erase(std::remove_if(std::begin(m_thymios), std::end(m_thymios),
-                                           [&provider](const std::shared_ptr<ThymioNode>& data) {
-                                               return data->provider() == provider.first;
-                                           }),
-                            std::end(m_thymios));
+        if(std::find(std::begin(new_providers), std::end(new_providers), provider.first) !=
+           std::end(new_providers)) {
+            providerIt++;
+            continue;
+        }
+        providerIt = m_providers.erase(providerIt);
+
+        // Remove the thymios associated to a given device
+        auto it = std::remove_if(std::begin(m_thymios), std::end(m_thymios),
+                                 [&provider](const std::shared_ptr<ThymioNode>& data) {
+                                     return data->provider() == provider.first;
+                                 });
+        while(it != std::end(m_thymios)) {
+            Robot r = std::move(*it);
+            it = m_thymios.erase(it);
+            Q_EMIT robotRemoved(r);
         }
     }
 

@@ -27,6 +27,7 @@ ThymioListModel::ThymioListModel(const ThymioManager* const manager, QObject* pa
     , m_manager(manager) {
 
     connect(m_manager, &ThymioManager::robotAdded, this, &ThymioListModel::onRobotAdded);
+    connect(m_manager, &ThymioManager::robotRemoved, this, &ThymioListModel::onRobotAdded);
 }
 
 void ThymioListModel::onRobotAdded() {
