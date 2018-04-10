@@ -85,7 +85,7 @@ void onDeviceAvailabilityChanged(JNIEnv*, jobject) {
     AndroidSerialDeviceProber::instance()->onDeviceAvailabilityChanged();
 }
 
-std::unique_ptr<QIODevice>
+std::shared_ptr<DeviceQtConnection>
 AndroidSerialDeviceProber::openConnection(const ThymioProviderInfo& info) {
     if(info.type() != ThymioProviderInfo::ProviderType::AndroidSerial)
         return {};
@@ -95,7 +95,9 @@ AndroidSerialDeviceProber::openConnection(const ThymioProviderInfo& info) {
     if(!connection->open(QIODevice::ReadWrite)) {
         return {};
     }
-    return std::move(connection);
+    auto wrapper = std::make_shared<DeviceQtConnection>(info, connection.get());
+    connection.release();
+    return wrapper;
 }
 
 static void RegisterAndroidSerialDeviceProber(JavaVM*) {

@@ -19,6 +19,7 @@ public:
     Q_INVOKABLE uint16_t id() const;
     Q_INVOKABLE QString name() const;
     bool isReady() const;
+    bool isConnected() const;
 
     auto description() {
         return &m_description;
@@ -31,6 +32,7 @@ public:
 Q_SIGNALS:
     void ready();
     void userMessageReceived(int type, QList<int>);
+    void connectedChanged();
 
 
 private:
@@ -65,7 +67,8 @@ Q_SIGNALS:
     void availabilityChanged();
 
 public:
-    virtual std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& thymio) = 0;
+    virtual std::shared_ptr<DeviceQtConnection>
+    openConnection(const ThymioProviderInfo& thymio) = 0;
 };
 
 class ThymioManager : public QObject {

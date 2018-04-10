@@ -114,6 +114,10 @@ bool ThymioNode::isReady() const {
     return m_ready;
 }
 
+bool ThymioNode::isConnected() const {
+    return m_connection->isOpen();
+}
+
 void ThymioNode::updateReadyness() {
     if(m_ready)
         return;
@@ -192,14 +196,14 @@ void ThymioManager::scanDevices() {
         }
     }
     requestNodesList();
-}
+}    // namespace mobsya
 
 std::shared_ptr<DeviceQtConnection>
 ThymioManager::openConnection(const ThymioProviderInfo& thymio) {
     for(auto&& probe : m_probes) {
         auto iod = probe->openConnection(thymio);
         if(iod)
-            return std::make_shared<DeviceQtConnection>(thymio, iod.release());
+            return iod;
     }
     return {};
 }

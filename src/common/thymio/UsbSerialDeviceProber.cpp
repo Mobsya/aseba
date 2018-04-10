@@ -105,7 +105,8 @@ std::vector<ThymioProviderInfo> UsbSerialDeviceProber::getDevices() {
     return compatible_ports;
 }
 
-std::unique_ptr<QIODevice> UsbSerialDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
+std::shared_ptr<DeviceQtConnection>
+UsbSerialDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
     if(thymio.type() != ThymioProviderInfo::ProviderType::Serial)
         return nullptr;
     auto port = static_cast<const UsbSerialThymioProviderInfo*>(thymio.data())->m_portName;
@@ -118,9 +119,12 @@ std::unique_ptr<QIODevice> UsbSerialDeviceProber::openConnection(const ThymioPro
     connection->setStopBits(QSerialPort::OneStop);
     connection->setFlowControl(QSerialPort::NoFlowControl);
     connection->setDataTerminalReady(true);
-    qDebug() << "Serial error: " << connection->error();
-    qDebug() << "Serial errorString: " << connection->errorString();
-    return connection;
+
+    auto wrapper = std::make_shared<DeviceQtConnection>(thymio, connection.get());
+    connect(connection.get(), &QSerialPort::errorOccurred, wrapper.get(),
+            &DeviceQtConnection::connectionStatusChanged);
+    connection.release();
+    return wrapper;
 }    // namespace mobsya
 
 UsbSerialDeviceProber::~UsbSerialDeviceProber() {

@@ -26,7 +26,7 @@ public:
     UsbSerialDeviceProber(QObject* parent = nullptr);
     ~UsbSerialDeviceProber();
     std::vector<ThymioProviderInfo> getDevices() override;
-    std::unique_ptr<QIODevice> openConnection(const ThymioProviderInfo& thymio) override;
+    std::shared_ptr<DeviceQtConnection> openConnection(const ThymioProviderInfo& thymio) override;
 
 private:
     void scan();

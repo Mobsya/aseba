@@ -17,6 +17,7 @@ public:
 Q_SIGNALS:
     void messageReceived(const ThymioProviderInfo& provider,
                          std::shared_ptr<Aseba::Message> message);
+    void connectionStatusChanged();
 public Q_SLOTS:
     void sendMessage(const Aseba::Message& message);
 

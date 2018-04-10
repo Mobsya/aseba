@@ -59,14 +59,18 @@ std::vector<ThymioProviderInfo> NetworkDeviceProber::getDevices() {
     }
     return info;
 }
-std::unique_ptr<QIODevice> NetworkDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
+std::shared_ptr<DeviceQtConnection>
+NetworkDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
     if(thymio.type() != ThymioProviderInfo::ProviderType::Tcp)
         return {};
     auto& service = static_cast<const NetworkThymioProviderInfo*>(thymio.data())->m_service;
 
     QTcpSocket* s = new QTcpSocket;
     s->connectToHost(service.ip(), service.port());
-    return std::unique_ptr<QIODevice>(s);
+    auto con = std::make_shared<DeviceQtConnection>(thymio, s);
+    connect(s, &QTcpSocket::connected, con.get(), &DeviceQtConnection::connectionStatusChanged);
+    connect(s, &QTcpSocket::disconnected, con.get(), &DeviceQtConnection::connectionStatusChanged);
+    return con;
 }
 
 
