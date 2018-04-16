@@ -15,7 +15,8 @@ DeviceQtConnection::DeviceQtConnection(const ThymioProviderInfo& provider, QIODe
     , m_provider(provider) {
     device->setParent(this);
 
-    connect(m_device, &QIODevice::readyRead, this, &DeviceQtConnection::onDataAvailable);
+    connect(m_device, &QIODevice::readyRead, this, &DeviceQtConnection::onDataAvailable,
+            Qt::QueuedConnection);
 }
 
 void DeviceQtConnection::sendMessage(const Aseba::Message& message) {
@@ -82,6 +83,7 @@ void DeviceQtConnection::onDataAvailable() {
     msg->dump(s);
     qDebug() << QString::fromStdWString(s.str());
     Q_EMIT messageReceived(m_provider, std::move(msg));
+    QMetaObject::invokeMethod(this, "onDataAvailable", Qt::QueuedConnection);
 }
 
 
