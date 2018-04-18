@@ -37,20 +37,20 @@ class ThymioVPLStandalone;
 struct ThymioVPLStandaloneInterface : DevelopmentEnvironmentInterface {
     ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone);
 
-    Target* getTarget();
-    unsigned getNodeId() const;
-    unsigned getProductId() const;
-    void setCommonDefinitions(const CommonDefinitions& commonDefinitions);
-    void displayCode(const QList<QString>& code, int line);
-    void loadAndRun();
-    void stop();
-    TargetVariablesModel* getVariablesModel();
-    void setVariableValues(unsigned, const VariablesDataVector&);
-    bool saveFile(bool as = false);
-    void openFile();
-    bool newFile();
-    void clearOpenedFileName(bool isModified);
-    QString openedFileName() const;
+    Target* getTarget() override;
+    unsigned getNodeId() const override;
+    unsigned getProductId() const override;
+    void setCommonDefinitions(const CommonDefinitions& commonDefinitions) override;
+    void displayCode(const QList<QString>& code, int line) override;
+    void loadAndRun() override;
+    void stop() override;
+    TargetVariablesModel* getVariablesModel() override;
+    void setVariableValues(unsigned, const VariablesDataVector&) override;
+    bool saveFile(bool as = false) override;
+    void openFile() override;
+    bool newFile() override;
+    void clearOpenedFileName(bool isModified) override;
+    QString openedFileName() const override;
 
 private:
     ThymioVPLStandalone* vplStandalone;
@@ -68,15 +68,15 @@ class ThymioVPLStandalone : public QSplitter, public VariableListener {
 public:
     ThymioVPLStandalone(QVector<QTranslator*> translators, const QString& commandLineTarget, bool useAnyTarget,
                         bool debugLog, bool execFeedback);
-    ~ThymioVPLStandalone();
+    ~ThymioVPLStandalone() override;
 
 protected:
     void setupWidgets();
     void setupConnections();
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
     void resetSizes();
-    void variableValueUpdated(const QString& name, const VariablesDataVector& values);
-    void closeEvent(QCloseEvent* event);
+    void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
+    void closeEvent(QCloseEvent* event) override;
     bool saveFile(bool as);
     void openFile();
 

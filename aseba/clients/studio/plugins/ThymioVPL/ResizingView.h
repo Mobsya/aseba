@@ -46,7 +46,7 @@ namespace ThymioVPL {
             void clearIgnoreResize();*/
 
     protected:
-        virtual void resizeEvent(QResizeEvent* event);
+        void resizeEvent(QResizeEvent* event) override;
 
     protected:
         qreal computedScale;

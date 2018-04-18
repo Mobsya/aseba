@@ -52,7 +52,7 @@ public:
 
 public:
     PlaygroundViewer(World* world, bool energyScoringSystemEnabled = false);
-    virtual ~PlaygroundViewer();
+    ~PlaygroundViewer() override;
 
     void log(const QString& entry, const QColor& color);
     void log(const std::string& entry, const QColor& color);

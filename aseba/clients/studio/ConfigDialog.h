@@ -68,7 +68,7 @@ signals:
 
 protected:
     ConfigDialog(QWidget* parent = nullptr);
-    ~ConfigDialog();
+    ~ConfigDialog() override;
     void setupWidgets();
 
 protected:
@@ -89,8 +89,8 @@ protected:
 public slots:
     virtual void saveState();
     virtual void reloadFromCache();
-    virtual void accept();
-    virtual void reject();
+    void accept() override;
+    void reject() override;
 
 protected slots:
     void flushCache();
@@ -102,7 +102,7 @@ class ConfigPage : public QWidget {
 
 public:
     ConfigPage(QString title = QString(), QWidget* parent = nullptr);
-    ~ConfigPage() = default;
+    ~ConfigPage() override = default;
 
     friend class ConfigDialog;
 
@@ -137,13 +137,13 @@ class GeneralPage : public ConfigPage {
 
 public:
     GeneralPage(QWidget* parent = nullptr);
-    ~GeneralPage() = default;
+    ~GeneralPage() override = default;
 
     friend class ConfigDialog;
 
 protected:
-    virtual void readSettings();
-    virtual void writeSettings();
+    void readSettings() override;
+    void writeSettings() override;
 };
 
 // EditorPage
@@ -152,13 +152,13 @@ class EditorPage : public ConfigPage {
 
 public:
     EditorPage(QWidget* parent = nullptr);
-    ~EditorPage() = default;
+    ~EditorPage() override = default;
 
     friend class ConfigDialog;
 
 protected:
-    virtual void readSettings();
-    virtual void writeSettings();
+    void readSettings() override;
+    void writeSettings() override;
 };
 }  // namespace Aseba
 

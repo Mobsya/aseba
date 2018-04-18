@@ -35,13 +35,13 @@ private:
 
 public:
     EventDataWrapper(std::vector<double>& _x, std::vector<int16_t>& _y) : _x(_x), _y(_y) {}
-    virtual QRectF boundingRect() const {
+    QRectF boundingRect() const override {
         return qwtBoundingRect(*this);
     }
-    virtual QPointF sample(size_t i) const {
+    QPointF sample(size_t i) const override {
         return QPointF(_x[i], double(_y[i]));
     }
-    virtual size_t size() const {
+    size_t size() const override {
         return _x.size();
     }
 };
@@ -115,12 +115,12 @@ public:
     }
 
 protected:
-    virtual void timerEvent(QTimerEvent* event) {
+    void timerEvent(QTimerEvent* event) override {
         if(!step(0))
             close();
     }
 
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         Message* message = Message::receive(stream);
         auto* userMessage = dynamic_cast<UserMessage*>(message);
         if(userMessage) {
@@ -148,7 +148,7 @@ protected:
         delete message;
     }
 
-    void connectionClosed(Stream* stream, bool abnormal) {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         dumpTime(cerr);
         cout << "Connection closed to " << stream->getTargetName();
         if(abnormal)

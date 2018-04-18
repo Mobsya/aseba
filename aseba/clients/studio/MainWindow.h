@@ -95,20 +95,20 @@ struct StudioInterface : DevelopmentEnvironmentInterface {
 
     StudioInterface(NodeTab* nodeTab);
 
-    Target* getTarget();
-    unsigned getNodeId() const;
-    unsigned getProductId() const;
-    void setCommonDefinitions(const CommonDefinitions& commonDefinitions);
-    void displayCode(const QList<QString>& code, int elementToHighlight);
-    void loadAndRun();
-    void stop();
-    TargetVariablesModel* getVariablesModel();
-    void setVariableValues(unsigned, const VariablesDataVector&);
-    bool saveFile(bool as = false);
-    void openFile();
-    bool newFile();
-    void clearOpenedFileName(bool isModified);
-    QString openedFileName() const;
+    Target* getTarget() override;
+    unsigned getNodeId() const override;
+    unsigned getProductId() const override;
+    void setCommonDefinitions(const CommonDefinitions& commonDefinitions) override;
+    void displayCode(const QList<QString>& code, int elementToHighlight) override;
+    void loadAndRun() override;
+    void stop() override;
+    TargetVariablesModel* getVariablesModel() override;
+    void setVariableValues(unsigned, const VariablesDataVector&) override;
+    bool saveFile(bool as = false) override;
+    void openFile() override;
+    bool newFile() override;
+    void clearOpenedFileName(bool isModified) override;
+    QString openedFileName() const override;
 };
 
 class CompilationLogDialog : public QDialog {
@@ -123,7 +123,7 @@ signals:
     void hidden();
 
 protected:
-    virtual void hideEvent(QHideEvent* event);
+    void hideEvent(QHideEvent* event) override;
     QTextEdit* te;
 };
 
@@ -132,7 +132,7 @@ class EditorsPlotsTabWidget : public QTabWidget {
 
 public:
     EditorsPlotsTabWidget();
-    virtual ~EditorsPlotsTabWidget();
+    ~EditorsPlotsTabWidget() override;
     void addTab(QWidget* widget, const QString& label, bool closable = false);
     void highlightTab(int index, QColor color = Qt::red);
     void setExecutionMode(int index, Target::ExecutionMode state);
@@ -186,7 +186,7 @@ class AbsentNodeTab : public QWidget, public ScriptTab {
 public:
     AbsentNodeTab(const unsigned id, const QString& name, const QString& sourceCode, const SavedPlugins& savedPlugins);
 
-    virtual SavedPlugins savePlugins() const {
+    SavedPlugins savePlugins() const override {
         return savedPlugins;
     }
 
@@ -216,7 +216,7 @@ public:
 public:
     NodeTab(MainWindow* mainWindow, Target* target, const CommonDefinitions* commonDefinitions, const unsigned id,
             QWidget* parent = nullptr);
-    ~NodeTab();
+    ~NodeTab() override;
     unsigned productId() const {
         return pid;
     }
@@ -227,11 +227,11 @@ signals:
     void uploadReadynessChanged(bool);
 
 protected:
-    virtual void timerEvent(QTimerEvent* event);
-    virtual void variableValueUpdated(const QString& name, const VariablesDataVector& values);
+    void timerEvent(QTimerEvent* event) override;
+    void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
     void setupWidgets();
     void setupConnections();
-    virtual SavedPlugins savePlugins() const;
+    SavedPlugins savePlugins() const override;
     void notifyPluginsAboutToLoad();
     void restorePlugins(const SavedPlugins& savedPlugins, bool fromFile);
     void updateToolList();
@@ -400,7 +400,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QVector<QTranslator*> translators, const QString& commandLineTarget, bool autoRefresh,
                QWidget* parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 signals:
     void MainWindowClosed();
@@ -516,7 +516,7 @@ private:
     void setupWidgets();
     void setupConnections();
     void setupMenu();
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
     bool readSettings();
     void writeSettings();
     void clearOpenedFileName(bool isModified);

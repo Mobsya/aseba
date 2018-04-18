@@ -130,23 +130,23 @@ public:
 
     // from PhysicalObject
 
-    virtual void collisionEvent(PhysicalObject* o);
+    void collisionEvent(PhysicalObject* o) override;
 
     // from Robot
 
-    virtual void mousePressEvent(unsigned button, double pointX, double pointY, double pointZ);
-    virtual void mouseReleaseEvent(unsigned button);
+    void mousePressEvent(unsigned button, double pointX, double pointY, double pointZ) override;
+    void mouseReleaseEvent(unsigned button) override;
 
     // from Thymio2
 
-    virtual void controlStep(double dt);
+    void controlStep(double dt) override;
 
     // from AbstractNodeGlue
 
-    virtual const AsebaVMDescription* getDescription() const;
-    virtual const AsebaLocalEventDescription* getLocalEventsDescriptions() const;
-    virtual const AsebaNativeFunctionDescription* const* getNativeFunctionsDescriptions() const;
-    virtual void callNativeFunction(uint16_t id);
+    const AsebaVMDescription* getDescription() const override;
+    const AsebaLocalEventDescription* getLocalEventsDescriptions() const override;
+    const AsebaNativeFunctionDescription* const* getNativeFunctionsDescriptions() const override;
+    void callNativeFunction(uint16_t id) override;
 
     // for Thymio2-natives.cpp
 

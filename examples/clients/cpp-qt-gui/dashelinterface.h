@@ -38,7 +38,7 @@ class DashelInterface : public QThread, public Dashel::Hub {
 
 public:
     DashelInterface();
-    ~DashelInterface();
+    ~DashelInterface() override;
     void connectAseba(const QString& dashelTarget);
     void connectAseba(const QString& ip, const QString& port);
     void disconnectAseba();
@@ -52,11 +52,11 @@ signals:
 
 protected:
     // from QThread
-    virtual void run();
+    void run() override;
 
     // from Dashel::Hub
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
+    void incomingData(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
 
     // members
     Dashel::Stream* stream;

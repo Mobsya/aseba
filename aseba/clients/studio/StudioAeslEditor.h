@@ -35,8 +35,8 @@ public:
     StudioAeslEditor(const ScriptTab* tab);
 
 protected:
-    virtual void dropEvent(QDropEvent* event);
-    virtual void insertFromMimeData(const QMimeData* source);
+    void dropEvent(QDropEvent* event) override;
+    void insertFromMimeData(const QMimeData* source) override;
 
 protected:
     const ScriptTab* tab;

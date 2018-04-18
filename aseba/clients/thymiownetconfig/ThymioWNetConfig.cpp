@@ -27,15 +27,15 @@ public:
     }
 
 protected:
-    QString textFromValue(int value) const {
+    QString textFromValue(int value) const override {
         return QString::number(value, 16).toUpper();
     }
 
-    int valueFromText(const QString& text) const {
+    int valueFromText(const QString& text) const override {
         return text.toInt(nullptr, 16);
     }
 
-    QValidator::State validate(QString& text, int& pos) const {
+    QValidator::State validate(QString& text, int& pos) const override {
         QString copy(text);
         if(copy.startsWith("0x"))
             copy.remove(0, 2);

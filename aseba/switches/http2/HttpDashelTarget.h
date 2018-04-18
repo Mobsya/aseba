@@ -54,7 +54,7 @@ namespace Http {
         };
 
         HttpDashelTarget(HttpInterface* interface, const std::string& address, Dashel::Stream* stream);
-        virtual ~HttpDashelTarget();
+        ~HttpDashelTarget() override;
 
         /**
          * Send an event to all nodes registered by this target on the Aseba bus. The first element
@@ -116,8 +116,8 @@ namespace Http {
     protected:
         virtual bool getVariableInfo(const Node& node, const std::string& variableName, unsigned& position,
                                      unsigned& size);
-        virtual void sendMessage(const Message& message);
-        virtual void nodeDescriptionReceived(unsigned localNodeId);
+        void sendMessage(const Message& message) override;
+        void nodeDescriptionReceived(unsigned localNodeId) override;
 
 
     private:

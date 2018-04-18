@@ -75,7 +75,7 @@ public:
 
 protected:
     bool updatePortList(const QString& toSelect);
-    virtual void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
 
 protected slots:
 #ifdef ZEROCONF_SUPPORT
@@ -123,21 +123,21 @@ signals:
 
 protected:
     // from QThread
-    virtual void run();
+    void run() override;
 
     // from Dashel::Hub
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
+    void incomingData(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
 
     // from NodesManager
-    virtual void nodeProtocolVersionMismatch(unsigned nodeId, const std::wstring& nodeName, uint16_t protocolVersion);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
-    virtual void nodeConnected(unsigned nodeId);
-    virtual void nodeDisconnected(unsigned nodeId);
+    void nodeProtocolVersionMismatch(unsigned nodeId, const std::wstring& nodeName, uint16_t protocolVersion) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
+    void nodeConnected(unsigned nodeId) override;
+    void nodeDisconnected(unsigned nodeId) override;
 
 public:
     // from NodesManager, now as public as we want DashelTarget to call this method
-    virtual void sendMessage(const Message& message);
+    void sendMessage(const Message& message) override;
 };
 
 class ReconnectionDialog : public QMessageBox {
@@ -147,7 +147,7 @@ public:
     ReconnectionDialog(DashelInterface& dashelInterface);
 
 protected:
-    virtual void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
 
     DashelInterface& dashelInterface;
     unsigned counter;
@@ -187,39 +187,39 @@ protected:
 public:
     friend class InvasivePlugin;
     DashelTarget(QVector<QTranslator*> translators, const QString& commandLineTarget);
-    ~DashelTarget();
+    ~DashelTarget() override;
 
-    virtual QString getLanguage() const {
+    QString getLanguage() const override {
         return dashelInterface.language;
     }
-    virtual QList<unsigned> getNodesList() const;
+    QList<unsigned> getNodesList() const override;
 
     virtual void disconnect();
 
-    virtual const TargetDescription* const getDescription(unsigned node) const;
+    const TargetDescription* const getDescription(unsigned node) const override;
 
-    virtual void uploadBytecode(unsigned node, const BytecodeVector& bytecode);
-    virtual void writeBytecode(unsigned node);
-    virtual void reboot(unsigned node);
+    void uploadBytecode(unsigned node, const BytecodeVector& bytecode) override;
+    void writeBytecode(unsigned node) override;
+    void reboot(unsigned node) override;
 
-    virtual void sendEvent(unsigned id, const VariablesDataVector& data);
+    void sendEvent(unsigned id, const VariablesDataVector& data) override;
 
-    virtual void setVariables(unsigned node, unsigned start, const VariablesDataVector& data);
-    virtual void getVariables(unsigned node, unsigned start, unsigned length);
+    void setVariables(unsigned node, unsigned start, const VariablesDataVector& data) override;
+    void getVariables(unsigned node, unsigned start, unsigned length) override;
 
-    virtual void reset(unsigned node);
-    virtual void run(unsigned node);
-    virtual void pause(unsigned node);
-    virtual void next(unsigned node);
-    virtual void stop(unsigned node);
+    void reset(unsigned node) override;
+    void run(unsigned node) override;
+    void pause(unsigned node) override;
+    void next(unsigned node) override;
+    void stop(unsigned node) override;
 
-    virtual void setBreakpoint(unsigned node, unsigned line);
-    virtual void clearBreakpoint(unsigned node, unsigned line);
-    virtual void clearBreakpoints(unsigned node);
+    void setBreakpoint(unsigned node, unsigned line) override;
+    void clearBreakpoint(unsigned node, unsigned line) override;
+    void clearBreakpoints(unsigned node) override;
 
 protected:
-    virtual void blockWrite();
-    virtual void unblockWrite();
+    void blockWrite() override;
+    void unblockWrite() override;
 
 protected slots:
     void updateUserEvents();

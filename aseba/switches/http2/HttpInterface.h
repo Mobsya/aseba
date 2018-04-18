@@ -78,7 +78,7 @@ namespace Http {
         };
 
         HttpInterface(const std::string& httpPort = "3000");
-        virtual ~HttpInterface();
+        ~HttpInterface() override;
 
         /**
          * Adds a Dashel target to the HTTP interface by its address (e.g. use
@@ -170,9 +170,9 @@ namespace Http {
         }
 
     protected:
-        virtual void connectionCreated(Dashel::Stream* stream);
-        virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
-        virtual void incomingData(Dashel::Stream* stream);
+        void connectionCreated(Dashel::Stream* stream) override;
+        void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+        void incomingData(Dashel::Stream* stream) override;
 
         /**
          * Sends all queued responses for HTTP requests. This method does not actually handle the

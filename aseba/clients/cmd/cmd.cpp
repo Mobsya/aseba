@@ -125,47 +125,47 @@ public:
 
 protected:
     // reporting function
-    virtual void writePageStart(unsigned pageNumber, const uint8_t* data, bool simple) {
+    void writePageStart(unsigned pageNumber, const uint8_t* data, bool simple) override {
         cout << "Writing page " << pageNumber << "... ";
         cout.flush();
         // cout << "First data: " << hex << (int) data[0] << "," << hex << (int) data[1] << "," <<
         // hex << (int) data[2] << endl;
     }
 
-    virtual void writePageWaitAck() {
+    void writePageWaitAck() override {
         cout << "Waiting ack ... ";
         cout.flush();
     }
 
-    virtual void writePageSuccess() {
+    void writePageSuccess() override {
         cout << "Success" << endl;
     }
 
-    virtual void writePageFailure() {
+    void writePageFailure() override {
         cout << "Failure" << endl;
     }
 
-    virtual void writeHexStart(const string& fileName, bool reset, bool simple) {
+    void writeHexStart(const string& fileName, bool reset, bool simple) override {
         cout << "Flashing " << fileName << endl;
     }
 
-    virtual void writeHexEnteringBootloader() {
+    void writeHexEnteringBootloader() override {
         cout << "Entering bootloader" << endl;
     }
 
-    virtual void writeHexGotDescription(unsigned pagesCount) {
+    void writeHexGotDescription(unsigned pagesCount) override {
         cout << "In bootloader, about to write " << pagesCount << " pages" << endl;
     }
 
-    virtual void writeHexWritten() {
+    void writeHexWritten() override {
         cout << "Write completed" << endl;
     }
 
-    virtual void writeHexExitingBootloader() {
+    void writeHexExitingBootloader() override {
         cout << "Exiting bootloader" << endl;
     }
 
-    virtual void errorWritePageNonFatal(unsigned pageNumber) {
+    void errorWritePageNonFatal(unsigned pageNumber) override {
         cerr << "Warning, error while writing page " << pageNumber << ", continuing ..." << endl;
     }
 };

@@ -45,7 +45,7 @@ namespace ThymioVPL {
         EventActionsSet(int row, bool advanced, QGraphicsItem* parent = nullptr);
 
         // from QGraphicsObject
-        virtual QRectF boundingRect() const;
+        QRectF boundingRect() const override;
 
         // specific
         QRectF innerBoundingRect() const;
@@ -105,17 +105,17 @@ namespace ThymioVPL {
 
     protected:
         // from QGraphicsObject
-        virtual void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
-        virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
+        void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
+        void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
-        virtual void dragEnterEvent(QGraphicsSceneDragDropEvent* event);
-        virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent* event);
-        virtual void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
-        virtual void dropEvent(QGraphicsSceneDragDropEvent* event);
+        void dragEnterEvent(QGraphicsSceneDragDropEvent* event) override;
+        void dragLeaveEvent(QGraphicsSceneDragDropEvent* event) override;
+        void dragMoveEvent(QGraphicsSceneDragDropEvent* event) override;
+        void dropEvent(QGraphicsSceneDragDropEvent* event) override;
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
         void drawBlockArea(QPainter* painter, const QString& type, const QPointF& pos, bool highlight) const;
 
         // specific

@@ -141,7 +141,7 @@ public:
     }
 #endif  // ZEROCONF_SUPPORT
 
-    virtual void connectionCreated(Dashel::Stream* stream) {
+    void connectionCreated(Dashel::Stream* stream) override {
         std::string targetName = stream->getTargetName();
         if(targetName.substr(0, targetName.find_first_of(':')) == "tcp") {
             // schedule current stream for disconnection
@@ -158,7 +158,7 @@ public:
         }
     }
 
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal) {
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override {
 #ifdef ZEROCONF_SUPPORT
         zeroconf.dashelConnectionClosed(stream);
 #endif  // ZEROCONF_SUPPORT
@@ -176,7 +176,7 @@ public:
 #endif  // ZEROCONF_SUPPORT
     }
 
-    virtual void incomingData(Dashel::Stream* stream) {
+    void incomingData(Dashel::Stream* stream) override {
 #ifdef ZEROCONF_SUPPORT
         zeroconf.dashelIncomingData(stream);
 #endif  // ZEROCONF_SUPPORT

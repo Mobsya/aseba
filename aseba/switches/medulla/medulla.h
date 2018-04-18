@@ -115,8 +115,8 @@ public slots:
     void PingNetwork();
 
 protected:
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
     QDBusConnection DBusConnectionBus() const;
 
 protected:
@@ -169,10 +169,10 @@ signals:
     void messageAvailable(Message* message, const Dashel::Stream* sourceStream);
 
 private:
-    virtual void run();
-    virtual void connectionCreated(Dashel::Stream* stream);
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
+    void run() override;
+    void connectionCreated(Dashel::Stream* stream) override;
+    void incomingData(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
 
 private:
     bool verbose;  //!< should we print a notification on each message

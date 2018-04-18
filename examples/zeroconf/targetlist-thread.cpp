@@ -27,7 +27,7 @@ namespace Aseba {
 using namespace std;
 
 class TargetLister : public ThreadZeroconf {
-    virtual void targetFound(const Aseba::Zeroconf::TargetInformation& target) override {
+    void targetFound(const Aseba::Zeroconf::TargetInformation& target) override {
         // output could be JSON but for now is Dashel target [Target name (DNS domain)]
         cout << target.host << ";port=" << target.port;
         cout << " [" << target.name << " (" << target.regtype + "." + target.domain << ")]" << endl;

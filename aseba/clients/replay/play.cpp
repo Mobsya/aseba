@@ -132,11 +132,11 @@ public:
     }
 
 protected:
-    void connectionCreated(Stream* stream) {
+    void connectionCreated(Stream* stream) override {
         // cerr << "got connection " << stream->getTargetName()  << endl;
     }
 
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         auto c(stream->read<char>());
         if(stream == in) {
             if(c == '\n')
@@ -146,7 +146,7 @@ protected:
         }
     }
 
-    void connectionClosed(Stream* stream, bool abnormal) {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         if(stream == in)
             stop();
     }

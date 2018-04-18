@@ -45,12 +45,12 @@ public:
     Dump(bool rawTime) : rawTime(rawTime) {}
 
 protected:
-    void connectionCreated(Stream* stream) {
+    void connectionCreated(Stream* stream) override {
         dumpTime(cout, rawTime);
         cout << stream->getTargetName() << " connection created." << endl;
     }
 
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         Message* message = Message::receive(stream);
 
         dumpTime(cout, rawTime);
@@ -62,7 +62,7 @@ protected:
         cout << endl;
     }
 
-    void connectionClosed(Stream* stream, bool abnormal) {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         dumpTime(cout);
         cout << stream->getTargetName() << " connection closed";
         if(abnormal)

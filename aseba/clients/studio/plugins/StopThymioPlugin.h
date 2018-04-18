@@ -32,8 +32,8 @@ class StopThymioPlugin : public QObject, public NodeToolInterface {
 
 public:
     StopThymioPlugin(DevelopmentEnvironmentInterface* _de);
-    virtual void closeAsSoonAsPossible() {}
-    virtual QWidget* createMenuEntry();
+    void closeAsSoonAsPossible() override {}
+    QWidget* createMenuEntry() override;
 
 private slots:
     void stopThymio();

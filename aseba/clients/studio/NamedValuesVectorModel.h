@@ -37,22 +37,22 @@ public:
     NamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
     NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-    QStringList mimeTypes() const;
+    QStringList mimeTypes() const override;
     void setExtraMimeType(QString mime) {
         privateMimeType = mime;
     }
-    QMimeData* mimeData(const QModelIndexList& indexes) const;
-    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
-    Qt::DropActions supportedDropActions() const;
+    QMimeData* mimeData(const QModelIndexList& indexes) const override;
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+    Qt::DropActions supportedDropActions() const override;
 
-    bool setData(const QModelIndex& index, const QVariant& value, int role);
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     bool checkIfModified() {
         return wasModified;
     }
@@ -91,7 +91,7 @@ public:
     ConstantsModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
     ConstantsModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
-    virtual bool validateName(const QString& name) const;
+    bool validateName(const QString& name) const override;
 };
 
 class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
@@ -101,14 +101,14 @@ public:
     MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
     MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     bool isVisible(const unsigned id);
 
-    virtual bool moveRow(int oldRow, int& newRow);
+    bool moveRow(int oldRow, int& newRow) override;
 
 public slots:
     void addNamedValue(const NamedValue& namedValue);
