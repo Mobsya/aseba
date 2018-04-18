@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
 
     // create and run bridge, catch Dashel exceptions
     try {
-        std::auto_ptr<Aseba::Http::HttpInterface> interface(new Aseba::Http::HttpInterface(httpPort));
+        std::unique_ptr<Aseba::Http::HttpInterface> interface(new Aseba::Http::HttpInterface(httpPort));
         interface->setVerbose(verbose);
 
         if(docRoot != nullptr) {
