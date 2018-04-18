@@ -207,7 +207,7 @@ bool DashelConnectionDialog::updatePortList(const QString& toSelect) {
     typedef std::map<int, std::pair<std::string, std::string> > PortsMap;
     const PortsMap ports = SerialPortEnumerator::getPorts();
     bool discoveredListPortSet(false);
-    const std::regex extractName("^(.*)\\ \\((.*)\\)$");
+    const std::regex extractName(R"(^(.*)\ \((.*)\)$)");
     std::vector<bool> seen(discoveredList->count(), false);
 
     // mark non-serial targets as seen

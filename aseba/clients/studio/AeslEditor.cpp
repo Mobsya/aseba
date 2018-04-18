@@ -68,7 +68,7 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
     // literals
     QTextCharFormat literalsFormat;
     literalsFormat.setForeground(Qt::darkBlue);
-    rule.pattern = QRegExp("\\b(-{0,1}\\d+|0x([0-9]|[a-f]|[A-F])+|0b[0-1]+)\\b");
+    rule.pattern = QRegExp(R"(\b(-{0,1}\d+|0x([0-9]|[a-f]|[A-F])+|0b[0-1]+)\b)");
     rule.format = literalsFormat;
     highlightingRules.append(rule);
 
@@ -97,7 +97,7 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
     QTextCharFormat todoFormat;
     todoFormat.setForeground(Qt::black);
     todoFormat.setBackground(QColor(255, 192, 192));
-    rule.pattern = QRegExp("#.*(\\bTODO\\b|\\bFIXME\\b).*");
+    rule.pattern = QRegExp(R"(#.*(\bTODO\b|\bFIXME\b).*)");
     rule.format = todoFormat;
     highlightingRules.append(rule);
 }

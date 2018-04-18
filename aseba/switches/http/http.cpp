@@ -661,7 +661,7 @@ void HttpInterface::evNodes(HttpRequest* req, strings& args) {
             json << (descIt == nodes.begin() ? "" : ",");
             json << "{";
             json << "\"node\":" << nodeId;
-            json << ",\"name\":\"" << nodeName << "\"";
+            json << R"(,"name":")" << nodeName << "\"";
             json << ",\"protocolVersion\":" << description.protocolVersion;
             json << ",\"aeslId\":"
                  << (nodeToAeslIdSubstitutions.find(nodeId) != nodeToAeslIdSubstitutions.end() ?
@@ -677,7 +677,7 @@ void HttpInterface::evNodes(HttpRequest* req, strings& args) {
 
             json << "{";  // begin node
             json << "\"node\":" << nodeId;
-            json << ",\"name\":\"" << nodeName << "\"";
+            json << R"(,"name":")" << nodeName << "\"";
             json << ",\"protocolVersion\":" << description.protocolVersion;
             json << ",\"aeslId\":"
                  << (nodeToAeslIdSubstitutions.find(nodeId) != nodeToAeslIdSubstitutions.end() ?
@@ -1211,7 +1211,7 @@ void HttpInterface::aeslLoad(const unsigned nodeId, xmlDoc* doc) {
             xmlChar* text(xmlNodeGetContent(nodeset->nodeTab[i]));
 
             if(!name)
-                wcerr << "missing \"name\" attribute in \"node\" entry" << endl;
+                wcerr << R"(missing "name" attribute in "node" entry)" << endl;
             else if(!text)
                 wcerr << "missing text in \"node\" entry" << endl;
             else {
