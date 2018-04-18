@@ -41,6 +41,7 @@
 #include <QDesktopServices>
 #include <QtConcurrentRun>
 #include <QSvgRenderer>
+#include <utility>
 #include <iostream>
 
 using std::copy;
@@ -272,9 +273,9 @@ void ScriptTab::createEditor() {
 
 //////
 
-AbsentNodeTab::AbsentNodeTab(const unsigned id, const QString& name, const QString& sourceCode,
-                             const SavedPlugins& savedPlugins)
-    : ScriptTab(id), name(name), savedPlugins(savedPlugins) {
+AbsentNodeTab::AbsentNodeTab(const unsigned id, QString  name, const QString& sourceCode,
+                             SavedPlugins  savedPlugins)
+    : ScriptTab(id), name(std::move(name)), savedPlugins(std::move(savedPlugins)) {
     createEditor();
     editor->setReadOnly(true);
     editor->setPlainText(sourceCode);

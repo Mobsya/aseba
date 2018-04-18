@@ -33,6 +33,7 @@
 #include <QStringList>
 #include <QFile>
 #include <QDomDocument>
+#include <utility>
 
 namespace Aseba {
 using namespace Dashel;
@@ -45,7 +46,7 @@ protected:
     Stream* stream;
 
 public:
-    MassLoader(const QString& fileName, bool once) : fileName(fileName), once(once), stream(nullptr) {}
+    MassLoader(QString  fileName, bool once) : fileName(std::move(fileName)), once(once), stream(nullptr) {}
     void loadToTarget(const std::string& target);
 
 protected:

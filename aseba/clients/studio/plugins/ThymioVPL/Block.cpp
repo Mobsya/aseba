@@ -38,6 +38,7 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <utility>
 
 #include "Block.h"
 #include "Buttons.h"
@@ -105,8 +106,8 @@ namespace ThymioVPL {
             return nullptr;
     }
 
-    Block::Block(const QString& type, const QString& name, QGraphicsItem* parent)
-        : QGraphicsObject(parent), type(type), name(name), beingDragged(false), changed(false) {
+    Block::Block(QString  type, QString  name, QGraphicsItem* parent)
+        : QGraphicsObject(parent), type(std::move(type)), name(std::move(name)), beingDragged(false), changed(false) {
         setFlag(QGraphicsItem::ItemIsMovable);
         setAcceptedMouseButtons(Qt::LeftButton);
     }
@@ -438,7 +439,7 @@ namespace ThymioVPL {
     BlockWithButtonsAndRange::BlockWithButtonsAndRange(const QString& type, const QString& name, bool up,
                                                        const PixelToValModel pixelToValModel, int lowerBound,
                                                        int upperBound, int defaultLow, int defaultHigh,
-                                                       const QColor& lowColor, const QColor& highColor, bool advanced,
+                                                       QColor  lowColor, QColor  highColor, bool advanced,
                                                        QGraphicsItem* parent)
         : BlockWithButtons(type, name, up, parent)
         , pixelToValModel(pixelToValModel)
@@ -447,8 +448,8 @@ namespace ThymioVPL {
         , range(upperBound - lowerBound)
         , defaultLow(defaultLow)
         , defaultHigh(defaultHigh)
-        , lowColor(lowColor)
-        , highColor(highColor)
+        , lowColor(std::move(lowColor))
+        , highColor(std::move(highColor))
         , low(defaultLow)
         , high(defaultHigh)
         , buttonsCountSimple(-1)

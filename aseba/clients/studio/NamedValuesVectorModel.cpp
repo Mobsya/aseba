@@ -21,17 +21,18 @@
 #include <QtDebug>
 #include <QtGui>
 #include <QMessageBox>
+#include <utility>
 
 namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-NamedValuesVectorModel::NamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText,
+NamedValuesVectorModel::NamedValuesVectorModel(NamedValuesVector* namedValues, QString  tooltipText,
                                                QObject* parent)
     : QAbstractTableModel(parent)
     , namedValues(namedValues)
     , wasModified(false)
-    , tooltipText(tooltipText)
+    , tooltipText(std::move(tooltipText))
     , editable(false) {
     Q_ASSERT(namedValues);
 }

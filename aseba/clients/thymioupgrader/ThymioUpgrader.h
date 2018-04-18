@@ -5,6 +5,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QTemporaryFile>
+#include <utility>
 #include <dashel/dashel.h>
 #include "common/utils/BootloaderInterface.h"
 
@@ -54,8 +55,8 @@ private:
         QString text;
 
         FlashResult() : status(SUCCESS) {}
-        FlashResult(Status status, const QString& title, const QString& text)
-            : status(status), title(title), text(text) {}
+        FlashResult(Status status, QString  title, QString  text)
+            : status(status), title(std::move(title)), text(std::move(text)) {}
     };
 
 private:
@@ -85,7 +86,7 @@ private:
     QNetworkAccessManager* networkManager;
 
 public:
-    ThymioUpgraderDialog(const std::string& target);
+    ThymioUpgraderDialog(std::string  target);
     ~ThymioUpgraderDialog() override;
 
 private:

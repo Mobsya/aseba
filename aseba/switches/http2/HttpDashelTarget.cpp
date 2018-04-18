@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include "common/msg/msg.h"
 #include "common/utils/utils.h"
 #include "HttpDashelTarget.h"
@@ -37,8 +38,8 @@ using std::set;
 using std::string;
 using std::vector;
 
-HttpDashelTarget::HttpDashelTarget(HttpInterface* interface_, const std::string& address_, Dashel::Stream* stream_)
-    : interface(interface_), address(address_), stream(stream_) {}
+HttpDashelTarget::HttpDashelTarget(HttpInterface* interface_, std::string  address_, Dashel::Stream* stream_)
+    : interface(interface_), address(std::move(address_)), stream(stream_) {}
 
 HttpDashelTarget::~HttpDashelTarget() = default;
 

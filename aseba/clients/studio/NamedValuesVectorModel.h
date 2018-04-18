@@ -34,7 +34,7 @@ class NamedValuesVectorModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-    NamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
+    NamedValuesVectorModel(NamedValuesVector* namedValues, QString  tooltipText, QObject* parent = nullptr);
     NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;

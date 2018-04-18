@@ -20,6 +20,7 @@
 #include <QDomDocument>
 #include <memory>
 #include <iostream>
+#include <utility>
 
 #include "common/consts.h"
 #include "common/msg/msg.h"
@@ -83,8 +84,8 @@ void QtBootloaderInterface::errorWritePageNonFatal(unsigned pageNumber) {
 }
 
 
-ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
-    : target(target), currentVersion(0), currentDevStatus(-1), officialVersion(0), officialDevStatus(-1) {
+ThymioUpgraderDialog::ThymioUpgraderDialog(std::string  target)
+    : target(std::move(target)), currentVersion(0), currentDevStatus(-1), officialVersion(0), officialDevStatus(-1) {
     // Create the gui ...
     setWindowTitle(tr("Thymio Firmware Upgrader"));
     setWindowIcon(QIcon(":/images/thymioupgrader.svgz"));
