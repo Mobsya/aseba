@@ -29,7 +29,7 @@
 
 DashelInterface::DashelInterface() : stream(0), isRunning(false), isConnected(false) {}
 
-DashelInterface::~DashelInterface() {}
+DashelInterface::~DashelInterface() = default;
 
 // Connect to any kind of valid Dashel target (TCP, serial, CAN,...)
 void DashelInterface::connectAseba(const QString& dashelTarget) {

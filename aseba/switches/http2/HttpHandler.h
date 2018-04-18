@@ -40,8 +40,8 @@ namespace Http {
      */
     class HttpHandler {
     public:
-        HttpHandler() {}
-        virtual ~HttpHandler() {}
+        HttpHandler() = default;
+        virtual ~HttpHandler() = default;
 
         virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const = 0;
         virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) = 0;
@@ -66,8 +66,8 @@ namespace Http {
 
     class WildcardHttpHandler : public virtual HttpHandler {
     public:
-        WildcardHttpHandler() {}
-        virtual ~WildcardHttpHandler() {}
+        WildcardHttpHandler() = default;
+        virtual ~WildcardHttpHandler() = default;
 
         virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
             return true;
@@ -76,7 +76,7 @@ namespace Http {
 
     class HierarchicalHttpHandler : public virtual HttpHandler {
     public:
-        HierarchicalHttpHandler() {}
+        HierarchicalHttpHandler() = default;
 
         virtual ~HierarchicalHttpHandler() {
             for(int i = 0; i < getNumSubhandlers(); i++) {
@@ -108,14 +108,14 @@ namespace Http {
 
     class RootHttpHandler : public WildcardHttpHandler, public HierarchicalHttpHandler {
     public:
-        RootHttpHandler() {}
-        virtual ~RootHttpHandler() {}
+        RootHttpHandler() = default;
+        virtual ~RootHttpHandler() = default;
     };
 
     class TokenHttpHandler : public virtual HttpHandler {
     public:
-        TokenHttpHandler() {}
-        virtual ~TokenHttpHandler() {}
+        TokenHttpHandler() = default;
+        virtual ~TokenHttpHandler() = default;
 
         virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
             if(tokens.empty()) {
@@ -147,8 +147,8 @@ namespace Http {
 
     class HierarchicalTokenHttpHandler : public HierarchicalHttpHandler, public TokenHttpHandler {
     public:
-        HierarchicalTokenHttpHandler() {}
-        virtual ~HierarchicalTokenHttpHandler() {}
+        HierarchicalTokenHttpHandler() = default;
+        virtual ~HierarchicalTokenHttpHandler() = default;
 
         virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
             assert(!tokens.empty());

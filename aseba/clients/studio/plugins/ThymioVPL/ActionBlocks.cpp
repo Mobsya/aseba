@@ -79,7 +79,7 @@ namespace ThymioVPL {
         connect(timer, SIGNAL(frameChanged(int)), SLOT(frameChanged(int)));
     }
 
-    MoveActionBlock::~MoveActionBlock() {}
+    MoveActionBlock::~MoveActionBlock() = default;
 
     void MoveActionBlock::frameChanged(int frame) {
         qreal pt[2];

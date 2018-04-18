@@ -22,9 +22,9 @@
 namespace Aseba {
 namespace ThymioVPL {
 
-    LogSignalMapper::LogSignalMapper() {}
+    LogSignalMapper::LogSignalMapper() = default;
 
-    LogSignalMapper::~LogSignalMapper() {}
+    LogSignalMapper::~LogSignalMapper() = default;
 
     void LogSignalMapper::setMapping(const QObject* sender, unsigned int senderId, QObject* logicalParent) {
         senderHash.insert(sender, SenderInfo(senderId, logicalParent));

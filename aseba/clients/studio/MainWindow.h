@@ -160,7 +160,7 @@ public:
     typedef QList<SavedContent> SavedPlugins;
 
     ScriptTab(const unsigned id) : id(id) {}
-    virtual ~ScriptTab() {}
+    virtual ~ScriptTab() = default;
 
     unsigned nodeId() const {
         return id;

@@ -88,7 +88,7 @@ signals:
 
 public:
     //! Virtual destructor.
-    virtual ~Target() {}
+    virtual ~Target() = default;
 
 public:
     //! Return the language that we choosen for this connection

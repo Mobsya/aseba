@@ -60,7 +60,7 @@ PlaygroundViewer::PlaygroundViewer(World* world, bool energyScoringSystemEnabled
     setMouseTracking(true);
 }
 
-PlaygroundViewer::~PlaygroundViewer() {}
+PlaygroundViewer::~PlaygroundViewer() = default;
 
 World* PlaygroundViewer::getWorld() const {
     return world;

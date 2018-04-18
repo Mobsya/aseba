@@ -175,7 +175,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     show();
 }
 
-ThymioWNetConfigDialog::~ThymioWNetConfigDialog() {}
+ThymioWNetConfigDialog::~ThymioWNetConfigDialog() = default;
 
 void ThymioWNetConfigDialog::updateSettings() {
     settings.panId = networkId->value();

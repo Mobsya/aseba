@@ -111,7 +111,7 @@ namespace Http {
         DashelHttpResponse(DashelHttpRequest* originatingRequest)
             : HttpResponse(originatingRequest), stream(originatingRequest->getStream()) {}
 
-        virtual ~DashelHttpResponse() {}
+        virtual ~DashelHttpResponse() = default;
 
     protected:
         virtual void writeRaw(const char* buffer, int length) {
