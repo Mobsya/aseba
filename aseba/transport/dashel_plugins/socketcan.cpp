@@ -181,7 +181,7 @@ private:
 
             if(ret != sizeof(*f))
                 throw DashelException(DashelException::IOError, 0, "Write error", this);
-        } while(0);
+        } while(false);
     }
 
     void send_aseba_packet() {
@@ -289,7 +289,7 @@ private:
         rx_buffer[2] = stopId;
         rx_buffer[3] = 0;
         rx_len = 4;
-        while(1) {
+        while(true) {
             if(rx_fifo[i].used && CANID_TO_ID(rx_fifo[i].f.can_id) == stopId) {
                 if(rx_len == 4 && CANID_TO_TYPE(rx_fifo[i].f.can_id) != TYPE_PACKET_START)
                     // We got a stop, but not a start, let's ignore this packet
@@ -328,7 +328,7 @@ private:
 
     void read_iface() {
         int def;
-        while(1) {
+        while(true) {
             while((def = defragment()) == -1)
                 ;
             if(def == 1)
