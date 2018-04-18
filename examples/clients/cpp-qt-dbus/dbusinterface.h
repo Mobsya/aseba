@@ -29,7 +29,7 @@
 Q_DECLARE_METATYPE(QList<qint16>);
 
 
-typedef QList<qint16> Values;
+using Values = QList<qint16>;
 
 namespace Aseba {
 class DBusInterface : public QObject {
@@ -37,7 +37,7 @@ class DBusInterface : public QObject {
 
 private:
     QDBusConnection bus;
-    typedef std::function<void(const Values&)> EventCallback;
+    using EventCallback = std::function<void (const Values &)>;
     std::map<QString, EventCallback> callbacks;
     QDBusInterface dbusMainInterface;
     QDBusInterface* eventfilterInterface;

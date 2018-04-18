@@ -32,7 +32,7 @@
 namespace Aseba {
 class DirectConnection : public RecvBufferNodeConnection {
 public:
-    typedef std::queue<std::unique_ptr<Message>> MessageQueue;
+    using MessageQueue = std::queue<std::unique_ptr<Message> >;
     MessageQueue inQueue;
     MessageQueue outQueue;
 

@@ -41,7 +41,7 @@
 */
 struct Shell : public Dashel::Hub, public Aseba::NodesManager {
 public:
-    typedef std::vector<std::string> strings;
+    using strings = std::vector<std::string>;
     typedef std::map<std::string, Aseba::VariablesMap> NodeNameToVariablesMap;
 
 protected:

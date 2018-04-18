@@ -89,7 +89,7 @@ namespace ThymioVPL {
     // global colors
 
     static struct PrivateStyle {
-        typedef QList<QColor> ColorList;
+        using ColorList = QList<QColor>;
 
         ColorList eventColors;
         ColorList stateColors;

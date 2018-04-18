@@ -28,7 +28,7 @@ protected:
         unsigned int column;
     };
 
-    typedef QList<ModelDescription> ModelList;
+    using ModelList = QList<ModelDescription>;
     ModelList models;
 };
 
@@ -66,7 +66,7 @@ protected:
 
     void sortWalkTree(const QModelIndex& parent);
 
-    typedef QList<ModelIndexLink> IndexLinkList;
+    using IndexLinkList = QList<ModelIndexLink>;
     IndexLinkList indexList;
 };
 };  // namespace Aseba

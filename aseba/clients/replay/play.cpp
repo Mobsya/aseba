@@ -41,7 +41,7 @@ using namespace std;
 //! This class replay saved user messages
 class Player : public Hub {
 private:
-    typedef deque<string> StringList;
+    using StringList = deque<string>;
 
     bool respectTimings;
     int speedFactor;

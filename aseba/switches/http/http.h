@@ -51,9 +51,9 @@ class HttpRequest;
 //! HTTP interface for aseba network
 class HttpInterface : public Dashel::Hub, public Aseba::NodesManager {
 public:
-    typedef std::vector<std::string> strings;
-    typedef std::list<HttpRequest*> ResponseQueue;
-    typedef std::set<HttpRequest*> ResponseSet;
+    using strings = std::vector<std::string>;
+    using ResponseQueue = std::list<HttpRequest *>;
+    using ResponseSet = std::set<HttpRequest *>;
     typedef std::pair<unsigned, unsigned> VariableAddress;
     typedef std::map<uint16_t, uint16_t> NodeIdSubstitution;
     typedef std::map<std::string, Aseba::VariablesMap> NodeNameVariablesMap;
@@ -63,7 +63,7 @@ public:
     typedef std::map<Dashel::Stream*, HttpRequest> StreamRequestMap;
     typedef std::map<HttpRequest*, std::set<std::string> > StreamEventSubscriptionMap;
     typedef std::map<Dashel::Stream*, std::set<unsigned> > StreamNodeIdMap;
-    typedef std::set<Dashel::Stream*> StreamSet;
+    using StreamSet = std::set<Dashel::Stream *>;
     typedef std::map<Dashel::Stream*, NodeIdSubstitution> StreamNodeIdSubstitutionMap;
     typedef std::map<unsigned, Aseba::CommonDefinitions> NodeIdCommonDefinitionsMap;
     typedef std::map<unsigned, std::wstring> NodeIdProgramMap;
@@ -171,7 +171,7 @@ protected:
 
 class HttpRequest {
 public:
-    typedef std::vector<std::string> strings;
+    using strings = std::vector<std::string>;
     std::string method;
     std::string uri;
     std::string protocol_version;
