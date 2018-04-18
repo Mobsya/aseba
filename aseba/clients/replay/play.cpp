@@ -116,7 +116,7 @@ public:
         }
 
         // write message on all connected streams
-        for(StreamsSet::iterator it = dataStreams.begin(); it != dataStreams.end(); ++it) {
+        for(auto it = dataStreams.begin(); it != dataStreams.end(); ++it) {
             Stream* destStream(*it);
             if(destStream != in) {
                 message->serialize(destStream);
@@ -137,7 +137,7 @@ protected:
     }
 
     void incomingData(Stream* stream) {
-        char c(stream->read<char>());
+        auto c(stream->read<char>());
         if(stream == in) {
             if(c == '\n')
                 sendLine();

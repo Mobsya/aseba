@@ -97,7 +97,7 @@ EventViewer::EventViewer(unsigned eventId, const QString& eventName, unsigned ev
     plot->setAxisTitle(plot->xBottom, tr("Time (seconds)"));
     plot->setAxisTitle(plot->yLeft, tr("Values"));
 
-    QwtLegend* legend = new QwtLegend;
+    auto* legend = new QwtLegend;
     // legend->setItemMode(QwtLegend::CheckableItem);
     plot->insertLegend(legend, QwtPlot::BottomLegend);
 
@@ -112,11 +112,11 @@ EventViewer::EventViewer(unsigned eventId, const QString& eventName, unsigned ev
         curve->setPen(QPen(QColor::fromHsv((i * 360) / values.size(), 255, 100), 2));
     }
 
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
     layout->addWidget(plot);
 
     // add control
-    QHBoxLayout* controlLayout = new QHBoxLayout;
+    auto* controlLayout = new QHBoxLayout;
 
     status = new QLabel(tr("Recording..."));
     controlLayout->addWidget(status);

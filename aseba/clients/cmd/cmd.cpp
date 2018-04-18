@@ -306,7 +306,7 @@ int processCommand(Stream* stream, int argc, char* argv[]) {
             Message* message = Message::receive(stream);
 
             // handle ack
-            BootloaderAck* ackMessage = dynamic_cast<BootloaderAck*>(message);
+            auto* ackMessage = dynamic_cast<BootloaderAck*>(message);
             if(ackMessage && (ackMessage->source == dest)) {
                 cout << "Device is now in user-code" << endl;
                 delete message;

@@ -130,7 +130,7 @@ static QString ptrToString(void* ptr) {
 QStringList EnkiWorldInterface::PhysicalObjectsByType(QString type) const {
     QStringList objectNames;
     const World* world(playground->getWorld());
-    for(World::ObjectsIterator it(world->objects.begin()); it != world->objects.end(); ++it) {
+    for(auto it(world->objects.begin()); it != world->objects.end(); ++it) {
         Enki::PhysicalObject* object(*it);
         if(QString(typeid(*object).name()).contains(type))
             objectNames.append(ptrToString(*it));
@@ -144,7 +144,7 @@ QStringList EnkiWorldInterface::AllPhysicalObjects() const {
 
 QDBusObjectPath EnkiWorldInterface::PhysicalObject(QString number, const QDBusMessage& message) {
     const World* world(playground->getWorld());
-    for(World::ObjectsIterator it(world->objects.begin()); it != world->objects.end(); ++it) {
+    for(auto it(world->objects.begin()); it != world->objects.end(); ++it) {
         if(ptrToString(*it) == number) {
             QDBusObjectPath path(QString("/world/objects/%0").arg(number));
 
@@ -153,7 +153,7 @@ QDBusObjectPath EnkiWorldInterface::PhysicalObject(QString number, const QDBusMe
                                                          QDBusConnection::ExportAllContents);
 
             // if robot is Thymio2, provide robot-specific interface
-            AsebaThymio2* thymio2(dynamic_cast<AsebaThymio2*>(*it));
+            auto* thymio2(dynamic_cast<AsebaThymio2*>(*it));
             qDebug() << "thymio" << thymio2;
             if(thymio2)
                 QDBusConnection::sessionBus().registerObject(

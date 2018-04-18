@@ -96,7 +96,7 @@ QStringList NamedValuesVectorModel::mimeTypes() const {
 }
 
 QMimeData* NamedValuesVectorModel::mimeData(const QModelIndexList& indexes) const {
-    QMimeData* mimeData = new QMimeData();
+    auto* mimeData = new QMimeData();
 
     // "text/plain"
     QString texts;
@@ -143,7 +143,7 @@ bool NamedValuesVectorModel::dropMimeData(const QMimeData* data, Qt::DropAction 
 
     // search for this element
     int oldIndex = 0;
-    for(NamedValuesVector::iterator it = namedValues->begin(); it != namedValues->end(); it++, oldIndex++)
+    for(auto it = namedValues->begin(); it != namedValues->end(); it++, oldIndex++)
         if((*it).name == name.toStdWString() && (*it).value == value) {
             // found! move it
             moveRow(oldIndex, row);
@@ -194,7 +194,7 @@ void NamedValuesVectorModel::addNamedValue(const NamedValue& namedValue, int ind
         endInsertRows();
     } else {
         beginInsertRows(QModelIndex(), index, index);
-        NamedValuesVector::iterator it = namedValues->begin() + index;
+        auto it = namedValues->begin() + index;
         namedValues->insert(it, namedValue);
         endInsertRows();
     }

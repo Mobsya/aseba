@@ -227,7 +227,7 @@ namespace ThymioVPL {
 #ifndef ANDROID
         assert(block);
 
-        QDrag* drag = new QDrag(this);
+        auto* drag = new QDrag(this);
         drag->setMimeData(block->mimeData());
         drag->setPixmap(QPixmap::fromImage(block->translucidImage(vpl->getViewScale())));
         const qreal thisScale = width() / 256.;

@@ -91,7 +91,7 @@ public:
         setAxisTitle(xBottom, tr("Time (seconds)"));
         setAxisTitle(yLeft, tr("Values"));
 
-        QwtLegend* legend = new QwtLegend;
+        auto* legend = new QwtLegend;
         // legend->setItemMode(QwtLegend::CheckableItem);
         insertLegend(legend, QwtPlot::BottomLegend);
 
@@ -122,7 +122,7 @@ protected:
 
     void incomingData(Stream* stream) {
         Message* message = Message::receive(stream);
-        UserMessage* userMessage = dynamic_cast<UserMessage*>(message);
+        auto* userMessage = dynamic_cast<UserMessage*>(message);
         if(userMessage) {
             if(userMessage->type == eventId) {
                 double elapsedTime = (double)startingTime.msecsTo(QTime::currentTime()) / 1000.;

@@ -59,7 +59,7 @@ bool BootloaderInterface::readPage(unsigned pageNumber, uint8_t* data) {
         unique_ptr<Message> message(Message::receive(stream));
 
         // handle ack
-        BootloaderAck* ackMessage = dynamic_cast<BootloaderAck*>(message.get());
+        auto* ackMessage = dynamic_cast<BootloaderAck*>(message.get());
         if(ackMessage && (ackMessage->source == dest)) {
             if(ackMessage->errorCode == BootloaderAck::ErrorCode::SUCCESS) {
                 if(dataRead < pageSize)
@@ -71,7 +71,7 @@ bool BootloaderInterface::readPage(unsigned pageNumber, uint8_t* data) {
         }
 
         // handle data
-        BootloaderDataRead* dataMessage = dynamic_cast<BootloaderDataRead*>(message.get());
+        auto* dataMessage = dynamic_cast<BootloaderDataRead*>(message.get());
         if(dataMessage && (dataMessage->source == dest)) {
             if(dataRead >= pageSize)
                 cerr << "Warning, reading oversized page (" << dataRead << "/" << pageSize << ") bytes.\n";
@@ -117,7 +117,7 @@ bool BootloaderInterface::writePage(unsigned pageNumber, const uint8_t* data, bo
             unique_ptr<Message> message(Message::receive(stream));
 
             // handle ack
-            BootloaderAck* ackMessage = dynamic_cast<BootloaderAck*>(message.get());
+            auto* ackMessage = dynamic_cast<BootloaderAck*>(message.get());
             if(ackMessage && (ackMessage->source == bootloaderDest)) {
                 if(ackMessage->errorCode == BootloaderAck::ErrorCode::SUCCESS)
                     break;
@@ -162,7 +162,7 @@ bool BootloaderInterface::writePage(unsigned pageNumber, const uint8_t* data, bo
         unique_ptr<Message> message(Message::receive(stream));
 
         // handle ack
-        BootloaderAck* ackMessage = dynamic_cast<BootloaderAck*>(message.get());
+        auto* ackMessage = dynamic_cast<BootloaderAck*>(message.get());
         if(ackMessage && (ackMessage->source == bootloaderDest)) {
             if(ackMessage->errorCode == BootloaderAck::ErrorCode::SUCCESS) {
                 writePageSuccess();
@@ -213,7 +213,7 @@ void BootloaderInterface::writeHex(const string& fileName, bool reset, bool simp
         // get bootloader description
         while(true) {
             unique_ptr<Message> message(Message::receive(stream));
-            BootloaderDescription* bDescMessage = dynamic_cast<BootloaderDescription*>(message.get());
+            auto* bDescMessage = dynamic_cast<BootloaderDescription*>(message.get());
             if(bDescMessage && (bDescMessage->source == bootloaderDest)) {
                 pageSize = bDescMessage->pageSize;
                 pagesStart = bDescMessage->pagesStart;
@@ -226,7 +226,7 @@ void BootloaderInterface::writeHex(const string& fileName, bool reset, bool simp
     // Build a map of pages out of the map of addresses
     typedef map<uint32_t, vector<uint8_t> > PageMap;
     PageMap pageMap;
-    for(HexFile::ChunkMap::iterator it = hexFile.data.begin(); it != hexFile.data.end(); it++) {
+    for(auto it = hexFile.data.begin(); it != hexFile.data.end(); it++) {
         // get page number
         unsigned chunkAddress = it->first;
         // index inside data chunk
@@ -261,14 +261,14 @@ void BootloaderInterface::writeHex(const string& fileName, bool reset, bool simp
 
     if(simple) {
         // Write pages
-        for(PageMap::iterator it = pageMap.begin(); it != pageMap.end(); it++) {
+        for(auto it = pageMap.begin(); it != pageMap.end(); it++) {
             unsigned pageIndex = it->first;
             if(pageIndex != 0)
                 if(!writePage(pageIndex, &it->second[0], true))
                     errorWritePageNonFatal(pageIndex);
         }
         // Now look for the index 0 page
-        for(PageMap::iterator it = pageMap.begin(); it != pageMap.end(); it++) {
+        for(auto it = pageMap.begin(); it != pageMap.end(); it++) {
             unsigned pageIndex = it->first;
             if(pageIndex == 0)
                 if(!writePage(pageIndex, &it->second[0], true))
@@ -276,7 +276,7 @@ void BootloaderInterface::writeHex(const string& fileName, bool reset, bool simp
         }
     } else {
         // Write pages
-        for(PageMap::iterator it = pageMap.begin(); it != pageMap.end(); it++) {
+        for(auto it = pageMap.begin(); it != pageMap.end(); it++) {
             unsigned pageIndex = it->first;
             if((pageIndex >= pagesStart) && (pageIndex < pagesStart + pagesCount))
                 if(!writePage(pageIndex, &it->second[0], false))

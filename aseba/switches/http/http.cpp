@@ -165,7 +165,7 @@ HttpInterface::HttpInterface(const strings& targets, const std::string& http_por
 // created empty: pendingResponses, pendingVariables, eventSubscriptions, httpRequests,
 // streamsToShutdown
 {
-    for(strings::const_iterator it = targets.cbegin(); it != targets.end(); ++it) {
+    for(auto it = targets.cbegin(); it != targets.end(); ++it) {
         streamInitParameters.insert(std::pair<std::string, Dashel::Stream*>(*it, NULL));
     }
     // listen for incoming HTTP and Aseba requests
@@ -191,7 +191,7 @@ HttpInterface::HttpInterface(const strings& targets, const std::string& http_por
 
 void HttpInterface::broadcastGetDescription() {
     GetDescription getDescription;
-    for(StreamNodeIdMap::iterator it = asebaStreams.begin(); it != asebaStreams.end(); it++) {
+    for(auto it = asebaStreams.begin(); it != asebaStreams.end(); it++) {
         getDescription.serialize(it->first);
         it->first->flush();
     }
@@ -265,12 +265,12 @@ bool HttpInterface::run1s() {
         sendAvailableResponses();
         if(verbose && streamsToShutdown.size() > 0) {
             cerr << "HttpInterface::run " << streamsToShutdown.size() << " streams to shut down";
-            for(StreamSet::iterator si = streamsToShutdown.begin(); si != streamsToShutdown.end(); si++)
+            for(auto si = streamsToShutdown.begin(); si != streamsToShutdown.end(); si++)
                 cerr << " " << *si;
             cerr << endl;
         }
         if(!streamsToShutdown.empty()) {
-            StreamSet::iterator i = streamsToShutdown.begin();
+            auto i = streamsToShutdown.begin();
             Dashel::Stream* stream_to_shutdown = *i;
             streamsToShutdown.erase(*i);  // invalidates iterator
             try {
@@ -299,7 +299,7 @@ bool HttpInterface::run1s() {
 
 void HttpInterface::connectToTargets() {
     // connect to each Aseba target
-    std::map<std::string, Dashel::Stream*>::iterator it = streamInitParameters.begin();
+    auto it = streamInitParameters.begin();
     for(; it != streamInitParameters.end(); it++) {
         if(it->second)
             continue;
@@ -313,9 +313,9 @@ void HttpInterface::connectToTargets() {
                 Dashel::ParameterSet parser;
                 parser.add("dummy:remapLocal=0;remapTarget=0;remapAesl=0");
                 parser.add(it->first.c_str());
-                const unsigned localId(parser.get<unsigned>("remapLocal"));
-                const unsigned targetId(parser.get<unsigned>("remapTarget"));
-                const unsigned aeslId(parser.get<unsigned>("remapAesl"));
+                const auto localId(parser.get<unsigned>("remapLocal"));
+                const auto targetId(parser.get<unsigned>("remapTarget"));
+                const auto aeslId(parser.get<unsigned>("remapAesl"));
                 // remember localId and aeslId as wishes to be answered when node description
                 // arrives
                 if(localId > 0 && targetId > 0)
@@ -333,13 +333,13 @@ void HttpInterface::connectToTargets() {
 }
 
 void HttpInterface::sendMessage(const Message& message) {
-    for(StreamNodeIdMap::iterator it = asebaStreams.begin(); it != asebaStreams.end(); it++) {
+    for(auto it = asebaStreams.begin(); it != asebaStreams.end(); it++) {
         // patch message source if target id is remapped
         // but really, node id remapping should be handled closer to the dashel target
         NodeIdSubstitution subs = targetToNodeIdSubstitutions[it->first];
-        const CmdMessage* cmdMsg(dynamic_cast<const CmdMessage*>(&message));
+        const auto* cmdMsg(dynamic_cast<const CmdMessage*>(&message));
         if(cmdMsg) {
-            for(NodeIdSubstitution::iterator m = subs.begin(); m != subs.end(); ++m)
+            for(auto m = subs.begin(); m != subs.end(); ++m)
                 if(m->first != m->second && m->second == cmdMsg->dest) {  // ugly hack to copy normally const message
                     CmdMessage patched_message = *cmdMsg;
                     patched_message.dest = m->first;
@@ -358,14 +358,14 @@ void HttpInterface::sendMessage(const Message& message) {
 }
 
 void HttpInterface::propagateCmdMessage(Message* message) {
-    CmdMessage* cmdMsg(dynamic_cast<CmdMessage*>(message));
+    auto* cmdMsg(dynamic_cast<CmdMessage*>(message));
     if(cmdMsg) {
         for(auto& stream_nodeid : asebaStreams) {
             NodeIdSubstitution subs = targetToNodeIdSubstitutions[stream_nodeid.first];
 
             // UGLY: subs doesn't have a reverse index, so we have to scan through
             // FRAGILE: rely on identity substitution in targetToNodeIdSubstitutions
-            for(NodeIdSubstitution::iterator node2sub = subs.begin(); node2sub != subs.end(); ++node2sub)
+            for(auto node2sub = subs.begin(); node2sub != subs.end(); ++node2sub)
                 if(node2sub->second == cmdMsg->dest)  // the dest node is remapped to here, so reverse the map
                 {
                     if(node2sub->second != node2sub->second) {
@@ -441,7 +441,7 @@ void HttpInterface::incomingData(Stream* stream) {
 void HttpInterface::incomingDataHTTP(Stream* stream) {
     if(verbose)
         cerr << "incoming for HTTP stream " << stream << endl;
-    HttpRequest* req = new HttpRequest;  // [promise] we will eventually delete req in sendAvailableResponses,
+    auto* req = new HttpRequest;  // [promise] we will eventually delete req in sendAvailableResponses,
                                          // unscheduleResponse, or stream shutdown
     if(!req->initialize(stream)) {       // protocol failure, shut down connection
         stream->write("HTTP/1.1 400 Bad request\r\n");
@@ -490,7 +490,7 @@ void HttpInterface::incomingDataTarget(Stream* stream) {
     NodesManager::processMessage(message);
 
     // if description, record the stream -- node id correspondence
-    const Description* description = dynamic_cast<const Description*>(message);
+    const auto* description = dynamic_cast<const Description*>(message);
     if(description) {
         const std::string target = targetFromString(stream);
         if(!target.empty())
@@ -509,7 +509,7 @@ void HttpInterface::incomingDataTarget(Stream* stream) {
         incomingUserMsg(userMsg);
 
     // act like asebaswitch: rebroadcast this message to the other streams
-    for(StreamNodeIdMap::iterator it = asebaStreams.begin(); it != asebaStreams.end(); ++it) {
+    for(auto it = asebaStreams.begin(); it != asebaStreams.end(); ++it) {
         Stream* outStream = it->first;
         if(outStream == stream)
             continue;  // don't echo!
@@ -552,12 +552,12 @@ void HttpInterface::incomingVariables(const Variables* variables) {
         cerr << "incomingVariables var (" << variables->source << "," << variables->start << ") = " << result_str
              << endl
              << "\tupdates " << pending->size() << " pending";
-        for(ResponseSet::iterator i = pending->begin(); i != pending->end(); i++)
+        for(auto i = pending->begin(); i != pending->end(); i++)
             cerr << " " << *i;
         cerr << endl;
     }
 
-    for(ResponseSet::iterator i = pending->begin(); i != pending->end();) {
+    for(auto i = pending->begin(); i != pending->end();) {
         // i points to an HttpRequest* that is waiting for this variable value
         if(verbose)
             cerr << *i << " updating response var (" << variables->source << "," << variables->start << ")" << endl;
@@ -566,7 +566,7 @@ void HttpInterface::incomingVariables(const Variables* variables) {
     }
     if(verbose) {
         cerr << "\tcheck " << pendingVariables[address].size() << " pending";
-        for(ResponseSet::iterator i = pendingVariables[address].begin(); i != pendingVariables[address].end(); i++)
+        for(auto i = pendingVariables[address].begin(); i != pendingVariables[address].end(); i++)
             cerr << " " << *i;
         cerr << endl;
     }
@@ -600,7 +600,7 @@ void HttpInterface::incomingUserMsg(const UserMessage* userMsg) {
         // In the HTTP world we set up a stream of Server-Sent Events for this.
         // Note that event name is in commonDefinitions.events[userMsg->type].name
 
-        for(StreamEventSubscriptionMap::iterator subscriber = eventSubscriptions.begin();
+        for(auto subscriber = eventSubscriptions.begin();
             subscriber != eventSubscriptions.end(); ++subscriber) {
             if(subscriber->second.count("*") >= 1 || subscriber->second.count(event_name) >= 1) {
                 if(subscriber->first->sse_todo > 0)
@@ -652,7 +652,7 @@ void HttpInterface::evNodes(HttpRequest* req, strings& args) {
     std::stringstream json;
     json << (do_one_node ? "" : "[");  // hack, should first select list of matching nodes, then check size
 
-    for(NodesMap::iterator descIt = nodes.begin(); descIt != nodes.end(); ++descIt) {
+    for(auto descIt = nodes.begin(); descIt != nodes.end(); ++descIt) {
         const Node& description(descIt->second);
         string nodeName = WStringToUTF8(description.name);
         unsigned nodeId = descIt->first;
@@ -699,7 +699,7 @@ void HttpInterface::evNodes(HttpRequest* req, strings& args) {
             if(!vm.empty()) {
                 //                    unsigned this_node = n->first;
                 //                    VariablesMap vm = n->second;
-                for(VariablesMap::iterator i = vm.begin(); i != vm.end(); ++i) {
+                for(auto i = vm.begin(); i != vm.end(); ++i) {
                     json << (i == vm.begin() ? "" : ",") << "\"" << WStringToUTF8(i->first)
                          << "\":" << i->second.second;
                     seen_named_variables = true;
@@ -708,7 +708,7 @@ void HttpInterface::evNodes(HttpRequest* req, strings& args) {
             if(!seen_named_variables) {
                 // failsafe: if compiler hasn't found any variables, get them from the node
                 // description
-                for(vector<Aseba::TargetDescription::NamedVariable>::const_iterator i(
+                for(auto i(
                         description.namedVariables.begin());
                     i != description.namedVariables.end(); ++i)
                     json << (i == description.namedVariables.begin() ? "" : ",") << "\"" << WStringToUTF8(i->name)
@@ -832,7 +832,7 @@ void HttpInterface::evSubscribe(HttpRequest* req, strings& args) {
     if(args.size() == 1)
         eventSubscriptions[req].insert("*");
     else
-        for(strings::iterator i = args.begin() + 1; i != args.end(); ++i)
+        for(auto i = args.begin() + 1; i != args.end(); ++i)
             eventSubscriptions[req].insert(*i);
 
     strings headers;
@@ -882,14 +882,14 @@ void HttpInterface::evLoad(HttpRequest* req, strings& args) {
 // Handler: Reset nodes and rerun
 
 void HttpInterface::evReset(HttpRequest* req, strings& args) {
-    for(NodesMap::iterator descIt = nodes.begin(); descIt != nodes.end(); ++descIt) {
+    for(auto descIt = nodes.begin(); descIt != nodes.end(); ++descIt) {
         bool ok = true;
         // nodeId = getNodeId(descIt->second.name, 0, &ok);
         if(!ok)
             continue;
         string nodeName = WStringToUTF8(descIt->second.name);
 
-        for(StreamNodeIdMap::iterator it = asebaStreams.begin(); it != asebaStreams.end(); ++it) {
+        for(auto it = asebaStreams.begin(); it != asebaStreams.end(); ++it) {
             Dashel::Stream* stream = it->first;
             for(auto nodeId : it->second) {
                 //                    unsigned nodeId = it->second;
@@ -959,7 +959,7 @@ std::pair<unsigned, unsigned> HttpInterface::sendGetVariables(const unsigned nod
         // HTTP response should be 400 BAD REQUEST, response body should be bad node id
         return std::pair<unsigned, unsigned>(0, 0);  // hack, should be using exceptions for HTTP errors
     }
-    for(strings::const_iterator it(args.begin()); it != args.end(); ++it) {
+    for(auto it(args.begin()); it != args.end(); ++it) {
         // get node id, variable position and length
         if(verbose)
             cerr << "getVariables node id " << nodeId << " " << *it;
@@ -1037,7 +1037,7 @@ bool HttpInterface::getVarPos(const unsigned nodeId, const std::string& variable
 // Utility: request update of all variables, used for variable caching
 void HttpInterface::updateVariables(const unsigned nodeId) {
     strings all_variables;
-    for(VariablesMap::iterator it = allVariables[nodeId].begin(); it != allVariables[nodeId].end(); ++it)
+    for(auto it = allVariables[nodeId].begin(); it != allVariables[nodeId].end(); ++it)
         all_variables.push_back(WStringToUTF8(it->first));
     sendGetVariables(nodeId, all_variables);
 }
@@ -1071,7 +1071,7 @@ void HttpInterface::parse_json_form(const std::string content, strings& values) 
 std::vector<unsigned> HttpInterface::getIdsFromURI(const strings& args) {
     std::vector<unsigned> found;
     // first, look for named nodes
-    for(NodesMap::iterator descIt = nodes.begin(); descIt != nodes.end(); ++descIt)
+    for(auto descIt = nodes.begin(); descIt != nodes.end(); ++descIt)
         if(descIt->second.name.find(UTF8ToWString(args[0])) == 0)
             found.push_back(descIt->first);
     if(found.size() > 0)
@@ -1087,7 +1087,7 @@ std::vector<unsigned> HttpInterface::getIdsFromURI(const strings& args) {
 
 // Utility: search stream map to find a given node id
 Dashel::Stream* HttpInterface::getStreamFromNodeId(const unsigned nodeId) {
-    for(StreamNodeIdMap::iterator it = asebaStreams.begin(); it != asebaStreams.end(); it++) {
+    for(auto it = asebaStreams.begin(); it != asebaStreams.end(); it++) {
         if(it->second.find(nodeId) != it->second.end())
             return it->first;
     }
@@ -1095,7 +1095,7 @@ Dashel::Stream* HttpInterface::getStreamFromNodeId(const unsigned nodeId) {
         ++it) {
         if(it->second != nodeId)
             continue;
-        std::map<std::string, Dashel::Stream*>::iterator found = streamInitParameters.find(it->first);
+        auto found = streamInitParameters.find(it->first);
         if(found != streamInitParameters.end()) {
             if(found->second)
                 return found->second;
@@ -1317,7 +1317,7 @@ void HttpInterface::scheduleResponse(Dashel::Stream* stream, HttpRequest* req) {
 }
 
 void HttpInterface::unscheduleResponse(Dashel::Stream* stream, HttpRequest* req) {
-    for(ResponseQueue::iterator i = pendingResponses[stream].begin(); i != pendingResponses[stream].end(); ++i)
+    for(auto i = pendingResponses[stream].begin(); i != pendingResponses[stream].end(); ++i)
         if(*i == req) {
             delete req;  // [promise]
             pendingResponses[stream].erase(i);
@@ -1356,10 +1356,10 @@ void HttpInterface::appendResponse(HttpRequest* req, unsigned status, const bool
 
 void HttpInterface::sendAvailableResponses() {
     // scan through all streams; use while to post-increment when we remove a stream
-    for(StreamResponseQueueMap::iterator m = pendingResponses.begin(); m != pendingResponses.end(); m++) {
+    for(auto m = pendingResponses.begin(); m != pendingResponses.end(); m++) {
         if(verbose) {
             cerr << m->first << " sendAvailableResponses " << m->second.size() << " in queue";
-            for(ResponseQueue::iterator qi = m->second.begin(); qi != m->second.end(); qi++)
+            for(auto qi = m->second.begin(); qi != m->second.end(); qi++)
                 cerr << " " << *qi;
             cerr << endl;
         }
@@ -1405,7 +1405,7 @@ std::set<unsigned> HttpInterface::allNodeIds() {
 
 unsigned HttpInterface::updateNodeId(Dashel::Stream* stream, unsigned targetId) {
     NodeIdSubstitution known = targetToNodeIdSubstitutions[stream];
-    NodeIdSubstitution::iterator it = known.find(targetId);
+    auto it = known.find(targetId);
     if(it != known.end())
         // already know about this targetId in this stream, return its assigned nodeId
         return it->second;
@@ -1414,7 +1414,7 @@ unsigned HttpInterface::updateNodeId(Dashel::Stream* stream, unsigned targetId) 
         NodeIdSubstitution localWishes = localIdWishes[stream];
         std::set<unsigned> used = allNodeIds();
         unsigned newId = targetId ? targetId : 1;
-        NodeIdSubstitution::iterator localWish = localWishes.find(targetId);
+        auto localWish = localWishes.find(targetId);
         if(localWish != localWishes.end())
             newId = localWish->second;
         while(used.count(newId) != 0 && (newId += 20))
@@ -1429,7 +1429,7 @@ unsigned HttpInterface::updateNodeId(Dashel::Stream* stream, unsigned targetId) 
 
         // if we had a promise for aeslId, add the substitution
         NodeIdSubstitution aeslWishes = aeslIdWishes[stream];
-        NodeIdSubstitution::iterator aeslWish = aeslWishes.find(targetId);
+        auto aeslWish = aeslWishes.find(targetId);
         if(aeslWish != aeslWishes.end())
             nodeToAeslIdSubstitutions[newId] = aeslWish->second;
         else if(localWish != localWishes.end())
@@ -1446,7 +1446,7 @@ void HttpInterface::discardStream(Dashel::Stream* stream) {
     if(asebaStreams.count(stream))
         asebaStreams.erase(stream);
 
-    for(std::map<std::string, Dashel::Stream*>::iterator it = streamInitParameters.begin();
+    for(auto it = streamInitParameters.begin();
         it != streamInitParameters.end(); ++it) {
         if(it->second == stream)
             it->second = NULL;
@@ -1454,7 +1454,7 @@ void HttpInterface::discardStream(Dashel::Stream* stream) {
 }
 
 std::string HttpInterface::targetFromString(Dashel::Stream* stream) const {
-    for(std::map<std::string, Dashel::Stream*>::const_iterator it = streamInitParameters.begin();
+    for(auto it = streamInitParameters.begin();
         it != streamInitParameters.end(); ++it) {
         if(it->second == stream)
             return it->first;
@@ -1539,13 +1539,13 @@ void HttpRequest::incomingData() {
     }
     if(verbose) {
         cerr << stream << " Headers complete; (" << headers.size() << " headers)";
-        for(std::map<std::string, std::string>::iterator i = headers.begin(); i != headers.end(); ++i)
+        for(auto i = headers.begin(); i != headers.end(); ++i)
             cerr << " " << i->first.c_str() << ":" << i->second.c_str();
         cerr << endl;
     }
     int content_length = atoi(headers["Content-Length"].c_str());
     content_length = (content_length > 40000) ? 40000 : content_length;  // truncate at 40000 bytes
-    char* buffer = new char[content_length];
+    auto* buffer = new char[content_length];
     stream->read(buffer, content_length);
     content = std::string(buffer, content_length);
     delete[] buffer;
@@ -1590,13 +1590,13 @@ void HttpRequest::sendStatus() {
         if(headers["Connection"].find("Keep-Alive") == 0)
             reply << "Connection: Keep-Alive\r\n";
     } else {
-        for(strings::iterator i = outheaders.begin(); i != outheaders.end(); i++)
+        for(auto i = outheaders.begin(); i != outheaders.end(); i++)
             reply << *i << "\r\n";
     }
     reply << "\r\n";
 
     int reply_len = reply.str().size();
-    char* reply_str = (char*)malloc(reply_len);
+    auto* reply_str = (char*)malloc(reply_len);
     memcpy(reply_str, reply.str().c_str(), reply_len);
     stream->write(reply_str, reply_len);
     free(reply_str);

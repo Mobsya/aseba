@@ -133,14 +133,14 @@ void PlaygroundViewer::log(const char* entry, const QColor& color) {
 }
 
 void PlaygroundViewer::processStarted() {
-    QProcess* process(polymorphic_downcast<QProcess*>(sender()));
+    auto* process(polymorphic_downcast<QProcess*>(sender()));
     // do not display to avoid clutter
     // log(tr("%0: Process started").arg((Q_PID_PRINT)process->pid()), Qt::white);
     Q_UNUSED(process);
 }
 
 void PlaygroundViewer::processError(QProcess::ProcessError error) {
-    QProcess* process(polymorphic_downcast<QProcess*>(sender()));
+    auto* process(polymorphic_downcast<QProcess*>(sender()));
     switch(error) {
         case QProcess::FailedToStart:
             log(tr("%0: Process failed to start").arg((Q_PID_PRINT)process->pid()), Qt::red);
@@ -154,13 +154,13 @@ void PlaygroundViewer::processError(QProcess::ProcessError error) {
 }
 
 void PlaygroundViewer::processReadyRead() {
-    QProcess* process(polymorphic_downcast<QProcess*>(sender()));
+    auto* process(polymorphic_downcast<QProcess*>(sender()));
     while(process->canReadLine())
         log(tr("%0: %1").arg((Q_PID_PRINT)process->pid()).arg(process->readLine().constData()), Qt::yellow);
 }
 
 void PlaygroundViewer::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    QProcess* process(polymorphic_downcast<QProcess*>(sender()));
+    auto* process(polymorphic_downcast<QProcess*>(sender()));
     // do not display to avoid clutter
     /*if (exitStatus == QProcess::NormalExit)
         log(tr("Process finished").arg((Q_PID_PRINT)process->pid()), Qt::yellow);
@@ -184,8 +184,8 @@ void PlaygroundViewer::sceneCompletedHook() {
         int i = 0;
         QString scoreString("Id.: E./Score. - ");
         int totalScore = 0;
-        for(World::ObjectsIterator it = world->objects.begin(); it != world->objects.end(); ++it) {
-            AsebaFeedableEPuck* epuck = dynamic_cast<AsebaFeedableEPuck*>(*it);
+        for(auto it = world->objects.begin(); it != world->objects.end(); ++it) {
+            auto* epuck = dynamic_cast<AsebaFeedableEPuck*>(*it);
             if(epuck) {
                 totalScore += (int)epuck->score;
                 if(i != 0)
@@ -240,7 +240,7 @@ void PlaygroundViewer::mouseMoveEvent(QMouseEvent* event) {
 
 void PlaygroundViewer::timerEvent(QTimerEvent* event) {
     // if the object being moved is Aseba-enabled, make sure it processes network events
-    AbstractNodeGlue* asebaObject(dynamic_cast<AbstractNodeGlue*>(selectedObject));
+    auto* asebaObject(dynamic_cast<AbstractNodeGlue*>(selectedObject));
     if(asebaObject)
         asebaObject->externalInputStep(double(timerPeriodMs) / 1000.);
 

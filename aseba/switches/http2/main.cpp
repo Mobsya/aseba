@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
             interface->setDocumentRoot(docRoot);
         }
 
-        int numTargets = (int)dashelTargetList.size();
+        auto numTargets = (int)dashelTargetList.size();
         for(int i = 0; i < numTargets; i++) {
             interface->addTarget(dashelTargetList[i]);
         }

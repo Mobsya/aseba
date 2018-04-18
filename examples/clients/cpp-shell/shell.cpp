@@ -239,7 +239,7 @@ void Shell::listVariables(const strings& args) {
     if(allVarMapIt != allVariables.end()) {
         // ... use it
         const VariablesMap& varMap(allVarMapIt->second);
-        VariablesMap::const_iterator it(varMap.begin());
+        auto it(varMap.begin());
         for(; it != varMap.end(); ++it)
             wcerr << "  " << it->first << " " << it->second.second << endl;
     } else {

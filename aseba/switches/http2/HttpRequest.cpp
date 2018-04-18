@@ -162,7 +162,7 @@ bool HttpRequest::readContent() {
     contentLength = (contentLength > CONTENT_BYTES_LIMIT) ? CONTENT_BYTES_LIMIT : contentLength;  // truncate at limit
 
     if(contentLength > 0) {
-        char* buffer = new char[contentLength];
+        auto* buffer = new char[contentLength];
         readRaw(buffer, contentLength);
         content = string(buffer, contentLength);
         delete[] buffer;

@@ -38,7 +38,7 @@ QMimeData* DraggableListWidget::mimeData(const QList<QListWidgetItem*> items) co
     QString texts;
     foreach(QListWidgetItem* item, items) { texts += item->text(); }
 
-    QMimeData* mimeData = new QMimeData();
+    auto* mimeData = new QMimeData();
     mimeData->setText(texts);
     return mimeData;
 }
@@ -77,7 +77,7 @@ void FixedWidthTableView::startDrag(Qt::DropActions supportedActions) {
 
     QMimeData* mimeData = model()->mimeData(list);
 
-    QDrag* drag = new QDrag(this);
+    auto* drag = new QDrag(this);
     drag->setMimeData(mimeData);
     QPixmap pixmap = getDragPixmap(mimeData->text());
     drag->setPixmap(pixmap);

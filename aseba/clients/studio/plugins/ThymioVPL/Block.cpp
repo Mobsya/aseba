@@ -199,7 +199,7 @@ namespace ThymioVPL {
         document.appendChild(serialize(document));
 
         // create a MIME data for this block
-        QMimeData* mime = new QMimeData;
+        auto* mime = new QMimeData;
         mime->setData("Block", document.toByteArray());
 
         return mime;
@@ -293,7 +293,7 @@ namespace ThymioVPL {
 #endif  // Q_WS_X11
         {
             for(int y = 0; y < img.height(); ++y) {
-                QRgb* row = (QRgb*)img.scanLine(y);
+                auto* row = (QRgb*)img.scanLine(y);
                 for(int x = 0; x < img.width(); ++x) {
                     ((unsigned char*)&row[x])[3] = 128;
                 }
@@ -354,13 +354,13 @@ namespace ThymioVPL {
 
         Q_ASSERT(scene());
         Q_ASSERT(scene()->views().size() > 0);
-        ResizingView* view(polymorphic_downcast<ResizingView*>(scene()->views()[0]));
+        auto* view(polymorphic_downcast<ResizingView*>(scene()->views()[0]));
         const QRectF sceneRect(mapRectToScene(boundingRect()));
         const QRect viewRect(view->mapFromScene(sceneRect).boundingRect());
         const QPoint hotspot(view->mapFromScene(event->scenePos()) - viewRect.topLeft());
 
         const bool isCopy((event->modifiers() & Qt::ControlModifier) || (name == "statefilter"));
-        QDrag* drag = new QDrag(event->widget());
+        auto* drag = new QDrag(event->widget());
         drag->setMimeData(mimeData());
         drag->setHotSpot(hotspot);
         drag->setPixmap(QPixmap::fromImage(translucidImage(view->getScale())));
@@ -370,7 +370,7 @@ namespace ThymioVPL {
         USAGE_LOG(logBlockMouseMove(this->name, this->type, event));
         Qt::DropAction dragResult(drag->exec(isCopy ? Qt::CopyAction : Qt::MoveAction));
         if(dragResult != Qt::IgnoreAction) {
-            EventActionsSet* eventActionsSet(dynamic_cast<EventActionsSet*>(parentItem()));
+            auto* eventActionsSet(dynamic_cast<EventActionsSet*>(parentItem()));
             if(eventActionsSet) {
                 if(!isCopy && !keepAfterDrop)
                     eventActionsSet->removeBlock(this);
@@ -383,7 +383,7 @@ namespace ThymioVPL {
     }
 
     void Block::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-        EventActionsSet* parentSet(dynamic_cast<EventActionsSet*>(parentItem()));
+        auto* parentSet(dynamic_cast<EventActionsSet*>(parentItem()));
         if(parentSet) {
             parentSet->setSoleSelection();
         }
@@ -700,7 +700,7 @@ namespace ThymioVPL {
 
     //! Create a point with a gradient representing a LED on the robot
     QGraphicsItem* BlockWithButtonsAndRange::createIndicationLED(int x, int y) {
-        QGraphicsEllipseItem* ledIndication = new QGraphicsEllipseItem(x - 12, y - 12, 24, 24, this);
+        auto* ledIndication = new QGraphicsEllipseItem(x - 12, y - 12, 24, 24, this);
         QRadialGradient grad(x, y, 12);
         grad.setColorAt(0, Qt::red);
         grad.setColorAt(1, Qt::transparent);

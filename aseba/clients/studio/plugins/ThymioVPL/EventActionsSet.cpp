@@ -106,7 +106,7 @@ namespace ThymioVPL {
         setPos(0, row * Style::eventActionsSetRowStep);
 
         // update scene rect
-        Scene* vplScene(dynamic_cast<Scene*>(scene()));
+        auto* vplScene(dynamic_cast<Scene*>(scene()));
         if(vplScene)
             vplScene->recomputeSceneRect();
     }
@@ -433,7 +433,7 @@ namespace ThymioVPL {
         prepareGeometryChange();
 
         // update scene rect
-        Scene* vplScene(dynamic_cast<Scene*>(scene()));
+        auto* vplScene(dynamic_cast<Scene*>(scene()));
         if(vplScene)
             vplScene->recomputeSceneRect();
     }
@@ -512,7 +512,7 @@ namespace ThymioVPL {
         document.appendChild(serialize(document));
 
         // create a MIME data for this block
-        QMimeData* mime = new QMimeData;
+        auto* mime = new QMimeData;
         mime->setData("EventActionsSet", document.toByteArray());
 
         return mime;
@@ -714,7 +714,7 @@ namespace ThymioVPL {
         painter.end();
 
         const bool isCopy(event->modifiers() & Qt::ControlModifier);
-        QDrag* drag = new QDrag(event->widget());
+        auto* drag = new QDrag(event->widget());
         drag->setMimeData(mimeData());
         QMimeData* myData(mimeData());
         drag->setHotSpot(hotspot);
@@ -727,7 +727,7 @@ namespace ThymioVPL {
         if(dragResult != Qt::IgnoreAction) {
             // find on which set the drag was droppes
             EventActionsSet* target(0);
-            Scene* vplScene(polymorphic_downcast<Scene*>(scene()));
+            auto* vplScene(polymorphic_downcast<Scene*>(scene()));
             for(Scene::SetItr it(vplScene->setsBegin()); it != vplScene->setsEnd(); ++it) {
                 if((*it)->wasDroppedTarget) {
                     target = *it;
@@ -931,7 +931,7 @@ namespace ThymioVPL {
         int colorId = (isSelected() ? 1 : 0);
 
         // if we are the last one, do not show buttons
-        Scene* vplScene(dynamic_cast<Scene*>(scene()));
+        auto* vplScene(dynamic_cast<Scene*>(scene()));
         if(vplScene) {
             assert(vplScene->setsBegin() != vplScene->setsEnd());
             // const bool isFirst(*vplScene->setsBegin() == this);

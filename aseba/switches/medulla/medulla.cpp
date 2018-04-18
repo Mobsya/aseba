@@ -105,7 +105,7 @@ AsebaNetworkInterface::AsebaNetworkInterface(Hub* hub, bool systemBus)
     DBusConnectionBus().registerService("ch.epfl.mobots.Aseba");
 
     // regular network pinging
-    QTimer* timer = new QTimer(this);
+    auto* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(PingNetwork()));
     timer->start(1000);
 }
@@ -118,13 +118,13 @@ void AsebaNetworkInterface::processMessage(Message* message, const Dashel::Strea
     NodesManager::processMessage(message);
 
     // if user message, send to D-Bus as well
-    UserMessage* userMessage = dynamic_cast<UserMessage*>(message);
+    auto* userMessage = dynamic_cast<UserMessage*>(message);
     if(userMessage) {
         sendEventOnDBus(userMessage->type, fromAsebaVector(userMessage->data));
     }
 
     // if variables, check for pending answers
-    Variables* variables = dynamic_cast<Variables*>(message);
+    auto* variables = dynamic_cast<Variables*>(message);
     if(variables) {
         const unsigned nodeId(variables->source);
         const unsigned pos(variables->start);
@@ -332,7 +332,7 @@ QStringList AsebaNetworkInterface::GetVariablesList(const QString& node) const {
         const UserDefinedVariablesMap::const_iterator userVarMapIt(userDefinedVariablesMap.find(node));
         if(userVarMapIt != userDefinedVariablesMap.end()) {
             const VariablesMap& variablesMap(*userVarMapIt);
-            for(VariablesMap::const_iterator jt = variablesMap.begin(); jt != variablesMap.end(); ++jt) {
+            for(auto jt = variablesMap.begin(); jt != variablesMap.end(); ++jt) {
                 list.push_back(QString::fromStdWString(jt->first));
             }
         }
@@ -354,7 +354,7 @@ void AsebaNetworkInterface::SetVariable(const QString& node, const QString& vari
     }
     const unsigned nodeId(nodeIt.value());
 
-    unsigned pos(unsigned(-1));
+    auto pos(unsigned(-1));
 
     // check whether variable is user-defined
     const UserDefinedVariablesMap::const_iterator userVarMapIt(userDefinedVariablesMap.find(node));
@@ -391,8 +391,8 @@ Values AsebaNetworkInterface::GetVariable(const QString& node, const QString& va
     }
     const unsigned nodeId(nodeIt.value());
 
-    unsigned pos(unsigned(-1));
-    unsigned length(unsigned(-1));
+    auto pos(unsigned(-1));
+    auto length(unsigned(-1));
 
     // check whether variable is user-defined
     const UserDefinedVariablesMap::const_iterator userVarMapIt(userDefinedVariablesMap.find(node));
@@ -424,7 +424,7 @@ Values AsebaNetworkInterface::GetVariable(const QString& node, const QString& va
     }
 
     // build bookkeeping for async reply
-    RequestData* request = new RequestData;
+    auto* request = new RequestData;
     request->nodeId = nodeId;
     request->pos = pos;
     message.setDelayedReply(true);
@@ -491,7 +491,7 @@ Hub::Hub(unsigned port, bool verbose, bool dump, bool forward, bool rawTime, boo
     , forward(forward)
     , rawTime(rawTime) {
     // TODO: work in progress to remove ugly delay
-    AsebaNetworkInterface* network(new AsebaNetworkInterface(this, systemBus));
+    auto* network(new AsebaNetworkInterface(this, systemBus));
     QObject::connect(this, SIGNAL(messageAvailable(Message*, const Dashel::Stream*)), network,
                      SLOT(processMessage(Message*, const Dashel::Stream*)));
     ostringstream oss;
@@ -511,7 +511,7 @@ void Hub::sendMessage(const Message* message, const Stream* sourceStream) {
     lock();
 
     // write on all connected streams
-    for(StreamsSet::iterator it = dataStreams.begin(); it != dataStreams.end(); ++it) {
+    for(auto it = dataStreams.begin(); it != dataStreams.end(); ++it) {
         Stream* destStream(*it);
 
         if((forward) && (destStream == sourceStream))

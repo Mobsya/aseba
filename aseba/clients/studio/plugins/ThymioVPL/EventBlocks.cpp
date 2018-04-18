@@ -53,7 +53,7 @@ namespace ThymioVPL {
                 new GeometryShapeButton(QRectF(-25, -21.5, 50, 43), GeometryShapeButton::TRIANGULAR_BUTTON, this,
                                         Style::unusedButtonFillColor, Style::unusedButtonStrokeColor);
 
-            qreal offset = (qreal)i;
+            auto offset = (qreal)i;
             button->setRotation(-90 * offset);
             button->addState(color);
             buttons.push_back(button);
@@ -82,7 +82,7 @@ namespace ThymioVPL {
             button = new GeometryShapeButton(QRectF(-25, -25, 50, 50), GeometryShapeButton::QUARTER_CIRCLE_BUTTON, this,
                                              Style::unusedButtonFillColor, Style::unusedButtonStrokeColor);
 
-            qreal offset = (qreal)i;
+            auto offset = (qreal)i;
             button->setRotation(-90 * offset + 45);
             button->setPos(128 - 54 * qSin(1.57079633 * offset), 100 - 54 * qCos(1.57079633 * offset));
             button->addState(color);
@@ -297,13 +297,13 @@ namespace ThymioVPL {
     void ArrowButtonsEventBlock::setButtonsPos(bool advanced) {
         if(advanced) {
             for(int i = 0; i < 4; i++) {
-                qreal offset = (qreal)i;
+                auto offset = (qreal)i;
                 buttons[i]->setPos(128 - 64 * qSin(1.57079633 * offset), 100 - 64 * qCos(1.57079633 * offset));
             }
             buttons[4]->setPos(128, 100);
         } else {
             for(int i = 0; i < 4; i++) {
-                qreal offset = (qreal)i;
+                auto offset = (qreal)i;
                 buttons[i]->setPos(128 - 70 * qSin(1.57079633 * offset), 128 - 70 * qCos(1.57079633 * offset));
             }
             buttons[4]->setPos(128, 128);
@@ -352,7 +352,7 @@ namespace ThymioVPL {
         // indication LEDs for front sensors
         indicationLEDs.push_back(createIndicationLED(15, 78));
         indicationLEDs.push_back(createIndicationLED(54, 43));
-        QGraphicsItemGroup* frontIndicationLEDs(new QGraphicsItemGroup(this));
+        auto* frontIndicationLEDs(new QGraphicsItemGroup(this));
         frontIndicationLEDs->addToGroup(createIndicationLED(104, 26));
         frontIndicationLEDs->addToGroup(createIndicationLED(152, 26));
         indicationLEDs.push_back(frontIndicationLEDs);

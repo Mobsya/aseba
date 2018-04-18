@@ -54,7 +54,7 @@ void DashelInterface::disconnectAseba() {
 // Consider _only_ UserMessage. Discard other types of messages (debug, etc.)
 void DashelInterface::incomingData(Dashel::Stream* stream) {
     Aseba::Message* message = Aseba::Message::receive(stream);
-    Aseba::UserMessage* userMessage = dynamic_cast<Aseba::UserMessage*>(message);
+    auto* userMessage = dynamic_cast<Aseba::UserMessage*>(message);
 
     if(userMessage)
         emit messageAvailable(userMessage);

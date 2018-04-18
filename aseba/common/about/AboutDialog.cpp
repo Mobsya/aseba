@@ -45,10 +45,10 @@ namespace Aseba {
 template <class T>
 static bool haveCommonElements(const T& container1, const T& container2) {
     using I = typename T::const_iterator;
-    I first1(container1.begin());
-    I last1(container1.end());
-    I first2(container2.begin());
-    I last2(container2.end());
+    auto first1(container1.begin());
+    auto last1(container1.end());
+    auto first2(container2.begin());
+    auto last2(container2.end());
     while(first1 != last1 && first2 != last2) {
         if(*first1 < *first2)
             ++first1;

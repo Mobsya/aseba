@@ -72,7 +72,7 @@ bool hasIntersection(const QList<QHostAddress>& addressesA, const QList<QHostAdd
 DashelConnectionDialog::DashelConnectionDialog() {
     QSettings settings;
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto* mainLayout = new QVBoxLayout(this);
 
     // discovered targets
     discoveredList = new QListWidget();
@@ -85,7 +85,7 @@ DashelConnectionDialog::DashelConnectionDialog() {
 
     // selected target
     mainLayout->addWidget(new QLabel(tr("Selected target")));
-    QHBoxLayout* targetLayout = new QHBoxLayout();
+    auto* targetLayout = new QHBoxLayout();
     currentTarget = new QLineEdit(settings.value("current target", ASEBA_DEFAULT_TARGET).toString());
     targetLayout->addWidget(currentTarget);
     auto templateButton = new QPushButton(QIcon(":/images/info.png"), "");
@@ -126,7 +126,7 @@ DashelConnectionDialog::DashelConnectionDialog() {
     mainLayout->addWidget(languageSelectionBox);
 
     // ok/cancel buttons
-    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    auto* buttonLayout = new QHBoxLayout();
     connectButton = new QPushButton(QIcon(":/images/ok.png"), tr("Connect"));
     buttonLayout->addWidget(connectButton);
     QPushButton* cancelButton = new QPushButton(QIcon(":/images/no.png"), tr("Cancel"));
@@ -220,7 +220,7 @@ bool DashelConnectionDialog::updatePortList(const QString& toSelect) {
 
     // FIXME: change this algo from O(n^2) to O(n log(n))
     // add newly seen devices
-    for(PortsMap::const_iterator it = ports.begin(); it != ports.end(); ++it) {
+    for(auto it = ports.begin(); it != ports.end(); ++it) {
         const QString discoveredListDashelTarget(
             QString("ser:device=%0").arg(QString::fromUtf8(it->second.first.c_str())));
         // look if item is already in the list
@@ -431,7 +431,7 @@ void DashelInterface::connectionClosed(Stream* stream, bool abnormal) {
     Q_UNUSED(abnormal);
 
     // mark all nodes as being disconnected
-    for(NodesMap::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
+    for(auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
         nodeIt->second.connected = false;
         nodeDisconnected(nodeIt->first);
     }
@@ -561,7 +561,7 @@ void DashelTarget::disconnect() {
 
 QList<unsigned> DashelTarget::getNodesList() const {
     QList<unsigned> nodeIds;
-    for(NodesMap::const_iterator node = nodes.begin(); node != nodes.end(); ++node)
+    for(auto node = nodes.begin(); node != nodes.end(); ++node)
         nodeIds.append(node->first);
     return nodeIds;
 }
@@ -573,7 +573,7 @@ const TargetDescription* const DashelTarget::getDescription(unsigned node) const
 void DashelTarget::uploadBytecode(unsigned node, const BytecodeVector& bytecode) {
     dashelInterface.lock();
     if(dashelInterface.stream && !writeBlocked) {
-        NodesMap::iterator nodeIt = nodes.find(node);
+        auto nodeIt = nodes.find(node);
         assert(nodeIt != nodes.end());
 
         // fill debug bytecode and build address map
@@ -667,7 +667,7 @@ void DashelTarget::reset(unsigned node) {
 void DashelTarget::run(unsigned node) {
     dashelInterface.lock();
     if(dashelInterface.stream && !writeBlocked) {
-        NodesMap::iterator nodeIt = nodes.find(node);
+        auto nodeIt = nodes.find(node);
         assert(nodeIt != nodes.end());
 
         try {
@@ -693,7 +693,7 @@ void DashelTarget::pause(unsigned node) {
 
 void DashelTarget::next(unsigned node) {
     if(!writeBlocked) {
-        NodesMap::iterator nodeIt = nodes.find(node);
+        auto nodeIt = nodes.find(node);
         assert(nodeIt != nodes.end());
 
         nodeIt->second.steppingInNext = WAITING_INITAL_PC;
@@ -780,7 +780,7 @@ void DashelTarget::messageFromDashel(Message* message) {
     // see if we have a registered handler for this message
     MessagesHandlersMap::const_iterator messageHandler = messagesHandlersMap.find(message->type);
     if(messageHandler == messagesHandlersMap.end()) {
-        UserMessage* userMessage = dynamic_cast<UserMessage*>(message);
+        auto* userMessage = dynamic_cast<UserMessage*>(message);
         if(userMessage) {
             userEventsQueue.enqueue(userMessage);
             if(!userEventsTimer.isActive())
@@ -843,13 +843,13 @@ void DashelTarget::receivedVariables(Message* message) {
     VariablesCounter++;
     // qDebug() << "diff get recv variables" << int(getVariablesCounter) - int(VariablesCounter);
 
-    Variables* variables = polymorphic_downcast<Variables*>(message);
+    auto* variables = polymorphic_downcast<Variables*>(message);
 
     emit variablesMemoryChanged(variables->source, variables->start, variables->variables);
 }
 
 void DashelTarget::receivedArrayAccessOutOfBounds(Message* message) {
-    ArrayAccessOutOfBounds* aa = polymorphic_downcast<ArrayAccessOutOfBounds*>(message);
+    auto* aa = polymorphic_downcast<ArrayAccessOutOfBounds*>(message);
 
     int line = getLineFromPC(aa->source, aa->pc);
     if(line >= 0) {
@@ -859,7 +859,7 @@ void DashelTarget::receivedArrayAccessOutOfBounds(Message* message) {
 }
 
 void DashelTarget::receivedDivisionByZero(Message* message) {
-    DivisionByZero* dz = polymorphic_downcast<DivisionByZero*>(message);
+    auto* dz = polymorphic_downcast<DivisionByZero*>(message);
 
     int line = getLineFromPC(dz->source, dz->pc);
     if(line >= 0) {
@@ -869,7 +869,7 @@ void DashelTarget::receivedDivisionByZero(Message* message) {
 }
 
 void DashelTarget::receivedEventExecutionKilled(Message* message) {
-    EventExecutionKilled* eek = polymorphic_downcast<EventExecutionKilled*>(message);
+    auto* eek = polymorphic_downcast<EventExecutionKilled*>(message);
 
     int line = getLineFromPC(eek->source, eek->pc);
     if(line >= 0) {
@@ -878,7 +878,7 @@ void DashelTarget::receivedEventExecutionKilled(Message* message) {
 }
 
 void DashelTarget::receivedNodeSpecificError(Message* message) {
-    NodeSpecificError* nse = polymorphic_downcast<NodeSpecificError*>(message);
+    auto* nse = polymorphic_downcast<NodeSpecificError*>(message);
 
     int line = getLineFromPC(nse->source, nse->pc);
     // The NodeSpecificError can be triggered even if the pc is not valid
@@ -890,7 +890,7 @@ void DashelTarget::receivedNodeSpecificError(Message* message) {
 }
 
 void DashelTarget::receivedExecutionStateChanged(Message* message) {
-    ExecutionStateChanged* ess = polymorphic_downcast<ExecutionStateChanged*>(message);
+    auto* ess = polymorphic_downcast<ExecutionStateChanged*>(message);
 
     Node& node = nodes[ess->source];
     int line = getLineFromPC(ess->source, ess->pc);
@@ -967,13 +967,13 @@ void DashelTarget::receivedExecutionStateChanged(Message* message) {
 }
 
 void DashelTarget::receivedBreakpointSetResult(Message* message) {
-    BreakpointSetResult* bsr = polymorphic_downcast<BreakpointSetResult*>(message);
+    auto* bsr = polymorphic_downcast<BreakpointSetResult*>(message);
     unsigned node = bsr->source;
     emit breakpointSetResult(node, getLineFromPC(node, bsr->pc), bsr->success);
 }
 
 void DashelTarget::receivedBootloaderAck(Message* message) {
-    BootloaderAck* ack = polymorphic_downcast<BootloaderAck*>(message);
+    auto* ack = polymorphic_downcast<BootloaderAck*>(message);
     emit bootloaderAck(ack->errorCode, ack->errorAddress);
 }
 

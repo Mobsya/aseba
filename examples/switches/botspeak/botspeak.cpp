@@ -454,7 +454,7 @@ void BotSpeakBridge::compileAndRunScript() {
     }
     if(verbose) {
         cout << "Found " << splits.size() + 1 << " basic blocs starting at lines 0 ";
-        for(set<unsigned>::const_iterator it(splits.begin()); it != splits.end(); ++it)
+        for(auto it(splits.begin()); it != splits.end(); ++it)
             cout << *it << " ";
         cout << endl;
     }
@@ -463,7 +463,7 @@ void BotSpeakBridge::compileAndRunScript() {
     vector<unsigned> blocToLineTable(script.size(), 0);
     unsigned line(0);
     unsigned bb(0);
-    for(set<unsigned>::const_iterator it(splits.begin()); it != splits.end(); ++it) {
+    for(auto it(splits.begin()); it != splits.end(); ++it) {
         while(line < *it)
             blocToLineTable[line++] = bb;
         ++bb;
@@ -491,7 +491,7 @@ void BotSpeakBridge::compileAndRunScript() {
          args.at(1))
 
     // subroutines for basic blocks
-    set<unsigned>::const_iterator bbIt(splits.begin());
+    auto bbIt(splits.begin());
     asebaSource += L"sub bb0\n";
     bb = 0;
     bool nextBBDefined(false);
