@@ -107,7 +107,7 @@ void PlaygroundViewer::notifyAsebaEnvironment(const EnvironmentNotificationType 
         }
     } else if(type == EnvironmentNotificationType::FATAL_ERROR) {
         if(description == "cannot create listening port") {
-            QMessageBox::critical(0, "Aseba Playground",
+            QMessageBox::critical(nullptr, "Aseba Playground",
                                   tr("Cannot create listening port %0: %1")
                                       .arg(QString::fromStdString(arguments.at(0)))
                                       .arg(QString::fromStdString(arguments.at(1))));

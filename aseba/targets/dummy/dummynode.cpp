@@ -282,7 +282,7 @@ static AsebaNativeFunctionPointer nativeFunctions[] = {
     ASEBA_NATIVES_STD_FUNCTIONS,
 };
 
-static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, 0};
+static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, nullptr};
 
 extern "C" const AsebaNativeFunctionDescription* const* AsebaGetNativeFunctionsDescriptions(AsebaVMState* vm) {
     return nativeFunctionsDescriptions;

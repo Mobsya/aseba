@@ -45,7 +45,7 @@ NodeToolInterface* NodeToolInterfaces::getNamed(const QString& name) const {
     for(auto it(begin()); it != end(); ++it)
         if((*it)->name == name)
             return *it;
-    return 0;
+    return nullptr;
 }
 
 /*@}*/

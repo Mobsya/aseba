@@ -102,7 +102,7 @@ namespace ThymioVPL {
         else if(name == "setstate")
             return new StateFilterActionBlock(parent);
         else
-            return 0;
+            return nullptr;
     }
 
     Block::Block(const QString& type, const QString& name, QGraphicsItem* parent)
@@ -222,7 +222,7 @@ namespace ThymioVPL {
         // create a block
         Block* block(createBlock(element.attribute("name"), advanced));
         if(!block)
-            return 0;
+            return nullptr;
 
         // set that block's informations from element's attributes
         for(unsigned i = 0; i < block->valuesCount(); ++i)
@@ -307,7 +307,7 @@ namespace ThymioVPL {
     void Block::render(QPainter& painter) {
         QStyleOptionGraphicsItem opt;
         opt.exposedRect = boundingRect();
-        paint(&painter, &opt, 0);
+        paint(&painter, &opt, nullptr);
         renderChildItems(painter, this, opt);
     }
 
@@ -327,7 +327,7 @@ namespace ThymioVPL {
             painter.scale(child->scale(), child->scale());
             painter.setOpacity(painter.opacity() * child->opacity());
             renderChildItems(painter, child, opt);
-            child->paint(&painter, &opt, 0);
+            child->paint(&painter, &opt, nullptr);
             painter.restore();
         }
     }

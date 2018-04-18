@@ -407,7 +407,7 @@ int AeslBreakpointSidebar::idealWidth() const {
 
 AeslEditor::AeslEditor()
     : debugging(false)
-    , completer(0)
+    , completer(nullptr)
     , vardefRegexp("^var .*")
     , constdefRegexp("^const .*")
     , leftValueRegexp("^\\w+\\s*=.*")
@@ -535,7 +535,7 @@ void AeslEditor::clearBreakpoint(QTextBlock block) {
     uData->properties.remove("breakpoint");
     if(uData->properties.isEmpty()) {
         // garbage collect UserData
-        block.setUserData(0);
+        block.setUserData(nullptr);
     }
     emit breakpointCleared(block.blockNumber());
 }

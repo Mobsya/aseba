@@ -71,7 +71,7 @@ static AsebaNativeFunctionPointer nativeFunctions[] = {
     ASEBA_NATIVES_STD_FUNCTIONS,
 };
 
-static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, 0};
+static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, nullptr};
 
 // changed by selection dialog
 static QString localName;
@@ -182,7 +182,7 @@ public:
     std::valarray<uint8_t> lastMessageData;
 
 public:
-    AsebaFeedableEPuck(int id) : stream(0) {
+    AsebaFeedableEPuck(int id) : stream(nullptr) {
         asebaEPuckMap[&vm] = this;
 
         vm.nodeId = 1;
@@ -202,7 +202,7 @@ public:
         try {
             Dashel::Hub::connect(QString("tcpin:port=%1").arg(port).toStdString());
         } catch(Dashel::DashelException e) {
-            QMessageBox::critical(0, QApplication::tr("Aseba Challenge"),
+            QMessageBox::critical(nullptr, QApplication::tr("Aseba Challenge"),
                                   QApplication::tr("Cannot create listening port %0: %1").arg(port).arg(e.what()));
             abort();
         }
@@ -250,7 +250,7 @@ public:
 
     void connectionClosed(Dashel::Stream* stream, bool abnormal) {
         if(stream == this->stream) {
-            this->stream = 0;
+            this->stream = nullptr;
             // clear breakpoints
             vm.breakpointsCount = 0;
         }

@@ -167,8 +167,8 @@ void BotSpeakBridge::Operation::exec(BotSpeakBridge* bridge) {
 
 
 BotSpeakBridge::BotSpeakBridge(unsigned botSpeakPort, const char* asebaTarget)
-    : botSpeakStream(0)
-    , asebaStream(0)
+    : botSpeakStream(nullptr)
+    , asebaStream(nullptr)
     , nodeId(0)
     , freeVariableIndex(0)
     , recordScript(false)
@@ -226,11 +226,11 @@ void BotSpeakBridge::connectionCreated(Dashel::Stream* stream) {
 
 void BotSpeakBridge::connectionClosed(Stream* stream, bool abnormal) {
     if(stream == asebaStream) {
-        asebaStream = 0;
+        asebaStream = nullptr;
         cout << "Connection closed to Aseba target" << endl;
         stop();
     } else if(stream == botSpeakStream) {
-        botSpeakStream = 0;
+        botSpeakStream = nullptr;
         cout << "Connection closed to botspeak client" << endl;
     } else
         abort();

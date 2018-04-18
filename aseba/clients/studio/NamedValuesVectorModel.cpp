@@ -266,12 +266,12 @@ bool ConstantsModel::validateName(const QString& name) const {
     Q_ASSERT(namedValues);
 
     if(namedValues->contains(name.toStdWString())) {
-        QMessageBox::warning(0, tr("Constant already defined"), tr("Constant %0 is already defined.").arg(name));
+        QMessageBox::warning(nullptr, tr("Constant already defined"), tr("Constant %0 is already defined.").arg(name));
         return false;
     }
 
     if(Compiler::isKeyword(name.toStdWString())) {
-        QMessageBox::warning(0, tr("The name is a keyword"),
+        QMessageBox::warning(nullptr, tr("The name is a keyword"),
                              tr("The name <tt>%0</tt> cannot be used as a constant, because it is "
                                 "a language keyword.")
                                  .arg(name));

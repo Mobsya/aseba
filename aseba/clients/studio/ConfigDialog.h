@@ -46,7 +46,7 @@ class ConfigDialog : public QDialog {
 
 public:
     // instantiate / kill the singleton
-    static void init(QWidget* parent = 0);
+    static void init(QWidget* parent = nullptr);
     static void bye();
     static const ConfigDialog* getInstance() {
         return me;
@@ -67,7 +67,7 @@ signals:
     void settingsChanged();
 
 protected:
-    ConfigDialog(QWidget* parent = 0);
+    ConfigDialog(QWidget* parent = nullptr);
     ~ConfigDialog();
     void setupWidgets();
 
@@ -101,7 +101,7 @@ class ConfigPage : public QWidget {
     Q_OBJECT
 
 public:
-    ConfigPage(QString title = QString(), QWidget* parent = 0);
+    ConfigPage(QString title = QString(), QWidget* parent = nullptr);
     ~ConfigPage() = default;
 
     friend class ConfigDialog;
@@ -136,7 +136,7 @@ class GeneralPage : public ConfigPage {
     Q_OBJECT
 
 public:
-    GeneralPage(QWidget* parent = 0);
+    GeneralPage(QWidget* parent = nullptr);
     ~GeneralPage() = default;
 
     friend class ConfigDialog;
@@ -151,7 +151,7 @@ class EditorPage : public ConfigPage {
     Q_OBJECT
 
 public:
-    EditorPage(QWidget* parent = 0);
+    EditorPage(QWidget* parent = nullptr);
     ~EditorPage() = default;
 
     friend class ConfigDialog;

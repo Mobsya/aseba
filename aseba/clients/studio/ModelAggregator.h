@@ -9,7 +9,7 @@
 namespace Aseba {
 class ModelAggregator : public QAbstractItemModel {
 public:
-    ModelAggregator(QObject* parent = 0);
+    ModelAggregator(QObject* parent = nullptr);
 
     // interface for the aggregator
     void addModel(QAbstractItemModel* model, unsigned int column = 0);
@@ -38,7 +38,7 @@ class TreeChainsawFilter : public QAbstractProxyModel {
     Q_OBJECT
 
 public:
-    TreeChainsawFilter(QObject* parent = 0) : QAbstractProxyModel(parent) {}
+    TreeChainsawFilter(QObject* parent = nullptr) : QAbstractProxyModel(parent) {}
 
     // model interface
     int rowCount(const QModelIndex& parent = QModelIndex()) const;

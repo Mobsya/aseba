@@ -42,7 +42,7 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        EventActionsSet(int row, bool advanced, QGraphicsItem* parent = 0);
+        EventActionsSet(int row, bool advanced, QGraphicsItem* parent = nullptr);
 
         // from QGraphicsObject
         virtual QRectF boundingRect() const;
@@ -115,7 +115,7 @@ namespace ThymioVPL {
         virtual void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
         virtual void dropEvent(QGraphicsSceneDragDropEvent* event);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
         void drawBlockArea(QPainter* painter, const QString& type, const QPointF& pos, bool highlight) const;
 
         // specific

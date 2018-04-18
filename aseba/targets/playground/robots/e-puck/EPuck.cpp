@@ -243,7 +243,7 @@ const AsebaLocalEventDescription* AsebaFeedableEPuck::getLocalEventsDescriptions
 
 static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {
     ASEBA_NATIVES_STD_DESCRIPTIONS, &PlaygroundEPuckNativeDescription_energysend,
-    &PlaygroundEPuckNativeDescription_energyreceive, &PlaygroundEPuckNativeDescription_energyamount, 0};
+    &PlaygroundEPuckNativeDescription_energyreceive, &PlaygroundEPuckNativeDescription_energyamount, nullptr};
 
 const AsebaNativeFunctionDescription* const* AsebaFeedableEPuck::getNativeFunctionsDescriptions() const {
     return nativeFunctionsDescriptions;

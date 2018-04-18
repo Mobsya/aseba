@@ -20,7 +20,7 @@
 
 class Hex16SpinBox : public QSpinBox {
 public:
-    Hex16SpinBox(QWidget* parent = 0) : QSpinBox(parent) {
+    Hex16SpinBox(QWidget* parent = nullptr) : QSpinBox(parent) {
         validator = new QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,4}"), this);
         setPrefix("0x");
         setValue(0);
@@ -32,7 +32,7 @@ protected:
     }
 
     int valueFromText(const QString& text) const {
-        return text.toInt(0, 16);
+        return text.toInt(nullptr, 16);
     }
 
     QValidator::State validate(QString& text, int& pos) const {
@@ -155,7 +155,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
             channel2->setChecked(true);
 
     } catch(Dashel::DashelException& e) {
-        QMessageBox::critical(0, tr("Connection error"),
+        QMessageBox::critical(nullptr, tr("Connection error"),
                               tr("<p><b>Cannot connect to dongle!</b></p><p>Make sure a Wireless "
                                  "Thymio dongle is connected!</p>"));
         return;
@@ -245,13 +245,13 @@ int main(int argc, char* argv[]) {
         }
     }
     if(!thymioFound) {
-        QMessageBox::critical(0, QApplication::tr("Wireless Thymio dongle not found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Wireless Thymio dongle not found"),
                               QApplication::tr("<p><b>Cannot find a Wireless Thymio dongle!</b></p><p>Plug a dongle "
                                                "into one of your USB ports and try again.</p>"));
         return 1;
     }
     if(thymiosFound) {
-        QMessageBox::critical(0, QApplication::tr("Multiple Wireless Thymio dongles found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Multiple Wireless Thymio dongles found"),
                               QApplication::tr("<p><b>More than one Wireless Thymio dongles found!</b></p><p>Plug a "
                                                "single dongle into your computer and try again.</p>"));
         return 2;

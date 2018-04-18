@@ -34,8 +34,8 @@ class NamedValuesVectorModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-    NamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = 0);
-    NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = 0);
+    NamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
+    NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
@@ -88,8 +88,8 @@ class ConstantsModel : public NamedValuesVectorModel {
     Q_OBJECT
 
 public:
-    ConstantsModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = 0);
-    ConstantsModel(NamedValuesVector* namedValues, QObject* parent = 0);
+    ConstantsModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
+    ConstantsModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
     virtual bool validateName(const QString& name) const;
 };
@@ -98,8 +98,8 @@ class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
     Q_OBJECT
 
 public:
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = 0);
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = 0);
+    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
+    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
 

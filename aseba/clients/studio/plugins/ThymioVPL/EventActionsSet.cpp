@@ -50,8 +50,8 @@ namespace ThymioVPL {
     //! Construct an new event-action set
     EventActionsSet::EventActionsSet(int row, bool advanced, QGraphicsItem* parent)
         : QGraphicsObject(parent)
-        , event(0)
-        , stateFilter(0)
+        , event(nullptr)
+        , stateFilter(nullptr)
         , blinkGraphicsItem(new QGraphicsSvgItem(":/images/vpl/blink.svg", this))
         , deleteButton(new AddRemoveButton(false, this))
         , addButton(new AddRemoveButton(true, this))
@@ -129,7 +129,7 @@ namespace ThymioVPL {
 
     //! Return whether the event holder has a block
     const bool EventActionsSet::hasEventBlock() const {
-        return event != 0;
+        return event != nullptr;
     }
 
     //! Return the block in the event holder
@@ -190,7 +190,7 @@ namespace ThymioVPL {
             if(action->name == blockName)
                 return action;
         }
-        return 0;
+        return nullptr;
     }
 
     //! Return an action block given its name, 0 if not present
@@ -199,7 +199,7 @@ namespace ThymioVPL {
             if(action->name == blockName)
                 return action;
         }
-        return 0;
+        return nullptr;
     }
 
     //! Return the block in one of the action holders
@@ -259,7 +259,7 @@ namespace ThymioVPL {
         // switch event and actions to given mode
         if(event) {
             if(event->isAdvancedBlock())
-                setBlock(event, 0);
+                setBlock(event, nullptr);
             else
                 event->setAdvanced(advanced);
         }
@@ -282,7 +282,7 @@ namespace ThymioVPL {
             setBlock(stateFilter, new StateFilterCheckBlock());
         } else if(!advanced && stateFilter) {
             // switching from advanced mode, delete state filter
-            setBlock(stateFilter, 0);
+            setBlock(stateFilter, nullptr);
         }
 
         // we might have to reposition some elements, because we might have removed some actions
@@ -291,7 +291,7 @@ namespace ThymioVPL {
 
     //! Return whether we are in advanced mode by testing whether stateFilter is not null
     bool EventActionsSet::isAdvanced() const {
-        return stateFilter != 0;
+        return stateFilter != nullptr;
     }
 
     //! Set whether or not this set has an error
@@ -355,7 +355,7 @@ namespace ThymioVPL {
         disconnect(this, SIGNAL(contentChanged()), this, SLOT(setSoleSelection()));
 
         // delete event
-        setBlock(event, 0);
+        setBlock(event, nullptr);
 
         // clear filter
         if(stateFilter)
@@ -537,7 +537,7 @@ namespace ThymioVPL {
 
     void EventActionsSet::deserialize(const QDomElement& element) {
         // this function assumes an empty set
-        const bool advanced(stateFilter != 0);
+        const bool advanced(stateFilter != nullptr);
         assert(isEmpty());
 
         // iterate on all stored block
@@ -550,7 +550,7 @@ namespace ThymioVPL {
             // deserialize block
             Block* block(Block::deserialize(blockElement, advanced));
             if(!block) {
-                QMessageBox::warning(0, tr("Loading"),
+                QMessageBox::warning(nullptr, tr("Loading"),
                                      tr("Error in XML source file at %0:%1: cannot create block %2")
                                          .arg(blockElement.lineNumber())
                                          .arg(blockElement.columnNumber())
@@ -566,7 +566,7 @@ namespace ThymioVPL {
             } else if(type == "action") {
                 addActionBlockNoEmit(block);
             } else {
-                QMessageBox::warning(0, tr("Loading"),
+                QMessageBox::warning(nullptr, tr("Loading"),
                                      tr("Error in XML source file at %0:%1: unknown block type %2")
                                          .arg(blockElement.lineNumber())
                                          .arg(blockElement.columnNumber())
@@ -592,7 +592,7 @@ namespace ThymioVPL {
         disconnect(this, SIGNAL(contentChanged()), this, SLOT(setSoleSelection()));
 
         if(block == event) {
-            setBlock(event, 0);
+            setBlock(event, nullptr);
         } else {
             int i = 0;
             while(i < actions.size()) {
@@ -726,7 +726,7 @@ namespace ThymioVPL {
         Qt::DropAction dragResult(drag->exec(isCopy ? Qt::CopyAction : Qt::MoveAction));
         if(dragResult != Qt::IgnoreAction) {
             // find on which set the drag was droppes
-            EventActionsSet* target(0);
+            EventActionsSet* target(nullptr);
             auto* vplScene(polymorphic_downcast<Scene*>(scene()));
             for(Scene::SetItr it(vplScene->setsBegin()); it != vplScene->setsEnd(); ++it) {
                 if((*it)->wasDroppedTarget) {

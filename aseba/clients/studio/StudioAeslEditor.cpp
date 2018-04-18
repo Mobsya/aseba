@@ -28,12 +28,12 @@ namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-StudioAeslEditor::StudioAeslEditor(const ScriptTab* tab) : tab(tab), dropSourceWidget(0) {}
+StudioAeslEditor::StudioAeslEditor(const ScriptTab* tab) : tab(tab), dropSourceWidget(nullptr) {}
 
 void StudioAeslEditor::dropEvent(QDropEvent* event) {
     dropSourceWidget = dynamic_cast<QWidget*>(event->source());
     QTextEdit::dropEvent(event);
-    dropSourceWidget = 0;
+    dropSourceWidget = nullptr;
     setFocus(Qt::MouseFocusReason);
 }
 

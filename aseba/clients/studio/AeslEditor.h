@@ -42,7 +42,7 @@ class AeslHighlighter : public QSyntaxHighlighter {
     Q_OBJECT
 
 public:
-    AeslHighlighter(AeslEditor* editor, QTextDocument* parent = 0);
+    AeslHighlighter(AeslEditor* editor, QTextDocument* parent = nullptr);
 
 protected:
     void highlightBlock(const QString& text);

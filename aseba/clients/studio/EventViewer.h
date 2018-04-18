@@ -65,7 +65,7 @@ public:
     virtual ~EventViewer();
 
     void detachFromMain() {
-        eventsViewers = 0;
+        eventsViewers = nullptr;
     }
     void addData(const VariablesDataVector& data);
 

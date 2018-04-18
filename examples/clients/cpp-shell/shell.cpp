@@ -89,7 +89,7 @@ void Shell::incomingData(Dashel::Stream* stream) {
 
 void Shell::incomingTargetData(Dashel::Stream* stream) {
     // receive message
-    Message* message = 0;
+    Message* message = nullptr;
     try {
         // deserialize message using Aseba::Message::receive() static function
         message = Message::receive(stream);

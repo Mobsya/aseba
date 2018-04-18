@@ -292,7 +292,7 @@ NodeTab::NodeTab(MainWindow* mainWindow, Target* target, const CommonDefinitions
                  QWidget* parent)
     : QSplitter(parent)
     , ScriptTab(id)
-    , VariableListener(0)
+    , VariableListener(nullptr)
     , pid(ASEBA_PID_UNDEFINED)
     , target(target)
     , commonDefinitions(commonDefinitions)
@@ -689,7 +689,7 @@ void NodeTab::updateToolList() {
     // delete menu entries
     int oldCount = toolListLayout->count();
     QLayoutItem* child;
-    while((child = toolListLayout->takeAt(0)) != 0) {
+    while((child = toolListLayout->takeAt(0)) != nullptr) {
         child->widget()->deleteLater();
         delete child;
     }
@@ -1118,7 +1118,7 @@ void NodeTab::clearExecutionErrors() {
 
 void NodeTab::refreshCompleterModel(LocalContext context) {
     //		qDebug() << "New context: " << context;
-    disconnect(mainWindow->eventsDescriptionsModel, 0, sortingProxy, 0);
+    disconnect(mainWindow->eventsDescriptionsModel, nullptr, sortingProxy, nullptr);
 
     switch(context) {
         case GeneralContext:  // both variables and constants
@@ -1137,7 +1137,7 @@ void NodeTab::refreshCompleterModel(LocalContext context) {
             break;
         case VarDefContext:
         default:  // disable auto-completion in this case
-            editor->setCompleterModel(0);
+            editor->setCompleterModel(nullptr);
             return;
     }
     sortingProxy->sort(0);
@@ -1298,7 +1298,7 @@ bool NodeTab::setEditorProperty(const QString& property, const QVariant& value, 
                 uData->properties.remove(property);
                 if(uData->properties.isEmpty()) {
                     // garbage collect UserData
-                    block.setUserData(0);
+                    block.setUserData(nullptr);
                 }
                 changed = true;
             }
@@ -1324,7 +1324,7 @@ bool NodeTab::clearEditorProperty(const QString& property, unsigned line) {
                 uData->properties.remove(property);
                 if(uData->properties.isEmpty()) {
                     // garbage collect UserData
-                    block.setUserData(0);
+                    block.setUserData(nullptr);
                 }
                 changed = true;
             }
@@ -1347,7 +1347,7 @@ bool NodeTab::clearEditorProperty(const QString& property) {
             uData->properties.remove(property);
             if(uData->properties.isEmpty()) {
                 // garbage collect UserData
-                block.setUserData(0);
+                block.setUserData(nullptr);
             }
             changed = true;
         }
@@ -1572,7 +1572,7 @@ void MainWindow::openFile(const QString& path) {
                 if(element.tagName() == "node") {
                     bool prefered;
                     NodeTab* tab =
-                        getTabFromName(element.attribute("name"), element.attribute("nodeId", 0).toUInt(), &prefered);
+                        getTabFromName(element.attribute("name"), element.attribute("nodeId", nullptr).toUInt(), &prefered);
                     if(prefered) {
                         const int index(nodes->indexOf(tab));
                         assert(index >= 0);
@@ -1615,7 +1615,7 @@ void MainWindow::openFile(const QString& path) {
                     // reconstruct nodes
                     bool prefered;
                     const QString nodeName(element.attribute("name"));
-                    const unsigned nodeId(element.attribute("nodeId", 0).toUInt());
+                    const unsigned nodeId(element.attribute("nodeId", nullptr).toUInt());
                     NodeTab* tab = getTabFromName(nodeName, nodeId, &prefered, &filledList);
                     if(tab) {
                         // matching tab name
@@ -2188,7 +2188,7 @@ void MainWindow::tabChanged(int index) {
 
         pasteAct->setEnabled(false);
         findDialog->hide();
-        findDialog->editor = 0;
+        findDialog->editor = nullptr;
         findAct->setEnabled(false);
         replaceAct->setEnabled(false);
         goToLineAct->setEnabled(false);
@@ -2244,9 +2244,9 @@ void MainWindow::tabChanged(int index) {
 
             currentScriptTab = tab;
         } else
-            currentScriptTab = 0;
+            currentScriptTab = nullptr;
     } else
-        currentScriptTab = 0;
+        currentScriptTab = nullptr;
 }
 
 void MainWindow::showCompilationMessages(bool doShow) {
@@ -2614,14 +2614,14 @@ NodeTab* MainWindow::getTabFromId(unsigned node) const {
                 return tab;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 //! Get the tab widget pointer of a corresponding node name, and of preferedId if found, but the
 //! first found otherwise. Do not consider tabs indices in filledList for non-prefered tabs
 NodeTab* MainWindow::getTabFromName(const QString& name, unsigned preferedId, bool* isPrefered,
                                     QSet<int>* filledList) const {
-    NodeTab* freeSlotFound(0);
+    NodeTab* freeSlotFound(nullptr);
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
@@ -2664,7 +2664,7 @@ AbsentNodeTab* MainWindow::getAbsentTabFromId(unsigned node) const {
                 return tab;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 void MainWindow::clearDocumentSpecificTabs() {
@@ -2689,7 +2689,7 @@ void MainWindow::clearDocumentSpecificTabs() {
 }
 
 void MainWindow::setupWidgets() {
-    currentScriptTab = 0;
+    currentScriptTab = nullptr;
     nodes = new EditorsPlotsTabWidget;
     nodes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 

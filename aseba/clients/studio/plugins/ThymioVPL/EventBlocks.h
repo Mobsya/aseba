@@ -36,7 +36,7 @@ namespace ThymioVPL {
         enum { MODE_ARROW = 0, MODE_RC_ARROW, MODE_RC_KEYPAD };
 
     public:
-        ArrowButtonsEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        ArrowButtonsEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
 
         virtual unsigned valuesCount() const {
             return 7;
@@ -55,7 +55,7 @@ namespace ThymioVPL {
         int getSelectedRCKeypadButton() const;
 
     protected:
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
         virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
         void setMode(unsigned mode);
@@ -74,12 +74,12 @@ namespace ThymioVPL {
 
     class ProxEventBlock : public BlockWithButtonsAndRange {
     public:
-        ProxEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        ProxEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
     };
 
     class ProxGroundEventBlock : public BlockWithButtonsAndRange {
     public:
-        ProxGroundEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        ProxGroundEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
     };
 
     class AccEventBlock : public Block {
@@ -88,9 +88,9 @@ namespace ThymioVPL {
         static const int resolution;
 
     public:
-        AccEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        AccEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
 
         virtual unsigned valuesCount() const {
             return 2;
@@ -127,12 +127,12 @@ namespace ThymioVPL {
 
     class ClapEventBlock : public BlockWithNoValues {
     public:
-        ClapEventBlock(QGraphicsItem* parent = 0);
+        ClapEventBlock(QGraphicsItem* parent = nullptr);
     };
 
     class TimeoutEventBlock : public BlockWithNoValues {
     public:
-        TimeoutEventBlock(QGraphicsItem* parent = 0);
+        TimeoutEventBlock(QGraphicsItem* parent = nullptr);
 
         virtual bool isAdvancedBlock() const {
             return true;

@@ -46,7 +46,7 @@ namespace ThymioVPL {
             QString filePath = homePath + "/" + groupName + "_" + getTimeStampString() + ".log";
 
             fileOut = new ofstream(filePath.toUtf8().constData(), ios::app | ios::binary);
-            scene = 0;
+            scene = nullptr;
 
             connect(&signalMapper, SIGNAL(mapped(unsigned int, QObject*, QObject*)), this,
                     SLOT(logGUIEvents(unsigned int, QObject*, QObject*)));
@@ -56,7 +56,7 @@ namespace ThymioVPL {
 
     UsageLogger::~UsageLogger() {
         delete action;
-        if(fileOut != 0) {
+        if(fileOut != nullptr) {
             fileOut->close();
             delete fileOut;
         }
@@ -70,7 +70,7 @@ namespace ThymioVPL {
         QSettings settings;
         groupName = settings.value("logging/groupname", "group").toString();
         bool ok;
-        QString text = QInputDialog::getText(0, tr("Login"), tr("Please enter your user or group name:"),
+        QString text = QInputDialog::getText(nullptr, tr("Login"), tr("Please enter your user or group name:"),
                                              QLineEdit::Normal, groupName, &ok);
         if(ok && !text.isEmpty()) {
             groupName = text;
@@ -100,22 +100,22 @@ namespace ThymioVPL {
     }
 
     void UsageLogger::logGUIEvents(unsigned int senderId, QObject* originalSender, QObject* logicalParent) {
-        if(originalSender == 0) {
+        if(originalSender == nullptr) {
             return;
         }
 
         auto* b = dynamic_cast<Block*>(logicalParent);
-        if(b != 0) {
+        if(b != nullptr) {
             int row = getRow(b);
 
             auto* slider = dynamic_cast<QSlider*>(originalSender);
             auto* button = dynamic_cast<GeometryShapeButton*>(originalSender);
 
-            if(slider != 0) {
+            if(slider != nullptr) {
                 int sliderValue = slider->value();
                 logBlockAction(SLIDER, b->getName(), b->getType(), row, senderId, &sliderValue, nullptr, nullptr,
                                nullptr);
-            } else if(button != 0) {
+            } else if(button != nullptr) {
                 int buttonValue = button->getValue();
                 logBlockAction(BUTTON, b->getName(), b->getType(), row, senderId, nullptr, nullptr, nullptr,
                                &buttonValue);
@@ -270,13 +270,13 @@ namespace ThymioVPL {
         a->set_xpos(xPos);
         a->set_ypos(yPos);
 
-        if(row != 0) {
+        if(row != nullptr) {
             a->set_row(*row);
         }
-        if(blockName != 0) {
+        if(blockName != nullptr) {
             a->set_blockname(blockName);
         }
-        if(blockType != 0) {
+        if(blockType != nullptr) {
             a->set_blocktype(blockType);
         }
 
@@ -390,7 +390,7 @@ namespace ThymioVPL {
 
     Action* UsageLogger::getActionWithCurrentState() {
         action->Clear();
-        if(scene != 0) {
+        if(scene != nullptr) {
             action->set_programstateasxml(scene->toString().toUtf8().constData());
         }
 

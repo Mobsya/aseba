@@ -59,7 +59,7 @@ namespace Http {
         virtual HttpResponse& respond();
 
         virtual bool isResponseReady() const {
-            return !blocking && response != NULL;
+            return !blocking && response != nullptr;
         }
 
         virtual void setVerbose(bool verbose) {
