@@ -156,8 +156,8 @@ protected:
 //! Tab holding code (instead of plot)
 class ScriptTab {
 public:
-    typedef NodeToolInterface::SavedContent SavedContent;
-    typedef QList<SavedContent> SavedPlugins;
+    using SavedContent = NodeToolInterface::SavedContent;
+    using SavedPlugins = QList<SavedContent>;
 
     ScriptTab(const unsigned id) : id(id) {}
     virtual ~ScriptTab() = default;
@@ -574,7 +574,7 @@ private:
     QMenu* rebootMenu;
     QMenu* saveBytecodeMenu;
     QMenu* helpMenu;
-    typedef QList<QAction*> ActionList;
+    using ActionList = QList<QAction *>;
     QAction* helpMenuTargetSpecificSeparator;
     ActionList targetSpecificHelp;
 

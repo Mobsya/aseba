@@ -57,7 +57,7 @@ namespace ThymioVPL {
         };
 
         //! An iterator on the generated code
-        typedef std::vector<std::wstring>::const_iterator CodeConstIterator;
+        using CodeConstIterator = std::vector<std::wstring>::const_iterator;
 
     protected:
         //! Everything needed to generate code

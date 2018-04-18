@@ -37,7 +37,7 @@ class Stream;
 }
 
 struct _DNSServiceRef_t;
-typedef struct _DNSServiceRef_t* DNSServiceRef;
+using DNSServiceRef = struct _DNSServiceRef_t *;
 
 namespace Aseba {
 /**

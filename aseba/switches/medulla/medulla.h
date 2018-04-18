@@ -33,7 +33,7 @@
 #include "common/msg/NodesManager.h"
 #include "compiler/compiler.h"
 
-typedef QList<qint16> Values;
+using Values = QList<qint16>;
 
 namespace Aseba {
 /**
@@ -126,7 +126,7 @@ protected:
     NodesNamesMap nodesNames;
     typedef QMap<QString, VariablesMap> UserDefinedVariablesMap;
     UserDefinedVariablesMap userDefinedVariablesMap;
-    typedef QList<RequestData*> RequestsList;
+    using RequestsList = QList<RequestData *>;
     RequestsList pendingReads;
     typedef QMultiMap<uint16_t, EventFilterInterface*> EventsFiltersMap;
     EventsFiltersMap eventsFilters;

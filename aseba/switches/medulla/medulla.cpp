@@ -219,7 +219,7 @@ void AsebaNetworkInterface::LoadScripts(const QString& fileName, const QDBusMess
                     bool result = compiler.compile(is, bytecode, allocatedVariablesCount, error);
 
                     if(result) {
-                        typedef std::vector<std::unique_ptr<Message>> MessageVector;
+                        using MessageVector = std::vector<std::unique_ptr<Message> >;
                         MessageVector messages;
                         sendBytecode(messages, nodeId, std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
                         for(const auto& message : messages)

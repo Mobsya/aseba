@@ -34,8 +34,8 @@ namespace Aseba {
 
 class BotSpeakBridge : public Dashel::Hub, public Aseba::NodesManager {
 protected:
-    typedef std::vector<std::string> StringVector;
-    typedef TargetDescription::NamedVariable NamedVariable;
+    using StringVector = std::vector<std::string>;
+    using NamedVariable = TargetDescription::NamedVariable;
 
     struct Value {
         enum { RESOLVED, PENDING_DIRECT_VALUE, PENDING_INDIRECT_VALUE } state;

@@ -3013,7 +3013,7 @@ void MainWindow::regenerateHelpMenu() {
     }
 
     // add back target-specific actions
-    typedef std::set<int> ProductIds;
+    using ProductIds = std::set<int>;
     ProductIds productIds;
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
