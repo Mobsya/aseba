@@ -20,6 +20,7 @@
 #include "TargetModels.h"
 #include <QtDebug>
 #include <QtWidgets>
+#include <utility>
 
 namespace Aseba {
 /** \addtogroup studio */
@@ -404,11 +405,11 @@ struct TargetFunctionsModel::TreeItem {
 
     TreeItem() : parent(nullptr), name("root"), enabled(true), draggable(false) {}
 
-    TreeItem(TreeItem* parent, const QString& name, bool enabled, bool draggable)
-        : parent(parent), name(name), enabled(enabled), draggable(draggable) {}
+    TreeItem(TreeItem* parent, QString  name, bool enabled, bool draggable)
+        : parent(parent), name(std::move(name)), enabled(enabled), draggable(draggable) {}
 
-    TreeItem(TreeItem* parent, const QString& name, const QString& toolTip, bool enabled, bool draggable)
-        : parent(parent), name(name), toolTip(toolTip), enabled(enabled), draggable(draggable) {}
+    TreeItem(TreeItem* parent, QString  name, QString  toolTip, bool enabled, bool draggable)
+        : parent(parent), name(std::move(name)), toolTip(std::move(toolTip)), enabled(enabled), draggable(draggable) {}
 
     ~TreeItem() {
         for(int i = 0; i < children.size(); i++)

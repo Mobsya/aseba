@@ -40,6 +40,7 @@
 #include <QDir>
 #include <QHash>
 #include <QHostInfo>
+#include <utility>
 
 #ifdef HAVE_DBUS
 #    include "PlaygroundDBusAdaptors.h"
@@ -57,8 +58,8 @@ public:
     PlaygroundViewer& viewer;
 
 public:
-    PlaygroundSimulatorEnvironment(const QString& sceneFileName, PlaygroundViewer& viewer)
-        : sceneFileName(sceneFileName), viewer(viewer) {}
+    PlaygroundSimulatorEnvironment(QString  sceneFileName, PlaygroundViewer& viewer)
+        : sceneFileName(std::move(sceneFileName)), viewer(viewer) {}
 
     void notify(const EnvironmentNotificationType type, const std::string& description,
                         const strings& arguments) override {

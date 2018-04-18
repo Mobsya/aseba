@@ -85,6 +85,7 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <utility>
 #include <valarray>
 #include <vector>
 #include <iterator>
@@ -146,7 +147,7 @@ using namespace Dashel;
 //-- Subclassing Dashel::Hub -----------------------------------------------------------
 
 
-HttpInterface::HttpInterface(const strings& targets, const std::string& http_port, const std::string& aseba_port,
+HttpInterface::HttpInterface(const strings& targets, std::string  http_port, std::string  aseba_port,
                              const int iterations, bool dump,
                              bool verbose)
     : Hub(false)
@@ -154,8 +155,8 @@ HttpInterface::HttpInterface(const strings& targets, const std::string& http_por
     asebaStreams()
     , inHttpStream(nullptr)
     , inAsebaStream(nullptr)
-    , inHttpPort(http_port)
-    , inAsebaPort(aseba_port)
+    , inHttpPort(std::move(http_port))
+    , inAsebaPort(std::move(aseba_port))
     , verbose(verbose)
     , iterations(iterations)
     , do_dump(dump)

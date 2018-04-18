@@ -53,7 +53,7 @@ namespace Http {
             std::map<unsigned, std::set<std::pair<Dashel::Stream*, DashelHttpRequest*> > > pendingVariables;
         };
 
-        HttpDashelTarget(HttpInterface* interface, const std::string& address, Dashel::Stream* stream);
+        HttpDashelTarget(HttpInterface* interface, std::string  address, Dashel::Stream* stream);
         ~HttpDashelTarget() override;
 
         /**
