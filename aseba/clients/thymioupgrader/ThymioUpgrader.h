@@ -32,9 +32,9 @@ public:
     QtBootloaderInterface(Dashel::Stream* stream, int dest, int bootloaderDest);
 
 protected:
-    virtual void writeHexGotDescription(unsigned pagesCount);
-    virtual void writePageStart(unsigned pageNumber, const uint8_t* data, bool simple);
-    virtual void errorWritePageNonFatal(unsigned pageNumber);
+    void writeHexGotDescription(unsigned pagesCount) override;
+    void writePageStart(unsigned pageNumber, const uint8_t* data, bool simple) override;
+    void errorWritePageNonFatal(unsigned pageNumber) override;
 
 protected:
     unsigned pagesCount;
@@ -86,7 +86,7 @@ private:
 
 public:
     ThymioUpgraderDialog(const std::string& target);
-    ~ThymioUpgraderDialog();
+    ~ThymioUpgraderDialog() override;
 
 private:
     unsigned readId(MessageHub& hub, Dashel::Stream* stream) const;

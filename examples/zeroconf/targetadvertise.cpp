@@ -85,7 +85,7 @@ public:
             pidMap.at(nodeId).second = message->variables[0];
     }
 
-    void sendMessage(const Message& message) {
+    void sendMessage(const Message& message) override {
         message.serialize(stream);
         stream->flush();
     }
@@ -103,7 +103,7 @@ protected:
     Aseba::DashelhubZeroconf zeroconf;
 
 protected:
-    virtual void incomingData(Stream* stream) override {
+    void incomingData(Stream* stream) override {
         Message* message(Message::receive(stream));
         streamMap.at(stream).processMessage(message);
         const Variables* variables(dynamic_cast<Variables*>(message));
@@ -111,7 +111,7 @@ protected:
             streamMap.at(stream).incomingVariable(variables);
     }
 
-    virtual void connectionClosed(Stream* stream, bool abnormal) override {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         zeroconf.forget("Aseba Local " + stream->getTargetParameter("port"), stream);
     }
 

@@ -33,7 +33,7 @@ namespace ThymioVPL {
 
     public:
         Scene(ThymioVisualProgramming* vpl);
-        ~Scene();
+        ~Scene() override;
 
         QGraphicsItem* addAction(const QString& name);
         QGraphicsItem* addEvent(const QString& name);

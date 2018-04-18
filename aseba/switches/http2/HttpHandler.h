@@ -67,9 +67,9 @@ namespace Http {
     class WildcardHttpHandler : public virtual HttpHandler {
     public:
         WildcardHttpHandler() = default;
-        virtual ~WildcardHttpHandler() = default;
+        ~WildcardHttpHandler() override = default;
 
-        virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
+        bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const override {
             return true;
         }
     };
@@ -78,13 +78,13 @@ namespace Http {
     public:
         HierarchicalHttpHandler() = default;
 
-        virtual ~HierarchicalHttpHandler() {
+        ~HierarchicalHttpHandler() override {
             for(int i = 0; i < getNumSubhandlers(); i++) {
                 delete subhandlers[i];
             }
         }
 
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override {
             for(int i = 0; i < getNumSubhandlers(); i++) {
                 if(subhandlers[i]->checkIfResponsible(request, tokens)) {
                     subhandlers[i]->handleRequest(request, tokens);
@@ -109,15 +109,15 @@ namespace Http {
     class RootHttpHandler : public WildcardHttpHandler, public HierarchicalHttpHandler {
     public:
         RootHttpHandler() = default;
-        virtual ~RootHttpHandler() = default;
+        ~RootHttpHandler() override = default;
     };
 
     class TokenHttpHandler : public virtual HttpHandler {
     public:
         TokenHttpHandler() = default;
-        virtual ~TokenHttpHandler() = default;
+        ~TokenHttpHandler() override = default;
 
-        virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
+        bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const override {
             if(tokens.empty()) {
                 return false;
             }
@@ -148,9 +148,9 @@ namespace Http {
     class HierarchicalTokenHttpHandler : public HierarchicalHttpHandler, public TokenHttpHandler {
     public:
         HierarchicalTokenHttpHandler() = default;
-        virtual ~HierarchicalTokenHttpHandler() = default;
+        ~HierarchicalTokenHttpHandler() override = default;
 
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override {
             assert(!tokens.empty());
             std::vector<std::string> newTokens(tokens.begin() + 1,
                                                tokens.end());  // eat first token

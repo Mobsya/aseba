@@ -62,7 +62,7 @@ protected:
 public:
     EventViewer(unsigned eventId, const QString& eventName, unsigned eventVariablesCount,
                 MainWindow::EventViewers* eventsViewers);
-    virtual ~EventViewer();
+    ~EventViewer() override;
 
     void detachFromMain() {
         eventsViewers = nullptr;

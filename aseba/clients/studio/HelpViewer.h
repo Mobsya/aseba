@@ -35,7 +35,7 @@ class HelpViewer : public QWidget {
 
 public:
     HelpViewer(QWidget* parent = nullptr);
-    ~HelpViewer();
+    ~HelpViewer() override;
 
     enum helpType { USERMANUAL, STUDIO, LANGUAGE };
 
@@ -75,8 +75,8 @@ protected slots:
 class HelpBrowser : public QTextBrowser {
 public:
     HelpBrowser(QHelpEngine* helpEngine, QWidget* parent = nullptr);
-    virtual void setSource(const QUrl& url);
-    virtual QVariant loadResource(int type, const QUrl& url);
+    void setSource(const QUrl& url) override;
+    QVariant loadResource(int type, const QUrl& url) override;
 
 protected:
     QHelpEngine* helpEngine;

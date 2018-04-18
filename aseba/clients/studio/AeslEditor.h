@@ -45,7 +45,7 @@ public:
     AeslHighlighter(AeslEditor* editor, QTextDocument* parent = nullptr);
 
 protected:
-    void highlightBlock(const QString& text);
+    void highlightBlock(const QString& text) override;
 
 private:
     struct HighlightingRule {
@@ -75,7 +75,7 @@ struct AeslEditorUserData : public QTextBlockUserData {
     AeslEditorUserData(const QString& property, const QVariant& value = QVariant()) {
         properties.insert(property, value);
     }
-    virtual ~AeslEditorUserData() = default;
+    ~AeslEditorUserData() override = default;
 };
 
 class AeslEditorSidebar : public QWidget {
@@ -83,14 +83,14 @@ class AeslEditorSidebar : public QWidget {
 
 public:
     AeslEditorSidebar(AeslEditor* editor);
-    virtual QSize sizeHint() const;
+    QSize sizeHint() const override;
 
 public slots:
     virtual void scroll(int verticalScroll);
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
-    virtual void mousePressEvent(QMouseEvent* event) {
+    void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override {
         QWidget::mousePressEvent(event);
     }
 
@@ -113,8 +113,8 @@ public slots:
     void showLineNumbers(bool state);
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
-    virtual int idealWidth() const;
+    void paintEvent(QPaintEvent* event) override;
+    int idealWidth() const override;
 };
 
 class AeslBreakpointSidebar : public AeslEditorSidebar {
@@ -124,9 +124,9 @@ public:
     AeslBreakpointSidebar(AeslEditor* editor);
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
-    virtual void mousePressEvent(QMouseEvent* event);
-    virtual int idealWidth() const;
+    void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    int idealWidth() const override;
 
 protected:
     const int borderSize;
@@ -154,8 +154,8 @@ signals:
 
 public:
     AeslEditor();
-    virtual ~AeslEditor() = default;
-    virtual void contextMenuEvent(QContextMenuEvent* e);
+    ~AeslEditor() override = default;
+    void contextMenuEvent(QContextMenuEvent* e) override;
 
     bool isBreakpoint();  // apply to the current line
     bool isBreakpoint(QTextBlock block);
@@ -182,8 +182,8 @@ protected slots:
     void insertCompletion(const QString& completion);
 
 protected:
-    virtual void wheelEvent(QWheelEvent* event);
-    virtual void keyPressEvent(QKeyEvent* event);
+    void wheelEvent(QWheelEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
     virtual bool handleCompleter(QKeyEvent* event);
     virtual bool handleTab(QKeyEvent* event);

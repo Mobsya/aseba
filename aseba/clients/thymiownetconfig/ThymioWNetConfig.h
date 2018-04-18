@@ -39,7 +39,7 @@ private:
 
 public:
     ThymioWNetConfigDialog(const std::string& target);
-    ~ThymioWNetConfigDialog();
+    ~ThymioWNetConfigDialog() override;
 
 private slots:
     void updateSettings();

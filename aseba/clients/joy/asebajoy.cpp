@@ -135,7 +135,7 @@ public:
         cout << "Connected to " << stream->getTargetName() << endl;
     }
 
-    ~JoystickReader() {
+    ~JoystickReader() override {
         for(size_t i = 0; i < joysticks.size(); ++i)
             delete joysticks[i];
         SDL_Quit();
@@ -149,11 +149,11 @@ public:
     }
 
 protected:
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         delete Message::receive(stream);
     }
 
-    void connectionClosed(Stream* stream, bool abnormal) {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         dumpTime(cerr);
         cerr << "Connection closed to " << stream->getTargetName();
         if(abnormal)

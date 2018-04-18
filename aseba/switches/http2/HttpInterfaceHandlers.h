@@ -30,58 +30,58 @@ namespace Http {
     class OptionsHandler : public HttpHandler {
     public:
         OptionsHandler();
-        virtual ~OptionsHandler();
+        ~OptionsHandler() override;
 
-        virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const;
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const override;
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
     };
 
     class NodesHandler : public HierarchicalTokenHttpHandler, public InterfaceHttpHandler {
     public:
         NodesHandler(HttpInterface* interface);
-        virtual ~NodesHandler();
+        ~NodesHandler() override;
     };
 
     class EventsHandler : public TokenHttpHandler, public InterfaceHttpHandler {
     public:
         EventsHandler(HttpInterface* interface);
-        virtual ~EventsHandler();
+        ~EventsHandler() override;
 
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
     };
 
     class ResetHandler : public TokenHttpHandler, public InterfaceHttpHandler {
     public:
         ResetHandler(HttpInterface* interface);
-        virtual ~ResetHandler();
+        ~ResetHandler() override;
 
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
     };
 
     class LoadHandler : public virtual InterfaceHttpHandler {
     public:
         LoadHandler(HttpInterface* interface);
-        virtual ~LoadHandler();
+        ~LoadHandler() override;
 
-        virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const;
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const override;
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
     };
 
     class NodeInfoHandler : public virtual InterfaceHttpHandler {
     public:
         NodeInfoHandler(HttpInterface* interface);
-        virtual ~NodeInfoHandler();
+        ~NodeInfoHandler() override;
 
-        virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const;
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const override;
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
     };
 
     class VariableOrEventHandler : public virtual WildcardHttpHandler, public virtual InterfaceHttpHandler {
     public:
         VariableOrEventHandler(HttpInterface* interface);
-        virtual ~VariableOrEventHandler();
+        ~VariableOrEventHandler() override;
 
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
 
     private:
         void parseJsonForm(std::string content, std::vector<std::string>& values);
@@ -90,10 +90,10 @@ namespace Http {
     class FileHandler : public InterfaceHttpHandler {
     public:
         FileHandler(HttpInterface* interface);
-        virtual ~FileHandler();
+        ~FileHandler() override;
 
-        virtual bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const;
-        virtual void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens);
+        bool checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const override;
+        void handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) override;
 
     private:
         std::string filePath(HttpRequest* request) const;

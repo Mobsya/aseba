@@ -117,31 +117,31 @@ namespace ThymioVPL {
             };
 
             struct ButtonEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct ProxEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct TapEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct AccEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct ClapEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct TimeoutEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct RemoteControlEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             typedef QMap<QString, EventHandler*> EventHandlers;

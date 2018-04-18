@@ -60,12 +60,12 @@ public:
     PlaygroundSimulatorEnvironment(const QString& sceneFileName, PlaygroundViewer& viewer)
         : sceneFileName(sceneFileName), viewer(viewer) {}
 
-    virtual void notify(const EnvironmentNotificationType type, const std::string& description,
+    void notify(const EnvironmentNotificationType type, const std::string& description,
                         const strings& arguments) override {
         viewer.notifyAsebaEnvironment(type, description, arguments);
     }
 
-    virtual std::string getSDFilePath(const std::string& robotName, unsigned fileNumber) const override {
+    std::string getSDFilePath(const std::string& robotName, unsigned fileNumber) const override {
         auto paths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
         auto fileName(QString("%1/%2/%3/U%4.DAT")
                           .arg(paths.empty() ? "" : paths.first())
@@ -78,7 +78,7 @@ public:
         return fileName.toStdString();
     }
 
-    virtual World* getWorld() const override {
+    World* getWorld() const override {
         return viewer.getWorld();
     }
 };

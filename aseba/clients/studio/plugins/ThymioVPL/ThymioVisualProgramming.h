@@ -62,16 +62,16 @@ namespace ThymioVPL {
     public:
         ThymioVisualProgramming(DevelopmentEnvironmentInterface* _de, bool showCloseButton = true,
                                 bool debugLog = false, bool execFeedback = false);
-        ~ThymioVisualProgramming();
+        ~ThymioVisualProgramming() override;
 
-        virtual QWidget* createMenuEntry();
-        virtual void closeAsSoonAsPossible();
+        QWidget* createMenuEntry() override;
+        void closeAsSoonAsPossible() override;
 
-        virtual void aboutToLoad();
-        virtual void loadFromDom(const QDomDocument& content, bool fromFile);
+        void aboutToLoad() override;
+        void loadFromDom(const QDomDocument& content, bool fromFile) override;
         virtual QDomDocument transformDomToVersion1(const QDomDocument& content0);
-        virtual QDomDocument saveToDom() const;
-        virtual void codeChangedInEditor();
+        QDomDocument saveToDom() const override;
+        void codeChangedInEditor() override;
 
         bool isModified() const;
         qreal getViewScale() const;
@@ -188,7 +188,7 @@ namespace ThymioVPL {
         void clearHighlighting(bool keepCode);
         void setColors(QComboBox* comboBox);
         void updateBlockButtonImages();
-        void closeEvent(QCloseEvent* event);
+        void closeEvent(QCloseEvent* event) override;
 
 #ifndef Q_OS_WIN
         void regenerateRunButtonAnimation(const QSize& iconSize);
@@ -196,8 +196,8 @@ namespace ThymioVPL {
         void startRunButtonAnimationTimer();
         void stopRunButtonAnimationTimer();
         float computeScale(QResizeEvent* event, int desiredToolbarIconSize);
-        virtual void resizeEvent(QResizeEvent* event);
-        virtual void timerEvent(QTimerEvent* event);
+        void resizeEvent(QResizeEvent* event) override;
+        void timerEvent(QTimerEvent* event) override;
     };
     /*@}*/
 }  // namespace ThymioVPL

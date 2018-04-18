@@ -135,11 +135,11 @@ public:
 
 protected:
     /* // reimplemented from parent classes */
-    virtual void connectionCreated(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void connectionCreated(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+    void incomingData(Dashel::Stream* stream) override;
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
     // helpers for standard methods
     virtual void incomingDataHTTP(Dashel::Stream* stream);
     virtual void incomingDataAseba(Dashel::Stream* stream);

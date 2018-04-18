@@ -226,7 +226,7 @@ private:
     }
 
 public:
-    virtual void write(const void* data, const size_t size) {
+    void write(const void* data, const size_t size) override {
         size_t s = size;
         const auto* d = (const unsigned char*)data;
         while(s--) {
@@ -236,7 +236,7 @@ public:
         }
     }
 
-    virtual void flush() {}
+    void flush() override {}
 
 private:
     void pack_fifo() {
@@ -361,7 +361,7 @@ private:
     }
 
 public:
-    virtual void read(void* data, size_t size) {
+    void read(void* data, size_t size) override {
         auto* d = (unsigned char*)data;
         while(size) {
             if(rx_len) {
@@ -374,11 +374,11 @@ public:
         }
     }
 
-    virtual bool receiveDataAndCheckDisconnection() {
+    bool receiveDataAndCheckDisconnection() override {
         return false;
     }
 
-    virtual bool isDataInRecvBuffer() const {
+    bool isDataInRecvBuffer() const override {
         struct can_frame f;
         if(rx_len || rx_insert != rx_consume)
             return true;

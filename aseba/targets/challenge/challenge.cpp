@@ -125,7 +125,7 @@ public:
         , score(0)
         , diedAnimation(-1) {}
 
-    virtual void controlStep(double dt) {
+    void controlStep(double dt) override {
         EPuck::controlStep(dt);
 
         energy -= dt * EPUCK_ENERGY_CONSUMPTION_RATE;
@@ -213,12 +213,12 @@ public:
         variables.colorG = 100;
     }
 
-    virtual ~AsebaFeedableEPuck() {
+    ~AsebaFeedableEPuck() override {
         asebaEPuckMap.remove(&vm);
     }
 
 public:
-    void connectionCreated(Dashel::Stream* stream) {
+    void connectionCreated(Dashel::Stream* stream) override {
         std::string targetName = stream->getTargetName();
         if(targetName.substr(0, targetName.find_first_of(':')) == "tcp") {
             // schedule current stream for disconnection
@@ -231,7 +231,7 @@ public:
         }
     }
 
-    void incomingData(Dashel::Stream* stream) {
+    void incomingData(Dashel::Stream* stream) override {
         uint16_t temp;
         uint16_t len;
 
@@ -248,7 +248,7 @@ public:
             qDebug() << this << " : Non debug event dropped.";
     }
 
-    void connectionClosed(Dashel::Stream* stream, bool abnormal) {
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override {
         if(stream == this->stream) {
             this->stream = nullptr;
             // clear breakpoints
@@ -269,7 +269,7 @@ public:
         return v;
     }
 
-    void controlStep(double dt) {
+    void controlStep(double dt) override {
 // get physical variables
 #ifdef SIMPLIFIED_EPUCK
         variables.dist_A[0] = static_cast<int16_t>(infraredSensor0.getDist());
@@ -363,7 +363,7 @@ public:
         alive = true;
     }
 
-    void objectStep(double dt, World* w, PhysicalObject* po) {
+    void objectStep(double dt, World* w, PhysicalObject* po) override {
         if(alive) {
             auto* epuck = dynamic_cast<FeedableEPuck*>(po);
             if(epuck && energy > 0) {
@@ -376,7 +376,7 @@ public:
         }
     }
 
-    void finalize(double dt, World* w) {
+    void finalize(double dt, World* w) override {
         age += dt;
         if(alive) {
             if((energy < EPUCK_FEEDER_THRESHOLD_SHOW) && (energy + dt >= EPUCK_FEEDER_THRESHOLD_SHOW))
@@ -429,14 +429,14 @@ public:
         lists[5] = GenFeederRing();
     }
 
-    void cleanup(ViewerWidget* viewer) {
+    void cleanup(ViewerWidget* viewer) override {
         for(int i = 0; i < textures.size(); i++)
             viewer->deleteTexture(textures[i]);
         for(int i = 0; i < lists.size(); i++)
             glDeleteLists(lists[i], 1);
     }
 
-    virtual void draw(PhysicalObject* object) const {
+    void draw(PhysicalObject* object) const override {
         auto* feeder = polymorphic_downcast<EPuckFeeder*>(object);
         double age = feeder->feeding.age;
         bool alive = feeder->feeding.alive;
@@ -517,7 +517,7 @@ public:
         glDisable(GL_TEXTURE_2D);
     }
 
-    virtual void drawSpecial(PhysicalObject* object, int param) const {
+    void drawSpecial(PhysicalObject* object, int param) const override {
         /*glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glDisable(GL_TEXTURE_2D);

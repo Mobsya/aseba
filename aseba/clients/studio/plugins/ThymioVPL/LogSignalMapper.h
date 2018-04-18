@@ -41,7 +41,7 @@ namespace ThymioVPL {
 
     public:
         LogSignalMapper();
-        ~LogSignalMapper();
+        ~LogSignalMapper() override;
         void setMapping(const QObject* sender, unsigned int senderId, QObject* logicalParent);
 
     private:

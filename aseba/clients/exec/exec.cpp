@@ -45,7 +45,7 @@ public:
     Exec(const unsigned messageId, const char* programName) : messageId(messageId), programName(programName) {}
 
 protected:
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         Message* message = Message::receive(stream);
 
         if(message->type == messageId) {

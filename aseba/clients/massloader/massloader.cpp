@@ -50,13 +50,13 @@ public:
 
 protected:
     // from Hub
-    virtual void connectionCreated(Stream* stream);
-    virtual void incomingData(Stream* stream);
-    virtual void connectionClosed(Stream* stream, bool abnormal);
+    void connectionCreated(Stream* stream) override;
+    void incomingData(Stream* stream) override;
+    void connectionClosed(Stream* stream, bool abnormal) override;
 
     // from NodesManager
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
 
     // self
     void waitMs(int duration);

@@ -139,17 +139,17 @@ namespace Http {
     class DashelHttpRequest : public HttpRequest {
     public:
         DashelHttpRequest(Dashel::Stream* stream);
-        virtual ~DashelHttpRequest();
+        ~DashelHttpRequest() override;
 
         virtual Dashel::Stream* getStream() {
             return stream;
         }
 
     protected:
-        virtual HttpResponse* createResponse();
+        HttpResponse* createResponse() override;
 
-        virtual std::string readLine();
-        virtual void readRaw(char* buffer, int size);
+        std::string readLine() override;
+        void readRaw(char* buffer, int size) override;
 
     private:
         Dashel::Stream* stream;

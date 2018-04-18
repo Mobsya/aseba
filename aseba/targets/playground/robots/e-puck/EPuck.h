@@ -36,9 +36,9 @@ public:
 public:
     EPuckFeeding(Robot* owner);
 
-    virtual void objectStep(double dt, World* w, PhysicalObject* po);
+    void objectStep(double dt, World* w, PhysicalObject* po) override;
 
-    virtual void finalize(double dt, World* w);
+    void finalize(double dt, World* w) override;
 };
 
 class EPuckFeeder : public Robot {
@@ -53,7 +53,7 @@ class ScoreModifier : public GlobalInteraction {
 public:
     ScoreModifier(Robot* owner) : GlobalInteraction(owner) {}
 
-    virtual void step(double dt, World* w);
+    void step(double dt, World* w) override;
 };
 
 class FeedableEPuck : public EPuck {
@@ -66,7 +66,7 @@ public:
 public:
     FeedableEPuck();
 
-    virtual void controlStep(double dt);
+    void controlStep(double dt) override;
 };
 
 class AsebaFeedableEPuck : public FeedableEPuck, public Aseba::SingleVMNodeGlue {
@@ -94,14 +94,14 @@ public:
 
     // from FeedableEPuck
 
-    virtual void controlStep(double dt);
+    void controlStep(double dt) override;
 
     // from AbstractNodeGlue
 
-    virtual const AsebaVMDescription* getDescription() const;
-    virtual const AsebaLocalEventDescription* getLocalEventsDescriptions() const;
-    virtual const AsebaNativeFunctionDescription* const* getNativeFunctionsDescriptions() const;
-    virtual void callNativeFunction(uint16_t id);
+    const AsebaVMDescription* getDescription() const override;
+    const AsebaLocalEventDescription* getLocalEventsDescriptions() const override;
+    const AsebaNativeFunctionDescription* const* getNativeFunctionsDescriptions() const override;
+    void callNativeFunction(uint16_t id) override;
 };
 }  // namespace Enki
 

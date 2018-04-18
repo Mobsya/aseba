@@ -40,12 +40,12 @@ public:
 public:
     MessageHub() = default;
 
-    virtual ~MessageHub() {
+    ~MessageHub() override {
         while(!messages.empty())
             delete messages.dequeue();
     }
 
-    virtual void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         messages.enqueue(Message::receive(stream));
     }
 
