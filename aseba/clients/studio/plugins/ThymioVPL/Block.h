@@ -226,7 +226,7 @@ namespace ThymioVPL {
         QGraphicsItem* createIndicationLED(int x, int y);
 
     protected slots:
-        void updateIndicationLEDsOpacity(void);
+        void updateIndicationLEDsOpacity();
 
     protected:
         int low;                 //< low activation threshold (at right)

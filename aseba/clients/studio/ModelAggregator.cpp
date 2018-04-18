@@ -97,7 +97,7 @@ QModelIndex TreeChainsawFilter::parent(const QModelIndex& child) const {
     return QModelIndex();
 }
 
-void TreeChainsawFilter::resetInternalData(void) {
+void TreeChainsawFilter::resetInternalData() {
     sort(0, Qt::AscendingOrder);
 }
 
