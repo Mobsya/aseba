@@ -710,7 +710,7 @@ namespace ThymioVPL {
     }
 
     //! For every button, update the indication LED accordingly
-    void BlockWithButtonsAndRange::updateIndicationLEDsOpacity(void) {
+    void BlockWithButtonsAndRange::updateIndicationLEDsOpacity() {
         // we need to have one LED per button for this function to work
         if(indicationLEDs.size() != buttons.size())
             return;

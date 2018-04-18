@@ -48,7 +48,7 @@ public:
     QModelIndex parent(const QModelIndex& child) const;
 
 public slots:
-    void resetInternalData(void);
+    void resetInternalData();
 
 public:
     // proxy interface

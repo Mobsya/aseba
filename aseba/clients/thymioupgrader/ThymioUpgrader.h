@@ -101,8 +101,8 @@ private slots:
     void officialGroupChecked(bool on);
     void fileGroupChecked(bool on);
     void setupFlashButtonState();
-    void openFile(void);
-    void doFlash(void);
+    void openFile();
+    void doFlash();
     void flashProgress(int percentage);
     void flashFinished();
     void networkReplyFinished(QNetworkReply*);

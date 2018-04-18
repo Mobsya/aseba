@@ -59,7 +59,7 @@ void SlidingDoor::controlStep(double dt) {
     PhysicalObject::controlStep(dt);
 }
 
-void SlidingDoor::open(void) {
+void SlidingDoor::open() {
     if(mode == MODE_CLOSED) {
         moveTimeLeft = moveDuration;
         mode = MODE_OPENING;
@@ -69,7 +69,7 @@ void SlidingDoor::open(void) {
     }
 }
 
-void SlidingDoor::close(void) {
+void SlidingDoor::close() {
     if(mode == MODE_OPENED) {
         moveTimeLeft = moveDuration;
         mode = MODE_CLOSING;

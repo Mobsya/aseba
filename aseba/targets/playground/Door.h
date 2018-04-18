@@ -45,8 +45,8 @@ public:
 
     virtual void controlStep(double dt);
 
-    virtual void open(void);
-    virtual void close(void);
+    virtual void open();
+    virtual void close();
 };
 
 class AreaActivating : public LocalInteraction {

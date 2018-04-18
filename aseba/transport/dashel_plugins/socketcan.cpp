@@ -153,7 +153,7 @@ public:
     }
 
 private:
-    int is_packet_tx(void) {
+    int is_packet_tx() {
         int packet_len;
         if(tx_len < 6)
             return 0;
@@ -249,7 +249,7 @@ private:
     // 1 if defragment was sucessfull.
     // 0 if not,
     // -1 if needs to recall (one packet was dropped because not full)
-    int defragment(void) {
+    int defragment() {
         int i;
         int stopId;
         int stopPos = -1;
@@ -326,7 +326,7 @@ private:
         return i == rx_consume;
     }
 
-    void read_iface(void) {
+    void read_iface() {
         int def;
         while(1) {
             while((def = defragment()) == -1)

@@ -47,7 +47,7 @@ class ConfigDialog : public QDialog {
 public:
     // instantiate / kill the singleton
     static void init(QWidget* parent = 0);
-    static void bye(void);
+    static void bye();
     static const ConfigDialog* getInstance() {
         return me;
     }

@@ -201,7 +201,7 @@ void ThymioUpgraderDialog::setupFlashButtonState() {
     }
 }
 
-void ThymioUpgraderDialog::openFile(void) {
+void ThymioUpgraderDialog::openFile() {
     QString name = QFileDialog::getOpenFileName(this, tr("Select hex file"), QString(), tr("Hex files (*.hex)"));
     lineEdit->setText(name);
     setupFlashButtonState();
@@ -242,7 +242,7 @@ unsigned ThymioUpgraderDialog::readId(MessageHub& hub, Dashel::Stream* stream) c
     return nodeId;
 }
 
-void ThymioUpgraderDialog::readIdVersion(void) {
+void ThymioUpgraderDialog::readIdVersion() {
     // open stream
     MessageHub hub;
     Dashel::Stream* stream(0);
@@ -294,7 +294,7 @@ QString ThymioUpgraderDialog::versionDevStatusToString(unsigned version, unsigne
         return tr("version %1 - development %2").arg(version).arg(devStatus);
 }
 
-void ThymioUpgraderDialog::doFlash(void) {
+void ThymioUpgraderDialog::doFlash() {
     // warning message
     const int warnRet =
         QMessageBox::warning(this, tr("Pre-upgrade warning"),
