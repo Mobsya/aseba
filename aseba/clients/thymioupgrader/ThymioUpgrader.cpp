@@ -88,10 +88,10 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
     // Create the gui ...
     setWindowTitle(tr("Thymio Firmware Upgrader"));
     setWindowIcon(QIcon(":/images/thymioupgrader.svgz"));
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto* mainLayout = new QVBoxLayout(this);
 
     // image
-    QHBoxLayout* imageLayout = new QHBoxLayout();
+    auto* imageLayout = new QHBoxLayout();
     QLabel* image = new QLabel(this);
     QPixmap logo(":/images/thymioupgrader.svgz");
     image->setPixmap(logo.scaledToWidth(384));
@@ -108,7 +108,7 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
 
     // latest file
     officialGroupBox = new QGroupBox(tr("Latest official firmware"));
-    QVBoxLayout* officialLayout = new QVBoxLayout();
+    auto* officialLayout = new QVBoxLayout();
     officialFirmwareText = new QLabel("Connection to official firmware server in progress...");
     officialFirmwareText->setWordWrap(true);
     officialLayout->addWidget(officialFirmwareText);
@@ -118,7 +118,7 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
 
     // file selector
     fileGroupBox = new QGroupBox(tr("Custom firmware file"));
-    QHBoxLayout* fileLayout = new QHBoxLayout();
+    auto* fileLayout = new QHBoxLayout();
     lineEdit = new QLineEdit(this);
     fileButton = new QPushButton(tr("Select..."), this);
     fileButton->setIcon(QIcon(":/images/fileopen.svgz"));
@@ -135,7 +135,7 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
     mainLayout->addWidget(progressBar);
 
     // flash and quit buttons
-    QHBoxLayout* flashLayout = new QHBoxLayout();
+    auto* flashLayout = new QHBoxLayout();
     flashButton = new QPushButton(tr("Upgrade"), this);
     flashButton->setEnabled(false);
     flashLayout->addWidget(flashButton);
@@ -224,14 +224,14 @@ unsigned ThymioUpgraderDialog::readId(MessageHub& hub, Dashel::Stream* stream) c
         hub.step(restDuration);
         while(hub.isMessage()) {
             // if node present, store id from source and quit (protocol 5)
-            NodePresent* nodePresent(dynamic_cast<NodePresent*>(hub.getMessage()));
+            auto* nodePresent(dynamic_cast<NodePresent*>(hub.getMessage()));
             if(nodePresent) {
                 nodeId = nodePresent->source;
                 hub.clearMessage();
                 break;
             }
             // if description, store id from source, but continue reading (protocol 4)
-            Description* description(dynamic_cast<Description*>(hub.getMessage()));
+            auto* description(dynamic_cast<Description*>(hub.getMessage()));
             if(description) {
                 nodeId = description->source;
             }
@@ -272,7 +272,7 @@ void ThymioUpgraderDialog::readIdVersion() {
     while(restDuration > 0) {
         hub.step(restDuration);
         while(hub.isMessage()) {
-            Variables* variables(dynamic_cast<Variables*>(hub.getMessage()));
+            auto* variables(dynamic_cast<Variables*>(hub.getMessage()));
             if(variables && variables->start == firmwareAddress && variables->variables.size() == 2) {
                 const unsigned currentVersion = variables->variables[0];
                 const unsigned currentDevStatus = variables->variables[1];
@@ -443,7 +443,7 @@ int main(int argc, char* argv[]) {
     bool wirelessThymioFound(false);
     bool thymioFound(false);
     bool thymiosFound(false);
-    for(Aseba::PortsMap::const_iterator it = ports.begin(); it != ports.end(); ++it) {
+    for(auto it = ports.begin(); it != ports.end(); ++it) {
         if((it->second.second.compare(0, 18, "Thymio-II Wireless") == 0) ||
            (it->second.second.compare(0, 18, "Thymio_II Wireless") == 0)) {
             wirelessThymioFound = true;

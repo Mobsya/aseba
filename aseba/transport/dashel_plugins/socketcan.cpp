@@ -228,7 +228,7 @@ private:
 public:
     virtual void write(const void* data, const size_t size) {
         size_t s = size;
-        const unsigned char* d = (const unsigned char*)data;
+        const auto* d = (const unsigned char*)data;
         while(s--) {
             tx_buffer[tx_len++] = *d++;
             if(is_packet_tx())
@@ -342,7 +342,7 @@ private:
 
             for(cmsg = CMSG_FIRSTHDR(&msg); cmsg && (cmsg->cmsg_level == SOL_SOCKET); cmsg = CMSG_NXTHDR(&msg, cmsg)) {
                 if(cmsg->cmsg_type == SO_RXQ_OVFL) {
-                    __u32* dropcnt = (__u32*)CMSG_DATA(cmsg);
+                    auto* dropcnt = (__u32*)CMSG_DATA(cmsg);
                     if(*dropcnt)
                         throw DashelException(DashelException::IOError, 0, "Packet dropped", this);
                 }
@@ -362,7 +362,7 @@ private:
 
 public:
     virtual void read(void* data, size_t size) {
-        unsigned char* d = (unsigned char*)data;
+        auto* d = (unsigned char*)data;
         while(size) {
             if(rx_len) {
                 *d++ = rx_buffer[rx_p++];

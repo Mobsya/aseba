@@ -12,7 +12,7 @@ LinearCameraViewVariablesDialog::LinearCameraViewVariablesDialog(TargetVariables
     , greenVariable(new QComboBox)
     , blueVariable(new QComboBox)
     , valuesRanges(new QComboBox) {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
 
     layout->addWidget(new QLabel(tr("Please choose your variables")));
     layout->addWidget(new QLabel(tr("red component")));
@@ -55,7 +55,7 @@ LinearCameraViewVariablesDialog::LinearCameraViewVariablesDialog(TargetVariables
 //! Construct the plugin, taking ownership of an interface to a development environment
 LinearCameraViewPlugin::LinearCameraViewPlugin(DevelopmentEnvironmentInterface* _de)
     : VariableListener(_de->getVariablesModel()), de(_de), componentsReceived(0), timerId(0) {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
     image = new QLabel;
     image->setScaledContents(true);
     layout->addWidget(image);

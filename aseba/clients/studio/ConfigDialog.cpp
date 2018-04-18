@@ -66,7 +66,7 @@ ConfigPage::ConfigPage(QString title, QWidget* parent) : QWidget(parent) {
 }
 
 QCheckBox* ConfigPage::newCheckbox(QString label, QString ID, bool checked) {
-    QCheckBox* widget = new QCheckBox(label);
+    auto* widget = new QCheckBox(label);
     widget->setCheckState(BOOL_TO_CHECKED(checked));
     WidgetCache<bool> cache(widget, checked);
     checkboxCache.insert(std::pair<QString, WidgetCache<bool> >(ID, cache));
@@ -79,9 +79,9 @@ void ConfigPage::readSettings() {
     // update cache and widgets from disk
     QSettings settings;
     // iterate on checkboxes
-    for(std::map<QString, WidgetCache<bool> >::iterator it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
+    for(auto it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
         QString name = it->first;
-        QCheckBox* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
+        auto* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
         Q_ASSERT(checkbox);
         if(settings.contains(name)) {
             bool value = settings.value(name, false).toBool();
@@ -95,9 +95,9 @@ void ConfigPage::writeSettings() {
     // write the cache on disk
     QSettings settings;
     // iterate on checkboxes
-    for(std::map<QString, WidgetCache<bool> >::iterator it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
+    for(auto it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
         QString name = it->first;
-        QCheckBox* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
+        auto* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
         Q_ASSERT(checkbox);
         Q_UNUSED(checkbox);
         settings.setValue(name, (it->second).value);
@@ -112,8 +112,8 @@ void ConfigPage::saveState() {
 void ConfigPage::flushCache() {
     // sync the cache with the widgets' state
     // iterate on checkboxes
-    for(std::map<QString, WidgetCache<bool> >::iterator it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
-        QCheckBox* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
+    for(auto it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
+        auto* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
         Q_ASSERT(checkbox);
         (it->second).value = CHECKED_TO_BOOL(checkbox->checkState());
     }
@@ -128,8 +128,8 @@ void ConfigPage::discardChanges() {
 
 void ConfigPage::reloadFromCache() {
     // update widgets based on the cache
-    for(std::map<QString, WidgetCache<bool> >::iterator it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
-        QCheckBox* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
+    for(auto it = checkboxCache.begin(); it != checkboxCache.end(); it++) {
+        auto* checkbox = dynamic_cast<QCheckBox*>((it->second).widget);
         Q_ASSERT(checkbox);
         checkbox->setCheckState(BOOL_TO_CHECKED((it->second).value));
     }
@@ -139,7 +139,7 @@ void ConfigPage::reloadFromCache() {
 /*** GeneralPage ***/
 GeneralPage::GeneralPage(QWidget* parent) : ConfigPage(tr("General Setup"), parent) {
     QGroupBox* gb1 = new QGroupBox(tr("Layout"));
-    QVBoxLayout* gb1layout = new QVBoxLayout();
+    auto* gb1layout = new QVBoxLayout();
     gb1->setLayout(gb1layout);
     mainLayout->addWidget(gb1);
     // Show the keyword toolbar
@@ -173,7 +173,7 @@ void GeneralPage::writeSettings() {
 EditorPage::EditorPage(QWidget* parent) : ConfigPage(tr("Editor Setup"), parent) {
     //
     QGroupBox* gb1 = new QGroupBox(tr("Autocompletion"));
-    QVBoxLayout* gb1layout = new QVBoxLayout();
+    auto* gb1layout = new QVBoxLayout();
     gb1->setLayout(gb1layout);
     mainLayout->addWidget(gb1);
     //
@@ -261,16 +261,16 @@ void ConfigDialog::setupWidgets() {
     connect(cancelButton, SIGNAL(clicked()), SLOT(reject()));
 
     // main layout
-    QHBoxLayout* contentLayout = new QHBoxLayout();
+    auto* contentLayout = new QHBoxLayout();
     contentLayout->addWidget(topicList);
     contentLayout->addWidget(configStack);
 
-    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    auto* buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
     buttonLayout->addWidget(okButton);
     buttonLayout->addWidget(cancelButton);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout();
+    auto* mainLayout = new QVBoxLayout();
     mainLayout->addLayout(contentLayout);
     mainLayout->addLayout(buttonLayout);
 
@@ -283,7 +283,7 @@ void ConfigDialog::setupWidgets() {
 void ConfigDialog::saveState() {
     // save the state of pages, prior to editing
     for(int i = 0; i < configStack->count(); i++) {
-        ConfigPage* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
+        auto* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
         if(config)
             config->saveState();
     }
@@ -292,7 +292,7 @@ void ConfigDialog::saveState() {
 void ConfigDialog::reloadFromCache() {
     // reload values from the cache
     for(int i = 0; i < configStack->count(); i++) {
-        ConfigPage* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
+        auto* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
         if(config)
             config->reloadFromCache();
     }
@@ -307,7 +307,7 @@ void ConfigDialog::accept() {
 void ConfigDialog::reject() {
     // discard the cache and reload widgets with old values
     for(int i = 0; i < configStack->count(); i++) {
-        ConfigPage* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
+        auto* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
         if(config)
             config->discardChanges();
     }
@@ -319,7 +319,7 @@ void ConfigDialog::reject() {
 void ConfigDialog::flushCache() {
     // update the cache with new values
     for(int i = 0; i < configStack->count(); i++) {
-        ConfigPage* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
+        auto* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
         if(config)
             config->flushCache();
     }
@@ -327,7 +327,7 @@ void ConfigDialog::flushCache() {
 
 void ConfigDialog::readSettings() {
     for(int i = 0; i < configStack->count(); i++) {
-        ConfigPage* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
+        auto* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
         if(config)
             config->readSettings();
     }
@@ -335,7 +335,7 @@ void ConfigDialog::readSettings() {
 
 void ConfigDialog::writeSettings() {
     for(int i = 0; i < configStack->count(); i++) {
-        ConfigPage* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
+        auto* config = dynamic_cast<ConfigPage*>(configStack->widget(i));
         if(config)
             config->writeSettings();
     }

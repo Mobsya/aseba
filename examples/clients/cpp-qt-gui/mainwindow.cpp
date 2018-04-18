@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent) {
 
     // Connection parameters
     QGroupBox* grp1 = new QGroupBox(tr("Connection"));
-    QVBoxLayout* grp1layout = new QVBoxLayout();
+    auto* grp1layout = new QVBoxLayout();
     grp1->setLayout(grp1layout);
     grp1layout->addWidget(new QLabel(tr("IP")));
     grp1layout->addWidget(ip);
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent) {
 
     // UserMessage parameters
     QGroupBox* grp2 = new QGroupBox(tr("User message"));
-    QVBoxLayout* grp2layout = new QVBoxLayout();
+    auto* grp2layout = new QVBoxLayout();
     grp2->setLayout(grp2layout);
     grp2layout->addWidget(new QLabel(tr("Message ID")));
     grp2layout->addWidget(msgId);
@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent) {
     grp2layout->addWidget(sendMsg);
 
     // Overall layout
-    QVBoxLayout* main_layout = new QVBoxLayout();
+    auto* main_layout = new QVBoxLayout();
     main_layout->addWidget(grp1);
     main_layout->addWidget(grp2);
     main_layout->addWidget(quitBtn);

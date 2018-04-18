@@ -34,7 +34,7 @@ namespace Aseba {
 
 //! Returns whether there is a tool named name in the list
 bool NodeToolInterfaces::containsNamed(const QString& name) const {
-    for(const_iterator it(begin()); it != end(); ++it)
+    for(auto it(begin()); it != end(); ++it)
         if((*it)->name == name)
             return true;
     return false;
@@ -42,7 +42,7 @@ bool NodeToolInterfaces::containsNamed(const QString& name) const {
 
 //! Returns a tool of a given name
 NodeToolInterface* NodeToolInterfaces::getNamed(const QString& name) const {
-    for(const_iterator it(begin()); it != end(); ++it)
+    for(auto it(begin()); it != end(); ++it)
         if((*it)->name == name)
             return *it;
     return 0;

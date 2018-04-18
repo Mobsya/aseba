@@ -74,10 +74,10 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     // Create the gui ...
     setWindowTitle(tr("Wireless Thymio Network Configurator"));
     setWindowIcon(QIcon(":/images/thymiownetconfig.svgz"));
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto* mainLayout = new QVBoxLayout(this);
 
     // image
-    QHBoxLayout* imageLayout = new QHBoxLayout();
+    auto* imageLayout = new QHBoxLayout();
     QLabel* image = new QLabel(this);
     QPixmap logo(":/images/thymiownetconfig.svgz");
     image->setPixmap(logo.scaledToWidth(384));
@@ -94,7 +94,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     channel0 = new QRadioButton(tr("0"));
     channel1 = new QRadioButton(tr("1"));
     channel2 = new QRadioButton(tr("2"));
-    QHBoxLayout* channelLayout = new QHBoxLayout();
+    auto* channelLayout = new QHBoxLayout();
     channelLayout->addWidget(new QLabel(tr("Channel:")));
     channelLayout->addStretch();
     channelLayout->addSpacing(10);
@@ -106,7 +106,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     // network identifier
     networkId = new Hex16SpinBox();
     networkId->setRange(1, 65534);
-    QHBoxLayout* networkIdLayout = new QHBoxLayout();
+    auto* networkIdLayout = new QHBoxLayout();
     networkIdLayout->addWidget(new QLabel(tr("Network identifier:")));
     networkIdLayout->addStretch();
     networkIdLayout->addSpacing(10);
@@ -116,7 +116,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     // network identifier
     nodeId = new Hex16SpinBox();
     nodeId->setRange(1, 65534);
-    QHBoxLayout* nodeIdLayout = new QHBoxLayout();
+    auto* nodeIdLayout = new QHBoxLayout();
     nodeIdLayout->addWidget(new QLabel(tr("Dongle node identifier:")));
     nodeIdLayout->addStretch();
     nodeIdLayout->addSpacing(10);
@@ -235,7 +235,7 @@ int main(int argc, char* argv[]) {
     std::string target("ser:device=");
     bool thymioFound(false);
     bool thymiosFound(false);
-    for(Aseba::PortsMap::const_iterator it = ports.begin(); it != ports.end(); ++it) {
+    for(auto it = ports.begin(); it != ports.end(); ++it) {
         if((it->second.second.compare(0, 18, "Thymio-II Wireless") == 0) ||
            (it->second.second.compare(0, 18, "Thymio_II Wireless") == 0)) {
             if(thymioFound)

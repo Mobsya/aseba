@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
             image = image.convertToFormat(QImage::Format_ARGB32);
             groundTexture.width = image.width();
             groundTexture.height = image.height();
-            const uint32_t* imageData(reinterpret_cast<const uint32_t*>(image.constBits()));
+            const auto* imageData(reinterpret_cast<const uint32_t*>(image.constBits()));
             std::copy(imageData, imageData + image.width() * image.height(), std::back_inserter(groundTexture.data));
             // Note: this works in little endian, in big endian data should be swapped
         } else {
@@ -260,7 +260,7 @@ int main(int argc, char* argv[]) {
     // Scan for walls
     QDomElement wallE = domDocument.documentElement().firstChildElement("wall");
     while(!wallE.isNull()) {
-        Enki::PhysicalObject* wall = new Enki::PhysicalObject();
+        auto* wall = new Enki::PhysicalObject();
         if(!colorsMap.contains(wallE.attribute("color")))
             std::cerr << "Warning, color " << wallE.attribute("color").toStdString() << " undefined\n";
         else
@@ -281,7 +281,7 @@ int main(int argc, char* argv[]) {
     // Scan for cylinders
     QDomElement cylinderE = domDocument.documentElement().firstChildElement("cylinder");
     while(!cylinderE.isNull()) {
-        Enki::PhysicalObject* cylinder = new Enki::PhysicalObject();
+        auto* cylinder = new Enki::PhysicalObject();
         if(!colorsMap.contains(cylinderE.attribute("color")))
             std::cerr << "Warning, color " << cylinderE.attribute("color").toStdString() << " undefined\n";
         else
@@ -300,7 +300,7 @@ int main(int argc, char* argv[]) {
     // Scan for feeders
     QDomElement feederE = domDocument.documentElement().firstChildElement("feeder");
     while(!feederE.isNull()) {
-        Enki::EPuckFeeder* feeder = new Enki::EPuckFeeder;
+        auto* feeder = new Enki::EPuckFeeder;
         feeder->pos.x = feederE.attribute("x").toDouble();
         feeder->pos.y = feederE.attribute("y").toDouble();
         world.addObject(feeder);

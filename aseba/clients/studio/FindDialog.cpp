@@ -38,14 +38,14 @@ FindDialog::FindDialog(QWidget* parent, QTextEdit* editor) : QDialog(parent), ed
     QLabel* label = new QLabel(tr("&Search for:"));
     findLineEdit = new QLineEdit;
     label->setBuddy(findLineEdit);
-    QHBoxLayout* entryLayout = new QHBoxLayout;
+    auto* entryLayout = new QHBoxLayout;
     entryLayout->addWidget(label);
     entryLayout->addWidget(findLineEdit);
 
     caseCheckBox = new QCheckBox(tr("&Case sensitive"));
     wholeWordsCheckBox = new QCheckBox(tr("&Whole words"));
     regularExpressionsCheckBox = new QCheckBox(tr("Re&gular expressions"));
-    QHBoxLayout* optionsLayout = new QHBoxLayout;
+    auto* optionsLayout = new QHBoxLayout;
     optionsLayout->addWidget(caseCheckBox);
     optionsLayout->addWidget(wholeWordsCheckBox);
     optionsLayout->addWidget(regularExpressionsCheckBox);
@@ -54,7 +54,7 @@ FindDialog::FindDialog(QWidget* parent, QTextEdit* editor) : QDialog(parent), ed
     findNextButton->setDefault(true);
     findPreviousButton = new QPushButton(tr("Find &Previous"));
     findFromTopButton = new QPushButton(tr("Find from &Top"));
-    QHBoxLayout* buttonsLayout = new QHBoxLayout;
+    auto* buttonsLayout = new QHBoxLayout;
     buttonsLayout->addWidget(findNextButton);
     buttonsLayout->addWidget(findPreviousButton);
     buttonsLayout->addWidget(findFromTopButton);
@@ -66,7 +66,7 @@ FindDialog::FindDialog(QWidget* parent, QTextEdit* editor) : QDialog(parent), ed
     replaceGroupBox->setCheckable(true);
     replaceGroupBox->setChecked(false);
     label = new QLabel(tr("w&ith:"));
-    QHBoxLayout* entryLayout2 = new QHBoxLayout;
+    auto* entryLayout2 = new QHBoxLayout;
     replaceLineEdit = new QLineEdit;
     label->setBuddy(replaceLineEdit);
     entryLayout2->addWidget(label);
@@ -74,16 +74,16 @@ FindDialog::FindDialog(QWidget* parent, QTextEdit* editor) : QDialog(parent), ed
     replaceFindNextButton = new QPushButton(tr("Replace and\nFind &Next"));
     replaceFindPreviousButton = new QPushButton(tr("Replace and\nFind Previo&us"));
     replaceAllButton = new QPushButton(tr("Replace &All\nOccurrences"));
-    QHBoxLayout* buttonsLayout2 = new QHBoxLayout;
+    auto* buttonsLayout2 = new QHBoxLayout;
     buttonsLayout2->addWidget(replaceFindNextButton);
     buttonsLayout2->addWidget(replaceFindPreviousButton);
     buttonsLayout2->addWidget(replaceAllButton);
-    QVBoxLayout* replaceLayout = new QVBoxLayout;
+    auto* replaceLayout = new QVBoxLayout;
     replaceLayout->addLayout(entryLayout2);
     replaceLayout->addLayout(buttonsLayout2);
     replaceGroupBox->setLayout(replaceLayout);
 
-    QVBoxLayout* layout = new QVBoxLayout;
+    auto* layout = new QVBoxLayout;
     layout->addLayout(entryLayout);
     layout->addLayout(optionsLayout);
     layout->addLayout(buttonsLayout);

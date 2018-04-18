@@ -78,7 +78,7 @@ void HelpViewer::setupWidgets() {
     next = new QPushButton(tr("Next"));
     next->setEnabled(false);
     home = new QPushButton(tr("Home"));
-    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    auto* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(previous);
     buttonLayout->addWidget(home);
     buttonLayout->addWidget(next);
@@ -88,13 +88,13 @@ void HelpViewer::setupWidgets() {
     viewer = new HelpBrowser(helpEngine);
 
     // help layout
-    QSplitter* helpSplitter = new QSplitter(Qt::Horizontal);
+    auto* helpSplitter = new QSplitter(Qt::Horizontal);
     helpSplitter->addWidget(helpEngine->contentWidget());
     helpSplitter->addWidget(viewer);
     helpSplitter->setStretchFactor(helpSplitter->indexOf(viewer), 1);
 
     // main layout
-    QVBoxLayout* mainLayout = new QVBoxLayout();
+    auto* mainLayout = new QVBoxLayout();
     mainLayout->addLayout(buttonLayout);
     // mainLayout->addWidget(viewer);
     mainLayout->addWidget(helpSplitter);

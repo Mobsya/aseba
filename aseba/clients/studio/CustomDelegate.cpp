@@ -29,7 +29,7 @@ SpinBoxDelegate::SpinBoxDelegate(int minValue, int maxValue, QObject* parent)
 
 QWidget* SpinBoxDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /* option */,
                                        const QModelIndex& /* index */) const {
-    QSpinBox* editor = new QSpinBox(parent);
+    auto* editor = new QSpinBox(parent);
     editor->setMinimum(minValue);
     editor->setMaximum(maxValue);
     editor->installEventFilter(const_cast<SpinBoxDelegate*>(this));
@@ -40,12 +40,12 @@ QWidget* SpinBoxDelegate::createEditor(QWidget* parent, const QStyleOptionViewIt
 void SpinBoxDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const {
     int value = index.model()->data(index, Qt::DisplayRole).toInt();
 
-    QSpinBox* spinBox = static_cast<QSpinBox*>(editor);
+    auto* spinBox = static_cast<QSpinBox*>(editor);
     spinBox->setValue(value);
 }
 
 void SpinBoxDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const {
-    QSpinBox* spinBox = static_cast<QSpinBox*>(editor);
+    auto* spinBox = static_cast<QSpinBox*>(editor);
     spinBox->interpretText();
     int value = spinBox->value();
 

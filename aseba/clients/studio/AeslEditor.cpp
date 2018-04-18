@@ -103,7 +103,7 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
 }
 
 void AeslHighlighter::highlightBlock(const QString& text) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(currentBlockUserData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(currentBlockUserData());
 
     // current line background blue
     bool isActive = uData && uData->properties.contains("active");
@@ -490,7 +490,7 @@ bool AeslEditor::isBreakpoint() {
 }
 
 bool AeslEditor::isBreakpoint(QTextBlock block) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     return (uData && (uData->properties.contains("breakpoint") || uData->properties.contains("breakpointPending")));
 }
 
@@ -515,7 +515,7 @@ void AeslEditor::setBreakpoint() {
 }
 
 void AeslEditor::setBreakpoint(QTextBlock block) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     if(!uData) {
         // create user data
         uData = new AeslEditorUserData("breakpointPending");
@@ -530,7 +530,7 @@ void AeslEditor::clearBreakpoint() {
 }
 
 void AeslEditor::clearBreakpoint(QTextBlock block) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     uData->properties.remove("breakpointPending");
     uData->properties.remove("breakpoint");
     if(uData->properties.isEmpty()) {
@@ -542,7 +542,7 @@ void AeslEditor::clearBreakpoint(QTextBlock block) {
 
 void AeslEditor::clearAllBreakpoints() {
     for(QTextBlock it = document()->begin(); it != document()->end(); it = it.next()) {
-        AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(it.userData());
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(it.userData());
         if(uData) {
             uData->properties.remove("breakpoint");
             uData->properties.remove("breakpointPending");

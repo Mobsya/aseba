@@ -82,7 +82,7 @@ namespace Http {
         }
 
         std::string getHeader(const std::string& header) const {
-            std::map<std::string, std::string>::const_iterator query = headers.find(header);
+            auto query = headers.find(header);
 
             if(query != headers.end()) {
                 return query->second;
