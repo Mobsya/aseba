@@ -234,8 +234,8 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
                 if(ok) {
                     std::stringstream part;
-                    part << "{\"node\":" << node.globalId << ",\"name\":\"" << node.name
-                         << "\",\"protocolVersion\":" << description->protocolVersion << "}";
+                    part << "{\"node\":" << node.globalId << R"(,"name":")" << node.name
+                         << R"(","protocolVersion":)" << description->protocolVersion << "}";
                     parts.push_back(part.str());
                 } else {
                     stringstream errorStream;
@@ -269,7 +269,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
                 if(ok) {
                     std::stringstream part;
                     part << "{\"node\":" << node.globalId;
-                    part << ",\"name\":\"" << node.name << "\"";
+                    part << R"(,"name":")" << node.name << "\"";
                     part << ",\"protocolVersion\":" << description->protocolVersion;
                     part << ",\"bytecodeSize\":" << description->bytecodeSize;
                     part << ",\"variablesSize\":" << description->variablesSize;
