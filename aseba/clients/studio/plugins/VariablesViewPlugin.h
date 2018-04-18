@@ -26,7 +26,7 @@ public:
     QComboBox* valuesRanges;
 
     LinearCameraViewVariablesDialog(TargetVariablesModel* variablesModel);
-    virtual ~LinearCameraViewVariablesDialog() {}
+    virtual ~LinearCameraViewVariablesDialog() = default;
 };
 
 class LinearCameraViewPlugin : public QWidget, public NodeToolInterface, public VariableListener {

@@ -38,7 +38,7 @@ public:
     QQueue<Message*> messages;
 
 public:
-    MessageHub() {}
+    MessageHub() = default;
 
     virtual ~MessageHub() {
         while(!messages.empty())

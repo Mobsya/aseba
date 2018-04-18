@@ -50,7 +50,7 @@ AeslProgram::AeslProgram(const char* buffer, const int size) : loaded(false) {
     xmlCleanupParser();
 }
 
-AeslProgram::~AeslProgram() {}
+AeslProgram::~AeslProgram() = default;
 
 void AeslProgram::load(xmlDoc* doc) {
     loaded = true;

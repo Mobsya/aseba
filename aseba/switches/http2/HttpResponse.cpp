@@ -40,7 +40,7 @@ HttpResponse::HttpResponse(const HttpRequest* originatingRequest_)
     }
 }
 
-HttpResponse::~HttpResponse() {}
+HttpResponse::~HttpResponse() = default;
 
 void HttpResponse::send() {
     // send reply with status and headers first

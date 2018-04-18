@@ -175,7 +175,7 @@ bool HttpRequest::readContent() {
 
 DashelHttpRequest::DashelHttpRequest(Dashel::Stream* stream_) : stream(stream_) {}
 
-DashelHttpRequest::~DashelHttpRequest() {}
+DashelHttpRequest::~DashelHttpRequest() = default;
 
 HttpResponse* DashelHttpRequest::createResponse() {
     return new DashelHttpResponse(this);

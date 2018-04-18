@@ -48,9 +48,9 @@ using std::string;
 using std::stringstream;
 using std::vector;
 
-OptionsHandler::OptionsHandler() {}
+OptionsHandler::OptionsHandler() = default;
 
-OptionsHandler::~OptionsHandler() {}
+OptionsHandler::~OptionsHandler() = default;
 
 bool OptionsHandler::checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
     return request->getMethod() == "OPTIONS";
@@ -71,13 +71,13 @@ NodesHandler::NodesHandler(HttpInterface* interface) : InterfaceHttpHandler(inte
     addSubhandler(new VariableOrEventHandler(interface));
 }
 
-NodesHandler::~NodesHandler() {}
+NodesHandler::~NodesHandler() = default;
 
 EventsHandler::EventsHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {
     addToken("events");
 }
 
-EventsHandler::~EventsHandler() {}
+EventsHandler::~EventsHandler() = default;
 
 void EventsHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
     if(tokens.size() == 1) {
@@ -107,7 +107,7 @@ ResetHandler::ResetHandler(HttpInterface* interface) : InterfaceHttpHandler(inte
     addToken("reset_all");
 }
 
-ResetHandler::~ResetHandler() {}
+ResetHandler::~ResetHandler() = default;
 
 void ResetHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
     map<Dashel::Stream*, HttpDashelTarget*>& targets = getInterface()->getTargets();
@@ -173,7 +173,7 @@ void ResetHandler::handleRequest(HttpRequest* request, const std::vector<std::st
 
 LoadHandler::LoadHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-LoadHandler::~LoadHandler() {}
+LoadHandler::~LoadHandler() = default;
 
 bool LoadHandler::checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
     return request->getMethod() == "PUT";
@@ -206,7 +206,7 @@ void LoadHandler::handleRequest(HttpRequest* request, const std::vector<std::str
 
 NodeInfoHandler::NodeInfoHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-NodeInfoHandler::~NodeInfoHandler() {}
+NodeInfoHandler::~NodeInfoHandler() = default;
 
 bool NodeInfoHandler::checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
     return tokens.size() <= 1;
@@ -346,7 +346,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
 VariableOrEventHandler::VariableOrEventHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-VariableOrEventHandler::~VariableOrEventHandler() {}
+VariableOrEventHandler::~VariableOrEventHandler() = default;
 
 void VariableOrEventHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
     const CommonDefinitions& commonDefinitions = getInterface()->getProgram().getCommonDefinitions();
@@ -448,7 +448,7 @@ void VariableOrEventHandler::parseJsonForm(std::string content, std::vector<std:
 
 FileHandler::FileHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-FileHandler::~FileHandler() {}
+FileHandler::~FileHandler() = default;
 
 std::string FileHandler::filePath(HttpRequest* request) const {
     // check that url has a single leading slash, not followed by a dot

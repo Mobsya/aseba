@@ -75,7 +75,7 @@ struct AeslEditorUserData : public QTextBlockUserData {
     AeslEditorUserData(const QString& property, const QVariant& value = QVariant()) {
         properties.insert(property, value);
     }
-    virtual ~AeslEditorUserData() {}
+    virtual ~AeslEditorUserData() = default;
 };
 
 class AeslEditorSidebar : public QWidget {
@@ -154,7 +154,7 @@ signals:
 
 public:
     AeslEditor();
-    virtual ~AeslEditor() {}
+    virtual ~AeslEditor() = default;
     virtual void contextMenuEvent(QContextMenuEvent* e);
 
     bool isBreakpoint();  // apply to the current line

@@ -106,7 +106,7 @@ namespace ThymioVPL {
                 QVector<PairCodeAndIndex> code;
                 bool isStateSet;
 
-                virtual ~EventHandler() {}
+                virtual ~EventHandler() = default;
 
                 void clear() {
                     code.clear();

@@ -3,7 +3,7 @@
 #include "compiler/errors_code.h"
 
 namespace Aseba {
-CompilerTranslator::CompilerTranslator() {}
+CompilerTranslator::CompilerTranslator() = default;
 
 const std::wstring CompilerTranslator::translate(ErrorCode error) {
     QString msg;

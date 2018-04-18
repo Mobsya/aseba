@@ -57,7 +57,7 @@ HttpInterface::HttpInterface(const std::string& httpPort)
     httpStream = connect("tcpin:port=" + httpPort);
 }
 
-HttpInterface::~HttpInterface() {}
+HttpInterface::~HttpInterface() = default;
 
 bool HttpInterface::addTarget(const std::string& address) {
     if(targetAddressStreams.find(address) == targetAddressStreams.end()) {  // target is not yet in our list of targets

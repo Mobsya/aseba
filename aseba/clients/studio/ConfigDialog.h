@@ -102,7 +102,7 @@ class ConfigPage : public QWidget {
 
 public:
     ConfigPage(QString title = QString(), QWidget* parent = 0);
-    ~ConfigPage() {}
+    ~ConfigPage() = default;
 
     friend class ConfigDialog;
 
@@ -120,7 +120,7 @@ protected:
 protected:
     template <class T>
     struct WidgetCache {
-        WidgetCache() {}
+        WidgetCache() = default;
         WidgetCache(QWidget* widget, T value) : widget(widget), value(value) {}
         QWidget* widget;
         T value;
@@ -137,7 +137,7 @@ class GeneralPage : public ConfigPage {
 
 public:
     GeneralPage(QWidget* parent = 0);
-    ~GeneralPage() {}
+    ~GeneralPage() = default;
 
     friend class ConfigDialog;
 
@@ -152,7 +152,7 @@ class EditorPage : public ConfigPage {
 
 public:
     EditorPage(QWidget* parent = 0);
-    ~EditorPage() {}
+    ~EditorPage() = default;
 
     friend class ConfigDialog;
 

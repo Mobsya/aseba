@@ -40,7 +40,7 @@ using std::vector;
 HttpDashelTarget::HttpDashelTarget(HttpInterface* interface_, const std::string& address_, Dashel::Stream* stream_)
     : interface(interface_), address(address_), stream(stream_) {}
 
-HttpDashelTarget::~HttpDashelTarget() {}
+HttpDashelTarget::~HttpDashelTarget() = default;
 
 bool HttpDashelTarget::sendEvent(const std::vector<std::string>& args) {
     if(args.empty()) {
