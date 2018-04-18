@@ -240,14 +240,14 @@ int processCommand(Stream* stream, int argc, char* argv[]) {
         } else
             errorReadPage(atoi(argv[2]));
     } else if(strcmp(cmd, "whex") == 0) {
-        bool reset = 0;
+        bool reset = false;
         // first arg is dest, second is file name
         if(argc < 3)
             errorMissingArgument(argv[0]);
         argEaten = 2;
 
         if(argc > 3 && !strcmp(argv[3], "reset")) {
-            reset = 1;
+            reset = true;
             argEaten = 3;
         }
 
@@ -259,12 +259,12 @@ int processCommand(Stream* stream, int argc, char* argv[]) {
             errorHexFile(e.toString());
         }
     } else if(strcmp(cmd, "wusb") == 0) {
-        bool reset = 0;
+        bool reset = false;
         if(argc < 3)
             errorMissingArgument(argv[0]);
         argEaten = 2;
         if(argc > 3 && !strcmp(argv[3], "reset")) {
-            reset = 1;
+            reset = true;
             argEaten = 3;
         }
         try {

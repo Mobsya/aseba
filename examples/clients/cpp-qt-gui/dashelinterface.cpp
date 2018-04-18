@@ -85,7 +85,7 @@ void DashelInterface::connectionClosed(Dashel::Stream* stream, bool abnormal) {
 
 // internals
 void DashelInterface::run() {
-    while(1) {
+    while(true) {
         try {
             stream = Dashel::Hub::connect(dashelParams.toStdString());
 

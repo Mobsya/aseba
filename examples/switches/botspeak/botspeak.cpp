@@ -312,7 +312,7 @@ void BotSpeakBridge::incomingAsebaData(Stream* stream) {
                 cout << "Execution completed" << endl;
             if(runAndWait)
                 outputBotspeak("Done");
-            runAndWait = 0;
+            runAndWait = false;
         } else if(userMsg->type == eventId(L"running_ping")) {
             if(verbose)
                 cout << "." << endl;

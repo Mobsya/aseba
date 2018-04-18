@@ -310,7 +310,7 @@ bool AsebaNetworkInterface::IsConnected(const QString& node, const QDBusMessage&
     if(nodeIt == nodesNames.end()) {
         DBusConnectionBus().send(
             message.createErrorReply(QDBusError::InvalidArgs, QString("node %0 does not exists").arg(node)));
-        return 0;
+        return false;
     }
     return nodes.find(nodeIt.value())->second.connected;
 }
