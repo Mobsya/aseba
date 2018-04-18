@@ -30,7 +30,7 @@ class SpinBoxDelegate : public QItemDelegate {
     Q_OBJECT
 
 public:
-    SpinBoxDelegate(int minValue, int maxValue, QObject* parent = 0);
+    SpinBoxDelegate(int minValue, int maxValue, QObject* parent = nullptr);
 
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 

@@ -372,7 +372,7 @@ namespace ThymioVPL {
         }
         QString selectedFilter;
         QString fileName(QFileDialog::getSaveFileName(
-            0, tr("Export program as image"), initialFileName,
+            nullptr, tr("Export program as image"), initialFileName,
             "Images (*.png *.jpg *.bmp *.ppm *.tiff);;Scalable Vector Graphics (*.svg)", &selectedFilter));
 
         if(fileName.isEmpty())
@@ -677,7 +677,7 @@ namespace ThymioVPL {
             return;
         }
         if(version != "1") {
-            QMessageBox::warning(0, tr("Incompatible Version"),
+            QMessageBox::warning(nullptr, tr("Incompatible Version"),
                                  tr("This file is incompatible with this version of ThymioVPL. It "
                                     "might not work correctly."));
         }

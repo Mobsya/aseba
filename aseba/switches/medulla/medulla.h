@@ -159,11 +159,11 @@ public:
         @param message aseba message to send
         @param sourceStream originate of the message, if from Dashel.
     */
-    void sendMessage(const Message* message, const Dashel::Stream* sourceStream = 0);
+    void sendMessage(const Message* message, const Dashel::Stream* sourceStream = nullptr);
     /*! Sends a message to Dashel peers.
         Convenience overload
     */
-    void sendMessage(const Message& message, const Dashel::Stream* sourceStream = 0);
+    void sendMessage(const Message& message, const Dashel::Stream* sourceStream = nullptr);
 
 signals:
     void messageAvailable(Message* message, const Dashel::Stream* sourceStream);

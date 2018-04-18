@@ -139,5 +139,5 @@ void MainWindow::disconnectionFromDashel() {
     status->setText(tr("Not connected"));
     connectBtn->setEnabled(true);
 
-    QMessageBox::warning(0, tr("Oops"), tr("Disconnected from Dashel"));
+    QMessageBox::warning(nullptr, tr("Oops"), tr("Disconnected from Dashel"));
 }

@@ -115,7 +115,7 @@ class CompilationLogDialog : public QDialog {
     Q_OBJECT
 
 public:
-    CompilationLogDialog(QWidget* parent = 0);
+    CompilationLogDialog(QWidget* parent = nullptr);
     void setText(const QString& text) {
         te->setText(text);
     }
@@ -215,7 +215,7 @@ public:
 
 public:
     NodeTab(MainWindow* mainWindow, Target* target, const CommonDefinitions* commonDefinitions, const unsigned id,
-            QWidget* parent = 0);
+            QWidget* parent = nullptr);
     ~NodeTab();
     unsigned productId() const {
         return pid;
@@ -399,7 +399,7 @@ class MainWindow : public QMainWindow {
 
 public:
     MainWindow(QVector<QTranslator*> translators, const QString& commandLineTarget, bool autoRefresh,
-               QWidget* parent = 0);
+               QWidget* parent = nullptr);
     ~MainWindow();
 
 signals:
@@ -499,8 +499,8 @@ private:
     // utility functions
     int getIndexFromId(unsigned node) const;
     NodeTab* getTabFromId(unsigned node) const;
-    NodeTab* getTabFromName(const QString& name, unsigned preferedId = 0, bool* isPrefered = 0,
-                            QSet<int>* filledList = 0) const;
+    NodeTab* getTabFromName(const QString& name, unsigned preferedId = 0, bool* isPrefered = nullptr,
+                            QSet<int>* filledList = nullptr) const;
     int getAbsentIndexFromId(unsigned node) const;
     AbsentNodeTab* getAbsentTabFromId(unsigned node) const;
     void addErrorEvent(unsigned node, unsigned line, const QString& message);

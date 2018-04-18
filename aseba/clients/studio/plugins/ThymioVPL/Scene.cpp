@@ -135,7 +135,7 @@ namespace ThymioVPL {
 
     //! Makes sure that there is at least one empty event-actions set at the end of the scene
     void Scene::ensureOneEmptySetAtEnd() {
-        EventActionsSet* newSet(0);
+        EventActionsSet* newSet(nullptr);
         if(eventActionsSets.empty())
             newSet = createNewEventActionsSet();
         else if(!eventActionsSets.last()->isEmpty())
@@ -434,14 +434,14 @@ namespace ThymioVPL {
 
     EventActionsSet* Scene::getSelectedSet() const {
         if(selectedItems().empty())
-            return 0;
+            return nullptr;
         QGraphicsItem* item;
         foreach(item, selectedItems()) {
             auto* eventActionsSet(dynamic_cast<EventActionsSet*>(item));
             if(eventActionsSet)
                 return eventActionsSet;
         }
-        return 0;
+        return nullptr;
     }
 
     EventActionsSet* Scene::getSetRow(int row) const {
@@ -466,9 +466,9 @@ namespace ThymioVPL {
         referredGraphicsItem->setVisible(lastCompilationResult.referredLine != -1);
         referredLineItem->setVisible(lastCompilationResult.referredLine != -1);
 
-        EventActionsSet* warningEventActionsSet(0);
-        EventActionsSet* errorEventActionsSet(0);
-        EventActionsSet* referredEventActionsSet(0);
+        EventActionsSet* warningEventActionsSet(nullptr);
+        EventActionsSet* errorEventActionsSet(nullptr);
+        EventActionsSet* referredEventActionsSet(nullptr);
         for(int i = 0; i < eventActionsSets.size(); ++i) {
             EventActionsSet* eventActionsSet(eventActionsSets[i]);
             Compiler::ErrorType errorType;

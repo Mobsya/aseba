@@ -86,10 +86,10 @@ public:
         UnifiedTime timeStamp(UnifiedTime::fromRawTimeString(tokenizedLine.front()));
         tokenizedLine.pop_front();
 
-        const uint16_t source = strtol(tokenizedLine.front().c_str(), 0, 16);
+        const uint16_t source = strtol(tokenizedLine.front().c_str(), nullptr, 16);
         tokenizedLine.pop_front();
 
-        const uint16_t type = strtol(tokenizedLine.front().c_str(), 0, 16);
+        const uint16_t type = strtol(tokenizedLine.front().c_str(), nullptr, 16);
         tokenizedLine.pop_front();
 
         Message::SerializationBuffer buffer;
@@ -97,7 +97,7 @@ public:
         tokenizedLine.pop_front();
 
         while(!tokenizedLine.empty()) {
-            buffer.rawData.push_back(strtol(tokenizedLine.front().c_str(), 0, 16));
+            buffer.rawData.push_back(strtol(tokenizedLine.front().c_str(), nullptr, 16));
             tokenizedLine.pop_front();
         }
 
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
     bool respectTimings = true;
     int speedFactor = 1;
     std::vector<std::string> targets;
-    const char* inputFile = 0;
+    const char* inputFile = nullptr;
 
     int argCounter = 1;
 

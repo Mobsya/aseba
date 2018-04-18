@@ -36,7 +36,7 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        MoveActionBlock(QGraphicsItem* parent = 0);
+        MoveActionBlock(QGraphicsItem* parent = nullptr);
         virtual ~MoveActionBlock();
 
         virtual unsigned valuesCount() const {
@@ -62,7 +62,7 @@ namespace ThymioVPL {
     protected:
         ColorActionBlock(QGraphicsItem* parent, bool top);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
 
     public:
         virtual unsigned valuesCount() const {
@@ -80,18 +80,18 @@ namespace ThymioVPL {
     };
 
     struct TopColorActionBlock : public ColorActionBlock {
-        TopColorActionBlock(QGraphicsItem* parent = 0);
+        TopColorActionBlock(QGraphicsItem* parent = nullptr);
     };
 
     struct BottomColorActionBlock : public ColorActionBlock {
-        BottomColorActionBlock(QGraphicsItem* parent = 0);
+        BottomColorActionBlock(QGraphicsItem* parent = nullptr);
     };
 
     class SoundActionBlock : public Block {
     public:
-        SoundActionBlock(QGraphicsItem* parent = 0);
+        SoundActionBlock(QGraphicsItem* parent = nullptr);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
 
         virtual unsigned valuesCount() const {
             return 6;
@@ -119,9 +119,9 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        TimerActionBlock(QGraphicsItem* parent = 0);
+        TimerActionBlock(QGraphicsItem* parent = nullptr);
 
-        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
 
         virtual unsigned valuesCount() const {
             return 1;
@@ -153,7 +153,7 @@ namespace ThymioVPL {
 
     class StateFilterActionBlock : public StateFilterBlock {
     public:
-        StateFilterActionBlock(QGraphicsItem* parent = 0);
+        StateFilterActionBlock(QGraphicsItem* parent = nullptr);
     };
 
     /*@}*/

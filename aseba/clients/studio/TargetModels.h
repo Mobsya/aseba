@@ -72,7 +72,7 @@ public:
     };
 
 public:
-    TargetVariablesModel(QObject* parent = 0);
+    TargetVariablesModel(QObject* parent = nullptr);
     virtual ~TargetVariablesModel();
 
     Qt::DropActions supportedDropActions() const;
@@ -136,7 +136,7 @@ public:
     struct TreeItem;
 
 public:
-    TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent = 0);
+    TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent = nullptr);
     ~TargetFunctionsModel();
 
     Qt::DropActions supportedDropActions() const;
@@ -170,7 +170,7 @@ private:
 
 class TargetSubroutinesModel : public QStringListModel {
 public:
-    TargetSubroutinesModel(QObject* parent = 0);
+    TargetSubroutinesModel(QObject* parent = nullptr);
 
     void updateSubroutineTable(const Compiler::SubroutineTable& subroutineTable);
 };

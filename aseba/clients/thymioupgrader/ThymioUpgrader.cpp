@@ -245,7 +245,7 @@ unsigned ThymioUpgraderDialog::readId(MessageHub& hub, Dashel::Stream* stream) c
 void ThymioUpgraderDialog::readIdVersion() {
     // open stream
     MessageHub hub;
-    Dashel::Stream* stream(0);
+    Dashel::Stream* stream(nullptr);
     try {
         stream = hub.connect(target);
     } catch(Dashel::DashelException& e) {
@@ -326,7 +326,7 @@ ThymioUpgraderDialog::FlashResult ThymioUpgraderDialog::flashThread(const std::s
                                                                     const std::string& hexFileName) const {
     // open stream
     MessageHub hub;
-    Dashel::Stream* stream(0);
+    Dashel::Stream* stream(nullptr);
     try {
         stream = hub.connect(_target);
     } catch(Dashel::DashelException& e) {
@@ -457,19 +457,19 @@ int main(int argc, char* argv[]) {
         }
     }
     if(wirelessThymioFound) {
-        QMessageBox::critical(0, QApplication::tr("Wireless Thymio found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Wireless Thymio found"),
                               QApplication::tr("<p><b>Wireless connection to Thymio found!</b></p><p>Plug a single "
                                                "Thymio to your computer using the USB cable.</p>"));
         return 3;
     }
     if(!thymioFound) {
-        QMessageBox::critical(0, QApplication::tr("Thymio not found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Thymio not found"),
                               QApplication::tr("<p><b>Cannot find Thymio!</b></p><p>Plug a Thymio "
                                                "to your computer using the USB cable.</p>"));
         return 1;
     }
     if(thymiosFound) {
-        QMessageBox::critical(0, QApplication::tr("Multiple Thymios found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Multiple Thymios found"),
                               QApplication::tr("<p><b>More than one Thymio found!</b></p><p>Plug a single Thymio to "
                                                "your computer using the USB cable.</p>"));
         return 2;

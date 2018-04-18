@@ -51,10 +51,10 @@ namespace ThymioVPL {
         // TODO: move that somewhere else
         class ThymioBody : public QGraphicsItem {
         public:
-            ThymioBody(QGraphicsItem* parent = 0, int yShift = 0)
+            ThymioBody(QGraphicsItem* parent = nullptr, int yShift = 0)
                 : QGraphicsItem(parent), bodyColor(Qt::white), yShift(yShift), up(true) {}
 
-            void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+            void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
             QRectF boundingRect() const {
                 return QRectF(-128, -128 + yShift, 256, 256);
             }
@@ -71,9 +71,9 @@ namespace ThymioVPL {
             bool up;
         };
 
-        static Block* createBlock(const QString& name, bool advanced = false, QGraphicsItem* parent = 0);
+        static Block* createBlock(const QString& name, bool advanced = false, QGraphicsItem* parent = nullptr);
 
-        Block(const QString& type, const QString& name, QGraphicsItem* parent = 0);
+        Block(const QString& type, const QString& name, QGraphicsItem* parent = nullptr);
         virtual ~Block();
 
         QString getType() const {
@@ -107,7 +107,7 @@ namespace ThymioVPL {
         static QString deserializeType(const QByteArray& data);
         static QString deserializeName(const QByteArray& data);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
         QRectF boundingRect() const {
             return QRectF(0, 0, 256, 256);
         }
@@ -159,7 +159,7 @@ namespace ThymioVPL {
     public:
         BlockWithBody(const QString& type, const QString& name, bool up, QGraphicsItem* parent);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
 
     public:
         const bool up;
@@ -193,7 +193,7 @@ namespace ThymioVPL {
                                  int defaultHigh, const QColor& lowColor, const QColor& highColor, bool advanced,
                                  QGraphicsItem* parent);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
 
         virtual unsigned valuesCount() const;
         virtual int getValue(unsigned i) const;
@@ -241,7 +241,7 @@ namespace ThymioVPL {
 
     class StateFilterBlock : public BlockWithButtons {
     public:
-        StateFilterBlock(const QString& type, const QString& name, QGraphicsItem* parent = 0);
+        StateFilterBlock(const QString& type, const QString& name, QGraphicsItem* parent = nullptr);
 
         virtual bool isAdvancedBlock() const {
             return true;

@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
     do {
         if(ask) {
             QString lastFileName = QSettings("EPFL-LSRO-Mobots", "Aseba Playground").value("last file").toString();
-            sceneFileName = QFileDialog::getOpenFileName(0, app.tr("Open Scenario"), lastFileName,
+            sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
                                                          app.tr("playground scenario (*.playground)"));
         }
         ask = true;
@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
             QString errorStr;
             int errorLine, errorColumn;
             if(!domDocument.setContent(&file, false, &errorStr, &errorLine, &errorColumn)) {
-                QMessageBox::information(0, "Aseba Playground",
+                QMessageBox::information(nullptr, "Aseba Playground",
                                          app.tr("Parse error at file %1, line %2, column %3:\n%4")
                                              .arg(sceneFileName)
                                              .arg(errorLine)

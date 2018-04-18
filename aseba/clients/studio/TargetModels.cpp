@@ -45,7 +45,7 @@ void VariableListener::unsubscribeToVariablesOfInterest() {
 }
 
 void VariableListener::invalidateVariableModel() {
-    variablesModel = 0;
+    variablesModel = nullptr;
 }
 
 
@@ -151,7 +151,7 @@ QVariant TargetVariablesModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags TargetVariablesModel::flags(const QModelIndex& index) const {
     if(!index.isValid())
-        return 0;
+        return nullptr;
 
     if(index.column() == 1) {
         if(index.parent().isValid())
@@ -159,7 +159,7 @@ Qt::ItemFlags TargetVariablesModel::flags(const QModelIndex& index) const {
         else if(variables.at(index.row()).value.size() == 1)
             return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
         else
-            return 0;
+            return nullptr;
     } else {
         if(index.parent().isValid())
             return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable;
@@ -402,7 +402,7 @@ struct TargetFunctionsModel::TreeItem {
     bool enabled;
     bool draggable;
 
-    TreeItem() : parent(0), name("root"), enabled(true), draggable(false) {}
+    TreeItem() : parent(nullptr), name("root"), enabled(true), draggable(false) {}
 
     TreeItem(TreeItem* parent, const QString& name, bool enabled, bool draggable)
         : parent(parent), name(name), enabled(enabled), draggable(draggable) {}
@@ -427,7 +427,7 @@ struct TargetFunctionsModel::TreeItem {
 
 
 TargetFunctionsModel::TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent)
-    : QAbstractItemModel(parent), root(0), descriptionRead(descriptionRead), regExp("\\b") {
+    : QAbstractItemModel(parent), root(nullptr), descriptionRead(descriptionRead), regExp("\\b") {
     Q_ASSERT(descriptionRead);
     recreateTreeFromDescription(showHidden);
 }

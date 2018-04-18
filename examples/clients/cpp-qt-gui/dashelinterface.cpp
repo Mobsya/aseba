@@ -27,7 +27,7 @@
 #include <QDebug>
 
 
-DashelInterface::DashelInterface() : stream(0), isRunning(false), isConnected(false) {}
+DashelInterface::DashelInterface() : stream(nullptr), isRunning(false), isConnected(false) {}
 
 DashelInterface::~DashelInterface() = default;
 
@@ -80,7 +80,7 @@ void DashelInterface::connectionClosed(Dashel::Stream* stream, bool abnormal) {
     Q_UNUSED(stream);
     Q_UNUSED(abnormal);
     emit dashelDisconnection();
-    this->stream = 0;
+    this->stream = nullptr;
 }
 
 // internals

@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
 
     int res;
     try {
-        EventLogger logger(argv[1], atoi(argv[2]), atoi(argv[3]), (argc > 4 ? argv[4] : 0));
+        EventLogger logger(argv[1], atoi(argv[2]), atoi(argv[3]), (argc > 4 ? argv[4] : nullptr));
         logger.show();
         res = app.exec();
     } catch(Dashel::DashelException e) {

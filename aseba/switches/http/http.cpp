@@ -152,8 +152,8 @@ HttpInterface::HttpInterface(const strings& targets, const std::string& http_por
     : Hub(false)
     ,  // don't resolve hostnames for incoming connections (there are a lot of them!)
     asebaStreams()
-    , inHttpStream(0)
-    , inAsebaStream(0)
+    , inHttpStream(nullptr)
+    , inAsebaStream(nullptr)
     , inHttpPort(http_port)
     , inAsebaPort(aseba_port)
     , verbose(verbose)
@@ -1104,14 +1104,14 @@ Dashel::Stream* HttpInterface::getStreamFromNodeId(const unsigned nodeId) {
     }
     // otherwise, raise exception
     throw runtime_error(FormatableString("getStreamFromNodeId: can't find stream for node id %0").arg(nodeId));
-    return NULL;
+    return nullptr;
 }
 
 
 // Load Aesl file from file
 void HttpInterface::aeslLoadFile(const unsigned nodeId, const std::string& filename) {
     // local file or URL
-    xmlDoc* doc(xmlReadFile(filename.c_str(), NULL, 0));
+    xmlDoc* doc(xmlReadFile(filename.c_str(), nullptr, 0));
     if(!doc)
         throw runtime_error(
             FormatableString("Cannot read aesl script XML from file %1 for nodeId %0").arg(nodeId).arg(filename));
@@ -1129,7 +1129,7 @@ void HttpInterface::aeslLoadFile(const unsigned nodeId, const std::string& filen
 // Load Aesl file from memory
 void HttpInterface::aeslLoadMemory(const unsigned nodeId, const char* buffer, const int size) {
     // open document
-    xmlDoc* doc(xmlReadMemory(buffer, size, "vmcode.aesl", NULL, 0));
+    xmlDoc* doc(xmlReadMemory(buffer, size, "vmcode.aesl", nullptr, 0));
     if(!doc)
         throw runtime_error(FormatableString("Cannot read aesl script XML from memory for nodeId %0").arg(nodeId));
     //            wcerr << "cannot read XML from memory " << buffer << endl;

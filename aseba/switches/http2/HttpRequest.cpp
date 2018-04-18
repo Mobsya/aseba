@@ -32,7 +32,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-HttpRequest::HttpRequest() : verbose(false), valid(false), blocking(false), response(NULL) {}
+HttpRequest::HttpRequest() : verbose(false), valid(false), blocking(false), response(nullptr) {}
 
 HttpRequest::~HttpRequest() {
     delete response;

@@ -171,7 +171,7 @@ void MassLoader::nodeDescriptionReceived(unsigned nodeId) {
             if(element.tagName() == "node") {
                 bool ok;
                 const unsigned nodeId(
-                    getNodeId(element.attribute("name").toStdWString(), element.attribute("nodeId", 0).toUInt(), &ok));
+                    getNodeId(element.attribute("name").toStdWString(), element.attribute("nodeId", nullptr).toUInt(), &ok));
                 if(ok) {
                     std::wistringstream is(element.firstChild().toText().data().toStdWString());
                     Error error;

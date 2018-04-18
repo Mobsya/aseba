@@ -209,7 +209,7 @@ const AsebaLocalEventDescription* AsebaThymio2::getLocalEventsDescriptions() con
 // array of descriptions of native functions, static so only visible in this file
 
 static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {
-    ASEBA_NATIVES_STD_DESCRIPTIONS, PLAYGROUND_THYMIO2_NATIVES_DESCRIPTIONS, 0};
+    ASEBA_NATIVES_STD_DESCRIPTIONS, PLAYGROUND_THYMIO2_NATIVES_DESCRIPTIONS, nullptr};
 
 const AsebaNativeFunctionDescription* const* AsebaThymio2::getNativeFunctionsDescriptions() const {
     return nativeFunctionsDescriptions;

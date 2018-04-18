@@ -206,7 +206,7 @@ void AsebaNetworkInterface::LoadScripts(const QString& fileName, const QDBusMess
             if(element.tagName() == "node") {
                 bool ok;
                 const unsigned nodeId(
-                    getNodeId(element.attribute("name").toStdWString(), element.attribute("nodeId", 0).toUInt(), &ok));
+                    getNodeId(element.attribute("name").toStdWString(), element.attribute("nodeId", nullptr).toUInt(), &ok));
                 if(ok) {
                     std::wistringstream is(element.firstChild().toText().data().toStdWString());
                     Error error;
@@ -300,7 +300,7 @@ QString AsebaNetworkInterface::GetNodeName(const uint16_t nodeId, const QDBusMes
     if(nodeName.isEmpty()) {
         DBusConnectionBus().send(
             message.createErrorReply(QDBusError::InvalidArgs, QString("node %0 does not exists").arg(nodeId)));
-        return 0;
+        return nullptr;
     }
     return nodeName;
 }
@@ -545,7 +545,7 @@ void Hub::run() {
 
 void Hub::incomingData(Stream* stream) {
     // receive message
-    Message* message(0);
+    Message* message(nullptr);
     try {
         message = Message::receive(stream);
     } catch(DashelException e) {

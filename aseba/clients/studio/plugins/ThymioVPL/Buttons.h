@@ -44,10 +44,10 @@ namespace ThymioVPL {
         enum ButtonType { CIRCULAR_BUTTON = 0, TRIANGULAR_BUTTON, RECTANGULAR_BUTTON, QUARTER_CIRCLE_BUTTON };
 
         //! Create a button with initially one state
-        GeometryShapeButton(const QRectF rect, const ButtonType type, QGraphicsItem* parent = 0,
+        GeometryShapeButton(const QRectF rect, const ButtonType type, QGraphicsItem* parent = nullptr,
                             const QColor& initBrushColor = Qt::white, const QColor& initPenColor = Qt::black);
 
-        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
         QRectF boundingRect() const {
             return boundingRectangle;
         }
@@ -94,8 +94,8 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        AddRemoveButton(bool add, QGraphicsItem* parent = 0);
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        AddRemoveButton(bool add, QGraphicsItem* parent = nullptr);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
         QRectF boundingRect() const;
 
     signals:
@@ -113,8 +113,8 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        RemoveBlockButton(QGraphicsItem* parent = 0);
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        RemoveBlockButton(QGraphicsItem* parent = nullptr);
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr);
         QRectF boundingRect() const;
 
     signals:
@@ -133,7 +133,7 @@ namespace ThymioVPL {
         void undoCheckpoint();
 
     public:
-        BlockButton(const QString& name, ThymioVisualProgramming* vpl, QWidget* parent = 0);
+        BlockButton(const QString& name, ThymioVisualProgramming* vpl, QWidget* parent = nullptr);
         ~BlockButton();
 
         QString getName() const;

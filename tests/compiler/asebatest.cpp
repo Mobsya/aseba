@@ -25,7 +25,7 @@ using namespace Aseba;
 
 extern "C" bool AsebaExecutionErrorOccurred();
 
-static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, 0};
+static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, nullptr};
 
 extern "C" const AsebaNativeFunctionDescription* const* AsebaGetNativeFunctionsDescriptions(AsebaVMState* vm) {
     return nativeFunctionsDescriptions;
@@ -42,7 +42,7 @@ static const struct option long_options[] = {
     {"memcmp_fail", no_argument, nullptr, 'n'}, {"event", no_argument, nullptr, 'v'},
     {"source", no_argument, nullptr, 's'},      {"dump", no_argument, nullptr, 'd'},
     {"memdump", no_argument, nullptr, 'u'},     {"memcmp", required_argument, nullptr, 'm'},
-    {"steps", required_argument, nullptr, 'i'}, {0, 0, 0, 0}};
+    {"steps", required_argument, nullptr, 'i'}, {nullptr, 0, nullptr, 0}};
 
 static void usage(int argc, char** argv) {
     std::cerr << "Usage: " << argv[0] << " [options] source" << std::endl

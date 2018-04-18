@@ -326,7 +326,7 @@ void DashelConnectionDialog::targetTemplateDoc() {
 
 
 DashelInterface::DashelInterface(QVector<QTranslator*> translators, const QString& commandLineTarget)
-    : isRunning(true), stream(0) {
+    : isRunning(true), stream(nullptr) {
     // first use local name
     const QString& systemLocale(QLocale::system().name());
     assert(translators.size() == 4);
@@ -354,11 +354,11 @@ DashelInterface::DashelInterface(QVector<QTranslator*> translators, const QStrin
 #ifndef ANDROID
         // have user-friendly Thymio-specific message
         if(commandLineTarget == "ser:name=Thymio-II")
-            QMessageBox::warning(0, tr("Thymio not found"),
+            QMessageBox::warning(nullptr, tr("Thymio not found"),
                                  tr("<p><b>Cannot find Thymio!</b></p><p>Connect a Thymio to your computer using "
                                     "the USB cable/dongle, and make sure no other program is using Thymio.</p>"));
         else
-            QMessageBox::warning(0, tr("Connection to command line target failed"),
+            QMessageBox::warning(nullptr, tr("Connection to command line target failed"),
                                  tr("Cannot connect to target %0").arg(commandLineTarget));
 #endif
     }
@@ -391,7 +391,7 @@ DashelInterface::DashelInterface(QVector<QTranslator*> translators, const QStrin
 bool DashelInterface::attemptToReconnect() {
     try {
         lock();
-        assert(stream == 0);
+        assert(stream == nullptr);
         stream = Hub::connect(lastConnectedTarget);
         unlock();
         reset();
@@ -405,7 +405,7 @@ bool DashelInterface::attemptToReconnect() {
     } catch(DashelException e) {
     }
 
-    return (stream != 0);
+    return (stream != nullptr);
 }
 
 
@@ -439,7 +439,7 @@ void DashelInterface::connectionClosed(Stream* stream, bool abnormal) {
     // notify target for showing reconnection message
     emit dashelDisconnection();
     Q_ASSERT(stream == this->stream);
-    this->stream = 0;
+    this->stream = nullptr;
 }
 
 void DashelInterface::sendMessage(const Message& message) {
@@ -464,14 +464,14 @@ void DashelInterface::nodeProtocolVersionMismatch(unsigned nodeId, const std::ws
                                                   uint16_t protocolVersion) {
     // show a different warning in function of the mismatch
     if(protocolVersion > ASEBA_PROTOCOL_VERSION) {
-        QMessageBox::warning(0, QApplication::tr("Protocol version mismatch"),
+        QMessageBox::warning(nullptr, QApplication::tr("Protocol version mismatch"),
                              QApplication::tr("Aseba Studio uses an older protocol (%1) than node "
                                               "%0 (%2), please upgrade Aseba Studio.")
                                  .arg(QString::fromStdWString(nodeName.c_str()))
                                  .arg(ASEBA_PROTOCOL_VERSION)
                                  .arg(protocolVersion));
     } else if(protocolVersion < ASEBA_PROTOCOL_VERSION) {
-        QMessageBox::warning(0, QApplication::tr("Protocol version mismatch"),
+        QMessageBox::warning(nullptr, QApplication::tr("Protocol version mismatch"),
                              QApplication::tr("Node %0 uses an older protocol (%2) than Aseba "
                                               "Studio (%1), please upgrade the node firmware.")
                                  .arg(QString::fromStdWString(nodeName.c_str()))
