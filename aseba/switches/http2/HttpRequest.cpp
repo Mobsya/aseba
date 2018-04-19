@@ -32,7 +32,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-HttpRequest::HttpRequest() : verbose(false), valid(false), blocking(false), response(NULL) {}
+HttpRequest::HttpRequest() : verbose(false), valid(false), blocking(false), response(nullptr) {}
 
 HttpRequest::~HttpRequest() {
     delete response;
@@ -162,7 +162,7 @@ bool HttpRequest::readContent() {
     contentLength = (contentLength > CONTENT_BYTES_LIMIT) ? CONTENT_BYTES_LIMIT : contentLength;  // truncate at limit
 
     if(contentLength > 0) {
-        char* buffer = new char[contentLength];
+        auto* buffer = new char[contentLength];
         readRaw(buffer, contentLength);
         content = string(buffer, contentLength);
         delete[] buffer;
@@ -175,7 +175,7 @@ bool HttpRequest::readContent() {
 
 DashelHttpRequest::DashelHttpRequest(Dashel::Stream* stream_) : stream(stream_) {}
 
-DashelHttpRequest::~DashelHttpRequest() {}
+DashelHttpRequest::~DashelHttpRequest() = default;
 
 HttpResponse* DashelHttpRequest::createResponse() {
     return new DashelHttpResponse(this);

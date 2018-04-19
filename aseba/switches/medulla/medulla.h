@@ -33,7 +33,7 @@
 #include "common/msg/NodesManager.h"
 #include "compiler/compiler.h"
 
-typedef QList<qint16> Values;
+using Values = QList<qint16>;
 
 namespace Aseba {
 /**
@@ -115,8 +115,8 @@ public slots:
     void PingNetwork();
 
 protected:
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
     QDBusConnection DBusConnectionBus() const;
 
 protected:
@@ -126,7 +126,7 @@ protected:
     NodesNamesMap nodesNames;
     typedef QMap<QString, VariablesMap> UserDefinedVariablesMap;
     UserDefinedVariablesMap userDefinedVariablesMap;
-    typedef QList<RequestData*> RequestsList;
+    using RequestsList = QList<RequestData*>;
     RequestsList pendingReads;
     typedef QMultiMap<uint16_t, EventFilterInterface*> EventsFiltersMap;
     EventsFiltersMap eventsFilters;
@@ -159,20 +159,20 @@ public:
         @param message aseba message to send
         @param sourceStream originate of the message, if from Dashel.
     */
-    void sendMessage(const Message* message, const Dashel::Stream* sourceStream = 0);
+    void sendMessage(const Message* message, const Dashel::Stream* sourceStream = nullptr);
     /*! Sends a message to Dashel peers.
         Convenience overload
     */
-    void sendMessage(const Message& message, const Dashel::Stream* sourceStream = 0);
+    void sendMessage(const Message& message, const Dashel::Stream* sourceStream = nullptr);
 
 signals:
     void messageAvailable(Message* message, const Dashel::Stream* sourceStream);
 
 private:
-    virtual void run();
-    virtual void connectionCreated(Dashel::Stream* stream);
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
+    void run() override;
+    void connectionCreated(Dashel::Stream* stream) override;
+    void incomingData(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
 
 private:
     bool verbose;  //!< should we print a notification on each message
@@ -182,8 +182,8 @@ private:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
-Q_DECLARE_METATYPE(Values);
+Q_DECLARE_METATYPE(Values)
 
 #endif

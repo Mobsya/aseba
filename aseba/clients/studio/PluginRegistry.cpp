@@ -57,7 +57,7 @@ void NodeToolRegistrar::reg(const QString& name, const ProductId pid, const Crea
 
 //! Update tool list with onse for given pid
 void NodeToolRegistrar::update(const ProductId pid, NodeTab* node, NodeToolInterfaces& tools) const {
-    typedef PidCreatorMap::const_iterator ConstIt;
+    using ConstIt = PidCreatorMap::const_iterator;
     ConstIt it(pidCreators.find(pid));
     while(it != pidCreators.end() && it.key() == pid) {
         const QString& name(it.value().second);
@@ -74,7 +74,7 @@ void NodeToolRegistrar::update(const ProductId pid, NodeTab* node, NodeToolInter
 void NodeToolRegistrar::update(const QString& name, NodeTab* node, NodeToolInterfaces& tools) const {
     if(tools.containsNamed(name))
         return;
-    typedef NamedCreatorMap::const_iterator ConstIt;
+    using ConstIt = NamedCreatorMap::const_iterator;
     ConstIt it(namedCreators.find(name));
     if(it == namedCreators.end())
         return;

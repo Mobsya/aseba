@@ -40,7 +40,7 @@ namespace ThymioVPL {
         new QGraphicsSvgItem(":/images/vpl_background_motor.svgz", this);
 
         for(int i = 0; i < 2; i++) {
-            QSlider* s = new QSlider(Qt::Vertical);
+            auto* s = new QSlider(Qt::Vertical);
             s->setRange(-10, 10);
             s->setStyleSheet("QSlider { border: 0px; padding: 0px; background: transparent; }"
                              "QSlider::groove:vertical { "
@@ -79,7 +79,7 @@ namespace ThymioVPL {
         connect(timer, SIGNAL(frameChanged(int)), SLOT(frameChanged(int)));
     }
 
-    MoveActionBlock::~MoveActionBlock() {}
+    MoveActionBlock::~MoveActionBlock() = default;
 
     void MoveActionBlock::frameChanged(int frame) {
         qreal pt[2];
@@ -125,7 +125,7 @@ namespace ThymioVPL {
         const char* sliderColors[] = {"FF0000", "00FF00", "0000FF"};
 
         for(unsigned i = 0; i < 3; i++) {
-            QSlider* s = new QSlider(Qt::Horizontal);
+            auto* s = new QSlider(Qt::Horizontal);
             s->setRange(0, 32);
             s->setStyleSheet(QString("QSlider { border: 0px; padding: 0px; }"
                                      "QSlider::groove:horizontal { "

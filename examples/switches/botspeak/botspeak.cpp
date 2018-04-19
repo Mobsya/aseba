@@ -24,6 +24,7 @@
 #include <functional>
 #include <cstdlib>
 #include <cctype>
+#include <utility>
 #include "botspeak.h"
 #include "common/utils/utils.h"
 #include "transport/dashel_plugins/dashel-plugins.h"
@@ -132,9 +133,9 @@ bool BotSpeakBridge::Value::update(BotSpeakBridge* bridge, unsigned addr, int va
     return false;
 }
 
-BotSpeakBridge::Operation::Operation(BotSpeakBridge* bridge, const std::string& op, const std::string& lhs,
+BotSpeakBridge::Operation::Operation(BotSpeakBridge* bridge, std::string op, const std::string& lhs,
                                      const std::string& rhs)
-    : op(op), lhs(bridge, lhs), rhs(bridge, rhs) {}
+    : op(std::move(op)), lhs(bridge, lhs), rhs(bridge, rhs) {}
 
 //! Update operation, exec if ready, return whether was executed
 bool BotSpeakBridge::Operation::update(BotSpeakBridge* bridge, unsigned addr, int val) {
@@ -167,8 +168,8 @@ void BotSpeakBridge::Operation::exec(BotSpeakBridge* bridge) {
 
 
 BotSpeakBridge::BotSpeakBridge(unsigned botSpeakPort, const char* asebaTarget)
-    : botSpeakStream(0)
-    , asebaStream(0)
+    : botSpeakStream(nullptr)
+    , asebaStream(nullptr)
     , nodeId(0)
     , freeVariableIndex(0)
     , recordScript(false)
@@ -226,11 +227,11 @@ void BotSpeakBridge::connectionCreated(Dashel::Stream* stream) {
 
 void BotSpeakBridge::connectionClosed(Stream* stream, bool abnormal) {
     if(stream == asebaStream) {
-        asebaStream = 0;
+        asebaStream = nullptr;
         cout << "Connection closed to Aseba target" << endl;
         stop();
     } else if(stream == botSpeakStream) {
-        botSpeakStream = 0;
+        botSpeakStream = nullptr;
         cout << "Connection closed to botspeak client" << endl;
     } else
         abort();
@@ -312,7 +313,7 @@ void BotSpeakBridge::incomingAsebaData(Stream* stream) {
                 cout << "Execution completed" << endl;
             if(runAndWait)
                 outputBotspeak("Done");
-            runAndWait = 0;
+            runAndWait = false;
         } else if(userMsg->type == eventId(L"running_ping")) {
             if(verbose)
                 cout << "." << endl;
@@ -454,7 +455,7 @@ void BotSpeakBridge::compileAndRunScript() {
     }
     if(verbose) {
         cout << "Found " << splits.size() + 1 << " basic blocs starting at lines 0 ";
-        for(set<unsigned>::const_iterator it(splits.begin()); it != splits.end(); ++it)
+        for(auto it(splits.begin()); it != splits.end(); ++it)
             cout << *it << " ";
         cout << endl;
     }
@@ -463,7 +464,7 @@ void BotSpeakBridge::compileAndRunScript() {
     vector<unsigned> blocToLineTable(script.size(), 0);
     unsigned line(0);
     unsigned bb(0);
-    for(set<unsigned>::const_iterator it(splits.begin()); it != splits.end(); ++it) {
+    for(auto it(splits.begin()); it != splits.end(); ++it) {
         while(line < *it)
             blocToLineTable[line++] = bb;
         ++bb;
@@ -491,7 +492,7 @@ void BotSpeakBridge::compileAndRunScript() {
          args.at(1))
 
     // subroutines for basic blocks
-    set<unsigned>::const_iterator bbIt(splits.begin());
+    auto bbIt(splits.begin());
     asebaSource += L"sub bb0\n";
     bb = 0;
     bool nextBBDefined(false);

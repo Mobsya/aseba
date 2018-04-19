@@ -45,7 +45,7 @@ class TargetVariablesModel;
 //! must use the method of a subclass of this class. This class interfaces to a specific node
 struct DevelopmentEnvironmentInterface {
     //! Virtual destructor
-    virtual ~DevelopmentEnvironmentInterface() {}
+    virtual ~DevelopmentEnvironmentInterface() = default;
     //! Return the target Aseba network
     virtual Target* getTarget() = 0;
     //! Return the node ID of the node this plugin talks to
@@ -82,7 +82,7 @@ struct NodeToolInterface {
     typedef QPair<QString, QDomDocument> SavedContent;
     QString name;  //!< name of the interface taken from the registrar
 
-    virtual ~NodeToolInterface() {}
+    virtual ~NodeToolInterface() = default;
 
     virtual void aboutToLoad(){};
     virtual void loadFromDom(const QDomDocument& content, bool fromFile){};

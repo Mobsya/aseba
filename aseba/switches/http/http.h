@@ -51,9 +51,9 @@ class HttpRequest;
 //! HTTP interface for aseba network
 class HttpInterface : public Dashel::Hub, public Aseba::NodesManager {
 public:
-    typedef std::vector<std::string> strings;
-    typedef std::list<HttpRequest*> ResponseQueue;
-    typedef std::set<HttpRequest*> ResponseSet;
+    using strings = std::vector<std::string>;
+    using ResponseQueue = std::list<HttpRequest*>;
+    using ResponseSet = std::set<HttpRequest*>;
     typedef std::pair<unsigned, unsigned> VariableAddress;
     typedef std::map<uint16_t, uint16_t> NodeIdSubstitution;
     typedef std::map<std::string, Aseba::VariablesMap> NodeNameVariablesMap;
@@ -63,7 +63,7 @@ public:
     typedef std::map<Dashel::Stream*, HttpRequest> StreamRequestMap;
     typedef std::map<HttpRequest*, std::set<std::string> > StreamEventSubscriptionMap;
     typedef std::map<Dashel::Stream*, std::set<unsigned> > StreamNodeIdMap;
-    typedef std::set<Dashel::Stream*> StreamSet;
+    using StreamSet = std::set<Dashel::Stream*>;
     typedef std::map<Dashel::Stream*, NodeIdSubstitution> StreamNodeIdSubstitutionMap;
     typedef std::map<unsigned, Aseba::CommonDefinitions> NodeIdCommonDefinitionsMap;
     typedef std::map<unsigned, std::wstring> NodeIdProgramMap;
@@ -107,9 +107,8 @@ protected:
 
 public:
     // default values needed for unit testing
-    HttpInterface(const strings& targets = std::vector<std::string>(), const std::string& http_port = "3000",
-                  const std::string& aseba_port = "33332", const int iterations = -1, bool dump = false,
-                  bool verbose = false);
+    HttpInterface(const strings& targets = std::vector<std::string>(), std::string http_port = "3000",
+                  std::string aseba_port = "33332", const int iterations = -1, bool dump = false, bool verbose = false);
     // virtual void run();
     virtual void broadcastGetDescription();
     virtual void evNodes(HttpRequest* req, strings& args);
@@ -135,11 +134,11 @@ public:
 
 protected:
     /* // reimplemented from parent classes */
-    virtual void connectionCreated(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void connectionCreated(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+    void incomingData(Dashel::Stream* stream) override;
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
     // helpers for standard methods
     virtual void incomingDataHTTP(Dashel::Stream* stream);
     virtual void incomingDataAseba(Dashel::Stream* stream);
@@ -171,7 +170,7 @@ protected:
 
 class HttpRequest {
 public:
-    typedef std::vector<std::string> strings;
+    using strings = std::vector<std::string>;
     std::string method;
     std::string uri;
     std::string protocol_version;
@@ -193,7 +192,8 @@ protected:
 
 public:
     HttpRequest();
-    virtual ~HttpRequest(){};
+    virtual ~HttpRequest() = default;
+
     virtual bool initialize(Dashel::Stream* stream);                                 //
     virtual bool initialize(std::string const& start_line, Dashel::Stream* stream);  //
     virtual bool initialize(std::string const& method, std::string const& uri, std::string const& _protocol_version,
@@ -211,6 +211,6 @@ public:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif

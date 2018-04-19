@@ -52,7 +52,7 @@ static void initTexturesResources() {
 //! Asserts a dynamic cast.	Similar to the one in boost/cast.hpp
 template <typename Derived, typename Base>
 inline Derived polymorphic_downcast(Base base) {
-    Derived derived = dynamic_cast<Derived>(base);
+    auto derived = dynamic_cast<Derived>(base);
     assert(derived);
     return derived;
 }
@@ -71,7 +71,7 @@ static AsebaNativeFunctionPointer nativeFunctions[] = {
     ASEBA_NATIVES_STD_FUNCTIONS,
 };
 
-static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, 0};
+static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, nullptr};
 
 // changed by selection dialog
 static QString localName;
@@ -125,7 +125,7 @@ public:
         , score(0)
         , diedAnimation(-1) {}
 
-    virtual void controlStep(double dt) {
+    void controlStep(double dt) override {
         EPuck::controlStep(dt);
 
         energy -= dt * EPUCK_ENERGY_CONSUMPTION_RATE;
@@ -182,7 +182,7 @@ public:
     std::valarray<uint8_t> lastMessageData;
 
 public:
-    AsebaFeedableEPuck(int id) : stream(0) {
+    AsebaFeedableEPuck(int id) : stream(nullptr) {
         asebaEPuckMap[&vm] = this;
 
         vm.nodeId = 1;
@@ -202,7 +202,7 @@ public:
         try {
             Dashel::Hub::connect(QString("tcpin:port=%1").arg(port).toStdString());
         } catch(Dashel::DashelException e) {
-            QMessageBox::critical(0, QApplication::tr("Aseba Challenge"),
+            QMessageBox::critical(nullptr, QApplication::tr("Aseba Challenge"),
                                   QApplication::tr("Cannot create listening port %0: %1").arg(port).arg(e.what()));
             abort();
         }
@@ -213,12 +213,12 @@ public:
         variables.colorG = 100;
     }
 
-    virtual ~AsebaFeedableEPuck() {
+    ~AsebaFeedableEPuck() override {
         asebaEPuckMap.remove(&vm);
     }
 
 public:
-    void connectionCreated(Dashel::Stream* stream) {
+    void connectionCreated(Dashel::Stream* stream) override {
         std::string targetName = stream->getTargetName();
         if(targetName.substr(0, targetName.find_first_of(':')) == "tcp") {
             // schedule current stream for disconnection
@@ -231,7 +231,7 @@ public:
         }
     }
 
-    void incomingData(Dashel::Stream* stream) {
+    void incomingData(Dashel::Stream* stream) override {
         uint16_t temp;
         uint16_t len;
 
@@ -248,9 +248,9 @@ public:
             qDebug() << this << " : Non debug event dropped.";
     }
 
-    void connectionClosed(Dashel::Stream* stream, bool abnormal) {
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override {
         if(stream == this->stream) {
-            this->stream = 0;
+            this->stream = nullptr;
             // clear breakpoints
             vm.breakpointsCount = 0;
         }
@@ -269,7 +269,7 @@ public:
         return v;
     }
 
-    void controlStep(double dt) {
+    void controlStep(double dt) override {
 // get physical variables
 #ifdef SIMPLIFIED_EPUCK
         variables.dist_A[0] = static_cast<int16_t>(infraredSensor0.getDist());
@@ -363,9 +363,9 @@ public:
         alive = true;
     }
 
-    void objectStep(double dt, World* w, PhysicalObject* po) {
+    void objectStep(double dt, World* w, PhysicalObject* po) override {
         if(alive) {
-            FeedableEPuck* epuck = dynamic_cast<FeedableEPuck*>(po);
+            auto* epuck = dynamic_cast<FeedableEPuck*>(po);
             if(epuck && energy > 0) {
                 double dEnergy = dt * EPUCK_FEEDER_D_ENERGY;
                 epuck->energy += dEnergy;
@@ -376,7 +376,7 @@ public:
         }
     }
 
-    void finalize(double dt, World* w) {
+    void finalize(double dt, World* w) override {
         age += dt;
         if(alive) {
             if((energy < EPUCK_FEEDER_THRESHOLD_SHOW) && (energy + dt >= EPUCK_FEEDER_THRESHOLD_SHOW))
@@ -429,15 +429,15 @@ public:
         lists[5] = GenFeederRing();
     }
 
-    void cleanup(ViewerWidget* viewer) {
+    void cleanup(ViewerWidget* viewer) override {
         for(int i = 0; i < textures.size(); i++)
             viewer->deleteTexture(textures[i]);
         for(int i = 0; i < lists.size(); i++)
             glDeleteLists(lists[i], 1);
     }
 
-    virtual void draw(PhysicalObject* object) const {
-        EPuckFeeder* feeder = polymorphic_downcast<EPuckFeeder*>(object);
+    void draw(PhysicalObject* object) const override {
+        auto* feeder = polymorphic_downcast<EPuckFeeder*>(object);
         double age = feeder->feeding.age;
         bool alive = feeder->feeding.alive;
 
@@ -476,7 +476,7 @@ public:
 
         // food
         glColor3d(0.3, 0.3, 1);
-        int foodAmount = (int)((feeder->feeding.energy * 5) / (EPUCK_FEEDER_MAX_ENERGY + 0.001));
+        auto foodAmount = (int)((feeder->feeding.energy * 5) / (EPUCK_FEEDER_MAX_ENERGY + 0.001));
         assert(foodAmount <= 4);
         for(int i = 0; i < foodAmount; i++)
             glCallList(lists[1 + i]);
@@ -517,7 +517,7 @@ public:
         glDisable(GL_TEXTURE_2D);
     }
 
-    virtual void drawSpecial(PhysicalObject* object, int param) const {
+    void drawSpecial(PhysicalObject* object, int param) const override {
         /*glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glDisable(GL_TEXTURE_2D);
@@ -554,7 +554,7 @@ void ChallengeViewer::addNewRobot() {
         QInputDialog::getText(this, tr("Add a new robot"), tr("Robot name:"), QLineEdit::Normal, "", &ok);
     if(ok && !eventName.isEmpty()) {
         // TODO change ePuckCount to port
-        Enki::AsebaFeedableEPuck* epuck = new Enki::AsebaFeedableEPuck(ePuckCount++);
+        auto* epuck = new Enki::AsebaFeedableEPuck(ePuckCount++);
         epuck->pos.x = Enki::random.getRange(120) + 10;
         epuck->pos.y = Enki::random.getRange(120) + 10;
         epuck->name = eventName;
@@ -565,13 +565,13 @@ void ChallengeViewer::addNewRobot() {
 void ChallengeViewer::removeRobot() {
     std::set<AsebaFeedableEPuck*> toFree;
     // TODO: for now, remove all robots; later, show a gui box to choose which robot to remove
-    for(World::ObjectsIterator it = world->objects.begin(); it != world->objects.end(); ++it) {
-        AsebaFeedableEPuck* epuck = dynamic_cast<AsebaFeedableEPuck*>(*it);
+    for(auto it = world->objects.begin(); it != world->objects.end(); ++it) {
+        auto* epuck = dynamic_cast<AsebaFeedableEPuck*>(*it);
         if(epuck)
             toFree.insert(epuck);
     }
 
-    for(std::set<AsebaFeedableEPuck*>::iterator it = toFree.begin(); it != toFree.end(); ++it) {
+    for(auto it = toFree.begin(); it != toFree.end(); ++it) {
         world->removeObject(*it);
         delete *it;
     }
@@ -665,12 +665,12 @@ void ChallengeViewer::renderObjectsTypesHook() {
 }
 
 void ChallengeViewer::displayObjectHook(PhysicalObject* object) {
-    FeedableEPuck* epuck = dynamic_cast<FeedableEPuck*>(object);
+    auto* epuck = dynamic_cast<FeedableEPuck*>(object);
     if((epuck) && (epuck->diedAnimation >= 0)) {
-        ViewerUserData* userData = dynamic_cast<ViewerUserData*>(epuck->userData);
+        auto* userData = dynamic_cast<ViewerUserData*>(epuck->userData);
         assert(userData);
 
-        double dist = (double)(DEATH_ANIMATION_STEPS - epuck->diedAnimation);
+        auto dist = (double)(DEATH_ANIMATION_STEPS - epuck->diedAnimation);
         double coeff = (double)(epuck->diedAnimation) / DEATH_ANIMATION_STEPS;
         glColor3d(0.2 * coeff, 0.2 * coeff, 0.2 * coeff);
         glTranslated(0, 0, 2. * dist);
@@ -685,8 +685,8 @@ void ChallengeViewer::sceneCompletedHook() {
     // create a map with names and scores
     qglColor(Qt::black);
     QMultiMap<int, QStringList> scores;
-    for(World::ObjectsIterator it = world->objects.begin(); it != world->objects.end(); ++it) {
-        AsebaFeedableEPuck* epuck = dynamic_cast<AsebaFeedableEPuck*>(*it);
+    for(auto it = world->objects.begin(); it != world->objects.end(); ++it) {
+        auto* epuck = dynamic_cast<AsebaFeedableEPuck*>(*it);
         if(epuck) {
             QStringList entry;
             entry << epuck->name << QString::number(epuck->port) << QString::number((int)epuck->energy)
@@ -839,8 +839,8 @@ ChallengeApplication::ChallengeApplication(World* world, int ePuckCount) : viewe
     connect(this, SIGNAL(windowClosed()), helpViewer, SLOT(close()));
 
     // main windows layout
-    QVBoxLayout* vLayout = new QVBoxLayout;
-    QHBoxLayout* hLayout = new QHBoxLayout;
+    auto* vLayout = new QVBoxLayout;
+    auto* hLayout = new QHBoxLayout;
 
     hLayout->addStretch();
 
@@ -848,7 +848,7 @@ ChallengeApplication::ChallengeApplication(World* world, int ePuckCount) : viewe
     QFrame* menuFrame = new QFrame();
     // menuFrame->setFrameStyle(QFrame::Box | QFrame::Plain);
     menuFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
-    QHBoxLayout* frameLayout = new QHBoxLayout;
+    auto* frameLayout = new QHBoxLayout;
     QPushButton* addRobotButton = new QPushButton(tr("Add a new robot"));
     frameLayout->addWidget(addRobotButton);
     QPushButton* delRobotButton = new QPushButton(tr("Remove all robots"));
@@ -1004,7 +1004,7 @@ extern "C" void AsebaAssert(AsebaVMState* vm, AsebaAssertReason reason) {
 
 
 LanguageSelectionDialog::LanguageSelectionDialog() {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
 
     QLabel* text = new QLabel(tr("Please choose your language"));
     layout->addWidget(text);
@@ -1094,7 +1094,7 @@ int main(int argc, char* argv[]) {
     // Add e-puck
     int ePuckCount = 0;
     for(int i = 1; i < argc; i++) {
-        Enki::AsebaFeedableEPuck* epuck = new Enki::AsebaFeedableEPuck(i - 1);
+        auto* epuck = new Enki::AsebaFeedableEPuck(i - 1);
         epuck->pos.x = Enki::random.getRange(120) + 10;
         epuck->pos.y = Enki::random.getRange(120) + 10;
         epuck->name = argv[i];

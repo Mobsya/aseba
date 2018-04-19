@@ -7,16 +7,16 @@
 
     This example is based on a first work of Olivier Marti (2010 - 2011).
     Stripped down & cleaned version by Florian Vaussard (2013).
-    
+    
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
     by the Free Software Foundation, version 3 of the License.
-    
+    
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+    
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -27,9 +27,9 @@
 #include <QDebug>
 
 
-DashelInterface::DashelInterface() : stream(0), isRunning(false), isConnected(false) {}
+DashelInterface::DashelInterface() : stream(nullptr), isRunning(false), isConnected(false) {}
 
-DashelInterface::~DashelInterface() {}
+DashelInterface::~DashelInterface() = default;
 
 // Connect to any kind of valid Dashel target (TCP, serial, CAN,...)
 void DashelInterface::connectAseba(const QString& dashelTarget) {
@@ -54,7 +54,7 @@ void DashelInterface::disconnectAseba() {
 // Consider _only_ UserMessage. Discard other types of messages (debug, etc.)
 void DashelInterface::incomingData(Dashel::Stream* stream) {
     Aseba::Message* message = Aseba::Message::receive(stream);
-    Aseba::UserMessage* userMessage = dynamic_cast<Aseba::UserMessage*>(message);
+    auto* userMessage = dynamic_cast<Aseba::UserMessage*>(message);
 
     if(userMessage)
         emit messageAvailable(userMessage);
@@ -80,12 +80,12 @@ void DashelInterface::connectionClosed(Dashel::Stream* stream, bool abnormal) {
     Q_UNUSED(stream);
     Q_UNUSED(abnormal);
     emit dashelDisconnection();
-    this->stream = 0;
+    this->stream = nullptr;
 }
 
 // internals
 void DashelInterface::run() {
-    while(1) {
+    while(true) {
         try {
             stream = Dashel::Hub::connect(dashelParams.toStdString());
 

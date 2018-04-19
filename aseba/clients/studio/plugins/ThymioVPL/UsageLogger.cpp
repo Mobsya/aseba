@@ -46,7 +46,7 @@ namespace ThymioVPL {
             QString filePath = homePath + "/" + groupName + "_" + getTimeStampString() + ".log";
 
             fileOut = new ofstream(filePath.toUtf8().constData(), ios::app | ios::binary);
-            scene = 0;
+            scene = nullptr;
 
             connect(&signalMapper, SIGNAL(mapped(unsigned int, QObject*, QObject*)), this,
                     SLOT(logGUIEvents(unsigned int, QObject*, QObject*)));
@@ -56,7 +56,7 @@ namespace ThymioVPL {
 
     UsageLogger::~UsageLogger() {
         delete action;
-        if(fileOut != 0) {
+        if(fileOut != nullptr) {
             fileOut->close();
             delete fileOut;
         }
@@ -70,7 +70,7 @@ namespace ThymioVPL {
         QSettings settings;
         groupName = settings.value("logging/groupname", "group").toString();
         bool ok;
-        QString text = QInputDialog::getText(0, tr("Login"), tr("Please enter your user or group name:"),
+        QString text = QInputDialog::getText(nullptr, tr("Login"), tr("Please enter your user or group name:"),
                                              QLineEdit::Normal, groupName, &ok);
         if(ok && !text.isEmpty()) {
             groupName = text;
@@ -82,7 +82,7 @@ namespace ThymioVPL {
         int row = -1;
         QGraphicsItem* parent = b->parentItem();
         if(parent) {
-            EventActionsSet* eas = dynamic_cast<EventActionsSet*>(parent);
+            auto* eas = dynamic_cast<EventActionsSet*>(parent);
             if(eas) {
                 row = eas->getRow();
             }
@@ -100,22 +100,22 @@ namespace ThymioVPL {
     }
 
     void UsageLogger::logGUIEvents(unsigned int senderId, QObject* originalSender, QObject* logicalParent) {
-        if(originalSender == 0) {
+        if(originalSender == nullptr) {
             return;
         }
 
-        Block* b = dynamic_cast<Block*>(logicalParent);
-        if(b != 0) {
+        auto* b = dynamic_cast<Block*>(logicalParent);
+        if(b != nullptr) {
             int row = getRow(b);
 
-            QSlider* slider = dynamic_cast<QSlider*>(originalSender);
-            GeometryShapeButton* button = dynamic_cast<GeometryShapeButton*>(originalSender);
+            auto* slider = dynamic_cast<QSlider*>(originalSender);
+            auto* button = dynamic_cast<GeometryShapeButton*>(originalSender);
 
-            if(slider != 0) {
+            if(slider != nullptr) {
                 int sliderValue = slider->value();
                 logBlockAction(SLIDER, b->getName(), b->getType(), row, senderId, &sliderValue, nullptr, nullptr,
                                nullptr);
-            } else if(button != 0) {
+            } else if(button != nullptr) {
                 int buttonValue = button->getValue();
                 logBlockAction(BUTTON, b->getName(), b->getType(), row, senderId, nullptr, nullptr, nullptr,
                                &buttonValue);
@@ -128,7 +128,7 @@ namespace ThymioVPL {
                                      int* sliderValue, unsigned int* soundValue, unsigned int* timerValue,
                                      int* buttonValue) {
         Action* wrapper = getActionWithCurrentState();
-        BlockAction* a = new BlockAction();
+        auto* a = new BlockAction();
 
         a->set_type(type);
         a->set_blockname(blockName.toUtf8().constData());
@@ -170,7 +170,7 @@ namespace ThymioVPL {
 
     void UsageLogger::logSetAction(RowAction_ActionType type, int row) {
         Action* wrapper = getActionWithCurrentState();
-        RowAction* rowAction = new RowAction();
+        auto* rowAction = new RowAction();
         rowAction->set_row(row);
         rowAction->set_type(type);
 
@@ -181,7 +181,7 @@ namespace ThymioVPL {
 
     void UsageLogger::logSetAdvanced(bool advanced) {
         Action* wrapper = getActionWithCurrentState();
-        AdvancedModeAction* a = new AdvancedModeAction();
+        auto* a = new AdvancedModeAction();
         a->set_isadvanced(advanced);
 
         wrapper->set_type(Action_ActionType_ADVANCED_MODE);
@@ -198,7 +198,7 @@ namespace ThymioVPL {
     void UsageLogger::logAddBlock(BlockType type, int row, Block* block) {
         Action* wrapper = getActionWithCurrentState();
 
-        AddBlockAction* a = new AddBlockAction();
+        auto* a = new AddBlockAction();
         a->set_type(type);
         a->set_blockname(block->getName().toUtf8().constData());
         a->set_blocktype(block->getType().toUtf8().constData());
@@ -210,7 +210,7 @@ namespace ThymioVPL {
 
     void UsageLogger::logEventBlockMode(QString name, QString type, int mode) {
         Action* wrapper = getActionWithCurrentState();
-        AccBlockModeAction* a = new AccBlockModeAction();
+        auto* a = new AccBlockModeAction();
 
         a->set_blockname(name.toUtf8().constData());
         a->set_blocktype(type.toUtf8().constData());
@@ -223,7 +223,7 @@ namespace ThymioVPL {
     void UsageLogger::logMenuAction(MenuEntry entry) {
         Action* wrapper = getActionWithCurrentState();
 
-        MenuAction* a = new MenuAction();
+        auto* a = new MenuAction();
         a->set_entry(entry);
         wrapper->set_type(Action_ActionType_MENU);
         wrapper->set_allocated_menuaction(a);
@@ -264,19 +264,19 @@ namespace ThymioVPL {
                                      const char* blockName, const char* blockType) {
         Action* wrapper = getActionWithCurrentState();
 
-        MouseAction* a = new MouseAction();
+        auto* a = new MouseAction();
         a->set_type(type);
         a->set_button(button);
         a->set_xpos(xPos);
         a->set_ypos(yPos);
 
-        if(row != 0) {
+        if(row != nullptr) {
             a->set_row(*row);
         }
-        if(blockName != 0) {
+        if(blockName != nullptr) {
             a->set_blockname(blockName);
         }
-        if(blockType != 0) {
+        if(blockType != nullptr) {
             a->set_blocktype(blockType);
         }
 
@@ -315,7 +315,7 @@ namespace ThymioVPL {
     }
     void UsageLogger::logUserEvent(unsigned id, const VariablesDataVector& data) {
         Action* wrapper = getActionWithCurrentState();
-        DeviceAction* a = new DeviceAction();
+        auto* a = new DeviceAction();
         a->set_id(id);
         for(unsigned i = 0; i < data.size(); i++) {
             a->add_variable(data[i]);
@@ -354,7 +354,7 @@ namespace ThymioVPL {
 
 
         Action* wrapper = getActionWithCurrentState();
-        TabletAction* a = new TabletAction();
+        auto* a = new TabletAction();
 
         a->set_camerax(cam_x);
         a->set_cameray(cam_y);
@@ -390,11 +390,11 @@ namespace ThymioVPL {
 
     Action* UsageLogger::getActionWithCurrentState() {
         action->Clear();
-        if(scene != 0) {
+        if(scene != nullptr) {
             action->set_programstateasxml(scene->toString().toUtf8().constData());
         }
 
-        TimeStamp* t = new TimeStamp();
+        auto* t = new TimeStamp();
         t->set_timestamp(time(nullptr));
         t->set_milliseconds(getMilliseconds());
         action->set_allocated_time(t);

@@ -153,7 +153,7 @@ public:
     }
 
 private:
-    int is_packet_tx(void) {
+    int is_packet_tx() {
         int packet_len;
         if(tx_len < 6)
             return 0;
@@ -181,7 +181,7 @@ private:
 
             if(ret != sizeof(*f))
                 throw DashelException(DashelException::IOError, 0, "Write error", this);
-        } while(0);
+        } while(false);
     }
 
     void send_aseba_packet() {
@@ -226,9 +226,9 @@ private:
     }
 
 public:
-    virtual void write(const void* data, const size_t size) {
+    void write(const void* data, const size_t size) override {
         size_t s = size;
-        const unsigned char* d = (const unsigned char*)data;
+        const auto* d = (const unsigned char*)data;
         while(s--) {
             tx_buffer[tx_len++] = *d++;
             if(is_packet_tx())
@@ -236,7 +236,7 @@ public:
         }
     }
 
-    virtual void flush() {}
+    void flush() override {}
 
 private:
     void pack_fifo() {
@@ -249,7 +249,7 @@ private:
     // 1 if defragment was sucessfull.
     // 0 if not,
     // -1 if needs to recall (one packet was dropped because not full)
-    int defragment(void) {
+    int defragment() {
         int i;
         int stopId;
         int stopPos = -1;
@@ -289,7 +289,7 @@ private:
         rx_buffer[2] = stopId;
         rx_buffer[3] = 0;
         rx_len = 4;
-        while(1) {
+        while(true) {
             if(rx_fifo[i].used && CANID_TO_ID(rx_fifo[i].f.can_id) == stopId) {
                 if(rx_len == 4 && CANID_TO_TYPE(rx_fifo[i].f.can_id) != TYPE_PACKET_START)
                     // We got a stop, but not a start, let's ignore this packet
@@ -326,9 +326,9 @@ private:
         return i == rx_consume;
     }
 
-    void read_iface(void) {
+    void read_iface() {
         int def;
-        while(1) {
+        while(true) {
             while((def = defragment()) == -1)
                 ;
             if(def == 1)
@@ -342,7 +342,7 @@ private:
 
             for(cmsg = CMSG_FIRSTHDR(&msg); cmsg && (cmsg->cmsg_level == SOL_SOCKET); cmsg = CMSG_NXTHDR(&msg, cmsg)) {
                 if(cmsg->cmsg_type == SO_RXQ_OVFL) {
-                    __u32* dropcnt = (__u32*)CMSG_DATA(cmsg);
+                    auto* dropcnt = (__u32*)CMSG_DATA(cmsg);
                     if(*dropcnt)
                         throw DashelException(DashelException::IOError, 0, "Packet dropped", this);
                 }
@@ -361,8 +361,8 @@ private:
     }
 
 public:
-    virtual void read(void* data, size_t size) {
-        unsigned char* d = (unsigned char*)data;
+    void read(void* data, size_t size) override {
+        auto* d = (unsigned char*)data;
         while(size) {
             if(rx_len) {
                 *d++ = rx_buffer[rx_p++];
@@ -374,11 +374,11 @@ public:
         }
     }
 
-    virtual bool receiveDataAndCheckDisconnection() {
+    bool receiveDataAndCheckDisconnection() override {
         return false;
     }
 
-    virtual bool isDataInRecvBuffer() const {
+    bool isDataInRecvBuffer() const override {
         struct can_frame f;
         if(rx_len || rx_insert != rx_consume)
             return true;

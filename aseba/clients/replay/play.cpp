@@ -41,7 +41,7 @@ using namespace std;
 //! This class replay saved user messages
 class Player : public Hub {
 private:
-    typedef deque<string> StringList;
+    using StringList = deque<string>;
 
     bool respectTimings;
     int speedFactor;
@@ -86,10 +86,10 @@ public:
         UnifiedTime timeStamp(UnifiedTime::fromRawTimeString(tokenizedLine.front()));
         tokenizedLine.pop_front();
 
-        const uint16_t source = strtol(tokenizedLine.front().c_str(), 0, 16);
+        const uint16_t source = strtol(tokenizedLine.front().c_str(), nullptr, 16);
         tokenizedLine.pop_front();
 
-        const uint16_t type = strtol(tokenizedLine.front().c_str(), 0, 16);
+        const uint16_t type = strtol(tokenizedLine.front().c_str(), nullptr, 16);
         tokenizedLine.pop_front();
 
         Message::SerializationBuffer buffer;
@@ -97,7 +97,7 @@ public:
         tokenizedLine.pop_front();
 
         while(!tokenizedLine.empty()) {
-            buffer.rawData.push_back(strtol(tokenizedLine.front().c_str(), 0, 16));
+            buffer.rawData.push_back(strtol(tokenizedLine.front().c_str(), nullptr, 16));
             tokenizedLine.pop_front();
         }
 
@@ -116,7 +116,7 @@ public:
         }
 
         // write message on all connected streams
-        for(StreamsSet::iterator it = dataStreams.begin(); it != dataStreams.end(); ++it) {
+        for(auto it = dataStreams.begin(); it != dataStreams.end(); ++it) {
             Stream* destStream(*it);
             if(destStream != in) {
                 message->serialize(destStream);
@@ -132,12 +132,12 @@ public:
     }
 
 protected:
-    void connectionCreated(Stream* stream) {
+    void connectionCreated(Stream* stream) override {
         // cerr << "got connection " << stream->getTargetName()  << endl;
     }
 
-    void incomingData(Stream* stream) {
-        char c(stream->read<char>());
+    void incomingData(Stream* stream) override {
+        auto c(stream->read<char>());
         if(stream == in) {
             if(c == '\n')
                 sendLine();
@@ -146,7 +146,7 @@ protected:
         }
     }
 
-    void connectionClosed(Stream* stream, bool abnormal) {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         if(stream == in)
             stop();
     }
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
     bool respectTimings = true;
     int speedFactor = 1;
     std::vector<std::string> targets;
-    const char* inputFile = 0;
+    const char* inputFile = nullptr;
 
     int argCounter = 1;
 

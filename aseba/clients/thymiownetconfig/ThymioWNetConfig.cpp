@@ -20,22 +20,22 @@
 
 class Hex16SpinBox : public QSpinBox {
 public:
-    Hex16SpinBox(QWidget* parent = 0) : QSpinBox(parent) {
+    Hex16SpinBox(QWidget* parent = nullptr) : QSpinBox(parent) {
         validator = new QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,4}"), this);
         setPrefix("0x");
         setValue(0);
     }
 
 protected:
-    QString textFromValue(int value) const {
+    QString textFromValue(int value) const override {
         return QString::number(value, 16).toUpper();
     }
 
-    int valueFromText(const QString& text) const {
-        return text.toInt(0, 16);
+    int valueFromText(const QString& text) const override {
+        return text.toInt(nullptr, 16);
     }
 
-    QValidator::State validate(QString& text, int& pos) const {
+    QValidator::State validate(QString& text, int& pos) const override {
         QString copy(text);
         if(copy.startsWith("0x"))
             copy.remove(0, 2);
@@ -74,10 +74,10 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     // Create the gui ...
     setWindowTitle(tr("Wireless Thymio Network Configurator"));
     setWindowIcon(QIcon(":/images/thymiownetconfig.svgz"));
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto* mainLayout = new QVBoxLayout(this);
 
     // image
-    QHBoxLayout* imageLayout = new QHBoxLayout();
+    auto* imageLayout = new QHBoxLayout();
     QLabel* image = new QLabel(this);
     QPixmap logo(":/images/thymiownetconfig.svgz");
     image->setPixmap(logo.scaledToWidth(384));
@@ -94,7 +94,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     channel0 = new QRadioButton(tr("0"));
     channel1 = new QRadioButton(tr("1"));
     channel2 = new QRadioButton(tr("2"));
-    QHBoxLayout* channelLayout = new QHBoxLayout();
+    auto* channelLayout = new QHBoxLayout();
     channelLayout->addWidget(new QLabel(tr("Channel:")));
     channelLayout->addStretch();
     channelLayout->addSpacing(10);
@@ -106,7 +106,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     // network identifier
     networkId = new Hex16SpinBox();
     networkId->setRange(1, 65534);
-    QHBoxLayout* networkIdLayout = new QHBoxLayout();
+    auto* networkIdLayout = new QHBoxLayout();
     networkIdLayout->addWidget(new QLabel(tr("Network identifier:")));
     networkIdLayout->addStretch();
     networkIdLayout->addSpacing(10);
@@ -116,7 +116,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     // network identifier
     nodeId = new Hex16SpinBox();
     nodeId->setRange(1, 65534);
-    QHBoxLayout* nodeIdLayout = new QHBoxLayout();
+    auto* nodeIdLayout = new QHBoxLayout();
     nodeIdLayout->addWidget(new QLabel(tr("Dongle node identifier:")));
     nodeIdLayout->addStretch();
     nodeIdLayout->addSpacing(10);
@@ -155,7 +155,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
             channel2->setChecked(true);
 
     } catch(Dashel::DashelException& e) {
-        QMessageBox::critical(0, tr("Connection error"),
+        QMessageBox::critical(nullptr, tr("Connection error"),
                               tr("<p><b>Cannot connect to dongle!</b></p><p>Make sure a Wireless "
                                  "Thymio dongle is connected!</p>"));
         return;
@@ -175,7 +175,7 @@ ThymioWNetConfigDialog::ThymioWNetConfigDialog(const std::string& target) : targ
     show();
 }
 
-ThymioWNetConfigDialog::~ThymioWNetConfigDialog() {}
+ThymioWNetConfigDialog::~ThymioWNetConfigDialog() = default;
 
 void ThymioWNetConfigDialog::updateSettings() {
     settings.panId = networkId->value();
@@ -218,7 +218,7 @@ void ThymioWNetConfigDialog::quit() {
     }
     close();
 }
-};  // namespace Aseba
+}  // namespace Aseba
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -235,7 +235,7 @@ int main(int argc, char* argv[]) {
     std::string target("ser:device=");
     bool thymioFound(false);
     bool thymiosFound(false);
-    for(Aseba::PortsMap::const_iterator it = ports.begin(); it != ports.end(); ++it) {
+    for(auto it = ports.begin(); it != ports.end(); ++it) {
         if((it->second.second.compare(0, 18, "Thymio-II Wireless") == 0) ||
            (it->second.second.compare(0, 18, "Thymio_II Wireless") == 0)) {
             if(thymioFound)
@@ -245,13 +245,13 @@ int main(int argc, char* argv[]) {
         }
     }
     if(!thymioFound) {
-        QMessageBox::critical(0, QApplication::tr("Wireless Thymio dongle not found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Wireless Thymio dongle not found"),
                               QApplication::tr("<p><b>Cannot find a Wireless Thymio dongle!</b></p><p>Plug a dongle "
                                                "into one of your USB ports and try again.</p>"));
         return 1;
     }
     if(thymiosFound) {
-        QMessageBox::critical(0, QApplication::tr("Multiple Wireless Thymio dongles found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Multiple Wireless Thymio dongles found"),
                               QApplication::tr("<p><b>More than one Wireless Thymio dongles found!</b></p><p>Plug a "
                                                "single dongle into your computer and try again.</p>"));
         return 2;

@@ -40,7 +40,7 @@ using namespace std;
 //! This class saves user messages
 class Recorder : public Hub {
 protected:
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         dumpTime(cout, true);
 
         // receive and deserialize message

@@ -53,13 +53,13 @@ private:
 
 public:
     EventDataWrapper(std::deque<double>& _x, std::deque<int16_t>& _y) : _x(_x), _y(_y) {}
-    virtual QRectF boundingRect() const {
+    QRectF boundingRect() const override {
         return qwtBoundingRect(*this);
     }
-    virtual QPointF sample(size_t i) const {
+    QPointF sample(size_t i) const override {
         return QPointF(_x[i], double(_y[i]));
     }
-    virtual size_t size() const {
+    size_t size() const override {
         return _x.size();
     }
 };
@@ -97,7 +97,7 @@ EventViewer::EventViewer(unsigned eventId, const QString& eventName, unsigned ev
     plot->setAxisTitle(plot->xBottom, tr("Time (seconds)"));
     plot->setAxisTitle(plot->yLeft, tr("Values"));
 
-    QwtLegend* legend = new QwtLegend;
+    auto* legend = new QwtLegend;
     // legend->setItemMode(QwtLegend::CheckableItem);
     plot->insertLegend(legend, QwtPlot::BottomLegend);
 
@@ -112,11 +112,11 @@ EventViewer::EventViewer(unsigned eventId, const QString& eventName, unsigned ev
         curve->setPen(QPen(QColor::fromHsv((i * 360) / values.size(), 255, 100), 2));
     }
 
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
     layout->addWidget(plot);
 
     // add control
-    QHBoxLayout* controlLayout = new QHBoxLayout;
+    auto* controlLayout = new QHBoxLayout;
 
     status = new QLabel(tr("Recording..."));
     controlLayout->addWidget(status);

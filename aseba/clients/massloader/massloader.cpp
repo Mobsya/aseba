@@ -33,6 +33,7 @@
 #include <QStringList>
 #include <QFile>
 #include <QDomDocument>
+#include <utility>
 
 namespace Aseba {
 using namespace Dashel;
@@ -45,18 +46,18 @@ protected:
     Stream* stream;
 
 public:
-    MassLoader(const QString& fileName, bool once) : fileName(fileName), once(once), stream(nullptr) {}
+    MassLoader(QString fileName, bool once) : fileName(std::move(fileName)), once(once), stream(nullptr) {}
     void loadToTarget(const std::string& target);
 
 protected:
     // from Hub
-    virtual void connectionCreated(Stream* stream);
-    virtual void incomingData(Stream* stream);
-    virtual void connectionClosed(Stream* stream, bool abnormal);
+    void connectionCreated(Stream* stream) override;
+    void incomingData(Stream* stream) override;
+    void connectionClosed(Stream* stream, bool abnormal) override;
 
     // from NodesManager
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
 
     // self
     void waitMs(int duration);
@@ -170,8 +171,8 @@ void MassLoader::nodeDescriptionReceived(unsigned nodeId) {
             QDomElement element = domNode.toElement();
             if(element.tagName() == "node") {
                 bool ok;
-                const unsigned nodeId(
-                    getNodeId(element.attribute("name").toStdWString(), element.attribute("nodeId", 0).toUInt(), &ok));
+                const unsigned nodeId(getNodeId(element.attribute("name").toStdWString(),
+                                                element.attribute("nodeId", nullptr).toUInt(), &ok));
                 if(ok) {
                     std::wistringstream is(element.firstChild().toText().data().toStdWString());
                     Error error;

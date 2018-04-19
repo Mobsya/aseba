@@ -35,7 +35,7 @@ namespace Aseba {
 class FindDialog : public QDialog {
     Q_OBJECT
 public:
-    FindDialog(QWidget* parent = 0, QTextEdit* editor = 0);
+    FindDialog(QWidget* parent = nullptr, QTextEdit* editor = nullptr);
     void setFindText(const QString& text);
 
 protected slots:

@@ -57,7 +57,7 @@ namespace ThymioVPL {
         };
 
         //! An iterator on the generated code
-        typedef std::vector<std::wstring>::const_iterator CodeConstIterator;
+        using CodeConstIterator = std::vector<std::wstring>::const_iterator;
 
     protected:
         //! Everything needed to generate code
@@ -106,7 +106,7 @@ namespace ThymioVPL {
                 QVector<PairCodeAndIndex> code;
                 bool isStateSet;
 
-                virtual ~EventHandler() {}
+                virtual ~EventHandler() = default;
 
                 void clear() {
                     code.clear();
@@ -117,31 +117,31 @@ namespace ThymioVPL {
             };
 
             struct ButtonEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct ProxEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct TapEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct AccEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct ClapEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct TimeoutEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             struct RemoteControlEventHandler : EventHandler {
-                virtual void generateAdditionalCode();
+                void generateAdditionalCode() override;
             };
 
             typedef QMap<QString, EventHandler*> EventHandlers;

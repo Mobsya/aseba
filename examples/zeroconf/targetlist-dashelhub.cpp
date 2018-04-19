@@ -30,15 +30,15 @@ using namespace std;
 
 class TargetLister : public Dashel::Hub, public DashelhubZeroconf {
     // from Dashel::Hub
-    virtual void incomingData(Dashel::Stream* stream) override {
+    void incomingData(Dashel::Stream* stream) override {
         dashelIncomingData(stream);
     }
 
-    virtual void connectionClosed(Stream* stream, bool abnormal) override {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         dashelConnectionClosed(stream);
     }
 
-    virtual void targetFound(const Aseba::Zeroconf::TargetInformation& target) override {
+    void targetFound(const Aseba::Zeroconf::TargetInformation& target) override {
         // output could be JSON but for now is Dashel target [Target name (DNS domain)]
         cout << target.host << ";port=" << target.port;
         cout << " [" << target.name << " (" << target.regtype + "." + target.domain << ")]" << endl;

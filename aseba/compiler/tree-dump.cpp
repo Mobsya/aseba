@@ -115,13 +115,13 @@ std::wstring FoldedIfWhenNode::toWString() const {
 std::wstring WhileNode::toWString() const {
     std::wstring s = L"While: ";
     return s;
-};
+}
 
 std::wstring FoldedWhileNode::toWString() const {
     std::wstring s = L"Folded While: ";
     s += binaryOperatorToString(op);
     return s;
-};
+}
 
 std::wstring EventDeclNode::toWString() const {
     if(eventId == ASEBA_EVENT_INIT)

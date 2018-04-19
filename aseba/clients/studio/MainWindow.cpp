@@ -41,6 +41,7 @@
 #include <QDesktopServices>
 #include <QtConcurrentRun>
 #include <QSvgRenderer>
+#include <utility>
 #include <iostream>
 
 using std::copy;
@@ -52,7 +53,7 @@ namespace Aseba {
 
 StudioInterface::StudioInterface(NodeTab* nodeTab) : nodeTab(nodeTab) {
     mainWindow = nodeTab->mainWindow;
-};
+}
 
 Target* StudioInterface::getTarget() {
     return nodeTab->target;
@@ -68,12 +69,10 @@ unsigned StudioInterface::getProductId() const {
 
 void StudioInterface::setCommonDefinitions(const CommonDefinitions& commonDefinitions) {
     mainWindow->eventsDescriptionsModel->clear();
-    for(NamedValuesVector::const_iterator it(commonDefinitions.events.begin()); it != commonDefinitions.events.end();
-        ++it)
+    for(auto it(commonDefinitions.events.begin()); it != commonDefinitions.events.end(); ++it)
         mainWindow->eventsDescriptionsModel->addNamedValue(*it);
     mainWindow->constantsDefinitionsModel->clear();
-    for(NamedValuesVector::const_iterator it(commonDefinitions.constants.begin());
-        it != commonDefinitions.constants.end(); ++it)
+    for(auto it(commonDefinitions.constants.begin()); it != commonDefinitions.constants.end(); ++it)
         mainWindow->constantsDefinitionsModel->addNamedValue(*it);
 }
 
@@ -124,7 +123,7 @@ QString StudioInterface::openedFileName() const {
 //////
 
 CompilationLogDialog::CompilationLogDialog(QWidget* parent) : QDialog(parent), te(new QTextEdit()) {
-    QVBoxLayout* l(new QVBoxLayout);
+    auto* l(new QVBoxLayout);
     l->addWidget(te);
     setLayout(l);
 
@@ -174,7 +173,7 @@ void EditorsPlotsTabWidget::addTab(QWidget* widget, const QString& label, bool c
 #endif  // QT_VERSION >= 0x040500
 
     // manage the sections size for the vmMemoryView child widget
-    NodeTab* tab = dynamic_cast<NodeTab*>(widget);
+    auto* tab = dynamic_cast<NodeTab*>(widget);
     if(tab) {
         vmMemoryViewResize(tab);
         connect(tab->vmMemoryView->header(), SIGNAL(sectionResized(int, int, int)), this,
@@ -201,7 +200,7 @@ void EditorsPlotsTabWidget::setExecutionMode(int index, Target::ExecutionMode st
 void EditorsPlotsTabWidget::removeAndDeleteTab(int index) {
 #if QT_VERSION >= 0x040500
     if(index < 0) {
-        QWidget* button(polymorphic_downcast<QWidget*>(sender()));
+        auto* button(polymorphic_downcast<QWidget*>(sender()));
         for(int i = 0; i < count(); ++i) {
             if(tabBar()->tabButton(i, QTabBar::RightSide) == button) {
                 index = i;
@@ -225,7 +224,7 @@ void EditorsPlotsTabWidget::vmMemoryResized(int col, int oldSize, int newSize) {
 
 void EditorsPlotsTabWidget::tabChanged(int index) {
     // resize the vmMemoryView, to match the user choice
-    NodeTab* tab = dynamic_cast<NodeTab*>(currentWidget());
+    auto* tab = dynamic_cast<NodeTab*>(currentWidget());
     if(!tab)
         return;
 
@@ -272,13 +271,12 @@ void ScriptTab::createEditor() {
 
 //////
 
-AbsentNodeTab::AbsentNodeTab(const unsigned id, const QString& name, const QString& sourceCode,
-                             const SavedPlugins& savedPlugins)
-    : ScriptTab(id), name(name), savedPlugins(savedPlugins) {
+AbsentNodeTab::AbsentNodeTab(const unsigned id, QString name, const QString& sourceCode, SavedPlugins savedPlugins)
+    : ScriptTab(id), name(std::move(name)), savedPlugins(std::move(savedPlugins)) {
     createEditor();
     editor->setReadOnly(true);
     editor->setPlainText(sourceCode);
-    QVBoxLayout* layout = new QVBoxLayout;
+    auto* layout = new QVBoxLayout;
     layout->addWidget(editor);
     setLayout(layout);
 }
@@ -292,7 +290,7 @@ NodeTab::NodeTab(MainWindow* mainWindow, Target* target, const CommonDefinitions
                  QWidget* parent)
     : QSplitter(parent)
     , ScriptTab(id)
-    , VariableListener(0)
+    , VariableListener(nullptr)
     , pid(ASEBA_PID_UNDEFINED)
     , target(target)
     , commonDefinitions(commonDefinitions)
@@ -319,7 +317,7 @@ NodeTab::NodeTab(MainWindow* mainWindow, Target* target, const CommonDefinitions
 
     // create aggregated models
     // local and global events
-    ModelAggregator* aggregator = new ModelAggregator(this);
+    auto* aggregator = new ModelAggregator(this);
     aggregator->addModel(vmLocalEvents->model());
     aggregator->addModel(mainWindow->eventsDescriptionsModel);
     eventAggregator = aggregator;
@@ -371,7 +369,7 @@ void NodeTab::setupWidgets() {
     compilationResultText = new ClickableLabel;
     compilationResultText->setWordWrap(true);
     compilationResultText->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QHBoxLayout* compilationResultLayout = new QHBoxLayout;
+    auto* compilationResultLayout = new QHBoxLayout;
     compilationResultLayout->addWidget(cursorPosText);
     compilationResultLayout->addWidget(compilationResultText, 1000);
     compilationResultLayout->addWidget(compilationResultImage);
@@ -382,7 +380,7 @@ void NodeTab::setupWidgets() {
     memoryUsageText->setWordWrap(true);
 
     // editor area
-    QHBoxLayout* editorAreaLayout = new QHBoxLayout;
+    auto* editorAreaLayout = new QHBoxLayout;
     editorAreaLayout->setSpacing(0);
     editorAreaLayout->addWidget(breakpoints);
     editorAreaLayout->addWidget(linenumbers);
@@ -420,7 +418,7 @@ void NodeTab::setupWidgets() {
     keywordsToolbar->addWidget(subroutineButton);
     keywordsToolbar->addWidget(callsubButton);
 
-    QVBoxLayout* editorLayout = new QVBoxLayout;
+    auto* editorLayout = new QVBoxLayout;
     editorLayout->addWidget(keywordsToolbar);
     editorLayout->addLayout(editorAreaLayout);
     editorLayout->addLayout(compilationResultLayout);
@@ -442,7 +440,7 @@ void NodeTab::setupWidgets() {
     refreshMemoryButton = new QPushButton(QIcon(":/images/rescan.png"), tr("refresh"));
     autoRefreshMemoryCheck = new QCheckBox(tr("auto"));
 
-    QGridLayout* buttonsLayout = new QGridLayout;
+    auto* buttonsLayout = new QGridLayout;
     buttonsLayout->addWidget(new QLabel(tr("<b>Execution</b>")), 0, 0);
     buttonsLayout->addWidget(executionModeLabel, 0, 1);
     buttonsLayout->addWidget(loadButton, 1, 0);
@@ -464,8 +462,8 @@ void NodeTab::setupWidgets() {
     // vmMemoryView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // vmMemoryView->setHeaderHidden(true);
 
-    QVBoxLayout* memoryLayout = new QVBoxLayout;
-    QHBoxLayout* memorySubLayout = new QHBoxLayout;
+    auto* memoryLayout = new QVBoxLayout;
+    auto* memorySubLayout = new QHBoxLayout;
     memorySubLayout->addWidget(new QLabel(tr("<b>Variables</b>")));
     memorySubLayout->addStretch();
     memorySubLayout->addWidget(autoRefreshMemoryCheck);
@@ -519,13 +517,13 @@ void NodeTab::setupWidgets() {
     toolListLayout = new QVBoxLayout;
     toolListWidget->setLayout(toolListLayout);
     toolListIndex = toolBox->addItem(toolListWidget, tr("Local Tools"));
-    QVBoxLayout* toolBoxLayout = new QVBoxLayout;
+    auto* toolBoxLayout = new QVBoxLayout;
     toolBoxLayout->addWidget(toolBox);
     QWidget* toolBoxWidget = new QWidget;
     toolBoxWidget->setLayout(toolBoxLayout);
 
     // panel
-    QSplitter* panelSplitter = new QSplitter(Qt::Vertical);
+    auto* panelSplitter = new QSplitter(Qt::Vertical);
 
     QWidget* buttonsWidget = new QWidget;
     buttonsWidget->setLayout(buttonsLayout);
@@ -658,7 +656,7 @@ void NodeTab::variableValueUpdated(const QString& name, const VariablesDataVecto
 
 ScriptTab::SavedPlugins NodeTab::savePlugins() const {
     SavedPlugins savedPlugins;
-    for(NodeToolInterfaces::const_iterator it(tools.begin()); it != tools.end(); ++it) {
+    for(auto it(tools.begin()); it != tools.end(); ++it) {
         const SavedContent savedContent((*it)->getSaved());
         if(!savedContent.first.isEmpty() && !savedContent.second.isNull())
             savedPlugins.push_back(savedContent);
@@ -689,7 +687,7 @@ void NodeTab::updateToolList() {
     // delete menu entries
     int oldCount = toolListLayout->count();
     QLayoutItem* child;
-    while((child = toolListLayout->takeAt(0)) != 0) {
+    while((child = toolListLayout->takeAt(0)) != nullptr) {
         child->widget()->deleteLater();
         delete child;
     }
@@ -938,7 +936,7 @@ void NodeTab::updateHidden() {
 
 NodeTab::CompilationResult* compilationThread(const TargetDescription targetDescription,
                                               const CommonDefinitions commonDefinitions, QString source, bool dump) {
-    NodeTab::CompilationResult* result(new NodeTab::CompilationResult(dump));
+    auto* result(new NodeTab::CompilationResult(dump));
 
     Compiler compiler;
     compiler.setTargetDescription(&targetDescription);
@@ -1018,11 +1016,11 @@ void NodeTab::processCompilationResult(CompilationResult* result) {
         const unsigned bytecodeTotal = (*target->getDescription(id)).bytecodeSize;
         assert(variableCount);
         assert(bytecodeCount);
-        const QString variableText = tr("variables: %1 on %2 (%3\%)")
+        const QString variableText = tr("variables: %1 on %2 (%3\\%)")
                                          .arg(variableCount)
                                          .arg(variableTotal)
                                          .arg((double)variableCount * 100. / variableTotal, 0, 'f', 1);
-        const QString bytecodeText = tr("bytecode: %1 on %2 (%3\%)")
+        const QString bytecodeText = tr("bytecode: %1 on %2 (%3\\%)")
                                          .arg(bytecodeCount)
                                          .arg(bytecodeTotal)
                                          .arg((double)bytecodeCount * 100. / bytecodeTotal, 0, 'f', 1);
@@ -1118,7 +1116,7 @@ void NodeTab::clearExecutionErrors() {
 
 void NodeTab::refreshCompleterModel(LocalContext context) {
     //		qDebug() << "New context: " << context;
-    disconnect(mainWindow->eventsDescriptionsModel, 0, sortingProxy, 0);
+    disconnect(mainWindow->eventsDescriptionsModel, nullptr, sortingProxy, nullptr);
 
     switch(context) {
         case GeneralContext:  // both variables and constants
@@ -1137,7 +1135,7 @@ void NodeTab::refreshCompleterModel(LocalContext context) {
             break;
         case VarDefContext:
         default:  // disable auto-completion in this case
-            editor->setCompleterModel(0);
+            editor->setCompleterModel(nullptr);
             return;
     }
     sortingProxy->sort(0);
@@ -1266,7 +1264,7 @@ void NodeTab::reSetBreakpoints() {
     QTextBlock block = editor->document()->begin();
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
-        AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
         if(uData && (uData->properties.contains("breakpoint") || uData->properties.contains("breakpointPending")))
             target->setBreakpoint(id, lineCounter);
         block = block.next();
@@ -1280,7 +1278,7 @@ bool NodeTab::setEditorProperty(const QString& property, const QVariant& value, 
     QTextBlock block = editor->document()->begin();
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
-        AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
         if(lineCounter == line) {
             // set propety
             if(uData) {
@@ -1298,7 +1296,7 @@ bool NodeTab::setEditorProperty(const QString& property, const QVariant& value, 
                 uData->properties.remove(property);
                 if(uData->properties.isEmpty()) {
                     // garbage collect UserData
-                    block.setUserData(0);
+                    block.setUserData(nullptr);
                 }
                 changed = true;
             }
@@ -1319,12 +1317,12 @@ bool NodeTab::clearEditorProperty(const QString& property, unsigned line) {
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
         if(lineCounter == line) {
-            AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+            auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
             if(uData && uData->properties.contains(property)) {
                 uData->properties.remove(property);
                 if(uData->properties.isEmpty()) {
                     // garbage collect UserData
-                    block.setUserData(0);
+                    block.setUserData(nullptr);
                 }
                 changed = true;
             }
@@ -1342,12 +1340,12 @@ bool NodeTab::clearEditorProperty(const QString& property) {
     // go through all blocks, remove property if found
     QTextBlock block = editor->document()->begin();
     while(block != editor->document()->end()) {
-        AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
         if(uData && uData->properties.contains(property)) {
             uData->properties.remove(property);
             if(uData->properties.isEmpty()) {
                 // garbage collect UserData
-                block.setUserData(0);
+                block.setUserData(nullptr);
             }
             changed = true;
         }
@@ -1360,7 +1358,7 @@ bool NodeTab::clearEditorProperty(const QString& property) {
 void NodeTab::switchEditorProperty(const QString& oldProperty, const QString& newProperty) {
     QTextBlock block = editor->document()->begin();
     while(block != editor->document()->end()) {
-        AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
         if(uData && uData->properties.contains(oldProperty)) {
             uData->properties.remove(oldProperty);
             uData->properties[newProperty] = QVariant();
@@ -1381,7 +1379,7 @@ NewNamedValueDialog::NewNamedValueDialog(QString* name, int* value, int min, int
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
     // create the layout
-    QVBoxLayout* mainLayout = new QVBoxLayout();
+    auto* mainLayout = new QVBoxLayout();
     mainLayout->addWidget(label1);
     mainLayout->addWidget(line1);
     mainLayout->addWidget(label2);
@@ -1488,7 +1486,7 @@ bool MainWindow::newFile() {
         clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
         for(int i = 0; i < nodes->count(); i++) {
-            NodeTab* tab = polymorphic_downcast<NodeTab*>(nodes->widget(i));
+            auto* tab = polymorphic_downcast<NodeTab*>(nodes->widget(i));
             Q_ASSERT(tab);
             tab->editor->clear();
         }
@@ -1511,7 +1509,7 @@ void MainWindow::openFile(const QString& path) {
 
     // notify plugins
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab(dynamic_cast<NodeTab*>(nodes->widget(i)));
+        auto* tab(dynamic_cast<NodeTab*>(nodes->widget(i)));
         if(tab)
             tab->notifyPluginsAboutToLoad();
     }
@@ -1558,7 +1556,7 @@ void MainWindow::openFile(const QString& path) {
         clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
         for(int i = 0; i < nodes->count(); i++) {
-            NodeTab* tab = polymorphic_downcast<NodeTab*>(nodes->widget(i));
+            auto* tab = polymorphic_downcast<NodeTab*>(nodes->widget(i));
             Q_ASSERT(tab);
             tab->editor->clear();
         }
@@ -1571,8 +1569,8 @@ void MainWindow::openFile(const QString& path) {
                 QDomElement element = domNode.toElement();
                 if(element.tagName() == "node") {
                     bool prefered;
-                    NodeTab* tab =
-                        getTabFromName(element.attribute("name"), element.attribute("nodeId", 0).toUInt(), &prefered);
+                    NodeTab* tab = getTabFromName(element.attribute("name"),
+                                                  element.attribute("nodeId", nullptr).toUInt(), &prefered);
                     if(prefered) {
                         const int index(nodes->indexOf(tab));
                         assert(index >= 0);
@@ -1615,7 +1613,7 @@ void MainWindow::openFile(const QString& path) {
                     // reconstruct nodes
                     bool prefered;
                     const QString nodeName(element.attribute("name"));
-                    const unsigned nodeId(element.attribute("nodeId", 0).toUInt());
+                    const unsigned nodeId(element.attribute("nodeId", nullptr).toUInt());
                     NodeTab* tab = getTabFromName(nodeName, nodeId, &prefered, &filledList);
                     if(tab) {
                         // matching tab name
@@ -1681,7 +1679,7 @@ void MainWindow::openFile(const QString& path) {
 }
 
 void MainWindow::openRecentFile() {
-    QAction* entry = polymorphic_downcast<QAction*>(sender());
+    auto* entry = polymorphic_downcast<QAction*>(sender());
     openFile(entry->text());
 }
 
@@ -1752,15 +1750,15 @@ bool MainWindow::saveFile(const QString& previousFileName) {
 
     // source code
     for(int i = 0; i < nodes->count(); i++) {
-        const ScriptTab* tab = dynamic_cast<const ScriptTab*>(nodes->widget(i));
+        const auto* tab = dynamic_cast<const ScriptTab*>(nodes->widget(i));
         if(tab) {
             QString nodeName;
 
-            const NodeTab* nodeTab = dynamic_cast<const NodeTab*>(tab);
+            const auto* nodeTab = dynamic_cast<const NodeTab*>(tab);
             if(nodeTab)
                 nodeName = target->getName(nodeTab->nodeId());
 
-            const AbsentNodeTab* absentNodeTab = dynamic_cast<const AbsentNodeTab*>(tab);
+            const auto* absentNodeTab = dynamic_cast<const AbsentNodeTab*>(tab);
             if(absentNodeTab)
                 nodeName = absentNodeTab->name;
 
@@ -1816,7 +1814,7 @@ void MainWindow::exportMemoriesContent() {
     QTextStream out(&file);
 
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             const QString nodeName(target->getName(tab->nodeId()));
             const QList<TargetVariablesModel::Variable>& variables(tab->vmMemoryModel->getVariables());
@@ -1911,7 +1909,7 @@ void MainWindow::copyAll() {
 }
 
 void MainWindow::findTriggered() {
-    ScriptTab* tab = dynamic_cast<ScriptTab*>(nodes->currentWidget());
+    auto* tab = dynamic_cast<ScriptTab*>(nodes->currentWidget());
     if(tab && tab->editor->textCursor().hasSelection())
         findDialog->setFindText(tab->editor->textCursor().selectedText());
     findDialog->replaceGroupBox->setChecked(false);
@@ -1935,7 +1933,7 @@ void MainWindow::uncommentTriggered() {
 
 void MainWindow::showLineNumbersChanged(bool state) {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = polymorphic_downcast<NodeTab*>(nodes->widget(i));
+        auto* tab = polymorphic_downcast<NodeTab*>(nodes->widget(i));
         Q_ASSERT(tab);
         tab->linenumbers->showLineNumbers(state);
     }
@@ -1984,7 +1982,7 @@ void MainWindow::clearAllBreakpoints() {
 
 void MainWindow::resetAll() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->resetClicked();
     }
@@ -1992,7 +1990,7 @@ void MainWindow::resetAll() {
 
 void MainWindow::loadAll() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->loadClicked();
     }
@@ -2000,7 +1998,7 @@ void MainWindow::loadAll() {
 
 void MainWindow::runAll() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             target->run(tab->nodeId());
     }
@@ -2008,7 +2006,7 @@ void MainWindow::runAll() {
 
 void MainWindow::pauseAll() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             target->pause(tab->nodeId());
     }
@@ -2016,7 +2014,7 @@ void MainWindow::pauseAll() {
 
 void MainWindow::stopAll() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             target->stop(tab->nodeId());
     }
@@ -2024,7 +2022,7 @@ void MainWindow::stopAll() {
 
 void MainWindow::showHidden(bool show) {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             tab->vmFunctionsModel->recreateTreeFromDescription(show);
             tab->showHidden = show;
@@ -2036,7 +2034,7 @@ void MainWindow::showHidden(bool show) {
 
 void MainWindow::showKeywords(bool show) {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->showKeywords(show);
     }
@@ -2045,7 +2043,7 @@ void MainWindow::showKeywords(bool show) {
 
 void MainWindow::clearAllExecutionError() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->clearExecutionErrors();
     }
@@ -2055,7 +2053,7 @@ void MainWindow::clearAllExecutionError() {
 void MainWindow::uploadReadynessChanged() {
     bool ready = true;
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             if(!tab->loadButton->isEnabled()) {
                 ready = false;
@@ -2188,7 +2186,7 @@ void MainWindow::tabChanged(int index) {
 
         pasteAct->setEnabled(false);
         findDialog->hide();
-        findDialog->editor = 0;
+        findDialog->editor = nullptr;
         findAct->setEnabled(false);
         replaceAct->setEnabled(false);
         goToLineAct->setEnabled(false);
@@ -2198,7 +2196,7 @@ void MainWindow::tabChanged(int index) {
 
     // reconnect to new
     if(index >= 0) {
-        ScriptTab* tab = dynamic_cast<ScriptTab*>(nodes->widget(index));
+        auto* tab = dynamic_cast<ScriptTab*>(nodes->widget(index));
         if(tab) {
             connect(copyAct, SIGNAL(triggered()), tab->editor, SLOT(copy()));
             connect(tab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
@@ -2209,7 +2207,7 @@ void MainWindow::tabChanged(int index) {
             zoomInAct->setEnabled(true);
             zoomOutAct->setEnabled(true);
 
-            NodeTab* nodeTab = dynamic_cast<NodeTab*>(tab);
+            auto* nodeTab = dynamic_cast<NodeTab*>(tab);
             if(nodeTab) {
                 connect(cutAct, SIGNAL(triggered()), tab->editor, SLOT(cut()));
                 connect(pasteAct, SIGNAL(triggered()), tab->editor, SLOT(paste()));
@@ -2244,9 +2242,9 @@ void MainWindow::tabChanged(int index) {
 
             currentScriptTab = tab;
         } else
-            currentScriptTab = 0;
+            currentScriptTab = nullptr;
     } else
-        currentScriptTab = 0;
+        currentScriptTab = nullptr;
 }
 
 void MainWindow::showCompilationMessages(bool doShow) {
@@ -2262,7 +2260,7 @@ void MainWindow::compilationMessagesWasHidden() {
 
 void MainWindow::showMemoryUsage(bool show) {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->showMemoryUsage(show);
     }
@@ -2282,7 +2280,7 @@ void MainWindow::addEventNameClicked() {
     if(ok && !eventName.isEmpty()) {
         if(commonDefinitions.events.contains(eventName.toStdWString())) {
             QMessageBox::warning(this, tr("Event already exists"), tr("Event %0 already exists.").arg(eventName));
-        } else if(!QRegExp("\\w(\\w|\\.)*").exactMatch(eventName) || eventName[0].isDigit()) {
+        } else if(!QRegExp(R"(\w(\w|\.)*)").exactMatch(eventName) || eventName[0].isDigit()) {
             QMessageBox::warning(this, tr("Invalid event name"),
                                  tr("Event %0 has an invalid name. Valid names start with an "
                                     "alphabetical character or an \"_\", and continue with any "
@@ -2300,7 +2298,7 @@ void MainWindow::removeEventNameClicked() {
     eventsDescriptionsModel->delNamedValue(currentRow.row());
 
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->isSynchronized = false;
     }
@@ -2332,7 +2330,7 @@ void MainWindow::resetStatusText() {
     bool flag = true;
 
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             if(!tab->isSynchronized) {
                 flag = false;
@@ -2381,7 +2379,7 @@ void MainWindow::constantsSelectionChanged() {
 
 void MainWindow::recompileAll() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->recompile();
     }
@@ -2389,7 +2387,7 @@ void MainWindow::recompileAll() {
 
 void MainWindow::writeAllBytecodes() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->writeBytecode();
     }
@@ -2397,7 +2395,7 @@ void MainWindow::writeAllBytecodes() {
 
 void MainWindow::rebootAllNodes() {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             tab->reboot();
     }
@@ -2415,7 +2413,7 @@ void MainWindow::showUserManual() {
 //! A new node has connected to the network.
 void MainWindow::nodeConnected(unsigned node) {
     // create a new tab for the node
-    NodeTab* tab = new NodeTab(this, target, &commonDefinitions, node);
+    auto* tab = new NodeTab(this, target, &commonDefinitions, node);
     tab->showKeywords(showKeywordsAct->isChecked());
     tab->linenumbers->showLineNumbers(showLineNumbers->isChecked());
     tab->showMemoryUsage(showMemoryUsageAct->isChecked());
@@ -2452,15 +2450,15 @@ void MainWindow::nodeDisconnected(unsigned node) {
     auto tabName = nodes->tabText(index).replace(QString("&"), QString(""));
 
     // clang-format off
-		nodes->addTab(
-			new AbsentNodeTab(
-				node,
-				tabName,
-				tab->editor->document()->toPlainText(),
-				tab->savePlugins()
-			),
-			tabName
-		);
+        nodes->addTab(
+            new AbsentNodeTab(
+                node,
+                tabName,
+                tab->editor->document()->toPlainText(),
+                tab->savePlugins()
+            ),
+            tabName
+        );
     // clang-format on
 
     nodes->removeAndDeleteTab(index);
@@ -2596,7 +2594,7 @@ void MainWindow::breakpointSetResult(unsigned node, unsigned line, bool success)
 //! Get the tab widget index of a corresponding node id
 int MainWindow::getIndexFromId(unsigned node) const {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             if(tab->nodeId() == node)
                 return i;
@@ -2608,22 +2606,22 @@ int MainWindow::getIndexFromId(unsigned node) const {
 //! Get the tab widget pointer of a corresponding node id
 NodeTab* MainWindow::getTabFromId(unsigned node) const {
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             if(tab->nodeId() == node)
                 return tab;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 //! Get the tab widget pointer of a corresponding node name, and of preferedId if found, but the
 //! first found otherwise. Do not consider tabs indices in filledList for non-prefered tabs
 NodeTab* MainWindow::getTabFromName(const QString& name, unsigned preferedId, bool* isPrefered,
                                     QSet<int>* filledList) const {
-    NodeTab* freeSlotFound(0);
+    NodeTab* freeSlotFound(nullptr);
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             const unsigned id(tab->nodeId());
             if(target->getName(id) == name) {
@@ -2646,7 +2644,7 @@ NodeTab* MainWindow::getTabFromName(const QString& name, unsigned preferedId, bo
 //! Get the absent tab widget index of a corresponding node id
 int MainWindow::getAbsentIndexFromId(unsigned node) const {
     for(int i = 0; i < nodes->count(); i++) {
-        AbsentNodeTab* tab = dynamic_cast<AbsentNodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<AbsentNodeTab*>(nodes->widget(i));
         if(tab) {
             if(tab->nodeId() == node)
                 return i;
@@ -2658,13 +2656,13 @@ int MainWindow::getAbsentIndexFromId(unsigned node) const {
 //! Get the absent tab widget pointer of a corresponding node id
 AbsentNodeTab* MainWindow::getAbsentTabFromId(unsigned node) const {
     for(int i = 0; i < nodes->count(); i++) {
-        AbsentNodeTab* tab = dynamic_cast<AbsentNodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<AbsentNodeTab*>(nodes->widget(i));
         if(tab) {
             if(tab->nodeId() == node)
                 return tab;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 void MainWindow::clearDocumentSpecificTabs() {
@@ -2689,11 +2687,11 @@ void MainWindow::clearDocumentSpecificTabs() {
 }
 
 void MainWindow::setupWidgets() {
-    currentScriptTab = 0;
+    currentScriptTab = nullptr;
     nodes = new EditorsPlotsTabWidget;
     nodes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    QSplitter* splitter = new QSplitter();
+    auto* splitter = new QSplitter();
     splitter->addWidget(nodes);
     setCentralWidget(splitter);
 
@@ -2719,7 +2717,7 @@ void MainWindow::setupWidgets() {
     constantsView->setSecondColumnLongestContent("-88888##");
     constantsView->resizeRowsToContents();
 
-    QGridLayout* constantsLayout = new QGridLayout;
+    auto* constantsLayout = new QGridLayout;
     constantsLayout->addWidget(new QLabel(tr("<b>Constants</b>")), 0, 0);
     constantsLayout->setColumnStretch(0, 1);
     constantsLayout->addWidget(addConstantButton, 0, 1);
@@ -2792,7 +2790,7 @@ void MainWindow::setupWidgets() {
     eventsDescriptionsView->resizeRowsToContents();
     eventsDescriptionsView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    QGridLayout* eventsLayout = new QGridLayout;
+    auto* eventsLayout = new QGridLayout;
     eventsLayout->addWidget(new QLabel(tr("<b>Global Events</b>")), 0, 0, 1, 4);
     eventsLayout->addWidget(addEventNameButton, 1, 0);
     // eventsLayout->setColumnStretch(2, 0);
@@ -2820,13 +2818,13 @@ void MainWindow::setupWidgets() {
     statusText = new QLabel("");
     statusText->hide();
 
-    QVBoxLayout* loggerLayout = new QVBoxLayout;
+    auto* loggerLayout = new QVBoxLayout;
     loggerLayout->addWidget(statusText);
     loggerLayout->addWidget(logger);
     loggerLayout->addWidget(clearLogger);
 
     // panel
-    QSplitter* rightPanelSplitter = new QSplitter(Qt::Vertical);
+    auto* rightPanelSplitter = new QSplitter(Qt::Vertical);
 
     QWidget* constantsWidget = new QWidget;
     constantsWidget->setLayout(constantsLayout);
@@ -2958,7 +2956,7 @@ void MainWindow::regenerateToolsMenus() {
 
     unsigned activeVMCount(0);
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab) {
             QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(target->getName(tab->nodeId())), tab,
                                                         SLOT(writeBytecode()));
@@ -3012,14 +3010,14 @@ void MainWindow::regenerateHelpMenu() {
     }
 
     // add back target-specific actions
-    typedef std::set<int> ProductIds;
+    using ProductIds = std::set<int>;
     ProductIds productIds;
     for(int i = 0; i < nodes->count(); i++) {
-        NodeTab* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
             productIds.insert(tab->productId());
     }
-    for(ProductIds::const_iterator it(productIds.begin()); it != productIds.end(); ++it) {
+    for(auto it(productIds.begin()); it != productIds.end(); ++it) {
         QAction* action;
         switch(*it) {
             case ASEBA_PID_THYMIO2:

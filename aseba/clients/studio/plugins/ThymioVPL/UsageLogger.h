@@ -95,7 +95,7 @@ namespace ThymioVPL {
 
     private:
         UsageLogger();
-        virtual ~UsageLogger();
+        ~UsageLogger() override;
         Action* action;
         LogSignalMapper signalMapper;
         QString groupName;

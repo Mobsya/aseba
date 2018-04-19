@@ -9,18 +9,18 @@
 namespace Aseba {
 class ModelAggregator : public QAbstractItemModel {
 public:
-    ModelAggregator(QObject* parent = 0);
+    ModelAggregator(QObject* parent = nullptr);
 
     // interface for the aggregator
     void addModel(QAbstractItemModel* model, unsigned int column = 0);
 
     // interface for QAbstractItemModel
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    QVariant data(const QModelIndex& index, int role) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
     bool hasIndex(int row, int column, const QModelIndex& parent) const;
-    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
-    QModelIndex parent(const QModelIndex& child) const;
+    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
+    QModelIndex parent(const QModelIndex& child) const override;
 
 protected:
     struct ModelDescription {
@@ -28,7 +28,7 @@ protected:
         unsigned int column;
     };
 
-    typedef QList<ModelDescription> ModelList;
+    using ModelList = QList<ModelDescription>;
     ModelList models;
 };
 
@@ -38,25 +38,25 @@ class TreeChainsawFilter : public QAbstractProxyModel {
     Q_OBJECT
 
 public:
-    TreeChainsawFilter(QObject* parent = 0) : QAbstractProxyModel(parent) {}
+    TreeChainsawFilter(QObject* parent = nullptr) : QAbstractProxyModel(parent) {}
 
     // model interface
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     bool hasIndex(int row, int column, const QModelIndex& parent) const;
-    QModelIndex index(int row, int column, const QModelIndex& parent) const;
-    QModelIndex parent(const QModelIndex& child) const;
+    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    QModelIndex parent(const QModelIndex& child) const override;
 
 public slots:
-    void resetInternalData(void);
+    void resetInternalData();
 
 public:
     // proxy interface
-    void setSourceModel(QAbstractItemModel* sourceModel);
-    QModelIndex mapFromSource(const QModelIndex& sourceIndex) const;
-    QModelIndex mapToSource(const QModelIndex& proxyIndex) const;
+    void setSourceModel(QAbstractItemModel* sourceModel) override;
+    QModelIndex mapFromSource(const QModelIndex& sourceIndex) const override;
+    QModelIndex mapToSource(const QModelIndex& proxyIndex) const override;
 
-    void sort(int column, Qt::SortOrder order);
+    void sort(int column, Qt::SortOrder order) override;
 
 protected:
     struct ModelIndexLink {
@@ -66,9 +66,9 @@ protected:
 
     void sortWalkTree(const QModelIndex& parent);
 
-    typedef QList<ModelIndexLink> IndexLinkList;
+    using IndexLinkList = QList<ModelIndexLink>;
     IndexLinkList indexList;
 };
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif  // MODELAGGREGATOR_H

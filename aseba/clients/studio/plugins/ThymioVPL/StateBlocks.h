@@ -29,7 +29,7 @@ namespace ThymioVPL {
 
     class StateFilterCheckBlock : public StateFilterBlock {
     public:
-        StateFilterCheckBlock(QGraphicsItem* parent = 0);
+        StateFilterCheckBlock(QGraphicsItem* parent = nullptr);
     };
 
     /*@}*/

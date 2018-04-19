@@ -26,7 +26,7 @@ public:
     QComboBox* valuesRanges;
 
     LinearCameraViewVariablesDialog(TargetVariablesModel* variablesModel);
-    virtual ~LinearCameraViewVariablesDialog() {}
+    ~LinearCameraViewVariablesDialog() override = default;
 };
 
 class LinearCameraViewPlugin : public QWidget, public NodeToolInterface, public VariableListener {
@@ -35,8 +35,8 @@ class LinearCameraViewPlugin : public QWidget, public NodeToolInterface, public 
 public:
     LinearCameraViewPlugin(DevelopmentEnvironmentInterface* _de);
 
-    virtual QWidget* createMenuEntry();
-    virtual void closeAsSoonAsPossible();
+    QWidget* createMenuEntry() override;
+    void closeAsSoonAsPossible() override;
 
 signals:
     void dialogBoxResult(bool ok);
@@ -48,9 +48,9 @@ private:
     void enablePlugin();
     void disablePlugin();
 
-    virtual void timerEvent(QTimerEvent* event);
-    virtual void closeEvent(QCloseEvent* event);
-    virtual void variableValueUpdated(const QString& name, const VariablesDataVector& values);
+    void timerEvent(QTimerEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
+    void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
 
 private:
     std::unique_ptr<DevelopmentEnvironmentInterface> de;

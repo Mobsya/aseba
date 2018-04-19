@@ -128,14 +128,14 @@ namespace ThymioVPL {
 
     //! Add a new event-actions set from a DOM Element, used by load
     void Scene::addEventActionsSet(const QDomElement& element) {
-        EventActionsSet* eventActionsSet(new EventActionsSet(eventActionsSets.size(), advancedMode));
+        auto* eventActionsSet(new EventActionsSet(eventActionsSets.size(), advancedMode));
         eventActionsSet->deserialize(element);
         addEventActionsSet(eventActionsSet);
     }
 
     //! Makes sure that there is at least one empty event-actions set at the end of the scene
     void Scene::ensureOneEmptySetAtEnd() {
-        EventActionsSet* newSet(0);
+        EventActionsSet* newSet(nullptr);
         if(eventActionsSets.empty())
             newSet = createNewEventActionsSet();
         else if(!eventActionsSets.last()->isEmpty())
@@ -153,7 +153,7 @@ namespace ThymioVPL {
 
     //! Create a new event-actions set and adds it
     EventActionsSet* Scene::createNewEventActionsSet() {
-        EventActionsSet* eventActionsSet(new EventActionsSet(eventActionsSets.size(), advancedMode));
+        auto* eventActionsSet(new EventActionsSet(eventActionsSets.size(), advancedMode));
         addEventActionsSet(eventActionsSet);
         return eventActionsSet;
     }
@@ -316,7 +316,7 @@ namespace ThymioVPL {
     void Scene::insertSet(int row) {
         Q_ASSERT(row <= eventActionsSets.size());
 
-        EventActionsSet* p(new EventActionsSet(row, advancedMode));
+        auto* p(new EventActionsSet(row, advancedMode));
         eventActionsSets.insert(row, p);
 
         addItem(p);
@@ -418,7 +418,7 @@ namespace ThymioVPL {
     QList<QString> Scene::getCode() const {
         QList<QString> out;
 
-        for(std::vector<std::wstring>::const_iterator itr = compiler.beginCode(); itr != compiler.endCode(); ++itr)
+        for(auto itr = compiler.beginCode(); itr != compiler.endCode(); ++itr)
             out.push_back(QString::fromStdWString(*itr));
 
         return out;
@@ -434,14 +434,14 @@ namespace ThymioVPL {
 
     EventActionsSet* Scene::getSelectedSet() const {
         if(selectedItems().empty())
-            return 0;
+            return nullptr;
         QGraphicsItem* item;
         foreach(item, selectedItems()) {
-            EventActionsSet* eventActionsSet(dynamic_cast<EventActionsSet*>(item));
+            auto* eventActionsSet(dynamic_cast<EventActionsSet*>(item));
             if(eventActionsSet)
                 return eventActionsSet;
         }
-        return 0;
+        return nullptr;
     }
 
     EventActionsSet* Scene::getSetRow(int row) const {
@@ -466,9 +466,9 @@ namespace ThymioVPL {
         referredGraphicsItem->setVisible(lastCompilationResult.referredLine != -1);
         referredLineItem->setVisible(lastCompilationResult.referredLine != -1);
 
-        EventActionsSet* warningEventActionsSet(0);
-        EventActionsSet* errorEventActionsSet(0);
-        EventActionsSet* referredEventActionsSet(0);
+        EventActionsSet* warningEventActionsSet(nullptr);
+        EventActionsSet* errorEventActionsSet(nullptr);
+        EventActionsSet* referredEventActionsSet(nullptr);
         for(int i = 0; i < eventActionsSets.size(); ++i) {
             EventActionsSet* eventActionsSet(eventActionsSets[i]);
             Compiler::ErrorType errorType;

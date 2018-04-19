@@ -33,7 +33,7 @@ struct TestNodesManager : NodesManager {
 
     TestNodesManager(DirectAsebaThymio2* thymio) : thymio(thymio) {}
 
-    virtual void sendMessage(const Message& message) {
+    void sendMessage(const Message& message) override {
         thymio->inQueue.emplace(message.clone());
     }
 
@@ -53,18 +53,17 @@ struct TestSimulatorEnvironment : SimulatorEnvironment {
 
     TestSimulatorEnvironment(World& world) : world(world) {}
 
-    virtual void notify(const EnvironmentNotificationType type, const string& description,
-                        const strings& arguments) override {
+    void notify(const EnvironmentNotificationType type, const string& description, const strings& arguments) override {
         cerr << "N " << description;
         copy(arguments.begin(), arguments.end(), ostream_iterator<string>(cerr, " "));
         cerr << endl;
     }
 
-    virtual string getSDFilePath(const string& robotName, unsigned fileNumber) const override {
+    string getSDFilePath(const string& robotName, unsigned fileNumber) const override {
         return string("SD_FILE_") + to_string(fileNumber) + ".DAT";
     }
 
-    virtual World* getWorld() const override {
+    World* getWorld() const override {
         return &world;
     }
 };
@@ -77,7 +76,7 @@ int main() {
     World world(40, 20);
     simulatorEnvironment.reset(new TestSimulatorEnvironment(world));
 
-    DirectAsebaThymio2* thymio(new DirectAsebaThymio2("thymio2_0", 1));
+    auto* thymio(new DirectAsebaThymio2("thymio2_0", 1));
     thymio->pos = {10, 10};
     world.addObject(thymio);
 

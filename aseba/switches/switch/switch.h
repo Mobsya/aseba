@@ -69,9 +69,9 @@ public:
 #endif  // ZEROCONF_SUPPORT
 
 private:
-    virtual void connectionCreated(Dashel::Stream* stream);
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
+    void connectionCreated(Dashel::Stream* stream) override;
+    void incomingData(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
 
 private:
 #ifdef ZEROCONF_SUPPORT
@@ -90,6 +90,6 @@ private:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif

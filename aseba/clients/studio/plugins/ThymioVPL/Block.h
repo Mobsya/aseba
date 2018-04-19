@@ -51,11 +51,11 @@ namespace ThymioVPL {
         // TODO: move that somewhere else
         class ThymioBody : public QGraphicsItem {
         public:
-            ThymioBody(QGraphicsItem* parent = 0, int yShift = 0)
+            ThymioBody(QGraphicsItem* parent = nullptr, int yShift = 0)
                 : QGraphicsItem(parent), bodyColor(Qt::white), yShift(yShift), up(true) {}
 
-            void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-            QRectF boundingRect() const {
+            void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+            QRectF boundingRect() const override {
                 return QRectF(-128, -128 + yShift, 256, 256);
             }
             void setUp(bool u) {
@@ -71,10 +71,10 @@ namespace ThymioVPL {
             bool up;
         };
 
-        static Block* createBlock(const QString& name, bool advanced = false, QGraphicsItem* parent = 0);
+        static Block* createBlock(const QString& name, bool advanced = false, QGraphicsItem* parent = nullptr);
 
-        Block(const QString& type, const QString& name, QGraphicsItem* parent = 0);
-        virtual ~Block();
+        Block(QString type, QString name, QGraphicsItem* parent = nullptr);
+        ~Block() override;
 
         QString getType() const {
             return type;
@@ -107,8 +107,8 @@ namespace ThymioVPL {
         static QString deserializeType(const QByteArray& data);
         static QString deserializeName(const QByteArray& data);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-        QRectF boundingRect() const {
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+        QRectF boundingRect() const override {
             return QRectF(0, 0, 256, 256);
         }
         virtual QImage image(qreal factor = 1);
@@ -133,8 +133,8 @@ namespace ThymioVPL {
 
     protected:
         void renderChildItems(QPainter& painter, QGraphicsItem* item, QStyleOptionGraphicsItem& opt);
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
         bool changed;
     };
@@ -143,14 +143,14 @@ namespace ThymioVPL {
     public:
         BlockWithNoValues(const QString& type, const QString& name, QGraphicsItem* parent);
 
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 0;
         }
-        virtual int getValue(unsigned i) const {
+        int getValue(unsigned i) const override {
             return -1;
         }
-        virtual void setValue(unsigned i, int value) {}
-        virtual QVector<uint16_t> getValuesCompressed() const {
+        void setValue(unsigned i, int value) override {}
+        QVector<uint16_t> getValuesCompressed() const override {
             return QVector<uint16_t>();
         }
     };
@@ -159,7 +159,7 @@ namespace ThymioVPL {
     public:
         BlockWithBody(const QString& type, const QString& name, bool up, QGraphicsItem* parent);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
     public:
         const bool up;
@@ -172,10 +172,10 @@ namespace ThymioVPL {
     public:
         BlockWithButtons(const QString& type, const QString& name, bool up, QGraphicsItem* parent);
 
-        virtual unsigned valuesCount() const;
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
+        unsigned valuesCount() const override;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
 
     protected:
         QList<GeometryShapeButton*> buttons;
@@ -190,19 +190,19 @@ namespace ThymioVPL {
     public:
         BlockWithButtonsAndRange(const QString& type, const QString& name, bool up,
                                  const PixelToValModel pixelToValModel, int lowerBound, int upperBound, int defaultLow,
-                                 int defaultHigh, const QColor& lowColor, const QColor& highColor, bool advanced,
+                                 int defaultHigh, QColor lowColor, QColor highColor, bool advanced,
                                  QGraphicsItem* parent);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
-        virtual unsigned valuesCount() const;
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
-        virtual bool isAnyValueSet() const;
+        unsigned valuesCount() const override;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
+        bool isAnyValueSet() const override;
 
-        virtual bool isAnyAdvancedFeature() const;
-        virtual void setAdvanced(bool advanced);
+        bool isAnyAdvancedFeature() const override;
+        void setAdvanced(bool advanced) override;
 
     public:
         const PixelToValModel pixelToValModel;  //< whether we have a linear or square mapping
@@ -215,9 +215,9 @@ namespace ThymioVPL {
         const QColor highColor;
 
     protected:
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
         QRectF rangeRect() const;
         float pixelToVal(float pixel) const;
@@ -226,7 +226,7 @@ namespace ThymioVPL {
         QGraphicsItem* createIndicationLED(int x, int y);
 
     protected slots:
-        void updateIndicationLEDsOpacity(void);
+        void updateIndicationLEDsOpacity();
 
     protected:
         int low;                 //< low activation threshold (at right)
@@ -241,9 +241,9 @@ namespace ThymioVPL {
 
     class StateFilterBlock : public BlockWithButtons {
     public:
-        StateFilterBlock(const QString& type, const QString& name, QGraphicsItem* parent = 0);
+        StateFilterBlock(const QString& type, const QString& name, QGraphicsItem* parent = nullptr);
 
-        virtual bool isAdvancedBlock() const {
+        bool isAdvancedBlock() const override {
             return true;
         }
     };

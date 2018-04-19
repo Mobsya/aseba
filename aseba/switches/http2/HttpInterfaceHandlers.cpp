@@ -48,9 +48,9 @@ using std::string;
 using std::stringstream;
 using std::vector;
 
-OptionsHandler::OptionsHandler() {}
+OptionsHandler::OptionsHandler() = default;
 
-OptionsHandler::~OptionsHandler() {}
+OptionsHandler::~OptionsHandler() = default;
 
 bool OptionsHandler::checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
     return request->getMethod() == "OPTIONS";
@@ -71,19 +71,19 @@ NodesHandler::NodesHandler(HttpInterface* interface) : InterfaceHttpHandler(inte
     addSubhandler(new VariableOrEventHandler(interface));
 }
 
-NodesHandler::~NodesHandler() {}
+NodesHandler::~NodesHandler() = default;
 
 EventsHandler::EventsHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {
     addToken("events");
 }
 
-EventsHandler::~EventsHandler() {}
+EventsHandler::~EventsHandler() = default;
 
 void EventsHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
     if(tokens.size() == 1) {
         getInterface()->addEventSubscription(request, "*");
     } else {
-        for(vector<string>::const_iterator i = tokens.begin() + 1; i != tokens.end(); ++i) {
+        for(auto i = tokens.begin() + 1; i != tokens.end(); ++i) {
             getInterface()->addEventSubscription(request, *i);
         }
     }
@@ -107,20 +107,19 @@ ResetHandler::ResetHandler(HttpInterface* interface) : InterfaceHttpHandler(inte
     addToken("reset_all");
 }
 
-ResetHandler::~ResetHandler() {}
+ResetHandler::~ResetHandler() = default;
 
 void ResetHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
     map<Dashel::Stream*, HttpDashelTarget*>& targets = getInterface()->getTargets();
 
-    map<Dashel::Stream*, HttpDashelTarget*>::iterator end = targets.begin();
-    for(std::map<Dashel::Stream*, HttpDashelTarget*>::iterator iter = targets.begin(); iter != end; ++iter) {
+    auto end = targets.begin();
+    for(auto iter = targets.begin(); iter != end; ++iter) {
         Dashel::Stream* stream = iter->first;
         HttpDashelTarget* target = iter->second;
         const map<unsigned, HttpDashelTarget::Node>& nodes = target->getNodes();
 
-        map<unsigned, HttpDashelTarget::Node>::const_iterator nodesEnd = nodes.end();
-        for(map<unsigned, HttpDashelTarget::Node>::const_iterator nodesIter = nodes.begin(); nodesIter != nodesEnd;
-            ++nodesIter) {
+        auto nodesEnd = nodes.end();
+        for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd; ++nodesIter) {
             const HttpDashelTarget::Node& node = nodesIter->second;
 
             try {
@@ -173,7 +172,7 @@ void ResetHandler::handleRequest(HttpRequest* request, const std::vector<std::st
 
 LoadHandler::LoadHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-LoadHandler::~LoadHandler() {}
+LoadHandler::~LoadHandler() = default;
 
 bool LoadHandler::checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
     return request->getMethod() == "PUT";
@@ -206,27 +205,26 @@ void LoadHandler::handleRequest(HttpRequest* request, const std::vector<std::str
 
 NodeInfoHandler::NodeInfoHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-NodeInfoHandler::~NodeInfoHandler() {}
+NodeInfoHandler::~NodeInfoHandler() = default;
 
 bool NodeInfoHandler::checkIfResponsible(HttpRequest* request, const std::vector<std::string>& tokens) const {
     return tokens.size() <= 1;
 }
 
 void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
-    int n = (int)tokens.size();
+    auto n = (int)tokens.size();
 
     vector<string> parts;
 
     if(n == 0) {  // list all nodes
         std::map<Dashel::Stream*, HttpDashelTarget*>& targets = getInterface()->getTargets();
-        std::map<Dashel::Stream*, HttpDashelTarget*>::iterator end = targets.end();
-        for(std::map<Dashel::Stream*, HttpDashelTarget*>::iterator iter = targets.begin(); iter != end; ++iter) {
+        auto end = targets.end();
+        for(auto iter = targets.begin(); iter != end; ++iter) {
             HttpDashelTarget* target = iter->second;
 
             const std::map<unsigned, HttpDashelTarget::Node>& nodes = target->getNodes();
-            std::map<unsigned, HttpDashelTarget::Node>::const_iterator nodesEnd = nodes.end();
-            for(std::map<unsigned, HttpDashelTarget::Node>::const_iterator nodesIter = nodes.begin();
-                nodesIter != nodesEnd; ++nodesIter) {
+            auto nodesEnd = nodes.end();
+            for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd; ++nodesIter) {
                 const HttpDashelTarget::Node& node = nodesIter->second;
 
                 bool ok;
@@ -234,8 +232,8 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
                 if(ok) {
                     std::stringstream part;
-                    part << "{\"node\":" << node.globalId << ",\"name\":\"" << node.name
-                         << "\",\"protocolVersion\":" << description->protocolVersion << "}";
+                    part << "{\"node\":" << node.globalId << R"(,"name":")" << node.name << R"(","protocolVersion":)"
+                         << description->protocolVersion << "}";
                     parts.push_back(part.str());
                 } else {
                     stringstream errorStream;
@@ -257,9 +255,8 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
         for(int i = 0; i < n; i++) {
             set<pair<HttpDashelTarget*, const HttpDashelTarget::Node*> > matchingNodes =
                 getInterface()->getNodesByNameOrId(tokens[i]);
-            set<pair<HttpDashelTarget*, const HttpDashelTarget::Node*> >::iterator end = matchingNodes.end();
-            for(set<pair<HttpDashelTarget*, const HttpDashelTarget::Node*> >::iterator iter = matchingNodes.begin();
-                iter != end; ++iter) {
+            auto end = matchingNodes.end();
+            for(auto iter = matchingNodes.begin(); iter != end; ++iter) {
                 HttpDashelTarget* target = iter->first;
                 const HttpDashelTarget::Node& node = *(iter->second);
 
@@ -269,7 +266,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
                 if(ok) {
                     std::stringstream part;
                     part << "{\"node\":" << node.globalId;
-                    part << ",\"name\":\"" << node.name << "\"";
+                    part << R"(,"name":")" << node.name << "\"";
                     part << ",\"protocolVersion\":" << description->protocolVersion;
                     part << ",\"bytecodeSize\":" << description->bytecodeSize;
                     part << ",\"variablesSize\":" << description->variablesSize;
@@ -278,8 +275,8 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
                     // named variables
                     part << ",\"namedVariables\":{";
                     bool seenNamedVariables = false;
-                    VariablesMap::const_iterator vmEnd = node.variablesMap.end();
-                    for(VariablesMap::const_iterator vmIter = node.variablesMap.begin(); vmIter != vmEnd; ++vmIter) {
+                    auto vmEnd = node.variablesMap.end();
+                    for(auto vmIter = node.variablesMap.begin(); vmIter != vmEnd; ++vmIter) {
                         part << (vmIter == node.variablesMap.begin() ? "" : ",") << "\"" << WStringToUTF8(vmIter->first)
                              << "\":" << vmIter->second.second;
                         seenNamedVariables = true;
@@ -297,7 +294,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
                     // local events variables
                     part << ",\"localEvents\":{";
-                    int numEvents = (int)description->localEvents.size();
+                    auto numEvents = (int)description->localEvents.size();
                     for(int j = 0; j < numEvents; j++) {
                         part << (j == 0 ? "" : ",") << "\"" << WStringToUTF8(description->localEvents[j].name) << "\":"
                              << "\"" << WStringToUTF8(description->localEvents[j].description) << "\"";
@@ -306,7 +303,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
                     // constants from introspection
                     part << ",\"constants\":{";
-                    int numConstants = (int)commonDefinitions.constants.size();
+                    auto numConstants = (int)commonDefinitions.constants.size();
                     for(int j = 0; j < numConstants; j++) {
                         part << (j == 0 ? "" : ",") << "\"" << WStringToUTF8(commonDefinitions.constants[j].name)
                              << "\":" << commonDefinitions.constants[j].value;
@@ -346,12 +343,12 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
 VariableOrEventHandler::VariableOrEventHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-VariableOrEventHandler::~VariableOrEventHandler() {}
+VariableOrEventHandler::~VariableOrEventHandler() = default;
 
 void VariableOrEventHandler::handleRequest(HttpRequest* request, const std::vector<std::string>& tokens) {
     const CommonDefinitions& commonDefinitions = getInterface()->getProgram().getCommonDefinitions();
 
-    int n = (int)tokens.size();
+    auto n = (int)tokens.size();
 
     if(n < 2) {
         request->respond().setStatus(HttpResponse::HTTP_STATUS_BAD_REQUEST);
@@ -365,9 +362,8 @@ void VariableOrEventHandler::handleRequest(HttpRequest* request, const std::vect
         return;
     }
 
-    set<pair<HttpDashelTarget*, const HttpDashelTarget::Node*> >::iterator end = matchingNodes.end();
-    for(set<pair<HttpDashelTarget*, const HttpDashelTarget::Node*> >::iterator iter = matchingNodes.begin();
-        iter != end; ++iter) {
+    auto end = matchingNodes.end();
+    for(auto iter = matchingNodes.begin(); iter != end; ++iter) {
         HttpDashelTarget* target = iter->first;
         const HttpDashelTarget::Node& node = *(iter->second);
 
@@ -448,7 +444,7 @@ void VariableOrEventHandler::parseJsonForm(std::string content, std::vector<std:
 
 FileHandler::FileHandler(HttpInterface* interface) : InterfaceHttpHandler(interface) {}
 
-FileHandler::~FileHandler() {}
+FileHandler::~FileHandler() = default;
 
 std::string FileHandler::filePath(HttpRequest* request) const {
     // check that url has a single leading slash, not followed by a dot

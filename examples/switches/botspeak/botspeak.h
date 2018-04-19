@@ -34,8 +34,8 @@ namespace Aseba {
 
 class BotSpeakBridge : public Dashel::Hub, public Aseba::NodesManager {
 protected:
-    typedef std::vector<std::string> StringVector;
-    typedef TargetDescription::NamedVariable NamedVariable;
+    using StringVector = std::vector<std::string>;
+    using NamedVariable = TargetDescription::NamedVariable;
 
     struct Value {
         enum { RESOLVED, PENDING_DIRECT_VALUE, PENDING_INDIRECT_VALUE } state;
@@ -53,7 +53,7 @@ protected:
         Value lhs;
         Value rhs;
 
-        Operation(BotSpeakBridge* bridge, const std::string& op, const std::string& lhs, const std::string& rhs);
+        Operation(BotSpeakBridge* bridge, std::string op, const std::string& lhs, const std::string& rhs);
         bool update(BotSpeakBridge* bridge, unsigned addr, int val);
 
     protected:
@@ -101,11 +101,11 @@ public:
 
 protected:
     // reimplemented from parent classes
-    virtual void connectionCreated(Dashel::Stream* stream);
-    virtual void connectionClosed(Dashel::Stream* stream, bool abnormal);
-    virtual void incomingData(Dashel::Stream* stream);
-    virtual void sendMessage(const Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
+    void connectionCreated(Dashel::Stream* stream) override;
+    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+    void incomingData(Dashel::Stream* stream) override;
+    void sendMessage(const Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
 
     // main handlers for activites on streams
     void incomingAsebaData(Dashel::Stream* stream);
@@ -132,6 +132,6 @@ protected:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif  // BOTSPEAK_H

@@ -35,7 +35,7 @@ unsigned Enki::energyPool = INITIAL_POOL_ENERGY;
 extern "C" void PlaygroundEPuckNative_energysend(AsebaVMState* vm) {
     int index = AsebaNativePopArg(vm);
 
-    AsebaFeedableEPuck* epuck(getEnkiObject<AsebaFeedableEPuck>(vm));
+    auto* epuck(getEnkiObject<AsebaFeedableEPuck>(vm));
     if(epuck) {
         const uint16_t amount = vm->variables[index];
 
@@ -51,7 +51,7 @@ extern "C" AsebaNativeFunctionDescription PlaygroundEPuckNativeDescription_energ
 extern "C" void PlaygroundEPuckNative_energyreceive(AsebaVMState* vm) {
     int index = AsebaNativePopArg(vm);
 
-    AsebaFeedableEPuck* epuck(getEnkiObject<AsebaFeedableEPuck>(vm));
+    auto* epuck(getEnkiObject<AsebaFeedableEPuck>(vm));
     if(epuck) {
         uint16_t amount = vm->variables[index];
 
@@ -86,7 +86,7 @@ EPuckFeeding::EPuckFeeding(Robot* owner) : energy(EPUCK_FEEDER_INITIAL_ENERGY) {
 }
 
 void EPuckFeeding::objectStep(double dt, World* w, PhysicalObject* po) {
-    FeedableEPuck* epuck = dynamic_cast<FeedableEPuck*>(po);
+    auto* epuck = dynamic_cast<FeedableEPuck*>(po);
     if(epuck && energy > 0) {
         double dEnergy = dt * EPUCK_FEEDER_D_ENERGY;
         epuck->energy += dEnergy;
@@ -221,7 +221,7 @@ extern "C" AsebaVMDescription PlaygroundEPuckVMDescription;
 static char ePuckName[] = "e-puck0";
 
 const AsebaVMDescription* AsebaFeedableEPuck::getDescription() const {
-    const unsigned id(Aseba::clamp<unsigned>(vm.nodeId - 1, 0, 9));
+    const auto id(Aseba::clamp<unsigned>(vm.nodeId - 1, 0, 9));
     ePuckName[6] = '0' + id;
     PlaygroundEPuckVMDescription.name = ePuckName;
     return &PlaygroundEPuckVMDescription;
@@ -243,7 +243,7 @@ const AsebaLocalEventDescription* AsebaFeedableEPuck::getLocalEventsDescriptions
 
 static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {
     ASEBA_NATIVES_STD_DESCRIPTIONS, &PlaygroundEPuckNativeDescription_energysend,
-    &PlaygroundEPuckNativeDescription_energyreceive, &PlaygroundEPuckNativeDescription_energyamount, 0};
+    &PlaygroundEPuckNativeDescription_energyreceive, &PlaygroundEPuckNativeDescription_energyamount, nullptr};
 
 const AsebaNativeFunctionDescription* const* AsebaFeedableEPuck::getNativeFunctionsDescriptions() const {
     return nativeFunctionsDescriptions;

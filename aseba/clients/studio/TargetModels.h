@@ -72,24 +72,24 @@ public:
     };
 
 public:
-    TargetVariablesModel(QObject* parent = 0);
-    virtual ~TargetVariablesModel();
+    TargetVariablesModel(QObject* parent = nullptr);
+    ~TargetVariablesModel() override;
 
-    Qt::DropActions supportedDropActions() const;
+    Qt::DropActions supportedDropActions() const override;
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
-    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
-    QModelIndex parent(const QModelIndex& index) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
+    QModelIndex parent(const QModelIndex& index) const override;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-    bool setData(const QModelIndex& index, const QVariant& value, int role);
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-    QStringList mimeTypes() const;
-    QMimeData* mimeData(const QModelIndexList& indexes) const;
+    QStringList mimeTypes() const override;
+    QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     const QList<Variable>& getVariables() const {
         return variables;
@@ -136,23 +136,23 @@ public:
     struct TreeItem;
 
 public:
-    TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent = 0);
-    ~TargetFunctionsModel();
+    TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent = nullptr);
+    ~TargetFunctionsModel() override;
 
-    Qt::DropActions supportedDropActions() const;
+    Qt::DropActions supportedDropActions() const override;
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    QModelIndex parent(const QModelIndex& index) const;
-    QModelIndex index(int row, int column, const QModelIndex& parent) const;
+    QModelIndex parent(const QModelIndex& index) const override;
+    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-    QStringList mimeTypes() const;
-    QMimeData* mimeData(const QModelIndexList& indexes) const;
+    QStringList mimeTypes() const override;
+    QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
 public slots:
     void recreateTreeFromDescription(bool showHidden);
@@ -170,7 +170,7 @@ private:
 
 class TargetSubroutinesModel : public QStringListModel {
 public:
-    TargetSubroutinesModel(QObject* parent = 0);
+    TargetSubroutinesModel(QObject* parent = nullptr);
 
     void updateSubroutineTable(const Compiler::SubroutineTable& subroutineTable);
 };

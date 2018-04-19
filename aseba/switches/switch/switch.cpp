@@ -119,8 +119,8 @@ void Switch::incomingData(Stream* stream) {
     }
 
     // write on all connected streams
-    CmdMessage* cmdMessage(dynamic_cast<CmdMessage*>(message));
-    for(StreamsSet::iterator it = dataStreams.begin(); it != dataStreams.end(); ++it) {
+    auto* cmdMessage(dynamic_cast<CmdMessage*>(message));
+    for(auto it = dataStreams.begin(); it != dataStreams.end(); ++it) {
         Stream* destStream = *it;
 
         if((forward) && (destStream == stream))
@@ -171,7 +171,7 @@ void Switch::broadcastDummyUserMessage() {
     Aseba::UserMessage uMsg;
     uMsg.type = 0;
     // for (int i = 0; i < 80; i++)
-    for(StreamsSet::iterator it = dataStreams.begin(); it != dataStreams.end(); ++it) {
+    for(auto it = dataStreams.begin(); it != dataStreams.end(); ++it) {
         uMsg.serialize(*it);
         (*it)->flush();
     }
@@ -182,7 +182,7 @@ void Switch::remapId(Dashel::Stream* stream, const uint16_t localId, const uint1
 }
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 //! Show usage
 void dumpHelp(std::ostream& stream, const char* programName) {
@@ -269,8 +269,8 @@ int main(int argc, char* argv[]) {
             Dashel::ParameterSet remapIdDecoder;
             remapIdDecoder.add("dummy:remapLocal=-1;remapTarget=1");
             remapIdDecoder.add(target.c_str());
-            const int remappedLocalId(remapIdDecoder.get<int>("remapLocal"));
-            const int remappedTargetId(remapIdDecoder.get<int>("remapTarget"));
+            const auto remappedLocalId(remapIdDecoder.get<int>("remapLocal"));
+            const auto remappedTargetId(remapIdDecoder.get<int>("remapTarget"));
             if(target.find("remapLocal=") != std::string::npos) {
                 aswitch.remapId(stream, uint16_t(remappedLocalId), uint16_t(remappedTargetId));
                 if(verbose)

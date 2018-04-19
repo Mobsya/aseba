@@ -32,12 +32,12 @@
 namespace Aseba {
 class DirectConnection : public RecvBufferNodeConnection {
 public:
-    typedef std::queue<std::unique_ptr<Message>> MessageQueue;
+    using MessageQueue = std::queue<std::unique_ptr<Message> >;
     MessageQueue inQueue;
     MessageQueue outQueue;
 
 public:
-    virtual void sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length);
+    void sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length) override;
 };
 
 }  // namespace Aseba
@@ -55,14 +55,14 @@ public:
             std::make_pair((Aseba::AbstractNodeGlue*)this, (Aseba::AbstractNodeConnection*)this);
     }
 
-    virtual ~DirectlyConnected() {
+    ~DirectlyConnected() override {
         Aseba::vmStateToEnvironment.erase(&this->vm);
     }
 
 protected:
     // from AbstractNodeGlue
 
-    virtual void externalInputStep(double dt) {
+    void externalInputStep(double dt) override {
         while(!inQueue.empty()) {
             // serialize message into reception buffer
             const auto message(inQueue.front().get());

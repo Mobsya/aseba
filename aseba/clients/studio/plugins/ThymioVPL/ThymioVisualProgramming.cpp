@@ -372,7 +372,7 @@ namespace ThymioVPL {
         }
         QString selectedFilter;
         QString fileName(QFileDialog::getSaveFileName(
-            0, tr("Export program as image"), initialFileName,
+            nullptr, tr("Export program as image"), initialFileName,
             "Images (*.png *.jpg *.bmp *.ppm *.tiff);;Scalable Vector Graphics (*.svg)", &selectedFilter));
 
         if(fileName.isEmpty())
@@ -677,7 +677,7 @@ namespace ThymioVPL {
             return;
         }
         if(version != "1") {
-            QMessageBox::warning(0, tr("Incompatible Version"),
+            QMessageBox::warning(nullptr, tr("Incompatible Version"),
                                  tr("This file is incompatible with this version of ThymioVPL. It "
                                     "might not work correctly."));
         }
@@ -962,12 +962,12 @@ namespace ThymioVPL {
     }
 
     void ThymioVisualProgramming::addEvent() {
-        BlockButton* button(polymorphic_downcast<BlockButton*>(sender()));
+        auto* button(polymorphic_downcast<BlockButton*>(sender()));
         view->ensureVisible(scene->addEvent(button->getName()));
     }
 
     void ThymioVisualProgramming::addAction() {
-        BlockButton* button(polymorphic_downcast<BlockButton*>(sender()));
+        auto* button(polymorphic_downcast<BlockButton*>(sender()));
         view->ensureVisible(scene->addAction(button->getName()));
     }
 
@@ -986,9 +986,9 @@ namespace ThymioVPL {
         const quint32 a(ratio * 255.);
         const quint32 oma(255 - a);
         for(int y = 0; y < firstImage.height(); ++y) {
-            const quint32* pF(reinterpret_cast<const quint32*>(firstImage.scanLine(y)));
-            const quint32* pS(reinterpret_cast<const quint32*>(secondImage.scanLine(y)));
-            quint32* pD(reinterpret_cast<quint32*>(destImage.scanLine(y)));
+            const auto* pF(reinterpret_cast<const quint32*>(firstImage.scanLine(y)));
+            const auto* pS(reinterpret_cast<const quint32*>(secondImage.scanLine(y)));
+            auto* pD(reinterpret_cast<quint32*>(destImage.scanLine(y)));
 
             for(int x = 0; x < firstImage.width(); ++x) {
                 const quint32 vF(*pF++);

@@ -38,7 +38,7 @@ namespace Aseba {
 using namespace std;
 
 ThymioVPLStandaloneInterface::ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone)
-    : vplStandalone(vplStandalone){};
+    : vplStandalone(vplStandalone) {}
 
 Target* ThymioVPLStandaloneInterface::getTarget() {
     return vplStandalone->target.get();
@@ -120,7 +120,7 @@ ThymioVPLStandalone::ThymioVPLStandalone(QVector<QTranslator*> translators, cons
     ,
     // setup initial values
     id(0)
-    , vpl(0)
+    , vpl(nullptr)
     , allocatedVariablesCount(0) {
     subscribeToVariableOfInterest(ASEBA_PID_VAR_NAME);
 
@@ -138,7 +138,7 @@ ThymioVPLStandalone::ThymioVPLStandalone(QVector<QTranslator*> translators, cons
 ThymioVPLStandalone::~ThymioVPLStandalone() {
     // delete variablesModel from VariableListener and set it to 0 to prevent double deletion
     delete variablesModel;
-    variablesModel = 0;
+    variablesModel = nullptr;
 }
 
 void ThymioVPLStandalone::setupWidgets() {
@@ -280,7 +280,7 @@ bool ThymioVPLStandalone::saveFile(bool as) {
         // keep only the path of the directory
             fileName = QFileInfo(fileName).dir().path();
         }
-        fileName = QFileDialog::getSaveFileName(0, tr("Save Script"), fileName, "Aseba scripts (*.aesl)");
+        fileName = QFileDialog::getSaveFileName(nullptr, tr("Save Script"), fileName, "Aseba scripts (*.aesl)");
     }
 
     if(fileName.isEmpty())
@@ -345,7 +345,7 @@ void ThymioVPLStandalone::openFile() {
         dir = fileName;
 
     // get file name
-    const QString newFileName(QFileDialog::getOpenFileName(0, tr("Open Script"), dir, "Aseba scripts (*.aesl)"));
+    const QString newFileName(QFileDialog::getOpenFileName(nullptr, tr("Open Script"), dir, "Aseba scripts (*.aesl)"));
     QFile file(newFileName);
     if(!file.open(QFile::ReadOnly))
         return;
@@ -476,10 +476,10 @@ void ThymioVPLStandalone::nodeDisconnected(unsigned node) {
         savedContent = vpl->saveToDom();
         vplLayout->removeWidget(vpl);
         // explicitely set no parent to avoid crash on Windows
-        vpl->setParent(0);
+        vpl->setParent(nullptr);
         delete vpl;
         // vpl->deleteLater();
-        vpl = 0;
+        vpl = nullptr;
 
         disconnectedMessage->show();
     }

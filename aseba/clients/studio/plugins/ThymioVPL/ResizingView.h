@@ -34,7 +34,7 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        ResizingView(QGraphicsScene* scene, QWidget* parent = 0);
+        ResizingView(QGraphicsScene* scene, QWidget* parent = nullptr);
         qreal getScale() const {
             return computedScale;
         }
@@ -46,7 +46,7 @@ namespace ThymioVPL {
             void clearIgnoreResize();*/
 
     protected:
-        virtual void resizeEvent(QResizeEvent* event);
+        void resizeEvent(QResizeEvent* event) override;
 
     protected:
         qreal computedScale;

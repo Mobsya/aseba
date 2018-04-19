@@ -21,17 +21,17 @@
 #include <QtDebug>
 #include <QtGui>
 #include <QMessageBox>
+#include <utility>
 
 namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-NamedValuesVectorModel::NamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText,
-                                               QObject* parent)
+NamedValuesVectorModel::NamedValuesVectorModel(NamedValuesVector* namedValues, QString tooltipText, QObject* parent)
     : QAbstractTableModel(parent)
     , namedValues(namedValues)
     , wasModified(false)
-    , tooltipText(tooltipText)
+    , tooltipText(std::move(tooltipText))
     , editable(false) {
     Q_ASSERT(namedValues);
 }
@@ -96,7 +96,7 @@ QStringList NamedValuesVectorModel::mimeTypes() const {
 }
 
 QMimeData* NamedValuesVectorModel::mimeData(const QModelIndexList& indexes) const {
-    QMimeData* mimeData = new QMimeData();
+    auto* mimeData = new QMimeData();
 
     // "text/plain"
     QString texts;
@@ -143,7 +143,7 @@ bool NamedValuesVectorModel::dropMimeData(const QMimeData* data, Qt::DropAction 
 
     // search for this element
     int oldIndex = 0;
-    for(NamedValuesVector::iterator it = namedValues->begin(); it != namedValues->end(); it++, oldIndex++)
+    for(auto it = namedValues->begin(); it != namedValues->end(); it++, oldIndex++)
         if((*it).name == name.toStdWString() && (*it).value == value) {
             // found! move it
             moveRow(oldIndex, row);
@@ -194,7 +194,7 @@ void NamedValuesVectorModel::addNamedValue(const NamedValue& namedValue, int ind
         endInsertRows();
     } else {
         beginInsertRows(QModelIndex(), index, index);
-        NamedValuesVector::iterator it = namedValues->begin() + index;
+        auto it = namedValues->begin() + index;
         namedValues->insert(it, namedValue);
         endInsertRows();
     }
@@ -266,12 +266,12 @@ bool ConstantsModel::validateName(const QString& name) const {
     Q_ASSERT(namedValues);
 
     if(namedValues->contains(name.toStdWString())) {
-        QMessageBox::warning(0, tr("Constant already defined"), tr("Constant %0 is already defined.").arg(name));
+        QMessageBox::warning(nullptr, tr("Constant already defined"), tr("Constant %0 is already defined.").arg(name));
         return false;
     }
 
     if(Compiler::isKeyword(name.toStdWString())) {
-        QMessageBox::warning(0, tr("The name is a keyword"),
+        QMessageBox::warning(nullptr, tr("The name is a keyword"),
                              tr("The name <tt>%0</tt> cannot be used as a constant, because it is "
                                 "a language keyword.")
                                  .arg(name));

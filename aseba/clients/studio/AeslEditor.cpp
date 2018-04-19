@@ -68,7 +68,7 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
     // literals
     QTextCharFormat literalsFormat;
     literalsFormat.setForeground(Qt::darkBlue);
-    rule.pattern = QRegExp("\\b(-{0,1}\\d+|0x([0-9]|[a-f]|[A-F])+|0b[0-1]+)\\b");
+    rule.pattern = QRegExp(R"(\b(-{0,1}\d+|0x([0-9]|[a-f]|[A-F])+|0b[0-1]+)\b)");
     rule.format = literalsFormat;
     highlightingRules.append(rule);
 
@@ -97,13 +97,13 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
     QTextCharFormat todoFormat;
     todoFormat.setForeground(Qt::black);
     todoFormat.setBackground(QColor(255, 192, 192));
-    rule.pattern = QRegExp("#.*(\\bTODO\\b|\\bFIXME\\b).*");
+    rule.pattern = QRegExp(R"(#.*(\bTODO\b|\bFIXME\b).*)");
     rule.format = todoFormat;
     highlightingRules.append(rule);
 }
 
 void AeslHighlighter::highlightBlock(const QString& text) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(currentBlockUserData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(currentBlockUserData());
 
     // current line background blue
     bool isActive = uData && uData->properties.contains("active");
@@ -407,7 +407,7 @@ int AeslBreakpointSidebar::idealWidth() const {
 
 AeslEditor::AeslEditor()
     : debugging(false)
-    , completer(0)
+    , completer(nullptr)
     , vardefRegexp("^var .*")
     , constdefRegexp("^const .*")
     , leftValueRegexp("^\\w+\\s*=.*")
@@ -490,7 +490,7 @@ bool AeslEditor::isBreakpoint() {
 }
 
 bool AeslEditor::isBreakpoint(QTextBlock block) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     return (uData && (uData->properties.contains("breakpoint") || uData->properties.contains("breakpointPending")));
 }
 
@@ -515,7 +515,7 @@ void AeslEditor::setBreakpoint() {
 }
 
 void AeslEditor::setBreakpoint(QTextBlock block) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     if(!uData) {
         // create user data
         uData = new AeslEditorUserData("breakpointPending");
@@ -530,19 +530,19 @@ void AeslEditor::clearBreakpoint() {
 }
 
 void AeslEditor::clearBreakpoint(QTextBlock block) {
-    AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     uData->properties.remove("breakpointPending");
     uData->properties.remove("breakpoint");
     if(uData->properties.isEmpty()) {
         // garbage collect UserData
-        block.setUserData(0);
+        block.setUserData(nullptr);
     }
     emit breakpointCleared(block.blockNumber());
 }
 
 void AeslEditor::clearAllBreakpoints() {
     for(QTextBlock it = document()->begin(); it != document()->end(); it = it.next()) {
-        AeslEditorUserData* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(it.userData());
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(it.userData());
         if(uData) {
             uData->properties.remove("breakpoint");
             uData->properties.remove("breakpointPending");

@@ -27,7 +27,7 @@
 
 #define CONFIG_PROPERTY_CHECKBOX_DECLARE(name) \
 public:                                        \
-    static const bool get##name(void);         \
+    static bool get##name(void);               \
     static void set##name(bool);
 
 class QStackedWidget;
@@ -46,8 +46,8 @@ class ConfigDialog : public QDialog {
 
 public:
     // instantiate / kill the singleton
-    static void init(QWidget* parent = 0);
-    static void bye(void);
+    static void init(QWidget* parent = nullptr);
+    static void bye();
     static const ConfigDialog* getInstance() {
         return me;
     }
@@ -67,8 +67,8 @@ signals:
     void settingsChanged();
 
 protected:
-    ConfigDialog(QWidget* parent = 0);
-    ~ConfigDialog();
+    ConfigDialog(QWidget* parent = nullptr);
+    ~ConfigDialog() override;
     void setupWidgets();
 
 protected:
@@ -89,8 +89,8 @@ protected:
 public slots:
     virtual void saveState();
     virtual void reloadFromCache();
-    virtual void accept();
-    virtual void reject();
+    void accept() override;
+    void reject() override;
 
 protected slots:
     void flushCache();
@@ -101,8 +101,8 @@ class ConfigPage : public QWidget {
     Q_OBJECT
 
 public:
-    ConfigPage(QString title = QString(), QWidget* parent = 0);
-    ~ConfigPage() {}
+    ConfigPage(QString title = QString(), QWidget* parent = nullptr);
+    ~ConfigPage() override = default;
 
     friend class ConfigDialog;
 
@@ -120,7 +120,7 @@ protected:
 protected:
     template <class T>
     struct WidgetCache {
-        WidgetCache() {}
+        WidgetCache() = default;
         WidgetCache(QWidget* widget, T value) : widget(widget), value(value) {}
         QWidget* widget;
         T value;
@@ -136,14 +136,14 @@ class GeneralPage : public ConfigPage {
     Q_OBJECT
 
 public:
-    GeneralPage(QWidget* parent = 0);
-    ~GeneralPage() {}
+    GeneralPage(QWidget* parent = nullptr);
+    ~GeneralPage() override = default;
 
     friend class ConfigDialog;
 
 protected:
-    virtual void readSettings();
-    virtual void writeSettings();
+    void readSettings() override;
+    void writeSettings() override;
 };
 
 // EditorPage
@@ -151,14 +151,14 @@ class EditorPage : public ConfigPage {
     Q_OBJECT
 
 public:
-    EditorPage(QWidget* parent = 0);
-    ~EditorPage() {}
+    EditorPage(QWidget* parent = nullptr);
+    ~EditorPage() override = default;
 
     friend class ConfigDialog;
 
 protected:
-    virtual void readSettings();
-    virtual void writeSettings();
+    void readSettings() override;
+    void writeSettings() override;
 };
 }  // namespace Aseba
 

@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include "common/msg/msg.h"
 #include "common/utils/utils.h"
 #include "HttpDashelTarget.h"
@@ -37,10 +38,10 @@ using std::set;
 using std::string;
 using std::vector;
 
-HttpDashelTarget::HttpDashelTarget(HttpInterface* interface_, const std::string& address_, Dashel::Stream* stream_)
-    : interface(interface_), address(address_), stream(stream_) {}
+HttpDashelTarget::HttpDashelTarget(HttpInterface* interface_, std::string address_, Dashel::Stream* stream_)
+    : interface(interface_), address(std::move(address_)), stream(stream_) {}
 
-HttpDashelTarget::~HttpDashelTarget() {}
+HttpDashelTarget::~HttpDashelTarget() = default;
 
 bool HttpDashelTarget::sendEvent(const std::vector<std::string>& args) {
     if(args.empty()) {
@@ -79,7 +80,7 @@ bool HttpDashelTarget::sendGetVariables(unsigned globalNodeId, const std::vector
                                         HttpRequest* request) {
     vector<unsigned> positions;
 
-    map<unsigned, Node>::iterator query = nodes.find(globalNodeId);
+    auto query = nodes.find(globalNodeId);
     if(query == nodes.end()) {
         if(interface->isVerbose()) {
             cerr << "Target " << address << " failed to send get variables message for node " << globalNodeId
@@ -91,7 +92,7 @@ bool HttpDashelTarget::sendGetVariables(unsigned globalNodeId, const std::vector
     Node& node = query->second;
     assert(globalNodeId == node.globalId);
 
-    for(vector<string>::const_iterator it(args.begin()); it != args.end(); ++it) {
+    for(auto it(args.begin()); it != args.end(); ++it) {
         unsigned position;
         unsigned size;
 
@@ -116,7 +117,7 @@ bool HttpDashelTarget::sendGetVariables(unsigned globalNodeId, const std::vector
     }
 
     if(!positions.empty()) {
-        DashelHttpRequest* dashelRequest = static_cast<DashelHttpRequest*>(request);
+        auto* dashelRequest = static_cast<DashelHttpRequest*>(request);
         node.pendingVariables[positions[0]].insert(make_pair(dashelRequest->getStream(), dashelRequest));
 
         if(interface->isVerbose()) {
@@ -129,7 +130,7 @@ bool HttpDashelTarget::sendGetVariables(unsigned globalNodeId, const std::vector
 }
 
 bool HttpDashelTarget::sendSetVariable(unsigned globalNodeId, const std::vector<std::string>& args) {
-    map<unsigned, Node>::iterator query = nodes.find(globalNodeId);
+    auto query = nodes.find(globalNodeId);
     if(query == nodes.end()) {
         if(interface->isVerbose()) {
             cerr << "Target " << address << " failed to send set variables message for node " << globalNodeId
@@ -175,7 +176,7 @@ bool HttpDashelTarget::sendSetVariable(unsigned globalNodeId, const std::vector<
 }
 
 bool HttpDashelTarget::compileAndRunCode(unsigned globalNodeId, const std::string& code, std::string& errorString) {
-    map<unsigned, Node>::iterator query = nodes.find(globalNodeId);
+    auto query = nodes.find(globalNodeId);
     if(query == nodes.end()) {
         if(interface->isVerbose()) {
             cerr << "Target " << address << " failed to compile and run code for node " << globalNodeId
@@ -231,7 +232,7 @@ bool HttpDashelTarget::compileAndRunCode(unsigned globalNodeId, const std::strin
 }
 
 bool HttpDashelTarget::removePendingVariable(unsigned globalNodeId, unsigned start) {
-    map<unsigned, Node>::iterator query = nodes.find(globalNodeId);
+    auto query = nodes.find(globalNodeId);
     if(query == nodes.end()) {
         if(interface->isVerbose()) {
             cerr << "Target " << address << " failed to remove pending variable for node " << globalNodeId
@@ -250,8 +251,8 @@ std::set<const HttpDashelTarget::Node*> HttpDashelTarget::getNodesByName(const s
     set<const HttpDashelTarget::Node*> result;
 
     // todo: maybe make this more efficient by caching node access by name?
-    map<unsigned, Node>::const_iterator end = nodes.end();
-    for(map<unsigned, Node>::const_iterator iter = nodes.begin(); iter != end; ++iter) {
+    auto end = nodes.end();
+    for(auto iter = nodes.begin(); iter != end; ++iter) {
         const Node& node = iter->second;
 
         if(node.name == name) {
@@ -263,7 +264,7 @@ std::set<const HttpDashelTarget::Node*> HttpDashelTarget::getNodesByName(const s
 }
 
 const HttpDashelTarget::Node* HttpDashelTarget::getNodeById(unsigned globalNodeId) const {
-    map<unsigned, Node>::const_iterator query = nodes.find(globalNodeId);
+    auto query = nodes.find(globalNodeId);
     if(query != nodes.end()) {
         return &query->second;
     } else {
@@ -272,7 +273,7 @@ const HttpDashelTarget::Node* HttpDashelTarget::getNodeById(unsigned globalNodeI
 }
 
 const HttpDashelTarget::Node* HttpDashelTarget::getNodeByLocalId(unsigned localNodeId) const {
-    map<unsigned, unsigned>::const_iterator query = globalIds.find(localNodeId);
+    auto query = globalIds.find(localNodeId);
     if(query != globalIds.end()) {
         return getNodeById(query->second);
     } else {
@@ -282,7 +283,7 @@ const HttpDashelTarget::Node* HttpDashelTarget::getNodeByLocalId(unsigned localN
 
 bool HttpDashelTarget::getVariableInfo(const Node& node, const std::string& variableName, unsigned& position,
                                        unsigned& size) {
-    VariablesMap::const_iterator query = node.variablesMap.find(UTF8ToWString(variableName));
+    auto query = node.variablesMap.find(UTF8ToWString(variableName));
     if(query != node.variablesMap.end()) {
         position = query->second.first;
         size = query->second.second;
@@ -313,7 +314,7 @@ void HttpDashelTarget::sendMessage(const Message& message) {
 }
 
 void HttpDashelTarget::nodeDescriptionReceived(unsigned localNodeId) {
-    std::map<unsigned, unsigned>::iterator query = globalIds.find(localNodeId);
+    auto query = globalIds.find(localNodeId);
     if(query == globalIds.end()) {
         Node node;
         node.localId = localNodeId;

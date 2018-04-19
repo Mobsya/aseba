@@ -28,12 +28,12 @@ namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-StudioAeslEditor::StudioAeslEditor(const ScriptTab* tab) : tab(tab), dropSourceWidget(0) {}
+StudioAeslEditor::StudioAeslEditor(const ScriptTab* tab) : tab(tab), dropSourceWidget(nullptr) {}
 
 void StudioAeslEditor::dropEvent(QDropEvent* event) {
     dropSourceWidget = dynamic_cast<QWidget*>(event->source());
     QTextEdit::dropEvent(event);
-    dropSourceWidget = 0;
+    dropSourceWidget = nullptr;
     setFocus(Qt::MouseFocusReason);
 }
 
@@ -50,7 +50,7 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
 
     // if beginning of a line and source widget is known, add some helper text
     if(dropSourceWidget && startOfLine) {
-        const NodeTab* nodeTab(dynamic_cast<const NodeTab*>(tab));
+        const auto* nodeTab(dynamic_cast<const NodeTab*>(tab));
         assert(nodeTab);
         QString prefix("");   // before the text
         QString midfix("");   // between the text and the cursor

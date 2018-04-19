@@ -38,6 +38,7 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <utility>
 
 #include "Block.h"
 #include "Buttons.h"
@@ -102,11 +103,11 @@ namespace ThymioVPL {
         else if(name == "setstate")
             return new StateFilterActionBlock(parent);
         else
-            return 0;
+            return nullptr;
     }
 
-    Block::Block(const QString& type, const QString& name, QGraphicsItem* parent)
-        : QGraphicsObject(parent), type(type), name(name), beingDragged(false), changed(false) {
+    Block::Block(QString type, QString name, QGraphicsItem* parent)
+        : QGraphicsObject(parent), type(std::move(type)), name(std::move(name)), beingDragged(false), changed(false) {
         setFlag(QGraphicsItem::ItemIsMovable);
         setAcceptedMouseButtons(Qt::LeftButton);
     }
@@ -199,7 +200,7 @@ namespace ThymioVPL {
         document.appendChild(serialize(document));
 
         // create a MIME data for this block
-        QMimeData* mime = new QMimeData;
+        auto* mime = new QMimeData;
         mime->setData("Block", document.toByteArray());
 
         return mime;
@@ -222,7 +223,7 @@ namespace ThymioVPL {
         // create a block
         Block* block(createBlock(element.attribute("name"), advanced));
         if(!block)
-            return 0;
+            return nullptr;
 
         // set that block's informations from element's attributes
         for(unsigned i = 0; i < block->valuesCount(); ++i)
@@ -293,7 +294,7 @@ namespace ThymioVPL {
 #endif  // Q_WS_X11
         {
             for(int y = 0; y < img.height(); ++y) {
-                QRgb* row = (QRgb*)img.scanLine(y);
+                auto* row = (QRgb*)img.scanLine(y);
                 for(int x = 0; x < img.width(); ++x) {
                     ((unsigned char*)&row[x])[3] = 128;
                 }
@@ -307,7 +308,7 @@ namespace ThymioVPL {
     void Block::render(QPainter& painter) {
         QStyleOptionGraphicsItem opt;
         opt.exposedRect = boundingRect();
-        paint(&painter, &opt, 0);
+        paint(&painter, &opt, nullptr);
         renderChildItems(painter, this, opt);
     }
 
@@ -327,7 +328,7 @@ namespace ThymioVPL {
             painter.scale(child->scale(), child->scale());
             painter.setOpacity(painter.opacity() * child->opacity());
             renderChildItems(painter, child, opt);
-            child->paint(&painter, &opt, 0);
+            child->paint(&painter, &opt, nullptr);
             painter.restore();
         }
     }
@@ -354,13 +355,13 @@ namespace ThymioVPL {
 
         Q_ASSERT(scene());
         Q_ASSERT(scene()->views().size() > 0);
-        ResizingView* view(polymorphic_downcast<ResizingView*>(scene()->views()[0]));
+        auto* view(polymorphic_downcast<ResizingView*>(scene()->views()[0]));
         const QRectF sceneRect(mapRectToScene(boundingRect()));
         const QRect viewRect(view->mapFromScene(sceneRect).boundingRect());
         const QPoint hotspot(view->mapFromScene(event->scenePos()) - viewRect.topLeft());
 
         const bool isCopy((event->modifiers() & Qt::ControlModifier) || (name == "statefilter"));
-        QDrag* drag = new QDrag(event->widget());
+        auto* drag = new QDrag(event->widget());
         drag->setMimeData(mimeData());
         drag->setHotSpot(hotspot);
         drag->setPixmap(QPixmap::fromImage(translucidImage(view->getScale())));
@@ -370,7 +371,7 @@ namespace ThymioVPL {
         USAGE_LOG(logBlockMouseMove(this->name, this->type, event));
         Qt::DropAction dragResult(drag->exec(isCopy ? Qt::CopyAction : Qt::MoveAction));
         if(dragResult != Qt::IgnoreAction) {
-            EventActionsSet* eventActionsSet(dynamic_cast<EventActionsSet*>(parentItem()));
+            auto* eventActionsSet(dynamic_cast<EventActionsSet*>(parentItem()));
             if(eventActionsSet) {
                 if(!isCopy && !keepAfterDrop)
                     eventActionsSet->removeBlock(this);
@@ -383,7 +384,7 @@ namespace ThymioVPL {
     }
 
     void Block::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-        EventActionsSet* parentSet(dynamic_cast<EventActionsSet*>(parentItem()));
+        auto* parentSet(dynamic_cast<EventActionsSet*>(parentItem()));
         if(parentSet) {
             parentSet->setSoleSelection();
         }
@@ -437,9 +438,8 @@ namespace ThymioVPL {
 
     BlockWithButtonsAndRange::BlockWithButtonsAndRange(const QString& type, const QString& name, bool up,
                                                        const PixelToValModel pixelToValModel, int lowerBound,
-                                                       int upperBound, int defaultLow, int defaultHigh,
-                                                       const QColor& lowColor, const QColor& highColor, bool advanced,
-                                                       QGraphicsItem* parent)
+                                                       int upperBound, int defaultLow, int defaultHigh, QColor lowColor,
+                                                       QColor highColor, bool advanced, QGraphicsItem* parent)
         : BlockWithButtons(type, name, up, parent)
         , pixelToValModel(pixelToValModel)
         , lowerBound(lowerBound)
@@ -447,8 +447,8 @@ namespace ThymioVPL {
         , range(upperBound - lowerBound)
         , defaultLow(defaultLow)
         , defaultHigh(defaultHigh)
-        , lowColor(lowColor)
-        , highColor(highColor)
+        , lowColor(std::move(lowColor))
+        , highColor(std::move(highColor))
         , low(defaultLow)
         , high(defaultHigh)
         , buttonsCountSimple(-1)
@@ -700,7 +700,7 @@ namespace ThymioVPL {
 
     //! Create a point with a gradient representing a LED on the robot
     QGraphicsItem* BlockWithButtonsAndRange::createIndicationLED(int x, int y) {
-        QGraphicsEllipseItem* ledIndication = new QGraphicsEllipseItem(x - 12, y - 12, 24, 24, this);
+        auto* ledIndication = new QGraphicsEllipseItem(x - 12, y - 12, 24, 24, this);
         QRadialGradient grad(x, y, 12);
         grad.setColorAt(0, Qt::red);
         grad.setColorAt(1, Qt::transparent);
@@ -710,7 +710,7 @@ namespace ThymioVPL {
     }
 
     //! For every button, update the indication LED accordingly
-    void BlockWithButtonsAndRange::updateIndicationLEDsOpacity(void) {
+    void BlockWithButtonsAndRange::updateIndicationLEDsOpacity() {
         // we need to have one LED per button for this function to work
         if(indicationLEDs.size() != buttons.size())
             return;

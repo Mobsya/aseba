@@ -41,11 +41,11 @@ class MainWindow;
 //! Node tools are available per product id
 struct NodeToolRegistrar {
     //! A product ID from Aseba
-    typedef int ProductId;
+    using ProductId = int;
     //! A list of product IDs
-    typedef QList<ProductId> ProductIds;
+    using ProductIds = QList<ProductId>;
     //! A function which creates an instance of a node tool
-    typedef NodeToolInterface* (*CreatorFunc)(NodeTab* node);
+    using CreatorFunc = NodeToolInterface* (*)(NodeTab*);
 
     void reg(const QString& name, const ProductIds& pid, const CreatorFunc func);
 

@@ -41,7 +41,7 @@
 */
 struct Shell : public Dashel::Hub, public Aseba::NodesManager {
 public:
-    typedef std::vector<std::string> strings;
+    using strings = std::vector<std::string>;
     typedef std::map<std::string, Aseba::VariablesMap> NodeNameToVariablesMap;
 
 protected:
@@ -64,9 +64,9 @@ public:
 
 protected:
     // reimplemented from parent classes
-    virtual void sendMessage(const Aseba::Message& message);
-    virtual void nodeDescriptionReceived(unsigned nodeId);
-    virtual void incomingData(Dashel::Stream* stream);
+    void sendMessage(const Aseba::Message& message) override;
+    void nodeDescriptionReceived(unsigned nodeId) override;
+    void incomingData(Dashel::Stream* stream) override;
 
     // main handlers for activites on streams
     void incomingTargetData(Dashel::Stream* stream);

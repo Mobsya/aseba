@@ -38,7 +38,7 @@ std::size_t Zeroconf::TargetInformationKeyHash::operator()(TargetInformation con
 bool Zeroconf::TargetInformationKeyCompareEqual::operator()(const TargetInformation& lhs,
                                                             const TargetInformation& rhs) const {
     return static_cast<const TargetKey&>(lhs) == static_cast<const TargetKey&>(rhs);
-};
+}
 
 //! Two target keys are equal if all their members are equal
 bool operator==(const Zeroconf::TargetKey& lhs, const Zeroconf::TargetKey& rhs) {

@@ -41,7 +41,7 @@ enum class EnvironmentNotificationType {
 };
 
 //! A vector of string
-typedef std::vector<std::string> strings;
+using strings = std::vector<std::string>;
 
 //! An interface to a simulation environment
 struct SimulatorEnvironment {
@@ -73,8 +73,8 @@ ObjectType* getEnkiObject(AsebaVMState* vm) {
     World* world(Enki::simulatorEnvironment->getWorld());
     if(!world)
         return nullptr;
-    for(World::ObjectsIterator objectIt = world->objects.begin(); objectIt != world->objects.end(); ++objectIt) {
-        ObjectType* enkiObject = dynamic_cast<ObjectType*>(*objectIt);
+    for(auto objectIt = world->objects.begin(); objectIt != world->objects.end(); ++objectIt) {
+        auto* enkiObject = dynamic_cast<ObjectType*>(*objectIt);
         if(enkiObject && (&(enkiObject->vm) == vm))
             return enkiObject;
     }

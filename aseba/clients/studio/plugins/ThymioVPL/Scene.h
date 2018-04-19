@@ -33,7 +33,7 @@ namespace ThymioVPL {
 
     public:
         Scene(ThymioVisualProgramming* vpl);
-        ~Scene();
+        ~Scene() override;
 
         QGraphicsItem* addAction(const QString& name);
         QGraphicsItem* addEvent(const QString& name);
@@ -75,8 +75,8 @@ namespace ThymioVPL {
         void insertSet(int row);
         void recomputeSceneRect();
 
-        typedef QList<EventActionsSet*>::iterator SetItr;
-        typedef QList<EventActionsSet*>::const_iterator SetConstItr;
+        using SetItr = QList<EventActionsSet*>::iterator;
+        using SetConstItr = QList<EventActionsSet*>::const_iterator;
 
         SetItr setsBegin() {
             return eventActionsSets.begin();

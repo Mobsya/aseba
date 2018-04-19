@@ -5,6 +5,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QTemporaryFile>
+#include <utility>
 #include <dashel/dashel.h>
 #include "common/utils/BootloaderInterface.h"
 
@@ -32,9 +33,9 @@ public:
     QtBootloaderInterface(Dashel::Stream* stream, int dest, int bootloaderDest);
 
 protected:
-    virtual void writeHexGotDescription(unsigned pagesCount);
-    virtual void writePageStart(unsigned pageNumber, const uint8_t* data, bool simple);
-    virtual void errorWritePageNonFatal(unsigned pageNumber);
+    void writeHexGotDescription(unsigned pagesCount) override;
+    void writePageStart(unsigned pageNumber, const uint8_t* data, bool simple) override;
+    void errorWritePageNonFatal(unsigned pageNumber) override;
 
 protected:
     unsigned pagesCount;
@@ -54,8 +55,8 @@ private:
         QString text;
 
         FlashResult() : status(SUCCESS) {}
-        FlashResult(Status status, const QString& title, const QString& text)
-            : status(status), title(title), text(text) {}
+        FlashResult(Status status, QString title, QString text)
+            : status(status), title(std::move(title)), text(std::move(text)) {}
     };
 
 private:
@@ -85,8 +86,8 @@ private:
     QNetworkAccessManager* networkManager;
 
 public:
-    ThymioUpgraderDialog(const std::string& target);
-    ~ThymioUpgraderDialog();
+    ThymioUpgraderDialog(std::string target);
+    ~ThymioUpgraderDialog() override;
 
 private:
     unsigned readId(MessageHub& hub, Dashel::Stream* stream) const;
@@ -101,8 +102,8 @@ private slots:
     void officialGroupChecked(bool on);
     void fileGroupChecked(bool on);
     void setupFlashButtonState();
-    void openFile(void);
-    void doFlash(void);
+    void openFile();
+    void doFlash();
     void flashProgress(int percentage);
     void flashFinished();
     void networkReplyFinished(QNetworkReply*);

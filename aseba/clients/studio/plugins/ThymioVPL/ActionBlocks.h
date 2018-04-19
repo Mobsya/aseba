@@ -36,15 +36,15 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        MoveActionBlock(QGraphicsItem* parent = 0);
-        virtual ~MoveActionBlock();
+        MoveActionBlock(QGraphicsItem* parent = nullptr);
+        ~MoveActionBlock() override;
 
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 2;
         }
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
 
     private slots:
         void frameChanged(int frame);
@@ -62,15 +62,15 @@ namespace ThymioVPL {
     protected:
         ColorActionBlock(QGraphicsItem* parent, bool top);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
     public:
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 3;
         }
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
 
     private slots:
         void valueChangeDetected();
@@ -80,30 +80,30 @@ namespace ThymioVPL {
     };
 
     struct TopColorActionBlock : public ColorActionBlock {
-        TopColorActionBlock(QGraphicsItem* parent = 0);
+        TopColorActionBlock(QGraphicsItem* parent = nullptr);
     };
 
     struct BottomColorActionBlock : public ColorActionBlock {
-        BottomColorActionBlock(QGraphicsItem* parent = 0);
+        BottomColorActionBlock(QGraphicsItem* parent = nullptr);
     };
 
     class SoundActionBlock : public Block {
     public:
-        SoundActionBlock(QGraphicsItem* parent = 0);
+        SoundActionBlock(QGraphicsItem* parent = nullptr);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 6;
         }
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
 
     protected:
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
         void idxAndValFromPos(const QPointF& pos, bool* ok, unsigned& noteIdx, unsigned& noteVal);
         void setNote(unsigned noteIdx, unsigned noteVal);
@@ -119,18 +119,18 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        TimerActionBlock(QGraphicsItem* parent = 0);
+        TimerActionBlock(QGraphicsItem* parent = nullptr);
 
-        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 1;
         }
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
 
-        virtual bool isAdvancedBlock() const {
+        bool isAdvancedBlock() const override {
             return true;
         }
 
@@ -138,9 +138,9 @@ namespace ThymioVPL {
         void frameChanged(int frame);
 
     protected:
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
         unsigned durationFromPos(const QPointF& pos, bool* ok) const;
         void setDuration(unsigned duration);
@@ -153,7 +153,7 @@ namespace ThymioVPL {
 
     class StateFilterActionBlock : public StateFilterBlock {
     public:
-        StateFilterActionBlock(QGraphicsItem* parent = 0);
+        StateFilterActionBlock(QGraphicsItem* parent = nullptr);
     };
 
     /*@}*/

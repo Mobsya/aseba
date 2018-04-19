@@ -20,6 +20,7 @@
 #include <QDomDocument>
 #include <memory>
 #include <iostream>
+#include <utility>
 
 #include "common/consts.h"
 #include "common/msg/msg.h"
@@ -38,14 +39,14 @@ public:
     QQueue<Message*> messages;
 
 public:
-    MessageHub() {}
+    MessageHub() = default;
 
-    virtual ~MessageHub() {
+    ~MessageHub() override {
         while(!messages.empty())
             delete messages.dequeue();
     }
 
-    virtual void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         messages.enqueue(Message::receive(stream));
     }
 
@@ -83,15 +84,15 @@ void QtBootloaderInterface::errorWritePageNonFatal(unsigned pageNumber) {
 }
 
 
-ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
-    : target(target), currentVersion(0), currentDevStatus(-1), officialVersion(0), officialDevStatus(-1) {
+ThymioUpgraderDialog::ThymioUpgraderDialog(std::string target)
+    : target(std::move(target)), currentVersion(0), currentDevStatus(-1), officialVersion(0), officialDevStatus(-1) {
     // Create the gui ...
     setWindowTitle(tr("Thymio Firmware Upgrader"));
     setWindowIcon(QIcon(":/images/thymioupgrader.svgz"));
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto* mainLayout = new QVBoxLayout(this);
 
     // image
-    QHBoxLayout* imageLayout = new QHBoxLayout();
+    auto* imageLayout = new QHBoxLayout();
     QLabel* image = new QLabel(this);
     QPixmap logo(":/images/thymioupgrader.svgz");
     image->setPixmap(logo.scaledToWidth(384));
@@ -108,7 +109,7 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
 
     // latest file
     officialGroupBox = new QGroupBox(tr("Latest official firmware"));
-    QVBoxLayout* officialLayout = new QVBoxLayout();
+    auto* officialLayout = new QVBoxLayout();
     officialFirmwareText = new QLabel("Connection to official firmware server in progress...");
     officialFirmwareText->setWordWrap(true);
     officialLayout->addWidget(officialFirmwareText);
@@ -118,7 +119,7 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
 
     // file selector
     fileGroupBox = new QGroupBox(tr("Custom firmware file"));
-    QHBoxLayout* fileLayout = new QHBoxLayout();
+    auto* fileLayout = new QHBoxLayout();
     lineEdit = new QLineEdit(this);
     fileButton = new QPushButton(tr("Select..."), this);
     fileButton->setIcon(QIcon(":/images/fileopen.svgz"));
@@ -135,7 +136,7 @@ ThymioUpgraderDialog::ThymioUpgraderDialog(const std::string& target)
     mainLayout->addWidget(progressBar);
 
     // flash and quit buttons
-    QHBoxLayout* flashLayout = new QHBoxLayout();
+    auto* flashLayout = new QHBoxLayout();
     flashButton = new QPushButton(tr("Upgrade"), this);
     flashButton->setEnabled(false);
     flashLayout->addWidget(flashButton);
@@ -201,7 +202,7 @@ void ThymioUpgraderDialog::setupFlashButtonState() {
     }
 }
 
-void ThymioUpgraderDialog::openFile(void) {
+void ThymioUpgraderDialog::openFile() {
     QString name = QFileDialog::getOpenFileName(this, tr("Select hex file"), QString(), tr("Hex files (*.hex)"));
     lineEdit->setText(name);
     setupFlashButtonState();
@@ -224,14 +225,14 @@ unsigned ThymioUpgraderDialog::readId(MessageHub& hub, Dashel::Stream* stream) c
         hub.step(restDuration);
         while(hub.isMessage()) {
             // if node present, store id from source and quit (protocol 5)
-            NodePresent* nodePresent(dynamic_cast<NodePresent*>(hub.getMessage()));
+            auto* nodePresent(dynamic_cast<NodePresent*>(hub.getMessage()));
             if(nodePresent) {
                 nodeId = nodePresent->source;
                 hub.clearMessage();
                 break;
             }
             // if description, store id from source, but continue reading (protocol 4)
-            Description* description(dynamic_cast<Description*>(hub.getMessage()));
+            auto* description(dynamic_cast<Description*>(hub.getMessage()));
             if(description) {
                 nodeId = description->source;
             }
@@ -242,10 +243,10 @@ unsigned ThymioUpgraderDialog::readId(MessageHub& hub, Dashel::Stream* stream) c
     return nodeId;
 }
 
-void ThymioUpgraderDialog::readIdVersion(void) {
+void ThymioUpgraderDialog::readIdVersion() {
     // open stream
     MessageHub hub;
-    Dashel::Stream* stream(0);
+    Dashel::Stream* stream(nullptr);
     try {
         stream = hub.connect(target);
     } catch(Dashel::DashelException& e) {
@@ -272,7 +273,7 @@ void ThymioUpgraderDialog::readIdVersion(void) {
     while(restDuration > 0) {
         hub.step(restDuration);
         while(hub.isMessage()) {
-            Variables* variables(dynamic_cast<Variables*>(hub.getMessage()));
+            auto* variables(dynamic_cast<Variables*>(hub.getMessage()));
             if(variables && variables->start == firmwareAddress && variables->variables.size() == 2) {
                 const unsigned currentVersion = variables->variables[0];
                 const unsigned currentDevStatus = variables->variables[1];
@@ -294,7 +295,7 @@ QString ThymioUpgraderDialog::versionDevStatusToString(unsigned version, unsigne
         return tr("version %1 - development %2").arg(version).arg(devStatus);
 }
 
-void ThymioUpgraderDialog::doFlash(void) {
+void ThymioUpgraderDialog::doFlash() {
     // warning message
     const int warnRet =
         QMessageBox::warning(this, tr("Pre-upgrade warning"),
@@ -326,7 +327,7 @@ ThymioUpgraderDialog::FlashResult ThymioUpgraderDialog::flashThread(const std::s
                                                                     const std::string& hexFileName) const {
     // open stream
     MessageHub hub;
-    Dashel::Stream* stream(0);
+    Dashel::Stream* stream(nullptr);
     try {
         stream = hub.connect(_target);
     } catch(Dashel::DashelException& e) {
@@ -425,7 +426,7 @@ void ThymioUpgraderDialog::networkReplyFinished(QNetworkReply* reply) {
 void ThymioUpgraderDialog::networkError() {
     officialFirmwareText->setText(tr("Error connecting to official firmware server!"));
 }
-};  // namespace Aseba
+}  // namespace Aseba
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -443,7 +444,7 @@ int main(int argc, char* argv[]) {
     bool wirelessThymioFound(false);
     bool thymioFound(false);
     bool thymiosFound(false);
-    for(Aseba::PortsMap::const_iterator it = ports.begin(); it != ports.end(); ++it) {
+    for(auto it = ports.begin(); it != ports.end(); ++it) {
         if((it->second.second.compare(0, 18, "Thymio-II Wireless") == 0) ||
            (it->second.second.compare(0, 18, "Thymio_II Wireless") == 0)) {
             wirelessThymioFound = true;
@@ -457,19 +458,19 @@ int main(int argc, char* argv[]) {
         }
     }
     if(wirelessThymioFound) {
-        QMessageBox::critical(0, QApplication::tr("Wireless Thymio found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Wireless Thymio found"),
                               QApplication::tr("<p><b>Wireless connection to Thymio found!</b></p><p>Plug a single "
                                                "Thymio to your computer using the USB cable.</p>"));
         return 3;
     }
     if(!thymioFound) {
-        QMessageBox::critical(0, QApplication::tr("Thymio not found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Thymio not found"),
                               QApplication::tr("<p><b>Cannot find Thymio!</b></p><p>Plug a Thymio "
                                                "to your computer using the USB cable.</p>"));
         return 1;
     }
     if(thymiosFound) {
-        QMessageBox::critical(0, QApplication::tr("Multiple Thymios found"),
+        QMessageBox::critical(nullptr, QApplication::tr("Multiple Thymios found"),
                               QApplication::tr("<p><b>More than one Thymio found!</b></p><p>Plug a single Thymio to "
                                                "your computer using the USB cable.</p>"));
         return 2;

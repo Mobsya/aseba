@@ -87,14 +87,14 @@ int main(int argc, char* argv[]) {
 
     // create and run bridge, catch Dashel exceptions
     try {
-        std::auto_ptr<Aseba::Http::HttpInterface> interface(new Aseba::Http::HttpInterface(httpPort));
+        std::unique_ptr<Aseba::Http::HttpInterface> interface(new Aseba::Http::HttpInterface(httpPort));
         interface->setVerbose(verbose);
 
         if(docRoot != nullptr) {
             interface->setDocumentRoot(docRoot);
         }
 
-        int numTargets = (int)dashelTargetList.size();
+        auto numTargets = (int)dashelTargetList.size();
         for(int i = 0; i < numTargets; i++) {
             interface->addTarget(dashelTargetList[i]);
         }

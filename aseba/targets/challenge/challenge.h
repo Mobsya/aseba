@@ -74,7 +74,7 @@ protected:
     void displayObjectHook(PhysicalObject* object) override;
     void sceneCompletedHook() override;
 
-    void helpActivated();
+    void helpActivated() override;
 };
 
 class ChallengeApplication : public QWidget {
@@ -95,7 +95,7 @@ signals:
     void windowClosed();
 
 protected:
-    virtual void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 };
 }  // namespace Enki
 

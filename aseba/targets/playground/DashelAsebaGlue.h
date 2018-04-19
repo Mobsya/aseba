@@ -81,14 +81,14 @@ public:
 #endif  // ZEROCONF_SUPPORT
     }
 
-    virtual ~DashelConnected() {
+    ~DashelConnected() override {
         Aseba::vmStateToEnvironment.erase(&this->vm);
     }
 
 protected:
     // from AbstractNodeGlue
 
-    virtual void externalInputStep(double dt) override {
+    void externalInputStep(double dt) override {
         // do a network step, if there are some events from the network, they will be executed
         Hub::step();
 

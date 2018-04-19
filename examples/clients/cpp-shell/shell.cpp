@@ -89,7 +89,7 @@ void Shell::incomingData(Dashel::Stream* stream) {
 
 void Shell::incomingTargetData(Dashel::Stream* stream) {
     // receive message
-    Message* message = 0;
+    Message* message = nullptr;
     try {
         // deserialize message using Aseba::Message::receive() static function
         message = Message::receive(stream);
@@ -239,7 +239,7 @@ void Shell::listVariables(const strings& args) {
     if(allVarMapIt != allVariables.end()) {
         // ... use it
         const VariablesMap& varMap(allVarMapIt->second);
-        VariablesMap::const_iterator it(varMap.begin());
+        auto it(varMap.begin());
         for(; it != varMap.end(); ++it)
             wcerr << "  " << it->first << " " << it->second.second << endl;
     } else {
@@ -375,7 +375,7 @@ void Shell::load(const strings& args) {
                     // get attributes, child and content
                     xmlChar* name(xmlGetProp(domNode, BAD_CAST("name")));
                     if(!name) {
-                        wcerr << "missing \"name\" attribute in \"node\" entry" << endl;
+                        wcerr << R"(missing "name" attribute in "node" entry)" << endl;
                     } else {
                         const string _name((const char*)name);
                         xmlChar* text(xmlNodeGetContent(domNode));
@@ -406,10 +406,10 @@ void Shell::load(const strings& args) {
                     // get attributes
                     xmlChar* name(xmlGetProp(domNode, BAD_CAST("name")));
                     if(!name)
-                        wcerr << "missing \"name\" attribute in \"event\" entry" << endl;
+                        wcerr << R"(missing "name" attribute in "event" entry)" << endl;
                     xmlChar* size(xmlGetProp(domNode, BAD_CAST("size")));
                     if(!size)
-                        wcerr << "missing \"size\" attribute in \"event\" entry" << endl;
+                        wcerr << R"(missing "size" attribute in "event" entry)" << endl;
                     // add event
                     if(name && size) {
                         int eventSize(atoi((const char*)size));
@@ -433,10 +433,10 @@ void Shell::load(const strings& args) {
                     // get attributes
                     xmlChar* name(xmlGetProp(domNode, BAD_CAST("name")));
                     if(!name)
-                        wcerr << "missing \"name\" attribute in \"constant\" entry" << endl;
+                        wcerr << R"(missing "name" attribute in "constant" entry)" << endl;
                     xmlChar* value(xmlGetProp(domNode, BAD_CAST("value")));
                     if(!value)
-                        wcerr << "missing \"value\" attribute in \"constant\" entry" << endl;
+                        wcerr << R"(missing "value" attribute in "constant" entry)" << endl;
                     // add constant if attributes are valid
                     if(name && value) {
                         commonDefinitions.constants.push_back(

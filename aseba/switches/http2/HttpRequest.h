@@ -59,7 +59,7 @@ namespace Http {
         virtual HttpResponse& respond();
 
         virtual bool isResponseReady() const {
-            return !blocking && response != NULL;
+            return !blocking && response != nullptr;
         }
 
         virtual void setVerbose(bool verbose) {
@@ -95,7 +95,7 @@ namespace Http {
         }
 
         std::string getHeader(const std::string& header) const {
-            std::map<std::string, std::string>::const_iterator query = headers.find(header);
+            auto query = headers.find(header);
 
             if(query != headers.end()) {
                 return query->second;
@@ -139,17 +139,17 @@ namespace Http {
     class DashelHttpRequest : public HttpRequest {
     public:
         DashelHttpRequest(Dashel::Stream* stream);
-        virtual ~DashelHttpRequest();
+        ~DashelHttpRequest() override;
 
         virtual Dashel::Stream* getStream() {
             return stream;
         }
 
     protected:
-        virtual HttpResponse* createResponse();
+        HttpResponse* createResponse() override;
 
-        virtual std::string readLine();
-        virtual void readRaw(char* buffer, int size);
+        std::string readLine() override;
+        void readRaw(char* buffer, int size) override;
 
     private:
         Dashel::Stream* stream;

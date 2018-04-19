@@ -88,7 +88,7 @@ signals:
 
 public:
     //! Virtual destructor.
-    virtual ~Target() {}
+    ~Target() override = default;
 
 public:
     //! Return the language that we choosen for this connection
@@ -101,7 +101,7 @@ public:
     const QString getName(unsigned node) const;
 
     //! Return a constant description of a node. Returned value is always valid if node exists
-    virtual const TargetDescription* const getDescription(unsigned node) const = 0;
+    virtual const TargetDescription* getDescription(unsigned node) const = 0;
 
     //! Upload bytecode to target.
     virtual void uploadBytecode(unsigned node, const BytecodeVector& bytecode) = 0;

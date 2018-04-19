@@ -20,6 +20,7 @@
 #include "TargetModels.h"
 #include <QtDebug>
 #include <QtWidgets>
+#include <utility>
 
 namespace Aseba {
 /** \addtogroup studio */
@@ -45,7 +46,7 @@ void VariableListener::unsubscribeToVariablesOfInterest() {
 }
 
 void VariableListener::invalidateVariableModel() {
-    variablesModel = 0;
+    variablesModel = nullptr;
 }
 
 
@@ -151,7 +152,7 @@ QVariant TargetVariablesModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags TargetVariablesModel::flags(const QModelIndex& index) const {
     if(!index.isValid())
-        return 0;
+        return nullptr;
 
     if(index.column() == 1) {
         if(index.parent().isValid())
@@ -159,7 +160,7 @@ Qt::ItemFlags TargetVariablesModel::flags(const QModelIndex& index) const {
         else if(variables.at(index.row()).value.size() == 1)
             return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
         else
-            return 0;
+            return nullptr;
     } else {
         if(index.parent().isValid())
             return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable;
@@ -215,7 +216,7 @@ QMimeData* TargetVariablesModel::mimeData(const QModelIndexList& indexes) const 
         }
     }
 
-    QMimeData* mimeData = new QMimeData();
+    auto* mimeData = new QMimeData();
     mimeData->setText(texts);
     return mimeData;
 }
@@ -250,7 +251,7 @@ VariablesDataVector TargetVariablesModel::getVariableValue(const QString& name) 
 void TargetVariablesModel::updateVariablesStructure(const VariablesMap* variablesMap) {
     // Build a new list of variables
     QList<Variable> newVariables;
-    for(VariablesMap::const_iterator it = variablesMap->begin(); it != variablesMap->end(); ++it) {
+    for(auto it = variablesMap->begin(); it != variablesMap->end(); ++it) {
         // create new variable
         Variable var;
         var.name = QString::fromStdWString(it->first);
@@ -319,9 +320,9 @@ void TargetVariablesModel::setVariablesData(unsigned start, const VariablesDataV
     size_t dataLength = data.size();
     for(int i = 0; i < variables.size(); ++i) {
         Variable& var = variables[i];
-        int varLen = (int)var.value.size();
+        auto varLen = (int)var.value.size();
         int varStart = (int)start - (int)var.pos;
-        int copyLen = (int)dataLength;
+        auto copyLen = (int)dataLength;
         int copyStart = 0;
         // crop data before us
         if(varStart < 0) {
@@ -402,13 +403,13 @@ struct TargetFunctionsModel::TreeItem {
     bool enabled;
     bool draggable;
 
-    TreeItem() : parent(0), name("root"), enabled(true), draggable(false) {}
+    TreeItem() : parent(nullptr), name("root"), enabled(true), draggable(false) {}
 
-    TreeItem(TreeItem* parent, const QString& name, bool enabled, bool draggable)
-        : parent(parent), name(name), enabled(enabled), draggable(draggable) {}
+    TreeItem(TreeItem* parent, QString name, bool enabled, bool draggable)
+        : parent(parent), name(std::move(name)), enabled(enabled), draggable(draggable) {}
 
-    TreeItem(TreeItem* parent, const QString& name, const QString& toolTip, bool enabled, bool draggable)
-        : parent(parent), name(name), toolTip(toolTip), enabled(enabled), draggable(draggable) {}
+    TreeItem(TreeItem* parent, QString name, QString toolTip, bool enabled, bool draggable)
+        : parent(parent), name(std::move(name)), toolTip(std::move(toolTip)), enabled(enabled), draggable(draggable) {}
 
     ~TreeItem() {
         for(int i = 0; i < children.size(); i++)
@@ -427,7 +428,7 @@ struct TargetFunctionsModel::TreeItem {
 
 
 TargetFunctionsModel::TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent)
-    : QAbstractItemModel(parent), root(0), descriptionRead(descriptionRead), regExp("\\b") {
+    : QAbstractItemModel(parent), root(nullptr), descriptionRead(descriptionRead), regExp("\\b") {
     Q_ASSERT(descriptionRead);
     recreateTreeFromDescription(showHidden);
 }
@@ -442,7 +443,7 @@ Qt::DropActions TargetFunctionsModel::supportedDropActions() const {
 
 TargetFunctionsModel::TreeItem* TargetFunctionsModel::getItem(const QModelIndex& index) const {
     if(index.isValid()) {
-        TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+        auto* item = static_cast<TreeItem*>(index.internalPointer());
         if(item)
             return item;
     }
@@ -573,7 +574,7 @@ QVariant TargetFunctionsModel::headerData(int section, Qt::Orientation orientati
 }
 
 Qt::ItemFlags TargetFunctionsModel::flags(const QModelIndex& index) const {
-    TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+    auto* item = static_cast<TreeItem*>(index.internalPointer());
     if(item) {
         QFlags<Qt::ItemFlag> flags;
         flags |= item->enabled ? Qt::ItemIsEnabled : QFlags<Qt::ItemFlag>();
@@ -598,7 +599,7 @@ QMimeData* TargetFunctionsModel::mimeData(const QModelIndexList& indexes) const 
         }
     }
 
-    QMimeData* mimeData = new QMimeData();
+    auto* mimeData = new QMimeData();
     mimeData->setText(texts);
     return mimeData;
 }
@@ -608,7 +609,7 @@ TargetSubroutinesModel::TargetSubroutinesModel(QObject* parent) : QStringListMod
 
 void TargetSubroutinesModel::updateSubroutineTable(const Compiler::SubroutineTable& subroutineTable) {
     QStringList subroutineNames;
-    for(Compiler::SubroutineTable::const_iterator it = subroutineTable.begin(); it != subroutineTable.end(); ++it)
+    for(auto it = subroutineTable.begin(); it != subroutineTable.end(); ++it)
         subroutineNames.push_back(QString::fromStdWString(it->name));
     setStringList(subroutineNames);
 }

@@ -40,6 +40,7 @@
 #include <QDir>
 #include <QHash>
 #include <QHostInfo>
+#include <utility>
 
 #ifdef HAVE_DBUS
 #    include "PlaygroundDBusAdaptors.h"
@@ -57,15 +58,15 @@ public:
     PlaygroundViewer& viewer;
 
 public:
-    PlaygroundSimulatorEnvironment(const QString& sceneFileName, PlaygroundViewer& viewer)
-        : sceneFileName(sceneFileName), viewer(viewer) {}
+    PlaygroundSimulatorEnvironment(QString sceneFileName, PlaygroundViewer& viewer)
+        : sceneFileName(std::move(sceneFileName)), viewer(viewer) {}
 
-    virtual void notify(const EnvironmentNotificationType type, const std::string& description,
-                        const strings& arguments) override {
+    void notify(const EnvironmentNotificationType type, const std::string& description,
+                const strings& arguments) override {
         viewer.notifyAsebaEnvironment(type, description, arguments);
     }
 
-    virtual std::string getSDFilePath(const std::string& robotName, unsigned fileNumber) const override {
+    std::string getSDFilePath(const std::string& robotName, unsigned fileNumber) const override {
         auto paths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
         auto fileName(QString("%1/%2/%3/U%4.DAT")
                           .arg(paths.empty() ? "" : paths.first())
@@ -78,7 +79,7 @@ public:
         return fileName.toStdString();
     }
 
-    virtual World* getWorld() const override {
+    World* getWorld() const override {
         return viewer.getWorld();
     }
 };
@@ -151,7 +152,7 @@ int main(int argc, char* argv[]) {
     do {
         if(ask) {
             QString lastFileName = QSettings("EPFL-LSRO-Mobots", "Aseba Playground").value("last file").toString();
-            sceneFileName = QFileDialog::getOpenFileName(0, app.tr("Open Scenario"), lastFileName,
+            sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
                                                          app.tr("playground scenario (*.playground)"));
         }
         ask = true;
@@ -168,7 +169,7 @@ int main(int argc, char* argv[]) {
             QString errorStr;
             int errorLine, errorColumn;
             if(!domDocument.setContent(&file, false, &errorStr, &errorLine, &errorColumn)) {
-                QMessageBox::information(0, "Aseba Playground",
+                QMessageBox::information(nullptr, "Aseba Playground",
                                          app.tr("Parse error at file %1, line %2, column %3:\n%4")
                                              .arg(sceneFileName)
                                              .arg(errorLine)
@@ -226,7 +227,7 @@ int main(int argc, char* argv[]) {
             image = image.convertToFormat(QImage::Format_ARGB32);
             groundTexture.width = image.width();
             groundTexture.height = image.height();
-            const uint32_t* imageData(reinterpret_cast<const uint32_t*>(image.constBits()));
+            const auto* imageData(reinterpret_cast<const uint32_t*>(image.constBits()));
             std::copy(imageData, imageData + image.width() * image.height(), std::back_inserter(groundTexture.data));
             // Note: this works in little endian, in big endian data should be swapped
         } else {
@@ -260,7 +261,7 @@ int main(int argc, char* argv[]) {
     // Scan for walls
     QDomElement wallE = domDocument.documentElement().firstChildElement("wall");
     while(!wallE.isNull()) {
-        Enki::PhysicalObject* wall = new Enki::PhysicalObject();
+        auto* wall = new Enki::PhysicalObject();
         if(!colorsMap.contains(wallE.attribute("color")))
             std::cerr << "Warning, color " << wallE.attribute("color").toStdString() << " undefined\n";
         else
@@ -281,7 +282,7 @@ int main(int argc, char* argv[]) {
     // Scan for cylinders
     QDomElement cylinderE = domDocument.documentElement().firstChildElement("cylinder");
     while(!cylinderE.isNull()) {
-        Enki::PhysicalObject* cylinder = new Enki::PhysicalObject();
+        auto* cylinder = new Enki::PhysicalObject();
         if(!colorsMap.contains(cylinderE.attribute("color")))
             std::cerr << "Warning, color " << cylinderE.attribute("color").toStdString() << " undefined\n";
         else
@@ -300,7 +301,7 @@ int main(int argc, char* argv[]) {
     // Scan for feeders
     QDomElement feederE = domDocument.documentElement().firstChildElement("feeder");
     while(!feederE.isNull()) {
-        Enki::EPuckFeeder* feeder = new Enki::EPuckFeeder;
+        auto* feeder = new Enki::EPuckFeeder;
         feeder->pos.x = feederE.attribute("x").toDouble();
         feeder->pos.y = feederE.attribute("y").toDouble();
         world.addObject(feeder);

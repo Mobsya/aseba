@@ -46,7 +46,7 @@ void logNativeFromThymio2(AsebaThymio2& thymio2, unsigned id, std::vector<int16_
 }
 
 void logNativeFromVM(AsebaVMState* vm, unsigned id, std::vector<int16_t>&& args) {
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2)
         logNativeFromThymio2(*thymio2, id, std::move(args));
 }
@@ -130,7 +130,7 @@ extern "C" void PlaygroundThymio2Native_leds_circle(AsebaVMState* vm) {
     const int16_t l6(clampValueTo32(vm->variables[AsebaNativePopArg(vm)]));
     const int16_t l7(clampValueTo32(vm->variables[AsebaNativePopArg(vm)]));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         thymio2->setLedIntensity(Thymio2::RING_0, l0 / 32.);
         thymio2->setLedIntensity(Thymio2::RING_1, l1 / 32.);
@@ -152,7 +152,7 @@ extern "C" void PlaygroundThymio2Native_leds_top(AsebaVMState* vm) {
     const int16_t a(std::max(std::max(r, g), b));
     const double param(1. / std::max(std::max(r, g), std::max((int16_t)1, b)));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         thymio2->setLedColor(Thymio2::TOP, Color(param * r, param * g, param * b, a / 32.));
 
@@ -167,7 +167,7 @@ extern "C" void PlaygroundThymio2Native_leds_bottom_right(AsebaVMState* vm) {
     const int16_t a(std::max(std::max(r, g), b));
     const double param(1. / std::max(std::max(r, g), std::max((int16_t)1, b)));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         thymio2->setLedColor(Thymio2::BOTTOM_RIGHT, Color(param * r, param * g, param * b, a / 32.));
 
@@ -182,7 +182,7 @@ extern "C" void PlaygroundThymio2Native_leds_bottom_left(AsebaVMState* vm) {
     const int16_t a(std::max(std::max(r, g), b));
     const double param(1. / std::max(std::max(r, g), std::max((int16_t)1, b)));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         thymio2->setLedColor(Thymio2::BOTTOM_LEFT, Color(param * r, param * g, param * b, a / 32.));
 
@@ -196,7 +196,7 @@ extern "C" void PlaygroundThymio2Native_leds_buttons(AsebaVMState* vm) {
     const int16_t l2(clampValueTo32(vm->variables[AsebaNativePopArg(vm)]));
     const int16_t l3(clampValueTo32(vm->variables[AsebaNativePopArg(vm)]));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         thymio2->setLedIntensity(Thymio2::BUTTON_UP, l0 / 32.);
         thymio2->setLedIntensity(Thymio2::BUTTON_RIGHT, l1 / 32.);
@@ -217,7 +217,7 @@ extern "C" void PlaygroundThymio2Native_leds_prox_h(AsebaVMState* vm) {
     const int16_t l6(clampValueTo32(vm->variables[AsebaNativePopArg(vm)]));
     const int16_t l7(clampValueTo32(vm->variables[AsebaNativePopArg(vm)]));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         thymio2->setLedIntensity(Thymio2::IR_FRONT_0, l0 / 32.);
         thymio2->setLedIntensity(Thymio2::IR_FRONT_1, l1 / 32.);
@@ -278,7 +278,7 @@ extern "C" void PlaygroundThymio2Native_sd_open(AsebaVMState* vm) {
     const int16_t number(vm->variables[AsebaNativePopArg(vm)]);
     const uint16_t statusAddr(AsebaNativePopArg(vm));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         int16_t result(0);
         // number must be [0:32767], or -1
@@ -301,7 +301,7 @@ extern "C" void PlaygroundThymio2Native_sd_write(AsebaVMState* vm) {
     const uint16_t statusAddr(AsebaNativePopArg(vm));
     const uint16_t dataLength(AsebaNativePopArg(vm));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         int16_t result(0);
 
@@ -327,7 +327,7 @@ extern "C" void PlaygroundThymio2Native_sd_read(AsebaVMState* vm) {
     const uint16_t statusAddr(AsebaNativePopArg(vm));
     const uint16_t dataLength(AsebaNativePopArg(vm));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         int16_t result(0);
 
@@ -352,7 +352,7 @@ extern "C" void PlaygroundThymio2Native_sd_seek(AsebaVMState* vm) {
     const int16_t seek(vm->variables[AsebaNativePopArg(vm)]);
     const int16_t statusAddr(AsebaNativePopArg(vm));
 
-    AsebaThymio2* thymio2(getEnkiObject<AsebaThymio2>(vm));
+    auto* thymio2(getEnkiObject<AsebaThymio2>(vm));
     if(thymio2) {
         int16_t result(0);
 

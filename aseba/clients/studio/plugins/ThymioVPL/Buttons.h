@@ -44,11 +44,11 @@ namespace ThymioVPL {
         enum ButtonType { CIRCULAR_BUTTON = 0, TRIANGULAR_BUTTON, RECTANGULAR_BUTTON, QUARTER_CIRCLE_BUTTON };
 
         //! Create a button with initially one state
-        GeometryShapeButton(const QRectF rect, const ButtonType type, QGraphicsItem* parent = 0,
+        GeometryShapeButton(const QRectF rect, const ButtonType type, QGraphicsItem* parent = nullptr,
                             const QColor& initBrushColor = Qt::white, const QColor& initPenColor = Qt::black);
 
-        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-        QRectF boundingRect() const {
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+        QRectF boundingRect() const override {
             return boundingRectangle;
         }
 
@@ -87,23 +87,23 @@ namespace ThymioVPL {
 
         QList<GeometryShapeButton*> siblings;
 
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     };
 
     class AddRemoveButton : public QGraphicsObject {
         Q_OBJECT
 
     public:
-        AddRemoveButton(bool add, QGraphicsItem* parent = 0);
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-        QRectF boundingRect() const;
+        AddRemoveButton(bool add, QGraphicsItem* parent = nullptr);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+        QRectF boundingRect() const override;
 
     signals:
         void clicked();
 
     protected:
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
     protected:
         bool add;
@@ -113,16 +113,16 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        RemoveBlockButton(QGraphicsItem* parent = 0);
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-        QRectF boundingRect() const;
+        RemoveBlockButton(QGraphicsItem* parent = nullptr);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+        QRectF boundingRect() const override;
 
     signals:
         void clicked();
 
     protected:
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
     };
 
     class BlockButton : public QPushButton {
@@ -133,17 +133,17 @@ namespace ThymioVPL {
         void undoCheckpoint();
 
     public:
-        BlockButton(const QString& name, ThymioVisualProgramming* vpl, QWidget* parent = 0);
-        ~BlockButton();
+        BlockButton(const QString& name, ThymioVisualProgramming* vpl, QWidget* parent = nullptr);
+        ~BlockButton() override;
 
         QString getName() const;
 
         void updateBlockImage(bool advanced);
 
     protected:
-        virtual void mouseMoveEvent(QMouseEvent* event);
-        virtual void dragEnterEvent(QDragEnterEvent* event);
-        virtual void dropEvent(QDropEvent* event);
+        void mouseMoveEvent(QMouseEvent* event) override;
+        void dragEnterEvent(QDragEnterEvent* event) override;
+        void dropEvent(QDropEvent* event) override;
 
     protected:
         Block* block;

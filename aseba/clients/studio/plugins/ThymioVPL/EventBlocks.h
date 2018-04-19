@@ -36,17 +36,17 @@ namespace ThymioVPL {
         enum { MODE_ARROW = 0, MODE_RC_ARROW, MODE_RC_KEYPAD };
 
     public:
-        ArrowButtonsEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        ArrowButtonsEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
 
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 7;
         }
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<quint16> getValuesCompressed() const;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<quint16> getValuesCompressed() const override;
 
-        virtual bool isAnyAdvancedFeature() const;
-        virtual void setAdvanced(bool advanced);
+        bool isAnyAdvancedFeature() const override;
+        void setAdvanced(bool advanced) override;
 
         unsigned getMode() const {
             return mode;
@@ -55,8 +55,8 @@ namespace ThymioVPL {
         int getSelectedRCKeypadButton() const;
 
     protected:
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
         void setMode(unsigned mode);
         void setButtonsPos(bool advanced);
@@ -74,12 +74,12 @@ namespace ThymioVPL {
 
     class ProxEventBlock : public BlockWithButtonsAndRange {
     public:
-        ProxEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        ProxEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
     };
 
     class ProxGroundEventBlock : public BlockWithButtonsAndRange {
     public:
-        ProxGroundEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        ProxGroundEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
     };
 
     class AccEventBlock : public Block {
@@ -88,24 +88,24 @@ namespace ThymioVPL {
         static const int resolution;
 
     public:
-        AccEventBlock(bool advanced, QGraphicsItem* parent = 0);
+        AccEventBlock(bool advanced, QGraphicsItem* parent = nullptr);
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
-        virtual unsigned valuesCount() const {
+        unsigned valuesCount() const override {
             return 2;
         }
-        virtual int getValue(unsigned i) const;
-        virtual void setValue(unsigned i, int value);
-        virtual QVector<uint16_t> getValuesCompressed() const;
+        int getValue(unsigned i) const override;
+        void setValue(unsigned i, int value) override;
+        QVector<uint16_t> getValuesCompressed() const override;
 
-        virtual bool isAnyAdvancedFeature() const;
-        virtual void setAdvanced(bool advanced);
+        bool isAnyAdvancedFeature() const override;
+        void setAdvanced(bool advanced) override;
 
     protected:
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
         int orientationFromPos(const QPointF& pos, bool* ok) const;
         void setMode(unsigned mode);
@@ -127,14 +127,14 @@ namespace ThymioVPL {
 
     class ClapEventBlock : public BlockWithNoValues {
     public:
-        ClapEventBlock(QGraphicsItem* parent = 0);
+        ClapEventBlock(QGraphicsItem* parent = nullptr);
     };
 
     class TimeoutEventBlock : public BlockWithNoValues {
     public:
-        TimeoutEventBlock(QGraphicsItem* parent = 0);
+        TimeoutEventBlock(QGraphicsItem* parent = nullptr);
 
-        virtual bool isAdvancedBlock() const {
+        bool isAdvancedBlock() const override {
             return true;
         }
     };

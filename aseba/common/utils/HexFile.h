@@ -35,9 +35,9 @@ namespace Aseba {
 class HexFile {
 public:
     struct Error : std::exception {
-        virtual ~Error() = default;
+        ~Error() override = default;
         virtual std::string toString() const = 0;
-        virtual const char* what() const noexcept override;
+        const char* what() const noexcept override;
     };
 
     struct EarlyEOF : Error {

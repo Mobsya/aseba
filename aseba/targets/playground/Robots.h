@@ -29,11 +29,11 @@
 namespace Enki {
 // typedefs for robots
 
-typedef DirectlyConnected<AsebaThymio2> DirectAsebaThymio2;
-typedef DirectlyConnected<AsebaFeedableEPuck> DirectAsebaFeedableEPuck;
+using DirectAsebaThymio2 = DirectlyConnected<AsebaThymio2>;
+using DirectAsebaFeedableEPuck = DirectlyConnected<AsebaFeedableEPuck>;
 
-typedef DashelConnected<AsebaThymio2> DashelAsebaThymio2;
-typedef DashelConnected<AsebaFeedableEPuck> DashelAsebaFeedableEPuck;
+using DashelAsebaThymio2 = DashelConnected<AsebaThymio2>;
+using DashelAsebaFeedableEPuck = DashelConnected<AsebaFeedableEPuck>;
 }  // namespace Enki
 
 #endif  // __PLAYGROUND_ROBOTS_H

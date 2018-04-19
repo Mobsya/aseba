@@ -35,13 +35,13 @@ private:
 
 public:
     EventDataWrapper(std::vector<double>& _x, std::vector<int16_t>& _y) : _x(_x), _y(_y) {}
-    virtual QRectF boundingRect() const {
+    QRectF boundingRect() const override {
         return qwtBoundingRect(*this);
     }
-    virtual QPointF sample(size_t i) const {
+    QPointF sample(size_t i) const override {
         return QPointF(_x[i], double(_y[i]));
     }
-    virtual size_t size() const {
+    size_t size() const override {
         return _x.size();
     }
 };
@@ -91,7 +91,7 @@ public:
         setAxisTitle(xBottom, tr("Time (seconds)"));
         setAxisTitle(yLeft, tr("Values"));
 
-        QwtLegend* legend = new QwtLegend;
+        auto* legend = new QwtLegend;
         // legend->setItemMode(QwtLegend::CheckableItem);
         insertLegend(legend, QwtPlot::BottomLegend);
 
@@ -115,14 +115,14 @@ public:
     }
 
 protected:
-    virtual void timerEvent(QTimerEvent* event) {
+    void timerEvent(QTimerEvent* event) override {
         if(!step(0))
             close();
     }
 
-    void incomingData(Stream* stream) {
+    void incomingData(Stream* stream) override {
         Message* message = Message::receive(stream);
-        UserMessage* userMessage = dynamic_cast<UserMessage*>(message);
+        auto* userMessage = dynamic_cast<UserMessage*>(message);
         if(userMessage) {
             if(userMessage->type == eventId) {
                 double elapsedTime = (double)startingTime.msecsTo(QTime::currentTime()) / 1000.;
@@ -148,7 +148,7 @@ protected:
         delete message;
     }
 
-    void connectionClosed(Stream* stream, bool abnormal) {
+    void connectionClosed(Stream* stream, bool abnormal) override {
         dumpTime(cerr);
         cout << "Connection closed to " << stream->getTargetName();
         if(abnormal)
@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
 
     int res;
     try {
-        EventLogger logger(argv[1], atoi(argv[2]), atoi(argv[3]), (argc > 4 ? argv[4] : 0));
+        EventLogger logger(argv[1], atoi(argv[2]), atoi(argv[3]), (argc > 4 ? argv[4] : nullptr));
         logger.show();
         res = app.exec();
     } catch(Dashel::DashelException e) {

@@ -43,10 +43,10 @@ protected:
 public:
     SlidingDoor(const Point& closedPos, const Point& openedPos, const Point& size, double height, double moveDuration);
 
-    virtual void controlStep(double dt);
+    void controlStep(double dt) override;
 
-    virtual void open(void);
-    virtual void close(void);
+    void open() override;
+    void close() override;
 };
 
 class AreaActivating : public LocalInteraction {
@@ -59,8 +59,8 @@ protected:
 public:
     AreaActivating(Robot* owner, const Polygon& activeArea);
 
-    virtual void init(double dt, World* w);
-    virtual void objectStep(double dt, World* w, PhysicalObject* po);
+    void init(double dt, World* w) override;
+    void objectStep(double dt, World* w, PhysicalObject* po) override;
 
     bool isActive() const;
 };
@@ -74,7 +74,7 @@ protected:
 public:
     DoorButton(const Point& pos, const Point& size, const Polygon& activeArea, Door* attachedDoor);
 
-    virtual void controlStep(double dt);
+    void controlStep(double dt) override;
 };
 }  // namespace Enki
 
