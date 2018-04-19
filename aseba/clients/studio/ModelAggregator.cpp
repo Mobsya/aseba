@@ -165,4 +165,4 @@ void TreeChainsawFilter::sortWalkTree(const QModelIndex& parent) {
         sortWalkTree(child);
     }
 }
-};  // namespace Aseba
+}  // namespace Aseba

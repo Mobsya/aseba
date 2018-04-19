@@ -38,7 +38,7 @@ namespace Aseba {
 using namespace std;
 
 ThymioVPLStandaloneInterface::ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone)
-    : vplStandalone(vplStandalone){};
+    : vplStandalone(vplStandalone) {}
 
 Target* ThymioVPLStandaloneInterface::getTarget() {
     return vplStandalone->target.get();

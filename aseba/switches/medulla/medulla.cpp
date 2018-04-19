@@ -576,7 +576,7 @@ void Hub::connectionClosed(Stream* stream, bool abnormal) {
 }
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 //! Show usage
 void dumpHelp(std::ostream& stream, const char* programName) {

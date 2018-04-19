@@ -26,7 +26,7 @@
 #include <QtDBus/QtDBus>
 #include <functional>
 
-Q_DECLARE_METATYPE(QList<qint16>);
+Q_DECLARE_METATYPE(QList<qint16>)
 
 
 using Values = QList<qint16>;

@@ -182,7 +182,7 @@ void Switch::remapId(Dashel::Stream* stream, const uint16_t localId, const uint1
 }
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 //! Show usage
 void dumpHelp(std::ostream& stream, const char* programName) {

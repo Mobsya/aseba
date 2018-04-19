@@ -182,8 +182,8 @@ private:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
-Q_DECLARE_METATYPE(Values);
+Q_DECLARE_METATYPE(Values)
 
 #endif

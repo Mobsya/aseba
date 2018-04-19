@@ -53,7 +53,7 @@ namespace Aseba {
 
 StudioInterface::StudioInterface(NodeTab* nodeTab) : nodeTab(nodeTab) {
     mainWindow = nodeTab->mainWindow;
-};
+}
 
 Target* StudioInterface::getTarget() {
     return nodeTab->target;
@@ -1016,11 +1016,11 @@ void NodeTab::processCompilationResult(CompilationResult* result) {
         const unsigned bytecodeTotal = (*target->getDescription(id)).bytecodeSize;
         assert(variableCount);
         assert(bytecodeCount);
-        const QString variableText = tr("variables: %1 on %2 (%3\%)")
+        const QString variableText = tr("variables: %1 on %2 (%3\\%)")
                                          .arg(variableCount)
                                          .arg(variableTotal)
                                          .arg((double)variableCount * 100. / variableTotal, 0, 'f', 1);
-        const QString bytecodeText = tr("bytecode: %1 on %2 (%3\%)")
+        const QString bytecodeText = tr("bytecode: %1 on %2 (%3\\%)")
                                          .arg(bytecodeCount)
                                          .arg(bytecodeTotal)
                                          .arg((double)bytecodeCount * 100. / bytecodeTotal, 0, 'f', 1);
@@ -2450,15 +2450,15 @@ void MainWindow::nodeDisconnected(unsigned node) {
     auto tabName = nodes->tabText(index).replace(QString("&"), QString(""));
 
     // clang-format off
-		nodes->addTab(
-			new AbsentNodeTab(
-				node,
-				tabName,
-				tab->editor->document()->toPlainText(),
-				tab->savePlugins()
-			),
-			tabName
-		);
+        nodes->addTab(
+            new AbsentNodeTab(
+                node,
+                tabName,
+                tab->editor->document()->toPlainText(),
+                tab->savePlugins()
+            ),
+            tabName
+        );
     // clang-format on
 
     nodes->removeAndDeleteTab(index);

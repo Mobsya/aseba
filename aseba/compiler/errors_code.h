@@ -163,6 +163,6 @@ enum ErrorCode {
 
     ERROR_END
 };
-};
+}
 
 #endif  // __ERRORS_H

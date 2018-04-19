@@ -132,6 +132,6 @@ protected:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif  // BOTSPEAK_H

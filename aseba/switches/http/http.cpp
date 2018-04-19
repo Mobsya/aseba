@@ -1461,7 +1461,7 @@ std::string HttpInterface::targetFromString(Dashel::Stream* stream) const {
 //== end of class HttpInterface ============================================================
 
 
-HttpRequest::HttpRequest() : verbose(false){};
+HttpRequest::HttpRequest() : verbose(false) {}
 
 bool HttpRequest::initialize(Dashel::Stream* _stream) {
     string start_line = readLine(_stream);
@@ -1608,4 +1608,4 @@ void HttpRequest::sendPayload() {
 }
 //== end of class HttpInterface ============================================================
 
-};  // namespace Aseba
+}  // namespace Aseba

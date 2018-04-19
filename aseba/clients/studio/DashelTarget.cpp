@@ -566,7 +566,7 @@ QList<unsigned> DashelTarget::getNodesList() const {
     return nodeIds;
 }
 
-const TargetDescription* const DashelTarget::getDescription(unsigned node) const {
+const TargetDescription* DashelTarget::getDescription(unsigned node) const {
     return dashelInterface.getDescription(node);
 }
 

@@ -69,6 +69,6 @@ protected:
     using IndexLinkList = QList<ModelIndexLink>;
     IndexLinkList indexList;
 };
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif  // MODELAGGREGATOR_H
