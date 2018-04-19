@@ -7,3 +7,8 @@ docs/*/_build
 dashel/
 enki/
 *.qm
+*.pro.user*
+._.DS_Store
+build/
+*.qmlc
+*.jsc

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 24 24"
+   style="enable-background:new 0 0 24 24;"
+   xml:space="preserve"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="ic_connection_off_white_24px.svg"><metadata
+     id="metadata21"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs19" /><sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2109"
+     inkscape:window-height="1061"
+     id="namedview17"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="-3.6101695"
+     inkscape:cy="12"
+     inkscape:window-x="0"
+     inkscape:window-y="56"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Layer_1" /><style
+     type="text/css"
+     id="style3">
+	.st0{fill:#000000;opacity:0.54}
+</style><g
+     id="g5"
+     style="opacity:0.3"><path
+       class="st0"
+       d="M2.1,11.6v8h1.5v-1.5c0-2.8,2.2-5,5-5s5,2.2,5,5v1.5h8.5v-8H2.1z"
+       id="path7"
+       style="" /><circle
+       class="st0"
+       cx="8.6"
+       cy="18.1"
+       r="3"
+       id="circle9"
+       style="" /></g><g
+     id="g11"><path
+       class="st0"
+       d="M20.2,3.1c-0.4,0-0.8,0.2-1.1,0.5h-1.2l0.7-1.1l-1.8-1l-3,5.2l1.8,1l1.2-2.1h2.3c0.3,0.3,0.7,0.5,1.1,0.5   c0.8,0,1.5-0.7,1.5-1.5C21.7,3.8,21,3.1,20.2,3.1z"
+       id="path13" /><path
+       class="st0"
+       d="M7.4,3.6H5.1C4.8,3.3,4.4,3.1,4,3.1c-0.8,0-1.5,0.7-1.5,1.5c0,0.8,0.7,1.5,1.5,1.5c0.4,0,0.8-0.2,1.1-0.5h1.2   L5.7,6.7l1.7,1l3-5.2l-1.7-1L7.4,3.6z"
+       id="path15" /></g></svg>
