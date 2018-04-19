@@ -184,7 +184,7 @@ class AbsentNodeTab : public QWidget, public ScriptTab {
     Q_OBJECT
 
 public:
-    AbsentNodeTab(const unsigned id, QString  name, const QString& sourceCode, SavedPlugins  savedPlugins);
+    AbsentNodeTab(const unsigned id, QString name, const QString& sourceCode, SavedPlugins savedPlugins);
 
     SavedPlugins savePlugins() const override {
         return savedPlugins;
@@ -574,7 +574,7 @@ private:
     QMenu* rebootMenu;
     QMenu* saveBytecodeMenu;
     QMenu* helpMenu;
-    using ActionList = QList<QAction *>;
+    using ActionList = QList<QAction*>;
     QAction* helpMenuTargetSpecificSeparator;
     ActionList targetSpecificHelp;
 

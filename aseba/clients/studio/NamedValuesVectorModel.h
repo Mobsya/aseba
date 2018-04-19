@@ -34,7 +34,7 @@ class NamedValuesVectorModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-    NamedValuesVectorModel(NamedValuesVector* namedValues, QString  tooltipText, QObject* parent = nullptr);
+    NamedValuesVectorModel(NamedValuesVector* namedValues, QString tooltipText, QObject* parent = nullptr);
     NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -49,7 +49,8 @@ public:
         privateMimeType = mime;
     }
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
-    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                      const QModelIndex& parent) override;
     Qt::DropActions supportedDropActions() const override;
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
@@ -98,7 +99,8 @@ class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
     Q_OBJECT
 
 public:
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
+    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText,
+                                   QObject* parent = nullptr);
     MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;

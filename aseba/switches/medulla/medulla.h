@@ -126,7 +126,7 @@ protected:
     NodesNamesMap nodesNames;
     typedef QMap<QString, VariablesMap> UserDefinedVariablesMap;
     UserDefinedVariablesMap userDefinedVariablesMap;
-    using RequestsList = QList<RequestData *>;
+    using RequestsList = QList<RequestData*>;
     RequestsList pendingReads;
     typedef QMultiMap<uint16_t, EventFilterInterface*> EventsFiltersMap;
     EventsFiltersMap eventsFilters;

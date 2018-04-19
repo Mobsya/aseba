@@ -405,10 +405,10 @@ struct TargetFunctionsModel::TreeItem {
 
     TreeItem() : parent(nullptr), name("root"), enabled(true), draggable(false) {}
 
-    TreeItem(TreeItem* parent, QString  name, bool enabled, bool draggable)
+    TreeItem(TreeItem* parent, QString name, bool enabled, bool draggable)
         : parent(parent), name(std::move(name)), enabled(enabled), draggable(draggable) {}
 
-    TreeItem(TreeItem* parent, QString  name, QString  toolTip, bool enabled, bool draggable)
+    TreeItem(TreeItem* parent, QString name, QString toolTip, bool enabled, bool draggable)
         : parent(parent), name(std::move(name)), toolTip(std::move(toolTip)), enabled(enabled), draggable(draggable) {}
 
     ~TreeItem() {

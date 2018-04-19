@@ -147,7 +147,7 @@ using namespace Dashel;
 //-- Subclassing Dashel::Hub -----------------------------------------------------------
 
 
-HttpInterface::HttpInterface(const strings& targets, std::string  http_port, std::string  aseba_port,
+HttpInterface::HttpInterface(const strings& targets, std::string http_port, std::string aseba_port,
                              const int iterations, bool dump,
                              bool verbose)
     : Hub(false)
@@ -442,9 +442,9 @@ void HttpInterface::incomingData(Stream* stream) {
 void HttpInterface::incomingDataHTTP(Stream* stream) {
     if(verbose)
         cerr << "incoming for HTTP stream " << stream << endl;
-    auto* req = new HttpRequest;  // [promise] we will eventually delete req in sendAvailableResponses,
-                                         // unscheduleResponse, or stream shutdown
-    if(!req->initialize(stream)) {       // protocol failure, shut down connection
+    auto* req = new HttpRequest;    // [promise] we will eventually delete req in sendAvailableResponses,
+                                    // unscheduleResponse, or stream shutdown
+    if(!req->initialize(stream)) {  // protocol failure, shut down connection
         stream->write("HTTP/1.1 400 Bad request\r\n");
         stream->fail(DashelException::Unknown, 0, "400 Bad request");
         unscheduleAllResponses(stream);
@@ -601,8 +601,7 @@ void HttpInterface::incomingUserMsg(const UserMessage* userMsg) {
         // In the HTTP world we set up a stream of Server-Sent Events for this.
         // Note that event name is in commonDefinitions.events[userMsg->type].name
 
-        for(auto subscriber = eventSubscriptions.begin();
-            subscriber != eventSubscriptions.end(); ++subscriber) {
+        for(auto subscriber = eventSubscriptions.begin(); subscriber != eventSubscriptions.end(); ++subscriber) {
             if(subscriber->second.count("*") >= 1 || subscriber->second.count(event_name) >= 1) {
                 if(subscriber->first->sse_todo > 0)
                     subscriber->first->sse_todo -= 1;
@@ -709,9 +708,7 @@ void HttpInterface::evNodes(HttpRequest* req, strings& args) {
             if(!seen_named_variables) {
                 // failsafe: if compiler hasn't found any variables, get them from the node
                 // description
-                for(auto i(
-                        description.namedVariables.begin());
-                    i != description.namedVariables.end(); ++i)
+                for(auto i(description.namedVariables.begin()); i != description.namedVariables.end(); ++i)
                     json << (i == description.namedVariables.begin() ? "" : ",") << "\"" << WStringToUTF8(i->name)
                          << "\":" << i->size;
             }
@@ -1447,16 +1444,14 @@ void HttpInterface::discardStream(Dashel::Stream* stream) {
     if(asebaStreams.count(stream))
         asebaStreams.erase(stream);
 
-    for(auto it = streamInitParameters.begin();
-        it != streamInitParameters.end(); ++it) {
+    for(auto it = streamInitParameters.begin(); it != streamInitParameters.end(); ++it) {
         if(it->second == stream)
             it->second = NULL;
     }
 }
 
 std::string HttpInterface::targetFromString(Dashel::Stream* stream) const {
-    for(auto it = streamInitParameters.begin();
-        it != streamInitParameters.end(); ++it) {
+    for(auto it = streamInitParameters.begin(); it != streamInitParameters.end(); ++it) {
         if(it->second == stream)
             return it->first;
     }

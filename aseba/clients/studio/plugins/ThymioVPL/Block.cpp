@@ -106,7 +106,7 @@ namespace ThymioVPL {
             return nullptr;
     }
 
-    Block::Block(QString  type, QString  name, QGraphicsItem* parent)
+    Block::Block(QString type, QString name, QGraphicsItem* parent)
         : QGraphicsObject(parent), type(std::move(type)), name(std::move(name)), beingDragged(false), changed(false) {
         setFlag(QGraphicsItem::ItemIsMovable);
         setAcceptedMouseButtons(Qt::LeftButton);
@@ -438,9 +438,8 @@ namespace ThymioVPL {
 
     BlockWithButtonsAndRange::BlockWithButtonsAndRange(const QString& type, const QString& name, bool up,
                                                        const PixelToValModel pixelToValModel, int lowerBound,
-                                                       int upperBound, int defaultLow, int defaultHigh,
-                                                       QColor  lowColor, QColor  highColor, bool advanced,
-                                                       QGraphicsItem* parent)
+                                                       int upperBound, int defaultLow, int defaultHigh, QColor lowColor,
+                                                       QColor highColor, bool advanced, QGraphicsItem* parent)
         : BlockWithButtons(type, name, up, parent)
         , pixelToValModel(pixelToValModel)
         , lowerBound(lowerBound)

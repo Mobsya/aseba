@@ -167,7 +167,7 @@ protected:
         ExecutionMode executionMode;                              //!< last known execution mode if this node
     };
 
-    using MessageHandler = void (DashelTarget::*)(Message *);
+    using MessageHandler = void (DashelTarget::*)(Message*);
     typedef std::map<unsigned, MessageHandler> MessagesHandlersMap;
     typedef std::map<unsigned, Node> NodesMap;
 

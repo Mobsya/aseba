@@ -69,12 +69,10 @@ unsigned StudioInterface::getProductId() const {
 
 void StudioInterface::setCommonDefinitions(const CommonDefinitions& commonDefinitions) {
     mainWindow->eventsDescriptionsModel->clear();
-    for(auto it(commonDefinitions.events.begin()); it != commonDefinitions.events.end();
-        ++it)
+    for(auto it(commonDefinitions.events.begin()); it != commonDefinitions.events.end(); ++it)
         mainWindow->eventsDescriptionsModel->addNamedValue(*it);
     mainWindow->constantsDefinitionsModel->clear();
-    for(auto it(commonDefinitions.constants.begin());
-        it != commonDefinitions.constants.end(); ++it)
+    for(auto it(commonDefinitions.constants.begin()); it != commonDefinitions.constants.end(); ++it)
         mainWindow->constantsDefinitionsModel->addNamedValue(*it);
 }
 
@@ -273,8 +271,7 @@ void ScriptTab::createEditor() {
 
 //////
 
-AbsentNodeTab::AbsentNodeTab(const unsigned id, QString  name, const QString& sourceCode,
-                             SavedPlugins  savedPlugins)
+AbsentNodeTab::AbsentNodeTab(const unsigned id, QString name, const QString& sourceCode, SavedPlugins savedPlugins)
     : ScriptTab(id), name(std::move(name)), savedPlugins(std::move(savedPlugins)) {
     createEditor();
     editor->setReadOnly(true);
@@ -1572,8 +1569,8 @@ void MainWindow::openFile(const QString& path) {
                 QDomElement element = domNode.toElement();
                 if(element.tagName() == "node") {
                     bool prefered;
-                    NodeTab* tab =
-                        getTabFromName(element.attribute("name"), element.attribute("nodeId", nullptr).toUInt(), &prefered);
+                    NodeTab* tab = getTabFromName(element.attribute("name"),
+                                                  element.attribute("nodeId", nullptr).toUInt(), &prefered);
                     if(prefered) {
                         const int index(nodes->indexOf(tab));
                         assert(index >= 0);

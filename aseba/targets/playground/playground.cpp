@@ -58,11 +58,11 @@ public:
     PlaygroundViewer& viewer;
 
 public:
-    PlaygroundSimulatorEnvironment(QString  sceneFileName, PlaygroundViewer& viewer)
+    PlaygroundSimulatorEnvironment(QString sceneFileName, PlaygroundViewer& viewer)
         : sceneFileName(std::move(sceneFileName)), viewer(viewer) {}
 
     void notify(const EnvironmentNotificationType type, const std::string& description,
-                        const strings& arguments) override {
+                const strings& arguments) override {
         viewer.notifyAsebaEnvironment(type, description, arguments);
     }
 

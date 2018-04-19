@@ -9,7 +9,7 @@ const std::wstring CompilerTranslator::translate(ErrorCode error) {
     QString msg;
 
     switch(error) {
-            // clang-format off
+        // clang-format off
 			case ERROR_BROKEN_TARGET:
 				msg = tr("Broken target description: not enough room for internal variables");
 				break;

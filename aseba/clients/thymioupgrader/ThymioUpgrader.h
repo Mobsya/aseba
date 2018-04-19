@@ -55,7 +55,7 @@ private:
         QString text;
 
         FlashResult() : status(SUCCESS) {}
-        FlashResult(Status status, QString  title, QString  text)
+        FlashResult(Status status, QString title, QString text)
             : status(status), title(std::move(title)), text(std::move(text)) {}
     };
 
@@ -86,7 +86,7 @@ private:
     QNetworkAccessManager* networkManager;
 
 public:
-    ThymioUpgraderDialog(std::string  target);
+    ThymioUpgraderDialog(std::string target);
     ~ThymioUpgraderDialog() override;
 
 private:

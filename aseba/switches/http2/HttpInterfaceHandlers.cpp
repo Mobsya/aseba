@@ -119,8 +119,7 @@ void ResetHandler::handleRequest(HttpRequest* request, const std::vector<std::st
         const map<unsigned, HttpDashelTarget::Node>& nodes = target->getNodes();
 
         auto nodesEnd = nodes.end();
-        for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd;
-            ++nodesIter) {
+        for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd; ++nodesIter) {
             const HttpDashelTarget::Node& node = nodesIter->second;
 
             try {
@@ -225,8 +224,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
             const std::map<unsigned, HttpDashelTarget::Node>& nodes = target->getNodes();
             auto nodesEnd = nodes.end();
-            for(auto nodesIter = nodes.begin();
-                nodesIter != nodesEnd; ++nodesIter) {
+            for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd; ++nodesIter) {
                 const HttpDashelTarget::Node& node = nodesIter->second;
 
                 bool ok;
@@ -234,8 +232,8 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
 
                 if(ok) {
                     std::stringstream part;
-                    part << "{\"node\":" << node.globalId << R"(,"name":")" << node.name
-                         << R"(","protocolVersion":)" << description->protocolVersion << "}";
+                    part << "{\"node\":" << node.globalId << R"(,"name":")" << node.name << R"(","protocolVersion":)"
+                         << description->protocolVersion << "}";
                     parts.push_back(part.str());
                 } else {
                     stringstream errorStream;
@@ -258,8 +256,7 @@ void NodeInfoHandler::handleRequest(HttpRequest* request, const std::vector<std:
             set<pair<HttpDashelTarget*, const HttpDashelTarget::Node*> > matchingNodes =
                 getInterface()->getNodesByNameOrId(tokens[i]);
             auto end = matchingNodes.end();
-            for(auto iter = matchingNodes.begin();
-                iter != end; ++iter) {
+            for(auto iter = matchingNodes.begin(); iter != end; ++iter) {
                 HttpDashelTarget* target = iter->first;
                 const HttpDashelTarget::Node& node = *(iter->second);
 
@@ -366,8 +363,7 @@ void VariableOrEventHandler::handleRequest(HttpRequest* request, const std::vect
     }
 
     auto end = matchingNodes.end();
-    for(auto iter = matchingNodes.begin();
-        iter != end; ++iter) {
+    for(auto iter = matchingNodes.begin(); iter != end; ++iter) {
         HttpDashelTarget* target = iter->first;
         const HttpDashelTarget::Node& node = *(iter->second);
 

@@ -84,7 +84,7 @@ void QtBootloaderInterface::errorWritePageNonFatal(unsigned pageNumber) {
 }
 
 
-ThymioUpgraderDialog::ThymioUpgraderDialog(std::string  target)
+ThymioUpgraderDialog::ThymioUpgraderDialog(std::string target)
     : target(std::move(target)), currentVersion(0), currentDevStatus(-1), officialVersion(0), officialDevStatus(-1) {
     // Create the gui ...
     setWindowTitle(tr("Thymio Firmware Upgrader"));

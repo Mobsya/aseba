@@ -27,8 +27,7 @@ namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-NamedValuesVectorModel::NamedValuesVectorModel(NamedValuesVector* namedValues, QString  tooltipText,
-                                               QObject* parent)
+NamedValuesVectorModel::NamedValuesVectorModel(NamedValuesVector* namedValues, QString tooltipText, QObject* parent)
     : QAbstractTableModel(parent)
     , namedValues(namedValues)
     , wasModified(false)
