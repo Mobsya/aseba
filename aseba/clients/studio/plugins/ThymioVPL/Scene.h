@@ -75,8 +75,8 @@ namespace ThymioVPL {
         void insertSet(int row);
         void recomputeSceneRect();
 
-        using SetItr = QList<EventActionsSet *>::iterator;
-        using SetConstItr = QList<EventActionsSet *>::const_iterator;
+        using SetItr = QList<EventActionsSet*>::iterator;
+        using SetConstItr = QList<EventActionsSet*>::const_iterator;
 
         SetItr setsBegin() {
             return eventActionsSets.begin();

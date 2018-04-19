@@ -37,7 +37,7 @@ class DBusInterface : public QObject {
 
 private:
     QDBusConnection bus;
-    using EventCallback = std::function<void (const Values &)>;
+    using EventCallback = std::function<void(const Values&)>;
     std::map<QString, EventCallback> callbacks;
     QDBusInterface dbusMainInterface;
     QDBusInterface* eventfilterInterface;

@@ -52,8 +52,8 @@ class HttpRequest;
 class HttpInterface : public Dashel::Hub, public Aseba::NodesManager {
 public:
     using strings = std::vector<std::string>;
-    using ResponseQueue = std::list<HttpRequest *>;
-    using ResponseSet = std::set<HttpRequest *>;
+    using ResponseQueue = std::list<HttpRequest*>;
+    using ResponseSet = std::set<HttpRequest*>;
     typedef std::pair<unsigned, unsigned> VariableAddress;
     typedef std::map<uint16_t, uint16_t> NodeIdSubstitution;
     typedef std::map<std::string, Aseba::VariablesMap> NodeNameVariablesMap;
@@ -63,7 +63,7 @@ public:
     typedef std::map<Dashel::Stream*, HttpRequest> StreamRequestMap;
     typedef std::map<HttpRequest*, std::set<std::string> > StreamEventSubscriptionMap;
     typedef std::map<Dashel::Stream*, std::set<unsigned> > StreamNodeIdMap;
-    using StreamSet = std::set<Dashel::Stream *>;
+    using StreamSet = std::set<Dashel::Stream*>;
     typedef std::map<Dashel::Stream*, NodeIdSubstitution> StreamNodeIdSubstitutionMap;
     typedef std::map<unsigned, Aseba::CommonDefinitions> NodeIdCommonDefinitionsMap;
     typedef std::map<unsigned, std::wstring> NodeIdProgramMap;
@@ -107,9 +107,8 @@ protected:
 
 public:
     // default values needed for unit testing
-    HttpInterface(const strings& targets = std::vector<std::string>(), std::string  http_port = "3000",
-                  std::string  aseba_port = "33332", const int iterations = -1, bool dump = false,
-                  bool verbose = false);
+    HttpInterface(const strings& targets = std::vector<std::string>(), std::string http_port = "3000",
+                  std::string aseba_port = "33332", const int iterations = -1, bool dump = false, bool verbose = false);
     // virtual void run();
     virtual void broadcastGetDescription();
     virtual void evNodes(HttpRequest* req, strings& args);
@@ -193,7 +192,8 @@ protected:
 
 public:
     HttpRequest();
-    virtual ~HttpRequest()= default;;
+    virtual ~HttpRequest() = default;
+    ;
     virtual bool initialize(Dashel::Stream* stream);                                 //
     virtual bool initialize(std::string const& start_line, Dashel::Stream* stream);  //
     virtual bool initialize(std::string const& method, std::string const& uri, std::string const& _protocol_version,

@@ -102,8 +102,7 @@ void HttpInterface::step() {
                     targetAddressReconnectionTime[address] = now;
                 }
                 // ping the connected networks
-                for(auto iter = targets.begin(); iter != targets.end();
-                    ++iter) {
+                for(auto iter = targets.begin(); iter != targets.end(); ++iter) {
                     HttpDashelTarget* target = iter->second;
                     target->pingNetwork();
                 }
@@ -223,8 +222,7 @@ bool HttpInterface::runProgram(std::string& errorString) {
         }
 
         auto end = matchingNodes.end();
-        for(auto iter = matchingNodes.begin();
-            iter != end; ++iter) {
+        for(auto iter = matchingNodes.begin(); iter != end; ++iter) {
             HttpDashelTarget* target = iter->first;
             const HttpDashelTarget::Node* node = iter->second;
 
@@ -254,8 +252,7 @@ HttpInterface::getNodesByName(const std::string& name) {
 
         set<const HttpDashelTarget::Node*> nodes = target->getNodesByName(name);
         auto nodesEnd = nodes.end();
-        for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd;
-            ++nodesIter) {
+        for(auto nodesIter = nodes.begin(); nodesIter != nodesEnd; ++nodesIter) {
             const HttpDashelTarget::Node* node = *nodesIter;
             results.insert(make_pair(target, node));
         }
@@ -324,18 +321,14 @@ void HttpInterface::connectionClosed(Dashel::Stream* stream, bool abnormal) {
             nodeIds.erase(node.globalId);
 
             // cancel all pending variable requests for the disconnected node
-            auto pendingVariablesEnd =
-                node.pendingVariables.end();
-            for(auto pendingVariablesIter =
-                    node.pendingVariables.begin();
-                pendingVariablesIter != pendingVariablesEnd; ++pendingVariablesIter) {
+            auto pendingVariablesEnd = node.pendingVariables.end();
+            for(auto pendingVariablesIter = node.pendingVariables.begin(); pendingVariablesIter != pendingVariablesEnd;
+                ++pendingVariablesIter) {
                 const set<pair<Dashel::Stream*, DashelHttpRequest*> >& pendingRequests = pendingVariablesIter->second;
 
-                auto pendingRequestsEnd =
-                    pendingRequests.end();
-                for(auto pendingRequestsIter =
-                        pendingRequests.begin();
-                    pendingRequestsIter != pendingRequestsEnd; ++pendingRequestsIter) {
+                auto pendingRequestsEnd = pendingRequests.end();
+                for(auto pendingRequestsIter = pendingRequests.begin(); pendingRequestsIter != pendingRequestsEnd;
+                    ++pendingRequestsIter) {
                     Dashel::Stream* stream = pendingRequestsIter->first;
                     DashelHttpRequest* request = pendingRequestsIter->second;
 
@@ -431,8 +424,7 @@ void HttpInterface::incomingData(Dashel::Stream* stream) {
             auto* cmdMessage(dynamic_cast<CmdMessage*>(message));
             if(cmdMessage != nullptr) {  // targeted message, only rebroadcast to correct target
                                          // with remapped destination
-                auto query =
-                    nodeIds.find(cmdMessage->dest);
+                auto query = nodeIds.find(cmdMessage->dest);
                 if(query != nodeIds.end()) {  // only relay it to known targets, else if we cannot remap
                                               // the target, discard the message and do not relay it
                     HttpDashelTarget* target = query->second.first;
@@ -587,15 +579,13 @@ void HttpInterface::incomingVariables(HttpDashelTarget* target, const Variables*
     const HttpDashelTarget::Node* node = target->getNodeById(variables->source);
 
     if(node != nullptr) {
-        auto query =
-            node->pendingVariables.find(variables->start);
+        auto query = node->pendingVariables.find(variables->start);
 
         if(query != node->pendingVariables.end()) {
             const set<pair<Dashel::Stream*, DashelHttpRequest*> >& pendingRequests = query->second;
 
             auto end = pendingRequests.end();
-            for(auto iter = pendingRequests.begin();
-                iter != end; ++iter) {
+            for(auto iter = pendingRequests.begin(); iter != end; ++iter) {
                 Dashel::Stream* stream = iter->first;
                 DashelHttpRequest* request = iter->second;
 

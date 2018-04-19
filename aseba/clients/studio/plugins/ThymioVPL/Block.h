@@ -73,7 +73,7 @@ namespace ThymioVPL {
 
         static Block* createBlock(const QString& name, bool advanced = false, QGraphicsItem* parent = nullptr);
 
-        Block(QString  type, QString  name, QGraphicsItem* parent = nullptr);
+        Block(QString type, QString name, QGraphicsItem* parent = nullptr);
         ~Block() override;
 
         QString getType() const {
@@ -190,7 +190,7 @@ namespace ThymioVPL {
     public:
         BlockWithButtonsAndRange(const QString& type, const QString& name, bool up,
                                  const PixelToValModel pixelToValModel, int lowerBound, int upperBound, int defaultLow,
-                                 int defaultHigh, QColor  lowColor, QColor  highColor, bool advanced,
+                                 int defaultHigh, QColor lowColor, QColor highColor, bool advanced,
                                  QGraphicsItem* parent);
 
         void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;

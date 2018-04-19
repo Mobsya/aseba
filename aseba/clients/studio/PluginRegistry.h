@@ -45,7 +45,7 @@ struct NodeToolRegistrar {
     //! A list of product IDs
     using ProductIds = QList<ProductId>;
     //! A function which creates an instance of a node tool
-    using CreatorFunc = NodeToolInterface *(*)(NodeTab *);
+    using CreatorFunc = NodeToolInterface* (*)(NodeTab*);
 
     void reg(const QString& name, const ProductIds& pid, const CreatorFunc func);
 

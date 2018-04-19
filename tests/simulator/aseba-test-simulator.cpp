@@ -53,8 +53,7 @@ struct TestSimulatorEnvironment : SimulatorEnvironment {
 
     TestSimulatorEnvironment(World& world) : world(world) {}
 
-    void notify(const EnvironmentNotificationType type, const string& description,
-                        const strings& arguments) override {
+    void notify(const EnvironmentNotificationType type, const string& description, const strings& arguments) override {
         cerr << "N " << description;
         copy(arguments.begin(), arguments.end(), ostream_iterator<string>(cerr, " "));
         cerr << endl;

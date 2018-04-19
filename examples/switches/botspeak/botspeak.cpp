@@ -133,7 +133,7 @@ bool BotSpeakBridge::Value::update(BotSpeakBridge* bridge, unsigned addr, int va
     return false;
 }
 
-BotSpeakBridge::Operation::Operation(BotSpeakBridge* bridge, std::string  op, const std::string& lhs,
+BotSpeakBridge::Operation::Operation(BotSpeakBridge* bridge, std::string op, const std::string& lhs,
                                      const std::string& rhs)
     : op(std::move(op)), lhs(bridge, lhs), rhs(bridge, rhs) {}
 

@@ -205,8 +205,8 @@ void AsebaNetworkInterface::LoadScripts(const QString& fileName, const QDBusMess
             QDomElement element = domNode.toElement();
             if(element.tagName() == "node") {
                 bool ok;
-                const unsigned nodeId(
-                    getNodeId(element.attribute("name").toStdWString(), element.attribute("nodeId", nullptr).toUInt(), &ok));
+                const unsigned nodeId(getNodeId(element.attribute("name").toStdWString(),
+                                                element.attribute("nodeId", nullptr).toUInt(), &ok));
                 if(ok) {
                     std::wistringstream is(element.firstChild().toText().data().toStdWString());
                     Error error;

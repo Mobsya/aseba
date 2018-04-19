@@ -53,7 +53,7 @@ protected:
         Value lhs;
         Value rhs;
 
-        Operation(BotSpeakBridge* bridge, std::string  op, const std::string& lhs, const std::string& rhs);
+        Operation(BotSpeakBridge* bridge, std::string op, const std::string& lhs, const std::string& rhs);
         bool update(BotSpeakBridge* bridge, unsigned addr, int val);
 
     protected:
