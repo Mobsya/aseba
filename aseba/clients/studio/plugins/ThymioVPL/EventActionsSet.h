@@ -57,7 +57,7 @@ namespace ThymioVPL {
 
         void addEventBlock(Block* block);
         void addActionBlock(Block* block, int number = -1);
-        const bool hasEventBlock() const;
+        bool hasEventBlock() const;
         const Block* getEventBlock() const;
         const Block* getStateFilterBlock() const;
         QString getEventAndStateFilterHash() const;

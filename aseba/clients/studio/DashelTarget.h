@@ -196,7 +196,7 @@ public:
 
     virtual void disconnect();
 
-    const TargetDescription* const getDescription(unsigned node) const override;
+    const TargetDescription* getDescription(unsigned node) const override;
 
     void uploadBytecode(unsigned node, const BytecodeVector& bytecode) override;
     void writeBytecode(unsigned node) override;

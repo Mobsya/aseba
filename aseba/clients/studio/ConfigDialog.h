@@ -27,7 +27,7 @@
 
 #define CONFIG_PROPERTY_CHECKBOX_DECLARE(name) \
 public:                                        \
-    static const bool get##name(void);         \
+    static bool get##name(void);               \
     static void set##name(bool);
 
 class QStackedWidget;

@@ -39,7 +39,7 @@ std::wstring Node::typeName(const Node::ReturnType& type) const {
 void Node::expectType(const Node::ReturnType& expected, const Node::ReturnType& type) const {
     if(type != expected)
         throw TranslatableError(sourcePos, ERROR_EXPECTING_TYPE).arg(typeName(expected)).arg(typeName(type));
-};
+}
 
 Node::ReturnType Node::typeCheck(Compiler* compiler) {
     for(NodesVector::const_iterator it = children.begin(); it != children.end(); ++it) {

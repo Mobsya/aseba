@@ -14,6 +14,6 @@ public:
 
     static const std::wstring translate(ErrorCode error);
 };
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif  // _TRANSLATOR_H

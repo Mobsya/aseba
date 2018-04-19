@@ -47,7 +47,7 @@ static void addImmediateToBytecodes(int value, const SourcePos& sourcePos, PreLi
 PreLinkBytecode::PreLinkBytecode() {
     events[ASEBA_EVENT_INIT] = BytecodeVector();
     current = &events[ASEBA_EVENT_INIT];
-};
+}
 
 //! Fixup prelinked bytecodes by making sure that each vector is closed correctly,
 //! i.e. with a STOP for events and a RET for subroutines

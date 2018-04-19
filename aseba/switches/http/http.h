@@ -193,7 +193,7 @@ protected:
 public:
     HttpRequest();
     virtual ~HttpRequest() = default;
-    ;
+
     virtual bool initialize(Dashel::Stream* stream);                                 //
     virtual bool initialize(std::string const& start_line, Dashel::Stream* stream);  //
     virtual bool initialize(std::string const& method, std::string const& uri, std::string const& _protocol_version,
@@ -211,6 +211,6 @@ public:
 };
 
 /*@}*/
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif

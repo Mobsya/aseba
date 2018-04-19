@@ -86,7 +86,7 @@ namespace ThymioVPL {
     void Compiler::CodeGenerator::RemoteControlEventHandler::generateAdditionalCode() {
         EventHandler::generateAdditionalCode();
         code.prepend(EventHandler::PairCodeAndIndex(L"\nonevent rc5\n", -1));
-    };
+    }
 
     //////
 

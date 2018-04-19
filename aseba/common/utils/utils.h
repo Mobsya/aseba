@@ -230,6 +230,6 @@ constexpr T clamp(T v, T minV, T maxV) {
 
 /*@}*/
 
-};  // namespace Aseba
+}  // namespace Aseba
 
 #endif

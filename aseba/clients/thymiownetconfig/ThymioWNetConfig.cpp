@@ -218,7 +218,7 @@ void ThymioWNetConfigDialog::quit() {
     }
     close();
 }
-};  // namespace Aseba
+}  // namespace Aseba
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);

@@ -426,7 +426,7 @@ void ThymioUpgraderDialog::networkReplyFinished(QNetworkReply* reply) {
 void ThymioUpgraderDialog::networkError() {
     officialFirmwareText->setText(tr("Error connecting to official firmware server!"));
 }
-};  // namespace Aseba
+}  // namespace Aseba
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);

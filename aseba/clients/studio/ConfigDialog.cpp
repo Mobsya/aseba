@@ -26,7 +26,7 @@
 #define CHECKED_TO_BOOL(value) (value == Qt::Checked ? true : false)
 
 #define CONFIG_PROPERTY_CHECKBOX_HANDLER(name, page, keyword) \
-    const bool ConfigDialog::get##name() {                    \
+    bool ConfigDialog::get##name() {                          \
         if(me)                                                \
             return me->page->checkboxCache[#keyword].value;   \
         else                                                  \

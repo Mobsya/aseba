@@ -128,7 +128,7 @@ namespace ThymioVPL {
     }
 
     //! Return whether the event holder has a block
-    const bool EventActionsSet::hasEventBlock() const {
+    bool EventActionsSet::hasEventBlock() const {
         return event != nullptr;
     }
 
