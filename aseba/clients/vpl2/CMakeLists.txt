@@ -1,0 +1,40 @@
+find_package(Qt5 COMPONENTS Core Network Gui Qml Quick)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+add_executable(thymiovpl2
+    src/common/aseba.cpp
+    src/common/thymio/ThymioManager.cpp
+    src/common/thymio/NetworkDeviceProber.cpp
+    src/common/thymio/DeviceQtConnection.cpp
+    src/common/thymio/ThymioProviderInfo.cpp
+    src/common/thymio/ThymioListModel.cpp
+    src/common/aseba.h
+    src/common/thymio/ThymioManager.h
+    src/common/thymio/NetworkDeviceProber.h
+    src/common/thymio/DeviceQtConnection.h
+    src/common/thymio/ThymioProviderInfo.h
+    src/common/thymio/ThymioListModel.h
+    src/app/main.cpp
+    src/app/thymio-vpl2.cpp
+    src/app/thymio-vpl2.h
+    src/app/liveqmlreloadingengine.cpp
+    )
+
+if(NOT ANDROID)
+    target_sources(thymiovpl2 PRIVATE
+        src/common/thymio/UsbSerialDeviceProber.cpp
+        src/common/thymio/UsbSerialDeviceProber.h
+    )
+    find_package(Qt5 COMPONENTS SerialPort)
+    target_link_libraries(thymiovpl2 PRIVATE Qt5::SerialPort)
+endif()
+
+target_link_libraries(thymiovpl2 PUBLIC asebacommon asebacompiler Qt5::Core Qt5::Qml Qt5::Quick QtZeroConf libusb)
+target_compile_definitions(thymiovpl2 PRIVATE -DQML_ROOT_FILE=\"qrc:/thymio-vpl2/main.qml\")
+target_include_directories(thymiovpl2 PRIVATE src/common/)
+
+file(GLOB TRANSLATIONS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/translations/*.ts")
+set_source_files_properties(${TRANSLATIONS_SOURCES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/src/qml/thymio-vpl2/translations/")
+qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
+qt5_add_resources(resfiles src/qml/thymio-vpl2.qrc)

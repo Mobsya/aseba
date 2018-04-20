@@ -1,17 +1,16 @@
 #pragma once
+#include <aseba/common/msg/msg.h>
 #include <QObject>
 #include <QVector>
 #include "ThymioProviderInfo.h"
 #include "DeviceQtConnection.h"
-#include <aseba/common/msg/msg.h>
 
 namespace mobsya {
 
 class ThymioNode : public QObject {
     Q_OBJECT
 public:
-    ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider,
-               uint16_t node);
+    ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider, uint16_t node);
 
     void setVariable(QString name, const QList<int>& value);
     const ThymioProviderInfo& provider() const;
@@ -53,7 +52,7 @@ private:
     Aseba::VariablesMap m_variablesMap;
 
     struct {
-        u_int16_t variables{0}, event{0}, functions{0};
+        uint16_t variables{0}, event{0}, functions{0};
     } m_message_counter;
     bool m_ready;
 };
@@ -67,8 +66,7 @@ Q_SIGNALS:
     void availabilityChanged();
 
 public:
-    virtual std::shared_ptr<DeviceQtConnection>
-    openConnection(const ThymioProviderInfo& thymio) = 0;
+    virtual std::shared_ptr<DeviceQtConnection> openConnection(const ThymioProviderInfo& thymio) = 0;
 };
 
 class ThymioManager : public QObject {
@@ -104,4 +102,4 @@ private:
     std::vector<Robot> m_thymios;
 };
 
-}    // namespace mobsya
+}  // namespace mobsya

@@ -24,8 +24,7 @@ public:
     UsbSerialThymioProviderInfo(QString portName, QString deviceName)
         : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType::Serial)
         , m_portName(portName)
-        , m_deviceName(deviceName) {
-    }
+        , m_deviceName(deviceName) {}
 
     QString name() const override {
         return m_deviceName;
@@ -48,8 +47,8 @@ public:
 };
 
 
-int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev,
-                     libusb_hotplug_event event, void* user_data) {
+int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
+                                 void* user_data) {
     auto object = reinterpret_cast<UsbSerialDeviceProberThread*>(user_data);
     return object->hotplug_callback(ctx, dev, event);
 }
@@ -57,11 +56,9 @@ void UsbSerialDeviceProberThread::run() {
     libusb_hotplug_callback_handle handle;
 
     int rc = libusb_hotplug_register_callback(
-        nullptr,
-        libusb_hotplug_event(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED |
-                             LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT),
+        nullptr, libusb_hotplug_event(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED | LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT),
         libusb_hotplug_flag(0), EPFL_VENDOR_ID, LIBUSB_HOTPLUG_MATCH_ANY, LIBUSB_HOTPLUG_MATCH_ANY,
-        mobsya::hotplug_callback, this, &handle);
+        (libusb_hotplug_callback_fn)mobsya::hotplug_callback, this, &handle);
 
     if(LIBUSB_SUCCESS != rc) {
         return;
@@ -77,14 +74,12 @@ void UsbSerialDeviceProberThread::run() {
     libusb_hotplug_deregister_callback(nullptr, handle);
 }
 
-int UsbSerialDeviceProberThread::hotplug_callback(struct libusb_context*, struct libusb_device*,
-                                                  libusb_hotplug_event) {
+int UsbSerialDeviceProberThread::hotplug_callback(struct libusb_context*, struct libusb_device*, libusb_hotplug_event) {
     Q_EMIT availabilityChanged();
     return 0;
 }
 
-UsbSerialDeviceProber::UsbSerialDeviceProber(QObject* parent)
-    : AbstractDeviceProber(parent) {
+UsbSerialDeviceProber::UsbSerialDeviceProber(QObject* parent) : AbstractDeviceProber(parent) {
 
     connect(&m_thread, &UsbSerialDeviceProberThread::availabilityChanged, this,
             &UsbSerialDeviceProber::availabilityChanged);
@@ -105,8 +100,7 @@ std::vector<ThymioProviderInfo> UsbSerialDeviceProber::getDevices() {
     return compatible_ports;
 }
 
-std::shared_ptr<DeviceQtConnection>
-UsbSerialDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
+std::shared_ptr<DeviceQtConnection> UsbSerialDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
     if(thymio.type() != ThymioProviderInfo::ProviderType::Serial)
         return nullptr;
     auto port = static_cast<const UsbSerialThymioProviderInfo*>(thymio.data())->m_portName;
@@ -121,15 +115,14 @@ UsbSerialDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
     connection->setDataTerminalReady(true);
 
     auto wrapper = std::make_shared<DeviceQtConnection>(thymio, connection.get());
-    connect(connection.get(), &QSerialPort::errorOccurred, wrapper.get(),
-            &DeviceQtConnection::connectionStatusChanged);
+    connect(connection.get(), &QSerialPort::errorOccurred, wrapper.get(), &DeviceQtConnection::connectionStatusChanged);
     connection.release();
     return wrapper;
-}    // namespace mobsya
+}  // namespace mobsya
 
 UsbSerialDeviceProber::~UsbSerialDeviceProber() {
     m_thread.requestInterruption();
     m_thread.wait();
 }
 
-}    // namespace mobsya
+}  // namespace mobsya

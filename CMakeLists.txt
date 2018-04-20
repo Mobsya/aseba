@@ -24,7 +24,8 @@ include(CMakeModules/deployqt.cmake)
 include(CMakeModules/codesign.cmake)
 
 add_subdirectory(third_party/catch2)
-
+add_subdirectory(third_party/libusb)
+add_subdirectory(third_party/qtzeroconf)
 
 # testing and defines
 enable_testing()

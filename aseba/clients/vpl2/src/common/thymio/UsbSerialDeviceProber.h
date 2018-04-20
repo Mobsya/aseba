@@ -14,10 +14,9 @@ Q_SIGNALS:
     void availabilityChanged();
 
 private:
-    int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev,
-                         libusb_hotplug_event event);
-    friend int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev,
-                                libusb_hotplug_event event, void* user_data);
+    int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event);
+    friend int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev,
+                                            libusb_hotplug_event event, void* user_data);
 };
 
 class UsbSerialDeviceProber : public AbstractDeviceProber {
@@ -33,4 +32,4 @@ private:
     UsbSerialDeviceProberThread m_thread;
 };
 
-}    // namespace mobsya
+}  // namespace mobsya

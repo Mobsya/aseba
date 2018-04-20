@@ -39,3 +39,4 @@ add_feature_info(THYMIO_CONFIG HAS_THYMIO_UPGRADER   "upgrader (depends on QtCon
 add_feature_info(STUDIO HAS_STUDIO "Studio")
 add_feature_info(JOY SDL2_FOUND "Aseba Joy ( depends on SDL )")
 
+add_subdirectory(vpl2)
