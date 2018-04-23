@@ -135,7 +135,9 @@ Dependencies On Ubuntu & Debian
 
     sudo apt-get install qttools5-dev-tools \
                          qtbase5-dev \
-                         qt5-qmake \
+                         qttools5-dev \
+                         libqt5help5 \
+                         qt5-qmake \
                          libqt5opengl5-dev \
                          libqt5svg5-dev \
                          libqt5x11extras5-dev \
