@@ -27,6 +27,11 @@ if(NOT ANDROID)
 	find_package(Threads REQUIRED)
 endif()
 
+if(ANDROID)
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/android/qt-android-cmake/)
+	include(android/qt-android-cmake/AddQtAndroidApk.cmake)
+endif()
+
 add_subdirectory(third_party/catch2)
 add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/qtzeroconf)

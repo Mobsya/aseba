@@ -2,7 +2,15 @@ find_package(Qt5 COMPONENTS Core Network Gui Qml Quick)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_executable(thymiovpl2
+if(ANDROID)
+    add_library(thymiovpl2 SHARED
+               src/app/main.cpp)
+else()
+    add_executable(thymiovpl2
+               src/app/main.cpp)
+endif()
+
+target_sources(thymiovpl2 PRIVATE
     src/common/aseba.cpp
     src/common/thymio/ThymioManager.cpp
     src/common/thymio/NetworkDeviceProber.cpp
@@ -15,11 +23,10 @@ add_executable(thymiovpl2
     src/common/thymio/DeviceQtConnection.h
     src/common/thymio/ThymioProviderInfo.h
     src/common/thymio/ThymioListModel.h
-    src/app/main.cpp
     src/app/thymio-vpl2.cpp
     src/app/thymio-vpl2.h
     src/app/liveqmlreloadingengine.cpp
-    )
+)
 
 if(NOT ANDROID)
     target_sources(thymiovpl2 PRIVATE
@@ -53,3 +60,15 @@ file(GLOB TRANSLATIONS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/translations/*.ts")
 set_source_files_properties(${TRANSLATIONS_SOURCES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/src/qml/thymio-vpl2/translations/")
 qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
 qt5_add_resources(resfiles src/qml/thymio-vpl2.qrc)
+
+
+if(ANDROID)
+    set(ANDROID_NATIVE_API_LEVEL 20)
+    add_qt_android_apk(
+        thymiovpl2_apk thymiovpl2
+        NAME "Thymio VPL"
+        PACKAGE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/android"
+        DEPENDS QtZeroConf libusb
+        MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/android/AndroidManifest.xml"
+        )
+endif()
