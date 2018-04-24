@@ -1,5 +1,3 @@
-language: cpp
-
 cache:
   ccache: true
   directories:
@@ -8,6 +6,7 @@ cache:
 matrix:
   include:
     - os: linux
+      language: cpp
       addons:
         apt:
           sources:
@@ -51,8 +50,24 @@ matrix:
       env: COMPILER=clang-6.0  CXX_COMPILER=clang++-6.0
 
     - os: osx
+      language: cpp
       osx_image: xcode8
       env: COMPILER=clang  CXX_COMPILER=clang++
+
+    - os: linux
+      addons:
+         sources:
+            - sourceline: 'ppa:corentinjabot/cmake-backport'
+          packages:
+            - ninja-build
+            - p7zip-full
+            - ninja-build
+            - cmake-data
+            - cmake
+      env:
+        - ANDROID=1
+      sudo: true
+      jdk: oraclejdk8
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -65,29 +80,61 @@ before_install:
       brew update
       brew bundle
     fi
+    if [[ "$ANDROID" ]]; then
+      cd $HOME
+      wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip -O $HOME/android-sdk.zip
+      mkdir android
+      unzip android-sdk.zip -d android/sdk
+      export PATH=$PATH:$HOME/android/sdk/tools:$HOME/android/sdk/tools/bin
+      echo  y\ny | sdkmanager "platform-tools" "platforms;android-26"
+      rm -rf $HOME/android-ndk-r10e
+      wget https://dl.google.com/android/repository/android-ndk-r10e-linux-x86_64.zip
+      unzip -oq android-ndk-r10e-linux-x86_64.zip
+      export ANDROID_NDK_HOME=$HOME/android-ndk-r10e
+      export ANDROID_NDK=$HOME/android-ndk-r10e
+      rm -fr $HOME/qt5-android
+      mkdir  $HOME/qt5-android
+      pushd  $HOME/qt5-android
+      wget https://github.com/Mobsya/ci-data/releases/download/data/qt_5.10.1-android-armv7.7z
+      7z x qt_5.10.1-android-armv7.7z 1>/dev/null
+      popd
+    fi
     set +e
 
 script:
   - |
+    cmake --version
     set +e
     set -x
+    cd ${TRAVIS_BUILD_DIR}
+    mkdir build && cd build
     export CC=${COMPILER}
     export CXX=${CXX_COMPILER}
     export CFLAGS="-Wall -Wextra -Wno-unused-parameter"
     export CXXFLAGS="-Wall -Wextra -Wno-unused-parameter"
-    cd ${TRAVIS_BUILD_DIR}
+    set -e
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
       #export PATH="(brew --prefix llvm)/bin:${PATH}"
+      cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+      ninja -v
     fi
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
         ls /opt/qt510/
         /opt/qt510/bin/qt510-env.sh
         export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
+        cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+        ninja -v
     fi
-    set -e
-    mkdir build && cd build
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF .. #-DCMAKE_CXX_CLANG_TIDY="clang-tidy\;-checks=-clang-diagnostic-error,clang-analyzer-*"
-    ninja -v
+    if [[ "$ANDROID" ]]; then
+        export ANDROID_NDK=$HOME/android-ndk-r10e
+        export ANDROID_HOME=$HOME/android/sdk
+        export ANDROID_SDK=$HOME/android/sdk
+        export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
+        cmake .. -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+        make
+    fi
+    #cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF .. #-DCMAKE_CXX_CLANG_TIDY="clang-tidy\;-checks=-clang-diagnostic-error,clang-analyzer-*"
     #CTEST_OUTPUT_ON_FAILURE=1 ctest
     set +e
+
