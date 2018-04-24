@@ -14,7 +14,7 @@ namespace Aseba {
 enum ErrorCode {
     // compiler.cpp
     ERROR_BROKEN_TARGET = 0,
-    ERROR_STACK_OVERFLOW,
+    ASEBA_ERROR_STACK_OVERFLOW,
     ERROR_SCRIPT_TOO_BIG,
     // identifier-lookup.cpp
     ERROR_VARIABLE_NOT_DEFINED,
