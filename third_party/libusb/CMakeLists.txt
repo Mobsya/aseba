@@ -28,12 +28,19 @@ if(UNIX)
        _GNU_SOURCE)
 
 
-
-
    target_sources(libusb PRIVATE
        ${LIB_USB_DIR}/os/poll_posix.c
        ${LIB_USB_DIR}/os/threads_posix.c
    )
+
+   if(ANDROID)
+        target_sources(libusb PRIVATE
+                ${LIB_USB_DIR}/os/linux_usbfs.c
+                ${LIB_USB_DIR}/os/linux_netlink.c
+                )
+        target_compile_definitions(libusb PRIVATE OS_LINUX HAVE_PIPE2)
+   endif()
+
 
    if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
        target_sources(libusb PRIVATE

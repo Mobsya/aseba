@@ -18,10 +18,14 @@ include(CMakeModules/ParseVersion.cmake)
 include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
-include(CMakeModules/dashel.cmake)
-include(CMakeModules/enki.cmake)
-include(CMakeModules/deployqt.cmake)
 include(CMakeModules/codesign.cmake)
+include(CMakeModules/dashel.cmake)
+
+if(NOT ANDROID)
+	include(CMakeModules/enki.cmake)
+	include(CMakeModules/deployqt.cmake)
+	find_package(Threads REQUIRED)
+endif()
 
 add_subdirectory(third_party/catch2)
 add_subdirectory(third_party/libusb)
@@ -32,21 +36,23 @@ enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-find_package(Threads REQUIRED)
-
 # Qt and Qwt
-find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Help Concurrent Xml Svg Test LinguistTools)
+find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools)
 
-find_package(Qwt)
+if (NOT ANDROID)
+	find_package(Qt5Help)
+	find_package(Qwt)
+endif()
 
-if (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE AND NOT ANDROID)
 	find_package(Qt5X11Extras)
 	find_package(Qt5DBus)
 endif ()
 
 # Zeroconf
-include(CMakeModules/zeroconf.cmake)
-
+if (NOT ANDROID)
+	include(CMakeModules/zeroconf.cmake)
+endif()
 
 # Aseba itself
 set(LIB_INSTALL_DIR lib CACHE FILEPATH "Where to install libraries")
@@ -58,11 +64,13 @@ set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_P
 
 add_subdirectory(aseba)
 
-# Examples for developers
-add_subdirectory(examples)
+if(NOT ANDROID)
+	# Examples for developers
+	add_subdirectory(examples)
 
-# Unit tests
-add_subdirectory(tests)
+	# Unit tests
+	add_subdirectory(tests)
+endif()
 
 # User entries
 if (UNIX)

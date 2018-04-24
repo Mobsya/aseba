@@ -30,7 +30,22 @@ if(NOT ANDROID)
     target_link_libraries(thymiovpl2 PRIVATE Qt5::SerialPort)
 endif()
 
+if(ANDROID)
+    target_sources(thymiovpl2 PRIVATE
+        src/common/thymio/AndroidSerialDeviceProber.cpp
+        src/common/thymio/AndroidSerialDeviceProber.h
+        src/common/thymio/AndroidUsbSerialDevice.cpp
+        src/common/thymio/AndroidUsbSerialDevice.h
+    )
+endif()
+
 target_link_libraries(thymiovpl2 PUBLIC asebacommon asebacompiler Qt5::Core Qt5::Qml Qt5::Quick QtZeroConf libusb)
+
+if(ANDROID)
+    find_package(Qt5AndroidExtras)
+    target_link_libraries(thymiovpl2 PUBLIC Qt5::AndroidExtras)
+endif()
+
 target_compile_definitions(thymiovpl2 PRIVATE -DQML_ROOT_FILE=\"qrc:/thymio-vpl2/main.qml\")
 target_include_directories(thymiovpl2 PRIVATE src/common/)
 
