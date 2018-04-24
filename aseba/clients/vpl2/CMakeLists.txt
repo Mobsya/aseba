@@ -68,7 +68,7 @@ if(ANDROID)
         thymiovpl2_apk thymiovpl2
         NAME "Thymio VPL"
         PACKAGE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/android"
-        DEPENDS QtZeroConf libusb
+        #DEPENDS QtZeroConf libusb
         MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/android/AndroidManifest.xml"
         )
 endif()

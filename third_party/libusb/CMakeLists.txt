@@ -1,5 +1,5 @@
 set(LIB_USB_DIR "${CMAKE_CURRENT_LIST_DIR}/libusb/libusb/")
-add_library(libusb
+add_library(libusb STATIC
     ${LIB_USB_DIR}/core.c
     ${LIB_USB_DIR}/descriptor.c
     ${LIB_USB_DIR}/hotplug.c
