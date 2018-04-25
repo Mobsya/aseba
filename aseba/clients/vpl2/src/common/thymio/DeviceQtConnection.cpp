@@ -7,16 +7,11 @@
 
 namespace mobsya {
 
-DeviceQtConnection::DeviceQtConnection(const ThymioProviderInfo& provider, QIODevice* device,
-                                       QObject* parent)
-    : QObject(parent)
-    , m_device(device)
-    , m_messageSize(-1)
-    , m_provider(provider) {
+DeviceQtConnection::DeviceQtConnection(const ThymioProviderInfo& provider, QIODevice* device, QObject* parent)
+    : QObject(parent), m_device(device), m_messageSize(-1), m_provider(provider) {
     device->setParent(this);
 
-    connect(m_device, &QIODevice::readyRead, this, &DeviceQtConnection::onDataAvailable,
-            Qt::QueuedConnection);
+    connect(m_device, &QIODevice::readyRead, this, &DeviceQtConnection::onDataAvailable, Qt::QueuedConnection);
 }
 
 void DeviceQtConnection::sendMessage(const Aseba::Message& message) {
@@ -26,12 +21,10 @@ void DeviceQtConnection::sendMessage(const Aseba::Message& message) {
     auto len = static_cast<uint16_t>(buffer.rawData.size());
 
     if(len > ASEBA_MAX_EVENT_ARG_SIZE) {
-        std::cerr
-            << "Message::serialize() : fatal error: message size exceeds maximum packet size.\n";
+        std::cerr << "Message::serialize() : fatal error: message size exceeds maximum packet size.\n";
         std::cerr << "message payload size: " << len
                   << ", maximum packet payload size (excluding type): " << ASEBA_MAX_EVENT_ARG_SIZE
-                  << ", message type: " << std::hex << std::showbase << message.type << std::dec
-                  << std::noshowbase;
+                  << ", message type: " << std::hex << std::showbase << message.type << std::dec << std::noshowbase;
         std::cerr << std::endl;
         std::terminate();
     }
@@ -87,4 +80,4 @@ void DeviceQtConnection::onDataAvailable() {
 }
 
 
-}    // namespace mobsya
+}  // namespace mobsya

@@ -16,18 +16,11 @@
 
 namespace mobsya {
 
-AbstractDeviceProber::AbstractDeviceProber(QObject* parent)
-    : QObject(parent) {
-}
+AbstractDeviceProber::AbstractDeviceProber(QObject* parent) : QObject(parent) {}
 
 
-ThymioNode::ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider,
-                       uint16_t node)
-    : m_connection(connection)
-    , m_provider(provider)
-    , m_nodeId(node)
-    , m_ready(false) {
-}
+ThymioNode::ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider, uint16_t node)
+    : m_connection(connection), m_provider(provider), m_nodeId(node), m_ready(false) {}
 
 void ThymioNode::setVariable(QString name, const QList<int>& value) {
     uint16_t start = uint16_t(m_variablesMap[name.toStdWString()].first);
@@ -43,20 +36,16 @@ void ThymioNode::onMessageReceived(const std::shared_ptr<Aseba::Message>& messag
             onDescriptionReceived(*static_cast<const Aseba::Description*>(message.get()));
             break;
         case ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION:
-            onVariableDescriptionReceived(
-                *static_cast<const Aseba::NamedVariableDescription*>(message.get()));
+            onVariableDescriptionReceived(*static_cast<const Aseba::NamedVariableDescription*>(message.get()));
             break;
         case ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION:
-            onEventDescriptionReceived(
-                *static_cast<const Aseba::LocalEventDescription*>(message.get()));
+            onEventDescriptionReceived(*static_cast<const Aseba::LocalEventDescription*>(message.get()));
             break;
         case ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION:
-            onFunctionDescriptionReceived(
-                *static_cast<const Aseba::NativeFunctionDescription*>(message.get()));
+            onFunctionDescriptionReceived(*static_cast<const Aseba::NativeFunctionDescription*>(message.get()));
             break;
         default:
-            if(auto um =
-                   dynamic_cast<Aseba::UserMessage*>(message.get())) {    // This is so terrible...
+            if(auto um = dynamic_cast<Aseba::UserMessage*>(message.get())) {  // This is so terrible...
                 onUserMessageReceived(*um);
             }
     }
@@ -71,8 +60,7 @@ void ThymioNode::onVariableDescriptionReceived(const Aseba::NamedVariableDescrip
     m_description.namedVariables[m_message_counter.variables++] = description;
     updateReadyness();
 }
-void ThymioNode::onFunctionDescriptionReceived(
-    const Aseba::NativeFunctionDescription& description) {
+void ThymioNode::onFunctionDescriptionReceived(const Aseba::NativeFunctionDescription& description) {
 
     m_description.nativeFunctions[m_message_counter.functions++] = description;
     updateReadyness();
@@ -121,37 +109,32 @@ bool ThymioNode::isConnected() const {
 void ThymioNode::updateReadyness() {
     if(m_ready)
         return;
-    m_ready = !m_description.name.empty() &&
-              m_message_counter.variables == m_description.namedVariables.size() &&
-              m_message_counter.event == m_description.localEvents.size() &&
-              m_message_counter.functions == m_description.nativeFunctions.size();
+    m_ready = !m_description.name.empty() && m_message_counter.variables == m_description.namedVariables.size() &&
+        m_message_counter.event == m_description.localEvents.size() &&
+        m_message_counter.functions == m_description.nativeFunctions.size();
     if(m_ready) {
         Q_EMIT ready();
     }
 }
 
-ThymioManager::ThymioManager(QObject* parent)
-    : QObject(parent) {
+ThymioManager::ThymioManager(QObject* parent) : QObject(parent) {
 
 // Thymio using the system-level serial driver only works on desktop OSes
 #if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) || defined(Q_OS_WIN)
 
     auto desktopProbe = new UsbSerialDeviceProber(this);
-    connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this,
-            &ThymioManager::scanDevices);
+    connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
     m_probes.push_back(desktopProbe);
 
 #endif
 
 #ifdef Q_OS_ANDROID
     auto androidProbe = AndroidSerialDeviceProber::instance();
-    connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this,
-            &ThymioManager::scanDevices);
+    connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
     m_probes.push_back(androidProbe);
 #endif
     auto networkProbe = new NetworkDeviceProber(this);
-    connect(networkProbe, &NetworkDeviceProber::availabilityChanged, this,
-            &ThymioManager::scanDevices);
+    connect(networkProbe, &NetworkDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
     m_probes.push_back(networkProbe);
 
     QTimer* t = new QTimer(this);
@@ -173,18 +156,16 @@ void ThymioManager::scanDevices() {
     for(auto providerIt = std::begin(m_providers); providerIt != std::end(m_providers);) {
         const auto& provider = *providerIt;
 
-        if(std::find(std::begin(new_providers), std::end(new_providers), provider.first) !=
-           std::end(new_providers)) {
+        if(std::find(std::begin(new_providers), std::end(new_providers), provider.first) != std::end(new_providers)) {
             providerIt++;
             continue;
         }
         providerIt = m_providers.erase(providerIt);
 
         // Remove the thymios associated to a given device
-        auto it = std::remove_if(std::begin(m_thymios), std::end(m_thymios),
-                                 [&provider](const std::shared_ptr<ThymioNode>& data) {
-                                     return data->provider() == provider.first;
-                                 });
+        auto it = std::remove_if(
+            std::begin(m_thymios), std::end(m_thymios),
+            [&provider](const std::shared_ptr<ThymioNode>& data) { return data->provider() == provider.first; });
         while(it != std::end(m_thymios)) {
             Robot r = std::move(*it);
             it = m_thymios.erase(it);
@@ -195,19 +176,17 @@ void ThymioManager::scanDevices() {
     // Register the new providers and open a connection to them
     for(auto&& provider : new_providers) {
         if(m_providers.find(provider) == m_providers.end()) {
-            auto con = openConnection(provider);    // TODO : Manage errors ?
+            auto con = openConnection(provider);  // TODO : Manage errors ?
             if(!con)
                 continue;
             m_providers.emplace(std::move(provider), con);
-            connect(con.get(), &DeviceQtConnection::messageReceived, this,
-                    &ThymioManager::onMessageReceived);
+            connect(con.get(), &DeviceQtConnection::messageReceived, this, &ThymioManager::onMessageReceived);
         }
     }
     requestNodesList();
-}    // namespace mobsya
+}  // namespace mobsya
 
-std::shared_ptr<DeviceQtConnection>
-ThymioManager::openConnection(const ThymioProviderInfo& thymio) {
+std::shared_ptr<DeviceQtConnection> ThymioManager::openConnection(const ThymioProviderInfo& thymio) {
     for(auto&& probe : m_probes) {
         auto iod = probe->openConnection(thymio);
         if(iod)
@@ -226,8 +205,7 @@ void ThymioManager::requestNodesList() {
     });
 }
 
-void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider,
-                                      std::shared_ptr<Aseba::Message> message) {
+void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider, std::shared_ptr<Aseba::Message> message) {
 
     auto it = std::find_if(std::begin(m_thymios), std::end(m_thymios),
                            [&provider, &message](const std::shared_ptr<ThymioNode>& node) {
@@ -239,8 +217,7 @@ void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider,
         if(providerIt == std::end(m_providers))
             return;
         providerIt->second->sendMessage(Aseba::GetNodeDescription(message->source));
-        it = m_thymios.insert(it, std::make_shared<ThymioNode>(providerIt->second,
-                                                               providerIt->first, message->source));
+        it = m_thymios.insert(it, std::make_shared<ThymioNode>(providerIt->second, providerIt->first, message->source));
         Q_EMIT robotAdded(*it);
     }
 
@@ -268,4 +245,4 @@ bool ThymioManager::hasDevice() const {
     return m_providers.size() > 0;
 }
 
-}    // namespace mobsya
+}  // namespace mobsya

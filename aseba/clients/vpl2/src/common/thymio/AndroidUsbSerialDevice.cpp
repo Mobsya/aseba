@@ -21,12 +21,9 @@ namespace {
     static LibUSB lib_usb_handle;
 
     struct usb_handle {
-        usb_handle()
-            : h(nullptr) {
-        }
+        usb_handle() : h(nullptr) {}
         usb_handle(const usb_handle& other) = delete;
-        usb_handle(usb_handle&& other)
-            : h(nullptr) {
+        usb_handle(usb_handle&& other) : h(nullptr) {
             std::swap(h, other.h);
         }
         ~usb_handle() {
@@ -41,7 +38,7 @@ namespace {
         libusb_device_handle* h = nullptr;
     };
 
-}    // namespace
+}  // namespace
 
 
 struct AndroidUsbSerialDeviceData {
@@ -64,10 +61,7 @@ class AndroidUsbSerialDeviceThread : public QThread {
     Q_OBJECT
 public:
     AndroidUsbSerialDeviceThread(AndroidUsbSerialDeviceData&& data, QObject* parent)
-        : QThread(parent)
-        , m_data(std::move(data))
-        , m_readTransfer(nullptr) {
-    }
+        : QThread(parent), m_data(std::move(data)), m_readTransfer(nullptr) {}
     void run() {
         // unsigned char buffer[8];
         while(!isInterruptionRequested()) {
@@ -109,10 +103,9 @@ private:
         write_transfer(const char* data, qint64 maxSize, AndroidUsbSerialDeviceThread* parent)
             : data(data, int(maxSize)) {
             transfer = libusb_alloc_transfer(0);
-            libusb_fill_bulk_transfer(transfer, parent->m_data.usb_handle,
-                                      parent->m_data.out_address,
-                                      reinterpret_cast<unsigned char*>(this->data.data()),
-                                      this->data.size(), write_callback, parent, 0);
+            libusb_fill_bulk_transfer(transfer, parent->m_data.usb_handle, parent->m_data.out_address,
+                                      reinterpret_cast<unsigned char*>(this->data.data()), this->data.size(),
+                                      write_callback, parent, 0);
         }
         write_transfer(const write_transfer& other) = delete;
         write_transfer(write_transfer&& other) {
@@ -158,8 +151,8 @@ void AndroidUsbSerialDeviceThread::doReadNext() {
             qDebug() << "libusb_claim_interface FAILED";
         }
         libusb_fill_bulk_transfer(m_readTransfer, m_data.usb_handle, m_data.in_address,
-                                  reinterpret_cast<unsigned char*>(m_readBuffer.data()),
-                                  m_readBuffer.capacity(), callback, this, 50000);
+                                  reinterpret_cast<unsigned char*>(m_readBuffer.data()), m_readBuffer.capacity(),
+                                  callback, this, 50000);
         libusb_submit_transfer(m_readTransfer);
     }
 }
@@ -167,10 +160,9 @@ void AndroidUsbSerialDeviceThread::doReadNext() {
 void AndroidUsbSerialDeviceThread::onReadCompleted() {
     if(!m_readTransfer)
         return;
-    if(m_readTransfer->actual_length > 0 && (m_readTransfer->status == LIBUSB_TRANSFER_COMPLETED ||
-                                             m_readTransfer->status == LIBUSB_TRANSFER_TIMED_OUT)) {
-        QByteArray data(reinterpret_cast<char*>(m_readTransfer->buffer),
-                        m_readTransfer->actual_length);
+    if(m_readTransfer->actual_length > 0 &&
+       (m_readTransfer->status == LIBUSB_TRANSFER_COMPLETED || m_readTransfer->status == LIBUSB_TRANSFER_TIMED_OUT)) {
+        QByteArray data(reinterpret_cast<char*>(m_readTransfer->buffer), m_readTransfer->actual_length);
         Q_EMIT read(data);
     } else {
         qDebug() << m_readTransfer->status;
@@ -232,10 +224,7 @@ qint64 AndroidUsbSerialDeviceThread::doWrite() {
 }
 
 AndroidUsbSerialDevice::AndroidUsbSerialDevice(const QAndroidJniObject& device, QObject* parent)
-    : QIODevice(parent)
-    , m_android_usb_device(device)
-    , m_thread(nullptr) {
-}
+    : QIODevice(parent), m_android_usb_device(device), m_thread(nullptr) {}
 
 AndroidUsbSerialDevice::~AndroidUsbSerialDevice() {
     close();
@@ -271,8 +260,7 @@ bool AndroidUsbSerialDevice::open(OpenMode mode) {
 
     data.connection = QAndroidJniObject::callStaticObjectMethod(
         ACTIVITY_CLASS_NAME, "openUsbDevice",
-        "(Landroid/hardware/usb/UsbDevice;)Landroid/hardware/usb/UsbDeviceConnection;",
-        m_android_usb_device.object());
+        "(Landroid/hardware/usb/UsbDevice;)Landroid/hardware/usb/UsbDeviceConnection;", m_android_usb_device.object());
 
     int fd = -1;
 
@@ -292,8 +280,7 @@ bool AndroidUsbSerialDevice::open(OpenMode mode) {
         return false;
     }
 
-    qDebug() << (libusb_kernel_driver_active(data.usb_handle, 0) ? "KERNEL DRIVER ACTIVE"
-                                                                 : "KERNEL DRIVER INACTIVE");
+    qDebug() << (libusb_kernel_driver_active(data.usb_handle, 0) ? "KERNEL DRIVER ACTIVE" : "KERNEL DRIVER INACTIVE");
     if(libusb_kernel_driver_active(data.usb_handle, 0)) {
         libusb_detach_kernel_driver(data.usb_handle, 0);
     }
@@ -333,8 +320,7 @@ bool AndroidUsbSerialDevice::open(OpenMode mode) {
                     if((endpoint.bEndpointAddress & LIBUSB_ENDPOINT_IN) == LIBUSB_ENDPOINT_IN) {
                         data.in_address = endpoint.bEndpointAddress;
                         data.read_size = endpoint.wMaxPacketSize;
-                    } else if((endpoint.bEndpointAddress & LIBUSB_ENDPOINT_OUT) ==
-                              LIBUSB_ENDPOINT_OUT) {
+                    } else if((endpoint.bEndpointAddress & LIBUSB_ENDPOINT_OUT) == LIBUSB_ENDPOINT_OUT) {
                         data.out_address = endpoint.bEndpointAddress;
                         data.write_size = endpoint.wMaxPacketSize;
                     }
@@ -344,8 +330,7 @@ bool AndroidUsbSerialDevice::open(OpenMode mode) {
     }
 
     m_thread = new AndroidUsbSerialDeviceThread(std ::move(data), this);
-    connect(m_thread, &AndroidUsbSerialDeviceThread::read, this, &AndroidUsbSerialDevice::onData,
-            Qt::QueuedConnection);
+    connect(m_thread, &AndroidUsbSerialDeviceThread::read, this, &AndroidUsbSerialDevice::onData, Qt::QueuedConnection);
     m_thread->start();
     QIODevice::setOpenMode(mode);
     return true;
@@ -375,6 +360,6 @@ void AndroidUsbSerialDevice::onData(QByteArray data) {
     QTimer::singleShot(0, this, &AndroidUsbSerialDevice::readyRead);
 }
 
-}    // namespace mobsya
+}  // namespace mobsya
 
 #include "AndroidUsbSerialDevice.moc"

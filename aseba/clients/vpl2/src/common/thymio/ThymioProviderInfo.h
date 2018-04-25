@@ -39,4 +39,4 @@ private:
     ThymioProviderInfo::ProviderType m_type;
 };
 
-}    // namespace mobsya
+}  // namespace mobsya

@@ -18,11 +18,10 @@ static void scan_files(const QString& root, QStringList& files) {
 }
 
 
-LiveQmlReloadingEngine::LiveQmlReloadingEngine()
-    : m_watcher(new QFileSystemWatcher(this)) {
+LiveQmlReloadingEngine::LiveQmlReloadingEngine() : m_watcher(new QFileSystemWatcher(this)) {
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &LiveQmlReloadingEngine::reload);
     connect(m_watcher, &QFileSystemWatcher::fileChanged, [this](const QString& path) {
-        m_watcher->addPath(path);    // rearm the signal
+        m_watcher->addPath(path);  // rearm the signal
     });
 }
 

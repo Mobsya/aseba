@@ -37,4 +37,4 @@ private:
     QAndroidJniObject m_android_usb_device;
     AndroidUsbSerialDeviceThread* m_thread;
 };
-}    // namespace mobsya
+}  // namespace mobsya

@@ -55,4 +55,4 @@ private:
     mobsya::ThymioManager::Robot m_robot;
 };
 
-#endif    // ASEBA_CLIENT_H
+#endif  // ASEBA_CLIENT_H

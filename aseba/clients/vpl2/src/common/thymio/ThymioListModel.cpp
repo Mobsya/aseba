@@ -20,11 +20,10 @@ namespace {
         return name;
     }
 
-}    // namespace
+}  // namespace
 
 ThymioListModel::ThymioListModel(const ThymioManager* const manager, QObject* parent)
-    : QAbstractListModel(parent)
-    , m_manager(manager) {
+    : QAbstractListModel(parent), m_manager(manager) {
 
     connect(m_manager, &ThymioManager::robotAdded, this, &ThymioListModel::onRobotAdded);
     connect(m_manager, &ThymioManager::robotRemoved, this, &ThymioListModel::onRobotAdded);
@@ -69,4 +68,4 @@ Q_INVOKABLE QVariantMap ThymioListModel::get(int index) const {
 }
 
 
-}    // namespace mobsya
+}  // namespace mobsya
