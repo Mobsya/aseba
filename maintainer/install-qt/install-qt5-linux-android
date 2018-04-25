@@ -1,0 +1,8 @@
+#!/bin/bash
+set -x
+export VERBOSE=1
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export QT_CI_PACKAGES=qt.qt5.5101.android_armv7
+wget -N https://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
+chmod +x qt-unified-linux-x64-online.run
+$DIR/extract-qt-installer qt-unified-linux-x64-online.run `pwd`

@@ -14,7 +14,7 @@ const std::wstring CompilerTranslator::translate(ErrorCode error) {
                 msg = tr("Broken target description: not enough room for internal variables");
                 break;
 
-            case ERROR_STACK_OVERFLOW:
+            case ASEBA_ERROR_STACK_OVERFLOW:
                 msg = tr("Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions");
                 break;
 

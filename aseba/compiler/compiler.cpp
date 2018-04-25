@@ -228,7 +228,7 @@ bool Compiler::compile(std::wistream& source, BytecodeVector& bytecode, unsigned
 
     // stack check
     if(!verifyStackCalls(preLinkBytecode)) {
-        errorDescription = TranslatableError(SourcePos(), ERROR_STACK_OVERFLOW).toError();
+        errorDescription = TranslatableError(SourcePos(), ASEBA_ERROR_STACK_OVERFLOW).toError();
         return false;
     }
 

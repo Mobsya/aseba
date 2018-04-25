@@ -4,3 +4,12 @@
 [submodule "dashel"]
 	path = dashel
 	url = https://github.com/mobsya/dashel
+[submodule "third_party/QtZeroConf"]
+	path = third_party/qtzeroconf
+	url = https://github.com/Mobsya/QtZeroConf
+[submodule "third_party/libusb/libusb"]
+	path = third_party/libusb/libusb
+	url = https://github.com/Mobsya/libusb.git
+[submodule "android/qt-android-cmake"]
+	path = android/qt-android-cmake
+	url = https://github.com/Mobsya/qt-android-cmake.git

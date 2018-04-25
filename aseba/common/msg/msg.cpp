@@ -26,8 +26,9 @@
 #include <map>
 #include <iterator>
 #include <utility>
-#include <dashel/dashel.h>
-
+#ifndef ASEBA_NO_DASHEL
+    #include <dashel/dashel.h>
+#endif
 using namespace std;
 
 namespace Aseba {
@@ -143,7 +144,7 @@ bool operator==(const TargetDescription::NativeFunction& lhs, const TargetDescri
 }
 
 //
-
+#ifndef ASEBA_NO_DASHEL
 void Message::serialize(Stream* stream) const {
     SerializationBuffer buffer;
     serializeSpecific(buffer);
@@ -187,6 +188,7 @@ Message* Message::receive(Stream* stream) {
     // deserialize message
     return create(source, type, buffer);
 }
+#endif
 
 Message* Message::create(uint16_t source, uint16_t type, SerializationBuffer& buffer) {
     // create message

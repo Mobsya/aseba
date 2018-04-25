@@ -31,7 +31,7 @@ static const wchar_t* error_map[ERROR_END];
 ErrorMessages::ErrorMessages() {
     // compiler.cpp
     error_map[ERROR_BROKEN_TARGET] = L"Broken target description: not enough room for internal variables";
-    error_map[ERROR_STACK_OVERFLOW] = L"Execution stack will overflow, check for any recursive "
+    error_map[ASEBA_ERROR_STACK_OVERFLOW] = L"Execution stack will overflow, check for any recursive "
                                       L"subroutine call and cut long mathematical expressions";
     error_map[ERROR_SCRIPT_TOO_BIG] = L"Script too big for target bytecode size";
     // identifier-lookup.cpp
