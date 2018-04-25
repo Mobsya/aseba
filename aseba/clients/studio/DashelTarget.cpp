@@ -321,7 +321,7 @@ void DashelConnectionDialog::targetTemplateTCP() {
 }
 
 void DashelConnectionDialog::targetTemplateDoc() {
-    QDesktopServices::openUrl(QUrl("http://aseba-community.github.io/dashel#TargetNamingSec"));
+    QDesktopServices::openUrl(QUrl("http://mobsya.github.io/dashel#TargetNamingSec"));
 }
 
 

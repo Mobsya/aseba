@@ -48,7 +48,7 @@ License:        LGPL-3.0
 License:        LGPLv3
 %endif
 URL:            http://aseba.wikidot.com
-Source0:        https://github.com/aseba-community/aseba/archive/%{commit}.tar.gz
+Source0:        https://github.com/mobsya/aseba/archive/%{commit}.tar.gz
 Source1:        https://github.com/philsquared/Catch/archive/%{catchcommit}.tar.gz
 Patch0:         aseba-rpm.patch
 

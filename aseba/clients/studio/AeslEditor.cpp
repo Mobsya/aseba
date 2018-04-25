@@ -425,7 +425,7 @@ AeslEditor::AeslEditor()
 
 #ifdef Q_WS_WIN
     // Fix selection color on Windows when the find dialog is active
-    // See issue 93: https://github.com/aseba-community/aseba/issues/93
+    // See issue 93: https://github.com/mobsya/aseba/issues/93
     // Code from:
     // http://stackoverflow.com/questions/9880441/qt-how-to-display-selected-text-in-an-inactive-window
     QPalette p = palette();

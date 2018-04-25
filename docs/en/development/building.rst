@@ -13,7 +13,7 @@ greater, we recommend you use the latest version available.
 Getting the source code
 -----------------------
 
-The `source code of Aseba <https://github.com/aseba-community/aseba>`_
+The `source code of Aseba <https://github.com/mobsya/aseba>`_
 is hosted on github.
 To fetch the source, you must first `install Git <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_
 .
@@ -22,7 +22,7 @@ Then, to clone aseba, execute:
 
 ::
 
-    git clone --recursive https://github.com/aseba-community/aseba.git
+    git clone --recursive https://github.com/mobsya/aseba.git
     cd aseba
 
 
