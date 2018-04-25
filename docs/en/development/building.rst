@@ -175,6 +175,35 @@ following commands:
     newgrp dialout
 
 
+Getting Started on Android
+--------------------------
+VPL 2 can be build for Android. Other tools such as studio, playground and the old VPL
+are not compatible with android.
+
+To build the android version you will need:
+ * `The android tools for your system <https://developer.android.com/studio/index.html#downloads>`_
+ * `The android NDK <https://developer.android.com/ndk/downloads/index.html>`_ - tested with version 10 - currently not compatible wuth newer NDK
+ * Qt 5.10 for android - which you can install through the Qt installer
+ * CMake 3.7 or greater
+
+Building VPL 2
+~~~~~~~~~~~~~~
+First, you need to prepare some environment variables
+
+::
+
+    export ANDROID_SDK=<path_of_the_android_sdk>
+    export ANDROID_NDK=<path_of_the_android_ndk>
+    export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/<path_of_qt5_for_android>"
+
+Then you can build vpl2 with cmake. An APK will be generated in ``build/bin``
+
+::
+
+    mkdir build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Release -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+    make
+
 
 Advanced Setup
 --------------
