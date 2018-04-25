@@ -20,8 +20,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>(c) 2006-2017 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; and &lt;a href=&quot;https://github.com/aseba-community/aseba/blob/master/authors.txt&quot;&gt;other contributors&lt;/a&gt;. See tabs &quot;Authors&quot; and &quot;Thanks To&quot; for more information.</source>
-        <translation>(c) 2006-2017 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; e &lt;a href=&quot;https://github.com/aseba-community/aseba/blob/master/authors.txt&quot;&gt;altri collaboratori&lt;/a&gt;. Per ulteriori informazioni, vedere le schede &quot;Autori&quot; e &quot;Grazie a&quot;.</translation>
+        <source>(c) 2006-2017 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; and &lt;a href=&quot;https://github.com/mobsya/aseba/blob/master/authors.txt&quot;&gt;other contributors&lt;/a&gt;. See tabs &quot;Authors&quot; and &quot;Thanks To&quot; for more information.</source>
+        <translation>(c) 2006-2017 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; e &lt;a href=&quot;https://github.com/mobsya/aseba/blob/master/authors.txt&quot;&gt;altri collaboratori&lt;/a&gt;. Per ulteriori informazioni, vedere le schede &quot;Autori&quot; e &quot;Grazie a&quot;.</translation>
     </message>
     <message>
         <location line="+1"/>

@@ -33,8 +33,8 @@ If you use Aseba in an academic project leading to a publication, please cite:
 
 ## Hack and contribute
 
-If you found a bug with Aseba, please look at the [existing issues](https://github.com/aseba-community/aseba/issues) to see if your problem has already been reported.
-If not, please [open a new issue](https://github.com/aseba-community/aseba/issues/new).
+If you found a bug with Aseba, please look at the [existing issues](https://github.com/mobsya/aseba/issues) to see if your problem has already been reported.
+If not, please [open a new issue](https://github.com/mobsya/aseba/issues/new).
 
 If you want to help us translating Aseba or its documentation, please read the [localization guide](localization.md).
 
