@@ -8,9 +8,7 @@ namespace mobsya {
 class NetworkThymioProviderInfo : public AbstractThymioProviderInfoPrivate {
 public:
     NetworkThymioProviderInfo(QZeroConfService service)
-        : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType::Tcp)
-        , m_service(service) {
-    }
+        : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType::Tcp), m_service(service) {}
 
     QString name() const override {
         return m_service.name();
@@ -40,8 +38,7 @@ QZeroConfService dns_service_for_provider(const ThymioProviderInfo& info) {
 }
 
 NetworkDeviceProber::NetworkDeviceProber(QObject* parent)
-    : AbstractDeviceProber(parent)
-    , m_register(new QZeroConf(this)) {
+    : AbstractDeviceProber(parent), m_register(new QZeroConf(this)) {
 
     connect(m_register, &QZeroConf::serviceAdded, this, &NetworkDeviceProber::onServiceAdded);
     connect(m_register, &QZeroConf::serviceUpdated, this, &NetworkDeviceProber::onServiceUpdated);
@@ -49,8 +46,7 @@ NetworkDeviceProber::NetworkDeviceProber(QObject* parent)
     m_register->startBrowser("_aseba._tcp");
 }
 
-NetworkDeviceProber::~NetworkDeviceProber() {
-}
+NetworkDeviceProber::~NetworkDeviceProber() {}
 
 std::vector<ThymioProviderInfo> NetworkDeviceProber::getDevices() {
     std::vector<ThymioProviderInfo> info;
@@ -59,8 +55,7 @@ std::vector<ThymioProviderInfo> NetworkDeviceProber::getDevices() {
     }
     return info;
 }
-std::shared_ptr<DeviceQtConnection>
-NetworkDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
+std::shared_ptr<DeviceQtConnection> NetworkDeviceProber::openConnection(const ThymioProviderInfo& thymio) {
     if(thymio.type() != ThymioProviderInfo::ProviderType::Tcp)
         return {};
     auto& service = static_cast<const NetworkThymioProviderInfo*>(thymio.data())->m_service;
@@ -87,4 +82,4 @@ void NetworkDeviceProber::onServiceRemoved(QZeroConfService service) {
     m_services.removeAll(service);
     Q_EMIT availabilityChanged();
 }
-}    // namespace mobsya
+}  // namespace mobsya

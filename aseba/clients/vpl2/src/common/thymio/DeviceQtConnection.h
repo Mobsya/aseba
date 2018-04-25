@@ -9,14 +9,12 @@ namespace mobsya {
 class DeviceQtConnection : public QObject {
     Q_OBJECT
 public:
-    DeviceQtConnection(const ThymioProviderInfo& provider, QIODevice* device,
-                       QObject* parent = nullptr);
+    DeviceQtConnection(const ThymioProviderInfo& provider, QIODevice* device, QObject* parent = nullptr);
     bool isOpen() const;
 
 
 Q_SIGNALS:
-    void messageReceived(const ThymioProviderInfo& provider,
-                         std::shared_ptr<Aseba::Message> message);
+    void messageReceived(const ThymioProviderInfo& provider, std::shared_ptr<Aseba::Message> message);
     void connectionStatusChanged();
 public Q_SLOTS:
     void sendMessage(const Aseba::Message& message);
@@ -30,4 +28,4 @@ private:
     ThymioProviderInfo m_provider;
 };
 
-}    // namespace mobsya
+}  // namespace mobsya

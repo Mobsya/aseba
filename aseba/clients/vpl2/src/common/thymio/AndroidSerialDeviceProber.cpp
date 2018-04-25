@@ -10,13 +10,11 @@ const char* ACTIVITY_CLASS_NAME = "org/mobsya/thymiovpl/ThymioVPLActivity";
 
 class AndroidSerialThymioProviderInfo : public AbstractThymioProviderInfoPrivate {
 public:
-    AndroidSerialThymioProviderInfo(QString portName, QString deviceName,
-                                    const QAndroidJniObject& device)
+    AndroidSerialThymioProviderInfo(QString portName, QString deviceName, const QAndroidJniObject& device)
         : AbstractThymioProviderInfoPrivate(ThymioProviderInfo::ProviderType::AndroidSerial)
         , m_portName(portName)
         , m_deviceName(deviceName)
-        , m_device(device) {
-    }
+        , m_device(device) {}
 
     QString name() const {
         return m_deviceName;
@@ -39,9 +37,7 @@ public:
     QAndroidJniObject m_device;
 };
 
-AndroidSerialDeviceProber::AndroidSerialDeviceProber(QObject* parent)
-    : AbstractDeviceProber(parent) {
-}
+AndroidSerialDeviceProber::AndroidSerialDeviceProber(QObject* parent) : AbstractDeviceProber(parent) {}
 
 AndroidSerialDeviceProber* AndroidSerialDeviceProber::instance() {
     static AndroidSerialDeviceProber the_instance;
@@ -52,15 +48,15 @@ auto fromJni(QAndroidJniObject device) {
     QAndroidJniObject deviceName = device.callObjectMethod<jstring>("getDeviceName");
     QAndroidJniObject productName = device.callObjectMethod<jstring>("getProductName");
     qDebug() << deviceName.toString() << productName.toString();
-    return std::make_unique<AndroidSerialThymioProviderInfo>(
-        deviceName.toString().trimmed(), productName.toString().trimmed(), device);
+    return std::make_unique<AndroidSerialThymioProviderInfo>(deviceName.toString().trimmed(),
+                                                             productName.toString().trimmed(), device);
 }
 
 std::vector<ThymioProviderInfo> AndroidSerialDeviceProber::getDevices() {
     QAndroidJniEnvironment qjniEnv;
 
-    QAndroidJniObject jDevices = QAndroidJniObject::callStaticObjectMethod(
-        ACTIVITY_CLASS_NAME, "listDevices", "()[Landroid/hardware/usb/UsbDevice;");
+    QAndroidJniObject jDevices = QAndroidJniObject::callStaticObjectMethod(ACTIVITY_CLASS_NAME, "listDevices",
+                                                                           "()[Landroid/hardware/usb/UsbDevice;");
     jobjectArray objectArray = jDevices.object<jobjectArray>();
     if(!objectArray)
         return {};
@@ -74,8 +70,7 @@ std::vector<ThymioProviderInfo> AndroidSerialDeviceProber::getDevices() {
     return compatible_ports;
 }
 
-AndroidSerialDeviceProber::~AndroidSerialDeviceProber() {
-}
+AndroidSerialDeviceProber::~AndroidSerialDeviceProber() {}
 
 void AndroidSerialDeviceProber::onDeviceAvailabilityChanged() {
     Q_EMIT availabilityChanged();
@@ -85,8 +80,7 @@ void onDeviceAvailabilityChanged(JNIEnv*, jobject) {
     AndroidSerialDeviceProber::instance()->onDeviceAvailabilityChanged();
 }
 
-std::shared_ptr<DeviceQtConnection>
-AndroidSerialDeviceProber::openConnection(const ThymioProviderInfo& info) {
+std::shared_ptr<DeviceQtConnection> AndroidSerialDeviceProber::openConnection(const ThymioProviderInfo& info) {
     if(info.type() != ThymioProviderInfo::ProviderType::AndroidSerial)
         return {};
 
@@ -102,8 +96,8 @@ AndroidSerialDeviceProber::openConnection(const ThymioProviderInfo& info) {
 
 static void RegisterAndroidSerialDeviceProber(JavaVM*) {
 
-    JNINativeMethod methods[]{{"onDeviceAvailabilityChanged", "()V",
-                               reinterpret_cast<void*>(onDeviceAvailabilityChanged)}};
+    JNINativeMethod methods[]{
+        {"onDeviceAvailabilityChanged", "()V", reinterpret_cast<void*>(onDeviceAvailabilityChanged)}};
 
     QAndroidJniEnvironment env;
     auto class_ThymioVPLActivity = env->FindClass("org/mobsya/thymiovpl/ThymioVPLActivity");
@@ -112,7 +106,7 @@ static void RegisterAndroidSerialDeviceProber(JavaVM*) {
 
 // extern void RegisterAndroidUsbSerialDevice(JavaVM*);
 
-}    // namespace mobsya
+}  // namespace mobsya
 
 
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {

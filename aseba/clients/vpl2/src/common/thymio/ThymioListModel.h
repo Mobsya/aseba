@@ -26,4 +26,4 @@ private:
     const ThymioManager* const m_manager;
 };
 
-}    // namespace mobsya
+}  // namespace mobsya

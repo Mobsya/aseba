@@ -30,9 +30,7 @@ Aseba::CommonDefinitions AsebaNode::commonDefinitionsFromEvents(QVariantMap even
 }
 
 
-AsebaClient::AsebaClient()
-    : m_robots(&m_thymioManager) {
-}
+AsebaClient::AsebaClient() : m_robots(&m_thymioManager) {}
 
 
 AsebaNode* AsebaClient::createNode(int nodeId) {
@@ -46,14 +44,11 @@ AsebaNode* AsebaClient::createNode(int nodeId) {
 }
 
 
-AsebaClient::~AsebaClient() {
-}
+AsebaClient::~AsebaClient() {}
 
-AsebaNode::AsebaNode(mobsya::ThymioManager::Robot robot)
-    : m_robot(robot) {
+AsebaNode::AsebaNode(mobsya::ThymioManager::Robot robot) : m_robot(robot) {
     connect(m_robot.get(), &mobsya::ThymioNode::ready, this, &AsebaNode::readyChanged);
-    connect(m_robot.get(), &mobsya::ThymioNode::userMessageReceived, this,
-            &AsebaNode::userMessageReceived);
+    connect(m_robot.get(), &mobsya::ThymioNode::userMessageReceived, this, &AsebaNode::userMessageReceived);
 }
 QString AsebaNode::name() {
     return m_robot->name();
@@ -87,8 +82,7 @@ QString AsebaNode::setProgram(QVariantMap events, QString source) {
     }
 
     std::vector<std::unique_ptr<Aseba::Message>> messages;
-    Aseba::sendBytecode(messages, m_robot->id(),
-                        std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
+    Aseba::sendBytecode(messages, m_robot->id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
     for(auto& message : messages) {
         m_robot->sendMessage(*message);
     }

@@ -24,4 +24,4 @@ private:
     QZeroConf* m_register;
 };
 
-}    // namespace mobsya
+}  // namespace mobsya
