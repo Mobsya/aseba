@@ -843,8 +843,8 @@ event %0 : </source>
     </message>
     <message>
         <location line="+0"/>
-        <source>http://github.com/aseba-community/aseba/issues/new</source>
-        <translation>http://github.com/aseba-community/aseba/issues/new</translation>
+        <source>http://github.com/mobsya/aseba/issues/new</source>
+        <translation>http://github.com/mobsya/aseba/issues/new</translation>
     </message>
     <message>
         <location line="+7"/>

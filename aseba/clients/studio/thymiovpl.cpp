@@ -63,7 +63,7 @@ void usage(const char* execName) {
     cout << endl;
     cout << "Version " << ASEBA_VERSION << ", Aseba protocol " << ASEBA_PROTOCOL_VERSION << endl;
     cout << "Licence LGPLv3: GNU LGPL version 3 <http://www.gnu.org/licenses/lgpl.html>" << endl;
-    cout << "Report bugs to: https://github.com/aseba-community/aseba/issues/new" << endl;
+    cout << "Report bugs to: https://github.com/mobsya/aseba/issues/new" << endl;
 }
 
 

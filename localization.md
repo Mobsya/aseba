@@ -15,7 +15,7 @@ Here are the steps to help us:
 ### Your language is German, Spanish, Greek, French, Italian, Japanese or Chinese
 
 In that case, the translation files already exist.
-To modify the translation, first [fork the Aseba repository](https://github.com/aseba-community/aseba#fork-destination-box) ([understand github forking](https://help.github.com/articles/fork-a-repo/)).
+To modify the translation, first [fork the Aseba repository](https://github.com/mobsya/aseba#fork-destination-box) ([understand github forking](https://help.github.com/articles/fork-a-repo/)).
 Then, modify the relevant files using Qt Linguist, these files are:
 * For about boxes: `common/about/qtabout_LL.ts`
 * For Studio: `clients/studio/asebastudio_LL.ts` and `clients/studio/compiler_LL.ts`
@@ -29,7 +29,7 @@ Then, submit a [pull request](https://help.github.com/articles/about-pull-reques
 
 ### Your language is a new one
 
-Please open an [new issue](https://github.com/aseba-community/aseba/issues/new) requesting the addition of your language.
+Please open an [new issue](https://github.com/mobsya/aseba/issues/new) requesting the addition of your language.
 Once the issue is processed, follow the instructions above.
 
 ### Useful Resources
@@ -46,4 +46,4 @@ Databases with existing translations:
 
 ### For Maintainers
 
-In [`/maintainer/translations`](https://github.com/aseba-community/aseba/tree/master/maintainer/translations) you will find a set of scripts to help you maintain the translation files.
+In [`/maintainer/translations`](https://github.com/mobsya/aseba/tree/master/maintainer/translations) you will find a set of scripts to help you maintain the translation files.

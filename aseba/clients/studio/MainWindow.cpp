@@ -2989,7 +2989,7 @@ void MainWindow::generateHelpMenu() {
     helpMenu->addAction(tr("Web site Aseba..."), this, SLOT(openToUrlFromAction()))
         ->setData(QUrl(tr("http://aseba.wikidot.com/en:start")));
     helpMenu->addAction(tr("Report bug..."), this, SLOT(openToUrlFromAction()))
-        ->setData(QUrl(tr("http://github.com/aseba-community/aseba/issues/new")));
+        ->setData(QUrl(tr("http://github.com/mobsya/aseba/issues/new")));
 
 #ifdef Q_WS_MAC
     helpMenu->addAction("about", this, SLOT(about()));

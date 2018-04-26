@@ -3,10 +3,10 @@
 ## Reporting bugs and suggesting improvements
 
 Bugs and improvements are tracked using [github's issues](https://guides.github.com/features/issues/).
-If you find a bug or wish to suggest an improvement, please first look through the [existing issues](https://github.com/aseba-community/aseba/issues) to see whether it has already been reported.
-If not, please [open a new issue](https://github.com/aseba-community/aseba/issues/new).
+If you find a bug or wish to suggest an improvement, please first look through the [existing issues](https://github.com/mobsya/aseba/issues) to see whether it has already been reported.
+If not, please [open a new issue](https://github.com/mobsya/aseba/issues/new).
 
-To contact the Aseba team, please open an issue with your question. Referring to a person through an [@mention](https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown) in an issue is better than sending a direct e-mail, because it allows another team member to answer the question, and it allows another user with the same question to discover it in the [closed issues](https://github.com/aseba-community/aseba/issues?q=is%3Aissue+is%3Aclosed).
+To contact the Aseba team, please open an issue with your question. Referring to a person through an [@mention](https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown) in an issue is better than sending a direct e-mail, because it allows another team member to answer the question, and it allows another user with the same question to discover it in the [closed issues](https://github.com/mobsya/aseba/issues?q=is%3Aissue+is%3Aclosed).
 
 If implementing your suggestion will require help from other developers, or will have a substantial impact on Aseba, or will require a large investment of your own, it is important to discuss it with the team as early as possible. 
 
@@ -16,16 +16,16 @@ If you want to help us translating Aseba or its documentation, please read the [
 
 ## Software development work flow
 
-Aseba uses [git](https://git-scm.com/) and the repository is stored on [github](https://github.com/aseba-community/aseba).
+Aseba uses [git](https://git-scm.com/) and the repository is stored on [github](https://github.com/mobsya/aseba).
 Please read the [description of the source tree](readme.sourcetree.md) before modifying the source code.
 
 To integrate contributions, we work through [github's pull request mechanism](https://help.github.com/articles/about-pull-requests/).
-To contribute to Aseba, [fork the repository](https://github.com/aseba-community/aseba#fork-destination-box) and submit pull requests.
+To contribute to Aseba, [fork the repository](https://github.com/mobsya/aseba#fork-destination-box) and submit pull requests.
 The maintainer will comment on your pull request, a discussion will follow, and if an agreement is reached and requested changes are implemented, your contribution will be merged.
 
 ## Roadmap
 
-The maintainer, in discussion with the stakeholders of the project on the mailing list, defines the project roadmap as a set of [milestones](https://github.com/aseba-community/aseba/milestones).
+The maintainer, in discussion with the stakeholders of the project on the mailing list, defines the project roadmap as a set of [milestones](https://github.com/mobsya/aseba/milestones).
 Each milestone collects issues that need to be solved or implemented to reach the milestone.
 
 If an issue is assigned to a contributor, she or he is working on it.
