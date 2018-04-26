@@ -97,7 +97,7 @@ AboutBox::AboutBox(QWidget* parent, const Parameters& parameters) : QDialog(pare
             .arg("<a href=\"http://aseba.io\">aseba.io</a>") +
         "</p>" + "<p>" +
         tr("(c) 2006-2017 <a href=\"http://stephane.magnenat.net\">Stéphane Magnenat</a> and <a "
-           "href=\"https://github.com/aseba-community/aseba/blob/master/authors.txt\">other "
+           "href=\"https://github.com/mobsya/aseba/blob/master/authors.txt\">other "
            "contributors</a>. See tabs \"Authors\" and \"Thanks To\" for more information.") +
         " " +
         tr("Aseba is open-source licensed under the <a "
@@ -207,7 +207,7 @@ AboutBox::AboutBox(QWidget* parent, const Parameters& parameters) : QDialog(pare
     const QString liStart = "<li style=\"margin-top:5px; margin-bottom:5px;\">";
     const QString libraryText = welcomeText + "<ul>" + liStart +
         libEntryText.arg("Aseba").arg(ASEBA_VERSION).arg("http://aseba.io") + "<br/>" + asebaBuildInfo + "</li>" +
-        liStart + libEntryText.arg("Dashel").arg(DASHEL_VERSION).arg("http://aseba-community.github.io/dashel/") +
+        liStart + libEntryText.arg("Dashel").arg(DASHEL_VERSION).arg("http://mobsya.github.io/dashel/") +
         "<br/>" + dashelStreamInfo + "</li>" + liStart +
         libEntryText.arg("Qt").arg(qVersion()).arg("https://www.qt.io/") + "</li>" +
 #ifdef HAVE_QWT

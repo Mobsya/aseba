@@ -143,7 +143,7 @@ extern "C" void AsebaAssert(AsebaVMState* vm, AsebaAssertReason reason) {
     std::cerr << ".\npc = " << vm->pc << ", sp = " << vm->sp << std::endl;
     // std::cerr << "\nResetting VM" << std::endl;
     std::cerr << "\nAborting playground, please report bug to "
-                 "\nhttps://github.com/aseba-community/aseba/issues/new"
+                 "\nhttps://github.com/mobsya/aseba/issues/new"
               << std::endl;
     abort();
     AsebaVMInit(vm);

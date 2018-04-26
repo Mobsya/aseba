@@ -346,22 +346,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Studio: De-indentation now works when indented with spaces.
 - Studio: Fixed crash if serial connection was in settings but not present any more.
 
-[Unreleased]: https://github.com/aseba-community/aseba/compare/1.5.5...master
+[Unreleased]: https://github.com/mobsya/aseba/compare/1.5.5...master
 
-[1.5.5]: https://github.com/aseba-community/aseba/compare/1.5.4...1.5.5
-[1.5.4]: https://github.com/aseba-community/aseba/compare/1.5.3...1.5.4
-[1.5.3]: https://github.com/aseba-community/aseba/compare/1.5.2...1.5.3
-[1.5.2]: https://github.com/aseba-community/aseba/compare/1.5.1...1.5.2
-[1.5.1]: https://github.com/aseba-community/aseba/compare/1.5.0...1.5.1
-[1.5.0]: https://github.com/aseba-community/aseba/compare/1.4.0...1.5.0
-[1.4.0]: https://github.com/aseba-community/aseba/compare/1.3.3...1.4.0
-[1.3.3]: https://github.com/aseba-community/aseba/compare/1.3.1...1.3.3
-[1.3.1]: https://github.com/aseba-community/aseba/compare/1.3.0...1.3.1
-[1.3.0]: https://github.com/aseba-community/aseba/compare/1.2.2...1.3.0
-[1.2.2]: https://github.com/aseba-community/aseba/compare/1.2.1...1.2.2
-[1.2.1]: https://github.com/aseba-community/aseba/compare/1.2.0...1.2.1
-[1.2.0]: https://github.com/aseba-community/aseba/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/aseba-community/aseba/compare/1.0.2...1.1.0
-[1.0.2]: https://github.com/aseba-community/aseba/compare/1.0.1...1.0.2
-[1.0.1]: https://github.com/aseba-community/aseba/compare/1.0.0...1.0.1
-[1.0.0]: https://github.com/aseba-community/aseba/tree/1.0.0
+[1.5.5]: https://github.com/mobsya/aseba/compare/1.5.4...1.5.5
+[1.5.4]: https://github.com/mobsya/aseba/compare/1.5.3...1.5.4
+[1.5.3]: https://github.com/mobsya/aseba/compare/1.5.2...1.5.3
+[1.5.2]: https://github.com/mobsya/aseba/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/mobsya/aseba/compare/1.5.0...1.5.1
+[1.5.0]: https://github.com/mobsya/aseba/compare/1.4.0...1.5.0
+[1.4.0]: https://github.com/mobsya/aseba/compare/1.3.3...1.4.0
+[1.3.3]: https://github.com/mobsya/aseba/compare/1.3.1...1.3.3
+[1.3.1]: https://github.com/mobsya/aseba/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/mobsya/aseba/compare/1.2.2...1.3.0
+[1.2.2]: https://github.com/mobsya/aseba/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/mobsya/aseba/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/mobsya/aseba/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/mobsya/aseba/compare/1.0.2...1.1.0
+[1.0.2]: https://github.com/mobsya/aseba/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/mobsya/aseba/compare/1.0.0...1.0.1
+[1.0.0]: https://github.com/mobsya/aseba/tree/1.0.0
