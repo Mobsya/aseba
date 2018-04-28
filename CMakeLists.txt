@@ -20,6 +20,7 @@ include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
 include(CMakeModules/dashel.cmake)
+include(CMakeModules/boost.cmake)
 
 if(NOT ANDROID)
 	include(CMakeModules/enki.cmake)
