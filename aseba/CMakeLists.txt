@@ -2,6 +2,7 @@
 add_subdirectory(common)
 add_subdirectory(compiler)
 add_subdirectory(clients)
+add_subdirectory(switch)
 
 if(NOT ANDROID)
     add_subdirectory(vm)
