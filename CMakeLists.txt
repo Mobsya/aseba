@@ -36,6 +36,7 @@ endif()
 add_subdirectory(third_party/catch2)
 add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/qtzeroconf)
+add_subdirectory(third_party/spdlog)
 
 # testing and defines
 enable_testing()
