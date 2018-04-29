@@ -76,7 +76,8 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
     }
 
     m_requests.pop();
-    req.d.set_native_device(dev);
+    req.d.assign(dev);
+    // Fixme, support for allocators, executors, etc
     boost::asio::dispatch(this->get_io_context(), [req]() { req.handler({}); });
     return 0;
 }
