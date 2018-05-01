@@ -1,12 +1,8 @@
-include(../../third_party/libusb/libusb_lib.pri)
-include(../../third_party/qtzeroconf/qtzeroconf_lib.pri)
+include(../../../../../third_party/qtzeroconf/qtzeroconf_lib.pri)
+LIBS += -L../../../../..
 
 
-ASEBA_DIR=$$PWD/aseba/aseba
-!exists($${ASEBA_DIR}/CMakeLists.txt) {
-    ASEBA_DIR=$$PWD/aseba
-}
-
+ASEBA_DIR=$$PWD/../../../..
 
 ASEBA_SOURCES = \
     $$ASEBA_DIR/common/utils/FormatableString.cpp \
@@ -48,7 +44,7 @@ win32 {
 	}
 }
 
-ASEBA_INCLUDE = $$PWD/aseba $$PWD/aseba/aseba
+ASEBA_INCLUDE = $$ASEBA_DIR $$ASEBA_DIR/..
 
 
 SOURCES += \
@@ -76,12 +72,6 @@ HEADERS += \
 }
 
 android {
-   SOURCES += $$PWD/thymio/AndroidSerialDeviceProber.cpp \
-              $$PWD/thymio/AndroidUsbSerialDevice.cpp
-
-   HEADERS += $$PWD/thymio/AndroidSerialDeviceProber.h \
-              $$PWD/thymio/AndroidUsbSerialDevice.h
-
    QT += androidextras
 }
 

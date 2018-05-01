@@ -27,7 +27,7 @@
 #include <iterator>
 #include <utility>
 #ifndef ASEBA_NO_DASHEL
-    #include <dashel/dashel.h>
+#    include <dashel/dashel.h>
 #endif
 using namespace std;
 
@@ -925,7 +925,7 @@ bool operator==(const SetBytecode& lhs, const SetBytecode& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.start == rhs.start &&
         lhs.bytecode == rhs.bytecode;
 }
-
+#ifndef ASEBA_NO_DASHEL
 void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
@@ -949,6 +949,7 @@ void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint1
         setBytecodeMessage.serialize(stream);
     }
 }
+#endif
 
 void sendBytecode(std::vector<std::unique_ptr<Message>>& messagesVector, uint16_t dest,
                   const std::vector<uint16_t>& bytecode) {

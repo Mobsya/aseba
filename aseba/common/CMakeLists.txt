@@ -1,7 +1,7 @@
 configure_file("version.cpp.tpl" "version.cpp")
 
 
-add_library(asebacommon
+add_library(asebacommon STATIC
 	utils/FormatableString.cpp
 	utils/utils.cpp
 	utils/HexFile.cpp

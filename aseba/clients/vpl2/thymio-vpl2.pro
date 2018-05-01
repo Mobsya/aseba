@@ -2,12 +2,10 @@ TEMPLATE = subdirs
 
 
 SUBDIRS =    \
-  libusb     \
   qtzeroconf \
   app
 
-libusb.subdir     = third_party/libusb
-qtzeroconf.subdir = third_party/qtzeroconf
+qtzeroconf.subdir = $$absolute_path($PWD/../../../../third_party/qtzeroconf)
 app.subdir        = src
 
-app.depends = libusb qtzeroconf
+app.depends = qtzeroconf
