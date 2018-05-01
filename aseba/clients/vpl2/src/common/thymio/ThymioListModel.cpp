@@ -48,7 +48,7 @@ QVariant ThymioListModel::data(const QModelIndex& index, int role) const {
     switch(role) {
         case Qt::DisplayRole: return label(robot);
         case int(Role::NodeId): return robot->id();
-        case int(Role::RobotName): return robot->name();
+        case int(Role::RobotName): return label(robot);
     }
     return {};
 }
