@@ -184,6 +184,9 @@ std::string WStringToUTF8(const std::wstring& s) {
  *  - Or a multiple-codepoint grapheme
  */
 bool is_utf8_alpha_num(wchar_t c) {
+#ifdef ANDROID
+    return std::isalnum(c);
+#endif
 #ifdef _WIN32
     return IsCharAlphaNumericW(c);
 #else
