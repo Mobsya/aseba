@@ -20,7 +20,11 @@ AbstractDeviceProber::AbstractDeviceProber(QObject* parent) : QObject(parent) {}
 
 
 ThymioNode::ThymioNode(std::shared_ptr<DeviceQtConnection> connection, ThymioProviderInfo provider, uint16_t node)
-    : m_connection(connection), m_provider(provider), m_nodeId(node), m_ready(false) {}
+    : m_connection(connection), m_provider(provider), m_nodeId(node), m_ready(false) {
+
+    connect(connection.get(), &DeviceQtConnection::connectionStatusChanged, this, &ThymioNode::connectedChanged);
+    connect(this, &ThymioNode::connectedChanged, this, &ThymioNode::ready);
+}
 
 void ThymioNode::setVariable(QString name, const QList<int>& value) {
     uint16_t start = uint16_t(m_variablesMap[name.toStdWString()].first);
@@ -99,7 +103,7 @@ QString ThymioNode::name() const {
 }
 
 bool ThymioNode::isReady() const {
-    return m_ready;
+    return isConnected() && m_ready;
 }
 
 bool ThymioNode::isConnected() const {
