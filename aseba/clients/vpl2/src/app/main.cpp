@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
     thymioVPL2Init();
 
-#if defined(QT_DEBUG) && !defined(Q_OS_ANDROID)
+#if 0  // defined(QT_DEBUG) && !defined(Q_OS_ANDROID)
     LiveQmlReloadingEngine engine;
     engine.load(QML_ROOT_FILE);
 #else
