@@ -64,7 +64,8 @@ std::shared_ptr<DeviceQtConnection> NetworkDeviceProber::openConnection(const Th
     s->connectToHost(service.ip(), service.port());
     auto con = std::make_shared<DeviceQtConnection>(thymio, s);
     connect(s, &QTcpSocket::connected, con.get(), &DeviceQtConnection::connectionStatusChanged);
-    connect(s, &QTcpSocket::disconnected, con.get(), &DeviceQtConnection::connectionStatusChanged);
+    connect(s, &QTcpSocket::disconnected, con.get(), &DeviceQtConnection::connectionStatusChanged,
+            Qt::QueuedConnection);
     return con;
 }
 

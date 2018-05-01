@@ -48,6 +48,7 @@ AsebaClient::~AsebaClient() {}
 
 AsebaNode::AsebaNode(mobsya::ThymioManager::Robot robot) : m_robot(robot) {
     connect(m_robot.get(), &mobsya::ThymioNode::ready, this, &AsebaNode::readyChanged);
+    connect(m_robot.get(), &mobsya::ThymioNode::connectedChanged, this, &AsebaNode::connectedChanged);
     connect(m_robot.get(), &mobsya::ThymioNode::userMessageReceived, this, &AsebaNode::userMessageReceived);
 }
 QString AsebaNode::name() {
@@ -56,6 +57,10 @@ QString AsebaNode::name() {
 
 bool AsebaNode::isReady() const {
     return m_robot->isReady();
+}
+
+bool AsebaNode::isConnected() const {
+    return m_robot->isConnected();
 }
 
 

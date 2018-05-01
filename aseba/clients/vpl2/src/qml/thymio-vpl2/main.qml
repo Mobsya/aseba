@@ -40,7 +40,7 @@ Rectangle {
             vplEditor: vplEditor
             isThymioConnected: !!thymio.node
             onOpenDrawer: drawer.open()
-            onOpenDashelTargetSelector: dashelTargetSelector.open()
+            onOpenDashelTargetSelector: thymioselectionpane.visible = !thymioselectionpane.visible
             anchors.fill: parent
         }
 
@@ -83,11 +83,14 @@ Rectangle {
         ThymioSelectionPane {
             id:thymioselectionpane
             anchors.fill: parent
-            visible : true
+            visible : !thymio.node || !thymio.node.connected
             aseba: aseba
             onSelectedChanged: {
                 visible = false
                 thymio.node = aseba.createNode(thymioselectionpane.selected)
+                thymio.node.connectedChanged.connect(function() {
+                   thymioselectionpane.visible = !thymio.node.connected
+                });
             }
             onItemSelected: {
                 visible = false

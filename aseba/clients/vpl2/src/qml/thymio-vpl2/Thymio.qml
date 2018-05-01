@@ -3,6 +3,7 @@ import Thymio 1.0
 
 Item {
     property var ready: node && node.ready
+    property var connected: node && node.connected
     property var node
     property var variables: ({})
     property var program: ({

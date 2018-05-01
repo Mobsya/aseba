@@ -4,6 +4,7 @@
 #include <sstream>
 #include <QDebug>
 #include <QBuffer>
+#include <QAbstractSocket>
 
 namespace mobsya {
 
@@ -42,6 +43,9 @@ void DeviceQtConnection::sendMessage(const Aseba::Message& message) {
 }
 
 bool DeviceQtConnection::isOpen() const {
+    if(auto obj = qobject_cast<QAbstractSocket*>(m_device)) {
+        return obj->state() == QAbstractSocket::ConnectedState;
+    }
     return m_device->isOpen();
 }
 
