@@ -168,5 +168,6 @@
         <file>thymio-vpl2/images/logoETHGTC.svg</file>
         <file>thymio-vpl2/images/logoMobsya.svg</file>
         <file>thymio-vpl2/ThymioSelectionPane.qml</file>
+        <file>thymio-vpl2/images/icon-thymio.svg</file>
     </qresource>
 </RCC>
