@@ -39,7 +39,7 @@ Item {
             Column {
                 id: content
                 Image {
-                    source: "file://home/cor3ntin/dev/mobsya/thymio-vpl2/src/qml/thymio-vpl2/images/icon-thymio.svg"
+                    source: "images/icon-thymio.svg"
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: 100
                     fillMode: Image.PreserveAspectFit
