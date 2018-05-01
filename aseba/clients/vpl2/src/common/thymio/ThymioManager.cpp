@@ -55,23 +55,45 @@ void ThymioNode::onMessageReceived(const std::shared_ptr<Aseba::Message>& messag
     }
 }
 
-void ThymioNode::onDescriptionReceived(const Aseba::Description& description) {
-    m_description = description;
+void ThymioNode::onDescriptionReceived(Aseba::Description description) {
+    m_description = std::move(description);
     updateReadyness();
 }
 
-void ThymioNode::onVariableDescriptionReceived(const Aseba::NamedVariableDescription& description) {
-    m_description.namedVariables[m_message_counter.variables++] = description;
+
+void ThymioNode::onVariableDescriptionReceived(Aseba::NamedVariableDescription description) {
+    auto it = std::find_if(std::begin(m_description.namedVariables), std::end(m_description.namedVariables),
+                           [&description](auto&& variable) { return variable.name == description.name; });
+    if(it != std::end(m_description.namedVariables))
+        return;
+
+    qDebug() << bool(it != std::end(m_description.namedVariables)) << m_description.namedVariables.size()
+             << m_message_counter.variables;
+
+    if(m_description.namedVariables.size() == m_message_counter.variables) {
+        m_description.namedVariables.resize(m_description.namedVariables.size() + 1);
+    }
+
+    m_description.namedVariables[m_message_counter.variables++] = std::move(description);
     updateReadyness();
 }
-void ThymioNode::onFunctionDescriptionReceived(const Aseba::NativeFunctionDescription& description) {
+void ThymioNode::onFunctionDescriptionReceived(Aseba::NativeFunctionDescription description) {
+    auto it = std::find_if(std::begin(m_description.nativeFunctions), std::end(m_description.nativeFunctions),
+                           [&description](auto&& function) { return function.name == description.name; });
+    if(it != std::end(m_description.nativeFunctions))
+        return;
 
-    m_description.nativeFunctions[m_message_counter.functions++] = description;
+    m_description.nativeFunctions[m_message_counter.functions++] = std::move(description);
     updateReadyness();
 }
 
-void ThymioNode::onEventDescriptionReceived(const Aseba::LocalEventDescription& description) {
-    m_description.localEvents[m_message_counter.event++] = description;
+void ThymioNode::onEventDescriptionReceived(Aseba::LocalEventDescription description) {
+    auto it = std::find_if(std::begin(m_description.localEvents), std::end(m_description.localEvents),
+                           [&description](auto&& event) { return event.name == description.name; });
+    if(it != std::end(m_description.localEvents))
+        return;
+
+    m_description.localEvents[m_message_counter.events++] = std::move(description);
     updateReadyness();
 }
 
@@ -114,7 +136,7 @@ void ThymioNode::updateReadyness() {
     if(m_ready)
         return;
     m_ready = !m_description.name.empty() && m_message_counter.variables == m_description.namedVariables.size() &&
-        m_message_counter.event == m_description.localEvents.size() &&
+        m_message_counter.events == m_description.localEvents.size() &&
         m_message_counter.functions == m_description.nativeFunctions.size();
     if(m_ready) {
         Q_EMIT ready();
