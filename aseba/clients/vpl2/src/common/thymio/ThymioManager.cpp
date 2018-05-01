@@ -145,20 +145,21 @@ void ThymioNode::updateReadyness() {
 
 ThymioManager::ThymioManager(QObject* parent) : QObject(parent) {
 
-// Thymio using the system-level serial driver only works on desktop OSes
-#if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) || defined(Q_OS_WIN)
+    // Thymio using the system-level serial driver only works on desktop OSes
+    /*#if(defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MAC) || defined(Q_OS_WIN)
 
-    auto desktopProbe = new UsbSerialDeviceProber(this);
-    connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
-    m_probes.push_back(desktopProbe);
+        auto desktopProbe = new UsbSerialDeviceProber(this);
+        connect(desktopProbe, &UsbSerialDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
+        m_probes.push_back(desktopProbe);
 
-#endif
+    #endif
 
-#ifdef Q_OS_ANDROID
-    auto androidProbe = AndroidSerialDeviceProber::instance();
-    connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
-    m_probes.push_back(androidProbe);
-#endif
+    #ifdef Q_OS_ANDROID
+        auto androidProbe = AndroidSerialDeviceProber::instance();
+        connect(androidProbe, &AndroidSerialDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
+        m_probes.push_back(androidProbe);
+    #endif
+    */
     auto networkProbe = new NetworkDeviceProber(this);
     connect(networkProbe, &NetworkDeviceProber::availabilityChanged, this, &ThymioManager::scanDevices);
     m_probes.push_back(networkProbe);
@@ -233,10 +234,12 @@ void ThymioManager::requestNodesList() {
 
 void ThymioManager::onMessageReceived(const ThymioProviderInfo& provider, std::shared_ptr<Aseba::Message> message) {
 
-    auto it = std::find_if(std::begin(m_thymios), std::end(m_thymios),
-                           [&provider, &message](const std::shared_ptr<ThymioNode>& node) {
-                               return node->provider() == provider && node->id() == message->source;
-                           });
+    auto it = std::find_if(
+        std::begin(m_thymios), std::end(m_thymios),
+        [&provider, &message](const std::shared_ptr<ThymioNode>& node) { return node->id() == message->source; });
+
+    if(it != std::end(m_thymios) && !(provider == (*it)->provider()))
+        return;
 
     if(it == std::end(m_thymios) && message->type == ASEBA_MESSAGE_NODE_PRESENT) {
         auto providerIt = m_providers.find(provider);

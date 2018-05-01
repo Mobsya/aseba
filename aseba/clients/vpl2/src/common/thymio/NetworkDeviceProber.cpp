@@ -71,6 +71,8 @@ std::shared_ptr<DeviceQtConnection> NetworkDeviceProber::openConnection(const Th
 
 
 void NetworkDeviceProber::onServiceAdded(QZeroConfService service) {
+    if(service.ip().isLoopback() || service.ip().isEqual(QHostAddress::LocalHost))
+        return;
     m_services.append(service);
     Q_EMIT availabilityChanged();
 }
