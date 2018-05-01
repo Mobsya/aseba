@@ -60,7 +60,7 @@ file(GLOB TRANSLATIONS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/translations/*.ts")
 set_source_files_properties(${TRANSLATIONS_SOURCES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/src/qml/thymio-vpl2/translations/")
 qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
 qt5_add_resources(resfiles src/qml/thymio-vpl2.qrc)
-
+target_sources(thymiovpl2 PRIVATE ${resfiles})
 
 if(ANDROID)
     set(ANDROID_NATIVE_API_LEVEL 20)
