@@ -29,19 +29,18 @@ public:
     }
 
 Q_SIGNALS:
-    void ready();
     void userMessageReceived(int type, QList<int>);
     void connectedChanged();
-
+    void ready();
 
 private:
     friend class ThymioManager;
     friend class AsebaNode;
     void onMessageReceived(const std::shared_ptr<Aseba::Message>& message);
-    void onDescriptionReceived(const Aseba::Description& description);
-    void onVariableDescriptionReceived(const Aseba::NamedVariableDescription& description);
-    void onFunctionDescriptionReceived(const Aseba::NativeFunctionDescription& description);
-    void onEventDescriptionReceived(const Aseba::LocalEventDescription& description);
+    void onDescriptionReceived(Aseba::Description description);
+    void onVariableDescriptionReceived(Aseba::NamedVariableDescription description);
+    void onFunctionDescriptionReceived(Aseba::NativeFunctionDescription description);
+    void onEventDescriptionReceived(Aseba::LocalEventDescription description);
     void onUserMessageReceived(const Aseba::UserMessage& userMessage);
     void updateReadyness();
 
@@ -52,7 +51,7 @@ private:
     Aseba::VariablesMap m_variablesMap;
 
     struct {
-        uint16_t variables{0}, event{0}, functions{0};
+        uint16_t variables{0}, events{0}, functions{0};
     } m_message_counter;
     bool m_ready;
 };
