@@ -21,7 +21,7 @@ public:
     }
     bool lt(const ThymioProviderInfo& other) override {
         if(other.type() != ThymioProviderInfo::ProviderType::Tcp)
-            return false;
+            return true;
         auto service = static_cast<const NetworkThymioProviderInfo*>(other.data())->m_service;
         if(m_service.ip().toIPv4Address() == service.ip().toIPv4Address())
             return m_service.port() < service.port();
