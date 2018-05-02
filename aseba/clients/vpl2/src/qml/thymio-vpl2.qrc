@@ -169,5 +169,6 @@
         <file>thymio-vpl2/images/logoMobsya.svg</file>
         <file>thymio-vpl2/ThymioSelectionPane.qml</file>
         <file>thymio-vpl2/images/icon-thymio.svg</file>
+        <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>
