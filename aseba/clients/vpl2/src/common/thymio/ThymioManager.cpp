@@ -167,7 +167,7 @@ ThymioManager::ThymioManager(QObject* parent) : QObject(parent) {
     QTimer* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, &ThymioManager::scanDevices);
     scanDevices();
-    t->start(100);
+    t->start(1000);
 }
 
 
