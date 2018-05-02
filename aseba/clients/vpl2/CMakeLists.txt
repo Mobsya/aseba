@@ -1,4 +1,4 @@
-find_package(Qt5 COMPONENTS Core Network Gui Qml Quick)
+find_package(Qt5 COMPONENTS Core Network Gui Qml Quick Svg)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -46,7 +46,7 @@ if(ANDROID)
     )
 endif()
 
-target_link_libraries(thymiovpl2 PUBLIC asebacommon asebacompiler Qt5::Core Qt5::Qml Qt5::Quick QtZeroConf libusb)
+target_link_libraries(thymiovpl2 PUBLIC asebacommon asebacompiler Qt5::Core Qt5::Qml Qt5::Quick Qt5::Svg QtZeroConf libusb)
 
 if(ANDROID)
     find_package(Qt5AndroidExtras)
@@ -68,6 +68,7 @@ if(ANDROID)
         thymiovpl2_apk thymiovpl2
         NAME "Thymio VPL"
         PACKAGE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/android"
+        QML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/qml"
         #DEPENDS QtZeroConf libusb
         MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/android/AndroidManifest.xml"
         )
