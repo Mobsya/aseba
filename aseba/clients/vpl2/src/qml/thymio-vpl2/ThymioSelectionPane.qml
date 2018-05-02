@@ -32,13 +32,16 @@ Item {
         anchors.fill: parent
         topMargin: 20
         leftMargin: 20
+        anchors.leftMargin: 10
         model: aseba.model
+        cellWidth:180
         delegate: Item {
             height: content.height
             width: content.width
             Column {
                 id: content
                 Image {
+                    id:image
                     source: "images/icon-thymio.svg"
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: 100
@@ -46,6 +49,7 @@ Item {
 
                 }
                 Text {
+                    id:label
                     text: name;
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: "#FFFFFF"
