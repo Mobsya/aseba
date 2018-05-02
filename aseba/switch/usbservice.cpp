@@ -27,12 +27,12 @@ void usb_service::shutdown() {
     m_running = false;
     if(m_thread.joinable()) {
         m_thread.join();
-        mobsya::log->trace("libusb monitor thread stopped");
+        mLogDebug("libusb monitor thread stopped");
     }
 }
 
 void usb_service::async_wait_for_device() {
-    mobsya::log->info("libusb monitor thread started");
+    mLogDebug("libusb monitor thread started");
     auto rc =
         libusb_hotplug_register_callback(m_context, /*context*/
                                          LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED /*events*/,
@@ -62,7 +62,7 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
     struct libusb_device_descriptor desc;
     (void)libusb_get_device_descriptor(dev, &desc);
 
-    mobsya::log->info("device plugged : {}:{}", desc.idVendor, desc.idProduct);
+    mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
 
 
     if(m_context != ctx)
@@ -71,7 +71,7 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
     if(std::find(std::begin(req.impl.compatible_devices), std::end(req.impl.compatible_devices),
                  usb_device_identifier{desc.idVendor, desc.idProduct}) == std::end(req.impl.compatible_devices)) {
 
-        mobsya::log->trace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
+        mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
         return 0;
     }
 

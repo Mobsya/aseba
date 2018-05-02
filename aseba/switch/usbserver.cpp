@@ -9,9 +9,9 @@ void usb_server::accept() {
     auto session = std::make_shared<usb_connection>(m_io_ctx);
     m_acceptor.accept_async(session->device(), [session, this](boost::system::error_code ec) {
         if(ec) {
-            mobsya::log->error("system_error: %s", ec.message());
+            mLogError("system_error: %s", ec.message());
         }
-        mobsya::log->info("Created usb _device");
+        mLogInfo("Created usb _device");
         accept();
     });
 }
