@@ -1,4 +1,5 @@
 #include "usbdevice.h"
+#include <boost/asio/error.hpp>
 
 namespace mobsya {
 
@@ -14,6 +15,7 @@ void usb_device_service::destroy(implementation_type& impl) {
 }
 
 void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
+    close(impl);
     impl.device = d;
     libusb_ref_device(d);
 }
@@ -25,8 +27,8 @@ void usb_device_service::close(implementation_type& impl) {
     if(impl.handle) {
         libusb_close(impl.handle);
         impl.handle = nullptr;
-        impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
     }
+    impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
 }
 
 bool usb_device_service::is_open(implementation_type& impl) {
@@ -37,26 +39,39 @@ usb_device_service::native_handle_type usb_device_service::native_handle(impleme
     return impl.device;
 }
 
-void usb_device_service::open(implementation_type& impl) {
+std::size_t usb_device_service::write_channel_chunk_size(const implementation_type& impl) const {
+    return impl.write_size;
+}
+
+std::size_t usb_device_service::read_channel_chunk_size(const implementation_type& impl) const {
+    return impl.read_size;
+}
+
+tl::expected<void, boost::system::error_code> usb_device_service::open(implementation_type& impl) {
     if(impl.handle)
-        return;
+        return tl::make_unexpected(boost::asio::error::already_open);
+
+    impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
     auto res = libusb_open(impl.device, &impl.handle);
     if(res != LIBUSB_SUCCESS) {
-        // handle error
+        return usb::make_unexpected(res);
     }
 
     for(int if_num = 0; if_num < 2; if_num++) {
         if(libusb_kernel_driver_active(impl.handle, if_num)) {
-            libusb_detach_kernel_driver(impl.handle, if_num);
+            if(auto r = libusb_detach_kernel_driver(impl.handle, if_num)) {
+                return usb::make_unexpected(r);
+            }
         }
-        res = libusb_claim_interface(impl.handle, if_num);
-        if(res < 0) {
-            // handle error
+        if(res = libusb_claim_interface(impl.handle, if_num)) {
+            return usb::make_unexpected(res);
         }
     }
 
     libusb_config_descriptor* desc;
-    libusb_get_active_config_descriptor(impl.device, &desc);
+    if(auto r = libusb_get_active_config_descriptor(impl.device, &desc)) {
+        return usb::make_unexpected(r);
+    }
     for(int i = 0; i < desc->bNumInterfaces; i++) {
         const auto interface = desc->interface[i];
         for(int s = 0; s < interface.num_altsetting; s++) {
@@ -76,8 +91,15 @@ void usb_device_service::open(implementation_type& impl) {
             }
         }
     }
+    if(impl.in_address == 0 || impl.out_address == 0 || impl.read_size == 0 || impl.write_size == 0) {
+        close(impl);
+        return usb::make_unexpected(usb::error_code::not_found);
+    }
+
+
     send_control_transfer(impl);
     send_encoding(impl);
+    return {};
 }
 
 void usb_device_service::set_baud_rate(implementation_type& impl, baud_rate b) {
@@ -156,6 +178,14 @@ bool usb_device::is_open() {
 
 usb_device::native_handle_type usb_device::native_handle() {
     return this->get_service().native_handle(this->get_implementation());
+}
+
+std::size_t usb_device::write_channel_chunk_size() const {
+    return this->get_service().write_channel_chunk_size(this->get_implementation());
+}
+
+std::size_t usb_device::read_channel_chunk_size() const {
+    return this->get_service().read_channel_chunk_size(this->get_implementation());
 }
 
 
