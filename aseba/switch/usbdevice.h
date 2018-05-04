@@ -10,6 +10,7 @@
 #include <boost/bind.hpp>
 #include <memory>
 #include "error.h"
+#include "usbcontext.h"
 
 
 namespace mobsya {
@@ -34,6 +35,9 @@ public:
     using native_handle_type = libusb_device*;
 
     usb_device_service(boost::asio::io_context& io_context);
+    void shutdown() override;
+
+
     struct implementation_type {
         libusb_device* device = nullptr;
         libusb_device_handle* handle = nullptr;
@@ -84,9 +88,10 @@ public:
     void set_data_terminal_ready(implementation_type& impl, bool dtr);
 
 private:
+    details::usb_context::ptr m_context;
     bool send_control_transfer(implementation_type& impl);
     bool send_encoding(implementation_type& impl);
-};  // namespace mobsya
+};
 
 
 class usb_device : public boost::asio::basic_io_object<usb_device_service> {
@@ -326,7 +331,6 @@ void usb_device::async_transfer_some(uint8_t address, const BufferSequence& buff
     } else {
         data.release();
     }
-
-}  // namespace mobsya
+}
 
 }  // namespace mobsya

@@ -6,6 +6,7 @@ add_executable(switch
     usbservice.h
     usbdevice.cpp
     usbdevice.h
+    usbcontext.h
     log.h
     log.cpp
     libusb_utils.h
