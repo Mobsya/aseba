@@ -70,8 +70,8 @@ void ThymioNode::onVariableDescriptionReceived(Aseba::NamedVariableDescription d
     qDebug() << bool(it != std::end(m_description.namedVariables)) << m_description.namedVariables.size()
              << m_message_counter.variables;
 
-    if(m_description.namedVariables.size() == m_message_counter.variables) {
-        m_description.namedVariables.resize(m_description.namedVariables.size() + 1);
+    if(m_description.namedVariables.size() <= m_message_counter.variables) {
+        m_description.namedVariables.resize(m_message_counter.variables + 1);
     }
 
     m_description.namedVariables[m_message_counter.variables++] = std::move(description);
@@ -83,6 +83,10 @@ void ThymioNode::onFunctionDescriptionReceived(Aseba::NativeFunctionDescription 
     if(it != std::end(m_description.nativeFunctions))
         return;
 
+    if(m_description.nativeFunctions.size() <= m_message_counter.functions) {
+        m_description.nativeFunctions.resize(m_message_counter.functions + 1);
+    }
+
     m_description.nativeFunctions[m_message_counter.functions++] = std::move(description);
     updateReadyness();
 }
@@ -92,6 +96,10 @@ void ThymioNode::onEventDescriptionReceived(Aseba::LocalEventDescription descrip
                            [&description](auto&& event) { return event.name == description.name; });
     if(it != std::end(m_description.localEvents))
         return;
+
+    if(m_description.localEvents.size() <= m_message_counter.events) {
+        m_description.localEvents.resize(m_message_counter.events + 1);
+    }
 
     m_description.localEvents[m_message_counter.events++] = std::move(description);
     updateReadyness();
