@@ -4,7 +4,12 @@
 namespace mobsya {
 
 usb_device_service::usb_device_service(boost::asio::io_context& io_context)
-    : boost::asio::detail::service_base<usb_device_service>(io_context) {}
+    : boost::asio::detail::service_base<usb_device_service>(io_context)
+    , m_context(details::usb_context::acquire_context()) {}
+
+void usb_device_service::shutdown() {
+    m_context = nullptr;
+}
 
 void usb_device_service::construct(implementation_type& impl) {
     impl.device = nullptr;

@@ -14,7 +14,9 @@ int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libu
 }
 
 usb_service::usb_service(boost::asio::io_context& io_service)
-    : boost::asio::detail::service_base<usb_service>(io_service), m_running(false) {}
+    : boost::asio::detail::service_base<usb_service>(io_service)
+    , m_running(false)
+    , m_context(details::usb_context::acquire_context()) {}
 
 
 void usb_service::start_thread() {
@@ -29,12 +31,13 @@ void usb_service::shutdown() {
         m_thread.join();
         mLogDebug("libusb monitor thread stopped");
     }
+    m_context = nullptr;
 }
 
 void usb_service::async_wait_for_device() {
     mLogDebug("libusb monitor thread started");
     auto rc =
-        libusb_hotplug_register_callback(m_context, /*context*/
+        libusb_hotplug_register_callback(*m_context, /*context*/
                                          LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED /*events*/,
                                          LIBUSB_HOTPLUG_ENUMERATE /*flags */, LIBUSB_HOTPLUG_MATCH_ANY, /* vendor id */
                                          LIBUSB_HOTPLUG_MATCH_ANY,                                      /* product id */
@@ -42,9 +45,9 @@ void usb_service::async_wait_for_device() {
     m_running = true;
     while(m_running) {
         timeval v = {0, 0};
-        libusb_handle_events_timeout(m_context, &v);
+        libusb_handle_events_timeout(*m_context, &v);
     }
-    libusb_hotplug_deregister_callback(m_context, rc);
+    libusb_hotplug_deregister_callback(*m_context, rc);
 }
 
 
@@ -65,7 +68,7 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
     mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
 
 
-    if(m_context != ctx)
+    if(*m_context != ctx)
         return 0;
 
     if(std::find(std::begin(req.impl.compatible_devices), std::end(req.impl.compatible_devices),

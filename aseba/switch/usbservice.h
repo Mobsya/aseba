@@ -2,36 +2,14 @@
 #include <libusb/libusb.h>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/basic_io_object.hpp>
-#include "usbdevice.h"
 #include <queue>
 #include <functional>
 #include <mutex>
 #include <thread>
+#include "usbcontext.h"
+#include "usbdevice.h"
 
 namespace mobsya {
-
-namespace details {
-    class usb_context {
-    public:
-        usb_context() {
-            libusb_init(&ctx);
-        }
-        ~usb_context() {
-            libusb_exit(ctx);
-        }
-        usb_context(const usb_context&) = delete;
-        usb_context(usb_context&& other) {
-            ctx = other.ctx;
-            other.ctx = nullptr;
-        }
-        operator libusb_context*() const {
-            return ctx;
-        }
-
-    private:
-        libusb_context* ctx;
-    };
-}  // namespace details
 
 struct usb_device_identifier {
     uint16_t vendor_id;
@@ -74,8 +52,8 @@ private:
         usb_device& d;
         std::function<void(boost::system::error_code)> handler;
     };
+    details::usb_context::ptr m_context;
     std::thread m_thread;
-    details::usb_context m_context;
     libusb_hotplug_callback_handle m_cb_handle;
     std::atomic_bool m_running;
     mutable std::mutex m_req_mutex;
