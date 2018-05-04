@@ -12,6 +12,21 @@ void usb_server::accept() {
             mLogError("system_error: %s", ec.message());
         }
         mLogInfo("Created usb _device");
+        usb_device& d = session->device();
+        d.open();
+        std::string str;
+        d.async_read_some(boost::asio::buffer(str), [str = std::move(str)](boost::system::error_code, std::size_t) {
+
+        });
+        d.read_some(boost::asio::buffer(str));
+        d.write_some(boost::asio::buffer(str));
+
+
+        // error
+        //}
+        // d.async_write_some()
+
+
         accept();
     });
 }
