@@ -20,6 +20,7 @@ inline bool operator==(const usb_device_identifier& a, const usb_device_identifi
     return a.vendor_id == b.vendor_id && a.product_id == b.product_id;
 }
 
+class usb_acceptor;
 class usb_service : public boost::asio::detail::service_base<usb_service> {
 public:
     usb_service(boost::asio::io_context& io_service);
@@ -29,11 +30,11 @@ public:
     void construct(implementation_type&);
     void destroy(implementation_type&);
     template <typename AcceptHandler>
-    void accept_async(implementation_type& impl, usb_device& d, AcceptHandler&& handler) {
+    void accept_async(usb_acceptor& acceptor, usb_device& d, AcceptHandler&& handler) {
         {
             std::unique_lock<std::mutex> _(m_req_mutex);
-            m_requests.push(
-                request{impl, d, std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler))});
+            m_requests.push(request{
+                acceptor, d, std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler))});
         }
         start_thread();
     }
@@ -48,7 +49,7 @@ private:
 
 private:
     struct request {
-        implementation_type& impl;
+        usb_acceptor& acceptor;
         usb_device& d;
         std::function<void(boost::system::error_code)> handler;
     };
@@ -64,9 +65,13 @@ class usb_acceptor : public boost::asio::basic_io_object<usb_service> {
 public:
     usb_acceptor(boost::asio::io_context& io_service, std::initializer_list<usb_device_identifier> = {});
     template <typename AcceptHandler>
-    void accept_async(usb_device& d, AcceptHandler&& handler) {
-        this->get_service().accept_async(this->get_implementation(), d, std::forward<AcceptHandler>(handler));
+    BOOST_ASIO_INITFN_RESULT_TYPE(AcceptHandler, void(boost::system::error_code))
+    accept_async(usb_device& d, AcceptHandler&& handler) {
+        boost::asio::async_completion<AcceptHandler, void(boost::system::error_code)> init(handler);
+        this->get_service().accept_async(*this, d, std::forward<AcceptHandler>(init.completion_handler));
+        return init.result.get();
     }
+    const std::vector<usb_device_identifier>& compatible_devices() const;
 };
 
 
