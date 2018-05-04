@@ -9,7 +9,7 @@
 #include <boost/beast/core/detail/type_traits.hpp>
 #include <boost/bind.hpp>
 #include <memory>
-#include "libusb_utils.h"
+#include "error.h"
 
 
 namespace mobsya {
@@ -297,6 +297,11 @@ void usb_device::async_transfer_some(uint8_t address, const BufferSequence& buff
             d.release();
             return;
         }
+        boost::system::error_code ec;
+        if(transfer->status != LIBUSB_TRANSFER_COMPLETED) {
+            auto ec = usb::make_error_code_from_transfer(transfer->status);
+        }
+
         libusb_free_transfer(transfer);
 
         auto handler = std::move(d->handler);
@@ -307,8 +312,7 @@ void usb_device::async_transfer_some(uint8_t address, const BufferSequence& buff
         d.reset();
 
         boost::asio::post(executor,
-                          boost::beast::bind_handler(std::forward<CompletionHandler>(handler),
-                                                     boost::system::error_code{}, total_transfered));
+                          boost::beast::bind_handler(std::forward<CompletionHandler>(handler), ec, total_transfered));
     };
 
     libusb_fill_bulk_transfer(transfer, impl.handle, address, decltype(transfer->buffer)(data->it->data()),

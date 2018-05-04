@@ -8,5 +8,8 @@ add_executable(switch
     usbdevice.h
     log.h
     log.cpp
+    libusb_utils.h
+    error.cpp
+    error.h
 )
-target_link_libraries(switch boost::program_options boost::asio libusb spdlog)
+target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected)
