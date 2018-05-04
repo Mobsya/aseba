@@ -61,7 +61,7 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
         return 0;
     }
 
-    request req = m_requests.front();
+    request& req = m_requests.front();
     struct libusb_device_descriptor desc;
     (void)libusb_get_device_descriptor(dev, &desc);
 
@@ -71,17 +71,18 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
     if(*m_context != ctx)
         return 0;
 
-    if(std::find(std::begin(req.impl.compatible_devices), std::end(req.impl.compatible_devices),
-                 usb_device_identifier{desc.idVendor, desc.idProduct}) == std::end(req.impl.compatible_devices)) {
-
+    const auto& devices = req.acceptor.compatible_devices();
+    if(std::find(std::begin(devices), std::end(devices), usb_device_identifier{desc.idVendor, desc.idProduct}) ==
+       std::end(devices)) {
         mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
         return 0;
     }
-
-    m_requests.pop();
     req.d.assign(dev);
-    // Fixme, support for allocators, executors, etc
-    boost::asio::dispatch(this->get_io_context(), [req]() { req.handler({}); });
+    auto handler = std::move(req.handler);
+    const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
+    m_requests.pop();
+    boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
+
     return 0;
 }
 
@@ -94,6 +95,10 @@ usb_acceptor::usb_acceptor(boost::asio::io_context& io_service, std::initializer
 
     std::copy(std::begin(devices), std::end(devices),
               std::back_inserter(this->get_implementation().compatible_devices));
+}
+
+const std::vector<usb_device_identifier>& usb_acceptor::compatible_devices() const {
+    return this->get_implementation().compatible_devices;
 }
 
 
