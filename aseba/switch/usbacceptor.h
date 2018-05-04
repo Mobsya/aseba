@@ -21,9 +21,9 @@ inline bool operator==(const usb_device_identifier& a, const usb_device_identifi
 }
 
 class usb_acceptor;
-class usb_service : public boost::asio::detail::service_base<usb_service> {
+class usb_acceptor_service : public boost::asio::detail::service_base<usb_acceptor_service> {
 public:
-    usb_service(boost::asio::io_context& io_service);
+    usb_acceptor_service(boost::asio::io_context& io_service);
     struct implementation_type {
         std::vector<usb_device_identifier> compatible_devices;
     };
@@ -61,7 +61,7 @@ private:
     std::queue<request> m_requests;
 };
 
-class usb_acceptor : public boost::asio::basic_io_object<usb_service> {
+class usb_acceptor : public boost::asio::basic_io_object<usb_acceptor_service> {
 public:
     usb_acceptor(boost::asio::io_context& io_service, std::initializer_list<usb_device_identifier> = {});
     template <typename AcceptHandler>
