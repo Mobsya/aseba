@@ -1,4 +1,4 @@
-#include "usbservice.h"
+#include "usbacceptor.h"
 #include <libusb/libusb.h>
 #include <algorithm>
 #include <boost/asio/dispatch.hpp>
@@ -9,23 +9,23 @@ namespace mobsya {
 int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
                      void* user_data) {
 
-    auto service = static_cast<usb_service*>(user_data);
+    auto service = static_cast<usb_acceptor_service*>(user_data);
     return service->device_plugged(ctx, dev, event);
 }
 
-usb_service::usb_service(boost::asio::io_context& io_service)
-    : boost::asio::detail::service_base<usb_service>(io_service)
+usb_acceptor_service::usb_acceptor_service(boost::asio::io_context& io_service)
+    : boost::asio::detail::service_base<usb_acceptor_service>(io_service)
     , m_running(false)
     , m_context(details::usb_context::acquire_context()) {}
 
 
-void usb_service::start_thread() {
+void usb_acceptor_service::start_thread() {
     if(!m_running) {
         m_thread = std::thread([this]() { async_wait_for_device(); });
     }
 }
 
-void usb_service::shutdown() {
+void usb_acceptor_service::shutdown() {
     m_running = false;
     if(m_thread.joinable()) {
         m_thread.join();
@@ -34,7 +34,7 @@ void usb_service::shutdown() {
     m_context = nullptr;
 }
 
-void usb_service::async_wait_for_device() {
+void usb_acceptor_service::async_wait_for_device() {
     mLogDebug("libusb monitor thread started");
     auto rc =
         libusb_hotplug_register_callback(*m_context, /*context*/
@@ -51,7 +51,8 @@ void usb_service::async_wait_for_device() {
 }
 
 
-int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event) {
+int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev,
+                                         libusb_hotplug_event event) {
 
     std::unique_lock<std::mutex> lock(m_req_mutex);
     if(m_requests.empty()) {
@@ -87,11 +88,11 @@ int usb_service::device_plugged(struct libusb_context* ctx, struct libusb_device
 }
 
 
-void usb_service::construct(implementation_type&) {}
-void usb_service::destroy(implementation_type&) {}
+void usb_acceptor_service::construct(implementation_type&) {}
+void usb_acceptor_service::destroy(implementation_type&) {}
 
 usb_acceptor::usb_acceptor(boost::asio::io_context& io_service, std::initializer_list<usb_device_identifier> devices)
-    : boost::asio::basic_io_object<usb_service>(io_service) {
+    : boost::asio::basic_io_object<usb_acceptor_service>(io_service) {
 
     std::copy(std::begin(devices), std::end(devices),
               std::back_inserter(this->get_implementation().compatible_devices));

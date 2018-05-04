@@ -2,8 +2,8 @@ add_executable(switch
     main.cpp
     usbserver.cpp
     usbserver.h
-    usbservice.cpp
-    usbservice.h
+    usbacceptor.h
+    usbacceptor.cpp
     usbdevice.cpp
     usbdevice.h
     usbcontext.h

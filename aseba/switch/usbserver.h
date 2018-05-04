@@ -1,5 +1,5 @@
 #pragma once
-#include "usbservice.h"
+#include "usbacceptor.h"
 #include <memory>
 
 namespace mobsya {
