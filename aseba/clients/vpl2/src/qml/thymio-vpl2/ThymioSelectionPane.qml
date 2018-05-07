@@ -20,14 +20,6 @@ Item {
     }
 
     GridView {
-        onCountChanged: {
-            console.log(count)
-            if(count == 1) {
-                 thymioselectionpane.selected = model.get(0).nodeId
-                 itemSelected()
-            }
-        }
-
         id:view
         anchors.fill: parent
         topMargin: 20
