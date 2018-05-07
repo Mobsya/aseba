@@ -83,7 +83,7 @@ Rectangle {
         ThymioSelectionPane {
             id:thymioselectionpane
             anchors.fill: parent
-            visible : !thymio.node || !thymio.node.connected
+            visible : true
             aseba: aseba
             onSelectedChanged: {
                 visible = false
