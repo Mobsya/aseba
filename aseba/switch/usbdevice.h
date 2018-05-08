@@ -11,7 +11,8 @@
 #include <memory>
 #include "error.h"
 #include "usbcontext.h"
-
+#include "log.h"
+#include <numeric>
 
 namespace mobsya {
 
@@ -35,6 +36,7 @@ public:
     using native_handle_type = libusb_device*;
 
     usb_device_service(boost::asio::io_context& io_context);
+    usb_device_service(usb_device_service&&) = default;
     void shutdown() override;
 
 
@@ -86,6 +88,7 @@ public:
         buffer read_buffer;
     };
     void construct(implementation_type&);
+    void move_construct(implementation_type& impl, implementation_type& other_impl);
     void destroy(implementation_type&);
 
     void cancel(implementation_type& impl);
@@ -161,7 +164,12 @@ public:
     using native_handle_type = libusb_device*;
     using lowest_layer_type = usb_device;
 
+    ~usb_device() {
+        mLogCritical("destroyed");
+    }
+
     usb_device(boost::asio::io_context& io_context);
+    usb_device(usb_device&&) = default;
     void assign(native_handle_type);
     void cancel();
     void close();

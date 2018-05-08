@@ -4,19 +4,6 @@
 
 namespace mobsya {
 
-class usb_connection : public std::enable_shared_from_this<usb_connection> {
-public:
-    usb_connection(boost::asio::io_context& io_service) : m_device(io_service) {}
-
-    usb_device& device() {
-        return m_device;
-    }
-
-private:
-    usb_device m_device;
-};
-
-
 class usb_server {
 public:
     usb_server(boost::asio::io_context& io_service, std::initializer_list<usb_device_identifier> = {});

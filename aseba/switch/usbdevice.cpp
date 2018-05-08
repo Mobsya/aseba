@@ -15,6 +15,10 @@ void usb_device_service::construct(implementation_type& impl) {
     impl.device = nullptr;
 }
 
+void usb_device_service::move_construct(implementation_type& impl, implementation_type& other_impl) {
+    impl = other_impl;
+}
+
 void usb_device_service::destroy(implementation_type& impl) {
     libusb_unref_device(impl.device);
 }

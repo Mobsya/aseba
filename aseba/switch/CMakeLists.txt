@@ -1,3 +1,4 @@
+set(CMAKE_CXX_STANDARD 17)
 add_executable(switch
     main.cpp
     usbserver.cpp
@@ -12,5 +13,9 @@ add_executable(switch
     libusb_utils.h
     error.cpp
     error.h
+    aseba_message_parser.h
+    aseba_message_writer.h
+    aseba_endpoint.h
+    aseba_node.h
 )
-target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected)
+target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon)
