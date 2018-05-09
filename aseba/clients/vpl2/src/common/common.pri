@@ -1,4 +1,5 @@
 include(../../../../../third_party/qtzeroconf/qtzeroconf_lib.pri)
+include(../../../../../third_party/libusb/libusb_lib.pri)
 LIBS += -L../../../../..
 
 
@@ -72,6 +73,12 @@ HEADERS += \
 }
 
 android {
+   SOURCES += \
+      $$PWD/thymio/AndroidSerialDeviceProber.cpp \
+      $$PWD/thymio/AndroidUsbSerialDevice.cpp
+   HEADERS +=  \
+      $$PWD/thymio/AndroidUsbSerialDevice.h \
+      $$PWD/thymio/AndroidSerialDeviceProber.h
    QT += androidextras
 }
 

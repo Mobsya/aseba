@@ -4,15 +4,21 @@
 #include <vector>
 #include <memory>
 
+void log_with_qt(const char* text) {
+    qDebug() << text << "\n";
+}
+
 namespace mobsya {
 
 extern const char* ACTIVITY_CLASS_NAME;
+
 
 namespace {
     class LibUSB {
     public:
         LibUSB() {
             libusb_init(NULL);
+            libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_DEBUG);
         }
         ~LibUSB() {
             libusb_exit(NULL);
@@ -53,38 +59,21 @@ struct AndroidUsbSerialDeviceData {
 
 static void callback(libusb_transfer* transfer);
 
-static void write_callback(libusb_transfer* transfer) {
-    //   reinterpret_cast<AndroidUsbSerialDeviceThread*>(transfer->user_data)->onWrite();
-}
-
 class AndroidUsbSerialDeviceThread : public QThread {
     Q_OBJECT
 public:
     AndroidUsbSerialDeviceThread(AndroidUsbSerialDeviceData&& data, QObject* parent)
         : QThread(parent), m_data(std::move(data)), m_readTransfer(nullptr) {}
     void run() {
-        // unsigned char buffer[8];
+        m_readBuffer.resize(64 * 100);
         while(!isInterruptionRequested()) {
-            struct timeval tv;
-            tv.tv_sec = 1;
-            tv.tv_usec = 0;
-            libusb_handle_events_timeout_completed(nullptr, &tv, nullptr);
-            // doWrite();
             doReadNext();
-            // libusb_clear_halt(m_data.usb_handle, m_data.in_address);
-            // libusb_interrupt_transfer(m_data.usb_handle, m_data.in_address, buffer, 0, nullptr,
-            // 0);
-            // doRead();
-        }
-        if(m_readTransfer) {
-            libusb_cancel_transfer(m_readTransfer);
         }
         qDebug() << "*";
         m_data.connection.callMethod<void>("close");
     }
 
-public Q_SLOTS:
-    void write(const char* data, qint64 maxSize);
+    quint64 write(const char* data, qint64 maxSize);
 
 Q_SIGNALS:
     void read(QByteArray data);
@@ -92,74 +81,41 @@ Q_SIGNALS:
 public:
     void doReadNext();
     void doWriteNext();
-    void onReadCompleted();
+    void onReadCompleted(libusb_transfer* transfer);
 
 private:
-    using transfer = std::unique_ptr<libusb_transfer, void (*)(libusb_transfer*)>;
-
-    struct write_transfer {
-        QByteArray data;
-        libusb_transfer* transfer;
-        write_transfer(const char* data, qint64 maxSize, AndroidUsbSerialDeviceThread* parent)
-            : data(data, int(maxSize)) {
-            transfer = libusb_alloc_transfer(0);
-            libusb_fill_bulk_transfer(transfer, parent->m_data.usb_handle, parent->m_data.out_address,
-                                      reinterpret_cast<unsigned char*>(this->data.data()), this->data.size(),
-                                      write_callback, parent, 0);
-        }
-        write_transfer(const write_transfer& other) = delete;
-        write_transfer(write_transfer&& other) {
-            data = std::move(other.data);
-            transfer = other.transfer;
-            other.transfer = nullptr;
-        }
-
-        ~write_transfer() {
-            libusb_free_transfer(transfer);
-        }
-
-        void send() {
-            libusb_submit_transfer(transfer);
-        }
-    };
-
-    qint64 doWrite();
     void doRead();
-    mutable QMutex m_writeMutex;
     AndroidUsbSerialDeviceData m_data;
     libusb_transfer* m_readTransfer;
-    std::vector<write_transfer> m_writeTransfers;
     QByteArray m_readBuffer;
-
-
-    auto create_transfer() {
-        return transfer(libusb_alloc_transfer(0), libusb_free_transfer);
-    }
 };
 
-
+/*
 static void callback(libusb_transfer* transfer) {
-    reinterpret_cast<AndroidUsbSerialDeviceThread*>(transfer->user_data)->onReadCompleted();
-}
+    // reinterpret_cast<AndroidUsbSerialDeviceThread*>(transfer->user_data)->onReadCompleted(transfer);
+}*/
 
 
 void AndroidUsbSerialDeviceThread::doReadNext() {
-    if(!m_readTransfer) {
-        m_readBuffer.reserve(10 * m_data.read_size);
-        m_readTransfer = libusb_alloc_transfer(0);
-        if(libusb_claim_interface(m_data.usb_handle, 0)) {
-            qDebug() << "libusb_claim_interface FAILED";
-        }
-        libusb_fill_bulk_transfer(m_readTransfer, m_data.usb_handle, m_data.in_address,
-                                  reinterpret_cast<unsigned char*>(m_readBuffer.data()), m_readBuffer.capacity(),
-                                  callback, this, 50000);
-        libusb_submit_transfer(m_readTransfer);
+    int read = 0;
+    libusb_bulk_transfer(m_data.usb_handle, m_data.in_address, reinterpret_cast<unsigned char*>(m_readBuffer.data()),
+                         m_readBuffer.size(), &read, 0);
+    if(read > 0) {
+        Q_EMIT this->read(QByteArray(m_readBuffer.data(), read));
     }
 }
+/*
+void AndroidUsbSerialDeviceThread::onReadCompleted(libusb_transfer* transfer) {
+    if(transfer != m_readTransfer) {
+        qDebug() << "Not us";
+        goto end;
+    }
 
-void AndroidUsbSerialDeviceThread::onReadCompleted() {
-    if(!m_readTransfer)
-        return;
+    if(m_readTransfer->status == LIBUSB_TRANSFER_OVERFLOW) {
+        libusb_reset_device(m_data.usb_handle);
+        goto end;
+    }
+
     if(m_readTransfer->actual_length > 0 &&
        (m_readTransfer->status == LIBUSB_TRANSFER_COMPLETED || m_readTransfer->status == LIBUSB_TRANSFER_TIMED_OUT)) {
         QByteArray data(reinterpret_cast<char*>(m_readTransfer->buffer), m_readTransfer->actual_length);
@@ -167,60 +123,16 @@ void AndroidUsbSerialDeviceThread::onReadCompleted() {
     } else {
         qDebug() << m_readTransfer->status;
     }
+
+end:
     libusb_free_transfer(m_readTransfer);
     m_readTransfer = nullptr;
-    if(libusb_release_interface(m_data.usb_handle, 0)) {
-        qDebug() << "libusb_claim_interface FAILED";
-    }
-}
+}*/
 
-void AndroidUsbSerialDeviceThread::doRead() {
-    std::vector<unsigned char> buffer;
-    const auto s = m_data.read_size * 10;
-    buffer.resize(s);
-    while(true) {
-        int read = 0;
-        // qDebug() << "*" << m_data.read_size << m_data.usb_handle << m_data.in_address;
-        libusb_bulk_transfer(m_data.usb_handle, m_data.in_address, buffer.data(), s, &read, 0);
-        if(read == 0)
-            return;
-        QByteArray arr;
-        arr.reserve(read);
-        for(std::size_t i = 0; i < read; i++) {
-            arr.append(static_cast<char>(buffer.at(i)));
-        }
-        qDebug() << "*" << s << read << m_data.in_address << arr.toHex() << arr.size();
-        Q_EMIT this->read(arr);
-    }
-}
-
-void AndroidUsbSerialDeviceThread::write(const char* data, qint64 maxSize) {
-    auto transfer = write_transfer(data, maxSize, this);
-    transfer.send();
-    m_writeTransfers.push_back(std::move(transfer));
-    // return maxSize;
-}
-
-qint64 AndroidUsbSerialDeviceThread::doWrite() {
-    /* QMutexLocker _(&m_writeMutex);
-     unsigned char* b = reinterpret_cast<unsigned char*>(const_cast<char*>(m_writeBuffer.data()));
-     qint64 totalWritten = 0;
-     qint64 maxSize = m_writeBuffer.size();
-     while(maxSize > 0) {
-         int toWrite = int(qMin(maxSize, qint64(m_data.write_size)));
-         int written = 0;
-         if(libusb_bulk_transfer(m_data.usb_handle, m_data.out_address, b + totalWritten, toWrite,
-                                 &written, 0) < 0) {
-             qDebug() << "AndroidUsbSerialDevice::writeData failed";
-             m_writeBuffer.remove(0, int(totalWritten + written));
-             return -1;
-         }
-         totalWritten += qint64(written);
-         maxSize -= written;
-     }
-     m_writeBuffer.clear();
-     return totalWritten;
-     */
+quint64 AndroidUsbSerialDeviceThread::write(const char* data, qint64 maxSize) {
+    int s = 0;
+    auto r = libusb_bulk_transfer(m_data.usb_handle, m_data.out_address, (unsigned char*)(data), maxSize, &s, 0);
+    return r == LIBUSB_SUCCESS ? s : -1;
 }
 
 AndroidUsbSerialDevice::AndroidUsbSerialDevice(const QAndroidJniObject& device, QObject* parent)
@@ -280,6 +192,8 @@ bool AndroidUsbSerialDevice::open(OpenMode mode) {
         return false;
     }
 
+    libusb_reset_device(data.usb_handle);
+
     qDebug() << (libusb_kernel_driver_active(data.usb_handle, 0) ? "KERNEL DRIVER ACTIVE" : "KERNEL DRIVER INACTIVE");
     if(libusb_kernel_driver_active(data.usb_handle, 0)) {
         libusb_detach_kernel_driver(data.usb_handle, 0);
@@ -290,27 +204,27 @@ bool AndroidUsbSerialDevice::open(OpenMode mode) {
         return false;
     }
 
-    if(libusb_control_transfer(data.usb_handle, 0x21, 0x22, 0x01, 0, nullptr, 0, 0) < 0) {
+    libusb_control_transfer(data.usb_handle, 0x21, 0x22, 0x00, 0, nullptr, 0, 0);
+    if(libusb_control_transfer(data.usb_handle, 0x21, 0x22, 0x03, 0, nullptr, 0, 0) < 0) {
         qDebug() << "libusb_control_transfer failed";
     }
 
-    /*unsigned char encoding[] = {
-        // 0x00, 0xC2, 0x01, 0x00,    // baud rate, little endian
-        0x00, 0xFA, 0x00, 0x00,    // 64000
-        0,                         // stop bits
-        0,                         // parity (none)
-        0x08                       // bits
+    unsigned char encoding[] = {
+        0x00, 0xC2, 0x01, 0x00,  // baud rate, little endian
+        0,                       // stop bits
+        0,                       // parity (none)
+        0x08                     // bits
     };
-    if(libusb_control_transfer(data.usb_handle, 0x21, 0x20, 0, 0, encoding, sizeof(encoding), 0) <
-       0) {
+    if(libusb_control_transfer(data.usb_handle, 0x21, 0x20, 0, 0, encoding, sizeof(encoding), 0) < 0) {
         qDebug() << "libusb_control_transfer failed (encoding)";
-    }*/
+    }
 
 
     libusb_config_descriptor* desc;
     libusb_get_active_config_descriptor(data.usb_device, &desc);
     for(int i = 0; i < desc->bNumInterfaces; i++) {
         const auto interface = desc->interface[i];
+        libusb_claim_interface(data.usb_handle, i);
         for(int s = 0; s < interface.num_altsetting; s++) {
             if(interface.altsetting[s].bInterfaceClass != LIBUSB_CLASS_DATA)
                 continue;
@@ -341,17 +255,14 @@ qint64 AndroidUsbSerialDevice::readData(char* data, qint64 maxSize) {
     if(maxSize == 0)
         return 0;
     auto size = qMin(int(maxSize), m_readBuffer.size());
-    std::memcpy(data, m_readBuffer.data(), size_t(size));
+    std::copy(m_readBuffer.data(), m_readBuffer.data() + size_t(size), data);
     m_readBuffer.remove(0, size);
     qDebug() << m_readBuffer.toHex() << m_readBuffer.size();
     return size;
 }
 
 qint64 AndroidUsbSerialDevice::writeData(const char* data, qint64 maxSize) {
-    if(!m_thread)
-        return -1;
-    m_thread->write(data, maxSize);
-    return maxSize;
+    return m_thread->write(data, maxSize);
 }
 
 void AndroidUsbSerialDevice::onData(QByteArray data) {

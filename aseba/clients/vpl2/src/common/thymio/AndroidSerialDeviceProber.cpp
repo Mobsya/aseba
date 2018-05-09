@@ -84,6 +84,7 @@ std::shared_ptr<DeviceQtConnection> AndroidSerialDeviceProber::openConnection(co
     if(info.type() != ThymioProviderInfo::ProviderType::AndroidSerial)
         return {};
 
+    qDebug() << "Creating connection....";
     auto connection = std::make_unique<AndroidUsbSerialDevice>(
         (static_cast<const AndroidSerialThymioProviderInfo*>(info.data()))->m_device);
     if(!connection->open(QIODevice::ReadWrite)) {
