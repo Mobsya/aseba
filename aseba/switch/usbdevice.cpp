@@ -66,6 +66,8 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
         return usb::make_unexpected(res);
     }
 
+    libusb_reset_device(impl.handle);
+
     for(int if_num = 0; if_num < 2; if_num++) {
         if(libusb_kernel_driver_active(impl.handle, if_num)) {
             if(auto r = libusb_detach_kernel_driver(impl.handle, if_num)) {
@@ -104,6 +106,12 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
         close(impl);
         return usb::make_unexpected(usb::error_code::not_found);
     }
+
+    libusb_control_transfer(impl.handle, 0x21, 0x22, 0, 0, nullptr, 0, 0);
+    libusb_control_transfer(impl.handle, 0x21, 0x22, 3, 0, nullptr, 0, 0);
+    libusb_control_transfer(impl.handle, 0x21, 0x22, 0, 0, nullptr, 0, 0);
+    libusb_clear_halt(impl.handle, impl.in_address);
+    libusb_clear_halt(impl.handle, impl.out_address);
 
 
     send_control_transfer(impl);

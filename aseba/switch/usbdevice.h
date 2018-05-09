@@ -44,7 +44,7 @@ public:
     public:
         buffer() : s(0) {}
         void reserve(std::size_t size, std::size_t buffer_size) {
-            buffer_size = std::max(buffer_size, std::size_t{1});
+            buffer_size = std::max(10 * buffer_size, std::size_t{1});
             v.resize(((s + size + buffer_size - 1) / buffer_size) * buffer_size);
         }
 
@@ -52,6 +52,7 @@ public:
             const auto n = b.size();
             std::copy(v.data(), v.data() + n, static_cast<uint8_t*>(b.data()));
             std::vector<uint8_t>(v.begin() + n, v.end()).swap(v);
+            s -= n;
         }
 
         uint8_t* write_begin() {
@@ -293,7 +294,7 @@ usb_device_service::read_some(implementation_type& impl, const MutableBufferSequ
         int read = 0;
         auto err = libusb_bulk_transfer(impl.handle, impl.in_address,
                                         static_cast<unsigned char*>(impl.read_buffer.write_begin()),
-                                        impl.read_buffer.write_capacity(), &read, 10);
+                                        impl.read_buffer.write_capacity(), &read, 0);
         if(err == LIBUSB_SUCCESS || err == LIBUSB_ERROR_TIMEOUT) {
             total_read += read;
             impl.read_buffer.commit(read);
