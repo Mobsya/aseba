@@ -15,6 +15,10 @@ void usb_server::accept() {
         mLogInfo("Created usb _device");
         usb_device& d = session->usb();
         d.open();
+        d.set_baud_rate(usb_device::baud_rate::baud_115200);
+        d.set_parity(usb_device::parity::none);
+        d.set_stop_bits(usb_device::stop_bits::one);
+        d.set_data_terminal_ready(true);
         session->start();
         accept();
     });
