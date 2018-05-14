@@ -15,41 +15,30 @@ int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libu
 
 usb_acceptor_service::usb_acceptor_service(boost::asio::io_context& io_service)
     : boost::asio::detail::service_base<usb_acceptor_service>(io_service)
-    , m_running(false)
-    , m_context(details::usb_context::acquire_context()) {}
+    , m_context(details::usb_context::acquire_context()) {
 
-
-void usb_acceptor_service::start_thread() {
-    if(!m_running) {
-        m_thread = std::thread([this]() { async_wait_for_device(); });
-    }
+    mLogDebug("usb_acceptor_service started");
 }
 
+
 void usb_acceptor_service::shutdown() {
-    m_running = false;
-    if(m_thread.joinable()) {
-        m_thread.join();
-        mLogDebug("libusb monitor thread stopped");
+    mLogDebug("usb_acceptor_service stopped");
+    while(!m_requests.empty()) {
+        libusb_hotplug_deregister_callback(*m_context, m_requests.front().req_id);
+        m_requests.pop();
     }
     m_context = nullptr;
 }
 
-void usb_acceptor_service::async_wait_for_device() {
-    mLogDebug("libusb monitor thread started");
-    auto rc =
+
+void usb_acceptor_service::register_request(request& r) {
+    r.req_id =
         libusb_hotplug_register_callback(*m_context, /*context*/
                                          LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED /*events*/,
                                          LIBUSB_HOTPLUG_ENUMERATE /*flags */, LIBUSB_HOTPLUG_MATCH_ANY, /* vendor id */
                                          LIBUSB_HOTPLUG_MATCH_ANY,                                      /* product id */
                                          LIBUSB_HOTPLUG_MATCH_ANY /* class*/, hotplug_callback, this, &m_cb_handle);
-    m_running = true;
-    while(m_running) {
-        timeval v = {0, 0};
-        libusb_handle_events_timeout(*m_context, &v);
-    }
-    libusb_hotplug_deregister_callback(*m_context, rc);
 }
-
 
 int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev,
                                          libusb_hotplug_event event) {
@@ -78,7 +67,15 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
         mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
         return 0;
     }
+
+    if(m_context->is_device_open(dev)) {
+        mLogDebug("Already open");
+        return 0;
+    }
+
     req.d.assign(dev);
+    libusb_hotplug_deregister_callback(*m_context, req.req_id);
+
     auto handler = std::move(req.handler);
     const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
     m_requests.pop();

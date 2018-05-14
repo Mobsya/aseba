@@ -35,6 +35,7 @@ void usb_device_service::cancel(implementation_type& impl) {}
 void usb_device_service::close(implementation_type& impl) {
     if(impl.handle) {
         libusb_close(impl.handle);
+        m_context->mark_not_open(impl.device);
         impl.handle = nullptr;
     }
     impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
@@ -65,6 +66,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
     if(res != LIBUSB_SUCCESS) {
         return usb::make_unexpected(res);
     }
+    m_context->mark_open(impl.device);
 
     libusb_reset_device(impl.handle);
 
