@@ -2,6 +2,10 @@
 #include <libusb/libusb.h>
 #include <mutex>
 #include <memory>
+#include <thread>
+#include <vector>
+#include <algorithm>
+#include "log.h"
 
 namespace mobsya {
 
@@ -10,10 +14,15 @@ namespace details {
     public:
         usb_context() {
             libusb_init(&ctx);
+            m_thread = std::thread([this]() { run(); });
+            // libusb_set_debug(ctx, LIBUSB_LOG_LEVEL_DEBUG);
         }
         using ptr = std::shared_ptr<usb_context>;
 
         ~usb_context() {
+            m_running = false;
+            if(m_thread.joinable())
+                m_thread.join();
             libusb_exit(ctx);
         }
         usb_context(const usb_context&) = delete;
@@ -41,8 +50,37 @@ namespace details {
             return sp;
         }
 
+        bool is_device_open(libusb_device* d) const {
+            std::unique_lock<std::mutex> _(m_device_mutex);
+            return std::find(m_open_devices.begin(), m_open_devices.end(), d) != m_open_devices.end();
+        }
+
+        void mark_open(libusb_device* d) {
+            std::unique_lock<std::mutex> _(m_device_mutex);
+            m_open_devices.push_back(d);
+        }
+
+        void mark_not_open(libusb_device* d) {
+            std::unique_lock<std::mutex> _(m_device_mutex);
+            m_open_devices.erase(std::remove(m_open_devices.begin(), m_open_devices.end(), d), m_open_devices.end());
+        }
+
+
     private:
+        void run() {
+            m_running = true;
+            timeval tv{50000, 0};
+            while(m_running) {
+                libusb_handle_events_timeout(ctx, &tv);
+                mLogDebug("lol");
+            }
+        }
+
         libusb_context* ctx;
+        std::thread m_thread;
+        std::atomic_bool m_running;
+        std::vector<libusb_device*> m_open_devices;
+        mutable std::mutex m_device_mutex;
     };
 }  // namespace details
 

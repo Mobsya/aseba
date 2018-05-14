@@ -31,18 +31,18 @@ public:
     void destroy(implementation_type&);
     template <typename AcceptHandler>
     void accept_async(usb_acceptor& acceptor, usb_device& d, AcceptHandler&& handler) {
+        request* ptr = nullptr;
         {
             std::unique_lock<std::mutex> _(m_req_mutex);
-            m_requests.push(request{
-                acceptor, d, std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler))});
+            request r{acceptor, d,
+                      std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler))};
+            m_requests.push(r);
+            ptr = &m_requests.back();
         }
-        start_thread();
+        register_request(*ptr);
     }
     void shutdown() override;
 
-private:
-    void start_thread();
-    void async_wait_for_device();
     int device_plugged(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event);
     friend int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
                                 void* user_data);
@@ -52,11 +52,11 @@ private:
         usb_acceptor& acceptor;
         usb_device& d;
         std::function<void(boost::system::error_code)> handler;
+        int req_id;
     };
+    void register_request(request&);
     details::usb_context::ptr m_context;
-    std::thread m_thread;
     libusb_hotplug_callback_handle m_cb_handle;
-    std::atomic_bool m_running;
     mutable std::mutex m_req_mutex;
     std::queue<request> m_requests;
 };
