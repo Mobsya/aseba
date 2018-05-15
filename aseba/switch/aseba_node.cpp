@@ -4,7 +4,7 @@
 namespace mobsya {
 
 void aseba_node::on_message(const Aseba::Message& msg) {
-    switch(msg.type) {
+    /*switch(msg.type) {
         case ASEBA_MESSAGE_NODE_PRESENT: {
             std::unique_lock<std::mutex> _(m_node_mutex);
             if(m_description.name.empty()) {
@@ -16,7 +16,7 @@ void aseba_node::on_message(const Aseba::Message& msg) {
             break;
         }
         default: break;
-    }
+    }*/
 }
 
 
@@ -24,6 +24,7 @@ void aseba_node::write_message(const Aseba::Message& msg) {}
 
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
+    std::unique_lock<std::mutex> _(m_node_mutex);
     m_description = description;
 }
 

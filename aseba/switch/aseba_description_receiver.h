@@ -1,5 +1,6 @@
 #pragma once
 #include "aseba_message_parser.h"
+#include "log.h"
 
 namespace mobsya {
 
@@ -70,6 +71,7 @@ public:
 
 
         if(ec) {
+            mLogError("Error in read_aseba_description_message_op while expecting an Aseba::Message");
             m_p.invoke(ec, node, Aseba::TargetDescription());
             return;
         }
@@ -89,10 +91,12 @@ public:
             list[counter++] = std::forward<decltype(description)>(description);
         };
 
+        msg->dump(std::wcout);
+        std::wcout << std::endl;
         switch(msg->type) {
             case ASEBA_MESSAGE_DESCRIPTION:
-                if(counter.variables != 0 || counter.event != 0 || counter.functions != 0) {
-                    // error;
+                if(!desc.name.empty()) {
+                    mLogError("Received an Aseba::Description but we already got one");
                 }
                 desc = *static_cast<const Aseba::Description*>(msg.get());
                 break;
@@ -116,8 +120,8 @@ public:
         if(!ready) {
             return mobsya::async_read_aseba_message(s.stream, std::move(*this));
         }
-
-        m_p.invoke(ec, node, desc);
+        Aseba::TargetDescription sd = std::move(s.description);
+        m_p.invoke(ec, node, sd);
     }
 };
 }  // namespace mobsya

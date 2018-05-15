@@ -74,8 +74,22 @@ public:
         mLogInfo("Message received : {} {}", ec.message(), msg->type);
         msg->dump(std::wcout);
         std::wcout << std::endl;
+
+        if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
+            auto node_id = msg->source;
+            auto it = m_nodes.find(node_id);
+            const auto new_node = it == m_nodes.end();
+            if(new_node) {
+                it = m_nodes.insert({node_id, std::make_shared<aseba_node>(node_id, shared_from_this())}).first;
+                // Reading move this, we need to return immediately after
+                read_aseba_node_description(node_id);
+                return;
+            }
+        }
         auto node = find_node(*msg);
-        node->on_message(*msg);
+        if(node) {
+            node->on_message(*msg);
+        }
         read_aseba_message();
     }
     void handle_write(boost::system::error_code ec) {
@@ -91,7 +105,7 @@ private:
     std::shared_ptr<aseba_node> find_node(uint16_t node) {
         auto it = m_nodes.find(node);
         if(it == m_nodes.end()) {
-            it = m_nodes.insert({node, std::make_shared<aseba_node>(node, shared_from_this())}).first;
+            return {};
         }
         return it->second;
     }
@@ -100,10 +114,16 @@ private:
         auto that = shared_from_this();
         auto cb = boost::asio::bind_executor(
             m_strand, std::move([that](boost::system::error_code ec, uint16_t id, Aseba::TargetDescription msg) {
+                if(ec) {
+                    mLogError("Error while waiting for a node description");
+                }
                 auto node = that->find_node(id);
                 node->on_description(msg);
                 that->read_aseba_message();
             }));
+
+        mLogInfo("Asking for description of node {}", node);
+        write_aseba_message(Aseba::GetNodeDescription(node));
 
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             mobsya::async_read_aseba_description_message(variant_ns::get<usb_device>(m_endpoint), node, std::move(cb));
