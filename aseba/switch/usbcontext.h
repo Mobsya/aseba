@@ -72,7 +72,6 @@ namespace details {
             timeval tv{50000, 0};
             while(m_running) {
                 libusb_handle_events_timeout(ctx, &tv);
-                mLogDebug("lol");
             }
         }
 
