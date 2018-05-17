@@ -16,6 +16,8 @@ add_executable(switch
     aseba_message_parser.h
     aseba_description_receiver.h
     aseba_message_writer.h
+    aseba_node_registery.h
+    aseba_node_registery.cpp
     aseba_endpoint.h
     aseba_node.h
     aseba_node.cpp

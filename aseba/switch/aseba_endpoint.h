@@ -18,6 +18,10 @@ class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
 
 public:
+    ~aseba_endpoint() {
+        std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second->disconnect(); });
+    }
+
     using pointer = std::shared_ptr<aseba_endpoint>;
     using endpoint_t = variant_ns::variant<usb_device>;
 
@@ -80,7 +84,7 @@ public:
             auto it = m_nodes.find(node_id);
             const auto new_node = it == m_nodes.end();
             if(new_node) {
-                it = m_nodes.insert({node_id, std::make_shared<aseba_node>(node_id, shared_from_this())}).first;
+                it = m_nodes.insert({node_id, aseba_node::create(m_io_context, node_id, shared_from_this())}).first;
                 // Reading move this, we need to return immediately after
                 read_aseba_node_description(node_id);
                 return;
@@ -135,11 +139,12 @@ private:
 
 
     enum class endpoint_type { usb, tcp };
-    aseba_endpoint(boost::asio::io_service& io_context, endpoint_t&& e)
-        : m_endpoint(std::move(e)), m_strand(io_context.get_executor()) {}
+    aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e)
+        : m_endpoint(std::move(e)), m_strand(io_context.get_executor()), m_io_context(io_context) {}
     endpoint_t m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     std::unordered_map<aseba_node::node_id_t, std::shared_ptr<aseba_node>> m_nodes;
+    boost::asio::io_service& m_io_context;
 };
 
 }  // namespace mobsya
