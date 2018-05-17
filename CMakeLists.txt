@@ -38,6 +38,7 @@ add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/qtzeroconf)
 add_subdirectory(third_party/spdlog)
 add_subdirectory(third_party/expected)
+add_subdirectory(third_party/aware)
 
 # testing and defines
 enable_testing()

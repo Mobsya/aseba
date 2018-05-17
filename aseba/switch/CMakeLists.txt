@@ -23,4 +23,4 @@ add_executable(switch
     aseba_node.cpp
     dispatcher.h
 )
-target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon)
+target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon aware)
