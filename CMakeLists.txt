@@ -87,7 +87,7 @@ endif()
 
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/thymio-blockly-standalone/CMakeLists.txt)
-	add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
+	#add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
 	message("-- Found thymio-blockly-standalone, will bundle blockly")
 endif()
 
