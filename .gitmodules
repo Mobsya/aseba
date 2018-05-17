@@ -22,3 +22,6 @@
 [submodule "third_party/expected/expected"]
 	path = third_party/expected/expected
 	url = https://github.com/TartanLlama/expected
+[submodule "third_party/aware"]
+	path = third_party/aware
+	url = https://github.com/mobsya/aware
