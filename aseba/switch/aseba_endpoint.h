@@ -44,7 +44,21 @@ public:
 
     void start() {
         read_aseba_message();
-        write_aseba_message(Aseba::ListNodes());
+
+
+        // A newly connected thymio may not be ready yet
+        // Delay asking for its node id to let it start up the vm
+        // otherwhise it may never get our request.
+
+        auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+        timer->expires_from_now(boost::posix_time::milliseconds(200));
+        auto that = shared_from_this();
+        auto cb = boost::asio::bind_executor(m_strand, std::move([timer, that](const boost::system::error_code& ec) {
+                                                 mLogInfo("Requesting list nodes( ec : {}", ec.message());
+                                                 that->write_aseba_message(Aseba::ListNodes());
+                                             }));
+        mLogInfo("Waiting before requesting list node");
+        timer->async_wait(std::move(cb));
     }
 
 
