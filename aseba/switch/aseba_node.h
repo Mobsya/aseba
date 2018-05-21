@@ -11,13 +11,23 @@ class aseba_endpoint;
 
 class aseba_node : public std::enable_shared_from_this<aseba_node> {
 public:
-    enum class status { connected = 1, ready, busy, disconnected };
+    // aseba_node::status is exposed through zero conf & protocol : needs to be stable
+    enum class status { connected = 1, ready = 2, busy = 3, disconnected = 4 };
     using node_id_t = uint16_t;
 
     ~aseba_node();
 
     static std::shared_ptr<aseba_node> create(boost::asio::io_context& ctx, node_id_t id,
                                               std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+
+    static std::string_view status_to_string(aseba_node::status);
+    status get_status() const {
+        return m_status.load();
+    }
+
+    node_id_t native_id() const {
+        return m_id;
+    }
 
 private:
     // hack to make the private constructor be invokable through make_shared
