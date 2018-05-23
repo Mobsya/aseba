@@ -2,11 +2,14 @@
 #include "log.h"
 #include <aware/aware.hpp>
 #include <functional>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 namespace mobsya {
 
 aseba_node_registery::aseba_node_registery(boost::asio::io_context& io_context)
     : boost::asio::detail::service_base<aseba_node_registery>(io_context)
+    , m_uid(boost::uuids::random_generator()())
     , m_discovery_socket(io_context)
     , m_nodes_service_desc("_mobsya") {
     m_nodes_service_desc.name("Thymio Discovery service");
@@ -59,7 +62,7 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
 
 aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
     aware::contact::property_map_type map;
-    map["foo"] = "bar";
+    map["uuid"] = boost::uuids::to_string(m_uid);
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
         if(it->second.expired())
             continue;

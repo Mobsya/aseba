@@ -1,5 +1,6 @@
 #pragma once
 #include <boost/asio/io_service.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <unordered_map>
 #include <random>
 #include <aware/aware.hpp>
@@ -24,6 +25,7 @@ private:
     using node_map = std::unordered_map<node_id, std::weak_ptr<aseba_node>>;
 
     node_map::const_iterator find(std::shared_ptr<aseba_node> node) const;
+    boost::uuids::uuid m_uid;
     node_map m_aseba_nodes;
     aware::announce_socket m_discovery_socket;
     aware::contact m_nodes_service_desc;
