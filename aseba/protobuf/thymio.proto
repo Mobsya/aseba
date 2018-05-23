@@ -1,0 +1,139 @@
+syntax = "proto3";
+package mobsya;
+
+/*
+   Describes a node
+*/
+message Node {
+    enum NodeType {
+         Thymio2 = 0;
+         ThymioWireless = 1;
+    }
+    //matches mobsya::aseba_node::node_status
+    enum NodeStatus {
+        unknown   = 0;
+        connected = 1;
+        ready = 2;
+        busy  = 3;
+        disconnected = 4;
+    }
+
+    //id of the node - this id is intern to the switch and randomely generated
+    uint32 node_id = 1;
+    NodeStatus status = 2;
+    NodeType type = 3;
+    string name = 4;
+}
+
+/*
+    One or more node has changed.
+    This is automatically sent by the switch as node are connected,
+    disconnected, locked, unlocked, renamed...
+*/
+message NodesChanged {
+    repeated Node nodes = 1;
+}
+
+/*
+    Ask The server to send a list of nodes and their status
+    The switch will send messages as node change so requesting
+    a full listing should not be necessary.
+*/
+message RequestListOfNodes {}
+
+/*
+   Request the full description of the aseba vm of a given node
+*/
+message RequestNodeAsebaVMDescription {
+    uint32 node_id = 1;
+}
+
+/*
+   Describe the aseba vm of a given node
+*/
+message NodeAsebaVMDescription {
+   message NamedVariable {
+       string name = 1;
+       uint32 size = 2;
+   }
+   message LocalEvent {
+       string name = 1;
+       string description = 2;
+   }
+   message NativeFunction {
+       string name = 1;
+       string description = 2;
+       message Parameter {
+           string name = 1;
+           uint32 size = 2;
+       }
+       repeated Parameter parameters = 3;
+   }
+   uint32 node_id = 1;
+   uint32 bytecode_size  = 2;
+   uint32 data_size = 3;
+   uint32 stack_size = 4;
+   repeated NamedVariable variables = 5;
+   repeated LocalEvent events = 6;
+   repeated NativeFunction functions = 7;
+}
+
+/*
+   Asks the switch to establish a priviledged 1-1 connection between a node an this client.
+   This is requiered before mutating the state of the node, for example before sending bytecode.
+   It is not possible to lock an already locked node, however a client can lock multiple nodes.
+   Once locked, a node will appear "busy" both to other clients ( a NodesChanged message will be sent ),
+   and to the bonjour/avahi discovery service.
+   Other applications will not be abled to mutate a tymio in busy state, but the node will remain visible and
+   they will still receive read-only events .
+   A node remains locked until the application disconnects or an UnlockNode message is sent by the application.
+*/
+message LockNode {
+    uint32 node_id = 1;
+}
+
+/*
+    Unlocks a node
+*/
+message UnlockNode {
+    uint32 node_id = 1;
+}
+
+message NodeLocked {
+     uint32 node_id = 1;
+}
+
+message Error {
+    enum  Type {
+        unknown_error = 0; //Generic error
+        unknown_node  = 1; //No node matches this id
+        node_busy     = 2; //The node is busy and can not performed this operation
+    }
+    uint32 node_id = 1;
+    Type error = 2;
+}
+
+
+/*
+   Message sent by an application tpo a switch or an application
+*/
+message MessageFromApplication {
+    oneof message {
+        RequestListOfNodes request_node = 1;
+        RequestNodeAsebaVMDescription request_asebavm_description = 2;
+        LockNode lock_node = 3;
+        UnlockNode unlock_node = 4;
+    }
+}
+
+/*
+   Message sent by a switch ( or a tymio 3) to an application
+*/
+message MessageFromSwitch {
+    oneof message {
+        NodesChanged nodes_changed = 1;
+        NodeAsebaVMDescription asebavm_description = 2;
+        Error error = 3;
+        NodeLocked node_locked = 4;
+    }
+}
