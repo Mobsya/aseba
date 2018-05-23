@@ -11,7 +11,7 @@ aseba_node_registery::aseba_node_registery(boost::asio::io_context& io_context)
     : boost::asio::detail::service_base<aseba_node_registery>(io_context)
     , m_uid(boost::uuids::random_generator()())
     , m_discovery_socket(io_context)
-    , m_nodes_service_desc("_mobsya") {
+    , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name("Thymio Discovery service");
 
     update_discovery();
