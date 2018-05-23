@@ -46,6 +46,11 @@ void aseba_node_registery::set_node_status(std::shared_ptr<aseba_node> node, ase
     update_discovery();
 }
 
+void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
+    m_nodes_service_desc.endpoint(endpoint);
+    update_discovery();
+}
+
 void aseba_node_registery::update_discovery() {
     std::unique_lock _(m_discovery_mutex);
     m_nodes_service_desc.properties(build_discovery_properties());

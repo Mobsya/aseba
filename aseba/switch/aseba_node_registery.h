@@ -16,6 +16,7 @@ public:
     void add_node(std::shared_ptr<aseba_node> node);
     void remove_node(std::shared_ptr<aseba_node> node);
     void set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status);
+    void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
 
 private:
     void update_discovery();
