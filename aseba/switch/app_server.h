@@ -1,0 +1,38 @@
+#pragma once
+#include <boost/asio.hpp>
+#include "app_endpoint.h"
+#include "log.h"
+
+namespace mobsya {
+using tcp = boost::asio::ip::tcp;
+
+template <typename socket_type>
+class application_server {
+public:
+    application_server(boost::asio::io_context& io_context, uint16_t port = 0)
+        : m_acceptor(io_context, tcp::endpoint(tcp::v6(), port)) {
+        // Make sure we accept both ipv4 + ipv6
+        boost::asio::ip::v6_only opt(false);
+        boost::system::error_code ec;
+        m_acceptor.set_option(opt, ec);
+    }
+
+    tcp::acceptor::endpoint_type endpoint() const {
+        return m_acceptor.local_endpoint();
+    }
+
+    void accept() {
+        auto endpoint = create_application_endpoint<socket_type>(m_acceptor.get_io_context());
+        m_acceptor.async_accept(endpoint->tcp_socket(), [this, endpoint](const boost::system::error_code& error) {
+            mLogTrace("New connection {}", error.message());
+            if(!error) {
+                endpoint->start();
+            }
+            this->accept();
+        });
+    }
+
+private:
+    tcp::acceptor m_acceptor;
+};
+}  // namespace mobsya
