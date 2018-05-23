@@ -1,0 +1,7 @@
+find_package(Protobuf REQUIRED)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS thymio.proto)
+#protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS EXPORT_MACRO DLL_EXPORT thymio.proto)
+#protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS DESCRIPTORS PROTO_DESCS thymio.proto)
+add_library(thymio-protobuf-protocol ${PROTO_SRCS} ${PROTO_HDRS} thymio.proto)
+target_link_libraries(thymio-protobuf-protocol ${Protobuf_LIBRARIES})
+target_include_directories(thymio-protobuf-protocol PUBLIC ${Protobuf_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})

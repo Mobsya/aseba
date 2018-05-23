@@ -25,4 +25,4 @@ add_executable(switch
     app_server.h
     app_endpoint.h
 )
-target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon aware)
+target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon aware thymio-protobuf-protocol)

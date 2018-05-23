@@ -2,6 +2,7 @@
 add_subdirectory(common)
 add_subdirectory(compiler)
 add_subdirectory(clients)
+add_subdirectory(protobuf)
 add_subdirectory(switch)
 
 if(NOT ANDROID)
