@@ -18,16 +18,17 @@ message Node {
         disconnected = 4;
     }
 
-    //id of the node - this id is intern to the switch and randomely generated
+    //id of the node - this id is intern to the switch and randomly generated
     uint32 node_id = 1;
     NodeStatus status = 2;
     NodeType type = 3;
     string name = 4;
 }
 
+
 /*
     One or more node has changed.
-    This is automatically sent by the switch as node are connected,
+    This is automatically sent by the switch as nodes are connected,
     disconnected, locked, unlocked, renamed...
 */
 message NodesChanged {
@@ -35,8 +36,8 @@ message NodesChanged {
 }
 
 /*
-    Ask The server to send a list of nodes and their status
-    The switch will send messages as node change so requesting
+    Ask the server to send a list of nodes and their status
+    The switch will send messages as nodes change so requesting
     a full listing should not be necessary.
 */
 message RequestListOfNodes {}
@@ -79,12 +80,12 @@ message NodeAsebaVMDescription {
 }
 
 /*
-   Asks the switch to establish a priviledged 1-1 connection between a node an this client.
-   This is requiered before mutating the state of the node, for example before sending bytecode.
+   Asks the switch to establish a priviledged 1-1 connection between a node and this client.
+   This is required before mutating the state of the node, for example before sending bytecode.
    It is not possible to lock an already locked node, however a client can lock multiple nodes.
    Once locked, a node will appear "busy" both to other clients ( a NodesChanged message will be sent ),
    and to the bonjour/avahi discovery service.
-   Other applications will not be abled to mutate a tymio in busy state, but the node will remain visible and
+   Other applications will not be able to mutate a thymio in busy state, but the node will remain visible and
    they will still receive read-only events .
    A node remains locked until the application disconnects or an UnlockNode message is sent by the application.
 */
@@ -93,7 +94,7 @@ message LockNode {
 }
 
 /*
-    Unlocks a node
+    Unlock a node
 */
 message UnlockNode {
     uint32 node_id = 1;
@@ -115,7 +116,7 @@ message Error {
 
 
 /*
-   Message sent by an application tpo a switch or an application
+   Message sent by an application to a switch or an application
 */
 message MessageFromApplication {
     oneof message {
@@ -127,7 +128,7 @@ message MessageFromApplication {
 }
 
 /*
-   Message sent by a switch ( or a tymio 3) to an application
+   Message sent by a switch ( or a thymio 3) to an application
 */
 message MessageFromSwitch {
     oneof message {
