@@ -24,5 +24,8 @@ add_executable(switch
     dispatcher.h
     app_server.h
     app_endpoint.h
+    flatbuffers_message_reader.h
+    flatbuffers_message_writer.h
+    flatbuffers_messages.h
 )
-target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon aware thymio-protobuf-protocol)
+target_link_libraries(switch boost::program_options boost::asio libusb spdlog tl_expected asebacommon aware thymio-flatbuffers)

@@ -3,6 +3,8 @@
 #include <boost/beast.hpp>
 #include <memory>
 #include "variant.hpp"
+#include "flatbuffers_message_writer.h"
+#include "flatbuffers_message_reader.h"
 
 namespace mobsya {
 using tcp = boost::asio::ip::tcp;
