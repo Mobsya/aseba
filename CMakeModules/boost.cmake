@@ -1,4 +1,4 @@
-find_package(Boost 1.67 COMPONENTS system filesystem thread regex python date_time program_options)
+find_package(Boost 1.67 COMPONENTS system filesystem thread regex date_time program_options)
 if(Boost_FOUND)
     add_library(boost_meta INTERFACE)
     target_include_directories(boost_meta INTERFACE ${BOOST_INCLUDE_DIRS})
@@ -15,8 +15,8 @@ if(Boost_FOUND)
     set_property(TARGET boost::regex PROPERTY INTERFACE_LINK_LIBRARIES ${Boost_REGEX_LIBRARY} boost_meta)
     add_library( boost::thread IMPORTED INTERFACE)
     set_property(TARGET boost::thread PROPERTY INTERFACE_LINK_LIBRARIES ${Boost_THREAD_LIBRARY} boost_meta boost::system)
-    add_library( boost::python IMPORTED INTERFACE)
-    set_property(TARGET boost::python PROPERTY INTERFACE_LINK_LIBRARIES ${Boost_PYTHON_LIBRARY} boost_meta)
+    #add_library( boost::python IMPORTED INTERFACE)
+    #set_property(TARGET boost::python PROPERTY INTERFACE_LINK_LIBRARIES ${Boost_PYTHON_LIBRARY} boost_meta)
     add_library( boost::serialization IMPORTED INTERFACE)
     set_property(TARGET boost::serialization PROPERTY INTERFACE_LINK_LIBRARIES ${Boost_SERIALIZATION_LIBRARY} boost_meta)
 else()
@@ -50,7 +50,7 @@ else()
                 --with-libraries=date_time
                 --prefix=${boost_INSTALL}
             BUILD_COMMAND
-            ${boost_b2} install link=static variant=release threading=multi runtime-link=static --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options --with-python
+            ${boost_b2} install link=static variant=release threading=multi runtime-link=static --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options
             INSTALL_COMMAND ""
             INSTALL_DIR ${boost_INSTALL}
 
@@ -61,7 +61,6 @@ else()
                     ${boost_LIB_DIR}/libboost_filesystem${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_regex${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_thread${boost_LIBRARY_SUFFIX}
-                    ${boost_LIB_DIR}/libboost_python${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_serialization${boost_LIBRARY_SUFFIX}
             )
 
@@ -101,10 +100,10 @@ else()
     set_property( TARGET boost::thread PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
     add_dependencies( boost::thread external_boost )
 
-    add_library( boost::python STATIC IMPORTED )
-    set_property( TARGET boost::python PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_python${boost_LIBRARY_SUFFIX} )
-    set_property( TARGET boost::python PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
-    add_dependencies( boost::python external_boost )
+#     add_library( boost::python STATIC IMPORTED )
+#     set_property( TARGET boost::python PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_python${boost_LIBRARY_SUFFIX} )
+#     set_property( TARGET boost::python PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
+#     add_dependencies( boost::python external_boost )
 
     add_library( boost::serialization STATIC IMPORTED )
     set_property( TARGET boost::serialization PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_serialization${boost_LIBRARY_SUFFIX} )
