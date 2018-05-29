@@ -76,7 +76,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
                 return usb::make_unexpected(r);
             }
         }
-        if(res = libusb_claim_interface(impl.handle, if_num)) {
+        if((res = libusb_claim_interface(impl.handle, if_num))) {
             return usb::make_unexpected(res);
         }
     }

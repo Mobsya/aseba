@@ -46,7 +46,6 @@ public:
 private:
     boost::asio::io_context& m_ctx;
     socket m_socket;
-    std::optional<websocket_t> m_ws_stream;
 };
 
 template <typename T>
