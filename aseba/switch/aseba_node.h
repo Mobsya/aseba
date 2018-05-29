@@ -20,7 +20,7 @@ public:
     static std::shared_ptr<aseba_node> create(boost::asio::io_context& ctx, node_id_t id,
                                               std::weak_ptr<mobsya::aseba_endpoint> endpoint);
 
-    static std::string_view status_to_string(aseba_node::status);
+    static const std::string& status_to_string(aseba_node::status);
     status get_status() const {
         return m_status.load();
     }

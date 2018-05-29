@@ -38,7 +38,6 @@ add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/qtzeroconf)
 add_subdirectory(third_party/spdlog)
 add_subdirectory(third_party/expected)
-add_subdirectory(third_party/aware)
 
 
 add_subdirectory(third_party/flatbuffers)
@@ -64,6 +63,7 @@ endif ()
 # Zeroconf
 if (NOT ANDROID)
 	include(CMakeModules/zeroconf.cmake)
+	add_subdirectory(third_party/aware)
 endif()
 
 # Aseba itself

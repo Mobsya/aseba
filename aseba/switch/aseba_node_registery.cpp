@@ -52,7 +52,7 @@ void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint
 }
 
 void aseba_node_registery::update_discovery() {
-    std::unique_lock _(m_discovery_mutex);
+    std::unique_lock<std::mutex> _(m_discovery_mutex);
     m_nodes_service_desc.properties(build_discovery_properties());
 
     m_discovery_socket.async_announce(
