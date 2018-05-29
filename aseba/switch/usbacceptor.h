@@ -1,7 +1,7 @@
 #pragma once
-#include <libusb/libusb.h>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/basic_io_object.hpp>
+#include <libusb/libusb.h>
 #include <queue>
 #include <functional>
 #include <mutex>

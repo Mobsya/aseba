@@ -8,7 +8,8 @@ set(MSVC_VERSION 1300)
 set(MSVC_INCREMENTAL_DEFAULT ON)
 
 add_compile_options(-fuse-ld=lld-link)
-add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN -D_XKEYCHECK_H -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
+add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN -D_XKEYCHECK_H -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+-D_WIN32_WINNT=0x0600)
 add_compile_options(-fms-extensions -fms-compatibility -Wno-ignored-attributes
 					-Wno-unused-local-typedef
 				    -Wno-expansion-to-defined -Wno-pragma-pack -Wno-ignored-pragma-intrinsic
