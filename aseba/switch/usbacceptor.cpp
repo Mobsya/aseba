@@ -1,8 +1,8 @@
 #include "usbacceptor.h"
-#include <libusb/libusb.h>
 #include <algorithm>
 #include <boost/asio/dispatch.hpp>
 #include "log.h"
+#include <libusb/libusb.h>
 
 namespace mobsya {
 
