@@ -14,13 +14,13 @@ include(FeatureSummary)
 
 # additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
+include(CMakeModules/boost.cmake)
 include(CMakeModules/ParseVersion.cmake)
 include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
 include(CMakeModules/dashel.cmake)
-include(CMakeModules/boost.cmake)
 
 if(NOT ANDROID)
 	include(CMakeModules/enki.cmake)
