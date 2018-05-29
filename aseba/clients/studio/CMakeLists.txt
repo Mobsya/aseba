@@ -84,7 +84,7 @@ qt5_wrap_cpp(qt_common_MOCS
 )
 add_library(asebaqtcommon STATIC ${qt_common_SRCS} ${qt_common_MOCS})
 target_link_libraries(asebaqtcommon aseba_conf asebadashelplugins)
-qt5_use_modules(asebaqtcommon Gui Widgets Xml Network)
+target_link_libraries(asebaqtcommon Qt5::Network Qt5::Xml Qt5::Widgets)
 
 codesign(asebaqtcommon)
 
