@@ -41,6 +41,7 @@ matrix:
     addons:
       apt:
         packages:
+        - build-essential
         - ninja-build
         - p7zip-full
     env:
