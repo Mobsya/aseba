@@ -99,14 +99,14 @@ script:
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
     #export PATH="(brew --prefix llvm)/bin:${PATH}"
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+    cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
     ninja -v
   fi
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
       ls /opt/qt510/
       /opt/qt510/bin/qt510-env.sh
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
-      cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+      cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
       ninja -v
   fi
   if [[ "$ANDROID" ]]; then
@@ -114,7 +114,7 @@ script:
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
-      cmake .. -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      cmake .. -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
       make -j5
   fi
   #cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF .. #-DCMAKE_CXX_CLANG_TIDY="clang-tidy\;-checks=-clang-diagnostic-error,clang-analyzer-*"
