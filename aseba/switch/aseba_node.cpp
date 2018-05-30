@@ -18,7 +18,7 @@ aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr
 
 std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id,
                                                std::weak_ptr<mobsya::aseba_endpoint> endpoint) {
-    auto node = std::allocate_shared<aseba_node>(allocator_access<aseba_node>(), ctx, id, std::move(endpoint));
+    auto node = std::make_shared<aseba_node>(ctx, id, std::move(endpoint));
     node->set_status(status::connected);
     return node;
 }
