@@ -44,8 +44,8 @@ public:
     void shutdown() override;
 
     int device_plugged(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event);
-    friend int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
-                                void* user_data);
+    friend int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev,
+                                            libusb_hotplug_event event, void* user_data);
 
 private:
     struct request {
