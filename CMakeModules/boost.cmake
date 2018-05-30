@@ -1,6 +1,4 @@
-if(NOT WIN32)
-    set(Boost_USE_STATIC_LIBS   ON)
-endif()
+set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost 1.67 COMPONENTS system filesystem thread regex date_time program_options python27)
 add_definitions(-DBOOST_ALL_NO_LIB)
 if(NOT Boost_FOUND)
