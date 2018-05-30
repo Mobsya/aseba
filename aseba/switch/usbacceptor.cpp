@@ -6,8 +6,8 @@
 
 namespace mobsya {
 
-int hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
-                     void* user_data) {
+int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
+                                 void* user_data) {
 
     auto service = static_cast<usb_acceptor_service*>(user_data);
     return service->device_plugged(ctx, dev, event);
