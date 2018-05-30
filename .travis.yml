@@ -2,6 +2,7 @@ cache:
   ccache: true
   directories:
   - "$HOME/Library/Caches/Homebrew"
+
 matrix:
   include:
   - os: linux
@@ -44,14 +45,16 @@ matrix:
         - build-essential
         - ninja-build
         - p7zip-full
-    env:
-    - ANDROID=1
+        - make
+    env: ANDROID=1
     sudo: true
     language: cpp
     jdk: oraclejdk8
+
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
 - git submodule update --remote
+
 before_install:
 - |
   set -e
@@ -90,6 +93,7 @@ script:
   set +e
   set -x
   cd ${TRAVIS_BUILD_DIR}
+  rm -rf build || true
   mkdir build && cd build
   export CC=${COMPILER}
   export CXX=${CXX_COMPILER}
@@ -114,17 +118,17 @@ script:
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
-      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      cmake .. -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
       make -j5
   fi
-  #cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF .. #-DCMAKE_CXX_CLANG_TIDY="clang-tidy\;-checks=-clang-diagnostic-error,clang-analyzer-*"
-  #CTEST_OUTPUT_ON_FAILURE=1 ctest
   set +e
+
 before_deploy:
 - git config --local user.name "Travis"
 - git config --local user.email "ci@mobsya.org"
 - git tag "nightly"
 - export TRAVIS_TAG=nightly
+
 deploy:
   provider: releases
   skip_cleanup: true
