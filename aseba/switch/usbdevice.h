@@ -50,6 +50,7 @@ public:
             v.resize(((s + size + buffer_size - 1) / buffer_size) * buffer_size);
         }
 
+
         void read(const boost::asio::mutable_buffer& b) {
             const auto n = b.size();
             std::copy(v.data(), v.data() + n, static_cast<uint8_t*>(b.data()));
