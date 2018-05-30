@@ -29,3 +29,7 @@ add_executable(switch
     flatbuffers_messages.h
 )
 target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time libusb spdlog tl_expected asebacommon aware thymio-flatbuffers)
+if(WIN32)
+    target_link_libraries(switch bcrypt)
+endif()
+
