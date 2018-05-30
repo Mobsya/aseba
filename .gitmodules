@@ -1,6 +1,6 @@
 [submodule "enki"]
 	path = enki
-	url = https://github.com/enki-community/enki
+	url = https://github.com/Mobsya/enki
 [submodule "dashel"]
 	path = dashel
 	url = https://github.com/mobsya/dashel
