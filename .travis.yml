@@ -114,7 +114,7 @@ script:
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
-      cmake .. -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
       make -j5
   fi
   #cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF .. #-DCMAKE_CXX_CLANG_TIDY="clang-tidy\;-checks=-clang-diagnostic-error,clang-analyzer-*"
