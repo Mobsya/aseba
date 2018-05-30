@@ -1,5 +1,5 @@
 set(Boost_USE_STATIC_LIBS   ON)
-find_package(Boost 1.67 COMPONENTS system filesystem thread regex date_time program_options)
+find_package(Boost 1.67 COMPONENTS system filesystem thread regex date_time program_options python27)
 if(NOT Boost_FOUND)
     include( ExternalProject )
     if(WIN32)
@@ -25,12 +25,9 @@ if(NOT Boost_FOUND)
             URL_HASH SHA256=${boost_SHA256}
             BUILD_IN_SOURCE 1
             CONFIGURE_COMMAND ${boost_bootstrap}
-                --with-libraries=filesystem
-                --with-libraries=system
-                --with-libraries=date_time
                 --prefix=${boost_INSTALL}
             BUILD_COMMAND
-            ${boost_b2} install link=static variant=release threading=multi runtime-link=static --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options
+            ${boost_b2} install cxxflags=-fPIC cflags=-fPIC link=static variant=release threading=multi runtime-link=static --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options --with-python
             INSTALL_COMMAND ""
             INSTALL_DIR ${boost_INSTALL}
 
@@ -42,6 +39,7 @@ if(NOT Boost_FOUND)
                     ${boost_LIB_DIR}/libboost_regex${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_thread${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_serialization${boost_LIBRARY_SUFFIX}
+                    ${boost_LIB_DIR}/libboost_python27${boost_LIBRARY_SUFFIX}
             )
 
     file(MAKE_DIRECTORY ${boost_INCLUDE_DIR})
@@ -80,10 +78,10 @@ if(NOT Boost_FOUND)
     set_property( TARGET Boost::thread PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
     add_dependencies( Boost::thread external_boost )
 
-#     add_library( Boost::python STATIC IMPORTED )
-#     set_property( TARGET Boost::python PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_python${boost_LIBRARY_SUFFIX} )
-#     set_property( TARGET Boost::python PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
-#     add_dependencies( Boost::python external_boost )
+    add_library( Boost::python27 STATIC IMPORTED )
+    set_property( TARGET Boost::python27 PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_python27${boost_LIBRARY_SUFFIX} )
+    set_property( TARGET Boost::python27 PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
+    add_dependencies( Boost::python27 external_boost )
 
     add_library( Boost::serialization STATIC IMPORTED )
     set_property( TARGET Boost::serialization PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_serialization${boost_LIBRARY_SUFFIX} )
