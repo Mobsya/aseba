@@ -327,7 +327,7 @@ namespace detail {
         buffer_size = impl.read_buffer.write_capacity();
         buffer = impl.read_buffer.write_begin();
         address = impl.in_address;
-        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, buffer_size, cb, user_data, 0);
+        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, int(buffer_size), cb, user_data, 0);
     }
 
     template <typename BufferSequence>
@@ -341,7 +341,7 @@ namespace detail {
         buffer_size = it->size();
         buffer = (uint8_t*)(it->data());
         address = impl.out_address;
-        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, buffer_size, cb, user_data, 0);
+        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, int(buffer_size), cb, user_data, 0);
     }
 
 }  // namespace detail
