@@ -3,11 +3,8 @@
 namespace mobsya {
 namespace usb {
 
-
-    const usb_error_category usb_error_cat;
-
-
     const boost::system::error_category& get_usb_error_category() {
+        static const usb_error_category usb_error_cat;
         return usb_error_cat;
     }
 

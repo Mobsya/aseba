@@ -24,6 +24,7 @@ namespace usb {
 
     class usb_error_category : public boost::system::error_category {
     public:
+        usb_error_category() = default;
         const char* name() const noexcept override;
         std::string message(int ev) const override;
     };
