@@ -29,17 +29,17 @@ public:
         return m_id;
     }
 
+    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+
 private:
-    // hack to make the private constructor be invokable through make_shared
+    /*// hack to make the private constructor be invokable through make_shared
     template <typename T>
     struct allocator_access : std::allocator<T> {
         template <typename... Args>
         void construct(aseba_node* p, Args&&... args) {
             ::new((void*)p) aseba_node(std::forward<Args>(args)...);
         }
-    };
-
-    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+    };*/
 
 
     friend class aseba_endpoint;

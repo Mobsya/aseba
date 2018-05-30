@@ -1,5 +1,4 @@
 #pragma once
-#include <libusb/libusb.h>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/buffer.hpp>
@@ -8,6 +7,9 @@
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/beast/core/detail/type_traits.hpp>
 #include <boost/bind.hpp>
+
+// Include asio before libusb !
+#include <libusb/libusb.h>
 #include <memory>
 #include "error.h"
 #include "usbcontext.h"
@@ -310,9 +312,10 @@ usb_device_service::read_some(implementation_type& impl, const MutableBufferSequ
     return total_read;
 }
 namespace detail {
-    template <typename BufferSequence, typename Callback>
+    template <typename BufferSequence>
     void prepare_read_transfer(usb_device_service::implementation_type& impl, libusb_transfer* transfer,
-                               const BufferSequence& buffers, std::size_t& index, Callback&& cb, void* user_data) {
+                               const BufferSequence& buffers, std::size_t& index, libusb_transfer_cb_fn cb,
+                               void* user_data) {
         uint8_t address;
         uint8_t* buffer;
         const auto it = boost::asio::buffer_sequence_begin(buffers) + index;
@@ -324,13 +327,13 @@ namespace detail {
         buffer_size = impl.read_buffer.write_capacity();
         buffer = impl.read_buffer.write_begin();
         address = impl.in_address;
-        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, buffer_size, std::forward<Callback>(cb),
-                                  user_data, 0);
+        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, buffer_size, cb, user_data, 0);
     }
 
-    template <typename BufferSequence, typename Callback>
+    template <typename BufferSequence>
     void prepare_write_transfer(usb_device_service::implementation_type& impl, libusb_transfer* transfer,
-                                const BufferSequence& buffers, std::size_t& index, Callback&& cb, void* user_data) {
+                                const BufferSequence& buffers, std::size_t& index, libusb_transfer_cb_fn cb,
+                                void* user_data) {
         uint8_t address;
         uint8_t* buffer;
         const auto it = boost::asio::buffer_sequence_begin(buffers) + index;
@@ -338,8 +341,7 @@ namespace detail {
         buffer_size = it->size();
         buffer = (uint8_t*)(it->data());
         address = impl.out_address;
-        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, buffer_size, std::forward<Callback>(cb),
-                                  user_data, 0);
+        libusb_fill_bulk_transfer(transfer, impl.handle, address, buffer, buffer_size, cb, user_data, 0);
     }
 
 }  // namespace detail
@@ -420,8 +422,8 @@ void usb_device::async_transfer_read_some(const BufferSequence& buffers, Complet
 
 
             if(it != boost::asio::buffer_sequence_end(d->seq)) {
-                detail::prepare_write_transfer<BufferSequence, std::remove_reference_t<decltype(transfer->callback)>>(
-                    impl, transfer, d->seq, d->idx, (libusb_transfer_cb_fn)transfer->callback, transfer->user_data);
+                detail::prepare_read_transfer<BufferSequence>(impl, transfer, d->seq, d->idx, transfer->callback,
+                                                              transfer->user_data);
                 libusb_submit_transfer(transfer);
                 d.release();
                 return;
@@ -447,8 +449,7 @@ void usb_device::async_transfer_read_some(const BufferSequence& buffers, Complet
 
 
     auto transfer = libusb_alloc_transfer(0);
-    detail::prepare_write_transfer<BufferSequence, std::remove_reference_t<decltype(cb)>>(
-        impl, transfer, data->seq, data->idx, std::move(cb), data.get());
+    detail::prepare_read_transfer<BufferSequence>(impl, transfer, data->seq, data->idx, cb, data.get());
     auto r = libusb_submit_transfer(transfer);
     if(r != LIBUSB_SUCCESS) {
         libusb_free_transfer(transfer);
@@ -526,8 +527,8 @@ void usb_device::async_transfer_write_some(const BufferSequence& buffers, Comple
             d->idx++;
 
             if(it != boost::asio::buffer_sequence_end(d->seq)) {
-                detail::prepare_write_transfer<BufferSequence, std::remove_reference_t<decltype(transfer->callback)>>(
-                    impl, transfer, d->seq, d->idx, (libusb_transfer_cb_fn)transfer->callback, transfer->user_data);
+                detail::prepare_write_transfer<BufferSequence>(impl, transfer, d->seq, d->idx, transfer->callback,
+                                                               transfer->user_data);
                 libusb_submit_transfer(transfer);
                 d.release();
                 return;
@@ -553,8 +554,7 @@ void usb_device::async_transfer_write_some(const BufferSequence& buffers, Comple
 
 
     auto transfer = libusb_alloc_transfer(0);
-    detail::prepare_write_transfer<BufferSequence, std::remove_reference_t<decltype(cb)>>(
-        impl, transfer, data->seq, data->idx, std::move(cb), data.get());
+    detail::prepare_write_transfer<BufferSequence>(impl, transfer, data->seq, data->idx, std::move(cb), data.get());
     auto r = libusb_submit_transfer(transfer);
     if(r != LIBUSB_SUCCESS) {
         libusb_free_transfer(transfer);
