@@ -18,4 +18,7 @@ add_compile_options(-fms-extensions -fms-compatibility -Wno-ignored-attributes
 					-Wno-unused-command-line-argument
 					-Wno-unknown-argument
 					-Wno-int-to-void-pointer-cast)
+
+#Make find boost happy
+set(CMAKE_CXX_COMPILER_ID "MSVC")
 set(MSVC_TOOLSET_VERSION 144)
