@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <memory>
+#include <type_traits>
 #include "variant.hpp"
 #include "flatbuffers_message_writer.h"
 #include "flatbuffers_message_reader.h"
@@ -49,17 +50,14 @@ private:
 };
 
 template <typename T>
-application_endpoint::pointer create_application_endpoint(boost::asio::io_context& ctx) = delete;
-
-template <>
-application_endpoint::pointer
-create_application_endpoint<application_endpoint::tcp_socket_t>(boost::asio::io_context& ctx) {
+typename std::enable_if<std::is_same<T, application_endpoint::tcp_socket_t>::type, application_endpoint::pointer>::value
+create_application_endpoint(boost::asio::io_context& ctx) {
     return application_endpoint::create_tcp_endpoint(ctx);
 }
 
-template <>
-application_endpoint::pointer
-create_application_endpoint<application_endpoint::websocket_t>(boost::asio::io_context& ctx) {
+template <typename T>
+typename std::enable_if<std::is_same<T, application_endpoint::websocket_t>::type, application_endpoint::pointer>::value
+create_application_endpoint(boost::asio::io_context& ctx) {
     return application_endpoint::create_websocket_endpoint(ctx);
 }
 
