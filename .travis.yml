@@ -46,8 +46,9 @@ matrix:
         - ninja-build
         - p7zip-full
         - make
+        - cmake-data
+        - cmake
     env: ANDROID=1
-    sudo: true
     language: cpp
     jdk: oraclejdk8
 
@@ -118,8 +119,8 @@ script:
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
-      cmake .. -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
-      make -j5
+      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      ninja -v
   fi
   set +e
 
