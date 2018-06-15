@@ -366,7 +366,7 @@ void AsebaNative_vecadd(AsebaVMState* vm) {
 
 const AsebaNativeFunctionDescription AsebaNativeDescription_vecadd = {
     "math.add",
-    "adds src1 and src2 to dest, element by element",
+    "adds src1 and src2, write to dest, element by element",
     {{-1, "dest"}, {-1, "src1"}, {-1, "src2"}, {0, 0}}};
 
 
