@@ -29,6 +29,8 @@ public:
         return m_id;
     }
 
+    void write_message(const Aseba::Message& msg);
+
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
 
 private:
@@ -49,7 +51,6 @@ private:
     void disconnect();
     void on_message(const Aseba::Message& msg);
     void on_description(Aseba::TargetDescription description);
-    void write_message(const Aseba::Message& msg);
     void request_node_description();
 
     node_id_t m_id;

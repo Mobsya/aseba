@@ -9,6 +9,7 @@
 #include "aseba_node.h"
 #include "log.h"
 #include "variant.hpp"
+#include "aseba_node_registery.h"
 
 namespace mobsya {
 
@@ -86,6 +87,11 @@ public:
         } else if(variant_ns::holds_alternative<boost::asio::ip::tcp::socket>(m_endpoint)) {
             mobsya::async_read_aseba_message(variant_ns::get<boost::asio::ip::tcp::socket>(m_endpoint), std::move(cb));
         }
+    }
+
+    void broadcast(const Aseba::Message& msg) {
+        auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
+        registery.broadcast(msg);
     }
 
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {

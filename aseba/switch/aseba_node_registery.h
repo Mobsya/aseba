@@ -10,13 +10,14 @@ namespace mobsya {
 
 class aseba_node_registery : public boost::asio::detail::service_base<aseba_node_registery> {
 public:
-    using node_id = uint32_t;
+    using node_id = uint16_t;
     aseba_node_registery(boost::asio::io_context& io_context);
 
     void add_node(std::shared_ptr<aseba_node> node);
     void remove_node(std::shared_ptr<aseba_node> node);
     void set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status);
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
+    void broadcast(const Aseba::Message& msg);
 
 private:
     void update_discovery();
@@ -26,11 +27,13 @@ private:
     using node_map = std::unordered_map<node_id, std::weak_ptr<aseba_node>>;
 
     node_map::const_iterator find(std::shared_ptr<aseba_node> node) const;
+    node_map::const_iterator find_from_native_id(aseba_node::node_id_t id) const;
     boost::uuids::uuid m_uid;
     node_map m_aseba_nodes;
     aware::announce_socket m_discovery_socket;
     aware::contact m_nodes_service_desc;
     mutable std::mutex m_discovery_mutex;
+    mutable std::mutex m_nodes_mutex;
 
 
     struct id_generator {
