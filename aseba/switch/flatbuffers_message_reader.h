@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <aseba/flatbuffers/thymio_generated.h>
+#include "log.h"
 
 namespace mobsya {
 
@@ -32,6 +33,10 @@ public:
         return *m_msg;
     }
 
+    fb::AnyMessage message_type() const {
+        return m_msg->message_type();
+    }
+
 private:
     std::vector<uint8_t> m_data;
     const fb::Message* m_msg;
@@ -58,6 +63,7 @@ class read_flatbuffers_message_op {
     struct state {
         AsyncReadStream& stream;
         char sizeBuffer[2];
+        uint8_t size = 0;
         std::vector<uint8_t> dataBuffer;
 
         explicit state(Handler const& handler, AsyncReadStream& stream) : stream(stream) {}
@@ -92,22 +98,23 @@ public:
     }
 
     void operator()(boost::system::error_code ec, std::size_t bytes_transferred) {
+        mLogError("{}", ec.message());
         auto& state = *m_p;
         if(bytes_transferred == 0)
             return;
-        if(state.size == 0) {
+        if(state.dataBuffer.size() == 0) {
             assert(bytes_transferred == 2);
             auto size = reinterpret_cast<uint16_t&>(state.sizeBuffer);
             state.dataBuffer.resize(size);
             return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer),
                                            boost::asio::transfer_exactly(size), std::move(*this));
         }
-        if(bytes_transferred == state.size) {
+        if(bytes_transferred == state.dataBuffer.size()) {
             auto& b = state.dataBuffer;
             m_p.invoke(ec, fb_message_ptr(std::move(b)));
             return;
         }
-        m_p.invoke(ec, {});
+        m_p.invoke(ec, std::move(fb_message_ptr{}));
     }
 };
 }  // namespace mobsya
