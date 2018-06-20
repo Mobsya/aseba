@@ -11,13 +11,12 @@ int main() {
     boost::asio::executor_work_guard<boost::asio::io_context::executor_type> work(make_work_guard(ctx));
 
     // Create a server for regular tcp connection
-    mobsya::application_server<mobsya::application_endpoint::tcp_socket_t> tcp_server(ctx, 0);
+    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
 
     // Create a server for websocket
-    mobsya::application_server<mobsya::application_endpoint::websocket_t> websocket_server(ctx, 0);
+    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
+    websocket_server.accept();
 
-
-    // mobsya::client_ws_server ws_server(ctx, 0);
 
     mobsya::usb_server usb_server(ctx, {{0x0617, 0x000a}});
 

@@ -11,7 +11,7 @@ class write_flatbuffer_message_op;
 
 using write_flatbuffer_message_op_cb_t = void(boost::system::error_code);
 
-template <class Message, class AsyncWriteStream, class CompletionToken>
+template <class AsyncWriteStream, class CompletionToken>
 BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, write_flatbuffer_message_op_cb_t)
 async_write_flatbuffer_message(AsyncWriteStream& stream, flatbuffers::DetachedBuffer&& buffer,
                                CompletionToken&& token) {
