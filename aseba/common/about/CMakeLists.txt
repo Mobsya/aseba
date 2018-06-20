@@ -18,8 +18,7 @@ if (Qt5Svg_FOUND)
 
 	qt5_wrap_cpp(qt_about_MOCS AboutDialog.h)
 	add_library(asebaqtabout AboutDialog.cpp ${qt_about_MOCS} ${resfiles})
-	qt5_use_modules(asebaqtabout Core Widgets Svg)
-	target_link_libraries(asebaqtabout dashel)
+	target_link_libraries(asebaqtabout dashel Qt5::Core Qt5::Widgets Qt5::Svg)
 
 	if (HAS_DYN_VERSION)
 		add_dependencies(asebaqtabout versionheader)

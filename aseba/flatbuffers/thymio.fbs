@@ -1,0 +1,99 @@
+// Generated from thymio.proto
+
+namespace mobsya.fb;
+
+enum NodeType : int {
+  Thymio2 = 0,
+  ThymioWireless = 1,
+}
+
+enum NodeStatus : int {
+  unknown   = 0,
+  connected = 1,
+  ready = 2,
+  busy = 3,
+  disconnected = 4,
+}
+
+enum ErrorType : int {
+  unknown_error = 0,
+  unknown_node = 1,
+  node_busy = 2,
+}
+
+table Node {
+  node_id:uint;
+  status:NodeStatus;
+  type:NodeType;
+  name:string;
+}
+
+table NodesChanged {
+  nodes:[Node];
+}
+
+table RequestListOfNodes {
+}
+
+table RequestNodeAsebaVMDescription {
+  node_id:uint;
+}
+
+table NodeAsebaVMDescription {
+  node_id:uint;
+  bytecode_size:uint;
+  data_size:uint;
+  stack_size:uint;
+  variables:[NamedVariable];
+  events:[LocalEvent];
+  functions:[NativeFunction];
+}
+
+
+table NamedVariable {
+  name:string;
+  size:uint;
+}
+
+table LocalEvent {
+  name:string;
+  description:string;
+}
+
+table NativeFunction {
+  name:string;
+  description:string;
+  parameters:[NativeFunctionParameter];
+}
+
+table NativeFunctionParameter {
+  name:string;
+  size:uint;
+}
+
+table LockNode {
+  node_id:uint;
+}
+
+table UnlockNode {
+  node_id:uint;
+}
+
+table NodeLocked {
+  node_id:uint;
+}
+
+table Error {
+  node_id:uint;
+  error:ErrorType;
+}
+
+
+union AnyMessage {RequestListOfNodes, RequestNodeAsebaVMDescription, LockNode, UnlockNode, NodesChanged, NodeAsebaVMDescription, Error, NodeLocked }
+
+table Message {
+  message:AnyMessage;
+}
+
+
+root_type Message;

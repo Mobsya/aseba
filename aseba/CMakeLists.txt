@@ -10,4 +10,7 @@ if(NOT ANDROID)
     # User programs
     add_subdirectory(switches)
     add_subdirectory(targets)
+
+    add_subdirectory(flatbuffers)
+    add_subdirectory(switch)
 endif()

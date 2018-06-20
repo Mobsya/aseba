@@ -2,6 +2,7 @@ cache:
   ccache: true
   directories:
   - "$HOME/Library/Caches/Homebrew"
+
 matrix:
   include:
   - os: linux
@@ -11,13 +12,10 @@ matrix:
         sources:
         - ubuntu-toolchain-r-test
         - sourceline: deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main
-        - sourceline: ppa:corentinjabot/cmake-backport
         - sourceline: ppa:beineri/opt-qt-5.10.1-trusty
         packages:
         - g++-6
         - clang-6.0
-        - cmake-data
-        - cmake
         - libudev-dev
         - qt510base
         - qt510declarative
@@ -43,27 +41,31 @@ matrix:
   - os: linux
     addons:
       apt:
-        sources:
-        - sourceline: ppa:corentinjabot/cmake-backport
         packages:
+        - build-essential
         - ninja-build
         - p7zip-full
+        - make
         - cmake-data
         - cmake
-    env:
-    - ANDROID=1
-    sudo: true
+    env: ANDROID=1
     language: cpp
     jdk: oraclejdk8
+
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
 - git submodule update --remote
+
 before_install:
 - |
   set -e
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     brew update
     brew bundle
+  else
+    # install cmake through pip - should give us cmake 3.11 - which we need for boost
+    pip install --user --upgrade pip
+    pip install --user --upgrade cmake
   fi
   if [[ "$ANDROID" ]]; then
     cd $HOME
@@ -92,6 +94,7 @@ script:
   set +e
   set -x
   cd ${TRAVIS_BUILD_DIR}
+  rm -rf build || true
   mkdir build && cd build
   export CC=${COMPILER}
   export CXX=${CXX_COMPILER}
@@ -101,14 +104,14 @@ script:
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
     #export PATH="(brew --prefix llvm)/bin:${PATH}"
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+    cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
     ninja -v
   fi
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
       ls /opt/qt510/
       /opt/qt510/bin/qt510-env.sh
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
-      cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+      cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
       ninja -v
   fi
   if [[ "$ANDROID" ]]; then
@@ -116,17 +119,17 @@ script:
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
-      cmake .. -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
-      make -j5
+      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      ninja -v
   fi
-  #cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF .. #-DCMAKE_CXX_CLANG_TIDY="clang-tidy\;-checks=-clang-diagnostic-error,clang-analyzer-*"
-  #CTEST_OUTPUT_ON_FAILURE=1 ctest
   set +e
+
 before_deploy:
 - git config --local user.name "Travis"
 - git config --local user.email "ci@mobsya.org"
 - git tag "nightly"
 - export TRAVIS_TAG=nightly
+
 deploy:
   provider: releases
   skip_cleanup: true

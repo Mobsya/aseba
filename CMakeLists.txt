@@ -14,6 +14,9 @@ include(FeatureSummary)
 
 # additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
+
+include(CMakeModules/boost.cmake)
+
 include(CMakeModules/ParseVersion.cmake)
 include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
@@ -35,6 +38,14 @@ endif()
 add_subdirectory(third_party/catch2)
 add_subdirectory(third_party/libusb)
 add_subdirectory(third_party/qtzeroconf)
+add_subdirectory(third_party/spdlog)
+add_subdirectory(third_party/expected)
+
+
+if (NOT ANDROID)
+	add_subdirectory(third_party/flatbuffers)
+endif()
+
 
 # testing and defines
 enable_testing()
@@ -57,6 +68,7 @@ endif ()
 # Zeroconf
 if (NOT ANDROID)
 	include(CMakeModules/zeroconf.cmake)
+	add_subdirectory(third_party/aware)
 endif()
 
 # Aseba itself
@@ -84,7 +96,7 @@ endif()
 
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/thymio-blockly-standalone/CMakeLists.txt)
-	add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
+	#add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
 	message("-- Found thymio-blockly-standalone, will bundle blockly")
 endif()
 

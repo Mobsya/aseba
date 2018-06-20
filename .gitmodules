@@ -1,6 +1,6 @@
 [submodule "enki"]
 	path = enki
-	url = https://github.com/enki-community/enki
+	url = https://github.com/Mobsya/enki
 [submodule "dashel"]
 	path = dashel
 	url = https://github.com/mobsya/dashel
@@ -13,3 +13,18 @@
 [submodule "android/qt-android-cmake"]
 	path = android/qt-android-cmake
 	url = https://github.com/Mobsya/qt-android-cmake.git
+[submodule "third_party/inicpp"]
+	path = third_party/inicpp
+	url = https://github.com/SemaiCZE/inicpp
+[submodule "third_party/spdlog/spdlog"]
+	path = third_party/spdlog/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "third_party/expected/expected"]
+	path = third_party/expected/expected
+	url = https://github.com/TartanLlama/expected
+[submodule "third_party/aware"]
+	path = third_party/aware
+	url = https://github.com/mobsya/aware
+[submodule "third_party/flatbuffers"]
+	path = third_party/flatbuffers
+	url = https://github.com/google/flatbuffers
