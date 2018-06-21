@@ -8,7 +8,7 @@ const std::string& aseba_node::status_to_string(aseba_node::status s) {
     static std::array<std::string, 4> strs = {"connected", "ready", "busy", "disconnected"};
     int i = int(s) - 1;
     if(i < 0 && i >= int(status::connected))
-        return {};
+        return strs[3];
     return strs[i];
 }
 
