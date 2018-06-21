@@ -1,0 +1,102 @@
+    <html>
+    <head>
+    </head>
+    <body>
+    <h1> Websocket test </h1>
+
+    <script src="flatbuffers.js"></script>
+    <script src="thymio_generated.js"></script>
+    <script type="text/javascript">
+    "use strict";
+    class Node {
+        constructor(id, status) {
+            this.id_ = id;
+            this.status_ = status;
+        }
+        get id() {
+            return this.id_
+        }
+        get status() {
+            return this.status_
+        }
+        get status_str() {
+            switch(this.status) {
+                case mobsya.fb.NodeStatus.connected: return "connected"
+                case mobsya.fb.NodeStatus.ready: return "ready"
+                case mobsya.fb.NodeStatus.busy: return "busy"
+                case mobsya.fb.NodeStatus.disconnected: return "disconnected"
+            }
+            return "unknow"
+        }
+    }
+
+    class MobsyaClient {
+
+        constructor(url) {
+            this.socket = new WebSocket(url)
+            this.socket.binaryType = 'arraybuffer';
+            this.socket.onopen = this.onopen.bind(this)
+            this.socket.onmessage = this.onmessage.bind(this)
+        }
+
+        onopen(event) {
+            console.log("connected")
+        }
+
+        on_nodes_changed(nodes) {
+            console.log("unimplemented")
+        }
+
+        onmessage (event) {
+            var data = new Uint8Array(event.data)
+            var buf  = new flatbuffers.ByteBuffer(data);
+
+            var message = mobsya.fb.Message.getRootAsMessage(buf, null)
+            switch(message.messageType()) {
+                case mobsya.fb.AnyMessage.NodesChanged:
+                    this.on_nodes_changed(this.nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
+                    break;
+            }
+        }
+
+        nodes_changed_as_node_list(msg) {
+            var nodes = []
+            for(var i = 0; i < msg.nodesLength(); i++) {
+                var n = msg.nodes(i);
+                nodes.push(new Node(n.nodeId(), n.status()))
+            }
+            return nodes
+        }
+    }
+
+    class TestClient extends MobsyaClient {
+        constructor(url) {
+            super(url);
+        }
+
+        on_nodes_changed(nodes) {
+            for (var node of nodes) {
+                console.log(`${node.id} : ${node.status_str}`)
+            }
+        }
+    }
+
+    var client = new TestClient("ws://localhost:8597");
+
+
+    /*var builder = new flatbuffers.Builder();
+    mobsya.fb.RequestListOfNodes.startRequestListOfNodes(builder)
+    var offset = mobsya.fb.RequestListOfNodes.endRequestListOfNodes(builder)
+
+    mobsya.fb.Message.startMessage(builder)
+    mobsya.fb.Message.addMessageType(builder, mobsya.fb.AnyMessage.RequestListOfNodes)
+    mobsya.fb.Message.addMessage(builder, offset)
+    var builtMsg = mobsya.fb.Message.endMessage(builder)
+
+    builder.finish(builtMsg);
+    socket.send(builder.asUint8Array())
+    */
+    </script>
+
+    </body>
+    </html>
