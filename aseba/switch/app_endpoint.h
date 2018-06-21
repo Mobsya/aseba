@@ -6,6 +6,8 @@
 #include "flatbuffers_message_writer.h"
 #include "flatbuffers_message_reader.h"
 #include <aseba/flatbuffers/thymio_generated.h>
+#include "aseba_node_registery.h"
+
 #include "log.h"
 
 namespace mobsya {
@@ -69,9 +71,11 @@ public:
         return m_socket.next_layer();
     }
 
+protected:
+    boost::asio::io_context& m_ctx;
+
 private:
     boost::beast::multi_buffer m_buffer;
-    boost::asio::io_context& m_ctx;
     websocket_t m_socket;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 };
@@ -109,14 +113,17 @@ public:
         return m_socket;
     }
 
-private:
+protected:
     boost::asio::io_context& m_ctx;
+
+private:
     tcp::socket m_socket;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 };
 
 template <typename Socket>
-class application_endpoint : public application_endpoint_base<application_endpoint<Socket>, Socket> {
+class application_endpoint : public application_endpoint_base<application_endpoint<Socket>, Socket>,
+                             public node_status_monitor {
 public:
     using base = application_endpoint_base<application_endpoint<Socket>, Socket>;
     application_endpoint(boost::asio::io_context& ctx) : base(ctx) {}
@@ -127,7 +134,15 @@ public:
 
     void on_initialized(boost::system::error_code ec = {}) {
         mLogError("on_initialized: {}", ec.message());
+
+        // start listening for incomming messages
         read_message();
+
+        // Subscribe to node change events
+        start_node_monitoring(registery());
+
+        // Immediately send a list of nodes
+        send_full_node_list();
     }
 
     void read_message() {
@@ -152,8 +167,18 @@ public:
         mLogInfo("Stopping app endpoint");
     }
 
+    void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id, aseba_node::status status) {
+        mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
+    }
 
 private:
+    void send_full_node_list() {
+        auto& r = registery();
+    }
+
+    aseba_node_registery& registery() {
+        return boost::asio::use_service<aseba_node_registery>(this->m_ctx);
+    }
 };
 
 
