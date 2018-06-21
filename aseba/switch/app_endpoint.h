@@ -165,6 +165,10 @@ public:
         mLogError("{} -> {} ", ec.message(), EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
+            case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription:
+                mLogError("{} -> ", msg.as<fb::RequestNodeAsebaVMDescription>()->node_id());
+                send_aseba_vm_description(msg.as<fb::RequestNodeAsebaVMDescription>()->node_id());
+                break;
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
     }
@@ -207,6 +211,15 @@ private:
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
+    }
+
+    void send_aseba_vm_description(aseba_node_registery::node_id id) {
+        auto node = registery().node_from_id(id);
+        if(!node) {
+            // error ?
+            return;
+        }
+        write_message(serialize_aseba_vm_description(*node, id));
     }
 
     aseba_node_registery& registery() {

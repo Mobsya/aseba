@@ -29,6 +29,11 @@ public:
         return m_id;
     }
 
+    Aseba::TargetDescription vm_description() const {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        return m_description;
+    }
+
     void write_message(const Aseba::Message& msg);
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
@@ -46,7 +51,7 @@ private:
     node_id_t m_id;
     std::atomic<status> m_status;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
-    std::mutex m_node_mutex;
+    mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;
     boost::asio::io_context& m_io_ctx;
 };

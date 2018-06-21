@@ -24,6 +24,8 @@ public:
     void broadcast(const Aseba::Message& msg);
 
     node_map nodes() const;
+    std::shared_ptr<aseba_node> node_from_id(node_id) const;
+
 
 private:
     void update_discovery();

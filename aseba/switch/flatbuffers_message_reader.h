@@ -37,6 +37,11 @@ public:
         return m_msg->message_type();
     }
 
+    template <typename T>
+    const T* as() const {
+        return m_msg->message_as<T>();
+    }
+
 private:
     std::vector<uint8_t> m_data;
     const fb::Message* m_msg;
