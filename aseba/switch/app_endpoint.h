@@ -5,7 +5,7 @@
 #include <type_traits>
 #include "flatbuffers_message_writer.h"
 #include "flatbuffers_message_reader.h"
-#include <aseba/flatbuffers/thymio_generated.h>
+#include "flatbuffers_messages.h"
 #include "aseba_node_registery.h"
 
 #include "log.h"
@@ -37,33 +37,33 @@ public:
 
 
         auto cb = boost::asio::bind_executor(
-            m_strand, std::move([this, that](boost::system::error_code ec, std::size_t bytes_transferred) mutable {
+            m_strand, [that](boost::system::error_code ec, std::size_t bytes_transferred) mutable {
                 if(ec) {
                     mLogError("read_message :{}", ec.message());
                     return;
                 }
-                std::vector<uint8_t> buf(boost::asio::buffers_begin(this->m_buffer.data()),
-                                         boost::asio::buffers_begin(this->m_buffer.data()) + bytes_transferred);
+                std::vector<uint8_t> buf(boost::asio::buffers_begin(that->m_buffer.data()),
+                                         boost::asio::buffers_begin(that->m_buffer.data()) + bytes_transferred);
                 fb_message_ptr msg(std::move(buf));
                 static_cast<Self&>(*that).handle_read(ec, std::move(msg));
-            }));
+            });
         m_socket.async_read(m_buffer, std::move(cb));
     }
 
     void write_message(flatbuffers::DetachedBuffer&& buffer) {
         auto that = this->shared_from_this();
-        boost::asio::const_buffer netbuf(buffer.data(), buffer.size());
-        auto cb = boost::asio::bind_executor(
-            m_strand, std::move([buffer = std::move(buffer), that](boost::system::error_code ec, std::size_t s) {
-                static_cast<Self*>(that)->handle_write(ec);
-            }));
-        m_socket.async_write(netbuf, std::move(cb));
+        auto ptr = std::make_shared<flatbuffers::DetachedBuffer>(std::move(buffer));
+
+        auto cb = boost::asio::bind_executor(m_strand, [ptr, that](boost::system::error_code ec, std::size_t s) {
+            static_cast<Self&>(*that).handle_write(ec);
+        });
+        m_socket.async_write(boost::asio::buffer(ptr->data(), ptr->size()), std::move(cb));
     }
     void start() {
+        m_socket.binary(true);
         auto that = this->shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, std::move([that](boost::system::error_code ec) mutable {
-                                                 static_cast<Self&>(*that).on_initialized(ec);
-                                             }));
+        auto cb = boost::asio::bind_executor(
+            m_strand, [that](boost::system::error_code ec) mutable { static_cast<Self&>(*that).on_initialized(ec); });
         m_socket.async_accept(std::move(cb));
     }
 
@@ -89,19 +89,17 @@ public:
         : m_ctx(ctx), m_socket(tcp::socket(ctx)), m_strand(ctx.get_executor()) {}
     void read_message() {
         auto that = this->shared_from_this();
-        auto cb =
-            boost::asio::bind_executor(m_strand, std::move([that](boost::system::error_code ec, fb_message_ptr msg) {
-                                           static_cast<Self*>(that)->handle_read(ec, std::move(msg));
-                                       }));
+        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, fb_message_ptr msg) {
+            static_cast<Self*>(that)->handle_read(ec, std::move(msg));
+        });
         mobsya::async_read_flatbuffers_message(m_socket, std::move(cb));
     }
 
     void write_message(flatbuffers::DetachedBuffer&& buffer) {
-        auto that = this->shared_from_this();
         auto cb = boost::asio::bind_executor(
-            m_strand, std::move([buffer = std::move(buffer), that](boost::system::error_code ec, std::size_t s) {
-                static_cast<Self*>(that)->handle_write(ec);
-            }));
+            m_strand, [that = this->shared_from_this()](boost::system::error_code ec, std::size_t s) {
+                static_cast<Self&>(*that).handle_write(ec);
+            });
         mobsya::async_write_flatbuffer_message(m_socket, std::move(buffer), std::move(cb));
     }
 
@@ -155,8 +153,16 @@ public:
 
 
     void handle_read(boost::system::error_code ec, fb_message_ptr&& msg) {
+        if(ec)
+            return;
+        read_message();  // queue the next read early
+
+
         mLogError("{} -> {} ", ec.message(), EnumNameAnyMessage(msg.message_type()));
-        read_message();
+        switch(msg.message_type()) {
+            case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
+            default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
+        }
     }
 
     void handle_write(boost::system::error_code ec) {
@@ -167,13 +173,32 @@ public:
         mLogInfo("Stopping app endpoint");
     }
 
-    void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id, aseba_node::status status) {
+    void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
         mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
+
+        flatbuffers::FlatBufferBuilder builder;
+        std::vector<flatbuffers::Offset<fb::Node>> nodes;
+        nodes.emplace_back(fb::CreateNodeDirect(builder, id, mobsya::fb::NodeStatus(status), fb::NodeType::Thymio2));
+        auto vector_offset = builder.CreateVector(nodes);
+        auto offset = CreateNodesChanged(builder, vector_offset);
+        write_message(wrap_fb(builder, offset));
     }
 
 private:
     void send_full_node_list() {
-        auto& r = registery();
+        flatbuffers::FlatBufferBuilder builder;
+        std::vector<flatbuffers::Offset<fb::Node>> nodes;
+        auto map = registery().nodes();
+        for(auto&& node : map) {
+            const auto ptr = node.second.lock();
+            if(!ptr)
+                continue;
+            nodes.emplace_back(fb::CreateNodeDirect(builder, node.first, mobsya::fb::NodeStatus(ptr->get_status()),
+                                                    fb::NodeType::Thymio2));
+        }
+        auto vector_offset = builder.CreateVector(nodes);
+        auto offset = CreateNodesChanged(builder, vector_offset);
+        write_message(wrap_fb(builder, offset));
     }
 
     aseba_node_registery& registery() {
