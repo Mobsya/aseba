@@ -126,6 +126,14 @@ auto aseba_node_registery::find_from_native_id(aseba_node::node_id_t id) const -
     return std::end(m_aseba_nodes);
 }
 
+std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(node_id id) const {
+    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    auto it = m_aseba_nodes.find(id);
+    if(it == std::end(m_aseba_nodes))
+        return {};
+    return it->second.lock();
+}
+
 
 void aseba_node_registery::broadcast(const Aseba::Message& msg) {
 

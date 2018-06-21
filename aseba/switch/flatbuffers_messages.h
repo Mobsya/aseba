@@ -1,7 +1,12 @@
 #pragma once
+#include <aseba/common/utils/utils.h>
 #include <aseba/flatbuffers/thymio_generated.h>
+#include <flatbuffers/flatbuffers.h>
+#include "aseba_node.h"
+#include "aseba_node_registery.h"
 
 namespace mobsya {
+
 
 template <typename MessageType>
 flatbuffers::DetachedBuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb,
@@ -19,8 +24,38 @@ flatbuffers::DetachedBuffer create_nodes_list_request() {
     return wrap_fb(fb, errOff);
 }
 
+flatbuffers::DetachedBuffer serialize_aseba_vm_description(const mobsya::aseba_node& n,
+                                                           aseba_node_registery::node_id id) {
 
-//
-//
+    Aseba::TargetDescription desc = n.vm_description();
+    flatbuffers::FlatBufferBuilder fb;
+    std::vector<flatbuffers::Offset<fb::NamedVariable>> variables_vector;
+    std::vector<flatbuffers::Offset<fb::LocalEvent>> events_vector;
+    std::vector<flatbuffers::Offset<fb::NativeFunction>> functions_vector;
 
+    for(auto&& v : desc.namedVariables) {
+        variables_vector.emplace_back(
+            fb::CreateNamedVariable(fb, fb.CreateString(Aseba::WStringToUTF8(v.name)), v.size));
+    }
+
+    for(auto&& v : desc.localEvents) {
+        events_vector.emplace_back(fb::CreateLocalEvent(fb, fb.CreateString(Aseba::WStringToUTF8(v.name)),
+                                                        fb.CreateString(Aseba::WStringToUTF8(v.description))));
+    }
+    for(auto&& v : desc.nativeFunctions) {
+        std::vector<flatbuffers::Offset<fb::NativeFunctionParameter>> params;
+        for(auto&& p : v.parameters) {
+            params.emplace_back(
+                fb::CreateNativeFunctionParameter(fb, fb.CreateString(Aseba::WStringToUTF8(p.name)), p.size));
+        }
+        functions_vector.emplace_back(fb::CreateNativeFunction(fb, fb.CreateString(Aseba::WStringToUTF8(v.name)),
+                                                               fb.CreateString(Aseba::WStringToUTF8(v.description)),
+                                                               fb.CreateVector(params)));
+    }
+
+    auto offset = CreateNodeAsebaVMDescription(fb, id, desc.bytecodeSize, desc.variablesSize, desc.stackSize,
+                                               fb.CreateVector(variables_vector), fb.CreateVector(events_vector),
+                                               fb.CreateVector(functions_vector));
+    return wrap_fb(fb, offset);
+}
 }  // namespace mobsya
