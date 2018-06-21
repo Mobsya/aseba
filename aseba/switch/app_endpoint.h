@@ -21,7 +21,7 @@ public:
     application_endpoint_base(boost::asio::io_context& ctx) = delete;
     void read_message() = delete;
     void start() = delete;
-    void write_message(flatbuffers::DetachedBuffer&& buffer) = delete;
+    void write_message(const flatbuffers::DetachedBuffer& buffer) = delete;
     tcp::socket& tcp_socket() = delete;
 };
 
@@ -46,18 +46,17 @@ public:
                                          boost::asio::buffers_begin(that->m_buffer.data()) + bytes_transferred);
                 fb_message_ptr msg(std::move(buf));
                 static_cast<Self&>(*that).handle_read(ec, std::move(msg));
+                that->m_buffer.consume(bytes_transferred);
             });
         m_socket.async_read(m_buffer, std::move(cb));
     }
 
-    void write_message(flatbuffers::DetachedBuffer&& buffer) {
+    void write_message(const flatbuffers::DetachedBuffer& buffer) {
         auto that = this->shared_from_this();
-        auto ptr = std::make_shared<flatbuffers::DetachedBuffer>(std::move(buffer));
-
-        auto cb = boost::asio::bind_executor(m_strand, [ptr, that](boost::system::error_code ec, std::size_t s) {
+        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::size_t s) {
             static_cast<Self&>(*that).handle_write(ec);
         });
-        m_socket.async_write(boost::asio::buffer(ptr->data(), ptr->size()), std::move(cb));
+        m_socket.async_write(boost::asio::buffer(buffer.data(), buffer.size()), std::move(cb));
     }
     void start() {
         m_socket.binary(true);
@@ -73,11 +72,11 @@ public:
 
 protected:
     boost::asio::io_context& m_ctx;
+    boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 
 private:
     boost::beast::multi_buffer m_buffer;
     websocket_t m_socket;
-    boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 };
 
 
@@ -95,12 +94,12 @@ public:
         mobsya::async_read_flatbuffers_message(m_socket, std::move(cb));
     }
 
-    void write_message(flatbuffers::DetachedBuffer&& buffer) {
+    void write_message(const flatbuffers::DetachedBuffer& buffer) {
         auto cb = boost::asio::bind_executor(
             m_strand, [that = this->shared_from_this()](boost::system::error_code ec, std::size_t s) {
                 static_cast<Self&>(*that).handle_write(ec);
             });
-        mobsya::async_write_flatbuffer_message(m_socket, std::move(buffer), std::move(cb));
+        mobsya::async_write_flatbuffer_message(m_socket, buffer, std::move(cb));
     }
 
     void start() {
@@ -113,10 +112,10 @@ public:
 
 protected:
     boost::asio::io_context& m_ctx;
+    boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 
 private:
     tcp::socket m_socket;
-    boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 };
 
 template <typename Socket>
@@ -144,11 +143,16 @@ public:
     }
 
     void read_message() {
+        // boost::asio::post(this->m_strand, boost::bind(&base::read_message, this));
         base::read_message();
     }
 
     void write_message(flatbuffers::DetachedBuffer&& buffer) {
-        base::write_message(std::move(buffer));
+        m_queue.push_back(std::move(buffer));
+        if(m_queue.size() > 1)
+            return;
+
+        base::write_message(m_queue.front());
     }
 
 
@@ -167,6 +171,10 @@ public:
 
     void handle_write(boost::system::error_code ec) {
         mLogError("{}", ec.message());
+        m_queue.erase(m_queue.begin());
+        if(!m_queue.empty()) {
+            base::write_message(m_queue.front());
+        }
     }
 
     ~application_endpoint() {
@@ -204,6 +212,8 @@ private:
     aseba_node_registery& registery() {
         return boost::asio::use_service<aseba_node_registery>(this->m_ctx);
     }
+
+    std::vector<flatbuffers::DetachedBuffer> m_queue;
 };
 
 
