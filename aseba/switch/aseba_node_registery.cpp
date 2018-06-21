@@ -18,7 +18,7 @@ aseba_node_registery::aseba_node_registery(boost::asio::io_context& io_context)
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
-    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
 
     auto it = find(node);
     if(it == std::end(m_aseba_nodes)) {
@@ -28,6 +28,8 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
             it = m_aseba_nodes.find(id);
         } while(it != std::end(m_aseba_nodes));
         it = m_aseba_nodes.insert({id, node}).first;
+        lock.unlock();
+        m_node_status_changed_signal(node, id, aseba_node::status::connected);
 
         mLogInfo("Adding node id: {} - Real id: {}", id, node->native_id());
     }
@@ -35,19 +37,34 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
 }
 
 void aseba_node_registery::remove_node(std::shared_ptr<aseba_node> node) {
-    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
 
     mLogInfo("Removing node");
     auto it = find(node);
     if(it != std::end(m_aseba_nodes)) {
+        node_id id = it->first;
         m_aseba_nodes.erase(it);
+        lock.unlock();
+        m_node_status_changed_signal(node, id, aseba_node::status::disconnected);
     }
     update_discovery();
 }
 
-void aseba_node_registery::set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status) {
+void aseba_node_registery::set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status status) {
     mLogInfo("Changing node status");
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
+    auto it = find(node);
+    if(it != std::end(m_aseba_nodes)) {
+        node_id id = it->first;
+        lock.unlock();
+        m_node_status_changed_signal(node, id, status);
+    }
     update_discovery();
+}
+
+aseba_node_registery::node_map aseba_node_registery::nodes() const {
+    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    return m_aseba_nodes;
 }
 
 void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
