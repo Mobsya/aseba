@@ -608,7 +608,10 @@ bool operator==(const SetBytecode& lhs, const SetBytecode& rhs);
 void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint16_t>& bytecode);
 #endif
 //! Call the SetBytecode multiple time in order to send all the bytecode
-void sendBytecode(std::vector<std::unique_ptr<Message>>& messagesVector, uint16_t dest,
+void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
+                  const std::vector<uint16_t>& bytecode);
+
+void sendBytecode(std::vector<std::shared_ptr<Message> >& messagesVector, uint16_t dest,
                   const std::vector<uint16_t>& bytecode);
 
 //! Reset a node

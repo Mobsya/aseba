@@ -1,6 +1,8 @@
 #include "aseba_node.h"
 #include "aseba_endpoint.h"
 #include "aseba_node_registery.h"
+#include <aseba/common/utils/utils.h>
+#include <aseba/compiler/compiler.h>
 
 namespace mobsya {
 
@@ -72,6 +74,27 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
     endpoint->write_messages(std::move(messages));
 }
 
+bool aseba_node::send_aseba_program(const std::string& program) {
+    Aseba::Compiler compiler;
+    {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        compiler.setTargetDescription(&m_description);
+    }
+
+    auto wprogram = Aseba::UTF8ToWString(program);
+    std::wistringstream is(wprogram);
+    Aseba::Error error;
+    Aseba::BytecodeVector bytecode;
+    unsigned allocatedVariablesCount;
+    bool result = compiler.compile(is, bytecode, allocatedVariablesCount, error);
+    if(!result) {
+        mLogError("Compilation failed on node {} : {}", m_id, Aseba::WStringToUTF8(error.message));
+        return false;
+    }
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
+    write_messages(std::move(messages));
+}
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
     {
