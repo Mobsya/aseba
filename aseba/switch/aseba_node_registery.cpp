@@ -135,19 +135,19 @@ std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(node_id id) const
 }
 
 
-void aseba_node_registery::broadcast(const Aseba::Message& msg) {
+void aseba_node_registery::broadcast(std::shared_ptr<Aseba::Message> msg) {
 
     // ToDo : Maybe this lock is too broad
     std::unique_lock<std::mutex> _(m_nodes_mutex);
 
 
-    auto native_id = msg.source;
-    auto mapped = msg.clone();
+    auto native_id = msg->source;
+    std::shared_ptr<Aseba::Message> mapped = std::shared_ptr<Aseba::Message>(msg->clone());
     auto it = find_from_native_id(native_id);
     if(it == std::end(m_aseba_nodes))
         return;
     mapped->source = it->first;
-    auto cmd_msg = dynamic_cast<Aseba::CmdMessage*>(mapped);
+    auto cmd_msg = std::dynamic_pointer_cast<Aseba::CmdMessage>(mapped);
 
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
         if(it->second.expired())
@@ -163,12 +163,12 @@ void aseba_node_registery::broadcast(const Aseba::Message& msg) {
             if(it->first != cmd_msg->dest)
                 continue;
             cmd_msg->dest = node->native_id();
-            node->write_message(*cmd_msg);
+            node->write_message(cmd_msg);
             break;
         } else {
             // Otherwise, send to every node
             auto node = it->second.lock();
-            node->write_message(*mapped);
+            node->write_message(mapped);
         }
     }
 }

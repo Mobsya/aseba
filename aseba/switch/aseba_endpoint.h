@@ -56,23 +56,25 @@ public:
         auto that = shared_from_this();
         auto cb = boost::asio::bind_executor(m_strand, std::move([timer, that](const boost::system::error_code& ec) {
                                                  mLogInfo("Requesting list nodes( ec : {}", ec.message());
-                                                 that->write_aseba_message(Aseba::ListNodes());
+                                                 that->write_message(std::make_unique<Aseba::ListNodes>());
                                              }));
         mLogInfo("Waiting before requesting list node");
         timer->async_wait(std::move(cb));
     }
 
-
-    void write_aseba_message(const Aseba::Message& message) {
-        auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(
-            m_strand, std::move([that](boost::system::error_code ec) { that->handle_write(ec); }));
-        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
-            mobsya::async_write_aseba_message(variant_ns::get<usb_device>(m_endpoint), message, std::move(cb));
-        } else if(variant_ns::holds_alternative<boost::asio::ip::tcp::socket>(m_endpoint)) {
-            mobsya::async_write_aseba_message(variant_ns::get<boost::asio::ip::tcp::socket>(m_endpoint), message,
-                                              std::move(cb));
+    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages) {
+        std::unique_lock<std::mutex> _(m_msg_queue_lock);
+        for(auto&& m : messages) {
+            m_msg_queue.push_back(std::move(m));
         }
+        if(m_msg_queue.size() > messages.size() || messages.empty())
+            ;
+        return;
+        do_write_message(*m_msg_queue.front());
+    }
+
+    void write_message(std::shared_ptr<Aseba::Message> message) {
+        write_messages({std::move(message)});
     }
 
     void read_aseba_message() {
@@ -89,7 +91,7 @@ public:
         }
     }
 
-    void broadcast(const Aseba::Message& msg) {
+    void broadcast(std::shared_ptr<Aseba::Message> msg) {
         auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
         registery.broadcast(msg);
     }
@@ -115,9 +117,6 @@ public:
             node->on_message(*msg);
         }
         read_aseba_message();
-    }
-    void handle_write(boost::system::error_code ec) {
-        mLogInfo("Message sent : {}", ec.message());
     }
 
 private:
@@ -147,13 +146,34 @@ private:
             }));
 
         mLogInfo("Asking for description of node {}", node);
-        write_aseba_message(Aseba::GetNodeDescription(node));
+        write_message(std::make_unique<Aseba::GetNodeDescription>(node));
 
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             mobsya::async_read_aseba_description_message(variant_ns::get<usb_device>(m_endpoint), node, std::move(cb));
         } else if(variant_ns::holds_alternative<boost::asio::ip::tcp::socket>(m_endpoint)) {
             mobsya::async_read_aseba_description_message(variant_ns::get<boost::asio::ip::tcp::socket>(m_endpoint),
                                                          node, std::move(cb));
+        }
+    }
+
+    void do_write_message(const Aseba::Message& message) {
+        auto that = shared_from_this();
+        auto cb = boost::asio::bind_executor(
+            m_strand, std::move([that](boost::system::error_code ec) { that->handle_write(ec); }));
+        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
+            mobsya::async_write_aseba_message(variant_ns::get<usb_device>(m_endpoint), message, std::move(cb));
+        } else if(variant_ns::holds_alternative<boost::asio::ip::tcp::socket>(m_endpoint)) {
+            mobsya::async_write_aseba_message(variant_ns::get<boost::asio::ip::tcp::socket>(m_endpoint), message,
+                                              std::move(cb));
+        }
+    }
+
+    void handle_write(boost::system::error_code ec) {
+        mLogInfo("Message sent : {}", ec.message());
+        std::unique_lock<std::mutex> _(m_msg_queue_lock);
+        m_msg_queue.erase(m_msg_queue.begin());
+        if(!m_msg_queue.empty()) {
+            do_write_message(*m_msg_queue.front());
         }
     }
 
@@ -165,6 +185,8 @@ private:
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     std::unordered_map<aseba_node::node_id_t, std::shared_ptr<aseba_node>> m_nodes;
     boost::asio::io_service& m_io_context;
+    std::mutex m_msg_queue_lock;
+    std::vector<std::shared_ptr<Aseba::Message>> m_msg_queue;
 };
 
 }  // namespace mobsya
