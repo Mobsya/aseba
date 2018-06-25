@@ -15,6 +15,8 @@ public:
     enum class status { connected = 1, ready = 2, busy = 3, disconnected = 4 };
     using node_id_t = uint16_t;
 
+    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+
     ~aseba_node();
 
     static std::shared_ptr<aseba_node> create(boost::asio::io_context& ctx, node_id_t id,
@@ -34,9 +36,8 @@ public:
         return m_description;
     }
 
-    void write_message(const Aseba::Message& msg);
-
-    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message);
+    void write_message(std::shared_ptr<Aseba::Message> message);
 
 private:
     friend class aseba_endpoint;
