@@ -39,6 +39,8 @@ public:
     void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message);
     void write_message(std::shared_ptr<Aseba::Message> message);
 
+    bool send_aseba_program(const std::string& program);
+
 private:
     friend class aseba_endpoint;
     void set_status(status);

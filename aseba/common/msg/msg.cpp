@@ -951,7 +951,7 @@ void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint1
 }
 #endif
 
-void sendBytecode(std::vector<std::unique_ptr<Message>>& messagesVector, uint16_t dest,
+void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
@@ -970,6 +970,31 @@ void sendBytecode(std::vector<std::unique_ptr<Message>>& messagesVector, uint16_
 
     {
         auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
+        setBytecodeMessage->bytecode.resize(bytecodeCount);
+        copy(bytecode.begin() + bytecodeStart, bytecode.end(), setBytecodeMessage->bytecode.begin());
+        messagesVector.push_back(move(setBytecodeMessage));
+    }
+}
+
+void sendBytecode(std::vector<std::shared_ptr<Message> >& messagesVector, uint16_t dest,
+                  const std::vector<uint16_t>& bytecode) {
+    const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
+    unsigned bytecodeStart = 0;
+    unsigned bytecodeCount = bytecode.size();
+
+    while(bytecodeCount > bytecodePayloadSize) {
+        auto setBytecodeMessage = make_shared<SetBytecode>(dest, bytecodeStart);
+        setBytecodeMessage->bytecode.resize(bytecodePayloadSize);
+        copy(bytecode.begin() + bytecodeStart, bytecode.begin() + bytecodeStart + bytecodePayloadSize,
+             setBytecodeMessage->bytecode.begin());
+        messagesVector.push_back(move(setBytecodeMessage));
+
+        bytecodeStart += bytecodePayloadSize;
+        bytecodeCount -= bytecodePayloadSize;
+    }
+
+    {
+        auto setBytecodeMessage = make_shared<SetBytecode>(dest, bytecodeStart);
         setBytecodeMessage->bytecode.resize(bytecodeCount);
         copy(bytecode.begin() + bytecodeStart, bytecode.end(), setBytecodeMessage->bytecode.begin());
         messagesVector.push_back(move(setBytecodeMessage));
