@@ -20,8 +20,20 @@ flatbuffers::DetachedBuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb,
 
 flatbuffers::DetachedBuffer create_nodes_list_request() {
     flatbuffers::FlatBufferBuilder fb;
-    auto errOff = mobsya::fb::CreateRequestListOfNodes(fb);
-    return wrap_fb(fb, errOff);
+    auto offset = mobsya::fb::CreateRequestListOfNodes(fb);
+    return wrap_fb(fb, offset);
+}
+
+flatbuffers::DetachedBuffer create_error_response(uint32_t request_id, fb::ErrorType error) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto offset = mobsya::fb::CreateError(fb, request_id, error);
+    return wrap_fb(fb, offset);
+}
+
+flatbuffers::DetachedBuffer create_lock_response(uint32_t request_id, aseba_node_registery::node_id id) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto offset = mobsya::fb::CreateNodeLocked(fb, request_id, id);
+    return wrap_fb(fb, offset);
 }
 
 flatbuffers::DetachedBuffer serialize_aseba_vm_description(const mobsya::aseba_node& n,

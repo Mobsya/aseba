@@ -31,6 +31,44 @@
     Node.Status = mobsya.fb.NodeStatus;
 
 
+    class Request  {
+        constructor(request_id, node_id) {
+            this._request_id = request_id
+            this._node_id = node_id
+            this._onerror = undefined
+            this._then    = undefined
+        }
+
+        get node_id() {
+            return this._node_id
+        }
+
+        set onerror(func) {
+            this._onerror = func
+        }
+
+        set then(func) {
+            this._then = func
+        }
+
+        _trigger_error(err) {
+            this._onerror(err)
+        }
+    }
+    Request.ErrorType = mobsya.fb.ErrorType;
+
+    class LockNodeRequest extends Request {
+        constructor(request_id, node_id) {
+            super(request_id, node_id)
+        }
+
+        _trigger_then() {
+            console.log(this)
+            this._then()
+        }
+    }
+
+
     class AsebaVMDescription {
         constructor() {
             this.bytecode_size = this.data_size = this.stack_size = 0;
@@ -47,6 +85,7 @@
             this.socket.binaryType = 'arraybuffer';
             this.socket.onopen = this.onopen.bind(this)
             this.socket.onmessage = this.onmessage.bind(this)
+            this.requests = new Map();
         }
 
         onopen(event) {
@@ -58,51 +97,95 @@
         }
 
         onmessage (event) {
-            var data = new Uint8Array(event.data)
-            var buf  = new flatbuffers.ByteBuffer(data);
+            let data = new Uint8Array(event.data)
+            let buf  = new flatbuffers.ByteBuffer(data);
 
-            var message = mobsya.fb.Message.getRootAsMessage(buf, null)
+            let message = mobsya.fb.Message.getRootAsMessage(buf, null)
             switch(message.messageType()) {
-                case mobsya.fb.AnyMessage.NodesChanged:
+                case mobsya.fb.AnyMessage.NodesChanged: {
                     this.on_nodes_changed(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
                     break;
-                case mobsya.fb.AnyMessage.NodeAsebaVMDescription:
-                    var msg = message.message(new mobsya.fb.NodeAsebaVMDescription())
-                    var id = msg.nodeId()
+                }
+                case mobsya.fb.AnyMessage.NodeAsebaVMDescription: {
+                    let msg = message.message(new mobsya.fb.NodeAsebaVMDescription())
+                    const id = msg.nodeId()
                     this.on_aseba_vm_description(id, this._unserialize_aseba_vm_description(msg))
                     break;
+                }
+                case mobsya.fb.AnyMessage.NodeLocked: {
+                    let msg = message.message(new mobsya.fb.NodeLocked())
+                    let req = this._get_request(msg.requestId())
+                    if(req) {
+                        req._trigger_then()
+                    }
+                    break;
+                }
+                case mobsya.fb.AnyMessage.Error: {
+                    let msg = message.message(new mobsya.fb.Error())
+                    let req = this._get_request(msg.requestId())
+                    if(req) {
+                        req._trigger_error(msg.error())
+                    }
+                    break
+                }
             }
         }
 
+        /* request the description of the aseba vm for the node with the given id */
+        request_aseba_vm_description(id) {
+            let builder = new flatbuffers.Builder();
+            mobsya.fb.RequestNodeAsebaVMDescription.startRequestNodeAsebaVMDescription(builder)
+            mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, id)
+            const offset = mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription(builder)
+            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription
+            )
+        }
+
+        /* request the description of the aseba vm for the node with the given id */
+        lock_node(id) {
+            let builder = new flatbuffers.Builder();
+            let req_id  = this._gen_request_id()
+
+            mobsya.fb.LockNode.startLockNode(builder)
+            mobsya.fb.LockNode.addRequestId(builder, req_id)
+            mobsya.fb.LockNode.addNodeId(builder, id)
+            let offset = mobsya.fb.LockNode.endLockNode(builder)
+            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.LockNode)
+
+            let req = new LockNodeRequest(req_id, id)
+            this.requests.set(req_id, req)
+            return req
+        }
+
         _nodes_changed_as_node_list(msg) {
-            var nodes = []
-            for(var i = 0; i < msg.nodesLength(); i++) {
-                var n = msg.nodes(i);
+            let nodes = []
+            for(let i = 0; i < msg.nodesLength(); i++) {
+                const n = msg.nodes(i);
                 nodes.push(new Node(n.nodeId(), n.status()))
             }
             return nodes
         }
         _unserialize_aseba_vm_description(msg) {
-            var desc = new AsebaVMDescription()
+            let desc = new AsebaVMDescription()
             desc.bytecode_size = msg.bytecodeSize()
             desc.data_size  = msg.dataSize()
             desc.stack_size = msg.stackSize()
 
-            for(var i = 0; i < msg.variablesLength(); i++) {
-                var v = msg.variables(i);
+            for(let i = 0; i < msg.variablesLength(); i++) {
+                const v = msg.variables(i);
                 desc.variables.push({"name" : v.name(), "size" : v.size()})
             }
 
-            for(var i = 0; i < msg.eventsLength(); i++) {
-                var v = msg.events(i);
+            for(let i = 0; i < msg.eventsLength(); i++) {
+                const v = msg.events(i);
                 desc.events.push({"name" : v.name(), "description" : v.description()})
             }
 
-            for(var i = 0; i < msg.functionsLength(); i++) {
-                var v = msg.functions(i);
-                var params = []
-                for(var j = 0; j < v.parametersLength(); j++) {
-                    var p = v.parameters(i);
+            for(let i = 0; i < msg.functionsLength(); i++) {
+                const v = msg.functions(i);
+                let params = []
+                for(let j = 0; j < v.parametersLength(); j++) {
+                    const p = v.parameters(i);
                     params.push({"name" : v.name(), "size" : p.size()})
                 }
                 desc.functions.push({"name" : v.name(), "description" : v.description(), "params": params})
@@ -110,22 +193,31 @@
             return desc
         }
 
-        request_description(id) {
-            var builder = new flatbuffers.Builder();
-            mobsya.fb.RequestNodeAsebaVMDescription.startRequestNodeAsebaVMDescription(builder)
-            mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, id)
-            var offset = mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription(builder)
-            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription
-            )
-        }
-
         _wrap_message_and_send(builder, offset, type) {
             mobsya.fb.Message.startMessage(builder)
             mobsya.fb.Message.addMessageType(builder, type)
             mobsya.fb.Message.addMessage(builder, offset)
-            var builtMsg = mobsya.fb.Message.endMessage(builder)
+            const builtMsg = mobsya.fb.Message.endMessage(builder)
             builder.finish(builtMsg);
             this.socket.send(builder.asUint8Array())
+        }
+
+        _gen_request_id(min, max) {
+            let n = 0
+            do {
+                n = Math.floor(Math.random() * (0xffffffff - 2)) + 1
+            }while(this.requests.has(n))
+            return n
+        }
+        _get_request(id) {
+            const req = this.requests.get(id)
+            if(req != undefined)
+                this.requests.delete(id)
+             console.log(id, req)
+             if(req == undefined) {
+                console.error(`unknown request ${req_id}`)
+            }
+            return req
         }
     }
 
@@ -136,35 +228,35 @@
 
         on_nodes_changed(nodes) {
             console.log(nodes)
-            for (var node of nodes) {
+            for (let node of nodes) {
                 console.log(`${node.id} : ${node.status_str}`)
                 if(node.status == Node.Status.ready) {
                     console.log(`Requesting ${node.id} description`)
-                    this.request_description(node.id)
+                    this.request_aseba_vm_description(node.id)
+                    console.log(`Locking ${node.id}`)
+                    let req = this.lock_node(node.id)
+                    req.then = function() {
+                        console.log("Node locked")
+                    }
+                    req.onerror = function(err) {
+                        switch(err) {
+                            case Request.ErrorType.node_busy:
+                                console.log("Node Busy !")
+                                break
+                            default:
+                                console.log("unknown error")
+                        }
+                    }
                 }
             }
         }
 
         on_aseba_vm_description(id, desc) {
-            console.log(id,  desc)
+            console.log(id, desc)
         }
     }
 
-    var client = new TestClient("ws://localhost:8597");
-
-
-    /*var builder = new flatbuffers.Builder();
-    mobsya.fb.RequestListOfNodes.startRequestListOfNodes(builder)
-    var offset = mobsya.fb.RequestListOfNodes.endRequestListOfNodes(builder)
-
-    mobsya.fb.Message.startMessage(builder)
-    mobsya.fb.Message.addMessageType(builder, mobsya.fb.AnyMessage.RequestListOfNodes)
-    mobsya.fb.Message.addMessage(builder, offset)
-    var builtMsg = mobsya.fb.Message.endMessage(builder)
-
-    builder.finish(builtMsg);
-    socket.send(builder.asUint8Array())
-    */
+    let client = new TestClient("ws://localhost:8597");
     </script>
 
     </body>
