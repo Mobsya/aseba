@@ -63,6 +63,9 @@ public:
     virtual ~node_status_monitor() {
         m_connection.disconnect();
     }
+    void disconnect() {
+        m_connection.disconnect();
+    }
     virtual void node_changed(std::shared_ptr<aseba_node>, aseba_node_registery::node_id, aseba_node::status) = 0;
 
 protected:

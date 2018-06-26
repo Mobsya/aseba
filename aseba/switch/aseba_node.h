@@ -41,6 +41,9 @@ public:
 
     bool send_aseba_program(const std::string& program);
 
+    bool lock(void* app);
+    bool unlock(void* app);
+
 private:
     friend class aseba_endpoint;
     void set_status(status);
@@ -49,10 +52,10 @@ private:
     void disconnect();
     void on_message(const Aseba::Message& msg);
     void on_description(Aseba::TargetDescription description);
-    void request_node_description();
 
     node_id_t m_id;
     std::atomic<status> m_status;
+    std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
     mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;

@@ -16,7 +16,11 @@ const std::string& aseba_node::status_to_string(aseba_node::status s) {
 
 
 aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint)
-    : m_id(id), m_status(status::disconnected), m_endpoint(std::move(endpoint)), m_io_ctx(ctx) {}
+    : m_id(id)
+    , m_status(status::disconnected)
+    , m_connected_app(nullptr)
+    , m_endpoint(std::move(endpoint))
+    , m_io_ctx(ctx) {}
 
 std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id,
                                                std::weak_ptr<mobsya::aseba_endpoint> endpoint) {
@@ -64,6 +68,31 @@ void aseba_node::set_status(status s) {
     }
 }
 
+bool aseba_node::lock(void* app) {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    if(m_connected_app == app) {
+        return true;
+    }
+    if(m_connected_app != nullptr || m_status != status::ready) {
+        return false;
+    }
+    m_connected_app = app;
+    mLogDebug("Locking node");
+    set_status(status::busy);
+    return true;
+}
+
+bool aseba_node::unlock(void* app) {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    if(m_connected_app != app) {
+        return false;
+    }
+    m_connected_app = nullptr;
+    mLogDebug("Unlocking node");
+    set_status(status::ready);
+    return true;
+}
+
 void aseba_node::write_message(std::shared_ptr<Aseba::Message> message) {
     write_messages({{std::move(message)}});
 }
@@ -103,7 +132,5 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
     }
     set_status(status::ready);
 }
-
-void aseba_node::request_node_description() {}
 
 }  // namespace mobsya

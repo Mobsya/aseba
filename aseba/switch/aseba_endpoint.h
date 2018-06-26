@@ -67,9 +67,8 @@ public:
         for(auto&& m : messages) {
             m_msg_queue.push_back(std::move(m));
         }
-        if(m_msg_queue.size() > messages.size() || messages.empty())
-            ;
-        return;
+        if(m_msg_queue.size() > messages.size())
+            return;
         do_write_message(*m_msg_queue.front());
     }
 

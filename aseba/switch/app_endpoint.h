@@ -169,6 +169,17 @@ public:
                 mLogError("{} -> ", msg.as<fb::RequestNodeAsebaVMDescription>()->node_id());
                 send_aseba_vm_description(msg.as<fb::RequestNodeAsebaVMDescription>()->node_id());
                 break;
+            case mobsya::fb::AnyMessage::LockNode: {
+                auto lock_msg = msg.as<fb::LockNode>();
+                this->lock_node(lock_msg->node_id(), lock_msg->request_id());
+                break;
+            }
+            case mobsya::fb::AnyMessage::UnlockNode: {
+                break;
+                auto lock_msg = msg.as<fb::UnlockNode>();
+                this->lock_node(lock_msg->node_id(), lock_msg->request_id());
+                break;
+            }
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
     }
@@ -183,6 +194,17 @@ public:
 
     ~application_endpoint() {
         mLogInfo("Stopping app endpoint");
+
+        /* Disconnecting the node monotoring status before unlocking the nodes,
+         * otherwise we would receive node status event during destroying the endpoint, leading to a crash */
+        disconnect();
+
+        for(auto& p : m_locked_nodes) {
+            auto ptr = p.second.lock();
+            if(ptr) {
+                ptr->unlock(this);
+            }
+        }
     }
 
     void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
@@ -201,7 +223,7 @@ private:
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
         auto map = registery().nodes();
-        for(auto&& node : map) {
+        for(auto& node : map) {
             const auto ptr = node.second.lock();
             if(!ptr)
                 continue;
@@ -222,11 +244,45 @@ private:
         write_message(serialize_aseba_vm_description(*node, id));
     }
 
+    void lock_node(aseba_node_registery::node_id id, uint32_t request_id) {
+        auto node = registery().node_from_id(id);
+        if(!node) {
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto res = node->lock(this);
+        if(!res) {
+            write_message(create_error_response(request_id, fb::ErrorType::node_busy));
+        } else {
+            write_message(create_lock_response(request_id, id));
+            m_locked_nodes.insert(std::pair{id, std::weak_ptr<aseba_node>{node}});
+        }
+    }
+
+    void unlock_node(aseba_node_registery::node_id id, uint32_t request_id) {
+
+        auto it = m_locked_nodes.find(id);
+        std::shared_ptr<aseba_node> node;
+        if(it != std::end(m_locked_nodes)) {
+            node = it->second->lock();
+            m_locked_nodes.erase(it);
+        }
+
+        if(!node) {
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        if(!node->unlock(this)) {
+            write_message(create_error_response(request_id, fb::ErrorType::node_busy));
+        }
+    }
+
     aseba_node_registery& registery() {
         return boost::asio::use_service<aseba_node_registery>(this->m_ctx);
     }
 
     std::vector<flatbuffers::DetachedBuffer> m_queue;
+    std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>> m_locked_nodes;
 };
 
 

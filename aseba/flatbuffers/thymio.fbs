@@ -72,19 +72,22 @@ table NativeFunctionParameter {
 }
 
 table LockNode {
+  request_id:uint;
   node_id:uint;
 }
 
 table UnlockNode {
+  request_id:uint;
   node_id:uint;
 }
 
 table NodeLocked {
+  request_id:uint;
   node_id:uint;
 }
 
 table Error {
-  node_id:uint;
+  request_id:uint;
   error:ErrorType;
 }
 
