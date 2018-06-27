@@ -83,16 +83,44 @@ table UnlockNode {
   node_id:uint;
 }
 
+table RequestAsebaCodeLoad {
+    request_id:uint;
+    node_id:uint;
+    program:string;
+}
+
+table RequestAsebaCodeRun {
+    request_id:uint;
+    node_id:uint;
+}
+
+
 table Error {
   request_id:uint;
   error:ErrorType;
+}
+
+table CompilationError {
+  request_id:uint;
 }
 
 table RequestCompleted {
   request_id:uint;
 }
 
-union AnyMessage {RequestListOfNodes, RequestNodeAsebaVMDescription, LockNode, UnlockNode, NodesChanged, NodeAsebaVMDescription, Error, RequestCompleted }
+union AnyMessage {
+    RequestListOfNodes,
+    RequestNodeAsebaVMDescription,
+    LockNode,
+    UnlockNode,
+    RequestAsebaCodeLoad,
+    RequestAsebaCodeRun,
+    NodesChanged,
+    NodeAsebaVMDescription,
+    RequestCompleted,
+    Error,
+    CompilationError
+}
 
 table Message {
   message:AnyMessage;

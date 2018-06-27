@@ -104,11 +104,12 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
 }
 
 bool aseba_node::send_aseba_program(const std::string& program) {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+
     Aseba::Compiler compiler;
-    {
-        std::unique_lock<std::mutex> _(m_node_mutex);
-        compiler.setTargetDescription(&m_description);
-    }
+    Aseba::CommonDefinitions defs;
+    compiler.setTargetDescription(&m_description);
+    compiler.setCommonDefinitions(&defs);
 
     auto wprogram = Aseba::UTF8ToWString(program);
     std::wistringstream is(wprogram);
@@ -120,10 +121,17 @@ bool aseba_node::send_aseba_program(const std::string& program) {
         mLogError("Compilation failed on node {} : {}", m_id, Aseba::WStringToUTF8(error.message));
         return false;
     }
+
+    m_node_mutex.unlock();
+
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
     write_messages(std::move(messages));
     return true;
+}
+
+void aseba_node::run_aseba_program() {
+    write_message(std::make_shared<Aseba::Run>(native_id()));
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
