@@ -31,7 +31,7 @@ class application_endpoint_base<Self, websocket_t>
     : public std::enable_shared_from_this<application_endpoint_base<Self, websocket_t>> {
 public:
     application_endpoint_base(boost::asio::io_context& ctx)
-        : m_ctx(ctx), m_socket(tcp::socket(ctx)), m_strand(ctx.get_executor()) {}
+        : m_ctx(ctx), m_strand(ctx.get_executor()), m_socket(tcp::socket(ctx)) {}
     void read_message() {
         auto that = this->shared_from_this();
 
@@ -255,7 +255,7 @@ private:
             write_message(create_error_response(request_id, fb::ErrorType::node_busy));
         } else {
             write_message(create_lock_response(request_id, id));
-            m_locked_nodes.insert(std::pair{id, std::weak_ptr<aseba_node>{node}});
+            m_locked_nodes.insert(std::pair<aseba_node_registery::node_id, std::weak_ptr<aseba_node>>{id, node});
         }
     }
 

@@ -432,7 +432,7 @@ void usb_device::async_transfer_read_some(const BufferSequence& buffers, Complet
         }
         boost::system::error_code ec;
         if(transfer->status != LIBUSB_TRANSFER_COMPLETED) {
-            auto ec = usb::make_error_code_from_transfer(transfer->status);
+            ec = usb::make_error_code_from_transfer(transfer->status);
         }
 
         libusb_free_transfer(transfer);
@@ -537,7 +537,7 @@ void usb_device::async_transfer_write_some(const BufferSequence& buffers, Comple
         }
         boost::system::error_code ec;
         if(transfer->status != LIBUSB_TRANSFER_COMPLETED) {
-            auto ec = usb::make_error_code_from_transfer(transfer->status);
+            ec = usb::make_error_code_from_transfer(transfer->status);
         }
 
         libusb_free_transfer(transfer);

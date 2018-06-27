@@ -54,10 +54,10 @@ public:
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(boost::posix_time::milliseconds(200));
         auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, std::move([timer, that](const boost::system::error_code& ec) {
-                                                 mLogInfo("Requesting list nodes( ec : {}", ec.message());
-                                                 that->write_message(std::make_unique<Aseba::ListNodes>());
-                                             }));
+        auto cb = boost::asio::bind_executor(m_strand, [timer, that](const boost::system::error_code& ec) {
+            mLogInfo("Requesting list nodes( ec : {}", ec.message());
+            that->write_message(std::make_unique<Aseba::ListNodes>());
+        });
         mLogInfo("Waiting before requesting list node");
         timer->async_wait(std::move(cb));
     }
@@ -79,9 +79,8 @@ public:
     void read_aseba_message() {
         auto that = shared_from_this();
         auto cb = boost::asio::bind_executor(
-            m_strand, std::move([that](boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
-                that->handle_read(ec, msg);
-            }));
+            m_strand,
+            [that](boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) { that->handle_read(ec, msg); });
 
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             mobsya::async_read_aseba_message(variant_ns::get<usb_device>(m_endpoint), std::move(cb));
@@ -135,14 +134,14 @@ private:
     void read_aseba_node_description(uint16_t node) {
         auto that = shared_from_this();
         auto cb = boost::asio::bind_executor(
-            m_strand, std::move([that](boost::system::error_code ec, uint16_t id, Aseba::TargetDescription msg) {
+            m_strand, [that](boost::system::error_code ec, uint16_t id, Aseba::TargetDescription msg) {
                 if(ec) {
                     mLogError("Error while waiting for a node description");
                 }
                 auto node = that->find_node(id);
                 node->on_description(msg);
                 that->read_aseba_message();
-            }));
+            });
 
         mLogInfo("Asking for description of node {}", node);
         write_message(std::make_unique<Aseba::GetNodeDescription>(node));
@@ -157,8 +156,8 @@ private:
 
     void do_write_message(const Aseba::Message& message) {
         auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(
-            m_strand, std::move([that](boost::system::error_code ec) { that->handle_write(ec); }));
+        auto cb =
+            boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             mobsya::async_write_aseba_message(variant_ns::get<usb_device>(m_endpoint), message, std::move(cb));
         } else if(variant_ns::holds_alternative<boost::asio::ip::tcp::socket>(m_endpoint)) {

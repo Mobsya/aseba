@@ -123,6 +123,7 @@ bool aseba_node::send_aseba_program(const std::string& program) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
     write_messages(std::move(messages));
+    return true;
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
