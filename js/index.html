@@ -7,29 +7,6 @@
     <script src="flatbuffers.js"></script>
     <script src="thymio_generated.js"></script>
     <script type="text/javascript">
-    class Node {
-        constructor(id, status) {
-            this._id = id;
-            this._status = status;
-        }
-        get id() {
-            return this._id
-        }
-        get status() {
-            return this._status
-        }
-        get status_str() {
-            switch(this.status) {
-                case mobsya.fb.NodeStatus.connected: return "connected"
-                case mobsya.fb.NodeStatus.ready: return "ready"
-                case mobsya.fb.NodeStatus.busy: return "busy"
-                case mobsya.fb.NodeStatus.disconnected: return "disconnected"
-            }
-            return "unknow"
-        }
-    }
-    Node.Status = mobsya.fb.NodeStatus;
-
     /* Wrap a promise to allow external resolve */
     class Request extends Promise {
         constructor(promise) {
@@ -73,14 +50,77 @@
         }
     }
 
+
+    class Node {
+        constructor(client, id, status) {
+            this._id = id;
+            this._status = status;
+            this._desc   = undefined;
+            this._client = client
+        }
+        get id() {
+            return this._id
+        }
+
+        get status() {
+            return this._status
+        }
+
+        get disconnected() {
+            return this._status == mobsya.fb.NodeStatus.disconnected
+        }
+
+        get status_str() {
+            switch(this.status) {
+                case mobsya.fb.NodeStatus.connected: return "connected"
+                case mobsya.fb.NodeStatus.ready: return "ready"
+                case mobsya.fb.NodeStatus.busy: return "busy"
+                case mobsya.fb.NodeStatus.disconnected: return "disconnected"
+            }
+            return "unknow"
+        }
+
+        async lock() {
+            return await client.lock_node(this._id)
+        }
+
+        async unlock() {
+            return await client.unlock_node(this._id)
+        }
+
+        async get_description() {
+            if(!this._desc)
+                this._desc = await client.request_aseba_vm_description(this._id);
+            return this._desc
+        }
+
+        async send_aseba_code(code) {
+            return await client.send_aseba_code(this._id, code);
+        }
+
+        _set_status(status) {
+            if(status != this._status) {
+                this._status = status
+                if(this.on_status_changed) {
+                    this.on_status_changed(status)
+                }
+            }
+        }
+    }
+    Node.Status = mobsya.fb.NodeStatus;
+
     class MobsyaClient {
 
         constructor(url) {
-            this.socket = new WebSocket(url)
-            this.socket.binaryType = 'arraybuffer';
-            this.socket.onopen = this.onopen.bind(this)
-            this.socket.onmessage = this.onmessage.bind(this)
-            this.requests = new Map();
+            this._socket = new WebSocket(url)
+            this._socket.binaryType = 'arraybuffer';
+            this._socket.onopen = this.onopen.bind(this)
+            this._socket.onmessage = this.onmessage.bind(this)
+
+            //In progress requests (id : node)
+            this._requests = new Map();
+            //Known nodes (id : node)
+            this._nodes    = new Map();
         }
 
         onopen(event) {
@@ -103,12 +143,15 @@
                 }
                 case mobsya.fb.AnyMessage.NodeAsebaVMDescription: {
                     let msg = message.message(new mobsya.fb.NodeAsebaVMDescription())
+                    let req = this._get_request(msg.requestId())
                     const id = msg.nodeId()
-                    this.on_aseba_vm_description(id, this._unserialize_aseba_vm_description(msg))
+                    if(req) {
+                        req._trigger_then(id, this._unserialize_aseba_vm_description(msg))
+                    }
                     break;
                 }
-                case mobsya.fb.AnyMessage.NodeLocked: {
-                    let msg = message.message(new mobsya.fb.NodeLocked())
+                case mobsya.fb.AnyMessage.RequestCompleted: {
+                    let msg = message.message(new mobsya.fb.RequestCompleted())
                     let req = this._get_request(msg.requestId())
                     if(req) {
                         req._trigger_then()
@@ -129,11 +172,14 @@
         /* request the description of the aseba vm for the node with the given id */
         request_aseba_vm_description(id) {
             let builder = new flatbuffers.Builder();
+            let req_id  = this._gen_request_id()
+
             mobsya.fb.RequestNodeAsebaVMDescription.startRequestNodeAsebaVMDescription(builder)
+            mobsya.fb.RequestNodeAsebaVMDescription.addRequestId(builder, req_id)
             mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, id)
             const offset = mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription(builder)
-            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription
-            )
+            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription)
+            return this._prepare_request(req_id, id)
         }
 
         /* request the description of the aseba vm for the node with the given id */
@@ -146,20 +192,38 @@
             mobsya.fb.LockNode.addNodeId(builder, id)
             let offset = mobsya.fb.LockNode.endLockNode(builder)
             this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.LockNode)
+            return this._prepare_request(req_id, id)
+        }
 
-            let req = Request.create(req_id, id)
-            this.requests.set(req_id, req)
-            return req
+        unlock_node(id) {
+            let builder = new flatbuffers.Builder();
+            let req_id  = this._gen_request_id()
+
+            mobsya.fb.UnlockNode.startUnlockNode(builder)
+            mobsya.fb.UnlockNode.addRequestId(builder, req_id)
+            mobsya.fb.UnlockNode.addNodeId(builder, id)
+            let offset = mobsya.fb.UnlockNode.endUnlockNode(builder)
+            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.UnlockNode)
+            return this._prepare_request(req_id, id)
         }
 
         _nodes_changed_as_node_list(msg) {
             let nodes = []
             for(let i = 0; i < msg.nodesLength(); i++) {
                 const n = msg.nodes(i);
-                nodes.push(new Node(n.nodeId(), n.status()))
+                let node = this._requests.get(id)
+                if(!node) {
+                    node = new Node(this, n.nodeId(), n.status())
+                    this._requests.set(n.nodeId(), node)
+                }
+                if(n.status() == Node.Status.disconnected) {
+                    this._requests.delete(n.nodeId())
+                }
+                node._set_status(n.status())
             }
             return nodes
         }
+
         _unserialize_aseba_vm_description(msg) {
             let desc = new AsebaVMDescription()
             desc.bytecode_size = msg.bytecodeSize()
@@ -194,24 +258,30 @@
             mobsya.fb.Message.addMessage(builder, offset)
             const builtMsg = mobsya.fb.Message.endMessage(builder)
             builder.finish(builtMsg);
-            this.socket.send(builder.asUint8Array())
+            this._socket.send(builder.asUint8Array())
         }
 
         _gen_request_id(min, max) {
             let n = 0
             do {
                 n = Math.floor(Math.random() * (0xffffffff - 2)) + 1
-            }while(this.requests.has(n))
+            }while(this._requests.has(n))
             return n
         }
+
         _get_request(id) {
-            const req = this.requests.get(id)
+            const req = this._requests.get(id)
             if(req != undefined)
-                this.requests.delete(id)
+                this._requests.delete(id)
              console.log(id, req)
              if(req == undefined) {
-                console.error(`unknown request ${req_id}`)
+                console.error(`unknown request ${id}`)
             }
+            return req
+        }
+        _prepare_request(req_id, node_id) {
+            let req = Request.create(req_id, node_id)
+            this._requests.set(req_id, req)
             return req
         }
     }
@@ -221,35 +291,35 @@
             super(url);
         }
 
-        on_nodes_changed(nodes) {
-            console.log(nodes)
-            for (let node of nodes) {
-                console.log(`${node.id} : ${node.status_str}`)
-                if(node.status == Node.Status.ready) {
-                    console.log(`Requesting ${node.id} description`)
-                    this.request_aseba_vm_description(node.id)
-                    console.log(`Locking ${node.id}`)
-                    this.lock_node(node.id).then( () =>  {
-                        console.log("Node locked")
-                    }).catch((reason) =>  {
-                        switch(err) {
-                            case Request.ErrorType.node_busy:
-                                console.log("Node Busy !")
-                                break
-                            default:
-                                console.log("unknown error")
-                        }
-                    })
-                }
-            }
-        }
 
-        on_aseba_vm_description(id, desc) {
-            console.log(id, desc)
+    }
+
+    let client = new MobsyaClient("ws://localhost:8597");
+    let selectedNode = undefined
+    client.on_nodes_changed = function(nodes) {
+        console.log(nodes)
+        for (let node of nodes) {
+            console.log(`${node.id} : ${node.status_str}`)
+            if((!selectedNode || selectedNode.disconnected) && node.status == Node.Status.ready) {
+                selectedNode = node
+                console.log(`Locking ${node.id}`)
+                selectedNode.lock().then( () =>  {
+                    console.log("Node locked")
+                    console.log(node)
+                }).catch((err) =>  {
+                    switch(err) {
+                        case Request.ErrorType.node_busy:
+                            console.log("Node Busy !")
+                            break
+                        default:
+                            console.log("unknown error")
+                    }
+                })
+                break;
+            }
         }
     }
 
-    let client = new TestClient("ws://localhost:8597");
     </script>
 
     </body>

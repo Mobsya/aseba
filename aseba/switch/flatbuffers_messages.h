@@ -30,13 +30,13 @@ flatbuffers::DetachedBuffer create_error_response(uint32_t request_id, fb::Error
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer create_lock_response(uint32_t request_id, aseba_node_registery::node_id id) {
+flatbuffers::DetachedBuffer create_ack_response(uint32_t request_id) {
     flatbuffers::FlatBufferBuilder fb;
-    auto offset = mobsya::fb::CreateNodeLocked(fb, request_id, id);
+    auto offset = mobsya::fb::CreateRequestCompleted(fb, request_id);
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer serialize_aseba_vm_description(const mobsya::aseba_node& n,
+flatbuffers::DetachedBuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
                                                            aseba_node_registery::node_id id) {
 
     Aseba::TargetDescription desc = n.vm_description();
@@ -65,9 +65,9 @@ flatbuffers::DetachedBuffer serialize_aseba_vm_description(const mobsya::aseba_n
                                                                fb.CreateVector(params)));
     }
 
-    auto offset = CreateNodeAsebaVMDescription(fb, id, desc.bytecodeSize, desc.variablesSize, desc.stackSize,
-                                               fb.CreateVector(variables_vector), fb.CreateVector(events_vector),
-                                               fb.CreateVector(functions_vector));
+    auto offset = CreateNodeAsebaVMDescription(fb, request_id, id, desc.bytecodeSize, desc.variablesSize,
+                                               desc.stackSize, fb.CreateVector(variables_vector),
+                                               fb.CreateVector(events_vector), fb.CreateVector(functions_vector));
     return wrap_fb(fb, offset);
 }
 }  // namespace mobsya

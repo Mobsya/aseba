@@ -165,19 +165,19 @@ public:
         mLogError("{} -> {} ", ec.message(), EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
-            case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription:
-                mLogError("{} -> ", msg.as<fb::RequestNodeAsebaVMDescription>()->node_id());
-                send_aseba_vm_description(msg.as<fb::RequestNodeAsebaVMDescription>()->node_id());
+            case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription: {
+                auto req = msg.as<fb::RequestNodeAsebaVMDescription>();
+                send_aseba_vm_description(req->request_id(), req->node_id());
                 break;
+            }
             case mobsya::fb::AnyMessage::LockNode: {
                 auto lock_msg = msg.as<fb::LockNode>();
                 this->lock_node(lock_msg->node_id(), lock_msg->request_id());
                 break;
             }
             case mobsya::fb::AnyMessage::UnlockNode: {
-                break;
                 auto lock_msg = msg.as<fb::UnlockNode>();
-                this->lock_node(lock_msg->node_id(), lock_msg->request_id());
+                this->unlock_node(lock_msg->node_id(), lock_msg->request_id());
                 break;
             }
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
@@ -235,13 +235,13 @@ private:
         write_message(wrap_fb(builder, offset));
     }
 
-    void send_aseba_vm_description(aseba_node_registery::node_id id) {
+    void send_aseba_vm_description(uint32_t request_id, aseba_node_registery::node_id id) {
         auto node = registery().node_from_id(id);
         if(!node) {
             // error ?
             return;
         }
-        write_message(serialize_aseba_vm_description(*node, id));
+        write_message(serialize_aseba_vm_description(request_id, *node, id));
     }
 
     void lock_node(aseba_node_registery::node_id id, uint32_t request_id) {
@@ -254,17 +254,16 @@ private:
         if(!res) {
             write_message(create_error_response(request_id, fb::ErrorType::node_busy));
         } else {
-            write_message(create_lock_response(request_id, id));
             m_locked_nodes.insert(std::pair<aseba_node_registery::node_id, std::weak_ptr<aseba_node>>{id, node});
+            write_message(create_ack_response(request_id));
         }
     }
 
     void unlock_node(aseba_node_registery::node_id id, uint32_t request_id) {
-
         auto it = m_locked_nodes.find(id);
         std::shared_ptr<aseba_node> node;
         if(it != std::end(m_locked_nodes)) {
-            node = it->second->lock();
+            node = it->second.lock();
             m_locked_nodes.erase(it);
         }
 
@@ -274,6 +273,8 @@ private:
         }
         if(!node->unlock(this)) {
             write_message(create_error_response(request_id, fb::ErrorType::node_busy));
+        } else {
+            write_message(create_ack_response(request_id));
         }
     }
 

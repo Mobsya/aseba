@@ -36,10 +36,12 @@ table RequestListOfNodes {
 }
 
 table RequestNodeAsebaVMDescription {
+  request_id:uint;
   node_id:uint;
 }
 
 table NodeAsebaVMDescription {
+  request_id:uint;
   node_id:uint;
   bytecode_size:uint;
   data_size:uint;
@@ -81,18 +83,16 @@ table UnlockNode {
   node_id:uint;
 }
 
-table NodeLocked {
-  request_id:uint;
-  node_id:uint;
-}
-
 table Error {
   request_id:uint;
   error:ErrorType;
 }
 
+table RequestCompleted {
+  request_id:uint;
+}
 
-union AnyMessage {RequestListOfNodes, RequestNodeAsebaVMDescription, LockNode, UnlockNode, NodesChanged, NodeAsebaVMDescription, Error, NodeLocked }
+union AnyMessage {RequestListOfNodes, RequestNodeAsebaVMDescription, LockNode, UnlockNode, NodesChanged, NodeAsebaVMDescription, Error, RequestCompleted }
 
 table Message {
   message:AnyMessage;
