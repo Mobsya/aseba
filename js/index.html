@@ -30,44 +30,39 @@
     }
     Node.Status = mobsya.fb.NodeStatus;
 
-
-    class Request  {
-        constructor(request_id, node_id) {
-            this._request_id = request_id
-            this._node_id = node_id
-            this._onerror = undefined
-            this._then    = undefined
+    /* Wrap a promise to allow external resolve */
+    class Request extends Promise {
+        constructor(promise) {
+            super(promise)
         }
 
         get node_id() {
             return this._node_id
         }
 
-        set onerror(func) {
-            this._onerror = func
-        }
-
-        set then(func) {
-            this._then = func
-        }
-
         _trigger_error(err) {
             this._onerror(err)
         }
+
+        _trigger_then(...args) {
+           return this._then.apply(this, args);
+        }
+
+        static create(request_id, node_id) {
+            var then    = undefined;
+            var onerror = undefined;
+            let p = new Request(function(resolve, reject){
+                then    = resolve;
+                onerror = reject;
+            }.bind(this));
+            p._then = then
+            p._onerror = onerror
+            p._request_id = request_id
+            p._node_id = node_id
+            return p
+        }
     }
     Request.ErrorType = mobsya.fb.ErrorType;
-
-    class LockNodeRequest extends Request {
-        constructor(request_id, node_id) {
-            super(request_id, node_id)
-        }
-
-        _trigger_then() {
-            console.log(this)
-            this._then()
-        }
-    }
-
 
     class AsebaVMDescription {
         constructor() {
@@ -152,7 +147,7 @@
             let offset = mobsya.fb.LockNode.endLockNode(builder)
             this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.LockNode)
 
-            let req = new LockNodeRequest(req_id, id)
+            let req = Request.create(req_id, id)
             this.requests.set(req_id, req)
             return req
         }
@@ -234,11 +229,9 @@
                     console.log(`Requesting ${node.id} description`)
                     this.request_aseba_vm_description(node.id)
                     console.log(`Locking ${node.id}`)
-                    let req = this.lock_node(node.id)
-                    req.then = function() {
+                    this.lock_node(node.id).then( () =>  {
                         console.log("Node locked")
-                    }
-                    req.onerror = function(err) {
+                    }).catch((reason) =>  {
                         switch(err) {
                             case Request.ErrorType.node_busy:
                                 console.log("Node Busy !")
@@ -246,7 +239,7 @@
                             default:
                                 console.log("unknown error")
                         }
-                    }
+                    })
                 }
             }
         }
