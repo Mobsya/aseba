@@ -19,7 +19,7 @@ function(compile_flatbuffers_schema_to_js SRC_FBS HEADER)
   set(${HEADER} ${GEN_HEADER})
   add_custom_command(
     OUTPUT ${GEN_HEADER}
-    COMMAND "$<TARGET_FILE:flatc>" --js --gen-mutable
+    COMMAND "$<TARGET_FILE:flatc>" --js --gen-mutable --es6-js-export
             --gen-object-api -o "${CMAKE_BINARY_DIR}/js"
             "${SRC_FBS_ABS}"
     DEPENDS flatc ${SRC_FBS_ABS}

@@ -1,5 +1,9 @@
 /* Wrap a promise to allow external resolve */
-class Request extends Promise {
+
+import {flatbuffers} from './flatbuffers';
+import {mobsya} from './thymio_generated';
+
+export class Request extends Promise {
     constructor(promise) {
         super(promise)
     }
@@ -30,6 +34,10 @@ class Request extends Promise {
         return p
     }
 }
+
+console.log(mobsya)
+console.log(flatbuffers)
+
 Request.ErrorType = mobsya.fb.ErrorType;
 
 class AsebaVMDescription {
@@ -42,7 +50,7 @@ class AsebaVMDescription {
 }
 
 
-class Node {
+export class Node {
     constructor(client, id, status) {
         this._id = id;
         this._status = status;
@@ -72,25 +80,25 @@ class Node {
     }
 
     async lock() {
-        return await client.lock_node(this._id)
+        return await this._client.lock_node(this._id)
     }
 
     async unlock() {
-        return await client.unlock_node(this._id)
+        return await this._client.unlock_node(this._id)
     }
 
     async get_description() {
         if(!this._desc)
-            this._desc = await client.request_aseba_vm_description(this._id);
+            this._desc = await this._client.request_aseba_vm_description(this._id);
         return this._desc
     }
 
     async send_aseba_program(code) {
-        return await client.send_aseba_program(this._id, code);
+        return await this._client.send_aseba_program(this._id, code);
     }
 
     async run_aseba_program() {
-        return await client.run_aseba_program(this._id);
+        return await this._client.run_aseba_program(this._id);
     }
 
     _set_status(status) {
@@ -104,7 +112,7 @@ class Node {
 }
 Node.Status = mobsya.fb.NodeStatus;
 
-class MobsyaClient {
+export class Client {
 
     constructor(url) {
         this._socket = new WebSocket(url)
