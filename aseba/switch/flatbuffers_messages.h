@@ -30,6 +30,12 @@ flatbuffers::DetachedBuffer create_error_response(uint32_t request_id, fb::Error
     return wrap_fb(fb, offset);
 }
 
+flatbuffers::DetachedBuffer create_compilation_error_response(uint32_t request_id) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto offset = mobsya::fb::CreateCompilationError(fb, request_id);
+    return wrap_fb(fb, offset);
+}
+
 flatbuffers::DetachedBuffer create_ack_response(uint32_t request_id) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateRequestCompleted(fb, request_id);

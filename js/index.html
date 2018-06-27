@@ -94,8 +94,12 @@
             return this._desc
         }
 
-        async send_aseba_code(code) {
-            return await client.send_aseba_code(this._id, code);
+        async send_aseba_program(code) {
+            return await client.send_aseba_program(this._id, code);
+        }
+
+        async run_aseba_program() {
+            return await client.run_aseba_program(this._id);
         }
 
         _set_status(status) {
@@ -125,10 +129,6 @@
 
         onopen(event) {
             console.log("connected")
-        }
-
-        on_nodes_changed(nodes) {
-            console.log("unimplemented")
         }
 
         onmessage (event) {
@@ -166,6 +166,14 @@
                     }
                     break
                 }
+                case mobsya.fb.AnyMessage.CompilationError: {
+                    let msg = message.message(new mobsya.fb.CompilationError())
+                    let req = this._get_request(msg.requestId())
+                    if(req) {
+                        req._trigger_error(null)
+                    }
+                    break
+                }
             }
         }
 
@@ -179,6 +187,30 @@
             mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, id)
             const offset = mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription(builder)
             this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription)
+            return this._prepare_request(req_id, id)
+        }
+
+        send_aseba_program(id, code) {
+            let builder = new flatbuffers.Builder();
+            let req_id  = this._gen_request_id()
+            const codeOffset = builder.createString(code)
+            mobsya.fb.RequestAsebaCodeLoad.startRequestAsebaCodeLoad(builder)
+            mobsya.fb.RequestAsebaCodeLoad.addRequestId(builder, req_id)
+            mobsya.fb.RequestAsebaCodeLoad.addNodeId(builder, id)
+            mobsya.fb.RequestAsebaCodeLoad.addProgram(builder, codeOffset)
+            const offset = mobsya.fb.RequestAsebaCodeLoad.endRequestAsebaCodeLoad(builder)
+            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeLoad)
+            return this._prepare_request(req_id, id)
+        }
+
+        run_aseba_program(id) {
+            let builder = new flatbuffers.Builder();
+            let req_id  = this._gen_request_id()
+            mobsya.fb.RequestAsebaCodeRun.startRequestAsebaCodeRun(builder)
+            mobsya.fb.RequestAsebaCodeRun.addRequestId(builder, req_id)
+            mobsya.fb.RequestAsebaCodeRun.addNodeId(builder, id)
+            const offset = mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun(builder)
+            this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeRun)
             return this._prepare_request(req_id, id)
         }
 
@@ -211,7 +243,7 @@
             let nodes = []
             for(let i = 0; i < msg.nodesLength(); i++) {
                 const n = msg.nodes(i);
-                let node = this._requests.get(id)
+                let node = this._requests.get(n.nodeId())
                 if(!node) {
                     node = new Node(this, n.nodeId(), n.status())
                     this._requests.set(n.nodeId(), node)
@@ -219,6 +251,7 @@
                 if(n.status() == Node.Status.disconnected) {
                     this._requests.delete(n.nodeId())
                 }
+                nodes.push(node)
                 node._set_status(n.status())
             }
             return nodes
@@ -286,27 +319,26 @@
         }
     }
 
-    class TestClient extends MobsyaClient {
-        constructor(url) {
-            super(url);
-        }
-
-
-    }
-
     let client = new MobsyaClient("ws://localhost:8597");
     let selectedNode = undefined
-    client.on_nodes_changed = function(nodes) {
+    client.on_nodes_changed = async function(nodes) {
         console.log(nodes)
         for (let node of nodes) {
             console.log(`${node.id} : ${node.status_str}`)
             if((!selectedNode || selectedNode.disconnected) && node.status == Node.Status.ready) {
                 selectedNode = node
-                console.log(`Locking ${node.id}`)
-                selectedNode.lock().then( () =>  {
-                    console.log("Node locked")
-                    console.log(node)
-                }).catch((err) =>  {
+                try {
+                    console.log(`Locking ${node.id}`)
+                    await selectedNode.lock();
+                    console.log("Node locked, sending code")
+                    await selectedNode.send_aseba_program(
+                       `call leds.bottom.left(0,0,0)
+                        call leds.bottom.right(0,32,0)
+                        call leds.top(0, 32, 0)
+                    `)
+                    await selectedNode.run_aseba_program()
+
+                } catch(err) {
                     switch(err) {
                         case Request.ErrorType.node_busy:
                             console.log("Node Busy !")
@@ -314,7 +346,7 @@
                         default:
                             console.log("unknown error")
                     }
-                })
+                }
                 break;
             }
         }

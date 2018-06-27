@@ -40,6 +40,7 @@ public:
     void write_message(std::shared_ptr<Aseba::Message> message);
 
     bool send_aseba_program(const std::string& program);
+    void run_aseba_program();
 
     bool lock(void* app);
     bool unlock(void* app);
