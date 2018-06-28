@@ -100,6 +100,9 @@ void aseba_node::write_message(std::shared_ptr<Aseba::Message> message) {
 void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages) {
     std::unique_lock<std::mutex> _(m_node_mutex);  // Probably not necessary ?
     auto endpoint = m_endpoint.lock();
+    if(!endpoint) {
+        return;
+    }
     endpoint->write_messages(std::move(messages));
 }
 
