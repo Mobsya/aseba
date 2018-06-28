@@ -307,6 +307,6 @@ export class Client {
     _prepare_request(req_id, node_id) {
         let req = new Request(req_id, node_id)
         this._requests.set(req_id, req)
-        return req
+        return req._promise
     }
 }
