@@ -93,20 +93,20 @@ bool aseba_node::unlock(void* app) {
     return true;
 }
 
-void aseba_node::write_message(std::shared_ptr<Aseba::Message> message) {
-    write_messages({{std::move(message)}});
+void aseba_node::write_message(std::shared_ptr<Aseba::Message> message, write_callback&& cb) {
+    write_messages({{std::move(message)}}, std::move(cb));
 }
 
-void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages) {
+void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages, write_callback&& cb) {
     std::unique_lock<std::mutex> _(m_node_mutex);  // Probably not necessary ?
     auto endpoint = m_endpoint.lock();
     if(!endpoint) {
         return;
     }
-    endpoint->write_messages(std::move(messages));
+    endpoint->write_messages(std::move(messages), std::move(cb));
 }
 
-bool aseba_node::send_aseba_program(const std::string& program) {
+bool aseba_node::send_aseba_program(const std::string& program, write_callback&& cb) {
     std::unique_lock<std::mutex> _(m_node_mutex);
 
     Aseba::Compiler compiler;
@@ -129,12 +129,12 @@ bool aseba_node::send_aseba_program(const std::string& program) {
 
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
-    write_messages(std::move(messages));
+    write_messages(std::move(messages), std::move(cb));
     return true;
 }
 
-void aseba_node::run_aseba_program() {
-    write_message(std::make_shared<Aseba::Run>(native_id()));
+void aseba_node::run_aseba_program(write_callback&& cb) {
+    write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {

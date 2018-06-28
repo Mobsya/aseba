@@ -16,6 +16,7 @@ public:
     using node_id_t = uint16_t;
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+    using write_callback = std::function<void(boost::system::error_code)>;
 
     ~aseba_node();
 
@@ -36,11 +37,15 @@ public:
         return m_description;
     }
 
-    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message);
-    void write_message(std::shared_ptr<Aseba::Message> message);
+    // Write n messages to the enpoint owning that node, then invoke cb when all message have been written
+    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message, write_callback&& cb = {});
+    // Write a message to the enpoint owning that node, then invoke cb
+    void write_message(std::shared_ptr<Aseba::Message> message, write_callback&& cb = {});
 
-    bool send_aseba_program(const std::string& program);
-    void run_aseba_program();
+    // Compile a program and send it to the node, invoking cb once the assossiated message is written out
+    // If the code can not be compiled, returns false without invoking cb
+    bool send_aseba_program(const std::string& program, write_callback&& cb = {});
+    void run_aseba_program(write_callback&& cb = {});
 
     bool lock(void* app);
     bool unlock(void* app);

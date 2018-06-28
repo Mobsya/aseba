@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <memory>
 #include <unordered_map>
 #include <boost/asio.hpp>
@@ -25,6 +26,8 @@ public:
 
     using pointer = std::shared_ptr<aseba_endpoint>;
     using endpoint_t = variant_ns::variant<usb_device>;
+
+    using write_callback = std::function<void(boost::system::error_code)>;
 
     usb_device& usb() {
         return variant_ns::get<usb_device>(m_endpoint);
@@ -62,18 +65,25 @@ public:
         timer->async_wait(std::move(cb));
     }
 
-    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages) {
+    template <typename CB = write_callback>
+    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages, CB&& cb = {}) {
+        if(messages.empty())
+            return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         for(auto&& m : messages) {
-            m_msg_queue.push_back(std::move(m));
+            m_msg_queue.emplace_back(std::move(m), write_callback{});
+        }
+        if(cb) {
+            m_msg_queue.back().second = std::move(cb);
         }
         if(m_msg_queue.size() > messages.size())
             return;
-        do_write_message(*m_msg_queue.front());
+        do_write_message(*(m_msg_queue.front().first));
     }
 
-    void write_message(std::shared_ptr<Aseba::Message> message) {
-        write_messages({std::move(message)});
+    template <typename CB = write_callback>
+    void write_message(std::shared_ptr<Aseba::Message> message, CB&& cb = {}) {
+        write_messages({std::move(message)}, std::forward<CB>(cb));
     }
 
     void read_aseba_message() {
@@ -169,12 +179,15 @@ private:
     void handle_write(boost::system::error_code ec) {
         mLogInfo("Message sent : {}", ec.message());
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
+        auto cb = m_msg_queue.begin()->second;
+        if(cb) {
+            boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
+        }
         m_msg_queue.erase(m_msg_queue.begin());
         if(!m_msg_queue.empty()) {
-            do_write_message(*m_msg_queue.front());
+            do_write_message(*(m_msg_queue.front().first));
         }
     }
-
 
     enum class endpoint_type { usb, tcp };
     aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e)
@@ -184,7 +197,7 @@ private:
     std::unordered_map<aseba_node::node_id_t, std::shared_ptr<aseba_node>> m_nodes;
     boost::asio::io_service& m_io_context;
     std::mutex m_msg_queue_lock;
-    std::vector<std::shared_ptr<Aseba::Message>> m_msg_queue;
+    std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
 };
 
 }  // namespace mobsya
