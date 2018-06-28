@@ -26,16 +26,31 @@ client.on_nodes_changed = async (nodes) => {
                 await selectedNode.lock();
                 console.log("Node locked, sending code")
 
-                // Load some aseba code on the device
-                // The code will be compiled on the switch
-                await selectedNode.send_aseba_program(
-                    `call leds.bottom.left(0,0,0)
-                     call leds.bottom.right(32,32,32)
-                     call leds.top(0, 32, 0)
-                    `)
+                let colgen = () => {
+                    return Math.floor(Math.random() * (32 - 1)) + 0
+                }
 
-                // Execute whatever code is loaded on the device
-                await selectedNode.run_aseba_program()
+                function sleep(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
+                }
+
+                while(true) {
+                    // Load some aseba code on the device
+                    // The code will be compiled on the switch
+                    console.time('Sending code');
+                    await selectedNode.send_aseba_program(
+                        `call leds.bottom.left(${colgen()},${colgen()},${colgen()})
+                         call leds.bottom.right(${colgen()},${colgen()},${colgen()})
+                         call leds.top(${colgen()}, ${colgen()}, ${colgen()})
+                        `
+                    )
+                    console.timeEnd('Sending code');
+
+                    // Execute whatever code is loaded on the device
+                    console.time('Running code');
+                    await selectedNode.run_aseba_program()
+                    console.timeEnd('Running code');
+                }
 
             } catch(err) {
                 console.log(err)

@@ -21,7 +21,7 @@ public:
     application_endpoint_base(boost::asio::io_context& ctx) = delete;
     void read_message() = delete;
     void start() = delete;
-    void write_message(const flatbuffers::DetachedBuffer& buffer) = delete;
+    void do_write_message(const flatbuffers::DetachedBuffer& buffer) = delete;
     tcp::socket& tcp_socket() = delete;
 };
 
@@ -51,7 +51,7 @@ public:
         m_socket.async_read(m_buffer, std::move(cb));
     }
 
-    void write_message(const flatbuffers::DetachedBuffer& buffer) {
+    void do_write_message(const flatbuffers::DetachedBuffer& buffer) {
         auto that = this->shared_from_this();
         auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::size_t s) {
             static_cast<Self&>(*that).handle_write(ec);
@@ -94,7 +94,7 @@ public:
         mobsya::async_read_flatbuffers_message(m_socket, std::move(cb));
     }
 
-    void write_message(const flatbuffers::DetachedBuffer& buffer) {
+    void do_write_message(const flatbuffers::DetachedBuffer& buffer) {
         auto cb = boost::asio::bind_executor(
             m_strand, [that = this->shared_from_this()](boost::system::error_code ec, std::size_t s) {
                 static_cast<Self&>(*that).handle_write(ec);
@@ -152,7 +152,7 @@ public:
         if(m_queue.size() > 1)
             return;
 
-        base::write_message(m_queue.front());
+        base::do_write_message(m_queue.front());
     }
 
 
@@ -198,7 +198,7 @@ public:
         mLogError("{}", ec.message());
         m_queue.erase(m_queue.begin());
         if(!m_queue.empty()) {
-            base::write_message(m_queue.front());
+            base::do_write_message(m_queue.front());
         }
     }
 
@@ -295,10 +295,8 @@ private:
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        bool res = n->send_aseba_program(program);
-        if(res) {
-            write_message(create_ack_response(request_id));
-        } else {
+        bool res = n->send_aseba_program(program, create_device_write_completion_cb(request_id));
+        if(!res) {
             mLogWarn("send_aseba_code: compilation to node {} failed", id);
             write_message(create_compilation_error_response(request_id));
         }
@@ -311,8 +309,7 @@ private:
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        n->run_aseba_program();
-        write_message(create_ack_response(request_id));
+        n->run_aseba_program(create_device_write_completion_cb(request_id));
     }
 
     aseba_node_registery& registery() {
@@ -325,6 +322,34 @@ private:
             return {};
         return it->second.lock();
     }
+
+    /*
+     *  Returns a std::function that, when called posts a lambda in the endpoint strand
+     *  Said lambda is ultimately responsible for sending the ack message to the app,
+     *  if it still exists.
+     */
+    aseba_node::write_callback create_device_write_completion_cb(uint32_t request_id) {
+        auto strand = this->m_strand;
+        auto ptr = weak_from_this();
+        auto callback = [request_id, strand, ptr](boost::system::error_code ec) {
+            boost::asio::post(strand, [ec, request_id, ptr]() {
+                auto that = ptr.lock();
+                if(!that)
+                    return;
+                if(!ec) {
+                    that->write_message(create_ack_response(request_id));
+                } else {
+                    that->write_message(create_error_response(request_id, fb::ErrorType::node_busy));
+                }
+            });
+        };
+        return callback;
+    }
+
+    std::weak_ptr<application_endpoint<Socket>> weak_from_this() {
+        return std::static_pointer_cast<application_endpoint<Socket>>(this->shared_from_this());
+    }
+
 
     std::vector<flatbuffers::DetachedBuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>> m_locked_nodes;
