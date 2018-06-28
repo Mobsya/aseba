@@ -1,11 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
-
-module.exports = {
+const nodeConfig = {
+    target: 'node',
     entry : ['babel-polyfill', './src/demo.js'],
     output: {
-        filename: 'bundle.js',
-        library: 'thymio'
+        filename: 'thymio-api-node.js',
     },
     devtool: 'sourcemap',
     mode   : 'production',
@@ -18,11 +17,31 @@ module.exports = {
                     presets: ['env']
                 },
                 exclude: /node_modules/
-            },
-            {
-                //test: require.resolve('flatbuffers'),
-                //use: 'imports-loader?this=>window!./flatbuffers'
             }
         ]
     }
-}
+};
+
+const browserConfig = {
+    target: 'web', // <=== can be omitted as default is 'web'
+    entry : ['babel-polyfill', './src/demo.js'],
+    output: {
+        filename: 'thymio-api.js',
+    },
+    devtool: 'sourcemap',
+    mode   : 'production',
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                options: {
+                    presets: ['env']
+                },
+                exclude: /node_modules/
+            }
+        ]
+    }
+};
+
+module.exports = [ nodeConfig, browserConfig ];

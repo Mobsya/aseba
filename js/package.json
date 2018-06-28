@@ -1,13 +1,19 @@
 {
-  "name": "thymio-api",
+  "name": "@mobsya/thymio-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "A JS api to communicate with Thymio from node and browsers",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
+    "flatbuffers": "^1.9.0",
+    "isomorphic-ws": "^4.0.1",
+    "ws": "^5.2.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015-allow-top-level-this": "0.0.1",
+    "npx": "^10.2.0",
     "webpack": "^4.12.2",
     "webpack-cli": "^3.0.8"
   },
@@ -15,6 +21,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Mobsya",
+  "license": "ISC",
+  "main": "webpack.config.js",
+  "optionalDependencies": {
+    "bufferutil": "^3.0.5",
+    "utf-8-validate": "^4.0.2"
+  }
 }

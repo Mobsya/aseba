@@ -1,11 +1,22 @@
 /* Wrap a promise to allow external resolve */
 
-import {flatbuffers} from './flatbuffers';
+import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
+import WebSocket from 'isomorphic-ws';
 
-export class Request extends Promise {
-    constructor(promise) {
-        super(promise)
+export class Request {
+
+    constructor(request_id, node_id) {
+        var then    = undefined;
+        var onerror = undefined;
+        this._promise = new Promise((resolve, reject) => {
+            then    = resolve;
+            onerror = reject;
+        });
+        this._then = then
+        this._onerror = onerror
+        this._request_id = request_id
+        this._node_id = node_id
     }
 
     get node_id() {
@@ -19,24 +30,7 @@ export class Request extends Promise {
     _trigger_then(...args) {
         return this._then.apply(this, args);
     }
-
-    static create(request_id, node_id) {
-        var then    = undefined;
-        var onerror = undefined;
-        let p = new Request(function(resolve, reject){
-            then    = resolve;
-            onerror = reject;
-        }.bind(this));
-        p._then = then
-        p._onerror = onerror
-        p._request_id = request_id
-        p._node_id = node_id
-        return p
-    }
 }
-
-console.log(mobsya)
-console.log(flatbuffers)
 
 Request.ErrorType = mobsya.fb.ErrorType;
 
@@ -305,14 +299,13 @@ export class Client {
         const req = this._requests.get(id)
         if(req != undefined)
             this._requests.delete(id)
-            console.log(id, req)
             if(req == undefined) {
                 console.error(`unknown request ${id}`)
             }
             return req
     }
     _prepare_request(req_id, node_id) {
-        let req = Request.create(req_id, node_id)
+        let req = new Request(req_id, node_id)
         this._requests.set(req_id, req)
         return req
     }
