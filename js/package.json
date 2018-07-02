@@ -1,21 +1,14 @@
 {
   "name": "@mobsya/thymio-api",
-  "version": "1.0.0",
+  "version": "0.1.7",
   "description": "A JS api to communicate with Thymio from node and browsers",
   "private": true,
   "dependencies": {
-    "babel-loader": "^7.1.4",
-    "babel-polyfill": "^6.26.0",
     "flatbuffers": "^1.9.0",
     "isomorphic-ws": "^4.0.1",
     "ws": "^5.2.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "npx": "^10.2.0",
-    "webpack": "^4.12.2",
-    "webpack-cli": "^3.0.8"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
