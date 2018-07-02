@@ -1,12 +1,30 @@
 /* Wrap a promise to allow external resolve */
 
+/** @module Mobsya/tymio */
+
 import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
 import WebSocket from 'isomorphic-ws';
 
-export class Request {
+/** Class representing Request.
+ *  A Request wraps a promise that will be triggered when the corresponding Error/RequestCompleted message get received
+ *  @private
+ */
 
-    constructor(request_id, node_id) {
+
+/**
+ * The built in string object.
+ * @external String
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String|String}
+ */
+/**
+ * The built in Promise object.
+ * @external Promise
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise|Promise}
+ */
+class Request {
+
+    constructor(request_id) {
         var then    = undefined;
         var onerror = undefined;
         this._promise = new Promise((resolve, reject) => {
@@ -16,11 +34,6 @@ export class Request {
         this._then = then
         this._onerror = onerror
         this._request_id = request_id
-        this._node_id = node_id
-    }
-
-    get node_id() {
-        return this._node_id
     }
 
     _trigger_error(err) {
@@ -32,8 +45,11 @@ export class Request {
     }
 }
 
+/** Error type of a failed request */
 Request.ErrorType = mobsya.fb.ErrorType;
 
+
+/** Description of an aseba virtual machine. */
 class AsebaVMDescription {
     constructor() {
         this.bytecode_size = this.data_size = this.stack_size = 0;
@@ -44,6 +60,7 @@ class AsebaVMDescription {
 }
 
 
+/** Node */
 export class Node {
     constructor(client, id, status) {
         this._id = id;
@@ -51,18 +68,29 @@ export class Node {
         this._desc   = undefined;
         this._client = client
     }
+
+    /** return the node id*/
     get id() {
         return this._id
     }
 
+    /** Return the node status
+     *  @type {mobsya.fb.NodeStatus}
+     */
     get status() {
         return this._status
     }
 
+    /** Return whether the node is disconected
+     *  @type {boolean}
+     */
     get disconnected() {
         return this._status == mobsya.fb.NodeStatus.disconnected
     }
 
+    /** Return the node status converted to string
+     *  @type {string}
+     */
     get status_str() {
         switch(this.status) {
             case mobsya.fb.NodeStatus.connected: return "connected"
@@ -73,24 +101,55 @@ export class Node {
         return "unknow"
     }
 
+    /** Lock the device
+     *  Locking a device is akin to take sole ownership of it until the connection is closed or the {@link unlock}
+     *  *The device must be in the ready state before it can be locked*
+     *  Methods is explicitely call.
+     *  Once a device is locked, all client will see the device becoming busy.
+     *  if the device can not be locked, an {@link mobsya.fb.Error} is raised.
+     *  @throws {mobsya.fb.Error}
+     */
     async lock() {
         return await this._client.lock_node(this._id)
     }
 
+    /** Unlock the device
+     *  Once a device is unlocked, all client will see the device becoming ready.
+     *  Once unlock, a device can't be written to until loc
+     *  @throws {mobsya.fb.Error}
+     *  @see lock
+     */
     async unlock() {
         return await this._client.unlock_node(this._id)
     }
 
+    /** Get the description from the device
+     *  *The device must be in the ready state before requestibng the VM*
+     *  @returns {external:Promise<AsebaVMDescription>}
+     *  @throws {mobsya.fb.Error}
+     *  @see lock
+     */
     async get_description() {
         if(!this._desc)
             this._desc = await this._client.request_aseba_vm_description(this._id);
         return this._desc
     }
 
+    /** Load an aseba program on the VM
+     *  The device must be locked before calling this function
+     *  @param {external:String} code - the aseba code to load
+     *  @throws {mobsya.fb.Error}
+     *  @see lock
+     */
     async send_aseba_program(code) {
         return await this._client.send_aseba_program(this._id, code);
     }
 
+    /** Run the code currently loaded on the vm
+     *  The device must be locked before calling this function
+     *  @throws {mobsya.fb.Error}
+     *  @see lock
+     */
     async run_aseba_program() {
         return await this._client.run_aseba_program(this._id);
     }
@@ -104,6 +163,10 @@ export class Node {
         }
     }
 }
+
+/*
+ * The status of a node
+ */
 Node.Status = mobsya.fb.NodeStatus;
 
 export class Client {
@@ -180,7 +243,7 @@ export class Client {
         mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, id)
         const offset = mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription)
-        return this._prepare_request(req_id, id)
+        return this._prepare_request(req_id)
     }
 
     send_aseba_program(id, code) {
@@ -193,7 +256,7 @@ export class Client {
         mobsya.fb.RequestAsebaCodeLoad.addProgram(builder, codeOffset)
         const offset = mobsya.fb.RequestAsebaCodeLoad.endRequestAsebaCodeLoad(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeLoad)
-        return this._prepare_request(req_id, id)
+        return this._prepare_request(req_id)
     }
 
     run_aseba_program(id) {
@@ -204,7 +267,7 @@ export class Client {
         mobsya.fb.RequestAsebaCodeRun.addNodeId(builder, id)
         const offset = mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeRun)
-        return this._prepare_request(req_id, id)
+        return this._prepare_request(req_id)
     }
 
     /* request the description of the aseba vm for the node with the given id */
@@ -217,7 +280,7 @@ export class Client {
         mobsya.fb.LockNode.addNodeId(builder, id)
         let offset = mobsya.fb.LockNode.endLockNode(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.LockNode)
-        return this._prepare_request(req_id, id)
+        return this._prepare_request(req_id)
     }
 
     unlock_node(id) {
@@ -229,7 +292,7 @@ export class Client {
         mobsya.fb.UnlockNode.addNodeId(builder, id)
         let offset = mobsya.fb.UnlockNode.endUnlockNode(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.UnlockNode)
-        return this._prepare_request(req_id, id)
+        return this._prepare_request(req_id)
     }
 
     _nodes_changed_as_node_list(msg) {
@@ -304,8 +367,8 @@ export class Client {
             }
             return req
     }
-    _prepare_request(req_id, node_id) {
-        let req = new Request(req_id, node_id)
+    _prepare_request(req_id) {
+        let req = new Request(req_id)
         this._requests.set(req_id, req)
         return req._promise
     }
