@@ -32,8 +32,14 @@ subprocess.call('cd ../doxygen; doxygen', shell=True)
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.imgmath',
-    'sphinx.ext.githubpages', 'sphinx.ext.intersphinx', 'sphinx.ext.imgmath', 'sphinx.ext.todo', 'breathe']
+extensions = [
+    'sphinx.ext.imgmath',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'breathe',
+    'sphinx_js'
+    ]
 
 breathe_projects = { "aseba": "../doxygen/doc/xml" }
 breathe_default_project = "aseba"
@@ -173,5 +179,6 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-
-
+# js configuration
+js_source_path   = '../../js'
+jsdoc_config_path = '../../js/jsdoc.conf.json'

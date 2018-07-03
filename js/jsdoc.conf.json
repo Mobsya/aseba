@@ -2,7 +2,6 @@
   "tags": {
     "allowUnknownTags": true
   },
-  "plugins": ["plugins/markdown"],
   "templates": {
     "logoFile": "",
     "cleverLinks": true,
@@ -21,11 +20,7 @@
     "protocol": "html://",
     "methodHeadingReturns": false
   },
-  "markdown": {
-    "parser": "gfm",
-    "hardwrap": true
-  },
-  "opts": {
-    "template": "node_modules/ink-docstrap/template"
+  "source": {
+    "include":"."
   }
 }

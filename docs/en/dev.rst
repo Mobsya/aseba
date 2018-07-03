@@ -1,4 +1,0 @@
-DoxyGen Documentation
-=====================
-
-.. doxygenindex::
