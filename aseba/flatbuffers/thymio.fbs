@@ -2,25 +2,38 @@
 
 namespace mobsya.fb;
 
+/// The Type of a node
+/// A node can designate either a robot, a simulator, each with various capabilities.
 enum NodeType : int {
   Thymio2 = 0,
   ThymioWireless = 1,
 }
 
+/// The status of a node represents whether the node is connected and ready.
 enum NodeStatus : int {
+  /// The status is unknown, this denotes a programmation error or a bug
   unknown   = 0,
+  /// The node is just connected. However, sending code or requesting a VM desciption is unspecified in this state
   connected = 1,
+  /// The node is ready. It needs to be sent a LockNode message before any action that would mutate it state, such as sending code can take place
   ready = 2,
+  /// The node is busy - this will be sent to all clients, including the one that sent the LockNode message
   busy = 3,
+  /// The node is disconnected. Any reference to it will be destroyed on the server side, and sending further messages to it will fail
   disconnected = 4,
 }
 
+// Represent various errors a request can fail with.
 enum ErrorType : int {
+  /// Genric error
   unknown_error = 0,
+  /// The node ddoes not exist or was disconnected
   unknown_node = 1,
+  /// The node is busy (locked by another client)
   node_busy = 2,
 }
 
+/// Represent a node
 table Node {
   node_id:uint;
   status:NodeStatus;
@@ -28,18 +41,24 @@ table Node {
   name:string;
 }
 
+/// Message sent by the server when a node changes status.
+/// This messages is automatically sent when the application first connects and each time one or more node change status
 table NodesChanged {
+  /// Nodes whose status changed. it's up to the client to maintain a list of all nodes.
   nodes:[Node];
 }
 
-table RequestListOfNodes {
-}
+/// Ask the server to send a list of all nodes
+/// The server will send back a NodesChanged message containing infos on all nodes
+table RequestListOfNodes {}
 
+/// Request the server to send a NodeAsebaVMDescription for the node corresponding to node_id
 table RequestNodeAsebaVMDescription {
   request_id:uint;
   node_id:uint;
 }
 
+/// The description of an Aseba VM, sent in response to a RequestNodeAsebaVMDescription
 table NodeAsebaVMDescription {
   request_id:uint;
   node_id:uint;
@@ -73,11 +92,17 @@ table NativeFunctionParameter {
   size:uint;
 }
 
+/// Ask the server to give this client sole ownership of the node.
+/// This needs to be done once before sending mutating instructions to the node
+/// The lock remain until the client disconnect, the device disconnect or a UnlockNode message is sent
+/// Once locked, the node appears busy to all clients.
 table LockNode {
   request_id:uint;
   node_id:uint;
 }
 
+/// Unlock a device so that other client can use it.
+/// Once unlocked, the node appears ready to all clients.
 table UnlockNode {
   request_id:uint;
   node_id:uint;
