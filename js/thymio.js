@@ -74,21 +74,21 @@ export class Node {
         return this._id
     }
 
-    /** Return the node status
+    /** The node status
      *  @type {mobsya.fb.NodeStatus}
      */
     get status() {
         return this._status
     }
 
-    /** Return whether the node is disconected
+    /** Whether the node is disconnected
      *  @type {boolean}
      */
     get disconnected() {
         return this._status == mobsya.fb.NodeStatus.disconnected
     }
 
-    /** Return the node status converted to string
+    /** The node status converted to string.
      *  @type {string}
      */
     get status_str() {
@@ -102,11 +102,12 @@ export class Node {
     }
 
     /** Lock the device
-     *  Locking a device is akin to take sole ownership of it until the connection is closed or the {@link unlock}
-     *  *The device must be in the ready state before it can be locked*
-     *  Methods is explicitely call.
+     *  Locking a device is akin to take sole ownership of it until the connection is closed or the unlock method is explicitely called
+     *
+     *  The device must be in the ready state before it can be locked.
      *  Once a device is locked, all client will see the device becoming busy.
-     *  if the device can not be locked, an {@link mobsya.fb.Error} is raised.
+     *
+     *  If the device can not be locked, an {@link mobsya.fb.Error} is raised.
      *  @throws {mobsya.fb.Error}
      */
     async lock() {
@@ -124,7 +125,7 @@ export class Node {
     }
 
     /** Get the description from the device
-     *  *The device must be in the ready state before requestibng the VM*
+     *  The device must be in the ready state before requestibng the VM.
      *  @returns {external:Promise<AsebaVMDescription>}
      *  @throws {mobsya.fb.Error}
      *  @see lock
@@ -169,8 +170,15 @@ export class Node {
  */
 Node.Status = mobsya.fb.NodeStatus;
 
+/*
+ * A client. Main entry point of the api
+ */
 export class Client {
 
+    /**
+     *  @param {external:String} url : Web socket address
+     *  @see lock
+     */
     constructor(url) {
         this._socket = new WebSocket(url)
         this._socket.binaryType = 'arraybuffer';
@@ -181,10 +189,15 @@ export class Client {
         this._requests = new Map();
         //Known nodes (id : node)
         this._nodes    = new Map();
+
     }
 
-    onopen(event) {
-        console.log("connected")
+    /**
+     *  @param {Node[]} nodes : Nodes whose status has changed.
+     *
+     */
+    on_nodes_changed(nodes) {
+
     }
 
     onmessage (event) {
@@ -233,7 +246,6 @@ export class Client {
         }
     }
 
-    /* request the description of the aseba vm for the node with the given id */
     request_aseba_vm_description(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
