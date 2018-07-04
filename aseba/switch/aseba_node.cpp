@@ -7,10 +7,10 @@
 namespace mobsya {
 
 const std::string& aseba_node::status_to_string(aseba_node::status s) {
-    static std::array<std::string, 4> strs = {"connected", "ready", "busy", "disconnected"};
+    static std::array<std::string, 5> strs = {"connected", "available", "busy", "ready", "disconnected"};
     int i = int(s) - 1;
     if(i < 0 && i >= int(status::connected))
-        return strs[3];
+        return strs[4];
     return strs[i];
 }
 
@@ -73,7 +73,7 @@ bool aseba_node::lock(void* app) {
     if(m_connected_app == app) {
         return true;
     }
-    if(m_connected_app != nullptr || m_status != status::ready) {
+    if(m_connected_app != nullptr || m_status != status::available) {
         return false;
     }
     m_connected_app = app;
@@ -89,7 +89,7 @@ bool aseba_node::unlock(void* app) {
     }
     m_connected_app = nullptr;
     mLogDebug("Unlocking node");
-    set_status(status::ready);
+    set_status(status::available);
     return true;
 }
 
@@ -142,7 +142,7 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_description = description;
     }
-    set_status(status::ready);
+    set_status(status::available);
 }
 
 }  // namespace mobsya

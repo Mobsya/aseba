@@ -51,12 +51,12 @@ void aseba_node_registery::remove_node(std::shared_ptr<aseba_node> node) {
 }
 
 void aseba_node_registery::set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status status) {
-    mLogInfo("Changing node status");
     std::unique_lock<std::mutex> lock(m_nodes_mutex);
     auto it = find(node);
     if(it != std::end(m_aseba_nodes)) {
         node_id id = it->first;
         lock.unlock();
+        mLogInfo("Changing node {} status to {} ", id, aseba_node::status_to_string(status));
         m_node_status_changed_signal(node, id, status);
     }
     update_discovery();

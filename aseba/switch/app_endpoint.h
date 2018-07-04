@@ -220,6 +220,10 @@ public:
     void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
         mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
 
+        if(status == aseba_node::status::busy && get_locked_node(id)) {
+            status = aseba_node::status::ready;
+        }
+
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
         nodes.emplace_back(fb::CreateNodeDirect(builder, id, mobsya::fb::NodeStatus(status), fb::NodeType::Thymio2));

@@ -24,7 +24,7 @@ mobsya.fb.NodeType = {
 };
 
 /**
- * The status of a node represents whether the node is connected and ready.
+ * The status of a node represents whether the node is connected and available.
  *
  * @enum
  */
@@ -35,24 +35,29 @@ mobsya.fb.NodeStatus = {
   unknown: 0,
 
   /**
-   * The node is just connected. However, sending code or requesting a VM desciption is unspecified in this state 
+   * The node is just connected. However, sending code or requesting a VM desciption is unspecified in this state
    */
   connected: 1,
 
   /**
-   * The node is ready. It needs to be sent a LockNode message before any action that would mutate it state, such as sending code can take place
+   * The node is available. It needs to be sent a LockNode message before any action that would mutate it state, such as sending code can take place
    */
-  ready: 2,
+  available: 2,
 
   /**
-   * The node is busy - this will be sent to all clients, including the one that sent the LockNode message
+   * The node is busy - this will be sent to all clients, except the one who locked the node
    */
   busy: 3,
 
   /**
-   * The node is disconnected. Any reference to it will be destroyed on the server side, and sending further messages to it will fail 
+   * The node is ready - this will be sent the client that optained a lock on the node
    */
-  disconnected: 4
+  ready: 4,
+
+  /**
+   * The node is disconnected. Any reference to it will be destroyed on the server side, and sending further messages to it will fail
+   */
+  disconnected: 5
 };
 
 /**
@@ -414,7 +419,7 @@ mobsya.fb.RequestListOfNodes.endRequestListOfNodes = function(builder) {
 };
 
 /**
- * Request the server to send a NodeAsebaVMDescription for the node corresponding to node_id 
+ * Request the server to send a NodeAsebaVMDescription for the node corresponding to node_id
  *
  * @constructor
  */
@@ -529,7 +534,7 @@ mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription = funct
 };
 
 /**
- * The description of an Aseba VM, sent in response to a RequestNodeAsebaVMDescription 
+ * The description of an Aseba VM, sent in response to a RequestNodeAsebaVMDescription
  *
  * @constructor
  */

@@ -9,18 +9,20 @@ enum NodeType : int {
   ThymioWireless = 1,
 }
 
-/// The status of a node represents whether the node is connected and ready.
+/// The status of a node represents whether the node is connected and available.
 enum NodeStatus : int {
   /// The status is unknown, this denotes a programmation error or a bug
   unknown   = 0,
   /// The node is just connected. However, sending code or requesting a VM desciption is unspecified in this state
   connected = 1,
-  /// The node is ready. It needs to be sent a LockNode message before any action that would mutate it state, such as sending code can take place
-  ready = 2,
-  /// The node is busy - this will be sent to all clients, including the one that sent the LockNode message
+  /// The node is available. It needs to be sent a LockNode message before any action that would mutate it state, such as sending code can take place
+  available = 2,
+  /// The node is busy - this will be sent to all clients, except the one who locked the node
   busy = 3,
+  /// The node is ready - this will be sent the client that optained a lock on the node
+  ready = 4,
   /// The node is disconnected. Any reference to it will be destroyed on the server side, and sending further messages to it will fail
-  disconnected = 4,
+  disconnected = 5,
 }
 
 // Represent various errors a request can fail with.
