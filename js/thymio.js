@@ -22,7 +22,7 @@ import WebSocket from 'isomorphic-ws';
  * @external Promise
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise|Promise}
  */
-class Request {
+export class Request {
 
     constructor(request_id) {
         var then    = undefined;

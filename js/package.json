@@ -1,8 +1,7 @@
 {
   "name": "@mobsya/thymio-api",
-  "version": "0.1.7",
+  "version": "0.2.1",
   "description": "A JS api to communicate with Thymio from node and browsers",
-  "private": true,
   "dependencies": {
     "flatbuffers": "^1.9.0",
     "isomorphic-ws": "^4.0.1",
