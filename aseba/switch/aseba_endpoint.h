@@ -41,11 +41,6 @@ public:
     static pointer create_for_usb(boost::asio::io_context& io) {
         return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
     }
-    static pointer create_for_tcp(boost::asio::io_context& io) {
-        //   return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, endpoint_type::tcp));
-    }
-
-
     void start() {
         read_aseba_message();
 

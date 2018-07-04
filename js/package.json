@@ -8,15 +8,14 @@
     "isomorphic-ws": "^4.0.1",
     "ws": "^5.2.1"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Mobsya",
   "license": "ISC",
-  "main": "webpack.config.js",
+  "main": "thymio.js",
   "optionalDependencies": {
     "bufferutil": "^3.0.5",
     "utf-8-validate": "^4.0.2"

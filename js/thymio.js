@@ -81,11 +81,11 @@ export class Node {
         return this._status
     }
 
-    /** Whether the node is disconnected
+    /** Whether the node is ready (connected, and locked)
      *  @type {boolean}
      */
-    get disconnected() {
-        return this._status == mobsya.fb.NodeStatus.disconnected
+    get ready() {
+        return this._status == mobsya.fb.NodeStatus.ready
     }
 
     /** The node status converted to string.
@@ -95,6 +95,7 @@ export class Node {
         switch(this.status) {
             case mobsya.fb.NodeStatus.connected: return "connected"
             case mobsya.fb.NodeStatus.ready: return "ready"
+            case mobsya.fb.NodeStatus.available: return "available"
             case mobsya.fb.NodeStatus.busy: return "busy"
             case mobsya.fb.NodeStatus.disconnected: return "disconnected"
         }
@@ -102,9 +103,10 @@ export class Node {
     }
 
     /** Lock the device
-     *  Locking a device is akin to take sole ownership of it until the connection is closed or the unlock method is explicitely called
+     *  Locking a device is akin to take sole ownership of it until the connection
+     *  is closed or the unlock method is explicitely called
      *
-     *  The device must be in the ready state before it can be locked.
+     *  The device must be in the available state before it can be locked.
      *  Once a device is locked, all client will see the device becoming busy.
      *
      *  If the device can not be locked, an {@link mobsya.fb.Error} is raised.
@@ -115,7 +117,7 @@ export class Node {
     }
 
     /** Unlock the device
-     *  Once a device is unlocked, all client will see the device becoming ready.
+     *  Once a device is unlocked, all client will see the device becoming available.
      *  Once unlock, a device can't be written to until loc
      *  @throws {mobsya.fb.Error}
      *  @see lock
@@ -125,7 +127,7 @@ export class Node {
     }
 
     /** Get the description from the device
-     *  The device must be in the ready state before requestibng the VM.
+     *  The device must be in the available state before requesting the VM.
      *  @returns {external:Promise<AsebaVMDescription>}
      *  @throws {mobsya.fb.Error}
      *  @see lock
@@ -137,7 +139,7 @@ export class Node {
     }
 
     /** Load an aseba program on the VM
-     *  The device must be locked before calling this function
+     *  The device must be locked & ready before calling this function
      *  @param {external:String} code - the aseba code to load
      *  @throws {mobsya.fb.Error}
      *  @see lock
@@ -147,7 +149,7 @@ export class Node {
     }
 
     /** Run the code currently loaded on the vm
-     *  The device must be locked before calling this function
+     *  The device must be locked & ready before calling this function
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
@@ -198,6 +200,10 @@ export class Client {
      */
     on_nodes_changed(nodes) {
 
+    }
+
+    onopen() {
+        console.log("connected")
     }
 
     onmessage (event) {
