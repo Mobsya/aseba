@@ -218,6 +218,13 @@ public:
     }
 
     void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
+        boost::asio::post(this->m_strand, [that = this->shared_from_this(), node, id, status]() {
+            that->do_node_changed(node, id, status);
+        });
+    }
+
+private:
+    void do_node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
         mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
 
         if(status == aseba_node::status::busy && get_locked_node(id)) {
@@ -232,7 +239,6 @@ public:
         write_message(wrap_fb(builder, offset));
     }
 
-private:
     void send_full_node_list() {
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
@@ -348,6 +354,10 @@ private:
             });
         };
         return callback;
+    }
+
+    std::shared_ptr<application_endpoint<Socket>> shared_from_this() {
+        return std::static_pointer_cast<application_endpoint<Socket>>(base::shared_from_this());
     }
 
     std::weak_ptr<application_endpoint<Socket>> weak_from_this() {
