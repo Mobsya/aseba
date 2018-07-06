@@ -22,11 +22,7 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
 
     auto it = find(node);
     if(it == std::end(m_aseba_nodes)) {
-        node_id id = 0;
-        do {
-            id = m_id_generator();
-            it = m_aseba_nodes.find(id);
-        } while(it != std::end(m_aseba_nodes));
+        node_id id = m_id_generator();
         it = m_aseba_nodes.insert({id, node}).first;
         lock.unlock();
         m_node_status_changed_signal(node, id, aseba_node::status::connected);
@@ -126,7 +122,7 @@ auto aseba_node_registery::find_from_native_id(aseba_node::node_id_t id) const -
     return std::end(m_aseba_nodes);
 }
 
-std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(node_id id) const {
+std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(const aseba_node_registery::node_id& id) const {
     std::unique_lock<std::mutex> _(m_nodes_mutex);
     auto it = m_aseba_nodes.find(id);
     if(it == std::end(m_aseba_nodes))
@@ -146,7 +142,7 @@ void aseba_node_registery::broadcast(std::shared_ptr<Aseba::Message> msg) {
     auto it = find_from_native_id(native_id);
     if(it == std::end(m_aseba_nodes))
         return;
-    mapped->source = it->first;
+    mapped->source = it->first.short_for_tymio2();
     auto cmd_msg = std::dynamic_pointer_cast<Aseba::CmdMessage>(mapped);
 
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
@@ -160,7 +156,7 @@ void aseba_node_registery::broadcast(std::shared_ptr<Aseba::Message> msg) {
 
         // If the message is for a specific dest, do some filtering, and remap the destination
         if(cmd_msg) {
-            if(it->first != cmd_msg->dest)
+            if(it->first.short_for_tymio2() != cmd_msg->dest)
                 continue;
             cmd_msg->dest = node->native_id();
             node->write_message(cmd_msg);
@@ -171,14 +167,6 @@ void aseba_node_registery::broadcast(std::shared_ptr<Aseba::Message> msg) {
             node->write_message(mapped);
         }
     }
-}
-
-
-aseba_node_registery::id_generator::id_generator()
-    : gen(std::random_device()()), dis(1, std::numeric_limits<node_id>::max()) {}
-
-aseba_node_registery::node_id aseba_node_registery::id_generator::operator()() {
-    return dis(gen);
 }
 
 }  // namespace mobsya

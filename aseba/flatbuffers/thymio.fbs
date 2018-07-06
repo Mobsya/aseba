@@ -2,6 +2,11 @@
 
 namespace mobsya.fb;
 
+///>A node id
+table NodeId {
+   id:[ubyte];
+}
+
 /// The Type of a node
 /// A node can designate either a robot, a simulator, each with various capabilities.
 enum NodeType : int {
@@ -37,7 +42,7 @@ enum ErrorType : int {
 
 /// Represent a node
 table Node {
-  node_id:uint;
+  node_id:NodeId;
   status:NodeStatus;
   type:NodeType;
   name:string;
@@ -57,13 +62,13 @@ table RequestListOfNodes {}
 /// Request the server to send a NodeAsebaVMDescription for the node corresponding to node_id
 table RequestNodeAsebaVMDescription {
   request_id:uint;
-  node_id:uint;
+  node_id:NodeId;
 }
 
 /// The description of an Aseba VM, sent in response to a RequestNodeAsebaVMDescription
 table NodeAsebaVMDescription {
   request_id:uint;
-  node_id:uint;
+  node_id:NodeId;
   bytecode_size:uint;
   data_size:uint;
   stack_size:uint;
@@ -100,25 +105,25 @@ table NativeFunctionParameter {
 /// Once locked, the node appears busy to all clients.
 table LockNode {
   request_id:uint;
-  node_id:uint;
+  node_id:NodeId;
 }
 
 /// Unlock a device so that other client can use it.
 /// Once unlocked, the node appears ready to all clients.
 table UnlockNode {
   request_id:uint;
-  node_id:uint;
+  node_id:NodeId;
 }
 
 table RequestAsebaCodeLoad {
     request_id:uint;
-    node_id:uint;
+    node_id:NodeId;
     program:string;
 }
 
 table RequestAsebaCodeRun {
     request_id:uint;
-    node_id:uint;
+    node_id:NodeId;
 }
 
 

@@ -217,14 +217,16 @@ public:
         }
     }
 
-    void node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
+    void node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
+                      aseba_node::status status) {
         boost::asio::post(this->m_strand, [that = this->shared_from_this(), node, id, status]() {
             that->do_node_changed(node, id, status);
         });
     }
 
 private:
-    void do_node_changed(std::shared_ptr<aseba_node> node, aseba_node_registery::node_id id, aseba_node::status status) {
+    void do_node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
+                         aseba_node::status status) {
         mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
 
         if(status == aseba_node::status::busy && get_locked_node(id)) {
@@ -233,7 +235,8 @@ private:
 
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
-        nodes.emplace_back(fb::CreateNodeDirect(builder, id, mobsya::fb::NodeStatus(status), fb::NodeType::Thymio2));
+        nodes.emplace_back(
+            fb::CreateNodeDirect(builder, id.fb(builder), mobsya::fb::NodeStatus(status), fb::NodeType::Thymio2));
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
@@ -247,15 +250,15 @@ private:
             const auto ptr = node.second.lock();
             if(!ptr)
                 continue;
-            nodes.emplace_back(fb::CreateNodeDirect(builder, node.first, mobsya::fb::NodeStatus(ptr->get_status()),
-                                                    fb::NodeType::Thymio2));
+            nodes.emplace_back(fb::CreateNodeDirect(builder, node.first.fb(builder),
+                                                    mobsya::fb::NodeStatus(ptr->get_status()), fb::NodeType::Thymio2));
         }
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
     }
 
-    void send_aseba_vm_description(uint32_t request_id, aseba_node_registery::node_id id) {
+    void send_aseba_vm_description(uint32_t request_id, const aseba_node_registery::node_id& id) {
         auto node = registery().node_from_id(id);
         if(!node) {
             // error ?
@@ -264,7 +267,7 @@ private:
         write_message(serialize_aseba_vm_description(request_id, *node, id));
     }
 
-    void lock_node(uint32_t request_id, aseba_node_registery::node_id id) {
+    void lock_node(uint32_t request_id, const aseba_node_registery::node_id& id) {
         auto node = registery().node_from_id(id);
         if(!node) {
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
@@ -279,7 +282,7 @@ private:
         }
     }
 
-    void unlock_node(uint32_t request_id, aseba_node_registery::node_id id) {
+    void unlock_node(uint32_t request_id, const aseba_node_registery::node_id& id) {
         auto it = m_locked_nodes.find(id);
         std::shared_ptr<aseba_node> node;
         if(it != std::end(m_locked_nodes)) {
@@ -298,7 +301,7 @@ private:
         }
     }
 
-    void send_aseba_program(uint32_t request_id, aseba_node_registery::node_id id, std::string program) {
+    void send_aseba_program(uint32_t request_id, const aseba_node_registery::node_id& id, std::string program) {
         auto n = get_locked_node(id);
         if(!n) {
             mLogError("send_aseba_code: node {} not locked", id);
@@ -326,7 +329,7 @@ private:
         return boost::asio::use_service<aseba_node_registery>(this->m_ctx);
     }
 
-    std::shared_ptr<aseba_node> get_locked_node(aseba_node_registery::node_id id) const {
+    std::shared_ptr<aseba_node> get_locked_node(const aseba_node_registery::node_id& id) const {
         auto it = m_locked_nodes.find(id);
         if(it == std::end(m_locked_nodes))
             return {};
@@ -366,7 +369,8 @@ private:
 
 
     std::vector<flatbuffers::DetachedBuffer> m_queue;
-    std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>> m_locked_nodes;
+    std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
+        m_locked_nodes;
 };
 
 

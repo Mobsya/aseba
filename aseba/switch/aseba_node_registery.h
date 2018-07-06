@@ -1,18 +1,19 @@
 #pragma once
 #include <boost/asio/io_service.hpp>
-#include <boost/uuid/uuid.hpp>
 #include <unordered_map>
 #include <random>
 #include <aware/aware.hpp>
 #include <boost/signals2.hpp>
 
 #include "aseba_node.h"
+#include "node_id.h"
+
 
 namespace mobsya {
 
 class aseba_node_registery : public boost::asio::detail::service_base<aseba_node_registery> {
 public:
-    using node_id = uint16_t;
+    using node_id = mobsya::node_id;
     using node_map = std::unordered_map<node_id, std::weak_ptr<aseba_node>>;
 
     aseba_node_registery(boost::asio::io_context& io_context);
@@ -24,7 +25,7 @@ public:
     void broadcast(std::shared_ptr<Aseba::Message> msg);
 
     node_map nodes() const;
-    std::shared_ptr<aseba_node> node_from_id(node_id) const;
+    std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
 
 
 private:
@@ -46,15 +47,7 @@ private:
         m_node_status_changed_signal;
     friend class node_status_monitor;
 
-
-    struct id_generator {
-        id_generator();
-        node_id operator()();
-
-    private:
-        std::mt19937 gen;
-        std::uniform_int_distribution<node_id> dis;
-    } m_id_generator;
+    boost::uuids::random_generator m_id_generator;
 };
 
 
@@ -66,7 +59,8 @@ public:
     void disconnect() {
         m_connection.disconnect();
     }
-    virtual void node_changed(std::shared_ptr<aseba_node>, aseba_node_registery::node_id, aseba_node::status) = 0;
+    virtual void node_changed(std::shared_ptr<aseba_node>, const aseba_node_registery::node_id&,
+                              aseba_node::status) = 0;
 
 protected:
     void start_node_monitoring(aseba_node_registery& registery) {
