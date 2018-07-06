@@ -11,11 +11,9 @@ matrix:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        - sourceline: deb https://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main
         - sourceline: ppa:beineri/opt-qt-5.10.1-trusty
         packages:
         - g++-6
-        - clang-6.0
         - libudev-dev
         - qt510base
         - qt510declarative
@@ -66,6 +64,11 @@ before_install:
     # install cmake through pip - should give us cmake 3.11 - which we need for boost
     pip install --user --upgrade pip
     pip install --user --upgrade cmake
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository "deb https://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main"
+        sudo apt-get update -qq
+    fi
   fi
   if [[ "$ANDROID" ]]; then
     cd $HOME
@@ -88,6 +91,13 @@ before_install:
     popd
   fi
   set +e
+
+install:
+- |
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
+        sudo apt-get install --allow-unauthenticated clang-6.0
+  fi
+
 script:
 - |
   cmake --version
