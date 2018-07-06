@@ -113,7 +113,8 @@ export class Node {
      *  @throws {mobsya.fb.Error}
      */
     async lock() {
-        return await this._client.lock_node(this._id)
+        await this._client.lock_node(this._id)
+        this._status = Node.Status.ready
     }
 
     /** Unlock the device
@@ -124,6 +125,7 @@ export class Node {
      */
     async unlock() {
         return await this._client.unlock_node(this._id)
+        this._status = Node.Status.available
     }
 
     /** Get the description from the device
@@ -164,6 +166,32 @@ export class Node {
                 this.on_status_changed(status)
             }
         }
+    }
+}
+
+class InvalidNodeIDException {
+    constructor() {
+        this.message = message;
+        this.name = 'InvalidNodeIDException';
+    }
+}
+
+class NodeId {
+    constructor(array) {
+        if(array.length != 16) {
+            throw new InvalidNodeIDException()
+        }
+        this.data = array
+    }
+    toString() {
+        let res = []
+        this.data.forEach(byte => {
+                res.push(byte.toString(16).padStart(2, '0'))
+                if([4, 7, 10, 13].includes(res.length))
+                    res.push('-');
+            }
+        );
+        return '{' + res.join('') + '}';
     }
 }
 
@@ -219,7 +247,7 @@ export class Client {
             case mobsya.fb.AnyMessage.NodeAsebaVMDescription: {
                 let msg = message.message(new mobsya.fb.NodeAsebaVMDescription())
                 let req = this._get_request(msg.requestId())
-                const id = msg.nodeId()
+                const id = this._id(msg.nodeId())
                 if(req) {
                     req._trigger_then(id, this._unserialize_aseba_vm_description(msg))
                 }
@@ -253,24 +281,26 @@ export class Client {
     }
 
     request_aseba_vm_description(id) {
-        let builder = new flatbuffers.Builder();
-        let req_id  = this._gen_request_id()
+        const builder = new flatbuffers.Builder();
+        const req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
 
         mobsya.fb.RequestNodeAsebaVMDescription.startRequestNodeAsebaVMDescription(builder)
         mobsya.fb.RequestNodeAsebaVMDescription.addRequestId(builder, req_id)
-        mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, id)
+        mobsya.fb.RequestNodeAsebaVMDescription.addNodeId(builder, nodeOffset)
         const offset = mobsya.fb.RequestNodeAsebaVMDescription.endRequestNodeAsebaVMDescription(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestNodeAsebaVMDescription)
         return this._prepare_request(req_id)
     }
 
     send_aseba_program(id, code) {
-        let builder = new flatbuffers.Builder();
-        let req_id  = this._gen_request_id()
+        const builder = new flatbuffers.Builder();
+        const req_id  = this._gen_request_id()
         const codeOffset = builder.createString(code)
+        const nodeOffset = this._create_node_id(builder, id)
         mobsya.fb.RequestAsebaCodeLoad.startRequestAsebaCodeLoad(builder)
         mobsya.fb.RequestAsebaCodeLoad.addRequestId(builder, req_id)
-        mobsya.fb.RequestAsebaCodeLoad.addNodeId(builder, id)
+        mobsya.fb.RequestAsebaCodeLoad.addNodeId(builder, nodeOffset)
         mobsya.fb.RequestAsebaCodeLoad.addProgram(builder, codeOffset)
         const offset = mobsya.fb.RequestAsebaCodeLoad.endRequestAsebaCodeLoad(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeLoad)
@@ -280,9 +310,10 @@ export class Client {
     run_aseba_program(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
         mobsya.fb.RequestAsebaCodeRun.startRequestAsebaCodeRun(builder)
         mobsya.fb.RequestAsebaCodeRun.addRequestId(builder, req_id)
-        mobsya.fb.RequestAsebaCodeRun.addNodeId(builder, id)
+        mobsya.fb.RequestAsebaCodeRun.addNodeId(builder, nodeOffset)
         const offset = mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeRun)
         return this._prepare_request(req_id)
@@ -292,10 +323,11 @@ export class Client {
     lock_node(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
 
         mobsya.fb.LockNode.startLockNode(builder)
         mobsya.fb.LockNode.addRequestId(builder, req_id)
-        mobsya.fb.LockNode.addNodeId(builder, id)
+        mobsya.fb.LockNode.addNodeId(builder, nodeOffset)
         let offset = mobsya.fb.LockNode.endLockNode(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.LockNode)
         return this._prepare_request(req_id)
@@ -304,10 +336,11 @@ export class Client {
     unlock_node(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
 
         mobsya.fb.UnlockNode.startUnlockNode(builder)
         mobsya.fb.UnlockNode.addRequestId(builder, req_id)
-        mobsya.fb.UnlockNode.addNodeId(builder, id)
+        mobsya.fb.UnlockNode.addNodeId(builder, nodeOffset)
         let offset = mobsya.fb.UnlockNode.endUnlockNode(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.UnlockNode)
         return this._prepare_request(req_id)
@@ -317,18 +350,23 @@ export class Client {
         let nodes = []
         for(let i = 0; i < msg.nodesLength(); i++) {
             const n = msg.nodes(i);
-            let node = this._requests.get(n.nodeId())
+            const id = this._id(n.nodeId())
+            let node = this._nodes.get(id)
             if(!node) {
-                node = new Node(this, n.nodeId(), n.status())
-                this._requests.set(n.nodeId(), node)
+                node = new Node(this, id, n.status())
+                this._nodes.set(id, node)
             }
             if(n.status() == Node.Status.disconnected) {
-                this._requests.delete(n.nodeId())
+                this._nodes.delete(id)
             }
             nodes.push(node)
             node._set_status(n.status())
         }
         return nodes
+    }
+
+    _id(fb_id) {
+        return new NodeId(fb_id.idArray())
     }
 
     _unserialize_aseba_vm_description(msg) {
@@ -357,6 +395,13 @@ export class Client {
             desc.functions.push({"name" : v.name(), "description" : v.description(), "params": params})
         }
         return desc
+    }
+
+    _create_node_id(builder, id) {
+        const offset = mobsya.fb.NodeId.createIdVector(builder, id.data);
+        mobsya.fb.NodeId.startNodeId(builder)
+        mobsya.fb.NodeId.addId(builder, offset)
+        return mobsya.fb.NodeId.endNodeId(builder)
     }
 
     _wrap_message_and_send(builder, offset, type) {

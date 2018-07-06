@@ -43,7 +43,7 @@ flatbuffers::DetachedBuffer create_ack_response(uint32_t request_id) {
 }
 
 flatbuffers::DetachedBuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
-                                                           aseba_node_registery::node_id id) {
+                                                           const aseba_node_registery::node_id& id) {
 
     Aseba::TargetDescription desc = n.vm_description();
     flatbuffers::FlatBufferBuilder fb;
@@ -71,7 +71,7 @@ flatbuffers::DetachedBuffer serialize_aseba_vm_description(uint32_t request_id, 
                                                                fb.CreateVector(params)));
     }
 
-    auto offset = CreateNodeAsebaVMDescription(fb, request_id, id, desc.bytecodeSize, desc.variablesSize,
+    auto offset = CreateNodeAsebaVMDescription(fb, request_id, id.fb(fb), desc.bytecodeSize, desc.variablesSize,
                                                desc.stackSize, fb.CreateVector(variables_vector),
                                                fb.CreateVector(events_vector), fb.CreateVector(functions_vector));
     return wrap_fb(fb, offset);
