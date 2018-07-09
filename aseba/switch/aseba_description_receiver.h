@@ -96,7 +96,7 @@ public:
         switch(msg->type) {
             case ASEBA_MESSAGE_DESCRIPTION:
                 if(!desc.name.empty()) {
-                    mLogError("Received an Aseba::Description but we already got one");
+                    mLogWarn("Received an Aseba::Description but we already got one");
                 }
                 desc = *static_cast<const Aseba::Description*>(msg.get());
                 break;

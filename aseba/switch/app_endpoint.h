@@ -130,7 +130,7 @@ public:
     }
 
     void on_initialized(boost::system::error_code ec = {}) {
-        mLogError("on_initialized: {}", ec.message());
+        mLogTrace("on_initialized: {}", ec.message());
 
         // start listening for incomming messages
         read_message();
@@ -162,7 +162,7 @@ public:
         read_message();  // queue the next read early
 
 
-        mLogError("{} -> {} ", ec.message(), EnumNameAnyMessage(msg.message_type()));
+        mLogTrace("{} -> {} ", ec.message(), EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
             case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription: {
@@ -195,7 +195,9 @@ public:
     }
 
     void handle_write(boost::system::error_code ec) {
-        mLogError("{}", ec.message());
+        if(ec) {
+            mLogError("handle_write : error {}", ec.message());
+        }
         m_queue.erase(m_queue.begin());
         if(!m_queue.empty()) {
             base::do_write_message(m_queue.front());
@@ -304,7 +306,7 @@ private:
     void send_aseba_program(uint32_t request_id, const aseba_node_registery::node_id& id, std::string program) {
         auto n = get_locked_node(id);
         if(!n) {
-            mLogError("send_aseba_code: node {} not locked", id);
+            mLogWarn("send_aseba_code: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
@@ -318,7 +320,7 @@ private:
     void run_aseba_program(uint32_t request_id, aseba_node_registery::node_id id) {
         auto n = get_locked_node(id);
         if(!n) {
-            mLogError("run_aseba_program: node {} not locked", id);
+            mLogWarn("run_aseba_program: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }

@@ -168,10 +168,6 @@ public:
     using native_handle_type = libusb_device*;
     using lowest_layer_type = usb_device;
 
-    ~usb_device() {
-        mLogCritical("destroyed");
-    }
-
     usb_device(boost::asio::io_context& io_context);
     usb_device(usb_device&&) = default;
     void assign(native_handle_type);

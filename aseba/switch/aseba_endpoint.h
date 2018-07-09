@@ -56,7 +56,7 @@ public:
             mLogInfo("Requesting list nodes( ec : {}", ec.message());
             that->write_message(std::make_unique<Aseba::ListNodes>());
         });
-        mLogInfo("Waiting before requesting list node");
+        mLogDebug("Waiting before requesting list node");
         timer->async_wait(std::move(cb));
     }
 
@@ -142,6 +142,7 @@ private:
             m_strand, [that](boost::system::error_code ec, uint16_t id, Aseba::TargetDescription msg) {
                 if(ec) {
                     mLogError("Error while waiting for a node description");
+                    return;
                 }
                 auto node = that->find_node(id);
                 node->on_description(msg);
@@ -172,7 +173,7 @@ private:
     }
 
     void handle_write(boost::system::error_code ec) {
-        mLogInfo("Message sent : {}", ec.message());
+        mLogDebug("Message sent : {}", ec.message());
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         auto cb = m_msg_queue.begin()->second;
         if(cb) {
