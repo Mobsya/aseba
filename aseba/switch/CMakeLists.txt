@@ -34,3 +34,5 @@ if(WIN32)
     target_link_libraries(switch bcrypt)
 endif()
 
+install(TARGETS switch RUNTIME DESTINATION bin)
+codesign(switch)
