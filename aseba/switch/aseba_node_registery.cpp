@@ -78,7 +78,11 @@ void aseba_node_registery::update_discovery() {
 }
 
 void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
-    mLogError("Discovery : {}", ec.message());
+    if(ec) {
+        mLogError("Discovery : {}", ec.message());
+    } else {
+        mLogTrace("Discovery : update complete");
+    }
 }
 
 

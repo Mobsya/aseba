@@ -17,12 +17,12 @@ usb_acceptor_service::usb_acceptor_service(boost::asio::io_context& io_service)
     : boost::asio::detail::service_base<usb_acceptor_service>(io_service)
     , m_context(details::usb_context::acquire_context()) {
 
-    mLogDebug("usb_acceptor_service started");
+    mLogInfo("USB monitoring service: started");
 }
 
 
 void usb_acceptor_service::shutdown() {
-    mLogDebug("usb_acceptor_service stopped");
+    mLogInfo("USB monitoring service: Stopped");
     while(!m_requests.empty()) {
         libusb_hotplug_deregister_callback(*m_context, m_requests.front().req_id);
         m_requests.pop();
@@ -69,7 +69,6 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
     }
 
     if(m_context->is_device_open(dev)) {
-        mLogDebug("Already open");
         return 0;
     }
 

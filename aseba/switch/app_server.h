@@ -25,7 +25,7 @@ public:
     void accept() {
         auto endpoint = std::make_shared<application_endpoint<socket_type>>(m_acceptor.get_io_context());
         m_acceptor.async_accept(endpoint->tcp_socket(), [this, endpoint](const boost::system::error_code& error) {
-            mLogTrace("New connection {}", error.message());
+            mLogInfo("New connection {}", error.message());
             if(!error) {
                 endpoint->start();
             }

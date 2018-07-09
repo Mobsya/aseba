@@ -103,10 +103,11 @@ public:
     }
 
     void operator()(boost::system::error_code ec, std::size_t bytes_transferred) {
-        mLogError("{}", ec.message());
-        auto& state = *m_p;
-        if(bytes_transferred == 0)
+        if(ec)
+            mLogError("{}", ec.message());
+        if(ec || bytes_transferred == 0)
             return;
+        auto& state = *m_p;
         if(state.dataBuffer.size() == 0) {
             assert(bytes_transferred == 2);
             auto size = reinterpret_cast<uint16_t&>(state.sizeBuffer);

@@ -121,7 +121,7 @@ bool aseba_node::send_aseba_program(const std::string& program, write_callback&&
     unsigned allocatedVariablesCount;
     bool result = compiler.compile(is, bytecode, allocatedVariablesCount, error);
     if(!result) {
-        mLogError("Compilation failed on node {} : {}", m_id, Aseba::WStringToUTF8(error.message));
+        mLogWarn("Compilation failed on node {} : {}", m_id, Aseba::WStringToUTF8(error.message));
         return false;
     }
 
