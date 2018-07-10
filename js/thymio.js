@@ -365,6 +365,10 @@ export class Client {
         return nodes
     }
 
+    nodes() {
+        return Array.from(this._nodes.values());
+    }
+
     _id(fb_id) {
         return new NodeId(fb_id.idArray())
     }
