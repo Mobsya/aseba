@@ -55,7 +55,7 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
     struct libusb_device_descriptor desc;
     (void)libusb_get_device_descriptor(dev, &desc);
 
-    mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
+    //mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
 
 
     if(*m_context != ctx)
@@ -64,7 +64,7 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
     const auto& devices = req.acceptor.compatible_devices();
     if(std::find(std::begin(devices), std::end(devices), usb_device_identifier{desc.idVendor, desc.idProduct}) ==
        std::end(devices)) {
-        mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
+        //mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
         return 0;
     }
 
