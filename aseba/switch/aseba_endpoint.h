@@ -100,9 +100,11 @@ public:
     }
 
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
+        if(ec) {
+            mLogError("Error while reading aseba message {}", ec.message());
+            return;
+        }
         mLogInfo("Message received : {} {}", ec.message(), msg->type);
-        msg->dump(std::wcout);
-        std::wcout << std::endl;
 
         if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             auto node_id = msg->source;

@@ -70,8 +70,8 @@ public:
         const uint16_t node = s.node;
 
 
-        if(ec) {
-            mLogError("Error in read_aseba_description_message_op while expecting an Aseba::Message");
+        if(ec || !msg) {
+            mLogError("Error in read_aseba_description_message_op while expecting an Aseba::Message : {}", ec.message());
             m_p.invoke(ec, node, Aseba::TargetDescription());
             return;
         }
