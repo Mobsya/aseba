@@ -351,13 +351,13 @@ export class Client {
         for(let i = 0; i < msg.nodesLength(); i++) {
             const n = msg.nodes(i);
             const id = this._id(n.nodeId())
-            let node = this._nodes.get(id)
+            let node = this._nodes.get(id.toString())
             if(!node) {
                 node = new Node(this, id, n.status())
-                this._nodes.set(id, node)
+                this._nodes.set(id.toString(), node)
             }
             if(n.status() == Node.Status.disconnected) {
-                this._nodes.delete(id)
+                this._nodes.delete(id.toString())
             }
             nodes.push(node)
             node._set_status(n.status())
