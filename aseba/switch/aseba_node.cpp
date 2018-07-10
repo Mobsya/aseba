@@ -138,9 +138,11 @@ void aseba_node::run_aseba_program(write_callback&& cb) {
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
+    mLogInfo("Got description for {} [{} variables, {} functions, {} events]",
+             native_id(), description.namedVariables.size(), description.nativeFunctions.size(), description.localEvents.size());
     {
         std::unique_lock<std::mutex> _(m_node_mutex);
-        m_description = description;
+        m_description = std::move(description);
     }
     set_status(status::available);
 }

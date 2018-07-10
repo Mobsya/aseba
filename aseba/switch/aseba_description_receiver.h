@@ -91,8 +91,6 @@ public:
             list[counter++] = std::forward<decltype(description)>(description);
         };
 
-        msg->dump(std::wcout);
-        std::wcout << std::endl;
         switch(msg->type) {
             case ASEBA_MESSAGE_DESCRIPTION:
                 if(!desc.name.empty()) {
