@@ -46,7 +46,7 @@ public:
     public:
         buffer() : s(0) {}
         void reserve(std::size_t size, std::size_t buffer_size) {
-            buffer_size = std::max(10 * buffer_size, std::size_t{1});
+            buffer_size = std::max(50 * buffer_size, std::size_t{1});
             v.resize(((s + size + buffer_size - 1) / buffer_size) * buffer_size);
         }
 
