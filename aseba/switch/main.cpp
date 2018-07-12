@@ -18,7 +18,10 @@ int main() {
     websocket_server.accept();
 
 
-    mobsya::usb_server usb_server(ctx, {{0x0617, 0x000a}});
+    mobsya::usb_server usb_server(ctx, {
+                                  {0x0617, 0x000a},
+                                  {0x0617, 0x000c}
+                                 });
 
 
     mobsya::aseba_node_registery node_registery(ctx);
