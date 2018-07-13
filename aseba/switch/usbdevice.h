@@ -98,8 +98,7 @@ public:
     void cancel(implementation_type& impl);
     void close(implementation_type& impl);
     bool is_open(implementation_type& impl);
-    native_handle_type native_handle(implementation_type& impl);
-
+    native_handle_type native_handle(const implementation_type& impl) const;
     tl::expected<void, boost::system::error_code> open(implementation_type& impl);
 
 
@@ -174,8 +173,10 @@ public:
     void cancel();
     void close();
     bool is_open();
-    native_handle_type native_handle();
+    native_handle_type native_handle() const;
     void open();
+
+    usb_device_identifier usb_device_id() const;
 
     template <typename ConstBufferSequence, typename WriteHandler>
     BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler, void(boost::system::error_code, std::size_t))
