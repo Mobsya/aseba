@@ -3,6 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include <boost/asio.hpp>
+#include <chrono>
 #include "usbdevice.h"
 #include "aseba_message_parser.h"
 #include "aseba_message_writer.h"
@@ -21,7 +22,7 @@ class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
 public:
     ~aseba_endpoint() {
-        std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second->disconnect(); });
+        std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
     }
 
     using pointer = std::shared_ptr<aseba_endpoint>;
@@ -48,16 +49,8 @@ public:
         // A newly connected thymio may not be ready yet
         // Delay asking for its node id to let it start up the vm
         // otherwhise it may never get our request.
-
-        auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
-        timer->expires_from_now(boost::posix_time::milliseconds(200));
-        auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, [timer, that](const boost::system::error_code& ec) {
-            mLogInfo("Requesting list nodes( ec : {}", ec.message());
-            that->write_message(std::make_unique<Aseba::ListNodes>());
-        });
-        mLogDebug("Waiting before requesting list node");
-        timer->async_wait(std::move(cb));
+        schedule_send_ping(boost::posix_time::milliseconds(200));
+        schedule_nodes_health_check();
     }
 
     template <typename CB = write_callback>
@@ -106,19 +99,23 @@ public:
         }
         mLogInfo("Message received : {} {}", ec.message(), msg->type);
 
+        auto node_id = msg->source;
+        auto it = m_nodes.find(node_id);
+        auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
+        // auto & node = info.node;
         if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
-            auto node_id = msg->source;
-            auto it = m_nodes.find(node_id);
-            const auto new_node = it == m_nodes.end();
-            if(new_node) {
-                it = m_nodes.insert({node_id, aseba_node::create(m_io_context, node_id, shared_from_this())}).first;
+            if(!node) {
+                m_nodes.insert({node_id,
+                                {aseba_node::create(m_io_context, node_id, shared_from_this()),
+                                 std::chrono::steady_clock::now()}});
                 // Reading move this, we need to return immediately after
                 read_aseba_node_description(node_id);
                 return;
             }
-        }
-        auto node = find_node(*msg);
-        if(node) {
+            // Update node status
+            it->second.last_seen = std::chrono::steady_clock::now();
+
+        } else if(node) {
             node->on_message(*msg);
         }
         read_aseba_message();
@@ -127,15 +124,59 @@ public:
 private:
     friend class aseba_node;
 
+    struct node_info {
+        std::shared_ptr<aseba_node> node;
+        std::chrono::steady_clock::time_point last_seen;
+    };
+
     std::shared_ptr<aseba_node> find_node(const Aseba::Message& message) {
         return find_node(message.source);
     }
+
     std::shared_ptr<aseba_node> find_node(uint16_t node) {
         auto it = m_nodes.find(node);
         if(it == m_nodes.end()) {
             return {};
         }
-        return it->second;
+        return it->second.node;
+    }
+
+    void schedule_send_ping(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
+        auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+        timer->expires_from_now(delay);
+        auto that = shared_from_this();
+        auto cb = boost::asio::bind_executor(m_strand, [timer, that](const boost::system::error_code& ec) {
+            mLogInfo("Requesting list nodes( ec : {} )", ec.message());
+            that->write_message(std::make_unique<Aseba::ListNodes>());
+            // TODO: Only do if wireless
+            that->schedule_send_ping();
+        });
+        mLogDebug("Waiting before requesting list node");
+        timer->async_wait(std::move(cb));
+    }
+
+    void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
+        auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+        timer->expires_from_now(delay);
+        auto that = shared_from_this();
+        auto cb = boost::asio::bind_executor(m_strand, [this, timer, that](const boost::system::error_code&) {
+            auto now = std::chrono::steady_clock::now();
+            for(auto it = m_nodes.begin(); it != m_nodes.end();) {
+                const auto& info = it->second;
+                auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
+                if(d.count() >= 3) {
+                    mLogTrace("Node {} has been unresponsive for too long, disconnecting it {}",
+                              it->second.node->native_id());
+                    info.node->set_status(aseba_node::status::disconnected);
+                    it = m_nodes.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+            // Reschedule
+            that->schedule_nodes_health_check();
+        });
+        timer->async_wait(std::move(cb));
     }
 
     void read_aseba_node_description(uint16_t node) {
@@ -188,11 +229,12 @@ private:
     }
 
     enum class endpoint_type { usb, tcp };
+
     aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e)
         : m_endpoint(std::move(e)), m_strand(io_context.get_executor()), m_io_context(io_context) {}
     endpoint_t m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
-    std::unordered_map<aseba_node::node_id_t, std::shared_ptr<aseba_node>> m_nodes;
+    std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
     boost::asio::io_service& m_io_context;
     std::mutex m_msg_queue_lock;
     std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
