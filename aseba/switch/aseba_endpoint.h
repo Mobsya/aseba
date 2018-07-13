@@ -15,6 +15,9 @@
 
 namespace mobsya {
 
+constexpr usb_device_identifier THYMIO2_DEVICE_ID = {0x0617, 0x000a};
+constexpr usb_device_identifier THYMIO_WIRELESS_DEVICE_ID = {0x0617, 0x000c};
+
 namespace variant_ns = nonstd;
 
 class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
@@ -30,18 +33,18 @@ public:
 
     using write_callback = std::function<void(boost::system::error_code)>;
 
+    const usb_device& usb() const {
+        return variant_ns::get<usb_device>(m_endpoint);
+    }
+
     usb_device& usb() {
         return variant_ns::get<usb_device>(m_endpoint);
     }
 
-    usb_device& socket() {
-        return variant_ns::get<usb_device>(m_endpoint);
-    }
-
-
     static pointer create_for_usb(boost::asio::io_context& io) {
         return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
     }
+
     void start() {
         read_aseba_message();
 
@@ -50,7 +53,9 @@ public:
         // Delay asking for its node id to let it start up the vm
         // otherwhise it may never get our request.
         schedule_send_ping(boost::posix_time::milliseconds(200));
-        schedule_nodes_health_check();
+
+        if(needs_health_check())
+            schedule_nodes_health_check();
     }
 
     template <typename CB = write_callback>
@@ -102,7 +107,6 @@ public:
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
         auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
-        // auto & node = info.node;
         if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             if(!node) {
                 m_nodes.insert({node_id,
@@ -144,12 +148,15 @@ private:
     void schedule_send_ping(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
-        auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, [timer, that](const boost::system::error_code& ec) {
+        auto ptr = this->weak_from_this();
+        auto cb = boost::asio::bind_executor(m_strand, [timer, ptr](const boost::system::error_code& ec) {
+            auto that = ptr.lock();
+            if(!that || ec)
+                return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
             that->write_message(std::make_unique<Aseba::ListNodes>());
-            // TODO: Only do if wireless
-            that->schedule_send_ping();
+            if(that->needs_health_check())
+                that->schedule_send_ping();
         });
         mLogDebug("Waiting before requesting list node");
         timer->async_wait(std::move(cb));
@@ -158,14 +165,17 @@ private:
     void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
-        auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, [this, timer, that](const boost::system::error_code&) {
+        auto ptr = this->weak_from_this();
+        auto cb = boost::asio::bind_executor(m_strand, [this, timer, ptr](const boost::system::error_code&) {
+            auto that = ptr.lock();
+            if(!that)
+                return;
             auto now = std::chrono::steady_clock::now();
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
                 if(d.count() >= 3) {
-                    mLogTrace("Node {} has been unresponsive for too long, disconnecting it {}",
+                    mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
                     it = m_nodes.erase(it);
@@ -177,6 +187,12 @@ private:
             that->schedule_nodes_health_check();
         });
         timer->async_wait(std::move(cb));
+    }
+
+    // Do not run pings / health check for usb-connected nodes
+    bool needs_health_check() const {
+        return !variant_ns::holds_alternative<usb_device>(m_endpoint) ||
+            usb().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
     }
 
     void read_aseba_node_description(uint16_t node) {
@@ -227,8 +243,6 @@ private:
             do_write_message(*(m_msg_queue.front().first));
         }
     }
-
-    enum class endpoint_type { usb, tcp };
 
     aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e)
         : m_endpoint(std::move(e)), m_strand(io_context.get_executor()), m_io_context(io_context) {}

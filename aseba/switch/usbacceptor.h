@@ -11,15 +11,6 @@
 
 namespace mobsya {
 
-struct usb_device_identifier {
-    uint16_t vendor_id;
-    uint16_t product_id;
-};
-
-inline bool operator==(const usb_device_identifier& a, const usb_device_identifier& b) {
-    return a.vendor_id == b.vendor_id && a.product_id == b.product_id;
-}
-
 class usb_acceptor;
 class usb_acceptor_service : public boost::asio::detail::service_base<usb_acceptor_service> {
 public:
@@ -34,8 +25,8 @@ public:
         request* ptr = nullptr;
         {
             std::unique_lock<std::mutex> _(m_req_mutex);
-            request r{acceptor, d,
-                      std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler))};
+            request r{acceptor, d, std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler)),
+                      0};
             m_requests.push(r);
             ptr = &m_requests.back();
         }

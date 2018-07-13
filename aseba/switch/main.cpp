@@ -4,6 +4,7 @@
 #include "log.h"
 #include "aseba_node_registery.h"
 #include "app_server.h"
+#include "aseba_endpoint.h"
 
 int main() {
     mLogInfo("Starting...");
@@ -18,10 +19,7 @@ int main() {
     websocket_server.accept();
 
 
-    mobsya::usb_server usb_server(ctx, {
-                                  {0x0617, 0x000a},
-                                  {0x0617, 0x000c}
-                                 });
+    mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
 
 
     mobsya::aseba_node_registery node_registery(ctx);

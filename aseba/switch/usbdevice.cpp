@@ -45,7 +45,7 @@ bool usb_device_service::is_open(implementation_type& impl) {
     return impl.handle != nullptr;
 }
 
-usb_device_service::native_handle_type usb_device_service::native_handle(implementation_type& impl) {
+usb_device_service::native_handle_type usb_device_service::native_handle(const implementation_type& impl) const {
     return impl.device;
 }
 
@@ -195,8 +195,16 @@ bool usb_device::is_open() {
     return this->get_service().is_open(this->get_implementation());
 }
 
-usb_device::native_handle_type usb_device::native_handle() {
+usb_device::native_handle_type usb_device::native_handle() const {
     return this->get_service().native_handle(this->get_implementation());
+}
+
+usb_device_identifier usb_device::usb_device_id() const {
+    if(!this->native_handle())
+        return {0, 0};
+    libusb_device_descriptor desc;
+    libusb_get_device_descriptor(this->native_handle(), &desc);
+    return {desc.idVendor, desc.idProduct};
 }
 
 std::size_t usb_device::write_channel_chunk_size() const {
