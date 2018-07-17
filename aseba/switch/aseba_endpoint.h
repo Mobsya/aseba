@@ -148,7 +148,7 @@ private:
     void schedule_send_ping(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
-        auto ptr = this->weak_from_this();
+        std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();
         auto cb = boost::asio::bind_executor(m_strand, [timer, ptr](const boost::system::error_code& ec) {
             auto that = ptr.lock();
             if(!that || ec)
@@ -165,7 +165,7 @@ private:
     void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
-        auto ptr = this->weak_from_this();
+        std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();
         auto cb = boost::asio::bind_executor(m_strand, [this, timer, ptr](const boost::system::error_code&) {
             auto that = ptr.lock();
             if(!that)
