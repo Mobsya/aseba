@@ -1154,6 +1154,58 @@ bool operator==(const SetVariables& lhs, const SetVariables& rhs) {
         lhs.variables == rhs.variables;
 }
 
+
+void SetThymioDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
+    buffer.add(uint8_t(info));
+    buffer.add(uint8_t(data.size()));
+    for(const uint8_t& b : data)
+        buffer.add(b);
+}
+
+void SetThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
+    info = ThymioDeviceInfoType(buffer.get<uint8_t>());
+    auto size = buffer.get<uint8_t>();
+    data.resize(size);
+    for(auto & d : data)
+        d = buffer.get<uint8_t>();
+}
+
+void SetThymioDeviceInfo::dumpSpecific(std::wostream& stream) const {
+    stream << "info type: " << info << ", size: " << data.size();
+}
+
+void GetThymioDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
+    buffer.add(uint8_t(info));
+}
+
+void GetThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
+
+}
+
+void GetThymioDeviceInfo::dumpSpecific(std::wostream& stream) const {
+     stream << "info type: " << info;
+}
+
+void ThymioDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
+    buffer.add(uint8_t(info));
+    buffer.add(uint8_t(data.size()));
+    for(const uint8_t& b : data)
+        buffer.add(b);
+}
+
+void ThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
+    info = ThymioDeviceInfoType(buffer.get<uint8_t>());
+    auto size = buffer.get<uint8_t>();
+    data.resize(size);
+    for(auto & d : data)
+        d = buffer.get<uint8_t>();
+}
+
+void ThymioDeviceInfo::dumpSpecific(std::wostream& stream) const {
+    stream << "info type: " << info << ", size: " << data.size();
+}
+
+
 //
 
 bool operator==(const WriteBytecode& lhs, const WriteBytecode& rhs) {

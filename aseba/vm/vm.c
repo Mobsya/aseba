@@ -690,6 +690,11 @@ void AsebaVMDebugMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t
         AsebaSendMessageWords(vm, ASEBA_MESSAGE_NODE_PRESENT, &protocolVersion, 1);
         return;
     }
+#ifdef THYMIO_FIRMWARE_BUILD
+    if(AsebaHandleThymioSpecificMessage(vm, id, data, dataLength)) {
+        return;
+    }
+#endif
 
     // safety check to avoid memory trash in case of unknown messages with 0 length
     if(dataLength == 0)

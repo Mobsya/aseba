@@ -31,7 +31,7 @@ extern const char*  ASEBA_VERSION;
 extern const char*  ASEBA_REVISION;
 
 /*! version of aseba protocol, including bytecodes types and constants */
-#define ASEBA_PROTOCOL_VERSION 5
+#define ASEBA_PROTOCOL_VERSION 6
 
 /*! minimal accepted protocol version in targets */
 #define ASEBA_MIN_TARGET_PROTOCOL_VERSION 4
@@ -171,6 +171,7 @@ typedef enum
 	ASEBA_MESSAGE_EXECUTION_STATE_CHANGED,
 	ASEBA_MESSAGE_BREAKPOINT_SET_RESULT,
 	ASEBA_MESSAGE_NODE_PRESENT,
+    ASEBA_MESSAGE_THYMIO_DEVICE_INFO,
 
 	/* from IDE to all nodes */
 	ASEBA_MESSAGE_GET_DESCRIPTION = 0xA000,
@@ -196,6 +197,10 @@ typedef enum
 	/* from IDE to all nodes, here because it was added later */
 	ASEBA_MESSAGE_LIST_NODES,
 
+    /* APP TO THYMIO */
+    ASEBA_MESSAGE_THYMIO_GET_THYMIO_DEVICE_INFO,
+    ASEBA_MESSAGE_THYMIO_SET_THYMIO_DEVICE_INFO,
+
 	ASEBA_MESSAGE_INVALID = 0xFFFF
 } AsebaSystemMessagesTypes;
 
@@ -205,6 +210,16 @@ typedef enum
 	ASEBA_DEST_DEBUG = 0,
 	ASEBA_DEST_INVALID = 0xFFFF
 } AsebaMessagesDests;
+
+
+typedef enum
+{
+    THYMIO_DEVICE_INFO_UUID  = 1,
+    THYMIO_DEVICE_INFO_NAME  = 2,
+
+    THYMIO_DEVICE_INFO_ENUM_COUNT = 2
+} ThymioDeviceInfoType;
+
 
 /*! Limits for static buffers allocation */
 typedef enum
