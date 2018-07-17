@@ -196,6 +196,9 @@ void __attribute__((weak)) AsebaVMErrorCB(AsebaVMState* vm, const char* message)
 
 
 // Function optionally implemented
+#ifdef THYMIO_FIRMWARE_BUILD
+extern int AsebaHandleThymioSpecificMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength);
+#endif
 
 #ifdef ASEBA_ASSERT
 

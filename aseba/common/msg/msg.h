@@ -601,6 +601,63 @@ protected:
     }
 };
 
+
+//! Store persistent device info into thymio
+class SetThymioDeviceInfo : public CmdMessage {
+private:
+    ThymioDeviceInfoType info;
+    std::vector<uint8_t> data;
+
+public:
+    SetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info, const std::vector<uint8_t> & data)
+        : CmdMessage(ASEBA_MESSAGE_THYMIO_SET_THYMIO_DEVICE_INFO, dest), info(info), data(data) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "SetThymioDeviceInfo";
+    }
+};
+
+//! Get persistent device info from thymio
+class GetThymioDeviceInfo : public CmdMessage {
+private:
+    ThymioDeviceInfoType info;
+public:
+    GetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info)
+        : CmdMessage(ASEBA_MESSAGE_THYMIO_GET_THYMIO_DEVICE_INFO, dest), info(info){}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "GetThymioDeviceInfo";
+    }
+};
+
+//! Persistent device info from thymio
+class ThymioDeviceInfo : public Message {
+private:
+    ThymioDeviceInfoType info;
+    std::vector<uint8_t> data;
+public:
+    ThymioDeviceInfo(ThymioDeviceInfoType info, const std::vector<uint8_t> & data)
+        : Message(ASEBA_MESSAGE_THYMIO_DEVICE_INFO), info(info), data(data) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "ThymioDeviceInfo";
+    }
+};
+
+
+
 bool operator==(const SetBytecode& lhs, const SetBytecode& rhs);
 
 #ifndef ASEBA_NO_DASHEL
