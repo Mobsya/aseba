@@ -1,6 +1,8 @@
 #pragma once
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/basic_io_object.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/strand.hpp>
 #include <libusb/libusb.h>
 #include <queue>
 #include <functional>
@@ -26,7 +28,7 @@ public:
         {
             std::unique_lock<std::mutex> _(m_req_mutex);
             request r{acceptor, d, std::function<void(boost::system::error_code)>(std::forward<AcceptHandler>(handler)),
-                      0};
+                      -1};
             m_requests.push(r);
             ptr = &m_requests.back();
         }
@@ -43,13 +45,18 @@ private:
         usb_acceptor& acceptor;
         usb_device& d;
         std::function<void(boost::system::error_code)> handler;
-        int req_id;
+        libusb_hotplug_callback_handle req_id;
     };
+    int device_plugged(struct libusb_context* ctx, struct libusb_device* dev, request&);
     void register_request(request&);
+    void handle_request_by_active_enumeration();
+    void on_active_timer(const boost::system::error_code&);
+
     details::usb_context::ptr m_context;
-    libusb_hotplug_callback_handle m_cb_handle{};
     mutable std::mutex m_req_mutex;
     std::queue<request> m_requests;
+    boost::asio::deadline_timer m_active_timer;
+    boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 };
 
 class usb_acceptor : public boost::asio::basic_io_object<usb_acceptor_service> {

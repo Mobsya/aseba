@@ -1,8 +1,8 @@
 #include "usbacceptor.h"
 #include <algorithm>
-#include <boost/asio/dispatch.hpp>
-#include "log.h"
+#include <boost/asio.hpp>
 #include <libusb/libusb.h>
+#include "log.h"
 
 namespace mobsya {
 
@@ -15,7 +15,9 @@ int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_devic
 
 usb_acceptor_service::usb_acceptor_service(boost::asio::io_context& io_service)
     : boost::asio::detail::service_base<usb_acceptor_service>(io_service)
-    , m_context(details::usb_context::acquire_context()) {
+    , m_context(details::usb_context::acquire_context())
+    , m_active_timer(io_service)
+    , m_strand(io_service.get_executor()) {
 
     mLogInfo("USB monitoring service: started");
 }
@@ -23,8 +25,10 @@ usb_acceptor_service::usb_acceptor_service(boost::asio::io_context& io_service)
 
 void usb_acceptor_service::shutdown() {
     mLogInfo("USB monitoring service: Stopped");
+    m_active_timer.cancel();
     while(!m_requests.empty()) {
-        libusb_hotplug_deregister_callback(*m_context, m_requests.front().req_id);
+        if(m_requests.front().req_id != -1)
+            libusb_hotplug_deregister_callback(*m_context, m_requests.front().req_id);
         m_requests.pop();
     }
     m_context = nullptr;
@@ -32,12 +36,30 @@ void usb_acceptor_service::shutdown() {
 
 
 void usb_acceptor_service::register_request(request& r) {
-    r.req_id =
+    bool hotplug = libusb_has_capability(LIBUSB_CAP_HAS_HOTPLUG) &&
         libusb_hotplug_register_callback(*m_context, /*context*/
                                          LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED /*events*/,
                                          LIBUSB_HOTPLUG_ENUMERATE /*flags */, LIBUSB_HOTPLUG_MATCH_ANY, /* vendor id */
                                          LIBUSB_HOTPLUG_MATCH_ANY,                                      /* product id */
-                                         LIBUSB_HOTPLUG_MATCH_ANY /* class*/, hotplug_callback, this, &m_cb_handle);
+                                         LIBUSB_HOTPLUG_MATCH_ANY /* class*/, hotplug_callback, this,
+                                         &r.req_id) == LIBUSB_SUCCESS;
+    if(!hotplug) {  // we have to resort to a timer.
+        m_active_timer.expires_from_now(boost::posix_time::millisec(1));
+        m_active_timer.async_wait(boost::asio::bind_executor(
+            m_strand, boost::bind(&usb_acceptor_service::on_active_timer, this, boost::placeholders::_1)));
+    }
+}
+
+void usb_acceptor_service::on_active_timer(const boost::system::error_code& ec) {
+    if(ec)
+        return;
+    std::unique_lock<std::mutex> lock(m_req_mutex);
+    this->handle_request_by_active_enumeration();
+    if(!m_requests.empty()) {
+        m_active_timer.expires_from_now(boost::posix_time::seconds(1));  // :(
+        m_active_timer.async_wait(boost::asio::bind_executor(
+            m_strand, boost::bind(&usb_acceptor_service::on_active_timer, this, boost::placeholders::_1)));
+    }
 }
 
 int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev,
@@ -52,35 +74,45 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
     }
 
     request& req = m_requests.front();
-    struct libusb_device_descriptor desc{};
+    return device_plugged(ctx, dev, req);
+}
+
+int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev, request& req) {
+    libusb_device_descriptor desc;
     (void)libusb_get_device_descriptor(dev, &desc);
-
-    //mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
-
-
-    if(*m_context != ctx)
-        return 0;
-
-    const auto& devices = req.acceptor.compatible_devices();
-    if(std::find(std::begin(devices), std::end(devices), usb_device_identifier{desc.idVendor, desc.idProduct}) ==
-       std::end(devices)) {
-        //mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
-        return 0;
-    }
 
     if(m_context->is_device_open(dev)) {
         return 0;
     }
 
-    req.d.assign(dev);
-    libusb_hotplug_deregister_callback(*m_context, req.req_id);
+    if(*m_context != ctx)
+        return 0;
 
+    // mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
+
+    const auto& devices = req.acceptor.compatible_devices();
+    if(std::find(std::begin(devices), std::end(devices), usb_device_identifier{desc.idVendor, desc.idProduct}) ==
+       std::end(devices)) {
+        // mLogTrace("device not compatible : {}:{}", desc.idVendor, desc.idProduct);
+        return 0;
+    }
+
+    req.d.assign(dev);
     auto handler = std::move(req.handler);
     const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
     m_requests.pop();
     boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
+    return 1;
+}
 
-    return 0;
+
+void usb_acceptor_service::handle_request_by_active_enumeration() {
+    libusb_device** devices;
+    ssize_t ndevices = libusb_get_device_list(*m_context, &devices);
+    for(ssize_t i = 0; !m_requests.empty() && ndevices > 0 && i < ndevices; i++) {
+        device_plugged(*m_context, devices[i], m_requests.front());
+    }
+    libusb_free_device_list(devices, false);
 }
 
 
