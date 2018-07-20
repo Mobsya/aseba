@@ -30,7 +30,7 @@ void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
 }
 
 
-void usb_device_service::cancel(implementation_type& impl) {}
+void usb_device_service::cancel(implementation_type& /*impl*/) {}
 
 void usb_device_service::close(implementation_type& impl) {
     if(impl.handle) {
@@ -122,7 +122,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
 }
 
 void usb_device_service::set_baud_rate(implementation_type& impl, baud_rate b) {
-    unsigned br = static_cast<unsigned>(b);
+    auto br = static_cast<unsigned>(b);
     impl.control_line[0] = uint8_t(br & 0xff);
     impl.control_line[1] = uint8_t((br >> 8) & 0xff);
     impl.control_line[2] = uint8_t((br >> 16) & 0xff);
@@ -156,10 +156,7 @@ bool usb_device_service::send_control_transfer(implementation_type& impl) {
     uint16_t v = 0;
     if(impl.dtr)
         v |= 0x01;
-    if(libusb_control_transfer(impl.handle, 0x21, 0x22, v, 0, nullptr, 0, 0) != LIBUSB_SUCCESS) {
-        return false;
-    }
-    return true;
+    return libusb_control_transfer(impl.handle, 0x21, 0x22, v, 0, nullptr, 0, 0) == LIBUSB_SUCCESS;
 }
 
 bool usb_device_service::send_encoding(implementation_type& impl) {

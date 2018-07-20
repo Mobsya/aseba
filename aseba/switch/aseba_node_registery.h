@@ -19,10 +19,10 @@ public:
     aseba_node_registery(boost::asio::io_context& io_context);
 
     void add_node(std::shared_ptr<aseba_node> node);
-    void remove_node(std::shared_ptr<aseba_node> node);
-    void set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status);
+    void remove_node(const std::shared_ptr<aseba_node> &node);
+    void set_node_status(const std::shared_ptr<aseba_node>& node, aseba_node::status);
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
-    void broadcast(std::shared_ptr<Aseba::Message> msg);
+    void broadcast(const std::shared_ptr<Aseba::Message>& msg);
 
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
@@ -34,7 +34,7 @@ private:
     aware::contact::property_map_type build_discovery_properties() const;
 
 
-    node_map::const_iterator find(std::shared_ptr<aseba_node> node) const;
+    node_map::const_iterator find(const std::shared_ptr<aseba_node>& node) const;
     node_map::const_iterator find_from_native_id(aseba_node::node_id_t id) const;
     boost::uuids::uuid m_uid;
     node_map m_aseba_nodes;
@@ -47,15 +47,13 @@ private:
         m_node_status_changed_signal;
     friend class node_status_monitor;
 
-    boost::uuids::random_generator m_id_generator;
+    boost::uuids::random_generator m_id_generator{};
 };
 
 
 class node_status_monitor {
 public:
-    virtual ~node_status_monitor() {
-        m_connection.disconnect();
-    }
+    virtual ~node_status_monitor();
     void disconnect() {
         m_connection.disconnect();
     }

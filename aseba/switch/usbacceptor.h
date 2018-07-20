@@ -56,7 +56,7 @@ private:
     };
     void register_request(request&);
     details::usb_context::ptr m_context;
-    libusb_hotplug_callback_handle m_cb_handle;
+    libusb_hotplug_callback_handle m_cb_handle{};
     mutable std::mutex m_req_mutex;
     std::queue<request> m_requests;
 };

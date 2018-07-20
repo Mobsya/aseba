@@ -52,7 +52,7 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
     }
 
     request& req = m_requests.front();
-    struct libusb_device_descriptor desc;
+    struct libusb_device_descriptor desc{};
     (void)libusb_get_device_descriptor(dev, &desc);
 
     //mLogTrace("device plugged : {}:{}", desc.idVendor, desc.idProduct);
