@@ -1,0 +1,59 @@
+<!DOCTYPE aseba-playground>
+<!--Beginning of Playground definition-->
+<aseba-playground>
+	<author name="Fanny Riedo" email="fanny dot riedo at mobsya dot org" />
+	<description lang="en">This simple example shows the different elements that can be added to an Aseba Playground, made in July 2018 for Aseba 1.6.
+	</description>
+
+	<!--Colors can be defined by their r,g,b components (each from 0 to 1) and given a name for later use.-->
+	<color name="white" r="1.0" g="1.0" b="1.0" />
+	<color name="yellow" r="1.0" g="1.0" b="0" />
+	<color name="red" r="1.0" g="0" b="0" />
+	<color name="blue" r="0" g="0" b="1.0" />
+	<color name="pretty shade of purple" r="0.8" g="0.1" b="0.7" />
+
+	<!--Definition of the world, width (w) and height (h) in cm (origin in a corner). Can also have a color (defined above) and ground texture (PNG image). The PNG image will be stretched to the world's size. Attribute energyScoringSystemEnabled defines whether the energy of the e-pucks will be counted.-->
+	<world w="100" h="100" color="white" groundTexture="logo_thymio_couleur_fond.png" energyScoringSystemEnabled="true"/> 
+
+	<!--The position of the camera can be defined by its x,y and altitude in cm, yaw, pitch in radians.-->
+	<camera x="50" y="50" altitude="130" yaw=" 1.57" pitch="-1.56" />
+
+	<!--Walls are defined by their center coordinates x, y, dimensions l1, l2, height h in cm and angle in radians. A mass m can also be given, if m is not defined it becomes -1 which means unmovable. If m>1, the object can be moved if sufficient force is applied. Please note however that the simulator is very basic so the results can look inaccurate.-->
+	<wall x="40.00" y="60.00" l1="15" l2="2.00" h="10.00" color="red" angle="-2.356" />
+	<wall x="60.00" y="60.00" l1="15" l2="2.00" h="10.00" color="yellow" angle="2.356" />
+	<wall x="60.00" y="40.00" l1="15" l2="2.00" h="10.00" color="blue" angle="-2.356" />
+	<wall x="40.00" y="40.00" l1="15" l2="2.00" h="10.00" color="white" angle="2.356" />
+	<wall x="10.00" y="20.00" l1="15" l2="2.00" h="10.00" color="white" angle="0" mass="1"/>
+
+	<!--Cylinders are defined by their center coordinates x, y, radius r, height h in cm. A mass m can also be given, if m is not defined it becomes -1 which means unmovable. If m>1, the object can be moved if sufficient force is applied. Please note however that the simulator is very basic so the results can look inaccurate.-->
+	<cylinder x="50.00" y="35.00" r="2.00" h="10.00" />
+	<cylinder x="50.00" y="65.00" r="2.00" h="10.00" />
+	
+	<!--Robots: Thymio II and E-Puck are available. The simulated E-Puck's API is different from the real E-Puck's API, and they have a feeding system. The simulated Thymio's API is the same as the real Thymio's API (no feeding system) but some functions, events, variables, while available, are not simulated. Attributes are the robot's center position in the world, x and y, in cm, its anglein radians, port number and node ID.-->
+	<robot type="thymio2" x="10" y="50" port="33334" angle="-1.57" name="Tim" nodeId="1"/>
+	<robot type="e-puck" x="55" y="50" port="33335" name="Becky" nodeId="2" />
+
+<!--Areas are polygons that are defined by a series of points (x,y). They can be used as activation zones for doors. They have a name used to refer to them from activations.--> 
+	<area name="cage">
+	  <point x="-10" y="-10" />
+	  <point x="10" y="-10" />
+	  <point x="10" y="10" />
+	  <point x="-10" y="10" />
+	</area>
+
+	<!--Doors are walls that have two possible center positions: opened (openedX, openedY in cm) and closed (closedX, closedY in cm). You can define the time it takes to open or close (moveDuration in s) Like walls they have dimensions l1, l2, h in cm and a color. They additionally have a name.-->
+	<door openedX="35.00" openedY="40.00" closedX="35.00" closedY="50.00" l1="2.00" l2="10" h="10.00" moveDuration="3" name="entrance" color="pretty shade of purple" />
+	<door openedX="65.00" openedY="40.00" closedX="65.00" closedY="50.00" l1="2.00" l2="10" h="10.00" moveDuration="1" name="exit" color="pretty shade of purple" />
+
+	<!--Activations allow to open or close doors. They have a center position x, y, length l1, width l2 in cm and angle in radians. Those dimensions determine the size of the "button" in the world. They are linked to an area and a door. When a robot is within the area, the corresponding door opens.-->
+	<activation x="99.00" y="99.00" l1="2.00" l2="2.00" area="cage" door="exit" />
+	<activation x="1.00" y="1.00" l1="2.00" l2="2.00" area="cage" door="entrance" />
+
+	<!--Feeders have a limited amount of energy which they transfer to e-pucks when they come close. When the e-puck subsequently moves away the feeder will recharge its energy. The e-puck loses its energy over time. Feeders have their x,y center position in cm and angle in radians as attributes. -->
+	<feeder x="50" y="50"/>
+
+	<!--External processes can be run, here for example to load an aesl file (the basic behaviours of Thymio) on a robot.-->
+	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33334" />
+
+<!--End of Playground definition-->
+</aseba-playground>
