@@ -32,7 +32,7 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
     update_discovery();
 }
 
-void aseba_node_registery::remove_node(std::shared_ptr<aseba_node> node) {
+void aseba_node_registery::remove_node(const std::shared_ptr<aseba_node>& node) {
     std::unique_lock<std::mutex> lock(m_nodes_mutex);
 
     mLogInfo("Removing node");
@@ -46,7 +46,7 @@ void aseba_node_registery::remove_node(std::shared_ptr<aseba_node> node) {
     update_discovery();
 }
 
-void aseba_node_registery::set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status status) {
+void aseba_node_registery::set_node_status(const std::shared_ptr<aseba_node>& node, aseba_node::status status) {
     std::unique_lock<std::mutex> lock(m_nodes_mutex);
     auto it = find(node);
     if(it != std::end(m_aseba_nodes)) {
@@ -106,7 +106,7 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     return map;
 }
 
-auto aseba_node_registery::find(std::shared_ptr<aseba_node> node) const -> node_map::const_iterator {
+auto aseba_node_registery::find(const std::shared_ptr<aseba_node>& node) const -> node_map::const_iterator {
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
         if(it->second.expired())
             continue;
@@ -135,7 +135,7 @@ std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(const aseba_node_
 }
 
 
-void aseba_node_registery::broadcast(std::shared_ptr<Aseba::Message> msg) {
+void aseba_node_registery::broadcast(const std::shared_ptr<Aseba::Message>& msg) {
 
     // ToDo : Maybe this lock is too broad
     std::unique_lock<std::mutex> _(m_nodes_mutex);
@@ -165,12 +165,14 @@ void aseba_node_registery::broadcast(std::shared_ptr<Aseba::Message> msg) {
             cmd_msg->dest = node->native_id();
             node->write_message(cmd_msg);
             break;
-        } else {
-            // Otherwise, send to every node
-            auto node = it->second.lock();
-            node->write_message(mapped);
         }
+        // Otherwise, send to every node
+        node->write_message(mapped);
     }
+}
+
+node_status_monitor::~node_status_monitor() {
+    m_connection.disconnect();
 }
 
 }  // namespace mobsya
