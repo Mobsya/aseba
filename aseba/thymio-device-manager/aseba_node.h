@@ -4,6 +4,7 @@
 #include "aseba/common/msg/msg.h"
 #include "node_id.h"
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/deadline_timer.hpp>
 #include <atomic>
 #include <aseba/flatbuffers/thymio_generated.h>
 
@@ -76,6 +77,11 @@ private:
     void on_description(Aseba::TargetDescription description);
     void on_device_info(const Aseba::DeviceInfo& info);
 
+    void reset_known_variables(const Aseba::VariablesMap& variables);
+    void request_variables();
+    void on_variables_message(const Aseba::Variables& msg);
+    void schedule_variables_update();
+
     node_id_t m_id;
     node_id m_uuid;
     std::string m_friendly_name;
@@ -85,6 +91,17 @@ private:
     mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;
     boost::asio::io_context& m_io_ctx;
+
+    struct variable {
+        std::string name;
+        uint16_t start;
+        uint16_t size;
+        std::vector<int16_t> value;
+
+        variable(const std::string& name, uint16_t start, uint16_t size) : name(name), start(start), size(size) {}
+    };
+    std::vector<variable> m_variables;
+    boost::asio::deadline_timer m_variables_timer;
 };
 
 

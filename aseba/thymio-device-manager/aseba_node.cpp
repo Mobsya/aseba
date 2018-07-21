@@ -25,7 +25,8 @@ aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr
     , m_status(status::disconnected)
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
-    , m_io_ctx(ctx) {}
+    , m_io_ctx(ctx)
+    , m_variables_timer(ctx) {}
 
 std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id,
                                                std::weak_ptr<mobsya::aseba_endpoint> endpoint) {
@@ -57,10 +58,12 @@ void aseba_node::on_message(const Aseba::Message& msg) {
             on_device_info(static_cast<const Aseba::DeviceInfo&>(msg));
             break;
         }
+        case ASEBA_MESSAGE_VARIABLES: {
+            on_variables_message(static_cast<const Aseba::Variables&>(msg));
+        }
         default: break;
     }
 }
-
 
 void aseba_node::set_status(status s) {
     m_status = s;
@@ -129,6 +132,8 @@ bool aseba_node::send_aseba_program(const std::string& program, write_callback&&
         return false;
     }
 
+    reset_known_variables(*compiler.getVariablesMap());
+
     m_node_mutex.unlock();
 
     std::vector<std::shared_ptr<Aseba::Message>> messages;
@@ -157,7 +162,11 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
     {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_description = std::move(description);
+        unsigned count;
+        reset_known_variables(m_description.getVariablesMap(count));
+        schedule_variables_update();
     }
+
     if(description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
@@ -166,6 +175,68 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
     }
 
     set_status(status::available);
+}
+
+// ask the node to dump its memory.
+void aseba_node::request_variables() {
+    uint16_t start = 0;
+    uint16_t size = 0;
+    for(const auto& var : m_variables) {
+        if(size + var.size > ASEBA_MAX_EVENT_ARG_COUNT - 2) {  // cut at variable boundaries
+            write_message(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
+            start += size;
+            size = 0;
+        }
+        size += var.size;
+    }
+    if(size > 0)
+        write_message(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
+}
+
+void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
+    m_variables.clear();
+    for(const auto& var : variables) {
+        const auto name = Aseba::WStringToUTF8(var.first);
+        const auto start = var.second.first;
+        const auto size = var.second.second;
+        auto insert_point = std::lower_bound(m_variables.begin(), m_variables.end(), start,
+                                             [](const variable& v, unsigned start) { return v.start < start; });
+        if(insert_point == m_variables.end() || insert_point->start != start) {
+            m_variables.emplace(insert_point, name, start, size);
+        }
+    }
+}
+
+void aseba_node::on_variables_message(const Aseba::Variables& msg) {
+    std::vector<variable> changed;
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    auto it = msg.variables.begin();
+    for(auto& var : m_variables) {
+        if(var.start < msg.start)
+            continue;
+        auto end = it + var.size;
+        if(std::distance(it, end) > std::distance(it, std::end(msg.variables)))
+            break;
+        var.value.resize(var.size);
+        if(!std::equal(it, end, std::begin(var.value), std::end(var.value))) {
+            std::copy(it, end, var.value.begin());
+            changed.push_back(var);
+            mLogTrace("Variable changed {} : {}", var.name, var.value);
+        }
+        it = end;
+    }
+}
+
+void aseba_node::schedule_variables_update() {
+    m_variables_timer.expires_from_now(boost::posix_time::milliseconds(100));
+    m_variables_timer.async_wait([that = shared_from_this()](boost::system::error_code ec) {
+        if(ec)
+            return;
+        if(that->m_status == status::disconnected)
+            return;
+        that->request_variables();
+        that->schedule_variables_update();
+    });
 }
 
 void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
