@@ -1,7 +1,8 @@
 #pragma once
-
+#include <fmt/format.h>
+#include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
-#include <spdlog/fmt/bundled/ostream.h>
 
 namespace mobsya {
 extern std::shared_ptr<spdlog::logger> log;

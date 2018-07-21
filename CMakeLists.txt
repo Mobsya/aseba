@@ -35,11 +35,13 @@ if(ANDROID)
 	include(android/qt-android-cmake/AddQtAndroidApk.cmake)
 endif()
 
-add_subdirectory(third_party/catch2)
-add_subdirectory(third_party/libusb)
-add_subdirectory(third_party/qtzeroconf)
-add_subdirectory(third_party/spdlog)
-add_subdirectory(third_party/expected)
+add_subdirectory(third_party/catch2 EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/libusb EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/qtzeroconf EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/spdlog EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
+
 
 
 if (NOT ANDROID)
