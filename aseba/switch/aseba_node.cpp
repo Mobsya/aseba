@@ -3,6 +3,8 @@
 #include "aseba_node_registery.h"
 #include <aseba/common/utils/utils.h>
 #include <aseba/compiler/compiler.h>
+#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 namespace mobsya {
 
