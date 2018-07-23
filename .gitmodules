@@ -19,6 +19,7 @@
 [submodule "third_party/spdlog/spdlog"]
 	path = third_party/spdlog/spdlog
 	url = https://github.com/gabime/spdlog
+	branch = v1.x
 [submodule "third_party/expected/expected"]
 	path = third_party/expected/expected
 	url = https://github.com/TartanLlama/expected
