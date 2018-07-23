@@ -131,7 +131,7 @@ public:
             mLogError("Error while reading aseba message {}", ec.message());
             return;
         }
-        mLogInfo("Message received : {} {}", ec.message(), msg->type);
+        mLogTrace("Message received : {} {}", ec.message(), msg->type);
 
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
@@ -233,8 +233,8 @@ private:
                     return;
                 }
                 auto node = that->find_node(id);
-                node->on_description(msg);
                 that->read_aseba_message();
+                node->on_description(msg);
             });
 
         mLogInfo("Asking for description of node {}", node);
