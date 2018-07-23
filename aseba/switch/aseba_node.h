@@ -2,6 +2,7 @@
 #include <memory>
 #include <mutex>
 #include "aseba/common/msg/msg.h"
+#include "node_id.h"
 #include <boost/asio/io_context.hpp>
 #include <atomic>
 
@@ -32,6 +33,13 @@ public:
         return m_id;
     }
 
+    node_id uuid() const {
+        return m_uuid;
+    }
+
+    std::string friendly_name() const;
+    void set_friendly_name(const std::string& str);
+
     Aseba::TargetDescription vm_description() const {
         std::unique_lock<std::mutex> _(m_node_mutex);
         return m_description;
@@ -58,8 +66,11 @@ private:
     void disconnect();
     void on_message(const Aseba::Message& msg);
     void on_description(Aseba::TargetDescription description);
+    void on_device_info(const Aseba::ThymioDeviceInfo& info);
 
     node_id_t m_id;
+    node_id m_uuid;
+    std::string m_friendly_name;
     std::atomic<status> m_status;
     std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;

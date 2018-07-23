@@ -51,6 +51,8 @@ public:
         registerMessageType<GetNodeDescription>(ASEBA_MESSAGE_GET_NODE_DESCRIPTION);
 
         registerMessageType<Description>(ASEBA_MESSAGE_DESCRIPTION);
+        registerMessageType<ThymioDeviceInfo>(ASEBA_MESSAGE_THYMIO_DEVICE_INFO);
+
         registerMessageType<NamedVariableDescription>(ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION);
         registerMessageType<LocalEventDescription>(ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION);
         registerMessageType<NativeFunctionDescription>(ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION);
@@ -1156,34 +1158,37 @@ bool operator==(const SetVariables& lhs, const SetVariables& rhs) {
 
 
 void SetThymioDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
-    buffer.add(uint8_t(info));
-    buffer.add(uint8_t(data.size()));
+    CmdMessage::serializeSpecific(buffer);
+    buffer.add(uint16_t(info));
+    buffer.add(uint16_t(data.size()));
     for(const uint8_t& b : data)
         buffer.add(b);
 }
 
 void SetThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
+    CmdMessage::deserializeSpecific(buffer);
     info = ThymioDeviceInfoType(buffer.get<uint8_t>());
     auto size = buffer.get<uint8_t>();
     data.resize(size);
-    for(auto & d : data)
+    for(auto& d : data)
         d = buffer.get<uint8_t>();
 }
 
 void SetThymioDeviceInfo::dumpSpecific(std::wostream& stream) const {
+    CmdMessage::dumpSpecific(stream);
     stream << "info type: " << info << ", size: " << data.size();
 }
 
 void GetThymioDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
-    buffer.add(uint8_t(info));
+    CmdMessage::serializeSpecific(buffer);
+    buffer.add(uint16_t(info));
 }
 
-void GetThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
-
-}
+void GetThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {}
 
 void GetThymioDeviceInfo::dumpSpecific(std::wostream& stream) const {
-     stream << "info type: " << info;
+    CmdMessage::dumpSpecific(stream);
+    stream << "info type: " << info;
 }
 
 void ThymioDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
@@ -1197,7 +1202,7 @@ void ThymioDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
     info = ThymioDeviceInfoType(buffer.get<uint8_t>());
     auto size = buffer.get<uint8_t>();
     data.resize(size);
-    for(auto & d : data)
+    for(auto& d : data)
         d = buffer.get<uint8_t>();
 }
 

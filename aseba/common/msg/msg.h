@@ -609,7 +609,7 @@ private:
     std::vector<uint8_t> data;
 
 public:
-    SetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info, const std::vector<uint8_t> & data)
+    SetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info, const std::vector<uint8_t>& data)
         : CmdMessage(ASEBA_MESSAGE_THYMIO_SET_THYMIO_DEVICE_INFO, dest), info(info), data(data) {}
 
 protected:
@@ -625,9 +625,10 @@ protected:
 class GetThymioDeviceInfo : public CmdMessage {
 private:
     ThymioDeviceInfoType info;
+
 public:
     GetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info)
-        : CmdMessage(ASEBA_MESSAGE_THYMIO_GET_THYMIO_DEVICE_INFO, dest), info(info){}
+        : CmdMessage(ASEBA_MESSAGE_THYMIO_GET_THYMIO_DEVICE_INFO, dest), info(info) {}
 
 protected:
     void serializeSpecific(SerializationBuffer& buffer) const override;
@@ -640,11 +641,13 @@ protected:
 
 //! Persistent device info from thymio
 class ThymioDeviceInfo : public Message {
-private:
+public:
     ThymioDeviceInfoType info;
     std::vector<uint8_t> data;
+
 public:
-    ThymioDeviceInfo(ThymioDeviceInfoType info, const std::vector<uint8_t> & data)
+    ThymioDeviceInfo() : Message(ASEBA_MESSAGE_THYMIO_DEVICE_INFO) {}
+    ThymioDeviceInfo(ThymioDeviceInfoType info, const std::vector<uint8_t>& data)
         : Message(ASEBA_MESSAGE_THYMIO_DEVICE_INFO), info(info), data(data) {}
 
 protected:
@@ -655,7 +658,6 @@ protected:
         return "ThymioDeviceInfo";
     }
 };
-
 
 
 bool operator==(const SetBytecode& lhs, const SetBytecode& rhs);
