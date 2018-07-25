@@ -158,11 +158,12 @@ void aseba_node::on_device_info(const Aseba::ThymioDeviceInfo& info) {
         if(info.data.size() == 16) {
             std::copy(info.data.begin(), info.data.end(), m_uuid.begin());
         }
-        std::unique_lock<std::mutex> _(m_node_mutex);
+        std::unique_lock<std::mutex> lock(m_node_mutex);
         if(m_uuid.is_nil()) {
             m_uuid = boost::uuids::random_generator()();
             std::vector<uint8_t> data;
             std::copy(m_uuid.begin(), m_uuid.end(), std::back_inserter(data));
+            lock.unlock();
             write_message(std::make_shared<Aseba::SetThymioDeviceInfo>(native_id(), THYMIO_DEVICE_INFO_UUID, data));
         }
         mLogInfo("Persistent uuid for {} is now {} ", native_id(), m_uuid);
