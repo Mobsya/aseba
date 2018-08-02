@@ -14,7 +14,7 @@ aseba_node_registery::aseba_node_registery(boost::asio::io_context& io_context)
     , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name("Thymio Discovery service");
 
-    update_discovery();
+    //  update_discovery();
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
