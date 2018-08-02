@@ -35,6 +35,7 @@ add_library(thymio-flatbuffers
     ${FLATBUFFER_HEADER}
     ${FLATBUFFER_JS}
     thymio.fbs
+    fb_message_ptr.h
 )
-target_link_libraries(thymio-flatbuffers PUBLIC flatbuffers)
+target_link_libraries(thymio-flatbuffers PUBLIC flatbuffers aseba_conf)
 target_include_directories(thymio-flatbuffers PUBLIC ${CMAKE_BINARY_DIR} ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/include)
