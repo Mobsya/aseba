@@ -30,8 +30,7 @@ template <class AsyncReadStream, class Handler>
 class read_flatbuffers_message_op {
     struct state {
         AsyncReadStream& stream;
-        char sizeBuffer[2];
-        uint8_t size = 0;
+        char sizeBuffer[4];
         std::vector<uint8_t> dataBuffer;
 
         explicit state(Handler const& handler, AsyncReadStream& stream) : stream(stream) {}
@@ -62,7 +61,7 @@ public:
     void operator()() {
         auto& state = *m_p;
         return boost::asio::async_read(state.stream, boost::asio::buffer(state.sizeBuffer),
-                                       boost::asio::transfer_exactly(2), std::move(*this));
+                                       boost::asio::transfer_exactly(4), std::move(*this));
     }
 
     void operator()(boost::system::error_code ec, std::size_t bytes_transferred) {
@@ -72,8 +71,8 @@ public:
             return;
         auto& state = *m_p;
         if(state.dataBuffer.size() == 0) {
-            assert(bytes_transferred == 2);
-            auto size = reinterpret_cast<uint16_t&>(state.sizeBuffer);
+            assert(bytes_transferred == 4);
+            auto size = reinterpret_cast<uint32_t&>(state.sizeBuffer);
             state.dataBuffer.resize(size);
             return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer),
                                            boost::asio::transfer_exactly(size), std::move(*this));

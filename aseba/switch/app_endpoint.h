@@ -85,20 +85,19 @@ class application_endpoint_base<Self, tcp::socket>
     : public std::enable_shared_from_this<application_endpoint_base<Self, tcp::socket>> {
 public:
     application_endpoint_base(boost::asio::io_context& ctx)
-        : m_ctx(ctx), m_socket(tcp::socket(ctx)), m_strand(ctx.get_executor()) {}
+        : m_ctx(ctx), m_strand(ctx.get_executor()), m_socket(tcp::socket(ctx)) {}
     void read_message() {
         auto that = this->shared_from_this();
         auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, fb_message_ptr msg) {
-            static_cast<Self*>(that)->handle_read(ec, std::move(msg));
+            static_cast<Self&>(*that).handle_read(ec, std::move(msg));
         });
         mobsya::async_read_flatbuffers_message(m_socket, std::move(cb));
     }
 
     void do_write_message(const flatbuffers::DetachedBuffer& buffer) {
-        auto cb = boost::asio::bind_executor(
-            m_strand, [that = this->shared_from_this()](boost::system::error_code ec, std::size_t s) {
-                static_cast<Self&>(*that).handle_write(ec);
-            });
+        auto cb = boost::asio::bind_executor(m_strand, [that = this->shared_from_this()](boost::system::error_code ec) {
+            static_cast<Self&>(*that).handle_write(ec);
+        });
         mobsya::async_write_flatbuffer_message(m_socket, buffer, std::move(cb));
     }
 
