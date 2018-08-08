@@ -32,6 +32,7 @@ private:
         QUuid id;
         QString name;
         ThymioNode::Status status;
+        ThymioNode::NodeType type;
     };
 
     void onNodesChanged(const fb::NodesChanged&);

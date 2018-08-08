@@ -65,22 +65,20 @@ void ThymioDeviceManagerClient::onNodesChanged(const fb::NodesChanged& nc_msg) {
         const std::vector<uint8_t>& bytes = node.node_id->id;
         if(bytes.size() != 16)
             continue;
-        SimpleNode deserialized{
-            // Sometimes Qt apis aren't that convenient...
-            QUuid(*(reinterpret_cast<const uint32_t*>(bytes.data())),
-                  *(reinterpret_cast<const uint16_t*>(bytes.data() + 4)),
-                  *(reinterpret_cast<const uint16_t*>(bytes.data() + 6)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 8)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 9)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 10)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 11)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 12)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 13)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 14)),
-                  *(reinterpret_cast<const uint8_t*>(bytes.data() + 15))),
-            QString::fromStdString(node.name),
-            static_cast<ThymioNode::Status>(node.status),
-        };
+        SimpleNode deserialized{// Sometimes Qt apis aren't that convenient...
+                                QUuid(*(reinterpret_cast<const uint32_t*>(bytes.data())),
+                                      *(reinterpret_cast<const uint16_t*>(bytes.data() + 4)),
+                                      *(reinterpret_cast<const uint16_t*>(bytes.data() + 6)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 8)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 9)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 10)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 11)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 12)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 13)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 14)),
+                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 15))),
+                                QString::fromStdString(node.name), static_cast<ThymioNode::Status>(node.status),
+                                static_cast<ThymioNode::NodeType>(node.type)};
         changed_nodes.emplace_back(std::move(deserialized));
     }
     onNodesChanged(changed_nodes);
@@ -98,7 +96,7 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
     for(const auto& node : nodes) {
         auto it = m_nodes.find(node.id);
         if(it == m_nodes.end()) {
-            it = m_nodes.insert(node.id, std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name));
+            it = m_nodes.insert(node.id, std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type));
             Q_EMIT nodeAdded(it.value());
         }
         (*it)->setName(node.name);
