@@ -12,7 +12,7 @@ void usb_server::accept() {
         if(ec) {
             mLogError("system_error: %s", ec.message());
         }
-        mLogInfo("Created usb _device");
+        mLogInfo("New Aseba endpoint over USB device connected");
         usb_device& d = session->usb();
         d.open();
         d.set_baud_rate(usb_device::baud_rate::baud_115200);

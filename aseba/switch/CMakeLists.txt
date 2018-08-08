@@ -27,9 +27,12 @@ add_executable(switch
     flatbuffers_message_reader.h
     flatbuffers_message_writer.h
     flatbuffers_messages.h
+    node_id.h
 )
-target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time libusb spdlog tl_expected asebacommon aware thymio-flatbuffers)
+target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time libusb spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers)
 if(WIN32)
     target_link_libraries(switch bcrypt)
 endif()
 
+install(TARGETS switch RUNTIME DESTINATION bin)
+codesign(switch)

@@ -9,6 +9,15 @@
 
 namespace mobsya {
 
+struct usb_device_identifier {
+    uint16_t vendor_id;
+    uint16_t product_id;
+};
+
+inline bool operator==(const usb_device_identifier& a, const usb_device_identifier& b) {
+    return a.vendor_id == b.vendor_id && a.product_id == b.product_id;
+}
+
 namespace details {
     class usb_context {
     public:
@@ -69,7 +78,7 @@ namespace details {
     private:
         void run() {
             m_running = true;
-            timeval tv{50000, 0};
+            timeval tv{7, 0};
             while(m_running) {
                 libusb_handle_events_timeout(ctx, &tv);
             }

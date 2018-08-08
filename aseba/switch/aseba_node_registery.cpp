@@ -18,36 +18,49 @@ aseba_node_registery::aseba_node_registery(boost::asio::io_context& io_context)
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
-    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
 
     auto it = find(node);
     if(it == std::end(m_aseba_nodes)) {
-        node_id id = 0;
-        do {
-            id = m_id_generator();
-            it = m_aseba_nodes.find(id);
-        } while(it != std::end(m_aseba_nodes));
+        node_id id = m_id_generator();
         it = m_aseba_nodes.insert({id, node}).first;
+        lock.unlock();
+        m_node_status_changed_signal(node, id, aseba_node::status::connected);
 
         mLogInfo("Adding node id: {} - Real id: {}", id, node->native_id());
     }
     update_discovery();
 }
 
-void aseba_node_registery::remove_node(std::shared_ptr<aseba_node> node) {
-    std::unique_lock<std::mutex> _(m_nodes_mutex);
+void aseba_node_registery::remove_node(const std::shared_ptr<aseba_node>& node) {
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
 
     mLogInfo("Removing node");
     auto it = find(node);
     if(it != std::end(m_aseba_nodes)) {
+        node_id id = it->first;
         m_aseba_nodes.erase(it);
+        lock.unlock();
+        m_node_status_changed_signal(node, id, aseba_node::status::disconnected);
     }
     update_discovery();
 }
 
-void aseba_node_registery::set_node_status(std::shared_ptr<aseba_node> node, aseba_node::status) {
-    mLogInfo("Changing node status");
+void aseba_node_registery::set_node_status(const std::shared_ptr<aseba_node>& node, aseba_node::status status) {
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
+    auto it = find(node);
+    if(it != std::end(m_aseba_nodes)) {
+        node_id id = it->first;
+        lock.unlock();
+        mLogInfo("Changing node {} status to {} ", id, aseba_node::status_to_string(status));
+        m_node_status_changed_signal(node, id, status);
+    }
     update_discovery();
+}
+
+aseba_node_registery::node_map aseba_node_registery::nodes() const {
+    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    return m_aseba_nodes;
 }
 
 void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
@@ -65,7 +78,11 @@ void aseba_node_registery::update_discovery() {
 }
 
 void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
-    mLogError("Discovery : {}", ec.message());
+    if(ec) {
+        mLogError("Discovery : {}", ec.message());
+    } else {
+        mLogTrace("Discovery : update complete");
+    }
 }
 
 
@@ -89,7 +106,7 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     return map;
 }
 
-auto aseba_node_registery::find(std::shared_ptr<aseba_node> node) const -> node_map::const_iterator {
+auto aseba_node_registery::find(const std::shared_ptr<aseba_node>& node) const -> node_map::const_iterator {
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
         if(it->second.expired())
             continue;
@@ -109,20 +126,28 @@ auto aseba_node_registery::find_from_native_id(aseba_node::node_id_t id) const -
     return std::end(m_aseba_nodes);
 }
 
+std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(const aseba_node_registery::node_id& id) const {
+    std::unique_lock<std::mutex> _(m_nodes_mutex);
+    auto it = m_aseba_nodes.find(id);
+    if(it == std::end(m_aseba_nodes))
+        return {};
+    return it->second.lock();
+}
 
-void aseba_node_registery::broadcast(const Aseba::Message& msg) {
+
+void aseba_node_registery::broadcast(const std::shared_ptr<Aseba::Message>& msg) {
 
     // ToDo : Maybe this lock is too broad
     std::unique_lock<std::mutex> _(m_nodes_mutex);
 
 
-    auto native_id = msg.source;
-    auto mapped = msg.clone();
+    auto native_id = msg->source;
+    std::shared_ptr<Aseba::Message> mapped = std::shared_ptr<Aseba::Message>(msg->clone());
     auto it = find_from_native_id(native_id);
     if(it == std::end(m_aseba_nodes))
         return;
-    mapped->source = it->first;
-    auto cmd_msg = dynamic_cast<Aseba::CmdMessage*>(mapped);
+    mapped->source = it->first.short_for_tymio2();
+    auto cmd_msg = std::dynamic_pointer_cast<Aseba::CmdMessage>(mapped);
 
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
         if(it->second.expired())
@@ -135,25 +160,19 @@ void aseba_node_registery::broadcast(const Aseba::Message& msg) {
 
         // If the message is for a specific dest, do some filtering, and remap the destination
         if(cmd_msg) {
-            if(it->first != cmd_msg->dest)
+            if(it->first.short_for_tymio2() != cmd_msg->dest)
                 continue;
             cmd_msg->dest = node->native_id();
-            node->write_message(*cmd_msg);
+            node->write_message(cmd_msg);
             break;
-        } else {
-            // Otherwise, send to every node
-            auto node = it->second.lock();
-            node->write_message(*mapped);
         }
+        // Otherwise, send to every node
+        node->write_message(mapped);
     }
 }
 
-
-aseba_node_registery::id_generator::id_generator()
-    : gen(std::random_device()()), dis(1, std::numeric_limits<node_id>::max()) {}
-
-aseba_node_registery::node_id aseba_node_registery::id_generator::operator()() {
-    return dis(gen);
+node_status_monitor::~node_status_monitor() {
+    m_connection.disconnect();
 }
 
 }  // namespace mobsya

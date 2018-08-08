@@ -66,16 +66,20 @@ public:
 
     void operator()(boost::system::error_code ec, std::size_t bytes_transferred) {
         auto& state = *m_p;
-        if(bytes_transferred == 0)
-            return;
-        if(state.size == 0) {
+        if(!ec && bytes_transferred == 0)
+            return state.size == 0 ?
+                    boost::asio::async_read(state.stream, boost::asio::buffer(state.sizeBuffer),
+                                           boost::asio::transfer_exactly(2), std::move(*this))
+                        : boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
+                                                  boost::asio::transfer_exactly(state.size + 4), std::move(*this));
+        if(!ec && state.size == 0) {
             assert(bytes_transferred == 2);
             state.size = boost::endian::little_to_native(reinterpret_cast<uint16_t&>(state.sizeBuffer));
             state.dataBuffer.rawData.resize(state.size + 4);
             return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
                                            boost::asio::transfer_exactly(state.size + 4), std::move(*this));
         }
-        if(bytes_transferred == state.size + 4) {
+        if(!ec && bytes_transferred == state.size + 4) {
             Aseba::Message::SerializationBuffer& b = state.dataBuffer;
             auto source = b.get<uint16_t>();
             auto type = b.get<uint16_t>();

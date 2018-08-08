@@ -70,8 +70,8 @@ public:
         const uint16_t node = s.node;
 
 
-        if(ec) {
-            mLogError("Error in read_aseba_description_message_op while expecting an Aseba::Message");
+        if(ec || !msg) {
+            mLogError("Error in read_aseba_description_message_op while expecting an Aseba::Message : {}", ec.message());
             m_p.invoke(ec, node, Aseba::TargetDescription());
             return;
         }
@@ -91,12 +91,10 @@ public:
             list[counter++] = std::forward<decltype(description)>(description);
         };
 
-        msg->dump(std::wcout);
-        std::wcout << std::endl;
         switch(msg->type) {
             case ASEBA_MESSAGE_DESCRIPTION:
                 if(!desc.name.empty()) {
-                    mLogError("Received an Aseba::Description but we already got one");
+                    mLogWarn("Received an Aseba::Description but we already got one");
                 }
                 desc = *static_cast<const Aseba::Description*>(msg.get());
                 break;

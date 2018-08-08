@@ -1,4 +1,6 @@
 #include "log.h"
+#include <boost/utility/string_view.hpp>
+#include <spdlog/fmt/fmt.h>
 
 std::shared_ptr<spdlog::logger> mobsya::log = []() {
     auto log = spdlog::stdout_color_mt("console");
@@ -6,3 +8,12 @@ std::shared_ptr<spdlog::logger> mobsya::log = []() {
     log->flush_on(spdlog::level::trace);
     return log;
 }();
+
+std::string mobsya::log_filename(const char* path) {
+    auto sw = boost::string_view(path);
+    sw = sw.substr(sw.find_last_of("/\\") + 1);
+    sw = sw.substr(0, std::min(sw.size(), std::size_t(20)));
+    auto str = std::string(sw.data(), sw.size());
+    str.insert(str.begin(), 20 - str.size(), ' ');
+    return str;
+}

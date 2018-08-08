@@ -46,7 +46,7 @@ public:
     public:
         buffer() : s(0) {}
         void reserve(std::size_t size, std::size_t buffer_size) {
-            buffer_size = std::max(10 * buffer_size, std::size_t{1});
+            buffer_size = std::max(50 * buffer_size, std::size_t{1});
             v.resize(((s + size + buffer_size - 1) / buffer_size) * buffer_size);
         }
 
@@ -98,8 +98,7 @@ public:
     void cancel(implementation_type& impl);
     void close(implementation_type& impl);
     bool is_open(implementation_type& impl);
-    native_handle_type native_handle(implementation_type& impl);
-
+    native_handle_type native_handle(const implementation_type& impl) const;
     tl::expected<void, boost::system::error_code> open(implementation_type& impl);
 
 
@@ -168,18 +167,16 @@ public:
     using native_handle_type = libusb_device*;
     using lowest_layer_type = usb_device;
 
-    ~usb_device() {
-        mLogCritical("destroyed");
-    }
-
     usb_device(boost::asio::io_context& io_context);
     usb_device(usb_device&&) = default;
     void assign(native_handle_type);
     void cancel();
     void close();
     bool is_open();
-    native_handle_type native_handle();
+    native_handle_type native_handle() const;
     void open();
+
+    usb_device_identifier usb_device_id() const;
 
     template <typename ConstBufferSequence, typename WriteHandler>
     BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler, void(boost::system::error_code, std::size_t))
@@ -432,7 +429,7 @@ void usb_device::async_transfer_read_some(const BufferSequence& buffers, Complet
         }
         boost::system::error_code ec;
         if(transfer->status != LIBUSB_TRANSFER_COMPLETED) {
-            auto ec = usb::make_error_code_from_transfer(transfer->status);
+            ec = usb::make_error_code_from_transfer(transfer->status);
         }
 
         libusb_free_transfer(transfer);
@@ -537,7 +534,7 @@ void usb_device::async_transfer_write_some(const BufferSequence& buffers, Comple
         }
         boost::system::error_code ec;
         if(transfer->status != LIBUSB_TRANSFER_COMPLETED) {
-            auto ec = usb::make_error_code_from_transfer(transfer->status);
+            ec = usb::make_error_code_from_transfer(transfer->status);
         }
 
         libusb_free_transfer(transfer);

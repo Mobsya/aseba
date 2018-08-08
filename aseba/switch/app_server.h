@@ -15,6 +15,7 @@ public:
         boost::asio::ip::v6_only opt(false);
         boost::system::error_code ec;
         m_acceptor.set_option(opt, ec);
+        m_acceptor.listen(boost::asio::socket_base::max_listen_connections);
     }
 
     tcp::acceptor::endpoint_type endpoint() const {
@@ -22,9 +23,9 @@ public:
     }
 
     void accept() {
-        auto endpoint = create_application_endpoint<socket_type>(m_acceptor.get_io_context());
+        auto endpoint = std::make_shared<application_endpoint<socket_type>>(m_acceptor.get_io_context());
         m_acceptor.async_accept(endpoint->tcp_socket(), [this, endpoint](const boost::system::error_code& error) {
-            mLogTrace("New connection {}", error.message());
+            mLogInfo("New connection {}", error.message());
             if(!error) {
                 endpoint->start();
             }

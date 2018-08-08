@@ -12,8 +12,11 @@ class aseba_endpoint;
 class aseba_node : public std::enable_shared_from_this<aseba_node> {
 public:
     // aseba_node::status is exposed through zero conf & protocol : needs to be stable
-    enum class status { connected = 1, ready = 2, busy = 3, disconnected = 4 };
+    enum class status { connected = 1, available = 2, busy = 3, ready = 4, disconnected = 5 };
     using node_id_t = uint16_t;
+
+    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+    using write_callback = std::function<void(boost::system::error_code)>;
 
     ~aseba_node();
 
@@ -29,21 +32,25 @@ public:
         return m_id;
     }
 
-    void write_message(const Aseba::Message& msg);
+    Aseba::TargetDescription vm_description() const {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        return m_description;
+    }
 
-    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+    // Write n messages to the enpoint owning that node, then invoke cb when all message have been written
+    void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message, write_callback&& cb = {});
+    // Write a message to the enpoint owning that node, then invoke cb
+    void write_message(std::shared_ptr<Aseba::Message> message, write_callback&& cb = {});
+
+    // Compile a program and send it to the node, invoking cb once the assossiated message is written out
+    // If the code can not be compiled, returns false without invoking cb
+    bool send_aseba_program(const std::string& program, write_callback&& cb = {});
+    void run_aseba_program(write_callback&& cb = {});
+
+    bool lock(void* app);
+    bool unlock(void* app);
 
 private:
-    /*// hack to make the private constructor be invokable through make_shared
-    template <typename T>
-    struct allocator_access : std::allocator<T> {
-        template <typename... Args>
-        void construct(aseba_node* p, Args&&... args) {
-            ::new((void*)p) aseba_node(std::forward<Args>(args)...);
-        }
-    };*/
-
-
     friend class aseba_endpoint;
     void set_status(status);
 
@@ -51,12 +58,12 @@ private:
     void disconnect();
     void on_message(const Aseba::Message& msg);
     void on_description(Aseba::TargetDescription description);
-    void request_node_description();
 
     node_id_t m_id;
     std::atomic<status> m_status;
+    std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
-    std::mutex m_node_mutex;
+    mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;
     boost::asio::io_context& m_io_ctx;
 };

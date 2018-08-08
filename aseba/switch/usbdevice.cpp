@@ -30,7 +30,7 @@ void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
 }
 
 
-void usb_device_service::cancel(implementation_type& impl) {}
+void usb_device_service::cancel(implementation_type& /*impl*/) {}
 
 void usb_device_service::close(implementation_type& impl) {
     if(impl.handle) {
@@ -45,7 +45,7 @@ bool usb_device_service::is_open(implementation_type& impl) {
     return impl.handle != nullptr;
 }
 
-usb_device_service::native_handle_type usb_device_service::native_handle(implementation_type& impl) {
+usb_device_service::native_handle_type usb_device_service::native_handle(const implementation_type& impl) const {
     return impl.device;
 }
 
@@ -122,7 +122,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
 }
 
 void usb_device_service::set_baud_rate(implementation_type& impl, baud_rate b) {
-    unsigned br = static_cast<unsigned>(b);
+    auto br = static_cast<unsigned>(b);
     impl.control_line[0] = uint8_t(br & 0xff);
     impl.control_line[1] = uint8_t((br >> 8) & 0xff);
     impl.control_line[2] = uint8_t((br >> 16) & 0xff);
@@ -156,10 +156,7 @@ bool usb_device_service::send_control_transfer(implementation_type& impl) {
     uint16_t v = 0;
     if(impl.dtr)
         v |= 0x01;
-    if(libusb_control_transfer(impl.handle, 0x21, 0x22, v, 0, nullptr, 0, 0) != LIBUSB_SUCCESS) {
-        return false;
-    }
-    return true;
+    return libusb_control_transfer(impl.handle, 0x21, 0x22, v, 0, nullptr, 0, 0) == LIBUSB_SUCCESS;
 }
 
 bool usb_device_service::send_encoding(implementation_type& impl) {
@@ -195,8 +192,16 @@ bool usb_device::is_open() {
     return this->get_service().is_open(this->get_implementation());
 }
 
-usb_device::native_handle_type usb_device::native_handle() {
+usb_device::native_handle_type usb_device::native_handle() const {
     return this->get_service().native_handle(this->get_implementation());
+}
+
+usb_device_identifier usb_device::usb_device_id() const {
+    if(!this->native_handle())
+        return {0, 0};
+    libusb_device_descriptor desc;
+    libusb_get_device_descriptor(this->native_handle(), &desc);
+    return {desc.idVendor, desc.idProduct};
 }
 
 std::size_t usb_device::write_channel_chunk_size() const {
