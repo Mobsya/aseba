@@ -73,7 +73,8 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
 
     for(int if_num = 0; if_num < 2; if_num++) {
         if(libusb_kernel_driver_active(impl.handle, if_num)) {
-            if(auto r = libusb_detach_kernel_driver(impl.handle, if_num)) {
+            auto r = libusb_detach_kernel_driver(impl.handle, if_num);
+            if(r != LIBUSB_ERROR_NOT_SUPPORTED) {
                 return usb::make_unexpected(r);
             }
         }
@@ -91,6 +92,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
         for(int s = 0; s < interface.num_altsetting; s++) {
             if(interface.altsetting[s].bInterfaceClass != LIBUSB_CLASS_DATA)
                 continue;
+            libusb_claim_interface(impl.handle, i);
             for(int e = 0; e < interface.altsetting[s].bNumEndpoints; e++) {
                 const auto endpoint = interface.altsetting[s].endpoint[e];
                 if(endpoint.bmAttributes & LIBUSB_TRANSFER_TYPE_BULK) {
