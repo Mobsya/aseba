@@ -4,8 +4,8 @@
 namespace mobsya {
 
 ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint, const QUuid& uuid,
-                       const QString& name)
-    : m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::disconnected) {}
+                       const QString& name, NodeType type)
+    : m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::disconnected), m_type(type) {}
 
 
 QUuid ThymioNode::uuid() const {
@@ -18,6 +18,10 @@ QString ThymioNode::name() const {
 
 ThymioNode::Status ThymioNode::status() const {
     return m_status;
+}
+
+ThymioNode::NodeType ThymioNode::type() const {
+    return m_type;
 }
 
 void ThymioNode::setName(const QString& name) {
