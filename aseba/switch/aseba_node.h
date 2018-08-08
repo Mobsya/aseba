@@ -40,6 +40,8 @@ public:
     std::string friendly_name() const;
     void set_friendly_name(const std::string& str);
 
+    bool is_wirelessly_connected() const;
+
     Aseba::TargetDescription vm_description() const {
         std::unique_lock<std::mutex> _(m_node_mutex);
         return m_description;

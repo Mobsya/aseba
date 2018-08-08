@@ -18,6 +18,7 @@
 #include "log.h"
 #include "variant.hpp"
 #include "aseba_node_registery.h"
+#include "utils.h"
 
 namespace mobsya {
 
@@ -103,6 +104,13 @@ public:
     }
     void set_endpoint_type(endpoint_type type) {
         m_endpoint_type = type;
+    }
+
+    bool is_wireless() const {
+        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
+            return variant_ns::get<usb_device>(m_endpoint).usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
+        }
+        return false;
     }
 
     void start() {
