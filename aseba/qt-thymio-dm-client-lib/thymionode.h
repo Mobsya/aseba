@@ -11,6 +11,8 @@ class ThymioNode : public QObject {
     Q_OBJECT
 public:
     enum class Status { connected = 1, available = 2, busy = 3, ready = 4, disconnected = 5 };
+    Q_ENUMS(Status)
+
     Q_PROPERTY(QUuid uuid READ uuid CONSTANT)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
@@ -36,4 +38,7 @@ private:
     QString m_name;
     Status m_status;
 };
+
 }  // namespace mobsya
+
+Q_DECLARE_METATYPE(mobsya::ThymioNode::Status)

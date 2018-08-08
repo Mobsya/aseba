@@ -12,7 +12,7 @@ namespace mobsya {
 class ThymioDeviceManagerClientEndpoint;
 
 class ThymioDeviceManagerClient : public QObject {
-
+    Q_OBJECT
 public:
     ThymioDeviceManagerClient(QObject* parent = nullptr);
 
@@ -21,7 +21,13 @@ private Q_SLOTS:
     void onServiceRemoved(QZeroConfService);
     void onMessage(const fb_message_ptr& msg);
 
+Q_SIGNALS:
+    void nodeAdded(std::shared_ptr<ThymioNode>);
+    void nodeRemoved(std::shared_ptr<ThymioNode>);
+
 private:
+    friend class ThymioDevicesModel;
+
     struct SimpleNode {
         QUuid id;
         QString name;

@@ -66,6 +66,7 @@ void ThymioDeviceManagerClient::onNodesChanged(const fb::NodesChanged& nc_msg) {
         if(bytes.size() != 16)
             continue;
         SimpleNode deserialized{
+            // Sometimes Qt apis aren't that convenient...
             QUuid(*(reinterpret_cast<const uint32_t*>(bytes.data())),
                   *(reinterpret_cast<const uint16_t*>(bytes.data() + 4)),
                   *(reinterpret_cast<const uint16_t*>(bytes.data() + 6)),
@@ -98,12 +99,15 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
         auto it = m_nodes.find(node.id);
         if(it == m_nodes.end()) {
             it = m_nodes.insert(node.id, std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name));
+            Q_EMIT nodeAdded(it.value());
         }
         (*it)->setName(node.name);
         (*it)->setStatus(node.status);
 
         if(node.status == ThymioNode::Status::disconnected) {
+            auto node = it.value();
             m_nodes.erase(it);
+            Q_EMIT nodeRemoved(node);
         }
     }
 }

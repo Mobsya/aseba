@@ -4,7 +4,6 @@
 #include <aseba/flatbuffers/fb_message_ptr.h>
 
 namespace mobsya {
-
 class ThymioDeviceManagerClientEndpoint : public QObject {
     Q_OBJECT
 
