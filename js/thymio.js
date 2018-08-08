@@ -62,9 +62,10 @@ class AsebaVMDescription {
 
 /** Node */
 export class Node {
-    constructor(client, id, status) {
+    constructor(client, id, status, type) {
         this._id = id;
         this._status = status;
+        this._type = type
         this._desc   = undefined;
         this._client = client
     }
@@ -72,6 +73,11 @@ export class Node {
     /** return the node id*/
     get id() {
         return this._id
+    }
+
+    /** return the node type*/
+    get type() {
+        return this._type
     }
 
     /** The node status
@@ -199,6 +205,11 @@ class NodeId {
  * The status of a node
  */
 Node.Status = mobsya.fb.NodeStatus;
+
+/*
+ * The type of a node
+ */
+Node.Status = mobsya.fb.NodeType;
 
 /*
  * A client. Main entry point of the api
@@ -353,7 +364,7 @@ export class Client {
             const id = this._id(n.nodeId())
             let node = this._nodes.get(id.toString())
             if(!node) {
-                node = new Node(this, id, n.status())
+                node = new Node(this, id, n.status(), n.type())
                 this._nodes.set(id.toString(), node)
             }
             if(n.status() == Node.Status.disconnected) {

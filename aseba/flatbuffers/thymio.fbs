@@ -2,7 +2,7 @@
 
 namespace mobsya.fb;
 
-///>A node id
+///A node id
 table NodeId {
    id:[ubyte];
 }
@@ -11,7 +11,7 @@ table NodeId {
 /// A node can designate either a robot, a simulator, each with various capabilities.
 enum NodeType : int {
   Thymio2 = 0,
-  ThymioWireless = 1,
+  Thymio2Wireless = 1,
 }
 
 /// The status of a node represents whether the node is connected and available.

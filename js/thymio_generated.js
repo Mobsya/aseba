@@ -20,7 +20,7 @@ mobsya.fb = mobsya.fb || {};
  */
 mobsya.fb.NodeType = {
   Thymio2: 0,
-  ThymioWireless: 1
+  Thymio2Wireless: 1
 };
 
 /**
@@ -99,7 +99,7 @@ mobsya.fb.AnyMessage = {
 };
 
 /**
- *>A node id
+ *A node id
  *
  * @constructor
  */

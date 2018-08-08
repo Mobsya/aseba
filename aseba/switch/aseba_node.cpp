@@ -43,6 +43,11 @@ aseba_node::~aseba_node() {
     }
 }
 
+bool aseba_node::is_wirelessly_connected() const {
+    if(auto endpoint = m_endpoint.lock())
+        return endpoint->is_wireless();
+    return false;
+}
 
 void aseba_node::on_message(const Aseba::Message& msg) {
     switch(msg.type) {

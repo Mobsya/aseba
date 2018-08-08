@@ -236,8 +236,9 @@ private:
 
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
-        nodes.emplace_back(
-            fb::CreateNodeDirect(builder, id.fb(builder), mobsya::fb::NodeStatus(status), fb::NodeType::Thymio2));
+        nodes.emplace_back(fb::CreateNodeDirect(builder, id.fb(builder), mobsya::fb::NodeStatus(status),
+                                                node->is_wirelessly_connected() ? fb::NodeType::Thymio2Wireless :
+                                                                                  fb::NodeType::Thymio2));
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
