@@ -12,3 +12,6 @@ if(NOT ANDROID)
     add_subdirectory(flatbuffers)
     add_subdirectory(switch)
 endif()
+
+add_subdirectory(qt-thymio-dm-client-lib)
+add_subdirectory(launcher)

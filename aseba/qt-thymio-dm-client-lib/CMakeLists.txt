@@ -8,8 +8,11 @@ add_library(qt-thymio-dm-client-lib STATIC
     thymiodevicemanagerclient.h
     thymiodevicemanagerclientendpoint.cpp
     thymiodevicemanagerclientendpoint.h
+    thymiodevicesmodel.cpp
+    thymiodevicesmodel.h
     thymionode.cpp
     thymionode.h
+    thymio-api.h
 )
 target_link_libraries(qt-thymio-dm-client-lib
     Qt5::Core
