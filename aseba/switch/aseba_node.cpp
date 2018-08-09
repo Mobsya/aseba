@@ -139,6 +139,10 @@ void aseba_node::run_aseba_program(write_callback&& cb) {
     write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
 }
 
+void aseba_node::rename(const std::string&) {
+    set_status(m_status);
+}
+
 void aseba_node::on_description(Aseba::TargetDescription description) {
     mLogInfo("Got description for {} [{} variables, {} functions, {} events - protocol {}]", native_id(),
              description.namedVariables.size(), description.nativeFunctions.size(), description.localEvents.size(),
