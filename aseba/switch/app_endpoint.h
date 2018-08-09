@@ -169,6 +169,11 @@ public:
                 send_aseba_vm_description(req->request_id(), req->node_id());
                 break;
             }
+            case mobsya::fb::AnyMessage::RenameNode: {
+                auto rename_msg = msg.as<fb::RenameNode>();
+                this->rename_node(rename_msg->request_id(), rename_msg->node_id(), rename_msg->new_name()->str());
+                break;
+            }
             case mobsya::fb::AnyMessage::LockNode: {
                 auto lock_msg = msg.as<fb::LockNode>();
                 this->lock_node(lock_msg->request_id(), lock_msg->node_id());
@@ -267,6 +272,17 @@ private:
             return;
         }
         write_message(serialize_aseba_vm_description(request_id, *node, id));
+    }
+
+    void rename_node(uint32_t request_id, const aseba_node_registery::node_id& id, const std::string& new_name) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("run_aseba_program: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        n->rename(new_name);
+        write_message(create_ack_response(request_id));
     }
 
     void lock_node(uint32_t request_id, const aseba_node_registery::node_id& id) {

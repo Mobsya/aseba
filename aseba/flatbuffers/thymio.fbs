@@ -99,6 +99,13 @@ table NativeFunctionParameter {
   size:uint;
 }
 
+/// Set a new name for this nùode
+table RenameNode {
+   request_id:uint;
+   node_id:NodeId;
+   new_name:string;
+}
+
 /// Ask the server to give this client sole ownership of the node.
 /// This needs to be done once before sending mutating instructions to the node
 /// The lock remain until the client disconnect, the device disconnect or a UnlockNode message is sent
@@ -145,6 +152,7 @@ union AnyMessage {
     RequestNodeAsebaVMDescription,
     LockNode,
     UnlockNode,
+    RenameNode,
     RequestAsebaCodeLoad,
     RequestAsebaCodeRun,
     NodesChanged,
