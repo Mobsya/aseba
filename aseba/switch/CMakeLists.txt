@@ -21,6 +21,8 @@ add_executable(switch
     aseba_endpoint.h
     aseba_node.h
     aseba_node.cpp
+    aseba_tcpacceptor.h
+    aseba_tcpacceptor.cpp
     dispatcher.h
     app_server.h
     app_endpoint.h

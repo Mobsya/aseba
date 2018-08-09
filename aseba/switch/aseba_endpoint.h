@@ -24,12 +24,15 @@ class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
 
 public:
+    enum class endpoint_type { unknown, thymio, simulated_tymio, simulated_epuck, simulated_dummy_node, legacy_switch };
+
     ~aseba_endpoint() {
         std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
     }
 
     using pointer = std::shared_ptr<aseba_endpoint>;
-    using endpoint_t = variant_ns::variant<usb_device>;
+    using tcp_socket = boost::asio::ip::tcp::socket;
+    using endpoint_t = variant_ns::variant<tcp_socket, usb_device>;
 
     using write_callback = std::function<void(boost::system::error_code)>;
 
@@ -41,8 +44,34 @@ public:
         return variant_ns::get<usb_device>(m_endpoint);
     }
 
+    const tcp_socket& tcp() const {
+        return variant_ns::get<tcp_socket>(m_endpoint);
+    }
+
+    tcp_socket& tcp() {
+        return variant_ns::get<tcp_socket>(m_endpoint);
+    }
+
     static pointer create_for_usb(boost::asio::io_context& io) {
         return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+    }
+
+    static pointer create_for_tcp(boost::asio::io_context& io) {
+        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+    }
+
+    std::string endpoint_name() const {
+        return m_endpoint_name;
+    }
+    void set_endpoint_name(const std::string& name) {
+        m_endpoint_name = name;
+    }
+
+    endpoint_type type() const {
+        return m_endpoint_type;
+    }
+    void set_endpoint_type(endpoint_type type) {
+        m_endpoint_type = type;
     }
 
     void start() {
@@ -191,7 +220,7 @@ private:
 
     // Do not run pings / health check for usb-connected nodes
     bool needs_health_check() const {
-        return !variant_ns::holds_alternative<usb_device>(m_endpoint) ||
+        return variant_ns::holds_alternative<usb_device>(m_endpoint) &&
             usb().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
     }
 
@@ -244,12 +273,17 @@ private:
         }
     }
 
-    aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e)
-        : m_endpoint(std::move(e)), m_strand(io_context.get_executor()), m_io_context(io_context) {}
+    aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type = endpoint_type::thymio)
+        : m_endpoint(std::move(e))
+        , m_strand(io_context.get_executor())
+        , m_io_context(io_context)
+        , m_endpoint_type(type) {}
     endpoint_t m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
     boost::asio::io_service& m_io_context;
+    endpoint_type m_endpoint_type;
+    std::string m_endpoint_name;
     std::mutex m_msg_queue_lock;
     std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
 };
