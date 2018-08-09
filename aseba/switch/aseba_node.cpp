@@ -46,8 +46,8 @@ aseba_node::~aseba_node() {
 
 void aseba_node::on_message(const Aseba::Message& msg) {
     switch(msg.type) {
-        case ASEBA_MESSAGE_THYMIO_DEVICE_INFO: {
-            on_device_info(static_cast<const Aseba::ThymioDeviceInfo&>(msg));
+        case ASEBA_MESSAGE_DEVICE_INFO: {
+            on_device_info(static_cast<const Aseba::DeviceInfo&>(msg));
             break;
         }
         default: break;
@@ -144,17 +144,17 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
     }
     if(description.protocolVersion >= 6) {
         // set_friendly_name("The merovingian");
-        write_message(std::make_shared<Aseba::GetThymioDeviceInfo>(native_id(), THYMIO_DEVICE_INFO_NAME));
-        write_message(std::make_shared<Aseba::GetThymioDeviceInfo>(native_id(), THYMIO_DEVICE_INFO_UUID));
+        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
+        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
         return;
     }
 
     set_status(status::available);
 }
 
-void aseba_node::on_device_info(const Aseba::ThymioDeviceInfo& info) {
+void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
     mLogTrace("Got info for {} [{} : {}]", native_id(), info.info, info.data.size());
-    if(info.info == THYMIO_DEVICE_INFO_UUID) {
+    if(info.info == DEVICE_INFO_UUID) {
         if(info.data.size() == 16) {
             std::copy(info.data.begin(), info.data.end(), m_uuid.begin());
         }
@@ -164,14 +164,14 @@ void aseba_node::on_device_info(const Aseba::ThymioDeviceInfo& info) {
             std::vector<uint8_t> data;
             std::copy(m_uuid.begin(), m_uuid.end(), std::back_inserter(data));
             lock.unlock();
-            write_message(std::make_shared<Aseba::SetThymioDeviceInfo>(native_id(), THYMIO_DEVICE_INFO_UUID, data));
+            write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_UUID, data));
         }
         mLogInfo("Persistent uuid for {} is now {} ", native_id(), m_uuid);
         auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_ctx);
         registery.set_node_uuid(shared_from_this(), m_uuid);
         set_status(status::available);
 
-    } else if(info.info == THYMIO_DEVICE_INFO_NAME) {
+    } else if(info.info == DEVICE_INFO_NAME) {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_friendly_name.clear();
         m_friendly_name.reserve(info.data.size());
@@ -189,7 +189,7 @@ void aseba_node::set_friendly_name(const std::string& str) {
     std::vector<uint8_t> data;
     data.reserve(str.size());
     std::copy(str.begin(), str.end(), std::back_inserter(data));
-    write_message(std::make_shared<Aseba::SetThymioDeviceInfo>(native_id(), THYMIO_DEVICE_INFO_NAME, data));
+    write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_NAME, data));
     std::unique_lock<std::mutex> _(m_node_mutex);
     m_friendly_name = str;
 }
