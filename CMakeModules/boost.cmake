@@ -1,5 +1,5 @@
 set(Boost_USE_STATIC_LIBS   ON)
-find_package(Boost 1.67 COMPONENTS system filesystem thread regex date_time program_options python27)
+find_package(Boost 1.67 COMPONENTS chrono system filesystem thread regex date_time program_options python27)
 add_definitions(-DBOOST_ALL_NO_LIB)
 if(NOT Boost_FOUND)
     include( ExternalProject )
@@ -28,11 +28,12 @@ if(NOT Boost_FOUND)
             CONFIGURE_COMMAND ${boost_bootstrap}
                 --prefix=${boost_INSTALL}
             BUILD_COMMAND
-            ${boost_b2} install cxxflags=-fPIC cflags=-fPIC link=static variant=release threading=multi runtime-link=static --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options --with-python
+            ${boost_b2} install cxxflags=-fPIC cflags=-fPIC link=static variant=release threading=multi runtime-link=static --with-chrono --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options --with-python
             INSTALL_COMMAND ""
             INSTALL_DIR ${boost_INSTALL}
 
             BUILD_BYPRODUCTS
+                    ${boost_LIB_DIR}/libboost_chrono${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_date_time${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_system${boost_LIBRARY_SUFFIX}
                     ${boost_LIB_DIR}/libboost_program_options${boost_LIBRARY_SUFFIX}
@@ -48,6 +49,11 @@ if(NOT Boost_FOUND)
     add_library(  Boost::boost STATIC IMPORTED )
     set_property( TARGET Boost::boost PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
     add_dependencies( Boost::boost external_boost )
+
+    add_library(  Boost::chrono STATIC IMPORTED )
+    set_property( TARGET Boost::chrono PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_chrono${boost_LIBRARY_SUFFIX} )
+    set_property( TARGET Boost::chrono PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${boost_INCLUDE_DIR} )
+    add_dependencies( Boost::chrono external_boost )
 
     add_library( Boost::date_time STATIC IMPORTED )
     set_property( TARGET Boost::date_time PROPERTY IMPORTED_LOCATION ${boost_LIB_DIR}/libboost_date_time${boost_LIBRARY_SUFFIX} )
