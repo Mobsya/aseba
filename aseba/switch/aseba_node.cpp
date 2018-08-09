@@ -166,7 +166,7 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
             lock.unlock();
             write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_UUID, data));
         }
-        mLogInfo("Persistent uuid for {} is now {} ", native_id(), m_uuid);
+        mLogInfo("Persistent uuid for {} is now {} ", native_id(), boost::uuids::to_string(m_uuid));
         auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_ctx);
         registery.set_node_uuid(shared_from_this(), m_uuid);
         set_status(status::available);
