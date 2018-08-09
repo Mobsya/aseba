@@ -701,13 +701,11 @@ void AsebaVMDebugMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t
     data++;
     dataLength--;
 
-#ifdef THYMIO_FIRMWARE_BUILD
-    if(AsebaHandleThymioSpecificMessage(vm, id, data, dataLength)) {
-        return;
-    }
-#endif
-
     switch(id) {
+        case ASEBA_MESSAGE_GET_DEVICE_INFO:
+        case ASEBA_MESSAGE_SET_DEVICE_INFO:
+            AsebaHandleDeviceInfoMessages(vm, id, data, dataLength);
+            break;
         case ASEBA_MESSAGE_SET_BYTECODE: {
             uint16_t start = bswap16(data[0]);
             uint16_t length = dataLength - 1;

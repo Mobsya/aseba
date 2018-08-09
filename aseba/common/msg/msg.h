@@ -603,59 +603,58 @@ protected:
 
 
 //! Store persistent device info into thymio
-class SetThymioDeviceInfo : public CmdMessage {
+class SetDeviceInfo : public CmdMessage {
 private:
-    ThymioDeviceInfoType info;
+    DeviceInfoType info;
     std::vector<uint8_t> data;
 
 public:
-    SetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info, const std::vector<uint8_t>& data)
-        : CmdMessage(ASEBA_MESSAGE_THYMIO_SET_THYMIO_DEVICE_INFO, dest), info(info), data(data) {}
+    SetDeviceInfo(uint16_t dest, DeviceInfoType info, const std::vector<uint8_t>& data)
+        : CmdMessage(ASEBA_MESSAGE_SET_DEVICE_INFO, dest), info(info), data(data) {}
 
 protected:
     void serializeSpecific(SerializationBuffer& buffer) const override;
     void deserializeSpecific(SerializationBuffer& buffer) override;
     void dumpSpecific(std::wostream& stream) const override;
     operator const char*() const override {
-        return "SetThymioDeviceInfo";
+        return "SetDeviceInfo";
     }
 };
 
 //! Get persistent device info from thymio
-class GetThymioDeviceInfo : public CmdMessage {
+class GetDeviceInfo : public CmdMessage {
 private:
-    ThymioDeviceInfoType info;
+    DeviceInfoType info;
 
 public:
-    GetThymioDeviceInfo(uint16_t dest, ThymioDeviceInfoType info)
-        : CmdMessage(ASEBA_MESSAGE_THYMIO_GET_THYMIO_DEVICE_INFO, dest), info(info) {}
+    GetDeviceInfo(uint16_t dest, DeviceInfoType info) : CmdMessage(ASEBA_MESSAGE_GET_DEVICE_INFO, dest), info(info) {}
 
 protected:
     void serializeSpecific(SerializationBuffer& buffer) const override;
     void deserializeSpecific(SerializationBuffer& buffer) override;
     void dumpSpecific(std::wostream& stream) const override;
     operator const char*() const override {
-        return "GetThymioDeviceInfo";
+        return "GetDeviceInfo";
     }
 };
 
 //! Persistent device info from thymio
-class ThymioDeviceInfo : public Message {
+class DeviceInfo : public Message {
 public:
-    ThymioDeviceInfoType info;
+    DeviceInfoType info;
     std::vector<uint8_t> data;
 
 public:
-    ThymioDeviceInfo() : Message(ASEBA_MESSAGE_THYMIO_DEVICE_INFO) {}
-    ThymioDeviceInfo(ThymioDeviceInfoType info, const std::vector<uint8_t>& data)
-        : Message(ASEBA_MESSAGE_THYMIO_DEVICE_INFO), info(info), data(data) {}
+    DeviceInfo() : Message(ASEBA_MESSAGE_DEVICE_INFO) {}
+    DeviceInfo(DeviceInfoType info, const std::vector<uint8_t>& data)
+        : Message(ASEBA_MESSAGE_DEVICE_INFO), info(info), data(data) {}
 
 protected:
     void serializeSpecific(SerializationBuffer& buffer) const override;
     void deserializeSpecific(SerializationBuffer& buffer) override;
     void dumpSpecific(std::wostream& stream) const override;
     operator const char*() const override {
-        return "ThymioDeviceInfo";
+        return "DeviceInfo";
     }
 };
 

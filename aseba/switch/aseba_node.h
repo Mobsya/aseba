@@ -66,7 +66,7 @@ private:
     void disconnect();
     void on_message(const Aseba::Message& msg);
     void on_description(Aseba::TargetDescription description);
-    void on_device_info(const Aseba::ThymioDeviceInfo& info);
+    void on_device_info(const Aseba::DeviceInfo& info);
 
     node_id_t m_id;
     node_id m_uuid;
