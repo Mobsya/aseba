@@ -174,7 +174,7 @@ public:
     void close();
     bool is_open();
     native_handle_type native_handle() const;
-    void open();
+    tl::expected<void, boost::system::error_code> open();
 
     usb_device_identifier usb_device_id() const;
 
