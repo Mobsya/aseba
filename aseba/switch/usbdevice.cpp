@@ -74,7 +74,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
     for(int if_num = 0; if_num < 2; if_num++) {
         if(libusb_kernel_driver_active(impl.handle, if_num)) {
             auto r = libusb_detach_kernel_driver(impl.handle, if_num);
-            if(r != LIBUSB_ERROR_NOT_SUPPORTED) {
+            if(r > 0 && r != LIBUSB_ERROR_NOT_SUPPORTED) {
                 return usb::make_unexpected(r);
             }
         }
