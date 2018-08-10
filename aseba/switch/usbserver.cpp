@@ -14,7 +14,12 @@ void usb_server::accept() {
         }
         mLogInfo("New Aseba endpoint over USB device connected");
         usb_device& d = session->usb();
-        d.open();
+        auto res = d.open();
+        if(!res) {
+            mLogError("Can not open usb device {}", res.error().message());
+            accept();
+            return;
+        }
         d.set_baud_rate(usb_device::baud_rate::baud_115200);
         d.set_parity(usb_device::parity::none);
         d.set_stop_bits(usb_device::stop_bits::one);

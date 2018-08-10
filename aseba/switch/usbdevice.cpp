@@ -179,8 +179,8 @@ void usb_device::assign(native_handle_type d) {
     this->get_service().assign(this->get_implementation(), d);
 }
 
-void usb_device::open() {
-    this->get_service().open(this->get_implementation());
+tl::expected<void, boost::system::error_code> usb_device::open() {
+    return this->get_service().open(this->get_implementation());
 }
 
 void usb_device::cancel() {
