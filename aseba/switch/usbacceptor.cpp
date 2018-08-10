@@ -109,10 +109,17 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
 void usb_acceptor_service::handle_request_by_active_enumeration() {
     libusb_device** devices;
     ssize_t ndevices = libusb_get_device_list(*m_context, &devices);
+    std::vector<libusb_device*> sessions;
+    sessions.reserve(ndevices);
+
     for(ssize_t i = 0; !m_requests.empty() && ndevices > 0 && i < ndevices; i++) {
-        device_plugged(*m_context, devices[i], m_requests.front());
+        sessions.push_back(devices[i]);
+        if(std::find(m_known_devices.begin(), m_known_devices.end(), devices[i]) == m_known_devices.end()) {
+            device_plugged(*m_context, devices[i], m_requests.front());
+        }
     }
-    libusb_free_device_list(devices, false);
+    libusb_free_device_list(devices, true);
+    m_known_devices = std::move(sessions);
 }
 
 
