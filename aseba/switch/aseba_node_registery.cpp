@@ -147,43 +147,6 @@ std::shared_ptr<aseba_node> aseba_node_registery::node_from_id(const aseba_node_
     return it->second.lock();
 }
 
-
-void aseba_node_registery::broadcast(const std::shared_ptr<Aseba::Message>& msg) {
-
-    // ToDo : Maybe this lock is too broad
-    std::unique_lock<std::mutex> _(m_nodes_mutex);
-
-
-    auto native_id = msg->source;
-    std::shared_ptr<Aseba::Message> mapped = std::shared_ptr<Aseba::Message>(msg->clone());
-    auto it = find_from_native_id(native_id);
-    if(it == std::end(m_aseba_nodes))
-        return;
-    mapped->source = it->first.short_for_tymio2();
-    auto cmd_msg = std::dynamic_pointer_cast<Aseba::CmdMessage>(mapped);
-
-    for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {
-        if(it->second.expired())
-            continue;
-        auto node = it->second.lock();
-
-        // Do not broadcast the message to the sender
-        if(node->native_id() == native_id)
-            continue;
-
-        // If the message is for a specific dest, do some filtering, and remap the destination
-        if(cmd_msg) {
-            if(it->first.short_for_tymio2() != cmd_msg->dest)
-                continue;
-            cmd_msg->dest = node->native_id();
-            node->write_message(cmd_msg);
-            break;
-        }
-        // Otherwise, send to every node
-        node->write_message(mapped);
-    }
-}
-
 node_status_monitor::~node_status_monitor() {
     m_connection.disconnect();
 }

@@ -121,11 +121,6 @@ public:
         }
     }
 
-    void broadcast(std::shared_ptr<Aseba::Message> msg) {
-        auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
-        registery.broadcast(msg);
-    }
-
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
         if(ec) {
             mLogError("Error while reading aseba message {}", ec.message());
