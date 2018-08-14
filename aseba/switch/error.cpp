@@ -1,6 +1,7 @@
 #include "error.h"
 
 namespace mobsya {
+#ifdef MOBSYA_TDM_ENABLE_USB
 namespace usb {
 
     const boost::system::error_category& get_usb_error_category() {
@@ -32,4 +33,5 @@ namespace usb {
     }
 
 }  // namespace usb
+#endif
 }  // namespace mobsya

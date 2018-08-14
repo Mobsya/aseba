@@ -1,10 +1,12 @@
 #pragma once
+#ifdef MOBSYA_TDM_ENABLE_USB
 #include <libusb/libusb.h>
+#endif
 #include <boost/asio/error.hpp>
 #include "utils.h"
 
 namespace mobsya {
-
+#ifdef MOBSYA_TDM_ENABLE_USB
 namespace usb {
 
     enum class error_code {
@@ -65,8 +67,10 @@ namespace usb {
     }
 
 }  // namespace usb
+#endif
 }  // namespace mobsya
 
+#ifdef MOBSYA_TDM_ENABLE_USB
 namespace boost {
 namespace system {
     template <>
@@ -75,3 +79,4 @@ namespace system {
     };
 }  // namespace system
 }  // namespace boost
+#endif
