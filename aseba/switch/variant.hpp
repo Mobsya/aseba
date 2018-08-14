@@ -1,1532 +1,2457 @@
+// MPark.Variant
 //
-// Copyright (c) 2016 Martin Moene
+// Copyright Michael Park, 2015-2017
 //
-// https://github.com/martinmoene/variant-lite
-//
-// This code is licensed under the MIT License (MIT).
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
 
-#pragma once
+#ifndef MPARK_VARIANT_HPP
+#define MPARK_VARIANT_HPP
 
-#ifndef NONSTD_VARIANT_LITE_HPP
-#define NONSTD_VARIANT_LITE_HPP
-
-#define  variant_lite_VERSION "0.2.0"
-
-// variant-lite configuration:
-
-#ifndef  variant_CONFIG_OMIT_VARIANT_SIZE_V_MACRO
-# define variant_CONFIG_OMIT_VARIANT_SIZE_V_MACRO  0
-#endif
-
-#ifndef  variant_CONFIG_OMIT_VARIANT_ALTERNATIVE_T_MACRO
-# define variant_CONFIG_OMIT_VARIANT_ALTERNATIVE_T_MACRO  0
-#endif
-
-// Compiler detection:
-
-#define variant_CPP11_OR_GREATER  ( __cplusplus >= 201103L )
-#define variant_CPP14_OR_GREATER  ( __cplusplus >= 201402L )
-#define variant_CPP17_OR_GREATER  ( __cplusplus >= 201703L )
-
-// use C++17 std::variant if available:
-
-#if defined( __has_include )
-# define variant_HAS_INCLUDE( arg )  __has_include( arg )
-#else
-# define variant_HAS_INCLUDE( arg )  0
-#endif
-
-#if 0 // variant_HAS_INCLUDE( <variant> ) && variant_CPP17_OR_GREATER
-
-#define variant_HAVE_STD_VARIANT  1
-
-#include <variant>
-
-#if ! variant_CONFIG_OMIT_VARIANT_SIZE_V_MACRO
-# define variant_size_V(T)  nonstd::variant_size<T>::value
-#endif
-
-#if ! variant_CONFIG_OMIT_VARIANT_ALTERNATIVE_T_MACRO
-# define variant_alternative_T(I,T)  typename nonstd::variant_alternative<I,T >::type
-#endif
-
-namespace nonstd {
-
-    using std::variant;
-    using std::monostate;
-    using std::bad_variant_access;
-    using std::variant_size;
-    using std::variant_size_v;
-    using std::variant_alternative;
-    using std::variant_alternative_t;
-    using std::hash;
-
-    using std::in_place;
-    using std::in_place_type;
-    using std::in_place_index;
-    using std::in_place_t;
-    using std::in_place_type_t;
-    using std::in_place_index_t;
-
-    using std::visit;
-    using std::holds_alternative;
-    using std::get;
-    using std::get_if;
-    using std::operator==;
-    using std::operator!=;
-    using std::operator<;
-    using std::operator<=;
-    using std::operator>;
-    using std::operator>=;
-    using std::swap;
-}
-
-#else // C++17 std::variant
-
-#include <cstddef>
-#include <limits>
-#include <new>
-#include <stdexcept>
-#include <utility>
-
-// variant-lite alignment configuration:
-
-#ifndef  variant_CONFIG_MAX_ALIGN_HACK
-# define variant_CONFIG_MAX_ALIGN_HACK  0
-#endif
-
-#ifndef  variant_CONFIG_ALIGN_AS
-// no default, used in #if defined()
-#endif
-
-#ifndef  variant_CONFIG_ALIGN_AS_FALLBACK
-# define variant_CONFIG_ALIGN_AS_FALLBACK  double
-#endif
-
-// half-open range [lo..hi):
-#define variant_BETWEEN( v, lo, hi ) ( lo <= v && v < hi )
-
-#if defined(_MSC_VER) && !defined(__clang__)
-# define variant_COMPILER_MSVC_VERSION   (_MSC_VER / 100 - 5 - (_MSC_VER < 1900))
-#else
-# define variant_COMPILER_MSVC_VERSION   0
-#endif
-
-#if defined __GNUC__
-# define variant_COMPILER_GNUC_VERSION  __GNUC__
-#else
-# define variant_COMPILER_GNUC_VERSION    0
-#endif
-
-#if variant_BETWEEN(variant_COMPILER_MSVC_VERSION, 7, 14 )
-# pragma warning( push )
-# pragma warning( disable: 4345 )   // initialization behavior changed
-#endif
-
-// Presence of C++11 language features:
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 10
-# define variant_HAVE_AUTO  1
-# define variant_HAVE_NULLPTR  1
-# define variant_HAVE_STATIC_ASSERT  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 12
-# define variant_HAVE_DEFAULT_FUNCTION_TEMPLATE_ARG  1
-# define variant_HAVE_INITIALIZER_LIST  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 14
-# define variant_HAVE_ALIAS_TEMPLATE  1
-# define variant_HAVE_CONSTEXPR_11  1
-# define variant_HAVE_ENUM_CLASS  1
-# define variant_HAVE_EXPLICIT_CONVERSION  1
-# define variant_HAVE_IS_DEFAULT  1
-# define variant_HAVE_IS_DELETE  1
-# define variant_HAVE_NOEXCEPT  1
-# define variant_HAVE_OVERRIDE  1
-#endif
-
-// Presence of C++14 language features:
-
-#if variant_CPP14_OR_GREATER
-# define variant_HAVE_CONSTEXPR_14  1
-#endif
-
-// Presence of C++17 language features:
-
-#if variant_CPP17_OR_GREATER
-# define variant_HAVE_ENUM_CLASS_CONSTRUCTION_FROM_UNDERLYING_TYPE  1
-#endif
-
-// Presence of C++ library features:
-
-#if variant_COMPILER_GNUC_VERSION
-# define variant_HAVE_TR1_TYPE_TRAITS  1
-# define variant_HAVE_TR1_ADD_POINTER  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 9
-# define variant_HAVE_TYPE_TRAITS  1
-# define variant_HAVE_STD_ADD_POINTER  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 11
-# define variant_HAVE_ARRAY  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 12
-# define variant_HAVE_CONDITIONAL  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 14 || (variant_COMPILER_MSVC_VERSION >= 9 && _HAS_CPP0X)
-# define variant_HAVE_CONTAINER_DATA_METHOD  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 12
-# define variant_HAVE_REMOVE_CV  1
-#endif
-
-#if variant_CPP11_OR_GREATER || variant_COMPILER_MSVC_VERSION >= 14
-# define variant_HAVE_SIZED_TYPES  1
-#endif
-
-// For the rest, consider VC14 as C++11 for variant-lite:
-
-#if variant_COMPILER_MSVC_VERSION >= 14
-# undef  variant_CPP11_OR_GREATER
-# define variant_CPP11_OR_GREATER  1
-#endif
-
-// C++ feature usage:
-
-#if variant_HAVE_CONSTEXPR_11
-# define variant_constexpr constexpr
-#else
-# define variant_constexpr /*constexpr*/
-#endif
-
-#if variant_HAVE_CONSTEXPR_14
-# define variant_constexpr14 constexpr
-#else
-# define variant_constexpr14 /*constexpr*/
-#endif
-
-#if variant_HAVE_NOEXCEPT
-# define variant_noexcept noexcept
-#else
-# define variant_noexcept /*noexcept*/
-#endif
-
-#if variant_HAVE_NULLPTR
-# define variant_nullptr nullptr
-#else
-# define variant_nullptr NULL
-#endif
-
-#if variant_HAVE_OVERRIDE
-# define variant_override override
-#else
-# define variant_override /*override*/
-#endif
-
-// additional includes:
-
-#if variant_HAVE_INITIALIZER_LIST
-# include <initializer_list>
-#endif
-
-#if variant_HAVE_TYPE_TRAITS
-# include <type_traits>
-#elif variant_HAVE_TR1_TYPE_TRAITS
-# include <tr1/type_traits>
-#endif
-
-//
-// in_place: code duplicated in any-lite, optional-lite, variant-lite:
-//
-
-#if ! nonstd_lite_HAVE_IN_PLACE_TYPES
-
-namespace nonstd {
-
-namespace detail {
-
-template< class T >
-struct in_place_type_tag {};
-
-template< std::size_t I >
-struct in_place_index_tag {};
-
-} // namespace detail
-
-struct in_place_t {};
-
-template< class T >
-inline in_place_t in_place( detail::in_place_type_tag<T> = detail::in_place_type_tag<T>() )
-{
-    return in_place_t();
-}
-
-template< std::size_t I >
-inline in_place_t in_place( detail::in_place_index_tag<I> = detail::in_place_index_tag<I>() )
-{
-    return in_place_t();
-}
-
-template< class T >
-inline in_place_t in_place_type( detail::in_place_type_tag<T> = detail::in_place_type_tag<T>() )
-{
-    return in_place_t();
-}
-
-template< std::size_t I >
-inline in_place_t in_place_index( detail::in_place_index_tag<I> = detail::in_place_index_tag<I>() )
-{
-    return in_place_t();
-}
-
-// mimic templated typedef:
-
-#define nonstd_lite_in_place_type_t( T)  nonstd::in_place_t(&)( nonstd::detail::in_place_type_tag<T>  )
-#define nonstd_lite_in_place_index_t(T)  nonstd::in_place_t(&)( nonstd::detail::in_place_index_tag<I> )
-
-#define nonstd_lite_HAVE_IN_PLACE_TYPES  1
-
-} // namespace nonstd
-
-#endif // nonstd_lite_HAVE_IN_PLACE_TYPES
-
-//
-// variant:
-//
-
-namespace nonstd { namespace variants {
-
-namespace detail {
-
-// C++11 emulation:
-
-#if variant_HAVE_STD_ADD_POINTER
-
-using std::add_pointer;
-
-#elif variant_HAVE_TR1_ADD_POINTER
-
-using std::tr1::add_pointer;
-
-#else
-
-template< class T > struct remove_reference     { typedef T type; };
-template< class T > struct remove_reference<T&> { typedef T type; };
-
-template< class T > struct add_pointer
-{
-    typedef typename remove_reference<T>::type * type;
-};
-
-#endif // variant_HAVE_STD_ADD_POINTER
-
-#if variant_HAVE_REMOVE_CV
-
-using std::remove_cv;
-
-#else
-
-template< class T > struct remove_const          { typedef T type; };
-template< class T > struct remove_const<const T> { typedef T type; };
-
-template< class T > struct remove_volatile             { typedef T type; };
-template< class T > struct remove_volatile<volatile T> { typedef T type; };
-
-template< class T >
-struct remove_cv
-{
-    typedef typename remove_volatile<typename remove_const<T>::type>::type type;
-};
-
-#endif // variant_HAVE_REMOVE_CV
-
-#if variant_HAVE_CONDITIONAL
-
-using std::conditional;
-
-#else
-
-template< bool Cond, class Then, class Else >
-struct conditional;
-
-template< class Then, class Else >
-struct conditional< true , Then, Else > { typedef Then type; };
-
-template< class Then, class Else >
-struct conditional< false, Then, Else > { typedef Else type; };
-
-#endif // variant_HAVE_CONDITIONAL
-
-// typelist:
-
-#define variant_TL1( T1                         ) detail::typelist< T1, detail::nulltype >
-#define variant_TL2( T1, T2                     ) detail::typelist< T1, variant_TL1( T2) >
-#define variant_TL3( T1, T2, T3                 ) detail::typelist< T1, variant_TL2( T2, T3 ) >
-#define variant_TL4( T1, T2, T3, T4             ) detail::typelist< T1, variant_TL3( T2, T3, T4 ) >
-#define variant_TL5( T1, T2, T3, T4, T5         ) detail::typelist< T1, variant_TL4( T2, T3, T4, T5 ) >
-#define variant_TL6( T1, T2, T3, T4, T5, T6     ) detail::typelist< T1, variant_TL5( T2, T3, T4, T5, T6 ) >
-#define variant_TL7( T1, T2, T3, T4, T5, T6, T7 ) detail::typelist< T1, variant_TL6( T2, T3, T4, T5, T6, T7 ) >
-
-// variant parameter unused type tags:
-
-template< class T >
-struct TX : T
-{
-                        inline TX<T> operator+ (           ) const { return TX<T>();  }
-                        inline TX<T> operator- (           ) const { return TX<T>();  }
-
-                        inline TX<T> operator! (           ) const { return TX<T>();  }
-                        inline TX<T> operator~ (           ) const { return TX<T>();  }
-
-                        inline TX<T>*operator& (           ) const { return variant_nullptr; }
-
-    template< class U > inline TX<T> operator* ( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator/ ( U const & ) const { return TX<T>();  }
-
-    template< class U > inline TX<T> operator% ( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator+ ( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator- ( U const & ) const { return TX<T>();  }
-
-    template< class U > inline TX<T> operator<<( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator>>( U const & ) const { return TX<T>();  }
-
-                        inline bool  operator==( T const & ) const { return false; }
-                        inline bool  operator< ( T const & ) const { return false; }
-
-    template< class U > inline TX<T> operator& ( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator| ( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator^ ( U const & ) const { return TX<T>();  }
-
-    template< class U > inline TX<T> operator&&( U const & ) const { return TX<T>();  }
-    template< class U > inline TX<T> operator||( U const & ) const { return TX<T>();  }
-};
-
-struct S0{}; typedef TX<S0> T0;
-struct S1{}; typedef TX<S1> T1;
-struct S2{}; typedef TX<S2> T2;
-struct S3{}; typedef TX<S3> T3;
-struct S4{}; typedef TX<S4> T4;
-struct S5{}; typedef TX<S5> T5;
-struct S6{}; typedef TX<S6> T6;
-
-struct nulltype{};
-
-template< class Head, class Tail >
-struct typelist
-{
-    typedef Head head;
-    typedef Tail tail;
-};
-
-// typelist max element size:
-
-template< class List >
-struct typelist_max;
-
-template <>
-struct typelist_max< nulltype >
-{
-    enum { value = 0 } ;
-    typedef void type;
-};
-
-template< class Head, class Tail >
-struct typelist_max< typelist<Head, Tail> >
-{
-private:
-    enum { tail_value = size_t( typelist_max<Tail>::value ) };
-
-    typedef typename typelist_max<Tail>::type tail_type;
-
-public:
-    enum { value = (sizeof( Head ) > tail_value) ? sizeof( Head ) : std::size_t( tail_value ) } ;
-
-    typedef typename conditional< (sizeof( Head ) > tail_value), Head, tail_type>::type type;
-};
-
-#if variant_CPP11_OR_GREATER
-
-// typelist max alignof element type:
-
-template< class List >
-struct typelist_max_alignof;
-
-template <>
-struct typelist_max_alignof< nulltype >
-{
-    enum { value = 0 } ;
-};
-
-template< class Head, class Tail >
-struct typelist_max_alignof< typelist<Head, Tail> >
-{
-private:
-    enum { tail_value = size_t( typelist_max_alignof<Tail>::value ) };
-
-public:
-    enum { value = (alignof( Head ) > tail_value) ? alignof( Head ) : std::size_t( tail_value ) };
-};
-
-#endif
-
-// typelist size (length):
-
-template< class List >
-struct typelist_size
-{
-   enum { value = 1 };
-};
-
-template<> struct typelist_size< T0 > { enum { value = 0 }; };
-template<> struct typelist_size< T1 > { enum { value = 0 }; };
-template<> struct typelist_size< T2 > { enum { value = 0 }; };
-template<> struct typelist_size< T3 > { enum { value = 0 }; };
-template<> struct typelist_size< T4 > { enum { value = 0 }; };
-template<> struct typelist_size< T5 > { enum { value = 0 }; };
-template<> struct typelist_size< T6 > { enum { value = 0 }; };
-
-template<> struct typelist_size< nulltype > { enum { value = 0 } ; };
-
-template< class Head, class Tail >
-struct typelist_size< typelist<Head, Tail> >
-{
-    enum { value = typelist_size<Head>::value + typelist_size<Tail>::value };
-};
-
-// typelist index of type:
-
-template< class List, class T >
-struct typelist_index_of;
-
-template< class T >
-struct typelist_index_of< nulltype, T >
-{
-    enum { value = -1 };
-};
-
-template< class Tail, class T >
-struct typelist_index_of< typelist<T, Tail>, T >
-{
-    enum { value = 0 };
-};
-
-template< class Head, class Tail, class T >
-struct typelist_index_of< typelist<Head, Tail>, T >
-{
-private:
-    enum { nextVal = typelist_index_of<Tail, T>::value };
-public:
-    enum { value = nextVal == -1 ? -1 : 1 + nextVal } ;
-};
-
-// typelist type at index:
-
-template< class List, std::size_t i>
-struct typelist_type_at;
-
-template< class Head, class Tail >
-struct typelist_type_at< typelist<Head, Tail>, 0 >
-{
-    typedef Head type;
-};
-
-template< class Head, class Tail, std::size_t i >
-struct typelist_type_at< typelist<Head, Tail>, i >
-{
-    typedef typename typelist_type_at<Tail, i - 1>::type type;
-};
-
-#if variant_CONFIG_MAX_ALIGN_HACK
-
-// Max align, use most restricted type for alignment:
-
-#define variant_UNIQUE(  name )       variant_UNIQUE2( name, __LINE__ )
-#define variant_UNIQUE2( name, line ) variant_UNIQUE3( name, line )
-#define variant_UNIQUE3( name, line ) name ## line
-
-#define variant_ALIGN_TYPE( type ) \
-    type variant_UNIQUE( _t ); struct_t< type > variant_UNIQUE( _st )
-
-template< class T >
-struct struct_t { T _; };
-
-union max_align_t
-{
-    variant_ALIGN_TYPE( char );
-    variant_ALIGN_TYPE( short int );
-    variant_ALIGN_TYPE( int );
-    variant_ALIGN_TYPE( long int  );
-    variant_ALIGN_TYPE( float  );
-    variant_ALIGN_TYPE( double );
-    variant_ALIGN_TYPE( long double );
-    variant_ALIGN_TYPE( char * );
-    variant_ALIGN_TYPE( short int * );
-    variant_ALIGN_TYPE( int *  );
-    variant_ALIGN_TYPE( long int * );
-    variant_ALIGN_TYPE( float * );
-    variant_ALIGN_TYPE( double * );
-    variant_ALIGN_TYPE( long double * );
-    variant_ALIGN_TYPE( void * );
-
-#ifdef HAVE_LONG_LONG
-    variant_ALIGN_TYPE( long long );
-#endif
-
-    struct Unknown;
-
-    Unknown ( * variant_UNIQUE(_) )( Unknown );
-    Unknown * Unknown::* variant_UNIQUE(_);
-    Unknown ( Unknown::* variant_UNIQUE(_) )( Unknown );
-
-    struct_t< Unknown ( * )( Unknown)         > variant_UNIQUE(_);
-    struct_t< Unknown * Unknown::*            > variant_UNIQUE(_);
-    struct_t< Unknown ( Unknown::* )(Unknown) > variant_UNIQUE(_);
-};
-
-#undef variant_UNIQUE
-#undef variant_UNIQUE2
-#undef variant_UNIQUE3
-
-#undef variant_ALIGN_TYPE
-
-#elif defined( variant_CONFIG_ALIGN_AS ) // variant_CONFIG_MAX_ALIGN_HACK
-
-// Use user-specified type for alignment:
-
-#define variant_ALIGN_AS( unused ) \
-    variant_CONFIG_ALIGN_AS
-
-#else // variant_CONFIG_MAX_ALIGN_HACK
-
-// Determine POD type to use for alignment:
-
-#define variant_ALIGN_AS( to_align ) \
-    typename detail::type_of_size< detail::alignment_types, detail::alignment_of< to_align >::value >::type
-
-template <typename T>
-struct alignment_of;
-
-template <typename T>
-struct alignment_of_hack
-{
-    char c;
-    T t;
-    alignment_of_hack();
-};
-
-template <unsigned A, unsigned S>
-struct alignment_logic
-{
-    enum { value = A < S ? A : S };
-};
-
-template< typename T >
-struct alignment_of
-{
-    enum { value = alignment_logic<
-        sizeof( alignment_of_hack<T> ) - sizeof(T), sizeof(T) >::value, };
-};
-
-template< typename List, size_t N >
-struct type_of_size
-{
-    typedef typename conditional<
-        N == sizeof( typename List::head ),
-            typename List::head,
-            typename type_of_size<typename List::tail, N >::type >::type type;
-};
-
-template< size_t N >
-struct type_of_size< nulltype, N >
-{
-    typedef variant_CONFIG_ALIGN_AS_FALLBACK type;
-};
-
-template< typename T>
-struct struct_t { T _; };
-
-#define variant_ALIGN_TYPE( type ) \
-    typelist< type , typelist< struct_t< type >
-
-struct Unknown;
-
-typedef
-    variant_ALIGN_TYPE( char ),
-    variant_ALIGN_TYPE( short ),
-    variant_ALIGN_TYPE( int ),
-    variant_ALIGN_TYPE( long ),
-    variant_ALIGN_TYPE( float ),
-    variant_ALIGN_TYPE( double ),
-    variant_ALIGN_TYPE( long double ),
-
-    variant_ALIGN_TYPE( char *),
-    variant_ALIGN_TYPE( short * ),
-    variant_ALIGN_TYPE( int * ),
-    variant_ALIGN_TYPE( long * ),
-    variant_ALIGN_TYPE( float * ),
-    variant_ALIGN_TYPE( double * ),
-    variant_ALIGN_TYPE( long double * ),
-
-    variant_ALIGN_TYPE( Unknown ( * )( Unknown ) ),
-    variant_ALIGN_TYPE( Unknown * Unknown::*     ),
-    variant_ALIGN_TYPE( Unknown ( Unknown::* )( Unknown ) ),
-
-    nulltype
-    > > > > > > >    > > > > > > >
-    > > > > > > >    > > > > > > >
-    > > > > > >
-    alignment_types;
-
-#undef variant_ALIGN_TYPE
-
-#endif // variant_CONFIG_MAX_ALIGN_HACK
-
-template< typename T>
-inline std::size_t hash( T const & v )
-{
-    // primes:
-    unsigned const int a  = 54059;
-    unsigned const int b  = 76963;
-    unsigned const int h0 = 37;
-
-    unsigned int h = h0;
-    unsigned char const * s = reinterpret_cast<unsigned char const *>( &v );
-
-    for ( std::size_t i = 0; i < sizeof(v); ++i, ++s )
-    {
-        h = (h * a) ^ (*s * b);
-    }
-    return h;
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-struct helper
-{
-    typedef signed char type_index_t;
-    typedef variant_TL7( T0, T1, T2, T3, T4, T5, T6 ) variant_types;
-
-    template< class U >
-    static U * as( void * data )
-    {
-        return reinterpret_cast<U*>( data );
-    }
-
-    template< class U >
-    static U const * as( void const * data )
-    {
-        return reinterpret_cast<const U*>( data );
-    }
-
-    static type_index_t to_index_t( std::size_t index )
-    {
-        return static_cast<type_index_t>( index );
-    }
-
-    static void destroy( std::size_t index, void * data )
-    {
-        switch ( index )
-        {
-            case 0: as<T0>( data )->~T0(); break;
-            case 1: as<T1>( data )->~T1(); break;
-            case 2: as<T2>( data )->~T2(); break;
-            case 3: as<T3>( data )->~T3(); break;
-            case 4: as<T4>( data )->~T4(); break;
-            case 5: as<T5>( data )->~T5(); break;
-            case 6: as<T6>( data )->~T6(); break;
-        }
-    }
-
-#if variant_CPP11_OR_GREATER
-    template< class T, class... Args >
-    static type_index_t construct_t( void * data, Args&&... args )
-    {
-        new( data ) T( std::forward<Args>(args)... );
-
-        return to_index_t( detail::typelist_index_of< variant_types, T>::value );
-    }
-
-    template< std::size_t I, class... Args >
-    static type_index_t construct_i( void * data, Args&&... args )
-    {
-        using type = typename detail::typelist_type_at< variant_types, I >::type;
-
-        construct_t< type >( data, std::forward<Args>(args)... );
-
-        return to_index_t( I );
-    }
-
-    static type_index_t move( std::size_t const from_index, void * from_value, void * to_value )
-    {
-        switch ( from_index )
-        {
-            case 0: new( to_value ) T0( std::forward<T0>( *as<T0>( from_value ) ) ); break;
-            case 1: new( to_value ) T1( std::forward<T1>( *as<T1>( from_value ) ) ); break;
-            case 2: new( to_value ) T2( std::forward<T2>( *as<T2>( from_value ) ) ); break;
-            case 3: new( to_value ) T3( std::forward<T3>( *as<T3>( from_value ) ) ); break;
-            case 4: new( to_value ) T4( std::forward<T4>( *as<T4>( from_value ) ) ); break;
-            case 5: new( to_value ) T5( std::forward<T5>( *as<T5>( from_value ) ) ); break;
-            case 6: new( to_value ) T6( std::forward<T6>( *as<T6>( from_value ) ) ); break;
-        }
-        return to_index_t( from_index );
-    }
-#endif
-
-    static type_index_t copy( std::size_t const from_index, const void * from_value, void * to_value )
-    {
-        switch ( from_index )
-        {
-            case 0: new( to_value ) T0( *as<T0>( from_value ) ); break;
-            case 1: new( to_value ) T1( *as<T1>( from_value ) ); break;
-            case 2: new( to_value ) T2( *as<T2>( from_value ) ); break;
-            case 3: new( to_value ) T3( *as<T3>( from_value ) ); break;
-            case 4: new( to_value ) T4( *as<T4>( from_value ) ); break;
-            case 5: new( to_value ) T5( *as<T5>( from_value ) ); break;
-            case 6: new( to_value ) T6( *as<T6>( from_value ) ); break;
-        }
-        return to_index_t( from_index );
-    }
-};
-
-} // namespace detail
-
-//
-// Variant:
-//
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-class variant;
-
-class monostate{};
-
-inline variant_constexpr bool operator< ( monostate, monostate ) variant_noexcept { return false; }
-inline variant_constexpr bool operator> ( monostate, monostate ) variant_noexcept { return false; }
-inline variant_constexpr bool operator<=( monostate, monostate ) variant_noexcept { return true;  }
-inline variant_constexpr bool operator>=( monostate, monostate ) variant_noexcept { return true;  }
-inline variant_constexpr bool operator==( monostate, monostate ) variant_noexcept { return true;  }
-inline variant_constexpr bool operator!=( monostate, monostate ) variant_noexcept { return false; }
-
-// obtain the size of the variant's list of alternatives at compile time
-
-template< class T >
-struct variant_size; /* undefined */
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-struct variant_size< variant<T0, T1, T2, T3, T4, T5, T6> >
-{
-    enum { value = detail::typelist_size< variant_TL7(T0, T1, T2, T3, T4, T5, T6) >::value };
-};
-
-#if variant_CPP14_OR_GREATER
-template< class T >
-constexpr std::size_t variant_size_v = variant_size<T>::value;
-#endif
-
-#if ! variant_CONFIG_OMIT_VARIANT_SIZE_V_MACRO
-# define variant_size_V(T)  nonstd::variant_size<T>::value
-#endif
-
-// obtain the type of the alternative specified by its index, at compile time:
-
-template< std::size_t I, class T >
-struct variant_alternative; /* undefined */
-
-template< std::size_t I, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-struct variant_alternative< I, variant<T0, T1, T2, T3, T4, T5, T6> >
-{
-    typedef typename detail::typelist_type_at<variant_TL7(T0, T1, T2, T3, T4, T5, T6), I>::type type;
-};
-
-#if variant_CPP11_OR_GREATER
-template< std::size_t I, class T >
-using variant_alternative_t = typename variant_alternative<I, T>::type;
-#endif
-
-#if ! variant_CONFIG_OMIT_VARIANT_ALTERNATIVE_T_MACRO
-# define variant_alternative_T(I,T)  typename nonstd::variant_alternative<I,T >::type
-#endif
-
-// NTS:implement specializes the std::uses_allocator type trait
-// std::uses_allocator<nonstd::variant>
-
-// index of the variant in the invalid state (constant)
-
-#if variant_CPP11_OR_GREATER
-variant_constexpr std::size_t variant_npos = static_cast<std::size_t>( -1 );
-#else
-static const std::size_t variant_npos = static_cast<std::size_t>( -1 );
-#endif
-
-class bad_variant_access : public std::exception
-{
-public:
-#if variant_CPP11_OR_GREATER
-    virtual const char* what() const variant_noexcept variant_override
-#else
-    virtual const char* what() const throw()
-#endif
-    {
-        return "bad variant access";
-    }
-};
-
-template<
-    class T0,
-    class T1 = detail::T1,
-    class T2 = detail::T2,
-    class T3 = detail::T3,
-    class T4 = detail::T4,
-    class T5 = detail::T5,
-    class T6 = detail::T6
->
-class variant
-{
-    typedef detail::helper< T0, T1, T2, T3, T4, T5, T6 > helper_type;
-    typedef variant_TL7(    T0, T1, T2, T3, T4, T5, T6 ) variant_types;
-
-public:
-    variant() : type_index( 0 ) { new( ptr() ) T0(); }
-
-    variant( T0 const & t0 ) : type_index( 0 ) { new( ptr() ) T0( t0 ); }
-    variant( T1 const & t1 ) : type_index( 1 ) { new( ptr() ) T1( t1 ); }
-    variant( T2 const & t2 ) : type_index( 2 ) { new( ptr() ) T2( t2 ); }
-    variant( T3 const & t3 ) : type_index( 3 ) { new( ptr() ) T3( t3 ); }
-    variant( T4 const & t4 ) : type_index( 4 ) { new( ptr() ) T4( t4 ); }
-    variant( T5 const & t5 ) : type_index( 5 ) { new( ptr() ) T5( t5 ); }
-    variant( T6 const & t6 ) : type_index( 6 ) { new( ptr() ) T6( t6 ); }
-
-#if variant_CPP11_OR_GREATER
-    variant( T0 &&      t0 ) : type_index( 0 ) { new( ptr() ) T0( std::move( t0 ) ); }
-    variant( T1 &&      t1 ) : type_index( 1 ) { new( ptr() ) T1( std::move( t1 ) ); }
-    variant( T2 &&      t2 ) : type_index( 2 ) { new( ptr() ) T2( std::move( t2 ) ); }
-    variant( T3 &&      t3 ) : type_index( 3 ) { new( ptr() ) T3( std::move( t3 ) ); }
-    variant( T4 &&      t4 ) : type_index( 4 ) { new( ptr() ) T4( std::move( t4 ) ); }
-    variant( T5 &&      t5 ) : type_index( 5 ) { new( ptr() ) T5( std::move( t5 ) ); }
-    variant( T6 &&      t6 ) : type_index( 6 ) { new( ptr() ) T6( std::move( t6 ) ); }
-#endif
-
-    variant(variant const & rhs)
-    : type_index( rhs.type_index )
-    {
-        (void) helper_type::copy( rhs.type_index, rhs.ptr(), ptr() );
-    }
-
-#if variant_CPP11_OR_GREATER
-
-    variant( variant && rhs )
-    : type_index( rhs.type_index )
-    {
-        (void) helper_type::move( rhs.type_index, rhs.ptr(), ptr() );
-    }
-
-    template< std::size_t I >
-    using type_at_t = typename detail::typelist_type_at< variant_types, I >::type;
-
-    template< class T, class... Args,
-        typename = typename std::enable_if< std::is_constructible< T, Args...>::value>::type >
-    explicit variant( nonstd_lite_in_place_type_t(T), Args&&... args)
-    {
-        type_index = variant_npos_internal();
-        type_index = helper_type::template construct_t<T>( ptr(), std::forward<Args>(args)... );
-    }
-
-    template< class T, class U, class... Args,
-        typename = typename std::enable_if< std::is_constructible< T, std::initializer_list<U>&, Args...>::value>::type >
-    explicit variant( nonstd_lite_in_place_type_t(T), std::initializer_list<U> il, Args&&... args )
-    {
-        type_index = variant_npos_internal();
-        type_index = helper_type::template construct_t<T>( ptr(), il, std::forward<Args>(args)... );
-    }
-
-    template< std::size_t I, class... Args,
-        typename = typename std::enable_if< std::is_constructible< type_at_t<I>, Args...>::value>::type >
-    explicit variant( nonstd_lite_in_place_index_t(I), Args&&... args )
-    {
-        type_index = variant_npos_internal();
-        type_index = helper_type::template construct_i<I>( ptr(), std::forward<Args>(args)... );
-    }
-
-    template <size_t I, class U, class... Args,
-        typename = typename std::enable_if< std::is_constructible< type_at_t<I>, std::initializer_list<U>&, Args...>::value >::type >
-    explicit variant( nonstd_lite_in_place_index_t(I), std::initializer_list<U> il, Args&&... args )
-    {
-        type_index = variant_npos_internal();
-        type_index = helper_type::template construct_i<I>( ptr(), il, std::forward<Args>(args)... );
-    }
-
-#endif // variant_CPP11_OR_GREATER
-
-    ~variant()
-    {
-        helper_type::destroy( index(), ptr() );
-    }
-
-    variant & operator=( variant const & rhs )
-    {
-        return copy_assign( rhs );
-    }
-
-#if variant_CPP11_OR_GREATER
-
-    variant & operator=( variant && rhs )
-    {
-        return move_assign( std::forward<variant>( rhs ) );
-    }
-
-    variant & operator=( T0 &&      t0 ) { return move_assign_value<T0,0>( std::forward<T0>( t0 ) ); }
-    variant & operator=( T1 &&      t1 ) { return move_assign_value<T1,1>( std::forward<T1>( t1 ) ); }
-    variant & operator=( T2 &&      t2 ) { return move_assign_value<T2,2>( std::forward<T2>( t2 ) ); }
-    variant & operator=( T3 &&      t3 ) { return move_assign_value<T3,3>( std::forward<T3>( t3 ) ); }
-    variant & operator=( T4 &&      t4 ) { return move_assign_value<T4,4>( std::forward<T4>( t4 ) ); }
-    variant & operator=( T5 &&      t5 ) { return move_assign_value<T5,5>( std::forward<T5>( t5 ) ); }
-    variant & operator=( T6 &&      t6 ) { return move_assign_value<T6,6>( std::forward<T6>( t6 ) ); }
-#else
-    variant & operator=( T0 const & t0 ) { return copy_assign_value<T0,0>( t0 ); }
-    variant & operator=( T1 const & t1 ) { return copy_assign_value<T1,1>( t1 ); }
-    variant & operator=( T2 const & t2 ) { return copy_assign_value<T2,2>( t2 ); }
-    variant & operator=( T3 const & t3 ) { return copy_assign_value<T3,3>( t3 ); }
-    variant & operator=( T4 const & t4 ) { return copy_assign_value<T4,4>( t4 ); }
-    variant & operator=( T5 const & t5 ) { return copy_assign_value<T5,5>( t5 ); }
-    variant & operator=( T6 const & t6 ) { return copy_assign_value<T6,6>( t6 ); }
-#endif
-
-    std::size_t index() const
-    {
-        return variant_npos_internal() == type_index ? variant_npos : type_index;
-    }
-
-    bool valueless_by_exception() const
-    {
-        return type_index == variant_npos_internal();
-    }
-
-#if variant_CPP11_OR_GREATER
-    template< class T, class... Args,
-        typename = typename std::enable_if< std::is_constructible< T, Args...>::value>::type >
-    void emplace( Args&&... args )
-    {
-        helper_type::destroy( type_index, ptr() );
-        type_index = variant_npos_internal();
-        type_index = helper_type::template construct_t<T>( ptr(), std::forward<Args>(args)... );
-    }
-
-    template< class T, class U, class... Args,
-        typename = typename std::enable_if< std::is_constructible< T, std::initializer_list<U>&, Args...>::value>::type >
-    void emplace( std::initializer_list<U> il, Args&&... args )
-    {
-        helper_type::destroy( type_index, ptr() );
-        type_index = variant_npos_internal();
-        type_index = helper_type::template construct_t<T>( ptr(), il, std::forward<Args>(args)... );
-    }
-
-    template< size_t I, class... Args,
-        typename = typename std::enable_if< std::is_constructible< type_at_t<I>, Args...>::value>::type >
-    void emplace( Args&&... args )
-    {
-        this->template emplace< type_at_t<I> >( std::forward<Args>(args)... );
-    }
-
-    template< size_t I, class U, class... Args,
-        typename = typename std::enable_if< std::is_constructible< type_at_t<I>, std::initializer_list<U>&, Args...>::value >::type >
-    void emplace( std::initializer_list<U> il, Args&&... args )
-    {
-        this->template emplace< type_at_t<I> >( il, std::forward<Args>(args)... );
-    }
-
-#endif // variant_CPP11_OR_GREATER
-
-    void swap( variant & rhs ) variant_noexcept
-    {
-        if ( valueless_by_exception() && rhs.valueless_by_exception() )
-        {
-            // no effect
-        }
-        else if ( index() == rhs.index() )
-        {
-            this->swap_value( index(), rhs );
-        }
-        else
-        {
-            variant tmp( *this );
-            *this = rhs;
-            rhs = tmp;
-        }
-    }
-
-    //
-    // non-standard:
-    //
-
-    template< class T >
-    variant_constexpr std::size_t index_of() const variant_noexcept
-    {
-        return detail::typelist_index_of<variant_types, typename detail::remove_cv<T>::type >::value;
-    }
-
-    template< class T >
-    T & get()
-    {
-        const std::size_t i = index_of<T>();
-
-        if ( i != index() || i == max_index() )
-        {
-            throw bad_variant_access();
-        }
-
-        return *as<T>();
-    }
-
-    template< class T >
-    T const & get() const
-    {
-        const std::size_t i = index_of<T>();
-
-        if ( i != index() || i == max_index() )
-        {
-            throw bad_variant_access();
-        }
-
-        return *as<const T>();
-    }
-
-    template< std::size_t I >
-    typename variant_alternative< I, variant >::type &
-    get()
-    {
-        return this->template get< typename detail::typelist_type_at< variant_types, I >::type >();
-    }
-
-    template< std::size_t I >
-    typename variant_alternative< I, variant >::type const &
-    get() const
-    {
-        return this->template get< typename detail::typelist_type_at< variant_types, I >::type >();
-    }
-
-private:
-    typedef typename helper_type::type_index_t type_index_t;
-
-    void * ptr() variant_noexcept
-    {
-        return &data;
-    }
-
-    void const * ptr() const variant_noexcept
-    {
-        return &data;
-    }
-
-    template< class U >
-    U * as()
-    {
-        return reinterpret_cast<U*>( ptr() );
-    }
-
-    template< class U >
-    U const * as() const
-    {
-        return reinterpret_cast<U const *>( ptr() );
-    }
-
-    variant_constexpr std::size_t max_index() const variant_noexcept
-    {
-        return data_size;
-    }
-
-    variant_constexpr type_index_t variant_npos_internal() const variant_noexcept
-    {
-        return static_cast<type_index_t>( -1 );
-    }
-
-    variant & copy_assign( variant const & rhs )
-    {
-        if ( valueless_by_exception() && rhs.valueless_by_exception() )
-        {
-            // no effect
-        }
-        else if ( ! valueless_by_exception() && rhs.valueless_by_exception() )
-        {
-            helper_type::destroy( type_index, ptr() );
-            type_index = variant_npos_internal();
-        }
-        else if ( index() == rhs.index() )
-        {
-            type_index = helper_type::copy( rhs.type_index, rhs.ptr(), ptr() );
-        }
-        else
-        {
-            // alas exception safety with pre-C++11 needs an extra copy:
-
-            variant tmp( rhs );
-            helper_type::destroy( type_index, ptr() );
-            type_index = variant_npos_internal();
-#if variant_CPP11_OR_GREATER
-            type_index = helper_type::move( rhs.type_index, tmp.ptr(), ptr() );
-#else
-            type_index = helper_type::copy( rhs.type_index, tmp.ptr(), ptr() );
-#endif
-        }
-        return *this;
-    }
-
-#if variant_CPP11_OR_GREATER
-
-    variant & move_assign( variant && rhs )
-    {
-        if ( valueless_by_exception() && rhs.valueless_by_exception() )
-        {
-            // no effect
-        }
-        else if ( ! valueless_by_exception() && rhs.valueless_by_exception() )
-        {
-            helper_type::destroy( type_index, ptr() );
-            type_index = variant_npos_internal();
-        }
-        else if ( index() == rhs.index() )
-        {
-            type_index = helper_type::move( rhs.type_index, rhs.ptr(), ptr() );
-        }
-        else
-        {
-            helper_type::destroy( type_index, ptr() );
-            type_index = variant_npos_internal();
-            type_index = helper_type::move( rhs.type_index, rhs.ptr(), ptr() );
-        }
-        return *this;
-    }
-
-    template< class T, std::size_t I >
-    variant & move_assign_value( T && value )
-    {
-        if( index() == I )
-        {
-            *as<T>() = std::forward<T>( value );
-        }
-        else
-        {
-            helper_type::destroy( type_index, ptr() );
-            type_index = variant_npos_internal();
-            new( ptr() ) T( std::forward<T>( value ) );
-            type_index = I;
-        }
-        return *this;
-    }
-#else
-    template< class T, std::size_t I >
-    variant & copy_assign_value( T const & value )
-    {
-        if( index() == I )
-        {
-            *as<T>() = value;
-        }
-        else
-        {
-            helper_type::destroy( type_index, ptr() );
-            type_index = variant_npos_internal();
-            new( ptr() ) T( value );
-            type_index = I;
-        }
-        return *this;
-    }
-
-#endif // variant_CPP11_OR_GREATER
-
-    void swap_value( std::size_t index, variant & rhs )
-    {
-        using std::swap;
-        switch( index )
-        {
-            case 0: swap( this->get<0>(), rhs.get<0>() ); break;
-            case 1: swap( this->get<1>(), rhs.get<1>() ); break;
-            case 2: swap( this->get<2>(), rhs.get<2>() ); break;
-            case 3: swap( this->get<3>(), rhs.get<3>() ); break;
-            case 4: swap( this->get<4>(), rhs.get<4>() ); break;
-            case 5: swap( this->get<5>(), rhs.get<5>() ); break;
-            case 6: swap( this->get<6>(), rhs.get<6>() ); break;
-        }
-    }
-
-private:
-    enum { data_size  = detail::typelist_max< variant_types >::value };
-
-#if variant_CPP11_OR_GREATER
-
-    enum { data_align = detail::typelist_max_alignof< variant_types >::value };
-
-    using aligned_storage_t = typename std::aligned_storage< data_size, data_align >::type;
-    aligned_storage_t data;
-
-#elif variant_CONFIG_MAX_ALIGN_HACK
-
-    typedef union { unsigned char data[ data_size ]; } aligned_storage_t;
-
-    detail::max_align_t hack;
-    aligned_storage_t data;
-
-#else
-    typedef typename detail::typelist_max< variant_types >::type max_type;
-
-    typedef variant_ALIGN_AS( max_type ) align_as_type;
-
-    typedef union { align_as_type data[ 1 + ( data_size - 1 ) / sizeof(align_as_type) ]; } aligned_storage_t;
-    aligned_storage_t data;
-
-// #   undef variant_ALIGN_AS
-
-#endif // variant_CONFIG_MAX_ALIGN_HACK
-
-    type_index_t type_index;
-};
-
-template <class T, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool holds_alternative( variant<T0, T1, T2, T3, T4, T5, T6> const & v ) variant_noexcept
-{
-    return v.index() == v.template index_of<T>();
-}
-
-template< class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline R & get( variant<T0, T1, T2, T3, T4, T5, T6> & v, nonstd_lite_in_place_type_t(R) = in_place<R> )
-{
-    return v.template get<R>();
-}
-
-template< class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6  >
-inline R const & get( variant<T0, T1, T2, T3, T4, T5, T6> const & v, nonstd_lite_in_place_type_t(R) = in_place<R> )
-{
-    return v.template get<R>();
-}
-
-template< std::size_t I, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline typename variant_alternative< I, variant<T0, T1, T2, T3, T4, T5, T6> >::type &
-get( variant<T0, T1, T2, T3, T4, T5, T6> & v, nonstd_lite_in_place_index_t(I) = in_place<I> )
-{
-    if ( I != v.index() )
-    {
-        throw bad_variant_access();
-    }
-
-    return v.template get<I>();
-}
-
-template< std::size_t I, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline typename variant_alternative< I, variant<T0, T1, T2, T3, T4, T5, T6> >::type const &
-get( variant<T0, T1, T2, T3, T4, T5, T6> const & v, nonstd_lite_in_place_index_t(I) = in_place<I> )
-{
-    if ( I != v.index() )
-    {
-        throw bad_variant_access();
-    }
-
-    return v.template get<I>();
-}
-
-template< class T, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline typename detail::add_pointer<T>::type
-get_if( variant<T0, T1, T2, T3, T4, T5, T6> * pv, nonstd_lite_in_place_type_t(T) = in_place<T> )
-{
-    return ( pv->index() == pv->template index_of<T>() ) ? &get<T>( *pv ) : variant_nullptr;
-}
-
-template< class T, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline typename detail::add_pointer<const T>::type
-get_if( variant<T0, T1, T2, T3, T4, T5, T6> const * pv, nonstd_lite_in_place_type_t(T) = in_place<T>)
-{
-    return ( pv->index() == pv->template index_of<T>() ) ? &get<T>( *pv ) : variant_nullptr;
-}
-
-template< std::size_t I, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline typename detail::add_pointer< typename variant_alternative<I, variant<T0, T1, T2, T3, T4, T5, T6> >::type >::type
-get_if( variant<T0, T1, T2, T3, T4, T5, T6> * pv, nonstd_lite_in_place_index_t(I) = in_place<I> )
-{
-    return ( pv->index() == I ) ? &get<I>( *pv ) : variant_nullptr;
-}
-
-template< std::size_t I, class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline typename detail::add_pointer< const typename variant_alternative<I, variant<T0, T1, T2, T3, T4, T5, T6> >::type >::type
-get_if( variant<T0, T1, T2, T3, T4, T5, T6> const * pv, nonstd_lite_in_place_index_t(I) = in_place<I> )
-{
-    return ( pv->index() == I ) ? &get<I>( *pv )  : variant_nullptr;
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5 >
-inline void swap(
-    variant<T0, T1, T2, T3, T4, T5> & a,
-    variant<T0, T1, T2, T3, T4, T5> & b ) variant_noexcept
-{
-    a.swap( b );
-}
-
-// template <class Visitor, class... Variants>
-// visit( Visitor&& vis, Variants&&... vars );
-
-// The following visit is restricted  with respect to the standard.
-// It uses the common idiom is to return anrhs variant:
-
-template< class Visitor, class Variant >
-inline Variant visit( Visitor const & vis, Variant const & v )
-{
-    if ( v.valueless_by_exception() )
-    {
-        throw bad_variant_access();
-    }
-
-    switch( v.index() )
-    {
-        case 0: return vis( get<0>( v ) );
-        case 1: return vis( get<1>( v ) );
-        case 2: return vis( get<2>( v ) );
-        case 3: return vis( get<3>( v ) );
-        case 4: return vis( get<4>( v ) );
-        case 5: return vis( get<5>( v ) );
-        case 6: return vis( get<6>( v ) );
-        default: return Variant();
-    }
-}
-
-namespace detail {
-
-template< class Variant >
-struct Comparator
-{
-    static inline bool equal( Variant const & v, Variant const & w )
-    {
-        switch( v.index() )
-        {
-            case 0: return get<0>( v ) == get<0>( w );
-            case 1: return get<1>( v ) == get<1>( w );
-            case 2: return get<2>( v ) == get<2>( w );
-            case 3: return get<3>( v ) == get<3>( w );
-            case 4: return get<4>( v ) == get<4>( w );
-            case 5: return get<5>( v ) == get<5>( w );
-            case 6: return get<6>( v ) == get<6>( w );
-            default: return false;
-        }
-    }
-
-    static inline bool less_than( Variant const & v, Variant const & w )
-    {
-        switch( v.index() )
-        {
-            case 0: return get<0>( v ) < get<0>( w );
-            case 1: return get<1>( v ) < get<1>( w );
-            case 2: return get<2>( v ) < get<2>( w );
-            case 3: return get<3>( v ) < get<3>( w );
-            case 4: return get<4>( v ) < get<4>( w );
-            case 5: return get<5>( v ) < get<5>( w );
-            case 6: return get<6>( v ) < get<6>( w );
-            default: return false;
-        }
-    }
-};
-
-} //namespace detail
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool operator==(
-    variant<T0, T1, T2, T3, T4, T5, T6> const & v,
-    variant<T0, T1, T2, T3, T4, T5, T6> const & w )
-{
-    if      ( v.index() != w.index()     ) return false;
-    else if ( v.valueless_by_exception() ) return true;
-    else                                   return detail::Comparator< variant<T0, T1, T2, T3, T4, T5, T6> >::equal( v, w );
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool operator!=(
-    variant<T0, T1, T2, T3, T4, T5, T6> const & v,
-    variant<T0, T1, T2, T3, T4, T5, T6> const & w )
-{
-    return ! ( v == w );
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool operator<(
-    variant<T0, T1, T2, T3, T4, T5, T6> const & v,
-    variant<T0, T1, T2, T3, T4, T5, T6> const & w )
-{
-    if      ( w.valueless_by_exception() ) return false;
-    else if ( v.valueless_by_exception() ) return true;
-    else if ( v.index() < w.index()      ) return true;
-    else if ( v.index() > w.index()      ) return false;
-    else                                   return detail::Comparator< variant<T0, T1, T2, T3, T4, T5, T6> >::less_than( v, w );
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool operator>(
-    variant<T0, T1, T2, T3, T4, T5, T6> const & v,
-    variant<T0, T1, T2, T3, T4, T5, T6> const & w )
-{
-    return w < v;
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool operator<=(
-    variant<T0, T1, T2, T3, T4, T5, T6> const & v,
-    variant<T0, T1, T2, T3, T4, T5, T6> const & w )
-{
-    return ! ( v > w );
-}
-
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-inline bool operator>=(
-    variant<T0, T1, T2, T3, T4, T5, T6> const & v,
-    variant<T0, T1, T2, T3, T4, T5, T6> const & w )
-{
-    return ! ( v < w );
-}
-
-} // namespace variants
-
-using namespace variants;
-
-} // namespace nonstd
-
-#if variant_CPP11_OR_GREATER
-
-// specialize the std::hash algorithm:
+/*
+   variant synopsis
 
 namespace std {
 
-template<>
-struct hash< nonstd::monostate >
-{
-    std::size_t operator()( nonstd::monostate ) const variant_noexcept
-    {
-        return 42;
-    }
-};
+  // 20.7.2, class template variant
+  template <class... Types>
+  class variant {
+  public:
 
-template< class T0, class T1, class T2, class T3, class T4, class T5, class T6 >
-struct hash< nonstd::variant<T0, T1, T2, T3, T4, T5, T6> >
-{
-    std::size_t operator()( nonstd::variant<T0, T1, T2, T3, T4, T5, T6> const & v ) const variant_noexcept
-    {
-        return nonstd::variants::detail::hash( v );
-    }
-};
+    // 20.7.2.1, constructors
+    constexpr variant() noexcept(see below);
+    variant(const variant&);
+    variant(variant&&) noexcept(see below);
 
-} //namespace std
+    template <class T> constexpr variant(T&&) noexcept(see below);
 
-#endif // variant_CPP11_OR_GREATER
+    template <class T, class... Args>
+    constexpr explicit variant(in_place_type_t<T>, Args&&...);
 
-#if variant_BETWEEN(variant_COMPILER_MSVC_VERSION, 10, 14 )
-# pragma warning( pop )
+    template <class T, class U, class... Args>
+    constexpr explicit variant(
+        in_place_type_t<T>, initializer_list<U>, Args&&...);
+
+    template <size_t I, class... Args>
+    constexpr explicit variant(in_place_index_t<I>, Args&&...);
+
+    template <size_t I, class U, class... Args>
+    constexpr explicit variant(
+        in_place_index_t<I>, initializer_list<U>, Args&&...);
+
+    // 20.7.2.2, destructor
+    ~variant();
+
+    // 20.7.2.3, assignment
+    variant& operator=(const variant&);
+    variant& operator=(variant&&) noexcept(see below);
+
+    template <class T> variant& operator=(T&&) noexcept(see below);
+
+    // 20.7.2.4, modifiers
+    template <class T, class... Args>
+    T& emplace(Args&&...);
+
+    template <class T, class U, class... Args>
+    T& emplace(initializer_list<U>, Args&&...);
+
+    template <size_t I, class... Args>
+    variant_alternative<I, variant>& emplace(Args&&...);
+
+    template <size_t I, class U, class...  Args>
+    variant_alternative<I, variant>& emplace(initializer_list<U>, Args&&...);
+
+    // 20.7.2.5, value status
+    constexpr bool valueless_by_exception() const noexcept;
+    constexpr size_t index() const noexcept;
+
+    // 20.7.2.6, swap
+    void swap(variant&) noexcept(see below);
+  };
+
+  // 20.7.3, variant helper classes
+  template <class T> struct variant_size; // undefined
+
+  template <class T>
+  constexpr size_t variant_size_v = variant_size<T>::value;
+
+  template <class T> struct variant_size<const T>;
+  template <class T> struct variant_size<volatile T>;
+  template <class T> struct variant_size<const volatile T>;
+
+  template <class... Types>
+  struct variant_size<variant<Types...>>;
+
+  template <size_t I, class T> struct variant_alternative; // undefined
+
+  template <size_t I, class T>
+  using variant_alternative_t = typename variant_alternative<I, T>::type;
+
+  template <size_t I, class T> struct variant_alternative<I, const T>;
+  template <size_t I, class T> struct variant_alternative<I, volatile T>;
+  template <size_t I, class T> struct variant_alternative<I, const volatile T>;
+
+  template <size_t I, class... Types>
+  struct variant_alternative<I, variant<Types...>>;
+
+  constexpr size_t variant_npos = -1;
+
+  // 20.7.4, value access
+  template <class T, class... Types>
+  constexpr bool holds_alternative(const variant<Types...>&) noexcept;
+
+  template <size_t I, class... Types>
+  constexpr variant_alternative_t<I, variant<Types...>>&
+  get(variant<Types...>&);
+
+  template <size_t I, class... Types>
+  constexpr variant_alternative_t<I, variant<Types...>>&&
+  get(variant<Types...>&&);
+
+  template <size_t I, class... Types>
+  constexpr variant_alternative_t<I, variant<Types...>> const&
+  get(const variant<Types...>&);
+
+  template <size_t I, class... Types>
+  constexpr variant_alternative_t<I, variant<Types...>> const&&
+  get(const variant<Types...>&&);
+
+  template <class T, class...  Types>
+  constexpr T& get(variant<Types...>&);
+
+  template <class T, class... Types>
+  constexpr T&& get(variant<Types...>&&);
+
+  template <class T, class... Types>
+  constexpr const T& get(const variant<Types...>&);
+
+  template <class T, class... Types>
+  constexpr const T&& get(const variant<Types...>&&);
+
+  template <size_t I, class... Types>
+  constexpr add_pointer_t<variant_alternative_t<I, variant<Types...>>>
+  get_if(variant<Types...>*) noexcept;
+
+  template <size_t I, class... Types>
+  constexpr add_pointer_t<const variant_alternative_t<I, variant<Types...>>>
+  get_if(const variant<Types...>*) noexcept;
+
+  template <class T, class... Types>
+  constexpr add_pointer_t<T>
+  get_if(variant<Types...>*) noexcept;
+
+  template <class T, class... Types>
+  constexpr add_pointer_t<const T>
+  get_if(const variant<Types...>*) noexcept;
+
+  // 20.7.5, relational operators
+  template <class... Types>
+  constexpr bool operator==(const variant<Types...>&, const variant<Types...>&);
+
+  template <class... Types>
+  constexpr bool operator!=(const variant<Types...>&, const variant<Types...>&);
+
+  template <class... Types>
+  constexpr bool operator<(const variant<Types...>&, const variant<Types...>&);
+
+  template <class... Types>
+  constexpr bool operator>(const variant<Types...>&, const variant<Types...>&);
+
+  template <class... Types>
+  constexpr bool operator<=(const variant<Types...>&, const variant<Types...>&);
+
+  template <class... Types>
+  constexpr bool operator>=(const variant<Types...>&, const variant<Types...>&);
+
+  // 20.7.6, visitation
+  template <class Visitor, class... Variants>
+  constexpr see below visit(Visitor&&, Variants&&...);
+
+  // 20.7.7, class monostate
+  struct monostate;
+
+  // 20.7.8, monostate relational operators
+  constexpr bool operator<(monostate, monostate) noexcept;
+  constexpr bool operator>(monostate, monostate) noexcept;
+  constexpr bool operator<=(monostate, monostate) noexcept;
+  constexpr bool operator>=(monostate, monostate) noexcept;
+  constexpr bool operator==(monostate, monostate) noexcept;
+  constexpr bool operator!=(monostate, monostate) noexcept;
+
+  // 20.7.9, specialized algorithms
+  template <class... Types>
+  void swap(variant<Types...>&, variant<Types...>&) noexcept(see below);
+
+  // 20.7.10, class bad_variant_access
+  class bad_variant_access;
+
+  // 20.7.11, hash support
+  template <class T> struct hash;
+  template <class... Types> struct hash<variant<Types...>>;
+  template <> struct hash<monostate>;
+
+} // namespace std
+
+*/
+
+#include <cstddef>
+#include <exception>
+#include <functional>
+#include <initializer_list>
+#include <new>
+#include <type_traits>
+#include <utility>
+
+// MPark.Variant
+//
+// Copyright Michael Park, 2015-2017
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
+
+#ifndef MPARK_CONFIG_HPP
+#define MPARK_CONFIG_HPP
+
+// MSVC 2015 Update 3.
+#if __cplusplus < 201103L && (!defined(_MSC_VER) || _MSC_FULL_VER < 190024210)
+#error "MPark.Variant requires C++11 support."
 #endif
 
-#endif // have C++17 std::variant
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
 
-#endif // NONSTD_VARIANT_LITE_HPP
+#ifndef __has_include
+#define __has_include(x) 0
+#endif
+
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
+
+#if __has_builtin(__builtin_addressof) || \
+    (defined(__GNUC__) && __GNUC__ >= 7) || defined(_MSC_VER)
+#define MPARK_BUILTIN_ADDRESSOF
+#endif
+
+#if __has_builtin(__builtin_unreachable)
+#define MPARK_BUILTIN_UNREACHABLE
+#endif
+
+#if __has_builtin(__type_pack_element)
+#define MPARK_TYPE_PACK_ELEMENT
+#endif
+
+#if defined(__cpp_constexpr) && __cpp_constexpr >= 201304
+#define MPARK_CPP14_CONSTEXPR
+#endif
+
+#if __has_feature(cxx_exceptions) || defined(__cpp_exceptions) || \
+    (defined(_MSC_VER) && defined(_CPPUNWIND))
+#define MPARK_EXCEPTIONS
+#endif
+
+#if defined(__cpp_generic_lambdas) || defined(_MSC_VER)
+#define MPARK_GENERIC_LAMBDAS
+#endif
+
+#if defined(__cpp_lib_integer_sequence)
+#define MPARK_INTEGER_SEQUENCE
+#endif
+
+#if defined(__cpp_return_type_deduction) || defined(_MSC_VER)
+#define MPARK_RETURN_TYPE_DEDUCTION
+#endif
+
+#if defined(__cpp_lib_transparent_operators) || defined(_MSC_VER)
+#define MPARK_TRANSPARENT_OPERATORS
+#endif
+
+#if defined(__cpp_variable_templates) || defined(_MSC_VER)
+#define MPARK_VARIABLE_TEMPLATES
+#endif
+
+#if !defined(__GLIBCXX__) || __has_include(<codecvt>)  // >= libstdc++-5
+#define MPARK_TRIVIALITY_TYPE_TRAITS
+#endif
+
+#endif  // MPARK_CONFIG_HPP
+
+// MPark.Variant
+//
+// Copyright Michael Park, 2015-2017
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
+
+#ifndef MPARK_IN_PLACE_HPP
+#define MPARK_IN_PLACE_HPP
+
+#include <cstddef>
+
+
+namespace mpark {
+
+  struct in_place_t { explicit in_place_t() = default; };
+
+  template <std::size_t I>
+  struct in_place_index_t { explicit in_place_index_t() = default; };
+
+  template <typename T>
+  struct in_place_type_t { explicit in_place_type_t() = default; };
+
+#ifdef MPARK_VARIABLE_TEMPLATES
+  constexpr in_place_t in_place{};
+
+  template <std::size_t I> constexpr in_place_index_t<I> in_place_index{};
+
+  template <typename T> constexpr in_place_type_t<T> in_place_type{};
+#endif
+
+}  // namespace mpark
+
+#endif  // MPARK_IN_PLACE_HPP
+
+// MPark.Variant
+//
+// Copyright Michael Park, 2015-2017
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
+
+#ifndef MPARK_LIB_HPP
+#define MPARK_LIB_HPP
+
+#include <memory>
+#include <functional>
+#include <type_traits>
+#include <utility>
+
+
+#define RETURN(...)                                          \
+  noexcept(noexcept(__VA_ARGS__)) -> decltype(__VA_ARGS__) { \
+    return __VA_ARGS__;                                      \
+  }
+
+namespace mpark {
+  namespace lib {
+    template <typename T>
+    struct identity { using type = T; };
+
+    inline namespace cpp14 {
+      template <typename T, std::size_t N>
+      struct array {
+        constexpr const T &operator[](std::size_t index) const {
+          return data[index];
+        }
+
+        T data[N == 0 ? 1 : N];
+      };
+
+      template <typename T>
+      using add_pointer_t = typename std::add_pointer<T>::type;
+
+      template <typename... Ts>
+      using common_type_t = typename std::common_type<Ts...>::type;
+
+      template <typename T>
+      using decay_t = typename std::decay<T>::type;
+
+      template <bool B, typename T = void>
+      using enable_if_t = typename std::enable_if<B, T>::type;
+
+      template <typename T>
+      using remove_const_t = typename std::remove_const<T>::type;
+
+      template <typename T>
+      using remove_reference_t = typename std::remove_reference<T>::type;
+
+      template <typename T>
+      inline constexpr T &&forward(remove_reference_t<T> &t) noexcept {
+        return static_cast<T &&>(t);
+      }
+
+      template <typename T>
+      inline constexpr T &&forward(remove_reference_t<T> &&t) noexcept {
+        static_assert(!std::is_lvalue_reference<T>::value,
+                      "can not forward an rvalue as an lvalue");
+        return static_cast<T &&>(t);
+      }
+
+      template <typename T>
+      inline constexpr remove_reference_t<T> &&move(T &&t) noexcept {
+        return static_cast<remove_reference_t<T> &&>(t);
+      }
+
+#ifdef MPARK_INTEGER_SEQUENCE
+      using std::integer_sequence;
+      using std::index_sequence;
+      using std::make_index_sequence;
+      using std::index_sequence_for;
+#else
+      template <typename T, T... Is>
+      struct integer_sequence {
+        using value_type = T;
+        static constexpr std::size_t size() noexcept { return sizeof...(Is); }
+      };
+
+      template <std::size_t... Is>
+      using index_sequence = integer_sequence<std::size_t, Is...>;
+
+      template <typename Lhs, typename Rhs>
+      struct make_index_sequence_concat;
+
+      template <std::size_t... Lhs, std::size_t... Rhs>
+      struct make_index_sequence_concat<index_sequence<Lhs...>,
+                                        index_sequence<Rhs...>>
+          : identity<index_sequence<Lhs..., (sizeof...(Lhs) + Rhs)...>> {};
+
+      template <std::size_t N>
+      struct make_index_sequence_impl;
+
+      template <std::size_t N>
+      using make_index_sequence = typename make_index_sequence_impl<N>::type;
+
+      template <std::size_t N>
+      struct make_index_sequence_impl
+          : make_index_sequence_concat<make_index_sequence<N / 2>,
+                                       make_index_sequence<N - (N / 2)>> {};
+
+      template <>
+      struct make_index_sequence_impl<0> : identity<index_sequence<>> {};
+
+      template <>
+      struct make_index_sequence_impl<1> : identity<index_sequence<0>> {};
+
+      template <typename... Ts>
+      using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
+#endif
+
+      // <functional>
+#ifdef MPARK_TRANSPARENT_OPERATORS
+      using equal_to = std::equal_to<>;
+#else
+      struct equal_to {
+        template <typename Lhs, typename Rhs>
+        inline constexpr auto operator()(Lhs &&lhs, Rhs &&rhs) const
+          RETURN(lib::forward<Lhs>(lhs) == lib::forward<Rhs>(rhs))
+      };
+#endif
+
+#ifdef MPARK_TRANSPARENT_OPERATORS
+      using not_equal_to = std::not_equal_to<>;
+#else
+      struct not_equal_to {
+        template <typename Lhs, typename Rhs>
+        inline constexpr auto operator()(Lhs &&lhs, Rhs &&rhs) const
+          RETURN(lib::forward<Lhs>(lhs) != lib::forward<Rhs>(rhs))
+      };
+#endif
+
+#ifdef MPARK_TRANSPARENT_OPERATORS
+      using less = std::less<>;
+#else
+      struct less {
+        template <typename Lhs, typename Rhs>
+        inline constexpr auto operator()(Lhs &&lhs, Rhs &&rhs) const
+          RETURN(lib::forward<Lhs>(lhs) < lib::forward<Rhs>(rhs))
+      };
+#endif
+
+#ifdef MPARK_TRANSPARENT_OPERATORS
+      using greater = std::greater<>;
+#else
+      struct greater {
+        template <typename Lhs, typename Rhs>
+        inline constexpr auto operator()(Lhs &&lhs, Rhs &&rhs) const
+          RETURN(lib::forward<Lhs>(lhs) > lib::forward<Rhs>(rhs))
+      };
+#endif
+
+#ifdef MPARK_TRANSPARENT_OPERATORS
+      using less_equal = std::less_equal<>;
+#else
+      struct less_equal {
+        template <typename Lhs, typename Rhs>
+        inline constexpr auto operator()(Lhs &&lhs, Rhs &&rhs) const
+          RETURN(lib::forward<Lhs>(lhs) <= lib::forward<Rhs>(rhs))
+      };
+#endif
+
+#ifdef MPARK_TRANSPARENT_OPERATORS
+      using greater_equal = std::greater_equal<>;
+#else
+      struct greater_equal {
+        template <typename Lhs, typename Rhs>
+        inline constexpr auto operator()(Lhs &&lhs, Rhs &&rhs) const
+          RETURN(lib::forward<Lhs>(lhs) >= lib::forward<Rhs>(rhs))
+      };
+#endif
+    }  // namespace cpp14
+
+    inline namespace cpp17 {
+
+      // <type_traits>
+      template <bool B>
+      using bool_constant = std::integral_constant<bool, B>;
+
+      template <typename...>
+      struct voider : identity<void> {};
+
+      template <typename... Ts>
+      using void_t = typename voider<Ts...>::type;
+
+      namespace detail {
+        namespace swappable {
+
+          using std::swap;
+
+          template <typename T>
+          struct is_swappable {
+            private:
+            template <typename U,
+                      typename = decltype(swap(std::declval<U &>(),
+                                               std::declval<U &>()))>
+            inline static std::true_type test(int);
+
+            template <typename U>
+            inline static std::false_type test(...);
+
+            public:
+            static constexpr bool value = decltype(test<T>(0))::value;
+          };
+
+          template <typename T, bool = is_swappable<T>::value>
+          struct is_nothrow_swappable {
+            static constexpr bool value =
+                noexcept(swap(std::declval<T &>(), std::declval<T &>()));
+          };
+
+          template <typename T>
+          struct is_nothrow_swappable<T, false> : std::false_type {};
+
+        }  // namespace swappable
+      }  // namespace detail
+
+      using detail::swappable::is_swappable;
+      using detail::swappable::is_nothrow_swappable;
+
+      // <functional>
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#endif
+      template <typename F, typename... As>
+      inline constexpr auto invoke(F &&f, As &&... as)
+          RETURN(lib::forward<F>(f)(lib::forward<As>(as)...))
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+      template <typename B, typename T, typename D>
+      inline constexpr auto invoke(T B::*pmv, D &&d)
+          RETURN(lib::forward<D>(d).*pmv)
+
+      template <typename Pmv, typename Ptr>
+      inline constexpr auto invoke(Pmv pmv, Ptr &&ptr)
+          RETURN((*lib::forward<Ptr>(ptr)).*pmv)
+
+      template <typename B, typename T, typename D, typename... As>
+      inline constexpr auto invoke(T B::*pmf, D &&d, As &&... as)
+          RETURN((lib::forward<D>(d).*pmf)(lib::forward<As>(as)...))
+
+      template <typename Pmf, typename Ptr, typename... As>
+      inline constexpr auto invoke(Pmf pmf, Ptr &&ptr, As &&... as)
+          RETURN(((*lib::forward<Ptr>(ptr)).*pmf)(lib::forward<As>(as)...))
+
+      namespace detail {
+
+        template <typename Void, typename, typename...>
+        struct invoke_result {};
+
+        template <typename F, typename... Args>
+        struct invoke_result<void_t<decltype(lib::invoke(
+                                 std::declval<F>(), std::declval<Args>()...))>,
+                             F,
+                             Args...>
+            : identity<decltype(
+                  lib::invoke(std::declval<F>(), std::declval<Args>()...))> {};
+
+      }  // namespace detail
+
+      template <typename F, typename... Args>
+      using invoke_result = detail::invoke_result<void, F, Args...>;
+
+      template <typename F, typename... Args>
+      using invoke_result_t = typename invoke_result<F, Args...>::type;
+
+      namespace detail {
+
+        template <typename Void, typename, typename...>
+        struct is_invocable : std::false_type {};
+
+        template <typename F, typename... Args>
+        struct is_invocable<void_t<invoke_result_t<F, Args...>>, F, Args...>
+            : std::true_type {};
+
+        template <typename Void, typename, typename, typename...>
+        struct is_invocable_r : std::false_type {};
+
+        template <typename R, typename F, typename... Args>
+        struct is_invocable_r<void_t<invoke_result_t<F, Args...>>,
+                              R,
+                              F,
+                              Args...>
+            : std::is_convertible<invoke_result_t<F, Args...>, R> {};
+
+      }  // namespace detail
+
+      template <typename F, typename... Args>
+      using is_invocable = detail::is_invocable<void, F, Args...>;
+
+      template <typename R, typename F, typename... Args>
+      using is_invocable_r = detail::is_invocable_r<void, R, F, Args...>;
+
+      // <memory>
+#ifdef MPARK_BUILTIN_ADDRESSOF
+      template <typename T>
+      inline constexpr T *addressof(T &arg) {
+        return __builtin_addressof(arg);
+      }
+#else
+      namespace detail {
+
+        namespace has_addressof_impl {
+
+          struct fail;
+
+          template <typename T>
+          inline fail operator&(T &&);
+
+          template <typename T>
+          inline static constexpr bool impl() {
+            return (std::is_class<T>::value || std::is_union<T>::value) &&
+                   !std::is_same<decltype(&std::declval<T &>()), fail>::value;
+          }
+
+        }  // namespace has_addressof_impl
+
+        template <typename T>
+        using has_addressof = bool_constant<has_addressof_impl::impl<T>()>;
+
+        template <typename T>
+        inline constexpr T *addressof(T &arg, std::true_type) {
+          return std::addressof(arg);
+        }
+
+        template <typename T>
+        inline constexpr T *addressof(T &arg, std::false_type) {
+          return &arg;
+        }
+
+      }  // namespace detail
+
+      template <typename T>
+      inline constexpr T *addressof(T &arg) {
+        return detail::addressof(arg, detail::has_addressof<T>{});
+      }
+#endif
+
+      template <typename T>
+      inline constexpr T *addressof(const T &&) = delete;
+
+    }  // namespace cpp17
+
+    template <typename T>
+    struct remove_all_extents : identity<T> {};
+
+    template <typename T, std::size_t N>
+    struct remove_all_extents<array<T, N>> : remove_all_extents<T> {};
+
+    template <typename T>
+    using remove_all_extents_t = typename remove_all_extents<T>::type;
+
+    template <std::size_t N>
+    using size_constant = std::integral_constant<std::size_t, N>;
+
+    template <std::size_t I, typename T>
+    struct indexed_type : size_constant<I>, identity<T> {};
+
+    template <bool... Bs>
+    using all = std::is_same<integer_sequence<bool, true, Bs...>,
+                             integer_sequence<bool, Bs..., true>>;
+
+#ifdef MPARK_TYPE_PACK_ELEMENT
+    template <std::size_t I, typename... Ts>
+    using type_pack_element_t = __type_pack_element<I, Ts...>;
+#else
+    template <std::size_t I, typename... Ts>
+    struct type_pack_element_impl {
+      private:
+      template <typename>
+      struct set;
+
+      template <std::size_t... Is>
+      struct set<index_sequence<Is...>> : indexed_type<Is, Ts>... {};
+
+      template <typename T>
+      inline static std::enable_if<true, T> impl(indexed_type<I, T>);
+
+      inline static std::enable_if<false> impl(...);
+
+      public:
+      using type = decltype(impl(set<index_sequence_for<Ts...>>{}));
+    };
+
+    template <std::size_t I, typename... Ts>
+    using type_pack_element = typename type_pack_element_impl<I, Ts...>::type;
+
+    template <std::size_t I, typename... Ts>
+    using type_pack_element_t = typename type_pack_element<I, Ts...>::type;
+#endif
+
+#ifdef MPARK_TRIVIALITY_TYPE_TRAITS
+    using std::is_trivially_copy_constructible;
+    using std::is_trivially_move_constructible;
+    using std::is_trivially_copy_assignable;
+    using std::is_trivially_move_assignable;
+#else
+    template <typename T>
+    struct is_trivially_copy_constructible
+        : bool_constant<
+              std::is_copy_constructible<T>::value && __has_trivial_copy(T)> {};
+
+    template <typename T>
+    struct is_trivially_move_constructible : bool_constant<__is_trivial(T)> {};
+
+    template <typename T>
+    struct is_trivially_copy_assignable
+        : bool_constant<
+              std::is_copy_assignable<T>::value && __has_trivial_assign(T)> {};
+
+    template <typename T>
+    struct is_trivially_move_assignable : bool_constant<__is_trivial(T)> {};
+#endif
+
+    template <typename T, bool>
+    struct dependent_type : T {};
+
+    template <typename Is, std::size_t J>
+    struct push_back;
+
+    template <typename Is, std::size_t J>
+    using push_back_t = typename push_back<Is, J>::type;
+
+    template <std::size_t... Is, std::size_t J>
+    struct push_back<index_sequence<Is...>, J> {
+      using type = index_sequence<Is..., J>;
+    };
+
+  }  // namespace lib
+}  // namespace mpark
+
+#undef RETURN
+
+#endif  // MPARK_LIB_HPP
+
+
+namespace mpark {
+
+#ifdef MPARK_RETURN_TYPE_DEDUCTION
+
+#define AUTO auto
+#define AUTO_RETURN(...) { return __VA_ARGS__; }
+
+#define AUTO_REFREF auto &&
+#define AUTO_REFREF_RETURN(...) { return __VA_ARGS__; }
+
+#define DECLTYPE_AUTO decltype(auto)
+#define DECLTYPE_AUTO_RETURN(...) { return __VA_ARGS__; }
+
+#else
+
+#define AUTO auto
+#define AUTO_RETURN(...) \
+  -> lib::decay_t<decltype(__VA_ARGS__)> { return __VA_ARGS__; }
+
+#define AUTO_REFREF auto
+#define AUTO_REFREF_RETURN(...)                                           \
+  -> decltype((__VA_ARGS__)) {                                            \
+    static_assert(std::is_reference<decltype((__VA_ARGS__))>::value, ""); \
+    return __VA_ARGS__;                                                   \
+  }
+
+#define DECLTYPE_AUTO auto
+#define DECLTYPE_AUTO_RETURN(...) \
+  -> decltype(__VA_ARGS__) { return __VA_ARGS__; }
+
+#endif
+
+  class bad_variant_access : public std::exception {
+    public:
+    virtual const char *what() const noexcept { return "bad_variant_access"; }
+  };
+
+  [[noreturn]] inline void throw_bad_variant_access() {
+#ifdef MPARK_EXCEPTIONS
+    throw bad_variant_access{};
+#else
+    std::terminate();
+#ifdef MPARK_BUILTIN_UNREACHABLE
+    __builtin_unreachable();
+#endif
+#endif
+  }
+
+  template <typename... Ts>
+  class variant;
+
+  template <typename T>
+  struct variant_size;
+
+#ifdef MPARK_VARIABLE_TEMPLATES
+  template <typename T>
+  constexpr std::size_t variant_size_v = variant_size<T>::value;
+#endif
+
+  template <typename T>
+  struct variant_size<const T> : variant_size<T> {};
+
+  template <typename T>
+  struct variant_size<volatile T> : variant_size<T> {};
+
+  template <typename T>
+  struct variant_size<const volatile T> : variant_size<T> {};
+
+  template <typename... Ts>
+  struct variant_size<variant<Ts...>> : lib::size_constant<sizeof...(Ts)> {};
+
+  template <std::size_t I, typename T>
+  struct variant_alternative;
+
+  template <std::size_t I, typename T>
+  using variant_alternative_t = typename variant_alternative<I, T>::type;
+
+  template <std::size_t I, typename T>
+  struct variant_alternative<I, const T>
+      : std::add_const<variant_alternative_t<I, T>> {};
+
+  template <std::size_t I, typename T>
+  struct variant_alternative<I, volatile T>
+      : std::add_volatile<variant_alternative_t<I, T>> {};
+
+  template <std::size_t I, typename T>
+  struct variant_alternative<I, const volatile T>
+      : std::add_cv<variant_alternative_t<I, T>> {};
+
+  template <std::size_t I, typename... Ts>
+  struct variant_alternative<I, variant<Ts...>> {
+    static_assert(I < sizeof...(Ts),
+                  "Index out of bounds in std::variant_alternative<>");
+    using type = lib::type_pack_element_t<I, Ts...>;
+  };
+
+  constexpr std::size_t variant_npos = static_cast<std::size_t>(-1);
+
+  namespace detail {
+
+    constexpr std::size_t not_found = static_cast<std::size_t>(-1);
+    constexpr std::size_t ambiguous = static_cast<std::size_t>(-2);
+
+#ifdef MPARK_CPP14_CONSTEXPR
+    template <typename T, typename... Ts>
+    inline constexpr std::size_t find_index() {
+      constexpr lib::array<bool, sizeof...(Ts)> matches = {
+          {std::is_same<T, Ts>::value...}
+      };
+      std::size_t result = not_found;
+      for (std::size_t i = 0; i < sizeof...(Ts); ++i) {
+        if (matches[i]) {
+          if (result != not_found) {
+            return ambiguous;
+          }
+          result = i;
+        }
+      }
+      return result;
+    }
+#else
+    inline constexpr std::size_t find_index_impl(std::size_t result,
+                                                 std::size_t) {
+      return result;
+    }
+
+    template <typename... Bs>
+    inline constexpr std::size_t find_index_impl(std::size_t result,
+                                                 std::size_t idx,
+                                                 bool b,
+                                                 Bs... bs) {
+      return b ? (result != not_found ? ambiguous
+                                      : find_index_impl(idx, idx + 1, bs...))
+               : find_index_impl(result, idx + 1, bs...);
+    }
+
+    template <typename T, typename... Ts>
+    inline constexpr std::size_t find_index() {
+      return find_index_impl(not_found, 0, std::is_same<T, Ts>::value...);
+    }
+#endif
+
+    template <std::size_t I>
+    using find_index_sfinae_impl =
+        lib::enable_if_t<I != not_found && I != ambiguous,
+                         lib::size_constant<I>>;
+
+    template <typename T, typename... Ts>
+    using find_index_sfinae = find_index_sfinae_impl<find_index<T, Ts...>()>;
+
+    template <std::size_t I>
+    struct find_index_checked_impl : lib::size_constant<I> {
+      static_assert(I != not_found, "the specified type is not found.");
+      static_assert(I != ambiguous, "the specified type is ambiguous.");
+    };
+
+    template <typename T, typename... Ts>
+    using find_index_checked = find_index_checked_impl<find_index<T, Ts...>()>;
+
+    struct valueless_t {};
+
+    enum class Trait { TriviallyAvailable, Available, Unavailable };
+
+    template <typename T,
+              template <typename> class IsTriviallyAvailable,
+              template <typename> class IsAvailable>
+    inline constexpr Trait trait() {
+      return IsTriviallyAvailable<T>::value
+                 ? Trait::TriviallyAvailable
+                 : IsAvailable<T>::value ? Trait::Available
+                                         : Trait::Unavailable;
+    }
+
+#ifdef MPARK_CPP14_CONSTEXPR
+    template <typename... Traits>
+    inline constexpr Trait common_trait(Traits... traits) {
+      Trait result = Trait::TriviallyAvailable;
+      for (Trait t : {traits...}) {
+        if (static_cast<int>(t) > static_cast<int>(result)) {
+          result = t;
+        }
+      }
+      return result;
+    }
+#else
+    inline constexpr Trait common_trait_impl(Trait result) { return result; }
+
+    template <typename... Traits>
+    inline constexpr Trait common_trait_impl(Trait result,
+                                             Trait t,
+                                             Traits... ts) {
+      return static_cast<int>(t) > static_cast<int>(result)
+                 ? common_trait_impl(t, ts...)
+                 : common_trait_impl(result, ts...);
+    }
+
+    template <typename... Traits>
+    inline constexpr Trait common_trait(Traits... ts) {
+      return common_trait_impl(Trait::TriviallyAvailable, ts...);
+    }
+#endif
+
+    template <typename... Ts>
+    struct traits {
+      static constexpr Trait copy_constructible_trait =
+          common_trait(trait<Ts,
+                             lib::is_trivially_copy_constructible,
+                             std::is_copy_constructible>()...);
+
+      static constexpr Trait move_constructible_trait =
+          common_trait(trait<Ts,
+                             lib::is_trivially_move_constructible,
+                             std::is_move_constructible>()...);
+
+      static constexpr Trait copy_assignable_trait =
+          common_trait(copy_constructible_trait,
+                       trait<Ts,
+                             lib::is_trivially_copy_assignable,
+                             std::is_copy_assignable>()...);
+
+      static constexpr Trait move_assignable_trait =
+          common_trait(move_constructible_trait,
+                       trait<Ts,
+                             lib::is_trivially_move_assignable,
+                             std::is_move_assignable>()...);
+
+      static constexpr Trait destructible_trait =
+          common_trait(trait<Ts,
+                             std::is_trivially_destructible,
+                             std::is_destructible>()...);
+    };
+
+    namespace access {
+
+      struct recursive_union {
+#ifdef MPARK_RETURN_TYPE_DEDUCTION
+        template <typename V>
+        inline static constexpr auto &&get_alt(V &&v, in_place_index_t<0>) {
+          return lib::forward<V>(v).head_;
+        }
+
+        template <typename V, std::size_t I>
+        inline static constexpr auto &&get_alt(V &&v, in_place_index_t<I>) {
+          return get_alt(lib::forward<V>(v).tail_, in_place_index_t<I - 1>{});
+        }
+#else
+        template <std::size_t I, bool Dummy = true>
+        struct get_alt_impl {
+          template <typename V>
+          inline constexpr AUTO_REFREF operator()(V &&v) const
+            AUTO_REFREF_RETURN(get_alt_impl<I - 1>{}(lib::forward<V>(v).tail_))
+        };
+
+        template <bool Dummy>
+        struct get_alt_impl<0, Dummy> {
+          template <typename V>
+          inline constexpr AUTO_REFREF operator()(V &&v) const
+            AUTO_REFREF_RETURN(lib::forward<V>(v).head_)
+        };
+
+        template <typename V, std::size_t I>
+        inline static constexpr AUTO_REFREF get_alt(V &&v, in_place_index_t<I>)
+          AUTO_REFREF_RETURN(get_alt_impl<I>{}(lib::forward<V>(v)))
+#endif
+      };
+
+      struct base {
+        template <std::size_t I, typename V>
+        inline static constexpr AUTO_REFREF get_alt(V &&v)
+          AUTO_REFREF_RETURN(recursive_union::get_alt(
+              data(lib::forward<V>(v)), in_place_index_t<I>{}))
+      };
+
+      struct variant {
+        template <std::size_t I, typename V>
+        inline static constexpr AUTO_REFREF get_alt(V &&v)
+          AUTO_REFREF_RETURN(base::get_alt<I>(lib::forward<V>(v).impl_))
+      };
+
+    }  // namespace access
+
+    namespace visitation {
+
+      struct base {
+        template <typename T>
+        inline static constexpr const T &at(const T &elem) {
+          return elem;
+        }
+
+        template <typename T, std::size_t N, typename... Is>
+        inline static constexpr const lib::remove_all_extents_t<T> &at(
+            const lib::array<T, N> &elems, std::size_t i, Is... is) {
+          return at(elems[i], is...);
+        }
+
+        template <typename F, typename... Fs>
+        inline static constexpr int visit_visitor_return_type_check() {
+          static_assert(lib::all<std::is_same<F, Fs>::value...>::value,
+                        "`mpark::visit` requires the visitor to have a single "
+                        "return type.");
+          return 0;
+        }
+
+        template <typename... Fs>
+        inline static constexpr lib::array<
+            lib::common_type_t<lib::decay_t<Fs>...>,
+            sizeof...(Fs)>
+        make_farray(Fs &&... fs) {
+          using result = lib::array<lib::common_type_t<lib::decay_t<Fs>...>,
+                                    sizeof...(Fs)>;
+          return visit_visitor_return_type_check<lib::decay_t<Fs>...>(),
+                 result{{lib::forward<Fs>(fs)...}};
+        }
+
+        template <std::size_t... Is>
+        struct dispatcher {
+          template <typename F, typename... Vs>
+          struct impl {
+            inline static constexpr DECLTYPE_AUTO dispatch(F f, Vs... vs)
+              DECLTYPE_AUTO_RETURN(lib::invoke(
+                  static_cast<F>(f),
+                  access::base::get_alt<Is>(static_cast<Vs>(vs))...))
+          };
+        };
+
+        template <typename F, typename... Vs, std::size_t... Is>
+        inline static constexpr AUTO make_dispatch(lib::index_sequence<Is...>)
+          AUTO_RETURN(&dispatcher<Is...>::template impl<F, Vs...>::dispatch)
+
+        template <std::size_t I, typename F, typename... Vs>
+        inline static constexpr AUTO make_fdiagonal_impl()
+          AUTO_RETURN(make_dispatch<F, Vs...>(
+              lib::index_sequence<lib::indexed_type<I, Vs>::value...>{}))
+
+        template <typename F, typename... Vs, std::size_t... Is>
+        inline static constexpr AUTO make_fdiagonal_impl(
+            lib::index_sequence<Is...>)
+          AUTO_RETURN(make_farray(make_fdiagonal_impl<Is, F, Vs...>()...))
+
+        template <typename F, typename V, typename... Vs>
+        inline static constexpr /* auto * */ auto make_fdiagonal()
+            -> decltype(make_fdiagonal_impl<F, V, Vs...>(
+                lib::make_index_sequence<lib::decay_t<V>::size()>{})) {
+          static_assert(lib::all<(lib::decay_t<V>::size() ==
+                                  lib::decay_t<Vs>::size())...>::value,
+                        "all of the variants must be the same size.");
+          return make_fdiagonal_impl<F, V, Vs...>(
+              lib::make_index_sequence<lib::decay_t<V>::size()>{});
+        }
+
+#ifdef MPARK_RETURN_TYPE_DEDUCTION
+        template <typename F, typename... Vs, typename Is>
+        inline static constexpr auto make_fmatrix_impl(Is is) {
+          return make_dispatch<F, Vs...>(is);
+        }
+
+        template <typename F,
+                  typename... Vs,
+                  typename Is,
+                  std::size_t... Js,
+                  typename... Ls>
+        inline static constexpr auto make_fmatrix_impl(
+            Is, lib::index_sequence<Js...>, Ls... ls) {
+          return make_farray(make_fmatrix_impl<F, Vs...>(
+              lib::push_back_t<Is, Js>{}, ls...)...);
+        }
+
+        template <typename F, typename... Vs>
+        inline static constexpr auto make_fmatrix() {
+          return make_fmatrix_impl<F, Vs...>(
+              lib::index_sequence<>{},
+              lib::make_index_sequence<lib::decay_t<Vs>::size()>{}...);
+        }
+#else
+        template <typename F, typename... Vs>
+        struct make_fmatrix_impl {
+          template <typename...>
+          struct impl;
+
+          template <typename Is>
+          struct impl<Is> {
+            inline constexpr AUTO operator()() const
+              AUTO_RETURN(make_dispatch<F, Vs...>(Is{}))
+          };
+
+          template <typename Is, std::size_t... Js, typename... Ls>
+          struct impl<Is, lib::index_sequence<Js...>, Ls...> {
+            inline constexpr AUTO operator()() const
+              AUTO_RETURN(
+                  make_farray(impl<lib::push_back_t<Is, Js>, Ls...>{}()...))
+          };
+        };
+
+        template <typename F, typename... Vs>
+        inline static constexpr AUTO make_fmatrix()
+          AUTO_RETURN(
+              typename make_fmatrix_impl<F, Vs...>::template impl<
+                  lib::index_sequence<>,
+                  lib::make_index_sequence<lib::decay_t<Vs>::size()>...>{}())
+#endif
+      };  // namespace base
+
+      template <typename F, typename... Vs>
+      using FDiagonal = decltype(base::make_fdiagonal<F, Vs...>());
+
+      template <typename F, typename... Vs>
+      struct fdiagonal {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4268)
+#endif
+        static constexpr FDiagonal<F, Vs...> value =
+            base::make_fdiagonal<F, Vs...>();
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+      };
+
+      template <typename F, typename... Vs>
+      constexpr FDiagonal<F, Vs...> fdiagonal<F, Vs...>::value;
+
+      template <typename F, typename... Vs>
+      using FMatrix = decltype(base::make_fmatrix<F, Vs...>());
+
+      template <typename F, typename... Vs>
+      struct fmatrix {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4268)
+#endif
+        static constexpr FMatrix<F, Vs...> value =
+            base::make_fmatrix<F, Vs...>();
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+      };
+
+      template <typename F, typename... Vs>
+      constexpr FMatrix<F, Vs...> fmatrix<F, Vs...>::value;
+
+      struct alt {
+        template <typename Visitor, typename... Vs>
+        inline static constexpr DECLTYPE_AUTO visit_alt_at(std::size_t index,
+                                                           Visitor &&visitor,
+                                                           Vs &&... vs)
+          DECLTYPE_AUTO_RETURN(base::at(
+              fdiagonal<Visitor &&,
+                        decltype(as_base(lib::forward<Vs>(vs)))...>::value,
+              index)(lib::forward<Visitor>(visitor),
+                     as_base(lib::forward<Vs>(vs))...))
+
+        template <typename Visitor, typename... Vs>
+        inline static constexpr DECLTYPE_AUTO visit_alt(Visitor &&visitor,
+                                                        Vs &&... vs)
+          DECLTYPE_AUTO_RETURN(base::at(
+              fmatrix<Visitor &&,
+                      decltype(as_base(lib::forward<Vs>(vs)))...>::value,
+              vs.index()...)(lib::forward<Visitor>(visitor),
+                             as_base(lib::forward<Vs>(vs))...))
+      };
+
+      struct variant {
+        private:
+        template <typename Visitor, typename... Values>
+        struct visit_exhaustive_visitor_check {
+          static_assert(
+              lib::is_invocable<Visitor, Values...>::value,
+              "`mpark::visit` requires the visitor to be exhaustive.");
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#endif
+          inline constexpr DECLTYPE_AUTO operator()(Visitor &&visitor,
+                                                    Values &&... values) const
+            DECLTYPE_AUTO_RETURN(lib::invoke(lib::forward<Visitor>(visitor),
+                                             lib::forward<Values>(values)...))
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+        };
+
+        template <typename Visitor>
+        struct value_visitor {
+          Visitor &&visitor_;
+
+          template <typename... Alts>
+          inline constexpr DECLTYPE_AUTO operator()(Alts &&... alts) const
+            DECLTYPE_AUTO_RETURN(
+                visit_exhaustive_visitor_check<
+                    Visitor,
+                    decltype((lib::forward<Alts>(alts).value))...>{}(
+                    lib::forward<Visitor>(visitor_),
+                    lib::forward<Alts>(alts).value...))
+        };
+
+        template <typename Visitor>
+        inline static constexpr AUTO make_value_visitor(Visitor &&visitor)
+          AUTO_RETURN(value_visitor<Visitor>{lib::forward<Visitor>(visitor)})
+
+        public:
+        template <typename Visitor, typename... Vs>
+        inline static constexpr DECLTYPE_AUTO visit_alt_at(std::size_t index,
+                                                           Visitor &&visitor,
+                                                           Vs &&... vs)
+          DECLTYPE_AUTO_RETURN(
+              alt::visit_alt_at(index,
+                                lib::forward<Visitor>(visitor),
+                                lib::forward<Vs>(vs).impl_...))
+
+        template <typename Visitor, typename... Vs>
+        inline static constexpr DECLTYPE_AUTO visit_alt(Visitor &&visitor,
+                                                        Vs &&... vs)
+          DECLTYPE_AUTO_RETURN(alt::visit_alt(lib::forward<Visitor>(visitor),
+                                              lib::forward<Vs>(vs).impl_...))
+
+        template <typename Visitor, typename... Vs>
+        inline static constexpr DECLTYPE_AUTO visit_value_at(std::size_t index,
+                                                             Visitor &&visitor,
+                                                             Vs &&... vs)
+          DECLTYPE_AUTO_RETURN(
+              visit_alt_at(index,
+                           make_value_visitor(lib::forward<Visitor>(visitor)),
+                           lib::forward<Vs>(vs)...))
+
+        template <typename Visitor, typename... Vs>
+        inline static constexpr DECLTYPE_AUTO visit_value(Visitor &&visitor,
+                                                          Vs &&... vs)
+          DECLTYPE_AUTO_RETURN(
+              visit_alt(make_value_visitor(lib::forward<Visitor>(visitor)),
+                        lib::forward<Vs>(vs)...))
+      };
+
+    }  // namespace visitation
+
+    template <std::size_t Index, typename T>
+    struct alt {
+      using value_type = T;
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4244)
+#endif
+      template <typename... Args>
+      inline explicit constexpr alt(in_place_t, Args &&... args)
+          : value(lib::forward<Args>(args)...) {}
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+      T value;
+    };
+
+    template <Trait DestructibleTrait, std::size_t Index, typename... Ts>
+    union recursive_union;
+
+    template <Trait DestructibleTrait, std::size_t Index>
+    union recursive_union<DestructibleTrait, Index> {};
+
+#define MPARK_VARIANT_RECURSIVE_UNION(destructible_trait, destructor)      \
+  template <std::size_t Index, typename T, typename... Ts>                 \
+  union recursive_union<destructible_trait, Index, T, Ts...> {             \
+    public:                                                                \
+    inline explicit constexpr recursive_union(valueless_t) noexcept        \
+        : dummy_{} {}                                                      \
+                                                                           \
+    template <typename... Args>                                            \
+    inline explicit constexpr recursive_union(in_place_index_t<0>,         \
+                                              Args &&... args)             \
+        : head_(in_place_t{}, lib::forward<Args>(args)...) {}              \
+                                                                           \
+    template <std::size_t I, typename... Args>                             \
+    inline explicit constexpr recursive_union(in_place_index_t<I>,         \
+                                              Args &&... args)             \
+        : tail_(in_place_index_t<I - 1>{}, lib::forward<Args>(args)...) {} \
+                                                                           \
+    recursive_union(const recursive_union &) = default;                    \
+    recursive_union(recursive_union &&) = default;                         \
+                                                                           \
+    destructor                                                             \
+                                                                           \
+    recursive_union &operator=(const recursive_union &) = default;         \
+    recursive_union &operator=(recursive_union &&) = default;              \
+                                                                           \
+    private:                                                               \
+    char dummy_;                                                           \
+    alt<Index, T> head_;                                                   \
+    recursive_union<destructible_trait, Index + 1, Ts...> tail_;           \
+                                                                           \
+    friend struct access::recursive_union;                                 \
+  }
+
+    MPARK_VARIANT_RECURSIVE_UNION(Trait::TriviallyAvailable,
+                                  ~recursive_union() = default;);
+    MPARK_VARIANT_RECURSIVE_UNION(Trait::Available,
+                                  ~recursive_union() {});
+    MPARK_VARIANT_RECURSIVE_UNION(Trait::Unavailable,
+                                  ~recursive_union() = delete;);
+
+#undef MPARK_VARIANT_RECURSIVE_UNION
+
+    using index_t = unsigned int;
+
+    template <Trait DestructibleTrait, typename... Ts>
+    class base {
+      public:
+      inline explicit constexpr base(valueless_t tag) noexcept
+          : data_(tag), index_(static_cast<index_t>(-1)) {}
+
+      template <std::size_t I, typename... Args>
+      inline explicit constexpr base(in_place_index_t<I>, Args &&... args)
+          : data_(in_place_index_t<I>{}, lib::forward<Args>(args)...),
+            index_(I) {}
+
+      inline constexpr bool valueless_by_exception() const noexcept {
+        return index_ == static_cast<index_t>(-1);
+      }
+
+      inline constexpr std::size_t index() const noexcept {
+        return valueless_by_exception() ? variant_npos : index_;
+      }
+
+      protected:
+      using data_t = recursive_union<DestructibleTrait, 0, Ts...>;
+
+      friend inline constexpr base &as_base(base &b) { return b; }
+      friend inline constexpr const base &as_base(const base &b) { return b; }
+      friend inline constexpr base &&as_base(base &&b) { return lib::move(b); }
+      friend inline constexpr const base &&as_base(const base &&b) { return lib::move(b); }
+
+      friend inline constexpr data_t &data(base &b) { return b.data_; }
+      friend inline constexpr const data_t &data(const base &b) { return b.data_; }
+      friend inline constexpr data_t &&data(base &&b) { return lib::move(b).data_; }
+      friend inline constexpr const data_t &&data(const base &&b) { return lib::move(b).data_; }
+
+      inline static constexpr std::size_t size() { return sizeof...(Ts); }
+
+      data_t data_;
+      index_t index_;
+
+      friend struct access::base;
+      friend struct visitation::base;
+    };
+
+    struct dtor {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#endif
+      template <typename Alt>
+      inline void operator()(Alt &alt) const noexcept { alt.~Alt(); }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+    };
+
+#if defined(_MSC_VER) && _MSC_VER < 1910
+#define INHERITING_CTOR(type, base)               \
+  template <typename... Args>                     \
+  inline explicit constexpr type(Args &&... args) \
+      : base(lib::forward<Args>(args)...) {}
+#else
+#define INHERITING_CTOR(type, base) using base::base;
+#endif
+
+    template <typename Traits, Trait = Traits::destructible_trait>
+    class destructor;
+
+#define MPARK_VARIANT_DESTRUCTOR(destructible_trait, definition, destroy) \
+  template <typename... Ts>                                               \
+  class destructor<traits<Ts...>, destructible_trait>                     \
+      : public base<destructible_trait, Ts...> {                          \
+    using super = base<destructible_trait, Ts...>;                        \
+                                                                          \
+    public:                                                               \
+    INHERITING_CTOR(destructor, super)                                    \
+    using super::operator=;                                               \
+                                                                          \
+    destructor(const destructor &) = default;                             \
+    destructor(destructor &&) = default;                                  \
+    definition                                                            \
+    destructor &operator=(const destructor &) = default;                  \
+    destructor &operator=(destructor &&) = default;                       \
+                                                                          \
+    protected:                                                            \
+    destroy                                                               \
+  }
+
+    MPARK_VARIANT_DESTRUCTOR(
+        Trait::TriviallyAvailable,
+        ~destructor() = default;,
+        inline void destroy() noexcept {
+          this->index_ = static_cast<index_t>(-1);
+        });
+
+    MPARK_VARIANT_DESTRUCTOR(
+        Trait::Available,
+        ~destructor() { destroy(); },
+        inline void destroy() noexcept {
+          if (!this->valueless_by_exception()) {
+            visitation::alt::visit_alt(dtor{}, *this);
+          }
+          this->index_ = static_cast<index_t>(-1);
+        });
+
+    MPARK_VARIANT_DESTRUCTOR(
+        Trait::Unavailable,
+        ~destructor() = delete;,
+        inline void destroy() noexcept = delete;);
+
+#undef MPARK_VARIANT_DESTRUCTOR
+
+    template <typename Traits>
+    class constructor : public destructor<Traits> {
+      using super = destructor<Traits>;
+
+      public:
+      INHERITING_CTOR(constructor, super)
+      using super::operator=;
+
+      protected:
+#ifndef MPARK_GENERIC_LAMBDAS
+      struct ctor {
+        template <typename LhsAlt, typename RhsAlt>
+        inline void operator()(LhsAlt &lhs_alt, RhsAlt &&rhs_alt) const {
+          constructor::construct_alt(lhs_alt,
+                                     lib::forward<RhsAlt>(rhs_alt).value);
+        }
+      };
+#endif
+
+      template <std::size_t I, typename T, typename... Args>
+      inline static T &construct_alt(alt<I, T> &a, Args &&... args) {
+        ::new (static_cast<void *>(lib::addressof(a)))
+            alt<I, T>(in_place_t{}, lib::forward<Args>(args)...);
+        return a.value;
+      }
+
+      template <typename Rhs>
+      inline static void generic_construct(constructor &lhs, Rhs &&rhs) {
+        lhs.destroy();
+        if (!rhs.valueless_by_exception()) {
+          visitation::alt::visit_alt_at(
+              rhs.index(),
+#ifdef MPARK_GENERIC_LAMBDAS
+              [](auto &lhs_alt, auto &&rhs_alt) {
+                constructor::construct_alt(
+                    lhs_alt, lib::forward<decltype(rhs_alt)>(rhs_alt).value);
+              }
+#else
+              ctor{}
+#endif
+              ,
+              lhs,
+              lib::forward<Rhs>(rhs));
+          lhs.index_ = rhs.index_;
+        }
+      }
+    };
+
+    template <typename Traits, Trait = Traits::move_constructible_trait>
+    class move_constructor;
+
+#define MPARK_VARIANT_MOVE_CONSTRUCTOR(move_constructible_trait, definition) \
+  template <typename... Ts>                                                  \
+  class move_constructor<traits<Ts...>, move_constructible_trait>            \
+      : public constructor<traits<Ts...>> {                                  \
+    using super = constructor<traits<Ts...>>;                                \
+                                                                             \
+    public:                                                                  \
+    INHERITING_CTOR(move_constructor, super)                                 \
+    using super::operator=;                                                  \
+                                                                             \
+    move_constructor(const move_constructor &) = default;                    \
+    definition                                                               \
+    ~move_constructor() = default;                                           \
+    move_constructor &operator=(const move_constructor &) = default;         \
+    move_constructor &operator=(move_constructor &&) = default;              \
+  }
+
+    MPARK_VARIANT_MOVE_CONSTRUCTOR(
+        Trait::TriviallyAvailable,
+        move_constructor(move_constructor &&that) = default;);
+
+    MPARK_VARIANT_MOVE_CONSTRUCTOR(
+        Trait::Available,
+        move_constructor(move_constructor &&that) noexcept(
+            lib::all<std::is_nothrow_move_constructible<Ts>::value...>::value)
+            : move_constructor(valueless_t{}) {
+          this->generic_construct(*this, lib::move(that));
+        });
+
+    MPARK_VARIANT_MOVE_CONSTRUCTOR(
+        Trait::Unavailable,
+        move_constructor(move_constructor &&) = delete;);
+
+#undef MPARK_VARIANT_MOVE_CONSTRUCTOR
+
+    template <typename Traits, Trait = Traits::copy_constructible_trait>
+    class copy_constructor;
+
+#define MPARK_VARIANT_COPY_CONSTRUCTOR(copy_constructible_trait, definition) \
+  template <typename... Ts>                                                  \
+  class copy_constructor<traits<Ts...>, copy_constructible_trait>            \
+      : public move_constructor<traits<Ts...>> {                             \
+    using super = move_constructor<traits<Ts...>>;                           \
+                                                                             \
+    public:                                                                  \
+    INHERITING_CTOR(copy_constructor, super)                                 \
+    using super::operator=;                                                  \
+                                                                             \
+    definition                                                               \
+    copy_constructor(copy_constructor &&) = default;                         \
+    ~copy_constructor() = default;                                           \
+    copy_constructor &operator=(const copy_constructor &) = default;         \
+    copy_constructor &operator=(copy_constructor &&) = default;              \
+  }
+
+    MPARK_VARIANT_COPY_CONSTRUCTOR(
+        Trait::TriviallyAvailable,
+        copy_constructor(const copy_constructor &that) = default;);
+
+    MPARK_VARIANT_COPY_CONSTRUCTOR(
+        Trait::Available,
+        copy_constructor(const copy_constructor &that)
+            : copy_constructor(valueless_t{}) {
+          this->generic_construct(*this, that);
+        });
+
+    MPARK_VARIANT_COPY_CONSTRUCTOR(
+        Trait::Unavailable,
+        copy_constructor(const copy_constructor &) = delete;);
+
+#undef MPARK_VARIANT_COPY_CONSTRUCTOR
+
+    template <typename Traits>
+    class assignment : public copy_constructor<Traits> {
+      using super = copy_constructor<Traits>;
+
+      public:
+      INHERITING_CTOR(assignment, super)
+      using super::operator=;
+
+      template <std::size_t I, typename... Args>
+      inline /* auto & */ auto emplace(Args &&... args)
+          -> decltype(this->construct_alt(access::base::get_alt<I>(*this),
+                                          lib::forward<Args>(args)...)) {
+        this->destroy();
+        auto &result = this->construct_alt(access::base::get_alt<I>(*this),
+                                           lib::forward<Args>(args)...);
+        this->index_ = I;
+        return result;
+      }
+
+      protected:
+#ifndef MPARK_GENERIC_LAMBDAS
+      template <typename That>
+      struct assigner {
+        template <typename ThisAlt, typename ThatAlt>
+        inline void operator()(ThisAlt &this_alt, ThatAlt &&that_alt) const {
+          self->assign_alt(this_alt, lib::forward<ThatAlt>(that_alt).value);
+        }
+        assignment *self;
+      };
+#endif
+
+      template <std::size_t I, typename T, typename Arg>
+      inline void assign_alt(alt<I, T> &a, Arg &&arg) {
+        if (this->index() == I) {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4244)
+#endif
+          a.value = lib::forward<Arg>(arg);
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+        } else {
+          struct {
+            void operator()(std::true_type) const {
+              this_->emplace<I>(lib::forward<Arg>(arg_));
+            }
+            void operator()(std::false_type) const {
+              this_->emplace<I>(T(lib::forward<Arg>(arg_)));
+            }
+            assignment *this_;
+            Arg &&arg_;
+          } impl{this, lib::forward<Arg>(arg)};
+          impl(lib::bool_constant<
+                   std::is_nothrow_constructible<T, Arg>::value ||
+                   !std::is_nothrow_move_constructible<T>::value>{});
+        }
+      }
+
+      template <typename That>
+      inline void generic_assign(That &&that) {
+        if (this->valueless_by_exception() && that.valueless_by_exception()) {
+          // do nothing.
+        } else if (that.valueless_by_exception()) {
+          this->destroy();
+        } else {
+          visitation::alt::visit_alt_at(
+              that.index(),
+#ifdef MPARK_GENERIC_LAMBDAS
+              [this](auto &this_alt, auto &&that_alt) {
+                this->assign_alt(
+                    this_alt, lib::forward<decltype(that_alt)>(that_alt).value);
+              }
+#else
+              assigner<That>{this}
+#endif
+              ,
+              *this,
+              lib::forward<That>(that));
+        }
+      }
+    };
+
+    template <typename Traits, Trait = Traits::move_assignable_trait>
+    class move_assignment;
+
+#define MPARK_VARIANT_MOVE_ASSIGNMENT(move_assignable_trait, definition) \
+  template <typename... Ts>                                              \
+  class move_assignment<traits<Ts...>, move_assignable_trait>            \
+      : public assignment<traits<Ts...>> {                               \
+    using super = assignment<traits<Ts...>>;                             \
+                                                                         \
+    public:                                                              \
+    INHERITING_CTOR(move_assignment, super)                              \
+    using super::operator=;                                              \
+                                                                         \
+    move_assignment(const move_assignment &) = default;                  \
+    move_assignment(move_assignment &&) = default;                       \
+    ~move_assignment() = default;                                        \
+    move_assignment &operator=(const move_assignment &) = default;       \
+    definition                                                           \
+  }
+
+    MPARK_VARIANT_MOVE_ASSIGNMENT(
+        Trait::TriviallyAvailable,
+        move_assignment &operator=(move_assignment &&that) = default;);
+
+    MPARK_VARIANT_MOVE_ASSIGNMENT(
+        Trait::Available,
+        move_assignment &
+        operator=(move_assignment &&that) noexcept(
+            lib::all<(std::is_nothrow_move_constructible<Ts>::value &&
+                      std::is_nothrow_move_assignable<Ts>::value)...>::value) {
+          this->generic_assign(lib::move(that));
+          return *this;
+        });
+
+    MPARK_VARIANT_MOVE_ASSIGNMENT(
+        Trait::Unavailable,
+        move_assignment &operator=(move_assignment &&) = delete;);
+
+#undef MPARK_VARIANT_MOVE_ASSIGNMENT
+
+    template <typename Traits, Trait = Traits::copy_assignable_trait>
+    class copy_assignment;
+
+#define MPARK_VARIANT_COPY_ASSIGNMENT(copy_assignable_trait, definition) \
+  template <typename... Ts>                                              \
+  class copy_assignment<traits<Ts...>, copy_assignable_trait>            \
+      : public move_assignment<traits<Ts...>> {                          \
+    using super = move_assignment<traits<Ts...>>;                        \
+                                                                         \
+    public:                                                              \
+    INHERITING_CTOR(copy_assignment, super)                              \
+    using super::operator=;                                              \
+                                                                         \
+    copy_assignment(const copy_assignment &) = default;                  \
+    copy_assignment(copy_assignment &&) = default;                       \
+    ~copy_assignment() = default;                                        \
+    definition                                                           \
+    copy_assignment &operator=(copy_assignment &&) = default;            \
+  }
+
+    MPARK_VARIANT_COPY_ASSIGNMENT(
+        Trait::TriviallyAvailable,
+        copy_assignment &operator=(const copy_assignment &that) = default;);
+
+    MPARK_VARIANT_COPY_ASSIGNMENT(
+        Trait::Available,
+        copy_assignment &operator=(const copy_assignment &that) {
+          this->generic_assign(that);
+          return *this;
+        });
+
+    MPARK_VARIANT_COPY_ASSIGNMENT(
+        Trait::Unavailable,
+        copy_assignment &operator=(const copy_assignment &) = delete;);
+
+#undef MPARK_VARIANT_COPY_ASSIGNMENT
+
+    template <typename... Ts>
+    class impl : public copy_assignment<traits<Ts...>> {
+      using super = copy_assignment<traits<Ts...>>;
+
+      public:
+      INHERITING_CTOR(impl, super)
+      using super::operator=;
+
+      template <std::size_t I, typename Arg>
+      inline void assign(Arg &&arg) {
+        this->assign_alt(access::base::get_alt<I>(*this),
+                         lib::forward<Arg>(arg));
+      }
+
+      inline void swap(impl &that) {
+        if (this->valueless_by_exception() && that.valueless_by_exception()) {
+          // do nothing.
+        } else if (this->index() == that.index()) {
+          visitation::alt::visit_alt_at(this->index(),
+#ifdef MPARK_GENERIC_LAMBDAS
+                                        [](auto &this_alt, auto &that_alt) {
+                                          using std::swap;
+                                          swap(this_alt.value,
+                                               that_alt.value);
+                                        }
+#else
+                                        swapper{}
+#endif
+                                        ,
+                                        *this,
+                                        that);
+        } else {
+          impl *lhs = this;
+          impl *rhs = lib::addressof(that);
+          if (lhs->move_nothrow() && !rhs->move_nothrow()) {
+            std::swap(lhs, rhs);
+          }
+          impl tmp(lib::move(*rhs));
+#ifdef MPARK_EXCEPTIONS
+          // EXTENSION: When the move construction of `lhs` into `rhs` throws
+          // and `tmp` is nothrow move constructible then we move `tmp` back
+          // into `rhs` and provide the strong exception safety guarantee.
+          try {
+            this->generic_construct(*rhs, lib::move(*lhs));
+          } catch (...) {
+            if (tmp.move_nothrow()) {
+              this->generic_construct(*rhs, lib::move(tmp));
+            }
+            throw;
+          }
+#else
+          this->generic_construct(*rhs, lib::move(*lhs));
+#endif
+          this->generic_construct(*lhs, lib::move(tmp));
+        }
+      }
+
+      private:
+#ifndef MPARK_GENERIC_LAMBDAS
+      struct swapper {
+        template <typename ThisAlt, typename ThatAlt>
+        inline void operator()(ThisAlt &this_alt, ThatAlt &that_alt) const {
+          using std::swap;
+          swap(this_alt.value, that_alt.value);
+        }
+      };
+#endif
+
+      inline constexpr bool move_nothrow() const {
+        return this->valueless_by_exception() ||
+               lib::array<bool, sizeof...(Ts)>{
+                   {std::is_nothrow_move_constructible<Ts>::value...}
+               }[this->index()];
+      }
+    };
+
+    template <std::size_t I, typename T>
+    struct overload_leaf {
+      using F = lib::size_constant<I> (*)(T);
+      operator F() const { return nullptr; }
+    };
+
+    template <typename... Ts>
+    struct overload_impl {
+      private:
+      template <typename>
+      struct impl;
+
+      template <std::size_t... Is>
+      struct impl<lib::index_sequence<Is...>> : overload_leaf<Is, Ts>... {};
+
+      public:
+      using type = impl<lib::index_sequence_for<Ts...>>;
+    };
+
+    template <typename... Ts>
+    using overload = typename overload_impl<Ts...>::type;
+
+    template <typename T, typename... Ts>
+    using best_match = lib::invoke_result_t<overload<Ts...>, T &&>;
+
+    template <typename T>
+    struct is_in_place_index : std::false_type {};
+
+    template <std::size_t I>
+    struct is_in_place_index<in_place_index_t<I>> : std::true_type {};
+
+    template <typename T>
+    struct is_in_place_type : std::false_type {};
+
+    template <typename T>
+    struct is_in_place_type<in_place_type_t<T>> : std::true_type {};
+
+  }  // detail
+
+  template <typename... Ts>
+  class variant {
+    static_assert(0 < sizeof...(Ts),
+                  "variant must consist of at least one alternative.");
+
+    static_assert(lib::all<!std::is_array<Ts>::value...>::value,
+                  "variant can not have an array type as an alternative.");
+
+    static_assert(lib::all<!std::is_reference<Ts>::value...>::value,
+                  "variant can not have a reference type as an alternative.");
+
+    static_assert(lib::all<!std::is_void<Ts>::value...>::value,
+                  "variant can not have a void type as an alternative.");
+
+    public:
+    template <
+        typename Front = lib::type_pack_element_t<0, Ts...>,
+        lib::enable_if_t<std::is_default_constructible<Front>::value, int> = 0>
+    inline constexpr variant() noexcept(
+        std::is_nothrow_default_constructible<Front>::value)
+        : impl_(in_place_index_t<0>{}) {}
+
+    variant(const variant &) = default;
+    variant(variant &&) = default;
+
+    template <
+        typename Arg,
+        typename Decayed = lib::decay_t<Arg>,
+        lib::enable_if_t<!std::is_same<Decayed, variant>::value, int> = 0,
+        lib::enable_if_t<!detail::is_in_place_index<Decayed>::value, int> = 0,
+        lib::enable_if_t<!detail::is_in_place_type<Decayed>::value, int> = 0,
+        std::size_t I = detail::best_match<Arg, Ts...>::value,
+        typename T = lib::type_pack_element_t<I, Ts...>,
+        lib::enable_if_t<std::is_constructible<T, Arg>::value, int> = 0>
+    inline constexpr variant(Arg &&arg) noexcept(
+        std::is_nothrow_constructible<T, Arg>::value)
+        : impl_(in_place_index_t<I>{}, lib::forward<Arg>(arg)) {}
+
+    template <
+        std::size_t I,
+        typename... Args,
+        typename T = lib::type_pack_element_t<I, Ts...>,
+        lib::enable_if_t<std::is_constructible<T, Args...>::value, int> = 0>
+    inline explicit constexpr variant(
+        in_place_index_t<I>,
+        Args &&... args) noexcept(std::is_nothrow_constructible<T,
+                                                                Args...>::value)
+        : impl_(in_place_index_t<I>{}, lib::forward<Args>(args)...) {}
+
+    template <
+        std::size_t I,
+        typename Up,
+        typename... Args,
+        typename T = lib::type_pack_element_t<I, Ts...>,
+        lib::enable_if_t<std::is_constructible<T,
+                                               std::initializer_list<Up> &,
+                                               Args...>::value,
+                         int> = 0>
+    inline explicit constexpr variant(
+        in_place_index_t<I>,
+        std::initializer_list<Up> il,
+        Args &&... args) noexcept(std::
+                                      is_nothrow_constructible<
+                                          T,
+                                          std::initializer_list<Up> &,
+                                          Args...>::value)
+        : impl_(in_place_index_t<I>{}, il, lib::forward<Args>(args)...) {}
+
+    template <
+        typename T,
+        typename... Args,
+        std::size_t I = detail::find_index_sfinae<T, Ts...>::value,
+        lib::enable_if_t<std::is_constructible<T, Args...>::value, int> = 0>
+    inline explicit constexpr variant(
+        in_place_type_t<T>,
+        Args &&... args) noexcept(std::is_nothrow_constructible<T,
+                                                                Args...>::value)
+        : impl_(in_place_index_t<I>{}, lib::forward<Args>(args)...) {}
+
+    template <
+        typename T,
+        typename Up,
+        typename... Args,
+        std::size_t I = detail::find_index_sfinae<T, Ts...>::value,
+        lib::enable_if_t<std::is_constructible<T,
+                                               std::initializer_list<Up> &,
+                                               Args...>::value,
+                         int> = 0>
+    inline explicit constexpr variant(
+        in_place_type_t<T>,
+        std::initializer_list<Up> il,
+        Args &&... args) noexcept(std::
+                                      is_nothrow_constructible<
+                                          T,
+                                          std::initializer_list<Up> &,
+                                          Args...>::value)
+        : impl_(in_place_index_t<I>{}, il, lib::forward<Args>(args)...) {}
+
+    ~variant() = default;
+
+    variant &operator=(const variant &) = default;
+    variant &operator=(variant &&) = default;
+
+    template <typename Arg,
+              lib::enable_if_t<!std::is_same<lib::decay_t<Arg>, variant>::value,
+                               int> = 0,
+              std::size_t I = detail::best_match<Arg, Ts...>::value,
+              typename T = lib::type_pack_element_t<I, Ts...>,
+              lib::enable_if_t<(std::is_assignable<T &, Arg>::value &&
+                                std::is_constructible<T, Arg>::value),
+                               int> = 0>
+    inline variant &operator=(Arg &&arg) noexcept(
+        (std::is_nothrow_assignable<T &, Arg>::value &&
+         std::is_nothrow_constructible<T, Arg>::value)) {
+      impl_.template assign<I>(lib::forward<Arg>(arg));
+      return *this;
+    }
+
+    template <
+        std::size_t I,
+        typename... Args,
+        typename T = lib::type_pack_element_t<I, Ts...>,
+        lib::enable_if_t<std::is_constructible<T, Args...>::value, int> = 0>
+    inline T &emplace(Args &&... args) {
+      return impl_.template emplace<I>(lib::forward<Args>(args)...);
+    }
+
+    template <
+        std::size_t I,
+        typename Up,
+        typename... Args,
+        typename T = lib::type_pack_element_t<I, Ts...>,
+        lib::enable_if_t<std::is_constructible<T,
+                                               std::initializer_list<Up> &,
+                                               Args...>::value,
+                         int> = 0>
+    inline T &emplace(std::initializer_list<Up> il, Args &&... args) {
+      return impl_.template emplace<I>(il, lib::forward<Args>(args)...);
+    }
+
+    template <
+        typename T,
+        typename... Args,
+        std::size_t I = detail::find_index_sfinae<T, Ts...>::value,
+        lib::enable_if_t<std::is_constructible<T, Args...>::value, int> = 0>
+    inline T &emplace(Args &&... args) {
+      return impl_.template emplace<I>(lib::forward<Args>(args)...);
+    }
+
+    template <
+        typename T,
+        typename Up,
+        typename... Args,
+        std::size_t I = detail::find_index_sfinae<T, Ts...>::value,
+        lib::enable_if_t<std::is_constructible<T,
+                                               std::initializer_list<Up> &,
+                                               Args...>::value,
+                         int> = 0>
+    inline T &emplace(std::initializer_list<Up> il, Args &&... args) {
+      return impl_.template emplace<I>(il, lib::forward<Args>(args)...);
+    }
+
+    inline constexpr bool valueless_by_exception() const noexcept {
+      return impl_.valueless_by_exception();
+    }
+
+    inline constexpr std::size_t index() const noexcept {
+      return impl_.index();
+    }
+
+    template <bool Dummy = true,
+              lib::enable_if_t<
+                  lib::all<Dummy,
+                           (lib::dependent_type<std::is_move_constructible<Ts>,
+                                                Dummy>::value &&
+                            lib::dependent_type<lib::is_swappable<Ts>,
+                                                Dummy>::value)...>::value,
+                  int> = 0>
+    inline void swap(variant &that) noexcept(
+        lib::all<(std::is_nothrow_move_constructible<Ts>::value &&
+                  lib::is_nothrow_swappable<Ts>::value)...>::value) {
+      impl_.swap(that.impl_);
+    }
+
+    private:
+    detail::impl<Ts...> impl_;
+
+    friend struct detail::access::variant;
+    friend struct detail::visitation::variant;
+  };
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
+    return v.index() == I;
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
+    return holds_alternative<detail::find_index_checked<T, Ts...>::value>(v);
+  }
+
+  namespace detail {
+    template <std::size_t I, typename V>
+    struct generic_get_impl {
+      constexpr generic_get_impl(int) {}
+
+      constexpr AUTO_REFREF operator()(V &&v) const
+        AUTO_REFREF_RETURN(
+            access::variant::get_alt<I>(lib::forward<V>(v)).value)
+    };
+
+    template <std::size_t I, typename V>
+    inline constexpr AUTO_REFREF generic_get(V &&v)
+      AUTO_REFREF_RETURN(generic_get_impl<I, V>(
+          holds_alternative<I>(v) ? 0 : (throw_bad_variant_access(), 0))(
+          lib::forward<V>(v)))
+  }  // namespace detail
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr variant_alternative_t<I, variant<Ts...>> &get(
+      variant<Ts...> &v) {
+    return detail::generic_get<I>(v);
+  }
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr variant_alternative_t<I, variant<Ts...>> &&get(
+      variant<Ts...> &&v) {
+    return detail::generic_get<I>(lib::move(v));
+  }
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr const variant_alternative_t<I, variant<Ts...>> &get(
+      const variant<Ts...> &v) {
+    return detail::generic_get<I>(v);
+  }
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr const variant_alternative_t<I, variant<Ts...>> &&get(
+      const variant<Ts...> &&v) {
+    return detail::generic_get<I>(lib::move(v));
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr T &get(variant<Ts...> &v) {
+    return get<detail::find_index_checked<T, Ts...>::value>(v);
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr T &&get(variant<Ts...> &&v) {
+    return get<detail::find_index_checked<T, Ts...>::value>(lib::move(v));
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr const T &get(const variant<Ts...> &v) {
+    return get<detail::find_index_checked<T, Ts...>::value>(v);
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr const T &&get(const variant<Ts...> &&v) {
+    return get<detail::find_index_checked<T, Ts...>::value>(lib::move(v));
+  }
+
+  namespace detail {
+
+    template <std::size_t I, typename V>
+    inline constexpr /* auto * */ AUTO generic_get_if(V *v) noexcept
+      AUTO_RETURN(v && holds_alternative<I>(*v)
+                      ? lib::addressof(access::variant::get_alt<I>(*v).value)
+                      : nullptr)
+
+  }  // namespace detail
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr lib::add_pointer_t<variant_alternative_t<I, variant<Ts...>>>
+  get_if(variant<Ts...> *v) noexcept {
+    return detail::generic_get_if<I>(v);
+  }
+
+  template <std::size_t I, typename... Ts>
+  inline constexpr lib::add_pointer_t<
+      const variant_alternative_t<I, variant<Ts...>>>
+  get_if(const variant<Ts...> *v) noexcept {
+    return detail::generic_get_if<I>(v);
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr lib::add_pointer_t<T>
+  get_if(variant<Ts...> *v) noexcept {
+    return get_if<detail::find_index_checked<T, Ts...>::value>(v);
+  }
+
+  template <typename T, typename... Ts>
+  inline constexpr lib::add_pointer_t<const T>
+  get_if(const variant<Ts...> *v) noexcept {
+    return get_if<detail::find_index_checked<T, Ts...>::value>(v);
+  }
+
+  template <typename... Ts>
+  inline constexpr bool operator==(const variant<Ts...> &lhs,
+                                   const variant<Ts...> &rhs) {
+    using detail::visitation::variant;
+    using lib::equal_to;
+#ifdef MPARK_CPP14_CONSTEXPR
+    if (lhs.index() != rhs.index()) return false;
+    if (lhs.valueless_by_exception()) return true;
+    return variant::visit_value_at(lhs.index(), equal_to{}, lhs, rhs);
+#else
+    return lhs.index() == rhs.index() &&
+           (lhs.valueless_by_exception() ||
+            variant::visit_value_at(lhs.index(), equal_to{}, lhs, rhs));
+#endif
+  }
+
+  template <typename... Ts>
+  inline constexpr bool operator!=(const variant<Ts...> &lhs,
+                                   const variant<Ts...> &rhs) {
+    using detail::visitation::variant;
+    using lib::not_equal_to;
+#ifdef MPARK_CPP14_CONSTEXPR
+    if (lhs.index() != rhs.index()) return true;
+    if (lhs.valueless_by_exception()) return false;
+    return variant::visit_value_at(lhs.index(), not_equal_to{}, lhs, rhs);
+#else
+    return lhs.index() != rhs.index() ||
+           (!lhs.valueless_by_exception() &&
+            variant::visit_value_at(lhs.index(), not_equal_to{}, lhs, rhs));
+#endif
+  }
+
+  template <typename... Ts>
+  inline constexpr bool operator<(const variant<Ts...> &lhs,
+                                  const variant<Ts...> &rhs) {
+    using detail::visitation::variant;
+    using lib::less;
+#ifdef MPARK_CPP14_CONSTEXPR
+    if (rhs.valueless_by_exception()) return false;
+    if (lhs.valueless_by_exception()) return true;
+    if (lhs.index() < rhs.index()) return true;
+    if (lhs.index() > rhs.index()) return false;
+    return variant::visit_value_at(lhs.index(), less{}, lhs, rhs);
+#else
+    return !rhs.valueless_by_exception() &&
+           (lhs.valueless_by_exception() || lhs.index() < rhs.index() ||
+            (lhs.index() == rhs.index() &&
+             variant::visit_value_at(lhs.index(), less{}, lhs, rhs)));
+#endif
+  }
+
+  template <typename... Ts>
+  inline constexpr bool operator>(const variant<Ts...> &lhs,
+                                  const variant<Ts...> &rhs) {
+    using detail::visitation::variant;
+    using lib::greater;
+#ifdef MPARK_CPP14_CONSTEXPR
+    if (lhs.valueless_by_exception()) return false;
+    if (rhs.valueless_by_exception()) return true;
+    if (lhs.index() > rhs.index()) return true;
+    if (lhs.index() < rhs.index()) return false;
+    return variant::visit_value_at(lhs.index(), greater{}, lhs, rhs);
+#else
+    return !lhs.valueless_by_exception() &&
+           (rhs.valueless_by_exception() || lhs.index() > rhs.index() ||
+            (lhs.index() == rhs.index() &&
+             variant::visit_value_at(lhs.index(), greater{}, lhs, rhs)));
+#endif
+  }
+
+  template <typename... Ts>
+  inline constexpr bool operator<=(const variant<Ts...> &lhs,
+                                   const variant<Ts...> &rhs) {
+    using detail::visitation::variant;
+    using lib::less_equal;
+#ifdef MPARK_CPP14_CONSTEXPR
+    if (lhs.valueless_by_exception()) return true;
+    if (rhs.valueless_by_exception()) return false;
+    if (lhs.index() < rhs.index()) return true;
+    if (lhs.index() > rhs.index()) return false;
+    return variant::visit_value_at(lhs.index(), less_equal{}, lhs, rhs);
+#else
+    return lhs.valueless_by_exception() ||
+           (!rhs.valueless_by_exception() &&
+            (lhs.index() < rhs.index() ||
+             (lhs.index() == rhs.index() &&
+              variant::visit_value_at(lhs.index(), less_equal{}, lhs, rhs))));
+#endif
+  }
+
+  template <typename... Ts>
+  inline constexpr bool operator>=(const variant<Ts...> &lhs,
+                                   const variant<Ts...> &rhs) {
+    using detail::visitation::variant;
+    using lib::greater_equal;
+#ifdef MPARK_CPP14_CONSTEXPR
+    if (rhs.valueless_by_exception()) return true;
+    if (lhs.valueless_by_exception()) return false;
+    if (lhs.index() > rhs.index()) return true;
+    if (lhs.index() < rhs.index()) return false;
+    return variant::visit_value_at(lhs.index(), greater_equal{}, lhs, rhs);
+#else
+    return rhs.valueless_by_exception() ||
+           (!lhs.valueless_by_exception() &&
+            (lhs.index() > rhs.index() ||
+             (lhs.index() == rhs.index() &&
+              variant::visit_value_at(
+                  lhs.index(), greater_equal{}, lhs, rhs))));
+#endif
+  }
+
+  struct monostate {};
+
+  inline constexpr bool operator<(monostate, monostate) noexcept {
+    return false;
+  }
+
+  inline constexpr bool operator>(monostate, monostate) noexcept {
+    return false;
+  }
+
+  inline constexpr bool operator<=(monostate, monostate) noexcept {
+    return true;
+  }
+
+  inline constexpr bool operator>=(monostate, monostate) noexcept {
+    return true;
+  }
+
+  inline constexpr bool operator==(monostate, monostate) noexcept {
+    return true;
+  }
+
+  inline constexpr bool operator!=(monostate, monostate) noexcept {
+    return false;
+  }
+
+#ifdef MPARK_CPP14_CONSTEXPR
+  namespace detail {
+
+    inline constexpr bool all(std::initializer_list<bool> bs) {
+      for (bool b : bs) {
+        if (!b) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+  }  // namespace detail
+
+  template <typename Visitor, typename... Vs>
+  inline constexpr decltype(auto) visit(Visitor &&visitor, Vs &&... vs) {
+    return (detail::all({!vs.valueless_by_exception()...})
+                ? (void)0
+                : throw_bad_variant_access()),
+           detail::visitation::variant::visit_value(
+               lib::forward<Visitor>(visitor), lib::forward<Vs>(vs)...);
+  }
+#else
+  namespace detail {
+
+    template <std::size_t N>
+    inline constexpr bool all_impl(const lib::array<bool, N> &bs,
+                                   std::size_t idx) {
+      return idx >= N || (bs[idx] && all_impl(bs, idx + 1));
+    }
+
+    template <std::size_t N>
+    inline constexpr bool all(const lib::array<bool, N> &bs) {
+      return all_impl(bs, 0);
+    }
+
+  }  // namespace detail
+
+  template <typename Visitor, typename... Vs>
+  inline constexpr DECLTYPE_AUTO visit(Visitor &&visitor, Vs &&... vs)
+    DECLTYPE_AUTO_RETURN(
+        (detail::all(
+             lib::array<bool, sizeof...(Vs)>{{!vs.valueless_by_exception()...}})
+             ? (void)0
+             : throw_bad_variant_access()),
+        detail::visitation::variant::visit_value(lib::forward<Visitor>(visitor),
+                                                 lib::forward<Vs>(vs)...))
+#endif
+
+  template <typename... Ts>
+  inline auto swap(variant<Ts...> &lhs,
+                   variant<Ts...> &rhs) noexcept(noexcept(lhs.swap(rhs)))
+      -> decltype(lhs.swap(rhs)) {
+    lhs.swap(rhs);
+  }
+
+  namespace detail {
+
+    template <typename T, typename...>
+    using enabled_type = T;
+
+    namespace hash {
+
+      template <typename H, typename K>
+      constexpr bool meets_requirements() {
+        return std::is_copy_constructible<H>::value &&
+               std::is_move_constructible<H>::value &&
+               lib::is_invocable_r<std::size_t, H, const K &>::value;
+      }
+
+      template <typename K>
+      constexpr bool is_enabled() {
+        using H = std::hash<K>;
+        return meets_requirements<H, K>() &&
+               std::is_default_constructible<H>::value &&
+               std::is_copy_assignable<H>::value &&
+               std::is_move_assignable<H>::value;
+      }
+
+    }  // namespace hash
+
+  }  // namespace detail
+
+#undef AUTO
+#undef AUTO_RETURN
+
+#undef AUTO_REFREF
+#undef AUTO_REFREF_RETURN
+
+#undef DECLTYPE_AUTO
+#undef DECLTYPE_AUTO_RETURN
+
+}  // namespace mpark
+
+namespace std {
+
+  template <typename... Ts>
+  struct hash<mpark::detail::enabled_type<
+      mpark::variant<Ts...>,
+      mpark::lib::enable_if_t<mpark::lib::all<mpark::detail::hash::is_enabled<
+          mpark::lib::remove_const_t<Ts>>()...>::value>>> {
+    using argument_type = mpark::variant<Ts...>;
+    using result_type = std::size_t;
+
+    inline result_type operator()(const argument_type &v) const {
+      using mpark::detail::visitation::variant;
+      std::size_t result =
+          v.valueless_by_exception()
+              ? 299792458  // Random value chosen by the universe upon creation
+              : variant::visit_alt(
+#ifdef MPARK_GENERIC_LAMBDAS
+                    [](const auto &alt) {
+                      using alt_type = mpark::lib::decay_t<decltype(alt)>;
+                      using value_type = mpark::lib::remove_const_t<
+                          typename alt_type::value_type>;
+                      return hash<value_type>{}(alt.value);
+                    }
+#else
+                    hasher{}
+#endif
+                    ,
+                    v);
+      return hash_combine(result, hash<std::size_t>{}(v.index()));
+    }
+
+    private:
+#ifndef MPARK_GENERIC_LAMBDAS
+    struct hasher {
+      template <typename Alt>
+      inline std::size_t operator()(const Alt &alt) const {
+        using alt_type = mpark::lib::decay_t<Alt>;
+        using value_type =
+            mpark::lib::remove_const_t<typename alt_type::value_type>;
+        return hash<value_type>{}(alt.value);
+      }
+    };
+#endif
+
+    static std::size_t hash_combine(std::size_t lhs, std::size_t rhs) {
+      return lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
+    }
+  };
+
+  template <>
+  struct hash<mpark::monostate> {
+    using argument_type = mpark::monostate;
+    using result_type = std::size_t;
+
+    inline result_type operator()(const argument_type &) const noexcept {
+      return 66740831;  // return a fundamentally attractive random value.
+    }
+  };
+
+}  // namespace std
+
+#endif  // MPARK_VARIANT_HPP

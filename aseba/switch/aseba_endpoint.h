@@ -16,7 +16,7 @@
 #include "aseba_description_receiver.h"
 #include "aseba_node.h"
 #include "log.h"
-//#include "variant.hpp"
+#include "variant.hpp"
 #include "aseba_node_registery.h"
 
 namespace mobsya {
@@ -24,7 +24,7 @@ namespace mobsya {
 constexpr usb_device_identifier THYMIO2_DEVICE_ID = {0x0617, 0x000a};
 constexpr usb_device_identifier THYMIO_WIRELESS_DEVICE_ID = {0x0617, 0x000c};
 
-namespace variant_ns = std;
+namespace variant_ns = mpark;
 
 class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
