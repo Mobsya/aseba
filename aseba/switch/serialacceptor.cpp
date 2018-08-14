@@ -49,7 +49,7 @@ void serial_acceptor_service::on_active_timer(const boost::system::error_code& e
 
 static std::string device_instance_identifier(DEVINST deviceInstanceNumber) {
     std::string str(MAX_DEVICE_ID_LEN + 1, 0);
-    if(::CM_Get_Device_IDA(deviceInstanceNumber, str.data(), MAX_DEVICE_ID_LEN, 0) != CR_SUCCESS) {
+    if(::CM_Get_Device_IDA(deviceInstanceNumber, &str[0], MAX_DEVICE_ID_LEN, 0) != CR_SUCCESS) {
         return {};
     }
     for(char& c : str)
@@ -78,7 +78,7 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
         DWORD bytesRequired = MAX_PATH;
         for(;;) {
             const LONG ret =
-                ::RegQueryValueExA(key, subk, nullptr, &dataType, reinterpret_cast<PBYTE>(str.data()), &bytesRequired);
+                ::RegQueryValueExA(key, subk, nullptr, &dataType, reinterpret_cast<PBYTE>(&str[0]), &bytesRequired);
             if(ret == ERROR_MORE_DATA) {
                 str.resize(bytesRequired / sizeof(str) + 1, 0);
                 continue;
@@ -86,7 +86,7 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
                 if(dataType == REG_SZ)
                     return str;
                 else if(dataType == REG_DWORD)
-                    return fmt::format("COM{}", *(PDWORD(str.data())));
+                    return fmt::format("COM{}", *(PDWORD(&str[0])));
             }
             return {};
         }
