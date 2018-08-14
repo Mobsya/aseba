@@ -22,6 +22,7 @@ add_executable(switch
     flatbuffers_message_writer.h
     flatbuffers_messages.h
     node_id.h
+    usb_utils.h
 )
 
 if(WIN32)
@@ -39,7 +40,6 @@ else()
 		usbdevice.cpp
 		usbdevice.h
 		usbcontext.h
-		libusb_utils.h
 	)
 	target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_USB)
 endif()

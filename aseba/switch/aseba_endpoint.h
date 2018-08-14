@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <boost/asio.hpp>
 #include <chrono>
+#include "usb_utils.h"
 #ifdef MOBSYA_TDM_ENABLE_USB
 #	include "usbdevice.h"
 #endif
@@ -17,10 +18,8 @@
 
 namespace mobsya {
 
-#ifdef MOBSYA_TDM_ENABLE_USB
 constexpr usb_device_identifier THYMIO2_DEVICE_ID = {0x0617, 0x000a};
 constexpr usb_device_identifier THYMIO_WIRELESS_DEVICE_ID = {0x0617, 0x000c};
-#endif
 
 namespace variant_ns = nonstd;
 
