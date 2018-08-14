@@ -51,6 +51,8 @@ public:
         registerMessageType<GetNodeDescription>(ASEBA_MESSAGE_GET_NODE_DESCRIPTION);
 
         registerMessageType<Description>(ASEBA_MESSAGE_DESCRIPTION);
+        registerMessageType<DeviceInfo>(ASEBA_MESSAGE_DEVICE_INFO);
+
         registerMessageType<NamedVariableDescription>(ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION);
         registerMessageType<LocalEventDescription>(ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION);
         registerMessageType<NativeFunctionDescription>(ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION);
@@ -1153,6 +1155,61 @@ bool operator==(const SetVariables& lhs, const SetVariables& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.start == rhs.start &&
         lhs.variables == rhs.variables;
 }
+
+
+void SetDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
+    CmdMessage::serializeSpecific(buffer);
+    buffer.add(uint16_t(info));
+    buffer.add(uint16_t(data.size()));
+    for(const uint8_t& b : data)
+        buffer.add(b);
+}
+
+void SetDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
+    CmdMessage::deserializeSpecific(buffer);
+    info = DeviceInfoType(buffer.get<uint8_t>());
+    auto size = buffer.get<uint8_t>();
+    data.resize(size);
+    for(auto& d : data)
+        d = buffer.get<uint8_t>();
+}
+
+void SetDeviceInfo::dumpSpecific(std::wostream& stream) const {
+    CmdMessage::dumpSpecific(stream);
+    stream << "info type: " << info << ", size: " << data.size();
+}
+
+void GetDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
+    CmdMessage::serializeSpecific(buffer);
+    buffer.add(uint16_t(info));
+}
+
+void GetDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {}
+
+void GetDeviceInfo::dumpSpecific(std::wostream& stream) const {
+    CmdMessage::dumpSpecific(stream);
+    stream << "info type: " << info;
+}
+
+void DeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
+    buffer.add(uint8_t(info));
+    buffer.add(uint8_t(data.size()));
+    for(const uint8_t& b : data)
+        buffer.add(b);
+}
+
+void DeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {
+    info = DeviceInfoType(buffer.get<uint8_t>());
+    auto size = buffer.get<uint8_t>();
+    data.resize(size);
+    for(auto& d : data)
+        d = buffer.get<uint8_t>();
+}
+
+void DeviceInfo::dumpSpecific(std::wostream& stream) const {
+    stream << "info type: " << info << ", size: " << data.size();
+}
+
 
 //
 

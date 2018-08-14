@@ -1,11 +1,17 @@
 #pragma once
-
+#include <fmt/format.h>
+#include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
-#include <spdlog/fmt/bundled/ostream.h>
 
 namespace mobsya {
-extern std::shared_ptr<spdlog::logger> log;
+extern std::shared_ptr<spdlog::logger> logger;
 extern std::string log_filename(const char* path);
+template <typename... Args>
+void log(spdlog::level::level_enum level, const char* file, int line, const char* message, Args... args) {
+    mobsya::logger->log(
+        level, fmt::format("{}@L{}:\t{}", mobsya::log_filename(file), line, fmt::format(message, args...)).c_str());
+}
 
 }  // namespace mobsya
 #define _mobsya_CONCAT2(A, B) A##B
@@ -13,12 +19,18 @@ extern std::string log_filename(const char* path);
 #define _mobsya_STR2(x) #x
 #define _mobsya_STR(x) _mobsya_STR2(x)
 
-#define _mobsya_Log(level, message, ...)                                                                           \
-    mobsya::log->log(level, fmt::format("{}@L{}:\t{}", mobsya::log_filename(__FILE__), __LINE__, message).c_str(), \
-                     ##__VA_ARGS__)
-#define mLogTrace(...) _mobsya_Log(spdlog::level::trace, __VA_ARGS__)
-#define mLogDebug(...) _mobsya_Log(spdlog::level::debug, __VA_ARGS__)
-#define mLogInfo(...) _mobsya_Log(spdlog::level::info, __VA_ARGS__)
-#define mLogWarn(...) _mobsya_Log(spdlog::level::warn, __VA_ARGS__)
-#define mLogError(...) _mobsya_Log(spdlog::level::err, __VA_ARGS__)
-#define mLogCritical(...) _mobsya_Log(spdlog::level::critical, __VA_ARGS__)
+#ifdef _MSC_VER
+#    define mLogTrace(...) mobsya::log(spdlog::level::trace, __FILE__, __LINE__, __VA_ARGS__)
+#    define mLogDebug(...) mobsya::log(spdlog::level::debug, __FILE__, __LINE__, __VA_ARGS__)
+#    define mLogInfo(...) mobsya::log(spdlog::level::info, __FILE__, __LINE__, __VA_ARGS__)
+#    define mLogWarn(...) mobsya::log(spdlog::level::warn, __FILE__, __LINE__, __VA_ARGS__)
+#    define mLogError(...) mobsya::log(spdlog::level::err, __FILE__, __LINE__, __VA_ARGS__)
+#    define mLogCritical(...) mobsya::log(spdlog::level::critical, __FILE__, __LINE__, __VA_ARGS__)
+#else
+#    define mLogTrace(...) mobsya::log(spdlog::level::trace, __FILE__, __LINE__, ##__VA_ARGS__)
+#    define mLogDebug(...) mobsya::log(spdlog::level::debug, __FILE__, __LINE__, ##__VA_ARGS__)
+#    define mLogInfo(...) mobsya::log(spdlog::level::info, __FILE__, __LINE__, ##__VA_ARGS__)
+#    define mLogWarn(...) mobsya::log(spdlog::level::warn, __FILE__, __LINE__, ##__VA_ARGS__)
+#    define mLogError(...) mobsya::log(spdlog::level::err, __FILE__, __LINE__, ##__VA_ARGS__)
+#    define mLogCritical(...) mobsya::log(spdlog::level::critical, __FILE__, __LINE__, ##__VA_ARGS__)
+#endif

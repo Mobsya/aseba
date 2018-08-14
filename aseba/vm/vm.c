@@ -690,7 +690,6 @@ void AsebaVMDebugMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t
         AsebaSendMessageWords(vm, ASEBA_MESSAGE_NODE_PRESENT, &protocolVersion, 1);
         return;
     }
-
     // safety check to avoid memory trash in case of unknown messages with 0 length
     if(dataLength == 0)
         return;
@@ -703,6 +702,10 @@ void AsebaVMDebugMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t
     dataLength--;
 
     switch(id) {
+        case ASEBA_MESSAGE_GET_DEVICE_INFO:
+        case ASEBA_MESSAGE_SET_DEVICE_INFO:
+            AsebaHandleDeviceInfoMessages(vm, id, data, dataLength);
+            break;
         case ASEBA_MESSAGE_SET_BYTECODE: {
             uint16_t start = bswap16(data[0]);
             uint16_t length = dataLength - 1;

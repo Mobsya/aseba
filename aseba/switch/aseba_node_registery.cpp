@@ -22,7 +22,9 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
 
     auto it = find(node);
     if(it == std::end(m_aseba_nodes)) {
-        node_id id = m_id_generator();
+        node_id id = node->uuid();
+        if(id.is_nil())
+            id = m_id_generator();
         it = m_aseba_nodes.insert({id, node}).first;
         lock.unlock();
         m_node_status_changed_signal(node, id, aseba_node::status::connected);
@@ -32,7 +34,18 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
     update_discovery();
 }
 
-void aseba_node_registery::remove_node(const std::shared_ptr<aseba_node>& node) {
+void aseba_node_registery::set_node_uuid(const std::shared_ptr<aseba_node> & node, const node_id& id) {
+    std::unique_lock<std::mutex> lock(m_nodes_mutex);
+    auto it = find(node);
+    if(it != std::end(m_aseba_nodes)) {
+        m_aseba_nodes.erase(it);
+    }
+    m_aseba_nodes.insert({id, node});
+    lock.unlock();
+    update_discovery();
+}
+
+void aseba_node_registery::remove_node(const std::shared_ptr<aseba_node> & node) {
     std::unique_lock<std::mutex> lock(m_nodes_mutex);
 
     mLogInfo("Removing node");

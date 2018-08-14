@@ -21,6 +21,8 @@ add_executable(switch
     aseba_endpoint.h
     aseba_node.h
     aseba_node.cpp
+    aseba_tcpacceptor.h
+    aseba_tcpacceptor.cpp
     dispatcher.h
     app_server.h
     app_endpoint.h
@@ -29,7 +31,8 @@ add_executable(switch
     flatbuffers_messages.h
     node_id.h
 )
-target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time libusb spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers)
+target_compile_definitions(switch PUBLIC -DSPDLOG_FMT_EXTERNAL)
+target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time libusb spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
 if(WIN32)
     target_link_libraries(switch bcrypt)
 endif()

@@ -56,6 +56,7 @@ private:
     mutable std::mutex m_req_mutex;
     std::queue<request> m_requests;
     boost::asio::deadline_timer m_active_timer;
+    std::vector<libusb_device*> m_known_devices;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
 };
 

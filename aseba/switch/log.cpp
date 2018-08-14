@@ -1,8 +1,9 @@
 #include "log.h"
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <boost/utility/string_view.hpp>
-#include <spdlog/fmt/fmt.h>
+#include <fmt/format.h>
 
-std::shared_ptr<spdlog::logger> mobsya::log = []() {
+std::shared_ptr<spdlog::logger> mobsya::logger = []() {
     auto log = spdlog::stdout_color_mt("console");
     log->set_level(spdlog::level::trace);
     log->flush_on(spdlog::level::trace);

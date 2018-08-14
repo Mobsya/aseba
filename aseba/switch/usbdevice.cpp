@@ -20,6 +20,7 @@ void usb_device_service::move_construct(implementation_type& impl, implementatio
 }
 
 void usb_device_service::destroy(implementation_type& impl) {
+    close(impl);
     libusb_unref_device(impl.device);
 }
 
@@ -72,7 +73,8 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
 
     for(int if_num = 0; if_num < 2; if_num++) {
         if(libusb_kernel_driver_active(impl.handle, if_num)) {
-            if(auto r = libusb_detach_kernel_driver(impl.handle, if_num)) {
+            auto r = libusb_detach_kernel_driver(impl.handle, if_num);
+            if(r > 0 && r != LIBUSB_ERROR_NOT_SUPPORTED) {
                 return usb::make_unexpected(r);
             }
         }
@@ -90,6 +92,7 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
         for(int s = 0; s < interface.num_altsetting; s++) {
             if(interface.altsetting[s].bInterfaceClass != LIBUSB_CLASS_DATA)
                 continue;
+            libusb_claim_interface(impl.handle, i);
             for(int e = 0; e < interface.altsetting[s].bNumEndpoints; e++) {
                 const auto endpoint = interface.altsetting[s].endpoint[e];
                 if(endpoint.bmAttributes & LIBUSB_TRANSFER_TYPE_BULK) {
@@ -176,8 +179,8 @@ void usb_device::assign(native_handle_type d) {
     this->get_service().assign(this->get_implementation(), d);
 }
 
-void usb_device::open() {
-    this->get_service().open(this->get_implementation());
+tl::expected<void, boost::system::error_code> usb_device::open() {
+    return this->get_service().open(this->get_implementation());
 }
 
 void usb_device::cancel() {

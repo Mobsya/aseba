@@ -601,6 +601,64 @@ protected:
     }
 };
 
+
+//! Store persistent device info into thymio
+class SetDeviceInfo : public CmdMessage {
+private:
+    DeviceInfoType info;
+    std::vector<uint8_t> data;
+
+public:
+    SetDeviceInfo(uint16_t dest, DeviceInfoType info, const std::vector<uint8_t>& data)
+        : CmdMessage(ASEBA_MESSAGE_SET_DEVICE_INFO, dest), info(info), data(data) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "SetDeviceInfo";
+    }
+};
+
+//! Get persistent device info from thymio
+class GetDeviceInfo : public CmdMessage {
+private:
+    DeviceInfoType info;
+
+public:
+    GetDeviceInfo(uint16_t dest, DeviceInfoType info) : CmdMessage(ASEBA_MESSAGE_GET_DEVICE_INFO, dest), info(info) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "GetDeviceInfo";
+    }
+};
+
+//! Persistent device info from thymio
+class DeviceInfo : public Message {
+public:
+    DeviceInfoType info;
+    std::vector<uint8_t> data;
+
+public:
+    DeviceInfo() : Message(ASEBA_MESSAGE_DEVICE_INFO) {}
+    DeviceInfo(DeviceInfoType info, const std::vector<uint8_t>& data)
+        : Message(ASEBA_MESSAGE_DEVICE_INFO), info(info), data(data) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "DeviceInfo";
+    }
+};
+
+
 bool operator==(const SetBytecode& lhs, const SetBytecode& rhs);
 
 #ifndef ASEBA_NO_DASHEL

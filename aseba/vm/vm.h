@@ -194,8 +194,12 @@ static void AsebaVMErrorCB(AsebaVMState* vm, const char* message) {}
 void __attribute__((weak)) AsebaVMErrorCB(AsebaVMState* vm, const char* message);
 #endif  // DISABLE_WEAK_CALLBACKS
 
-
-// Function optionally implemented
+#ifdef DISABLE_WEAK_CALLBACKS
+static int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {}
+#else   // DISABLE_WEAK_CALLBACKS
+int __attribute__((weak))
+AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength);
+#endif  // DISABLE_WEAK_CALLBACKS
 
 #ifdef ASEBA_ASSERT
 

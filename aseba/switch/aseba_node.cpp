@@ -3,6 +3,8 @@
 #include "aseba_node_registery.h"
 #include <aseba/common/utils/utils.h>
 #include <aseba/compiler/compiler.h>
+#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 namespace mobsya {
 
@@ -17,6 +19,7 @@ const std::string& aseba_node::status_to_string(aseba_node::status s) {
 
 aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint)
     : m_id(id)
+    , m_uuid(boost::uuids::nil_uuid())
     , m_status(status::disconnected)
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
@@ -42,19 +45,13 @@ aseba_node::~aseba_node() {
 
 
 void aseba_node::on_message(const Aseba::Message& msg) {
-    /*switch(msg.type) {
-        case ASEBA_MESSAGE_NODE_PRESENT: {
-            std::unique_lock<std::mutex> _(m_node_mutex);
-            if(m_description.name.empty()) {
-                auto locked = m_endpoint.lock();
-                if(locked) {
-                    locked->read_aseba_node_description(m_id);
-                }
-            }
+    switch(msg.type) {
+        case ASEBA_MESSAGE_DEVICE_INFO: {
+            on_device_info(static_cast<const Aseba::DeviceInfo&>(msg));
             break;
         }
         default: break;
-    }*/
+    }
 }
 
 
@@ -138,13 +135,63 @@ void aseba_node::run_aseba_program(write_callback&& cb) {
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
-    mLogInfo("Got description for {} [{} variables, {} functions, {} events]",
-             native_id(), description.namedVariables.size(), description.nativeFunctions.size(), description.localEvents.size());
+    mLogInfo("Got description for {} [{} variables, {} functions, {} events - protocol {}]", native_id(),
+             description.namedVariables.size(), description.nativeFunctions.size(), description.localEvents.size(),
+             description.protocolVersion);
     {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_description = std::move(description);
     }
+    if(description.protocolVersion >= 6) {
+        // set_friendly_name("The merovingian");
+        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
+        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
+        return;
+    }
+
     set_status(status::available);
+}
+
+void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
+    mLogTrace("Got info for {} [{} : {}]", native_id(), info.info, info.data.size());
+    if(info.info == DEVICE_INFO_UUID) {
+        if(info.data.size() == 16) {
+            std::copy(info.data.begin(), info.data.end(), m_uuid.begin());
+        }
+        std::unique_lock<std::mutex> lock(m_node_mutex);
+        if(m_uuid.is_nil()) {
+            m_uuid = boost::uuids::random_generator()();
+            std::vector<uint8_t> data;
+            std::copy(m_uuid.begin(), m_uuid.end(), std::back_inserter(data));
+            lock.unlock();
+            write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_UUID, data));
+        }
+        mLogInfo("Persistent uuid for {} is now {} ", native_id(), boost::uuids::to_string(m_uuid));
+        auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_ctx);
+        registery.set_node_uuid(shared_from_this(), m_uuid);
+        set_status(status::available);
+
+    } else if(info.info == DEVICE_INFO_NAME) {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        m_friendly_name.clear();
+        m_friendly_name.reserve(info.data.size());
+        std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
+        if(!m_friendly_name.empty())
+            mLogInfo("Persistent name for {} is now \"{}\"", native_id(), m_friendly_name);
+    }
+}
+
+std::string aseba_node::friendly_name() const {
+    return m_friendly_name;
+}
+
+void aseba_node::set_friendly_name(const std::string& str) {
+    std::vector<uint8_t> data;
+    data.reserve(str.size());
+    std::copy(str.begin(), str.end(), std::back_inserter(data));
+    write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_NAME, data));
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    m_friendly_name = str;
 }
 
 }  // namespace mobsya
