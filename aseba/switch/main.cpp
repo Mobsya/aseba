@@ -9,6 +9,9 @@
 #ifdef MOBSYA_TDM_ENABLE_USB
 #include "usbserver.h"
 #endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+#include "serialserver.h"
+#endif
 
 int main() {
     mLogInfo("Starting...");
@@ -31,6 +34,10 @@ int main() {
 #ifdef MOBSYA_TDM_ENABLE_USB
 	mobsya::usb_server usb_server(ctx, { mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID }); 
 	usb_server.accept();
+#endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+	mobsya::serial_server serial_server(ctx, { mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID });
+	serial_server.accept();
 #endif
     aseba_tcp_acceptor.accept();
 

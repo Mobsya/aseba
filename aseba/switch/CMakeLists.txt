@@ -23,12 +23,16 @@ add_executable(switch
     flatbuffers_messages.h
     node_id.h
     usb_utils.h
+    utils.h
 )
 
 if(WIN32)
 	target_sources(switch PRIVATE
 		serialacceptor.h
 		serialacceptor.cpp
+		serialserver.h
+		serialserver.cpp
+		serial_usb_device.h
 	)
 	target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
 else()
