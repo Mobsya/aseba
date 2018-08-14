@@ -1,16 +1,8 @@
 set(CMAKE_CXX_STANDARD 17)
 add_executable(switch
     main.cpp
-    usbserver.cpp
-    usbserver.h
-    usbacceptor.h
-    usbacceptor.cpp
-    usbdevice.cpp
-    usbdevice.h
-    usbcontext.h
     log.h
     log.cpp
-    libusb_utils.h
     error.cpp
     error.h
     aseba_message_parser.h
@@ -31,10 +23,34 @@ add_executable(switch
     flatbuffers_messages.h
     node_id.h
 )
+
+if(WIN32)
+	target_sources(switch PRIVATE
+		serialacceptor.h
+		serialacceptor.cpp
+	)
+	target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
+else()
+	target_sources(switch PRIVATE
+		usbserver.cpp
+		usbserver.h
+		usbacceptor.h
+		usbacceptor.cpp
+		usbdevice.cpp
+		usbdevice.h
+		usbcontext.h
+		libusb_utils.h
+	)
+	target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_USB)
+endif()
+
+
 target_compile_definitions(switch PUBLIC -DSPDLOG_FMT_EXTERNAL)
-target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time libusb spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
+target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
 if(WIN32)
     target_link_libraries(switch bcrypt)
+else()
+	target_link_libraries(switch libusb)
 endif()
 
 install(TARGETS switch RUNTIME DESTINATION bin)
