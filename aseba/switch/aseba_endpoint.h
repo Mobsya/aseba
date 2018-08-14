@@ -252,8 +252,12 @@ private:
 #ifdef MOBSYA_TDM_ENABLE_USB
         return variant_ns::holds_alternative<usb_device>(m_endpoint) &&
             usb().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
+#elif defined(MOBSYA_TDM_ENABLE_SERIAL)
+        return variant_ns::holds_alternative<usb_serial_port>(m_endpoint) &&
+            serial().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
+#else
+        return false;
 #endif
-		return false;
     }
 
     void read_aseba_node_description(uint16_t node) {
