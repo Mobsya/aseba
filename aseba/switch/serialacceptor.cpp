@@ -12,7 +12,6 @@
 #include <setupapi.h>
 #include <cfgmgr32.h>
 
-
 namespace mobsya {
 
 serial_acceptor_service::serial_acceptor_service(boost::asio::io_context& io_service)
@@ -78,8 +77,8 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
         std::string str(MAX_PATH + 1, 0);
         DWORD bytesRequired = MAX_PATH;
         for(;;) {
-            const LONG ret = ::RegQueryValueExA(key, subk, nullptr, &dataType,
-                                               reinterpret_cast<PBYTE>(str.data()), &bytesRequired);
+            const LONG ret =
+                ::RegQueryValueExA(key, subk, nullptr, &dataType, reinterpret_cast<PBYTE>(str.data()), &bytesRequired);
             if(ret == ERROR_MORE_DATA) {
                 str.resize(bytesRequired / sizeof(str) + 1, 0);
                 continue;
@@ -105,7 +104,7 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
     if(deviceInfoSet == INVALID_HANDLE_VALUE)
         return;
 
-	std::vector<std::string> known_devices;
+    std::vector<std::string> known_devices;
 
     SP_DEVINFO_DATA deviceInfoData;
     ::memset(&deviceInfoData, 0, sizeof(deviceInfoData));
@@ -123,7 +122,7 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             const auto str = device_instance_identifier(deviceInfoData.DevInst);
             const auto id = device_id_from_interface_id(str);
             const auto& devices = req.acceptor.compatible_devices();
-            if(std::find(std::begin(devices), std::end(devices), id ) == std::end(devices)) {
+            if(std::find(std::begin(devices), std::end(devices), id) == std::end(devices)) {
                 mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
                 continue;
             }
@@ -137,11 +136,11 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             boost::system::error_code ec;
             req.d.open(port_name, ec);
             if(!ec) {
-				auto handler = std::move(req.handler);
-				const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
-				m_requests.pop();
-				boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
-			}
+                auto handler = std::move(req.handler);
+                const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
+                m_requests.pop();
+                boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
+            }
         }
         ::SetupDiDestroyDeviceInfoList(deviceInfoSet);
     }
