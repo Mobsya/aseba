@@ -6,10 +6,10 @@
 #include <chrono>
 #include "usb_utils.h"
 #ifdef MOBSYA_TDM_ENABLE_USB
-#	include "usbdevice.h"
+#    include "usbdevice.h"
 #endif
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
-#	include "serial_usb_device.h"
+#    include "serial_usb_device.h"
 #endif
 #include "aseba_message_parser.h"
 #include "aseba_message_writer.h"
@@ -40,12 +40,14 @@ public:
     using tcp_socket = boost::asio::ip::tcp::socket;
     using endpoint_t = variant_ns::variant<tcp_socket
 #ifdef MOBSYA_TDM_ENABLE_USB
-		, usb_device
+                                           ,
+                                           usb_device
 #endif
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
-		, usb_serial_port
+                                           ,
+                                           usb_serial_port
 #endif
-	>;
+                                           >;
 
     using write_callback = std::function<void(boost::system::error_code)>;
 
@@ -58,26 +60,26 @@ public:
         return variant_ns::get<usb_device>(m_endpoint);
     }
 
-	static pointer create_for_usb(boost::asio::io_context& io) {
-		return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
-	}
+    static pointer create_for_usb(boost::asio::io_context& io) {
+        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+    }
 #endif
 
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
-	const usb_serial_port& serial() const {
-		return variant_ns::get<usb_serial_port>(m_endpoint);
-	}
+    const usb_serial_port& serial() const {
+        return variant_ns::get<usb_serial_port>(m_endpoint);
+    }
 
-	usb_serial_port& serial() {
-		return variant_ns::get<usb_serial_port>(m_endpoint);
-	}
+    usb_serial_port& serial() {
+        return variant_ns::get<usb_serial_port>(m_endpoint);
+    }
 
-	static pointer create_for_serial(boost::asio::io_context& io) {
-		return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
-	}
+    static pointer create_for_serial(boost::asio::io_context& io) {
+        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+    }
 #endif
 
-	const tcp_socket& tcp() const {
+    const tcp_socket& tcp() const {
         return variant_ns::get<tcp_socket>(m_endpoint);
     }
 
@@ -143,9 +145,9 @@ public:
             m_strand,
             [that](boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) { that->handle_read(ec, msg); });
 
-		variant_ns::visit([&cb](auto & underlying) {
-			return mobsya::async_read_aseba_message(underlying, std::move(cb));
-		}, m_endpoint);
+        variant_ns::visit(
+            [&cb](auto& underlying) { return mobsya::async_read_aseba_message(underlying, std::move(cb)); },
+            m_endpoint);
     }
 
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
@@ -265,19 +267,23 @@ private:
         mLogInfo("Asking for description of node {}", node);
         write_message(std::make_unique<Aseba::GetNodeDescription>(node));
 
-		variant_ns::visit([&cb, &node](auto & underlying) {
-			return mobsya::async_read_aseba_description_message(underlying, node, std::move(cb));
-		}, m_endpoint);
+        variant_ns::visit(
+            [&cb, &node](auto& underlying) {
+                return mobsya::async_read_aseba_description_message(underlying, node, std::move(cb));
+            },
+            m_endpoint);
     }
 
     void do_write_message(const Aseba::Message& message) {
         auto that = shared_from_this();
         auto cb =
             boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
-		
-		variant_ns::visit([&cb, &message](auto & underlying) {
-			return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
-		}, m_endpoint);
+
+        variant_ns::visit(
+            [&cb, &message](auto& underlying) {
+                return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
+            },
+            m_endpoint);
     }
 
     void handle_write(boost::system::error_code ec) {

@@ -27,25 +27,25 @@ add_executable(switch
 )
 
 if(WIN32)
-	target_sources(switch PRIVATE
-		serialacceptor.h
-		serialacceptor.cpp
-		serialserver.h
-		serialserver.cpp
-		serial_usb_device.h
-	)
-	target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
+    target_sources(switch PRIVATE
+        serialacceptor.h
+        serialacceptor.cpp
+        serialserver.h
+        serialserver.cpp
+        serial_usb_device.h
+    )
+    target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
 else()
-	target_sources(switch PRIVATE
-		usbserver.cpp
-		usbserver.h
-		usbacceptor.h
-		usbacceptor.cpp
-		usbdevice.cpp
-		usbdevice.h
-		usbcontext.h
-	)
-	target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_USB)
+    target_sources(switch PRIVATE
+        usbserver.cpp
+        usbserver.h
+        usbacceptor.h
+        usbacceptor.cpp
+        usbdevice.cpp
+        usbdevice.h
+        usbcontext.h
+    )
+    target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_USB)
 endif()
 
 
@@ -54,7 +54,7 @@ target_link_libraries(switch Boost::program_options Boost::asio Boost::date_time
 if(WIN32)
     target_link_libraries(switch bcrypt)
 else()
-	target_link_libraries(switch libusb)
+    target_link_libraries(switch libusb)
 endif()
 
 install(TARGETS switch RUNTIME DESTINATION bin)
