@@ -37,7 +37,22 @@ QHash<int, QByteArray> ThymioDevicesModel::roleNames() const {
 }
 
 bool ThymioDevicesModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+    auto idx = index.row();
+    if(idx >= m_manager.m_nodes.size())
+        return false;
+    auto item = (m_manager.m_nodes.begin() + idx).value();
+    switch(role) {
+        case Qt::DisplayRole:
+            if(!value.canConvert<QString>())
+                return false;
+            item->setName(value.toString());
+            return true;
+    }
     return false;
+}
+
+Qt::ItemFlags ThymioDevicesModel::flags(const QModelIndex& index) const {
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
 void ThymioDevicesModel::updateModel() {
