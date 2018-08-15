@@ -84,9 +84,6 @@ set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_P
 add_subdirectory(aseba)
 
 if(NOT ANDROID)
-	# Examples for developers
-	add_subdirectory(examples)
-
 	# Unit tests
 	add_subdirectory(tests)
 endif()

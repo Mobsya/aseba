@@ -7,8 +7,6 @@ if(NOT ANDROID)
     add_subdirectory(vm)
     add_subdirectory(transport)
 
-    # User programs
-    add_subdirectory(switches)
     add_subdirectory(targets)
 
     add_subdirectory(flatbuffers)
