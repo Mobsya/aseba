@@ -1,6 +1,5 @@
 add_subdirectory(dummy)
 if (ENKI_FOUND)
-	#add_subdirectory(enki-marxbot)
 	add_subdirectory(challenge)
 	add_subdirectory(playground)
 endif()
