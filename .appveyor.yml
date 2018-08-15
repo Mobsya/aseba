@@ -135,6 +135,15 @@ environment:
   BOOST_ROOT: 'C:/Libraries/boost_1_67_0'
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=5"
   matrix:
+    - platform: x64
+      COMPILER: ClangCL
+      ARCH: x64
+      LLVM_URL: http://prereleases.llvm.org/win-snapshots/LLVM-7.0.0-r323406-win64.exe
+      LLVM_VERSION: 7.0
+      USE_VS_TOOLCHAIN: true
+      QT5: C:\Qt\5.10\msvc2017_64
+      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
+
     - ARCH: x86
       QT5: C:\Qt\5.10\msvc2015
       COMPILER: MSVC
@@ -157,15 +166,6 @@ environment:
       #ARCH: x64
       #BASH: C:\msys64\usr\bin\bash
       #MSYS_CACHE: C:\msys64\var\cache\pacman\pkg
-
-    - platform: x64
-      COMPILER: ClangCL
-      ARCH: x64
-      LLVM_URL: http://prereleases.llvm.org/win-snapshots/LLVM-7.0.0-r323406-win64.exe
-      LLVM_VERSION: 7.0
-      USE_VS_TOOLCHAIN: true
-      QT5: C:\Qt\5.10\msvc2017_64
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
 deploy:
   tag: nightly
