@@ -17,3 +17,4 @@ target_link_libraries(thymio-launcher
 )
 install(TARGETS thymio-launcher RUNTIME DESTINATION bin)
 codesign(thymio-launcher)
+target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
