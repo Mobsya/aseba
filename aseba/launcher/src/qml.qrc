@@ -29,6 +29,11 @@
         <file>assets/tools-icon.svg</file>
         <file>qml/SvgButton.qml</file>
         <file>assets/info-icon.svg</file>
-        <file>assets/physical_thymio.svg</file>
+        <file>assets/thymio.svg</file>
+        <file>assets/simulated_thymio.svg</file>
+        <file>assets/battery_full.svg</file>
+        <file>assets/battery_mid.svg</file>
+        <file>assets/battery_low.svg</file>
+        <file>assets/dummy_node.svg</file>
     </qresource>
 </RCC>

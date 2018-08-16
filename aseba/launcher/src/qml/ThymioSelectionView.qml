@@ -41,7 +41,7 @@ Item {
             id: left_pane
             Rectangle {
                 anchors.fill: parent
-                color: "orange" // Style.app_descrition_bg_color
+                color: Style.app_descrition_bg_color
 
                 Item {
                     anchors.fill: parent
@@ -57,8 +57,8 @@ Item {
                         id: img_description
                     }
 
-                    Rectangle {
-                        color: 'yellow'
+                    Item {
+                        //color: 'yellow'
                         anchors.left:  parent.left
                         anchors.right: parent.right
                         anchors.top: img_description.bottom
@@ -146,9 +146,9 @@ Item {
                             height: 142
                             anchors.horizontalCenter: parent.horizontalCenter
                             Image {
-                                source: "qrc:/assets/physical_thymio.svg"
+                                source: "qrc:/assets/thymio.svg"
                                 width :  90
-                                height:  90
+                                fillMode:Image.PreserveAspectFit
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
                             Item {
@@ -158,7 +158,7 @@ Item {
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: id
+                                text: name
                                 font.family: "Roboto Light"
                                 font.pointSize: 12
                                 color : "white"
