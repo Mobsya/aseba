@@ -139,8 +139,14 @@ Item {
                     delegate:  Item {
                         height: 172
                         width : 172
-                        //border.width: 1
-                        //border.color: "green"
+                        opacity: {
+                            switch(status) {
+                            case ThymioNode.Ready:
+                            case ThymioNode.Available:
+                                    return 1;
+                            default: return 0.5
+                            }
+                        }
 
                         Column {
                             width : 142
