@@ -99,12 +99,15 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
         auto it = m_nodes.find(node.id);
         if(it == m_nodes.end()) {
             it = m_nodes.insert(node.id, std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type));
-            Q_EMIT nodeAdded(it.value());
         }
+
         (*it)->setName(node.name);
         (*it)->setStatus(node.status);
 
-        if(node.status == ThymioNode::Status::disconnected) {
+        Q_EMIT it == m_nodes.end() ? nodeAdded(it.value()) :
+                                     nodeModified(std::distance(m_nodes.begin(), it), it.value());
+
+        if(node.status == ThymioNode::Status::Disconnected) {
             auto node = it.value();
             m_nodes.erase(it);
             Q_EMIT nodeRemoved(node);

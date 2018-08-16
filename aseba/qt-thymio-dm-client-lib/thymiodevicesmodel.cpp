@@ -10,6 +10,7 @@ ThymioDevicesModel::ThymioDevicesModel(const ThymioDeviceManagerClient& manager,
 
     connect(&manager, &ThymioDeviceManagerClient::nodeAdded, this, &ThymioDevicesModel::updateModel);
     connect(&manager, &ThymioDeviceManagerClient::nodeRemoved, this, &ThymioDevicesModel::updateModel);
+    connect(&manager, &ThymioDeviceManagerClient::nodeModified, this, &ThymioDevicesModel::updateModel);
 }
 int ThymioDevicesModel::rowCount(const QModelIndex&) const {
     return m_manager.m_nodes.size();
@@ -48,6 +49,7 @@ bool ThymioDevicesModel::setData(const QModelIndex& index, const QVariant& value
             if(!value.canConvert<QString>())
                 return false;
             item->setName(value.toString());
+            dataChanged(index, index);
             return true;
     }
     return false;
@@ -55,6 +57,11 @@ bool ThymioDevicesModel::setData(const QModelIndex& index, const QVariant& value
 
 Qt::ItemFlags ThymioDevicesModel::flags(const QModelIndex& index) const {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+void ThymioDevicesModel::onNodeModified(std::ptrdiff_t pos, std::shared_ptr<ThymioNode>) {
+    auto idx = index(int(pos));
+    Q_EMIT dataChanged(idx, idx);
 }
 
 void ThymioDevicesModel::updateModel() {
