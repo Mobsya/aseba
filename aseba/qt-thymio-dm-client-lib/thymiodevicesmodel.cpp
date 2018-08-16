@@ -23,7 +23,7 @@ QVariant ThymioDevicesModel::data(const QModelIndex& index, int role) const {
     auto item = (m_manager.m_nodes.begin() + idx).value();
     switch(role) {
         case Qt::DisplayRole: return item->name();
-        case StatusRole: return QVariant::fromValue(item->status());
+        case StatusRole: return int(item->status());
         case NodeIdRole: return item->uuid().toString();
         case NodeTypeRole: return int(item->type());
     }
