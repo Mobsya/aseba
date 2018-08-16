@@ -107,9 +107,16 @@ public:
     }
 
     bool is_wireless() const {
+#ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             return variant_ns::get<usb_device>(m_endpoint).usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
         }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
+            return variant_ns::get<usb_serial_port>(m_endpoint).usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
+        }
+#endif
         return false;
     }
 
