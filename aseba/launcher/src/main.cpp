@@ -23,10 +23,16 @@ int main(int argc, char** argv) {
         QFontDatabase::addApplicationFont(path);
     }
 
+
     mobsya::ThymioDeviceManagerClient client;
     mobsya::ThymioDevicesModel model(client);
 
     QQmlApplicationEngine engine;
+
+    QSurfaceFormat format;
+    format.setSamples(16);
+    QSurfaceFormat::setDefaultFormat(format);
+
     engine.rootContext()->setContextProperty("thymios", &model);
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
