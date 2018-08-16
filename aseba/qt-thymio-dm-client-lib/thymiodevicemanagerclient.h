@@ -24,7 +24,7 @@ private Q_SLOTS:
 Q_SIGNALS:
     void nodeAdded(std::shared_ptr<ThymioNode>);
     void nodeRemoved(std::shared_ptr<ThymioNode>);
-    void nodeModified(std::ptrdiff_t pos, std::shared_ptr<ThymioNode>);
+    void nodeModified(std::shared_ptr<ThymioNode>);
 
 private:
     friend class ThymioDevicesModel;

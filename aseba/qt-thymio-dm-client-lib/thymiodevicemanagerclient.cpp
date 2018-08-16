@@ -104,8 +104,7 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
         (*it)->setName(node.name);
         (*it)->setStatus(node.status);
 
-        Q_EMIT it == m_nodes.end() ? nodeAdded(it.value()) :
-                                     nodeModified(std::distance(m_nodes.begin(), it), it.value());
+        Q_EMIT it == m_nodes.end() ? nodeAdded(it.value()) : nodeModified(it.value());
 
         if(node.status == ThymioNode::Status::Disconnected) {
             auto node = it.value();
