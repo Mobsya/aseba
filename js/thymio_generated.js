@@ -20,7 +20,10 @@ mobsya.fb = mobsya.fb || {};
  */
 mobsya.fb.NodeType = {
   Thymio2: 0,
-  Thymio2Wireless: 1
+  Thymio2Wireless: 1,
+  SimulatedThymio2: 2,
+  DummyNode: 3,
+  UnknownType: 4
 };
 
 /**
@@ -89,13 +92,14 @@ mobsya.fb.AnyMessage = {
   RequestNodeAsebaVMDescription: 2,
   LockNode: 3,
   UnlockNode: 4,
-  RequestAsebaCodeLoad: 5,
-  RequestAsebaCodeRun: 6,
-  NodesChanged: 7,
-  NodeAsebaVMDescription: 8,
-  RequestCompleted: 9,
-  Error: 10,
-  CompilationError: 11
+  RenameNode: 5,
+  RequestAsebaCodeLoad: 6,
+  RequestAsebaCodeRun: 7,
+  NodesChanged: 8,
+  NodeAsebaVMDescription: 9,
+  RequestCompleted: 10,
+  Error: 11,
+  CompilationError: 12
 };
 
 /**
@@ -1358,6 +1362,124 @@ mobsya.fb.NativeFunctionParameter.addSize = function(builder, size) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.NativeFunctionParameter.endNativeFunctionParameter = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * Set a new name for this nùode
+ *
+ * @constructor
+ */
+mobsya.fb.RenameNode = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.RenameNode}
+ */
+mobsya.fb.RenameNode.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.RenameNode=} obj
+ * @returns {mobsya.fb.RenameNode}
+ */
+mobsya.fb.RenameNode.getRootAsRenameNode = function(bb, obj) {
+  return (obj || new mobsya.fb.RenameNode).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.RenameNode.prototype.requestId = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.RenameNode.prototype.mutate_request_id = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {mobsya.fb.NodeId=} obj
+ * @returns {mobsya.fb.NodeId|null}
+ */
+mobsya.fb.RenameNode.prototype.nodeId = function(obj) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+};
+
+/**
+ * @param {flatbuffers.Encoding=} optionalEncoding
+ * @returns {string|Uint8Array|null}
+ */
+mobsya.fb.RenameNode.prototype.newName = function(optionalEncoding) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.RenameNode.startRenameNode = function(builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} requestId
+ */
+mobsya.fb.RenameNode.addRequestId = function(builder, requestId) {
+  builder.addFieldInt32(0, requestId, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} nodeIdOffset
+ */
+mobsya.fb.RenameNode.addNodeId = function(builder, nodeIdOffset) {
+  builder.addFieldOffset(1, nodeIdOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} newNameOffset
+ */
+mobsya.fb.RenameNode.addNewName = function(builder, newNameOffset) {
+  builder.addFieldOffset(2, newNameOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.RenameNode.endRenameNode = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

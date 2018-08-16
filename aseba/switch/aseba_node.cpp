@@ -190,6 +190,22 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
     }
 }
 
+aseba_node::node_type aseba_node::type() const {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    auto ep = m_endpoint.lock();
+    if(!ep) {
+        return aseba_node::node_type::UnknownType;
+    }
+    switch(ep->type()) {
+        case aseba_endpoint::endpoint_type::thymio:
+            return is_wirelessly_connected() ? node_type::Thymio2Wireless : node_type::Thymio2;
+        case aseba_endpoint::endpoint_type::simulated_tymio: return node_type::SimulatedThymio2;
+        case aseba_endpoint::endpoint_type::simulated_dummy_node: return node_type::DummyNode;
+        default: break;
+    }
+    return node_type::UnknownType;
+}
+
 std::string aseba_node::friendly_name() const {
     std::unique_lock<std::mutex> _(m_node_mutex);
     if(m_friendly_name.empty()) {

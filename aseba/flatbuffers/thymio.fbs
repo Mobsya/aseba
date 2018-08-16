@@ -11,7 +11,10 @@ table NodeId {
 /// A node can designate either a robot, a simulator, each with various capabilities.
 enum NodeType : int {
   Thymio2 = 0,
-  Thymio2Wireless = 1,
+  Thymio2Wireless  = 1,
+  SimulatedThymio2 = 2,
+  DummyNode        = 3,
+  UnknownType      = 4
 }
 
 /// The status of a node represents whether the node is connected and available.
