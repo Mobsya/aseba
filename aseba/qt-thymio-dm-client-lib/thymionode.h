@@ -10,7 +10,7 @@ class ThymioDeviceManagerClientEndpoint;
 class ThymioNode : public QObject {
     Q_OBJECT
 public:
-    enum class Status { connected = 1, available = 2, busy = 3, ready = 4, disconnected = 5 };
+    enum class Status { Connected = 1, Available = 2, Busy = 3, Ready = 4, Disconnected = 5 };
     enum class NodeType { Thymio2 = 0, Thymio2Wireless = 1, SimulatedThymio2 = 2, DummyNode = 3, UnknownType = 4 };
 
     Q_ENUM(Status)
