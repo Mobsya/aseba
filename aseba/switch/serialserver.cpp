@@ -18,6 +18,7 @@ void serial_server::accept() {
         d.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
         d.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
         EscapeCommFunction(d.native_handle(), SETDTR);
+        session->set_endpoint_type(aseba_endpoint::endpoint_type::thymio);
         session->start();
         accept();
     });

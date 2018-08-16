@@ -5,7 +5,7 @@
 #include "node_id.h"
 #include <boost/asio/io_context.hpp>
 #include <atomic>
-
+#include <aseba/flatbuffers/thymio_generated.h>
 
 namespace mobsya {
 class aseba_endpoint;
@@ -14,6 +14,8 @@ class aseba_node : public std::enable_shared_from_this<aseba_node> {
 public:
     // aseba_node::status is exposed through zero conf & protocol : needs to be stable
     enum class status { connected = 1, available = 2, busy = 3, ready = 4, disconnected = 5 };
+    using node_type = fb::NodeType;
+
     using node_id_t = uint16_t;
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
@@ -36,6 +38,8 @@ public:
     node_id uuid() const {
         return m_uuid;
     }
+
+    node_type type() const;
 
     std::string friendly_name() const;
     void set_friendly_name(const std::string& str);

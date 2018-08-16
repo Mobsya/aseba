@@ -24,6 +24,7 @@ void usb_server::accept() {
         d.set_parity(usb_device::parity::none);
         d.set_stop_bits(usb_device::stop_bits::one);
         d.set_data_terminal_ready(true);
+        session->set_endpoint_type(aseba_endpoint::endpoint_type::thymio);
         session->start();
         accept();
     });
