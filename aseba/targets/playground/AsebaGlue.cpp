@@ -114,6 +114,10 @@ extern "C" void AsebaResetIntoBootloader(AsebaVMState* vm) {
     // not implemented in playground
 }
 
+extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {
+    return 1;
+}
+
 extern "C" void AsebaAssert(AsebaVMState* vm, AsebaAssertReason reason) {
     const Aseba::NodeEnvironment& environment(Aseba::vmStateToEnvironment.find(vm)->second);
     const Aseba::AbstractNodeGlue* glue(environment.first);
