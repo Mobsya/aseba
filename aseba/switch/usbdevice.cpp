@@ -207,6 +207,23 @@ usb_device_identifier usb_device::usb_device_id() const {
     return {desc.idVendor, desc.idProduct};
 }
 
+std::string usb_device::usb_device_name() const {
+    std::string s;
+    s.resize(256);
+    if(!this->native_handle())
+        return {};
+    libusb_device_descriptor desc;
+    libusb_get_device_descriptor(this->native_handle(), &desc);
+    auto l = libusb_get_string_descriptor_ascii(this->get_implementation().handle, desc.iProduct,
+                                                reinterpret_cast<unsigned char*>(&s[0]), int(s.size()));
+    if(l <= 0) {
+        return {};
+    }
+    s.resize(std::size_t(l));
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(), s.end());
+    return s;
+}
+
 std::size_t usb_device::write_channel_chunk_size() const {
     return this->get_service().write_channel_chunk_size(this->get_implementation());
 }
