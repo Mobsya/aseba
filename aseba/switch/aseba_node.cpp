@@ -151,7 +151,8 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_description = std::move(description);
     }
-    if(description.protocolVersion >= 6) {
+    if(description.protocolVersion >= 6 &&
+       (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
         // set_friendly_name("The merovingian");
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
