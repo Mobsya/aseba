@@ -35,5 +35,6 @@
         <file>assets/battery_mid.svg</file>
         <file>assets/battery_low.svg</file>
         <file>assets/dummy_node.svg</file>
+        <file>qml/BatteryIndicator.qml</file>
     </qresource>
 </RCC>

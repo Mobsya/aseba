@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import org.mobsya  1.0
 
 Item {
     id:selection_view
@@ -145,16 +146,59 @@ Item {
                             width : 142
                             height: 142
                             anchors.horizontalCenter: parent.horizontalCenter
+
+                            Item {
+                                width :  90
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                //color : "#FF00FF"
+                                height: 12
+
+
+                                BatteryIndicator {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    height: 8
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 2
+
+                                }
+
+                                Image {
+                                     id: icon;
+                                     source : "qrc:/assets/update-icon.svg"
+                                     fillMode: Image.PreserveAspectFit
+                                     anchors.verticalCenter: parent.verticalCenter
+                                     height: 12
+                                     anchors.right: parent.right
+                                     anchors.leftMargin: 2
+                                     smooth: true
+                                     antialiasing: true
+                                }
+                            }
+
+                            Item {
+                                width: parent.width
+                                height: 8
+                            }
+
                             Image {
-                                source: "qrc:/assets/thymio.svg"
+                                source: {
+                                    switch (type) {
+                                     case ThymioNode.Thymio2:
+                                     case ThymioNode.Thymio2Wireless:
+                                        return "qrc:/assets/thymio.svg"
+                                     case ThymioNode.SimulatedThymio2:
+                                        return "qrc:/assets/simulated_thymio.svg"
+                                     default:
+                                        return "qrc:/assets/dummy_node.svg"
+                                    }
+                                }
                                 width :  90
                                 fillMode:Image.PreserveAspectFit
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
                             Item {
-                                id: margin
                                 width: parent.width
-                                height: 10
+                                height: 20
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
