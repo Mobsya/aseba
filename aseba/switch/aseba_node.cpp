@@ -182,12 +182,13 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         set_status(status::available);
 
     } else if(info.info == DEVICE_INFO_NAME) {
-        std::unique_lock<std::mutex> _(m_node_mutex);
-        m_friendly_name.clear();
-        m_friendly_name.reserve(info.data.size());
-        std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
-        if(!m_friendly_name.empty())
-            mLogInfo("Persistent name for {} is now \"{}\"", native_id(), m_friendly_name);
+        {
+            std::unique_lock<std::mutex> _(m_node_mutex);
+            m_friendly_name.clear();
+            m_friendly_name.reserve(info.data.size());
+            std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
+        }
+        mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
     }
 }
 

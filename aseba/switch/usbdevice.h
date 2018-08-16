@@ -177,6 +177,7 @@ public:
     tl::expected<void, boost::system::error_code> open();
 
     usb_device_identifier usb_device_id() const;
+    std::string usb_device_name() const;
 
     template <typename ConstBufferSequence, typename WriteHandler>
     BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler, void(boost::system::error_code, std::size_t))
