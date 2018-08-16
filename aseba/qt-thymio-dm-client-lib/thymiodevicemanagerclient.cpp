@@ -39,6 +39,8 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
 
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::onMessage, this,
                 &ThymioDeviceManagerClient::onMessage);
+        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
+                &ThymioDeviceManagerClient::onEndpointDisconnected);
         m_endpoints.insert(id, endpoint);
     }
 }
@@ -108,6 +110,26 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
             Q_EMIT nodeRemoved(node);
         }
     }
+}
+
+void ThymioDeviceManagerClient::onEndpointDisconnected() {
+    auto endpoint = qobject_cast<ThymioDeviceManagerClientEndpoint*>(sender());
+    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
+                           [endpoint](const auto& ep) { return ep.get() == endpoint; });
+    if(it == std::end(m_endpoints))
+        return;
+    const auto shared_endpoint = *it;
+
+    auto node_it =
+        std::remove_if(m_nodes.begin(), m_nodes.end(), [shared_endpoint](const std::shared_ptr<ThymioNode>& node) {
+            return node->endpoint() == shared_endpoint;
+        });
+    while(node_it != m_nodes.end()) {
+        auto node = node_it.value();
+        node_it = m_nodes.erase(node_it);
+        Q_EMIT nodeRemoved(node);
+    }
+    m_endpoints.erase(it);
 }
 
 

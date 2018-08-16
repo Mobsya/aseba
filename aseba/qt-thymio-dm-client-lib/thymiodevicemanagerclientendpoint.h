@@ -15,6 +15,7 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void onMessage(const fb_message_ptr& msg);
+    void disconnected();
 
 private:
     QTcpSocket* m_socket;

@@ -37,6 +37,9 @@ public:
     void setName(const QString& name);
     void setStatus(const Status& status);
 
+    std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint() const {
+        return m_endpoint;
+    }
 
 private:
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;
