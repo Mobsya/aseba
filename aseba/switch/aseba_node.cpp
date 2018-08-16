@@ -191,6 +191,13 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
 }
 
 std::string aseba_node::friendly_name() const {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    if(m_friendly_name.empty()) {
+        auto ep = m_endpoint.lock();
+        if(ep) {
+            return ep->endpoint_name();
+        }
+    }
     return m_friendly_name;
 }
 
