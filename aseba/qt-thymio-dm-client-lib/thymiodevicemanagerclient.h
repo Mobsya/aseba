@@ -37,6 +37,7 @@ private:
 
     void onNodesChanged(const fb::NodesChanged&);
     void onNodesChanged(const std::vector<SimpleNode>& nodes);
+    void onEndpointDisconnected();
 
     QVector<QZeroConfService> m_services;
     QZeroConf* m_register;
