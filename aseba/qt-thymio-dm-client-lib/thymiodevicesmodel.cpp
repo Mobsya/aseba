@@ -24,6 +24,7 @@ QVariant ThymioDevicesModel::data(const QModelIndex& index, int role) const {
         case Qt::DisplayRole: return item->name();
         case StatusRole: return QVariant::fromValue(item->status());
         case NodeIdRole: return item->uuid().toString();
+        case NodeTypeRole: return int(item->type());
     }
     return {};
 }
@@ -33,6 +34,7 @@ QHash<int, QByteArray> ThymioDevicesModel::roleNames() const {
     roles.insert(StatusRole, "status");
     roles.insert(Qt::DisplayRole, "name");
     roles.insert(NodeIdRole, "id");
+    roles.insert(NodeTypeRole, "type");
     return roles;
 }
 
