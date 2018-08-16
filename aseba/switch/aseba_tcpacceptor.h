@@ -11,6 +11,7 @@ public:
     void accept();
 
 private:
+    void do_accept();
     boost::asio::io_context& m_iocontext;
     aware::contact m_contact;
     aware::monitor_socket m_monitor;
