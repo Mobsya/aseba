@@ -4,6 +4,7 @@
 	 viewBox="0 0 202.3 90.6" style="enable-background:new 0 0 202.3 90.6;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#FFFFFF;}
+	.st1{fill:url(#SVGID_1_);}
 </style>
 <g>
 	<g>
@@ -50,4 +51,11 @@
 			c-0.3,0-0.5-0.2-0.5-0.5v-8.2C179.2,33.6,179.4,33.3,179.7,33.3z"/>
 	</g>
 </g>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="1" y1="19.6151" x2="201.0696" y2="19.6151">
+	<stop  offset="0" style="stop-color:#EAEAEA"/>
+	<stop  offset="0" style="stop-color:#EAEAEA;stop-opacity:0"/>
+	<stop  offset="0.5248" style="stop-color:#FFF4FF;stop-opacity:0.3"/>
+	<stop  offset="1" style="stop-color:#FFF4FF;stop-opacity:0"/>
+</linearGradient>
+<path class="st1" d="M198.1,1.3H3.9C2.3,1.3,1,2.6,1,4.2V38h200.1V4.2C201.1,2.5,199.7,1.3,198.1,1.3z"/>
 </svg>
