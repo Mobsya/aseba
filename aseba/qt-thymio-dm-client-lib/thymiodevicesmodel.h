@@ -21,7 +21,7 @@ public:
 
 private Q_SLOTS:
     void updateModel();
-    void onNodeModified(std::ptrdiff_t pos, std::shared_ptr<ThymioNode>);
+    void onNodeModified(std::shared_ptr<ThymioNode>);
 
 private:
     const ThymioDeviceManagerClient& m_manager;

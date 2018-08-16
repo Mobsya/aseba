@@ -59,8 +59,9 @@ Qt::ItemFlags ThymioDevicesModel::flags(const QModelIndex& index) const {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
-void ThymioDevicesModel::onNodeModified(std::ptrdiff_t pos, std::shared_ptr<ThymioNode>) {
-    auto idx = index(int(pos));
+void ThymioDevicesModel::onNodeModified(std::shared_ptr<ThymioNode> node) {
+    auto idx = index(int(
+        std::distance(m_manager.m_nodes.begin(), std::find(m_manager.m_nodes.begin(), m_manager.m_nodes.end(), node))));
     Q_EMIT dataChanged(idx, idx);
 }
 
