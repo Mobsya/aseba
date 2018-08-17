@@ -16,7 +16,9 @@
 #include "aseba_description_receiver.h"
 #include "aseba_node.h"
 #include "log.h"
-#include "variant.hpp"
+#ifndef WIN32
+#    include "variant.hpp"
+#endif
 #include "aseba_node_registery.h"
 #include "utils.h"
 
@@ -25,8 +27,11 @@ namespace mobsya {
 constexpr usb_device_identifier THYMIO2_DEVICE_ID = {0x0617, 0x000a};
 constexpr usb_device_identifier THYMIO_WIRELESS_DEVICE_ID = {0x0617, 0x000c};
 
+#ifdef WIN32
+namespace variant_ns = std;
+#else
 namespace variant_ns = mpark;
-
+#endif
 class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
 
@@ -223,7 +228,7 @@ private:
                 return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
             that->write_message(std::make_unique<Aseba::ListNodes>());
-            if(that->needs_health_check())
+            if(that->needs_ping())
                 that->schedule_send_ping();
         });
         mLogDebug("Waiting before requesting list node");
@@ -270,6 +275,14 @@ private:
 #endif
     }
 
+    bool needs_ping() const {
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint))
+            return true;
+#endif
+        return needs_health_check();
+    }
+
     void read_aseba_node_description(uint16_t node) {
         auto that = shared_from_this();
         auto cb = boost::asio::bind_executor(
@@ -307,6 +320,12 @@ private:
 
     void handle_write(boost::system::error_code ec) {
         mLogDebug("Message sent : {}", ec.message());
+        if(ec) {
+            variant_ns::visit([](auto& underlying) { underlying.cancel(); }, m_endpoint);
+            m_msg_queue.clear();
+            return;
+        }
+
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         auto cb = m_msg_queue.begin()->second;
         if(cb) {

@@ -70,8 +70,10 @@ static usb_device_identifier device_id_from_interface_id(const std::string& str)
 
 static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_info) {
     const HKEY key = ::SetupDiOpenDevRegKey(info_set, device_info, DICS_FLAG_GLOBAL, 0, DIREG_DEV, KEY_READ);
-    if(key == INVALID_HANDLE_VALUE)
+    if(key == INVALID_HANDLE_VALUE) {
+        mLogTrace("SetupDiOpenDevRegKey : {}-{} ", GetLastError(), get_last_win32_error_string());
         return {};
+    }
     auto value = [&key](const char* subk) -> std::string {
         DWORD dataType = 0;
         std::string str(MAX_PATH + 1, 0);
@@ -99,8 +101,7 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
 }
 
 void serial_acceptor_service::handle_request_by_active_enumeration() {
-    const HDEVINFO deviceInfoSet =
-        ::SetupDiGetClassDevs(&GUID_DEVINTERFACE_COMPORT, nullptr, nullptr, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    const HDEVINFO deviceInfoSet = ::SetupDiGetClassDevs(&GUID_DEVCLASS_PORTS, nullptr, nullptr, DIGCF_PRESENT);
     if(deviceInfoSet == INVALID_HANDLE_VALUE)
         return;
 
@@ -111,37 +112,39 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
     deviceInfoData.cbSize = sizeof(deviceInfoData);
 
     DWORD index = 0;
-    while(::SetupDiEnumDeviceInfo(deviceInfoSet, index++, &deviceInfoData)) {
-        SP_DEVINFO_DATA deviceInfoData;
-        ::memset(&deviceInfoData, 0, sizeof(deviceInfoData));
-        deviceInfoData.cbSize = sizeof(deviceInfoData);
-
-        DWORD index = 0;
-        while(::SetupDiEnumDeviceInfo(deviceInfoSet, index++, &deviceInfoData)) {
-            auto& req = m_requests.front();
-            const auto str = device_instance_identifier(deviceInfoData.DevInst);
-            const auto id = device_id_from_interface_id(str);
-            const auto& devices = req.acceptor.compatible_devices();
-            if(std::find(std::begin(devices), std::end(devices), id) == std::end(devices)) {
-                mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
-                continue;
+    while(true) {
+        int32_t res = ::SetupDiEnumDeviceInfo(deviceInfoSet, index++, &deviceInfoData);
+        if(res == 0) {
+            if(GetLastError() != ERROR_NO_MORE_ITEMS) {
+                mLogTrace("SetupDiEnumDeviceInfo : {}-{} ", GetLastError(), get_last_win32_error_string());
             }
-            known_devices.push_back(str);
-            if(std::find(m_known_devices.begin(), m_known_devices.end(), str) != m_known_devices.end())
-                continue;
+            break;
+        }
 
-            const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
-            mLogTrace("{}", str);
-            mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
-            boost::system::error_code ec;
-            req.d.open(port_name, ec);
-            req.d.m_device_id = id;
-            if(!ec) {
-                auto handler = std::move(req.handler);
-                const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
-                m_requests.pop();
-                boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
-            }
+        auto& req = m_requests.front();
+        const auto str = device_instance_identifier(deviceInfoData.DevInst);
+        mLogTrace("{}", str);
+        const auto id = device_id_from_interface_id(str);
+        const auto& devices = req.acceptor.compatible_devices();
+        if(std::find(std::begin(devices), std::end(devices), id) == std::end(devices)) {
+            mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
+            continue;
+        }
+        known_devices.push_back(str);
+        if(std::find(m_known_devices.begin(), m_known_devices.end(), str) != m_known_devices.end())
+            continue;
+
+        const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
+
+        mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
+        boost::system::error_code ec;
+        req.d.open(port_name, ec);
+        req.d.m_device_id = id;
+        if(!ec) {
+            auto handler = std::move(req.handler);
+            const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
+            m_requests.pop();
+            boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
         }
         ::SetupDiDestroyDeviceInfoList(deviceInfoSet);
     }

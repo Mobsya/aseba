@@ -18,3 +18,13 @@ std::string mobsya::log_filename(const char* path) {
     str.insert(str.begin(), 20 - str.size(), ' ');
     return str;
 }
+
+#if WIN32
+std::string mobsya::get_last_win32_error_string() {
+    std::string str;
+    str.resize(1024);
+    str.resize(FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), 0,
+                              &str[0], DWORD(str.size()), NULL));
+    return str;
+}
+#endif

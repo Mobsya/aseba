@@ -5,6 +5,11 @@
 #include <spdlog/spdlog.h>
 
 namespace mobsya {
+
+#if WIN32
+extern std::string get_last_win32_error_string();
+#endif
+
 extern std::shared_ptr<spdlog::logger> logger;
 extern std::string log_filename(const char* path);
 template <typename... Args>

@@ -35,7 +35,7 @@ class write_flatbuffer_message_op {
         uint32_t size;
 
         explicit state(Handler const&, AsyncWriteStream& stream, const flatbuffers::DetachedBuffer& buffer)
-            : stream(stream), buffer(buffer), size(buffer.size()) {}
+            : stream(stream), buffer(buffer), size(uint32_t(buffer.size())) {}
     };
     boost::beast::handler_ptr<state, Handler> m_p;
 
