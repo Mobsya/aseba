@@ -28,16 +28,26 @@ void aseba_tcp_acceptor::do_accept() {
             do_accept();
             return;
         }
-
         known_ep key;
+        bool resolved_to_local = false;
         for(auto ar : m_resolver.resolve(m_contact.endpoint())) {
+            if(ar.host_name() == boost::asio::ip::host_name()) {
+                resolved_to_local = true;
+            }
             key = known_ep{ar.host_name(), m_contact.endpoint().port()};
             auto it = m_connected_endpoints.find(key);
             if(it != std::end(m_connected_endpoints) && !it->second.expired()) {
-                // mLogDebug("[tcp] {} already connected", m_contact.endpoint());
+                mLogTrace("[tcp] {} already connected", m_contact.endpoint());
                 do_accept();
                 return;
             }
+        }
+
+        if(!resolved_to_local) {
+            mLogTrace("Ignoring remote endoint {} (expected: {})", m_contact.endpoint().address().to_string(),
+                      boost::asio::ip::host_name());
+            do_accept();
+            return;
         }
 
         const auto& properties = m_contact.properties();
