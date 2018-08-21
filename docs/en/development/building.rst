@@ -25,6 +25,9 @@ Then, to clone aseba, execute:
     git clone --recursive https://github.com/mobsya/aseba.git
     cd aseba
 
+When pulling, it might be necessary to update the submodules with ``git submodule update --init``.
+Alternatively, git can do that for you if you configure it with ``git config --global submodule.recurse true``.
+
 
 All the commands given in the rest of this document assume the current path is the root folder of the cloned repository.
 
@@ -32,78 +35,55 @@ All the commands given in the rest of this document assume the current path is t
 Getting Started on Windows with MSVC
 ------------------------------------
 
-Aseba Builds on Windows Vista or greater.
+Aseba Builds on Windows Seven SP1 or greater.
 
--  Install ``Bonjour``. You will find the installer in
-   ``third_party/bonjour/bonjoursdksetup.exe``
--  Install Qt from Qt's website
-   https://download.qt.io/official\_releases/qt/. Once installed, th
-   ``bin`` repertory of Qt must be in your path.
--  Install Visual Studio
--  Install ``CMake``
+Download and install the following components:
 
-In a developer prompt run:
+.. csv-table::
+   :header: "Dep", "Dowload", "Notes"
 
-::
+   "Visual Studio 2017", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Deskop development with C++" workload
+   "Cmake 3.11+", `Website <https://cmake.org/download/>`__, Make sure the version of boost you choose is compatible with the cmake version
+   "Boost 1.67+", `Website <https://www.boost.org/>`_ `x64 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe/download>`_ `x86 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-32.exe/download>`_
+   "Qt 5.11.2+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt Charts`` component. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
+   Bonjour, You will find the installer in ``third_party/bonjour/bonjoursdksetup.exe``,
+   Node & Npm, "`Download <https://nodejs.org/en/download/>`_", "``npm.exe``" must be in the path
+   7Zip, "`Download <https://www.7-zip.org/download.html>`_", "",
+   NSIS 2, "`Download <https://sourceforge.net/projects/nsis/files/NSIS%202/>`_", For building the installer; "``nsis.exe``" must be in the path,
+   Python, "`Download <https://www.python.org/downloads/windows/>`_", For signing the installer; "``python.exe``" must be in the path,
 
-    mkdir build;
-    cd build
-    cmake -DBUILD\_SHARED\_LIBS=OFF -DCMAKE\_BUILD\_TYPE=Release -DCMAKE\_PREFIX\_PATH=";" ..
-    nmake
 
-Additional Dependencies
-~~~~~~~~~~~~~~~~~~~~~~~
+To build Aseba, you first need to generate a Visual Studio Solution.
 
-Aseba can be improved with several other dependencies \* SDL (Joystick
-Support) \* QWT (Charts) \* libxml2
+To do so:
 
-Getting Started on Windows with MingW
--------------------------------------
+1. Launch ``Visual C++ x64 Native Build Tools Command Prompt`` or
+   ``Visual C++ x86 Native Build Tools Command Prompt`` depending on the
+   architecture you want to build for
 
-An easy way to compile Aseba on Windows is to use
-`msys2 <http://www.msys2.org>`__.
+   Navigate to the directory in which you want to build aseba. It is recommanded not to build in the source directory
 
-Preliminary: download, install and update msys2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. Run ``set "CMAKE_PREFIX_PATH=C:`<BOOST_INSTALLATION_PATH>\boost\_1_67_0;C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017_64;"``
 
-Download and install msys2 from
-`www.msys2.org <http://www.msys2.org>`__. If you have a 64-bit version
-of Windows, take the ``x86_64`` installer, otherwise the ``i686`` one.
+   where ``<BOOST_INSTALLATION_PATH>`` and ``<QT_INSTALLATION_PATH>`` are the paths where Boost and Qt are installed, respectively.
 
-Once msys2 is installed, start the shell by running the ``MSYS2 MSYS``
-application. In the shell, update msys2 by typing:
+   ``<QT_VERTION>`` is the version of Qt you installed. A folder of that name exists in the Qt installation directory.
+
+3. ``set "BOOST_ROOT=<BOOST_INSTALLATION_PATH>\bin"``
+
+4. To build for x64:
 
 ::
 
-    pacman -Syu
+   cmake -G"Visual Studio 15 2017 Win64" -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_ROOT%/lib64-msvc-14.1" "-DCMAKE_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" <ASEBA_SOURCE_DIRECTORY>
 
-Then restart the shell and update the packages by typing:
-
-::
-
-    pacman -Su
-
-Install the dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-In the msys2 shell, install the dependencies by typing:
+To build for x86:
 
 ::
 
-    pacman -S mingw-w64-i686-{toolchain,cmake,qt5,qwt-qt5,libxml2,SDL2} git make
+   cmake -G"Visual Studio 15 2017" -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_ROOT%/lib32-msvc-14.1" "-DCMAKE_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" <ASEBA_SOURCE_DIRECTORY>
 
-If you want to build Windows 64 binaries, replace ``i686`` by ``x86_64``
-
-Building Aseba
-~~~~~~~~~~~~~~
-
-In a msys2 prompt, run
-
-::
-
-    mkdir build && cd build
-    cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="<path of qt>;<path of bonjour>" ..
-    make
+where ``<ASEBA_SOURCE_DIRECTORY>`` is the directory containing the aseba repository.
 
 Getting Started on OSX
 ----------------------
