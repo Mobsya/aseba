@@ -138,7 +138,7 @@ environment:
     - platform: x64
       COMPILER: ClangCL
       ARCH: x64
-      LLVM_URL: http://prereleases.llvm.org/win-snapshots/LLVM-7.0.0-r323406-win64.exe
+      LLVM_URL: http://prereleases.llvm.org/7.0.0/rc1/LLVM-7.0.0-rc1-win64.exe
       LLVM_VERSION: 7.0
       USE_VS_TOOLCHAIN: true
       QT5: C:\Qt\5.10\msvc2017_64
