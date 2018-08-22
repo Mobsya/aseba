@@ -24,11 +24,11 @@ include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
 include(CMakeModules/dashel.cmake)
+include(CMakeModules/deployqt.cmake)
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
     include(CMakeModules/enki.cmake)
-    include(CMakeModules/deployqt.cmake)
     find_package(Threads REQUIRED)
 endif()
 

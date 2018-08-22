@@ -21,6 +21,6 @@ target_link_libraries(thymio-launcher
     Qt5::Quick
     qt-thymio-dm-client-lib
 )
-install(TARGETS thymio-launcher RUNTIME DESTINATION bin)
 codesign(thymio-launcher)
+install_qt_app(thymio-launcher)
 target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
