@@ -86,8 +86,8 @@ before_install:
     rm -fr $HOME/qt5-android
     mkdir  $HOME/qt5-android
     pushd  $HOME/qt5-android
-    wget -q https://github.com/Mobsya/ci-data/releases/download/data/qt_5.10.1-android-armv7.7z 1>/dev/null
-    7z x qt_5.10.1-android-armv7.7z 1>/dev/null
+    wget -q https://github.com/Mobsya/ci-data/releases/download/data/qt_5.11.1-android-armv7.7z 1>/dev/null
+    7z x qt_5.11.1-android-armv7.7z 1>/dev/null
     popd
   fi
   set +e
@@ -128,7 +128,7 @@ script:
       export ANDROID_NDK=$HOME/android-ndk-r10e
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
-      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.10.1/android_armv7/"
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.11.1/android_armv7/"
       cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
       ninja -v
   fi
