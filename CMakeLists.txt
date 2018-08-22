@@ -8,14 +8,15 @@ project(aseba)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
+cmake_policy(SET CMP0071 NEW)
+
+
 # ensure a minimal version of CMake
 cmake_minimum_required(VERSION 3.5)
 include(FeatureSummary)
 
 # additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
-
-include(CMakeModules/boost.cmake)
 
 include(CMakeModules/ParseVersion.cmake)
 include(CMakeModules/cpp_features.cmake)
@@ -25,14 +26,15 @@ include(CMakeModules/codesign.cmake)
 include(CMakeModules/dashel.cmake)
 
 if(NOT ANDROID)
-	include(CMakeModules/enki.cmake)
-	include(CMakeModules/deployqt.cmake)
-	find_package(Threads REQUIRED)
+    include(CMakeModules/boost.cmake)
+    include(CMakeModules/enki.cmake)
+    include(CMakeModules/deployqt.cmake)
+    find_package(Threads REQUIRED)
 endif()
 
 if(ANDROID)
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/android/qt-android-cmake/)
-	include(android/qt-android-cmake/AddQtAndroidApk.cmake)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/android/qt-android-cmake/)
+    include(android/qt-android-cmake/AddQtAndroidApk.cmake)
 endif()
 
 add_subdirectory(third_party/catch2 EXCLUDE_FROM_ALL)
@@ -44,10 +46,27 @@ add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 
 
 
-if (NOT ANDROID)
-	add_subdirectory(third_party/flatbuffers)
+if (ANDROID)
+    set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
 endif()
+add_subdirectory(third_party/flatbuffers)
 
+if (NOT TARGET flatc)
+    include( ExternalProject )
+    list(APPEND CMAKE_ARGS "-DFLATBUFFERS_BUILD_FLATLIB=OFF")
+    list(APPEND CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release")
+    list(APPEND CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/flatc")
+
+    ExternalProject_Add(flatc_build
+      SOURCE_DIR ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/
+      CMAKE_ARGS "${CMAKE_ARGS}"
+      BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc
+      PREFIX ${CMAKE_CURRENT_BINARY_DIR}/flatc
+    )
+    add_executable(flatc IMPORTED GENERATED)
+    set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc)
+    add_dependencies(flatc flatc_build)
+endif()
 
 # testing and defines
 enable_testing()
