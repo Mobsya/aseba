@@ -2,12 +2,12 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.3
 
-ApplicationWindow {
+Item {
     id: main_window
-    title: qsTr("Thymio Launcher")
+    //title: qsTr("Thymio Launcher")
     visible:true
-    minimumHeight: 640
-    minimumWidth:  1024
+    //minimumHeight: 640
+    //minimumWidth:  1024
     Rectangle {
         id: bg
         anchors.fill: parent
@@ -17,14 +17,15 @@ ApplicationWindow {
     StackLayout {
         id: main_layout
         currentIndex: 0
-        
         anchors.fill: parent
         ApplicationSelectionView {
-            anchors.fill: parent
+            Layout.fillWidth:true
+            Layout.fillHeight:true
             id: app_view
         }
         ThymioSelectionView {
-            anchors.fill: parent
+            Layout.fillWidth:true
+            Layout.fillHeight:true
             id: thymio_view
         }
         

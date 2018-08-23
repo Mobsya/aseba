@@ -5,7 +5,6 @@ import org.mobsya  1.0
 
 Item {
     id:selection_view
-    anchors.fill: parent
     Rectangle  {
         id: app_titlebar
         anchors.top: parent.top

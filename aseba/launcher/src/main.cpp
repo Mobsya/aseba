@@ -4,17 +4,26 @@
 #include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
+#include <QtQuickWidgets/QQuickWidget>
 #ifdef QT_QML_DEBUG
 #    include <QQmlDebuggingEnabler>
 #endif
 #include <aseba/qt-thymio-dm-client-lib/thymio-api.h>
+#include <QtSingleApplication>
 
 int main(int argc, char** argv) {
 
 #ifdef QT_QML_DEBUG
     QQmlDebuggingEnabler enabler;
 #endif
-    QApplication app(argc, argv);
+
+    // Ensure a single instance
+    QtSingleApplication app(argc, argv);
+    if(app.sendMessage("ACTIVATE")) {
+        qWarning("Already launched, exiting");
+        return 0;
+    }
+
     mobsya::register_qml_types();
 
     for(QString& file : QDir(":/fonts").entryList(QDir::Files)) {
@@ -23,18 +32,22 @@ int main(int argc, char** argv) {
         QFontDatabase::addApplicationFont(path);
     }
 
-
-    mobsya::ThymioDeviceManagerClient client;
-    mobsya::ThymioDevicesModel model(client);
-
-    QQmlApplicationEngine engine;
-
     QSurfaceFormat format;
     format.setSamples(16);
     QSurfaceFormat::setDefaultFormat(format);
 
-    engine.rootContext()->setContextProperty("thymios", &model);
+    mobsya::ThymioDeviceManagerClient client;
+    mobsya::ThymioDevicesModel model(client);
 
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    QQuickWidget w;
+    w.rootContext()->setContextProperty("thymios", &model);
+    w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    w.setResizeMode(QQuickWidget::SizeRootObjectToView);
+    w.setFormat(format);
+    w.setMinimumSize(1024, 640);
+    w.showNormal();
+
+    app.setActivationWindow(&w, true);
+
     return app.exec();
 }
