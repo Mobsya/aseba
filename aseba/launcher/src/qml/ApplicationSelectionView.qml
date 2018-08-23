@@ -1,8 +1,6 @@
 import QtQuick 2.0
 
 Item {
-    anchors.fill: parent
-    
     ListView {
         anchors.margins: Style.window_margin + Style.column_margin + Style.column_width
         anchors.fill: parent

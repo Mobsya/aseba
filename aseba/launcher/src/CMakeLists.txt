@@ -19,7 +19,9 @@ target_link_libraries(thymio-launcher
     Qt5::Widgets
     Qt5::Qml
     Qt5::Quick
+    Qt5::QuickWidgets
     qt-thymio-dm-client-lib
+    qtsingleapplication
 )
 codesign(thymio-launcher)
 install_qt_app(thymio-launcher)
