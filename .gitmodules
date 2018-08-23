@@ -32,3 +32,6 @@
 [submodule "third_party/fmt"]
 	path = third_party/fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "third_party/qt-solutions/qt-solutions"]
+	path = third_party/qt-solutions/qt-solutions
+	url = https://github.com/qtproject/qt-solutions.git
