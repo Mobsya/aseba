@@ -34,10 +34,11 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
     update_discovery();
 }
 
-void aseba_node_registery::set_node_uuid(const std::shared_ptr<aseba_node> & node, const node_id& id) {
+void aseba_node_registery::set_node_uuid(const std::shared_ptr<aseba_node>& node, const node_id& id) {
     std::unique_lock<std::mutex> lock(m_nodes_mutex);
     auto it = find(node);
     if(it != std::end(m_aseba_nodes)) {
+        m_node_status_changed_signal(node, it->first, aseba_node::status::disconnected);
         m_aseba_nodes.erase(it);
     }
     m_aseba_nodes.insert({id, node});
