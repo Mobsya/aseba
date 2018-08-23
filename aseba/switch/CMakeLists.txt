@@ -15,7 +15,6 @@ add_executable(switch
     aseba_node.cpp
     aseba_tcpacceptor.h
     aseba_tcpacceptor.cpp
-    dispatcher.h
     app_server.h
     app_endpoint.h
     flatbuffers_message_reader.h
