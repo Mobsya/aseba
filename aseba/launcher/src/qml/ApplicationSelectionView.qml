@@ -8,7 +8,7 @@ Item {
         orientation: Qt.Horizontal
         id : app_view
         spacing: 0
-        
+
 //        Rectangle {
 //            anchors.fill: parent
 //            opacity: 0.1
@@ -17,27 +17,28 @@ Item {
 //        }
 
         delegate: Item {
-            anchors.verticalCenter: parent.verticalCenter 
+            anchors.verticalCenter: parent.verticalCenter
             height: icon.height + label.height + 12
             width:  (app_view.width) / app_view.count
-            
+
 //            Rectangle {
 //                anchors.fill: parent
 //                opacity: 0.1
 //                border.color: "magenta"
 //                border.width: 2
-//            }   
-            
+//            }
+
             Column {
-                anchors.fill: parent   
+                anchors.fill: parent
                 AnimatedImage {
                     id: icon
                     source: animatedIcon
                     playing: false
-                    
+
+
                     height: width
                     width : Math.max(48, Math.min(256, parent.width - 2 * 30))
-                    
+
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
@@ -47,12 +48,12 @@ Item {
                     }
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
-                
+
                 Item {
                     height: 12
                     width: parent.width
                 }
-                
+
                 Text {
                     id: label
                     anchors.horizontalCenter: icon.horizontalCenter
@@ -61,14 +62,14 @@ Item {
             }
         }
     }
-    
+
     WindowButtons {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: Style.window_margin
         anchors.rightMargin: Style.window_margin
     }
-    
+
     Text {
         id: version
         text: qsTr("Version 42 - lorem ipsum yo")
