@@ -14,19 +14,18 @@ Item {
             width: btn_size
             height: parent.height
         }
-        
+
         SvgButton {
             source: "qrc:/assets/info-icon.svg"
             width: btn_size
             height: parent.height
         }
-        
+
         SvgButton {
             source: "qrc:/assets/update-icon.svg"
             width: btn_size
             height: parent.height
         }
-        
         spacing: 15
     }
 }
