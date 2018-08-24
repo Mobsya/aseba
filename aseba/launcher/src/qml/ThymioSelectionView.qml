@@ -76,7 +76,7 @@ Item {
 
                 var mW = selection_view.width / 2
                 var count = Math.floor(mW / 172)
-                return Math.min(4, count) * 172  + 30
+                return Math.min(4, count) * 172  + 30 * 2
             }
             Layout.minimumWidth: Layout.maximumWidth
             Layout.fillHeight: true
@@ -97,16 +97,34 @@ Item {
 
             Rectangle {
                 id:button
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors.horizontalCenter: parent.horizontalCenter
                 height: 40;
+                width : 220;
+                radius: 20
                 anchors.bottom: parent.bottom
                 anchors.topMargin: Style.window_margin
-                color: "blue"
+                color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
+                Text {
+                    font.family: "Roboto Bold"
+                    font.pointSize: 12
+                    color : "white"
+                    anchors.centerIn: parent
+                    text : qsTr("Launch Blockly")
+
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    id: mouse_area
+                    cursorShape: Qt.PointingHandCursor
+                }
+
+                anchors.bottomMargin: 30
             }
 
 
             Item {
+                id:grid_container
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top : selection_title.bottom
@@ -117,15 +135,18 @@ Item {
                 anchors.bottomMargin: Style.window_margin
 
 
-                anchors.leftMargin: {
-                    var margin = (parent.width - 30) % 172
-                    return margin / 2
-
-                }
+                anchors.leftMargin : 30
                 anchors.rightMargin: anchors.leftMargin
 
                 GridView {
-                    anchors.fill: parent
+                    id: device_view
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: {
+                        console.log(grid_container.width, cellWidth, Math.floor(grid_container.width / cellWidth), cellWidth * (grid_container.width / cellWidth))
+                        return cellWidth * Math.floor(grid_container.width / cellWidth)
+                    }
+
+                    height: parent.height
                     cellWidth : 172
                     cellHeight: 172
                     boundsBehavior: Flickable.StopAtBounds
@@ -136,81 +157,104 @@ Item {
                     model: thymios
 
                     delegate:  Item {
+                        id:item
                         height: 172
                         width : 172
+                        property bool selected: device_view.currentIndex == index
                         opacity: {
                             switch(status) {
                             case ThymioNode.Ready:
                             case ThymioNode.Available:
-                                    return 1;
+                                    return selected ? 1 : 0.8;
                             default: return 0.5
                             }
                         }
 
-                        Column {
-                            width : 142
-                            height: 142
+                        MouseArea {
+                            id: device_mouse_area
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked:  {
+                                device_view.currentIndex = index
+                                //item.selected = device_view.currentIndex == index
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: selectable_area
+                            color: device_mouse_area.containsMouse ? "#353535" : "transparent"
+                            border.width: item.selected ? 1.3333 : 0
+                            border.color: "#0a9eeb"
+                            anchors.fill: parent
                             anchors.horizontalCenter: parent.horizontalCenter
 
-                            Item {
-                                width :  90
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                //color : "#FF00FF"
-                                height: 12
+                            Column {
+                                width : 142
+                                height: 120
+                                anchors.centerIn: parent
+
+                                Item {
+                                    width :  90
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    //color : "#FF00FF"
+                                    height: 12
 
 
-                                BatteryIndicator {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    BatteryIndicator {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: 8
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 2
+
+                                    }
+
+                                    Image {
+                                         id: icon;
+                                         source : "qrc:/assets/update-icon.svg"
+                                         fillMode: Image.PreserveAspectFit
+                                         anchors.verticalCenter: parent.verticalCenter
+                                         height: 12
+                                         anchors.right: parent.right
+                                         anchors.leftMargin: 2
+                                         smooth: true
+                                         antialiasing: true
+                                    }
+                                }
+
+                                Item {
+                                    width: parent.width
                                     height: 8
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 2
-
                                 }
 
                                 Image {
-                                     id: icon;
-                                     source : "qrc:/assets/update-icon.svg"
-                                     fillMode: Image.PreserveAspectFit
-                                     anchors.verticalCenter: parent.verticalCenter
-                                     height: 12
-                                     anchors.right: parent.right
-                                     anchors.leftMargin: 2
-                                     smooth: true
-                                     antialiasing: true
-                                }
-                            }
-
-                            Item {
-                                width: parent.width
-                                height: 8
-                            }
-
-                            Image {
-                                source: {
-                                    switch (type) {
-                                     case ThymioNode.Thymio2:
-                                     case ThymioNode.Thymio2Wireless:
-                                        return "qrc:/assets/thymio.svg"
-                                     case ThymioNode.SimulatedThymio2:
-                                        return "qrc:/assets/simulated_thymio.svg"
-                                     default:
-                                        return "qrc:/assets/dummy_node.svg"
+                                    source: {
+                                        switch (type) {
+                                         case ThymioNode.Thymio2:
+                                         case ThymioNode.Thymio2Wireless:
+                                            return "qrc:/assets/thymio.svg"
+                                         case ThymioNode.SimulatedThymio2:
+                                            return "qrc:/assets/simulated_thymio.svg"
+                                         default:
+                                            return "qrc:/assets/dummy_node.svg"
+                                        }
                                     }
+                                    width :  90
+                                    fillMode:Image.PreserveAspectFit
+                                    anchors.horizontalCenter: parent.horizontalCenter
                                 }
-                                width :  90
-                                fillMode:Image.PreserveAspectFit
-                                anchors.horizontalCenter: parent.horizontalCenter
-                            }
-                            Item {
-                                width: parent.width
-                                height: 20
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: name
-                                font.family: "Roboto Light"
-                                font.pointSize: 12
-                                color : "white"
+                                Item {
+                                    width: parent.width
+                                    height: 20
+                                }
+                                Text {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: name
+                                    font.family: "Roboto"
+                                    font.bold: true
+                                    font.pointSize: 9
+                                    color : "white"
+                                }
                             }
                         }
                     }
