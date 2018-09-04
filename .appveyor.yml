@@ -144,11 +144,11 @@ environment:
       QT5: C:\Qt\5.10\msvc2017_64
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
-    - ARCH: x86
-      QT5: C:\Qt\5.10\msvc2015
-      COMPILER: MSVC
-      USE_VS_TOOLCHAIN: true
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib32-msvc-14.1'
+    #- ARCH: x86
+      #QT5: C:\Qt\5.10\msvc2015
+      #COMPILER: MSVC
+      #USE_VS_TOOLCHAIN: true
+      #BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib32-msvc-14.1'
 
     - ARCH: x64
       COMPILER: MSVC
