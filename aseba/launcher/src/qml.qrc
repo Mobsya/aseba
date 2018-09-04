@@ -38,5 +38,9 @@
         <file>qml/BatteryIndicator.qml</file>
         <file>assets/selected_thymio.svg</file>
         <file>assets/selected_simulated_thymio.svg</file>
+        <file>qml/DeviceContextMenu.qml</file>
+        <file>qml/InverseMouseArea.qml</file>
+        <file>qml/EditableDeviceNameInput.qml</file>
+        <file>qml/ThymioSelectionDeviceDelegate.qml</file>
     </qresource>
 </RCC>
