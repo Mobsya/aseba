@@ -44,5 +44,6 @@
         <file>qml/ThymioSelectionDeviceDelegate.qml</file>
         <file>qml/BottomEasingStackView.qml</file>
         <file>apps/blockly/blockly-icon.svg</file>
+        <file>apps/blockly/description.jpeg</file>
     </qresource>
 </RCC>

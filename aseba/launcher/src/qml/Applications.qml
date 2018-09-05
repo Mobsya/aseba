@@ -16,6 +16,7 @@ ListModel {
         name: "Blockly"
         animatedIcon: "qrc:/apps/blockly/blockly-animated-icon.webp"
         icon: "qrc:/apps/blockly/blockly-icon.svg"
+        descriptionImage: "qrc:/apps/blockly/description.jpeg"
     }
 
 //    ListElement {

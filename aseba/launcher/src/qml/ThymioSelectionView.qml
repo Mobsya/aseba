@@ -70,17 +70,20 @@ Item {
 
                 Item {
                     anchors.fill: parent
-                    /*Rectangle {
-                        color: 'magenta'
+                    Image {
+                        source: launcher.selectedApp.descriptionImage
                         anchors.left:  parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
+                        fillMode: Image.PreserveAspectCrop
+                        verticalAlignment: Image.AlignTop
+                        horizontalAlignment: Image.AlignLeft
                         height: {
                             return selection_view.width > selection_view.height ? Math.min(width * 0.5, parent.height* 0.5) : parent.height * 0.33
                         }
 
                         id: img_description
-                    }*/
+                    }
 
                     Item {
                         //color: 'yellow'
