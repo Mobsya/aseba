@@ -1,6 +1,14 @@
 import QtQuick 2.0
 
 Item {
+    id:item
+    property var selectedApp
+
+    Rectangle {
+        id: bg
+        anchors.fill: parent
+        color: Style.main_bg_color
+    }
     ListView {
         anchors.margins: Style.window_margin + Style.column_margin + Style.column_width
         anchors.fill: parent
@@ -8,25 +16,11 @@ Item {
         orientation: Qt.Horizontal
         id : app_view
         spacing: 0
-
-//        Rectangle {
-//            anchors.fill: parent
-//            opacity: 0.1
-//            border.color: "black"
-//            border.width: 2
-//        }
-
+        currentIndex: -1
         delegate: Item {
             anchors.verticalCenter: parent.verticalCenter
             height: icon.height + label.height + 12
             width:  (app_view.width) / app_view.count
-
-//            Rectangle {
-//                anchors.fill: parent
-//                opacity: 0.1
-//                border.color: "magenta"
-//                border.width: 2
-//            }
 
             Column {
                 anchors.fill: parent
@@ -44,6 +38,12 @@ Item {
                         hoverEnabled: true
                         onEntered: {
                             icon.playing = true
+                        }
+                        onClicked: {
+                            //Make sure the index changed signal is always emitted on click
+                            app_view.currentIndex = -1
+                            app_view.currentIndex = index
+                            item.selectedApp = app_view.model.get(app_view.currentIndex)
                         }
                     }
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -72,7 +72,7 @@ Item {
 
     Text {
         id: version
-        text: qsTr("Version 42 - lorem ipsum yo")
+        text: qsTr("Alpha 1")
         font.family: "Roboto Light"
         anchors.bottom: parent.bottom
         anchors.left: parent.left

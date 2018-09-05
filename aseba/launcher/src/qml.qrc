@@ -42,5 +42,7 @@
         <file>qml/InverseMouseArea.qml</file>
         <file>qml/EditableDeviceNameInput.qml</file>
         <file>qml/ThymioSelectionDeviceDelegate.qml</file>
+        <file>qml/BottomEasingStackView.qml</file>
+        <file>apps/blockly/blockly-icon.svg</file>
     </qresource>
 </RCC>
