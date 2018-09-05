@@ -10,7 +10,7 @@ Item {
         anchors.top: parent.top
         width: parent.width
         height: Style.titlebar_height
-        color: Style.titlebar_bg_color
+        color: Style.dark
         Image {
             id: app_icon
             anchors.verticalCenter: parent.verticalCenter
@@ -66,11 +66,11 @@ Item {
             id: left_pane
             Rectangle {
                 anchors.fill: parent
-                color: Style.app_descrition_bg_color
+                color: Style.light
 
                 Item {
                     anchors.fill: parent
-                    Rectangle {
+                    /*Rectangle {
                         color: 'magenta'
                         anchors.left:  parent.left
                         anchors.right: parent.right
@@ -80,7 +80,7 @@ Item {
                         }
 
                         id: img_description
-                    }
+                    }*/
 
                     Item {
                         //color: 'yellow'
@@ -106,11 +106,11 @@ Item {
             Layout.minimumWidth: Layout.maximumWidth
             Layout.fillHeight: true
 
-            color: Style.thymio_selection_bg_color
+            color: Style.mid
             anchors.bottomMargin: Style.window_margin
             anchors.topMargin: Style.window_margin
 
-            Rectangle {
+            Item {
                 id: selection_title
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -118,6 +118,16 @@ Item {
                 anchors.top: parent.top
                 anchors.leftMargin: 30
                 anchors.rightMargin: 30
+                Text {
+                    text: qsTr("Choose a Tymio")
+                    font.family: "Roboto Bold"
+                    font.bold: true
+                    font.pointSize: 10
+                    color : "white"
+
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                }
             }
 
             Rectangle {
@@ -166,7 +176,6 @@ Item {
                     id: device_view
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: {
-                        console.log(grid_container.width, cellWidth, Math.floor(grid_container.width / cellWidth), cellWidth * (grid_container.width / cellWidth))
                         return cellWidth * Math.floor(grid_container.width / cellWidth)
                     }
 

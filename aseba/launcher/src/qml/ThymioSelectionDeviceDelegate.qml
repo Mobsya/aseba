@@ -67,7 +67,7 @@ Item {
 
     Rectangle {
         id: selectable_area
-        color: device_mouse_area.containsMouse ? "#353535" : "transparent"
+        color: device_mouse_area.containsMouse ? Style.light : "transparent"
         border.width: item.selected ? 1.3333 : 0
         border.color: "#0a9eeb"
         anchors.fill: parent
@@ -81,7 +81,6 @@ Item {
             Item {
                 width :  90
                 anchors.horizontalCenter: parent.horizontalCenter
-                //color : "#FF00FF"
                 height: 12
 
 
