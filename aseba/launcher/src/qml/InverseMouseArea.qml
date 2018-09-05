@@ -44,7 +44,7 @@ Item {
     }
 
     function _topMostItem() {
-        return main_window;
+        return launcher;
     }
 
     Component {

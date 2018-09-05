@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.11
 import QtGraphicalEffects 1.0
 
 Item {
@@ -13,6 +13,7 @@ Item {
         height: parent.height
         sourceSize: Qt.size(width, height)
         antialiasing: true
+        mipmap:true
     }
     MouseArea {
         id: mouse_area

@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.11
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import org.mobsya  1.0
@@ -11,17 +11,40 @@ Item {
         width: parent.width
         height: Style.titlebar_height
         color: Style.titlebar_bg_color
-        Row {
-            anchors.fill: parent
-            anchors.leftMargin: 30
-            Text {
-                id: test
-                text: qsTr("Hello")
-                color: "white"
-                font.bold: false
-                font.family: "Roboto"
-                font.pointSize: 20
-                anchors.verticalCenter: parent.verticalCenter
+        Image {
+            id: app_icon
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 15
+            anchors.left: parent.left
+            source: launcher.selectedApp.icon
+            width : 30
+            height: 30
+            mipmap:true
+
+        }
+
+        Text {
+            text: launcher.selectedApp.name
+            color: "white"
+            font.bold: true
+            font.family: "Roboto"
+            font.pointSize: 12
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 10
+            anchors.left: app_icon.right
+            smooth: true
+            antialiasing: true
+        }
+
+        SvgButton {
+            source: "qrc:/assets/vertical-close.svg"
+            height: 12
+            width : 22
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: (parent.height - height) / 2
+            onClicked: {
+                launcher.goToAppSelectionScreen()
             }
         }
 
@@ -32,6 +55,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         flow:  width > height ? GridLayout.LeftToRight : GridLayout.TopToBottom
+        columnSpacing: 0
+        rowSpacing: 0
 
 
         Item {
@@ -109,7 +134,7 @@ Item {
                     font.pointSize: 12
                     color : "white"
                     anchors.centerIn: parent
-                    text : qsTr("Launch Blockly")
+                    text : qsTr("Launch %1").arg(launcher.selectedApp.name)
 
                 }
                 MouseArea {
@@ -118,7 +143,6 @@ Item {
                     id: mouse_area
                     cursorShape: Qt.PointingHandCursor
                 }
-
                 anchors.bottomMargin: 30
             }
 

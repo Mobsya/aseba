@@ -1,48 +1,39 @@
-import QtQuick 2.0
+import QtQuick 2.6
 import QtQuick.Controls 2.4
-import QtQuick.Layouts 1.3
 
 Item {
-    id: main_window
-    //title: qsTr("Thymio Launcher")
+    id: launcher
     visible:true
-    //minimumHeight: 640
-    //minimumWidth:  1024
-    Rectangle {
-        id: bg
-        anchors.fill: parent
-        color: Style.main_bg_color
-    }
-    
-    StackLayout {
+    property var selectedApp : app_view.selectedApp
+
+    BottomEasingStackView {
         id: main_layout
-        currentIndex: 0
         anchors.fill: parent
-        ApplicationSelectionView {
-            Layout.fillWidth:true
-            Layout.fillHeight:true
+        initialItem: ApplicationSelectionView {
             id: app_view
-        }
-        ThymioSelectionView {
-            Layout.fillWidth:true
-            Layout.fillHeight:true
-            id: thymio_view
-        }
-        
-        onCurrentIndexChanged: {
-            if(thymio_view.visible) {
-                bg.color = Style.thymio_selection_bg_color
-            }
-            else {
-                bg.color = Style.main_bg_color
+            onSelectedAppChanged: {
+                goToDeviceSelectionWithApp()
             }
         }
     }
-    
-    Button {
-        anchors.top: main_window.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: "toogle"
-        onClicked: main_layout.currentIndex = main_layout.currentIndex == 1 ? 0 : 1
+
+    Component {
+        id: deviceSelectionViewFactory
+        ThymioSelectionView {
+            id: deviceSelectionView
+        }
+    }
+
+    function goToDeviceSelectionWithApp() {
+        if(app_view.selectedApp && main_layout.depth == 1) {
+            var component = deviceSelectionViewFactory.createObject(main_layout)
+            main_layout.push(component)
+        }
+    }
+
+    function goToAppSelectionScreen() {
+        if(main_layout.depth > 1) {
+            main_layout.pop()
+        }
     }
 }
