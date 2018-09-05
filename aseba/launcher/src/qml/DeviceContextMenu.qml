@@ -84,7 +84,7 @@ Item {
                 background: Rectangle {
                     anchors.fill: parent
                     opacity: 1
-                    color: menuItem.highlighted ? "#282828" : "transparent"
+                    color: menuItem.highlighted ? Style.verydark : "transparent"
                 }
             }
 
@@ -99,7 +99,7 @@ Item {
 
                     Rectangle {
                        id:bg
-                       color: "#242424"
+                       color: Style.dark
                        radius: 5
                        antialiasing: true
                        anchors.centerIn: parent

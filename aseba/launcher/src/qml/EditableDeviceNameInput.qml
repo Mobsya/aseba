@@ -72,7 +72,7 @@ TextField {
 
 
         Rectangle {
-            color: "#434343"
+            color: Style.light
             anchors.centerIn: parent
             anchors.fill: parent
             id:glowing
@@ -81,7 +81,7 @@ TextField {
         }
 
         Rectangle {
-            color: readOnly ? "transparent" : "#434343"
+            color: readOnly ? "transparent" : Style.light
             radius: 2
             anchors.centerIn: parent
             anchors.fill: parent
