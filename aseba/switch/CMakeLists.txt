@@ -56,5 +56,9 @@ else()
     target_link_libraries(switch libusb)
 endif()
 
+if (MSVC)
+    target_compile_options(switch PRIVATE /bigobj)
+endif()
+
 install(TARGETS switch RUNTIME DESTINATION bin)
 codesign(switch)
