@@ -58,6 +58,8 @@ matrix:
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
 - git submodule update --remote
+- rm -rf thymio-blockly-standalone
+- git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
 before_install:
 - |
@@ -135,8 +137,8 @@ script:
       export ANDROID_NDK=$HOME/android-ndk-r10e
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
-      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.11.1/android_armv7/:$(dirname $(which npm))"
-      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.11.1/android_armv7/"
+      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake "-DCMAKE_PROGRAM_PATH=$(dirname $(which npm))"
       ninja -v
   fi
   set +e

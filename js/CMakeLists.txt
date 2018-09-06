@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
-find_program(NPM_EXECUTABLE NAMES npm)
+find_program(NPM_EXECUTABLE NAMES npm NO_CMAKE_FIND_ROOT_PATH)
+
 if (NOT NPM_EXECUTABLE)
     message(FATAL_ERROR "Could not find npm")
 endif()

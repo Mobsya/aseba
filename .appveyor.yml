@@ -90,7 +90,7 @@ before_build:
     )
   - git submodule init
   - git submodule update --recursive --remote
-  - if NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER git clone https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --branch master --recurse-submodules
+  - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
 build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
