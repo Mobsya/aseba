@@ -5,7 +5,7 @@ if (NOT NPM_EXECUTABLE)
     message(FATAL_ERROR "Could not find npm")
 endif()
 
-add_custom_target(thymio-js-api ALL DEPENDS package.json  package-lock.json thymio_generated.js thymio.js ${CMAKE_CURRENT_BINARY_DIR}/mobsya-thymio-api.tgz)
+add_custom_target(thymio-js-api ALL DEPENDS package.json  package-lock.json ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js thymio.js ${CMAKE_CURRENT_BINARY_DIR}/mobsya-thymio-api.tgz)
 
 
 add_custom_command(
@@ -16,14 +16,11 @@ add_custom_command(
     DEPENDS package.json
 )
 
-add_dependencies(thymio-js-api thymio-flatbuffers)
-compile_flatbuffers_schema_to_js(../aseba/flatbuffers/thymio.fbs FLATBUFFER_JS)
-message("Copying JS API ${FLATBUFFER_JS}")
 add_custom_command(
-    OUTPUT  ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js
-    DEPENDS ${CMAKE_BINARY_DIR}/js/thymio_generated.js
-    COMMAND ${CMAKE_COMMAND} -E copy thymio_generated.js ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js
-    COMMENT "Copying JS API ${FLATBUFFER_JS}"
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js
+  COMMAND flatc --js --gen-mutable --es6-js-export --gen-object-api -o "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
+  DEPENDS flatc thymio-flatbuffers ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
+  COMMENT "Generating ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js"
 )
 
 add_custom_command(
