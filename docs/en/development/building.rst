@@ -4,7 +4,7 @@ Building Aseba
 Requierements & Dependencies
 ----------------------------
 
-Aseba requieres a C++14 compatible compiler. We recommand ``GCC 6``,
+Aseba requires a C++14 compatible compiler. We recommend ``GCC 6``,
 ``Clang 5`` or ``MSVC 19`` (Visual Studio 17).
 
 Aseba depends on Qt5.9 or greater. You will also need ``cmake`` 3.1 or
@@ -14,7 +14,7 @@ Getting the source code
 -----------------------
 
 The `source code of Aseba <https://github.com/mobsya/aseba>`_
-is hosted on github.
+is hosted on GitHub.
 To fetch the source, you must first `install Git <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_
 .
 
@@ -42,26 +42,24 @@ Download and install the following components:
 .. csv-table::
    :header: "Dep", "Dowload", "Notes"
 
-   "Visual Studio 2017", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Deskop development with C++" workload
+   "Visual Studio 2017", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload
    "Cmake 3.11+", `Website <https://cmake.org/download/>`__, Make sure the version of boost you choose is compatible with the cmake version
    "Boost 1.67+", `Website <https://www.boost.org/>`_ `x64 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe/download>`_ `x86 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-32.exe/download>`_
    "Qt 5.11.2+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt Charts`` component. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
-   Bonjour, You will find the installer in ``third_party/bonjour/bonjoursdksetup.exe``,
-   Node & Npm, "`Download <https://nodejs.org/en/download/>`_", "``npm.exe``" must be in the path
-   7Zip, "`Download <https://www.7-zip.org/download.html>`_", "",
-   NSIS 2, "`Download <https://sourceforge.net/projects/nsis/files/NSIS%202/>`_", For building the installer; "``nsis.exe``" must be in the path,
-   Python, "`Download <https://www.python.org/downloads/windows/>`_", For signing the installer; "``python.exe``" must be in the path,
+   Bonjour, You will find the installer in ``third_party/bonjour/bonjoursdksetup.exe``
+   Node & Npm, "`Download <https://nodejs.org/en/download/>`_", ``npm.exe`` must be in the path
+   7Zip, "`Download <https://www.7-zip.org/download.html>`_"
+   NSIS 2, "`Download <https://sourceforge.net/projects/nsis/files/NSIS%202/>`_", For building the installer; ``nsis.exe`` must be in the path;
+   Python, "`Download <https://www.python.org/downloads/windows/>`_", For signing the installer; ``python.exe`` must be in the path;
 
 
 To build Aseba, you first need to generate a Visual Studio Solution.
 
 To do so:
 
-1. Launch ``Visual C++ x64 Native Build Tools Command Prompt`` or
-   ``Visual C++ x86 Native Build Tools Command Prompt`` depending on the
-   architecture you want to build for
+1. Launch ``Developer Command Prompt for VS 2017``
 
-   Navigate to the directory in which you want to build aseba. It is recommanded not to build in the source directory
+   Navigate to the directory in which you want to build aseba. It is recommended not to build in the source directory
 
 2. Run ``set "CMAKE_PREFIX_PATH=C:`<BOOST_INSTALLATION_PATH>\boost\_1_67_0;C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017_64;"``
 
@@ -69,7 +67,7 @@ To do so:
 
    ``<QT_VERTION>`` is the version of Qt you installed. A folder of that name exists in the Qt installation directory.
 
-3. ``set "BOOST_ROOT=<BOOST_INSTALLATION_PATH>\bin"``
+3. ``set "BOOST_ROOT=<BOOST_INSTALLATION_PATH>"``
 
 4. To build for x64:
 
@@ -84,6 +82,9 @@ To build for x86:
    cmake -G"Visual Studio 15 2017" -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_ROOT%/lib32-msvc-14.1" "-DCMAKE_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" <ASEBA_SOURCE_DIRECTORY>
 
 where ``<ASEBA_SOURCE_DIRECTORY>`` is the directory containing the aseba repository.
+
+Then, to build the project, you can either run ``msbuild aseba.sln`` or open ``aseba.sln`` with Visual Studio 2017.
+Refer to the documentation of msbuild and Visual Studio for more informations.
 
 Getting Started on OSX
 ----------------------
@@ -158,13 +159,13 @@ following commands:
 
 Getting Started on Android
 --------------------------
-VPL 2 can be build for Android. Other tools such as studio, playground and the old VPL
-are not compatible with android.
+VPL 2 can be built for Android. Other tools such as studio, playground, and the old VPL
+are not compatible with Android.
 
-To build the android version you will need:
- * `The android tools for your system <https://developer.android.com/studio/index.html#downloads>`_
- * `The android NDK <https://developer.android.com/ndk/downloads/index.html>`_ - tested with version 10 - currently not compatible wuth newer NDK
- * Qt 5.10 for android - which you can install through the Qt installer
+To build the Android version you will need:
+ * `The Android tools for your system <https://developer.android.com/studio/index.html#downloads>`_
+ * `The Android NDK <https://developer.android.com/ndk/downloads/index.html>`_ - tested with version 10 - currently not compatible with newer NDK
+ * Qt 5.10 for Android - which you can install through the Qt installer
  * CMake 3.7 or greater
 
 Building VPL 2
@@ -198,5 +199,5 @@ to run the tests.
 Ninja
 ~~~~~
 
-The compilation of Aseba can be significantly speed up using ``ninja``
-insteadf of make. Refer to the documentation of ``cmake`` and ``ninja``.
+The compilation of Aseba can be significantly speedup using ``ninja``
+instead of make. Refer to the documentation of ``cmake`` and ``ninja``.
