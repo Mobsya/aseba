@@ -2,11 +2,14 @@ cache:
   ccache: true
   directories:
   - "$HOME/Library/Caches/Homebrew"
+  - "js/node_modules"
+  - "thymio-blockly-standalone/node_modules"
 
 matrix:
   include:
   - os: linux
     language: cpp
+    node_js: '8'
     addons:
       apt:
         sources:
@@ -33,6 +36,7 @@ matrix:
         - lcov
     env: COMPILER=clang-6.0  CXX_COMPILER=clang++-6.0
   - os: osx
+    node_js: '8'
     language: cpp
     osx_image: xcode8
     env: COMPILER=clang  CXX_COMPILER=clang++
@@ -48,6 +52,7 @@ matrix:
         - cmake
     env: ANDROID=1
     language: cpp
+    node_js: '8'
     jdk: oraclejdk8
 
 before_script:
@@ -97,6 +102,7 @@ install:
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
         sudo apt-get install --allow-unauthenticated clang-6.0
   fi
+  npm --version
 
 script:
 - |
