@@ -102,6 +102,7 @@ set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_P
 
 
 add_subdirectory(aseba)
+add_subdirectory(js)
 
 if(NOT ANDROID)
 	# Unit tests
@@ -115,8 +116,8 @@ endif()
 
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/thymio-blockly-standalone/CMakeLists.txt)
-	#add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
-	message("-- Found thymio-blockly-standalone, will bundle blockly")
+    add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
+    message("-- Found thymio-blockly-standalone, will bundle blockly")
 endif()
 
 
