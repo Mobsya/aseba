@@ -2,11 +2,14 @@ cache:
   ccache: true
   directories:
   - "$HOME/Library/Caches/Homebrew"
+  - "js/node_modules"
+  - "thymio-blockly-standalone/node_modules"
 
 matrix:
   include:
   - os: linux
     language: cpp
+    node_js: '8'
     addons:
       apt:
         sources:
@@ -33,6 +36,7 @@ matrix:
         - lcov
     env: COMPILER=clang-6.0  CXX_COMPILER=clang++-6.0
   - os: osx
+    node_js: '8'
     language: cpp
     osx_image: xcode8
     env: COMPILER=clang  CXX_COMPILER=clang++
@@ -48,11 +52,14 @@ matrix:
         - cmake
     env: ANDROID=1
     language: cpp
+    node_js: '8'
     jdk: oraclejdk8
 
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
 - git submodule update --remote
+- rm -rf thymio-blockly-standalone
+- git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
 before_install:
 - |
@@ -75,7 +82,7 @@ before_install:
     wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip -O $HOME/android-sdk.zip 1>/dev/null
     mkdir android
     unzip -q android-sdk.zip -d android/sdk
-    export PATH=$PATH:$HOME/android/sdk/tools:$HOME/android/sdk/tools/bin
+    export PATH=${PATH}:$HOME/android/sdk/tools:$HOME/android/sdk/tools/bin
     echo  y | sdkmanager "platform-tools"
     echo  y | sdkmanager "platforms;android-20"
     rm -rf $HOME/android-ndk-r10e
@@ -97,6 +104,8 @@ install:
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
         sudo apt-get install --allow-unauthenticated clang-6.0
   fi
+  nvm install 8
+  npm --version
 
 script:
 - |
@@ -129,7 +138,7 @@ script:
       export ANDROID_HOME=$HOME/android/sdk
       export ANDROID_SDK=$HOME/android/sdk
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.11.1/android_armv7/"
-      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake
+      cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake "-DCMAKE_PROGRAM_PATH=$(dirname $(which npm))"
       ninja -v
   fi
   set +e

@@ -10,6 +10,10 @@ matrix:
 skip_branch_with_pr: true
 
 install:
+  # Install npm, which we need for blockly and scratch
+  - ps: Install-Product node '8'
+  - npm install --global npm@latest
+  - set PATH=%APPDATA%\npm;%PATH%
   - mkdir C:\projects\deps
   - cd C:\projects\deps
 
@@ -86,7 +90,7 @@ before_build:
     )
   - git submodule init
   - git submodule update --recursive --remote
-  - if NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER git clone https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --branch master --recurse-submodules
+  - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
 build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
@@ -122,6 +126,7 @@ cache:
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
   - 'C:\Program Files (x86)\NSIS'
+  - '%APPDATA%\npm-cache'
 
 image: Visual Studio 2017
 platform: x64
@@ -149,12 +154,6 @@ environment:
       #COMPILER: MSVC
       #USE_VS_TOOLCHAIN: true
       #BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib32-msvc-14.1'
-
-    - ARCH: x86
-      QT5: C:\Qt\5.11.1\msvc2015
-      COMPILER: MSVC
-      USE_VS_TOOLCHAIN: true
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib32-msvc-14.1'
 
     - ARCH: x64
       COMPILER: MSVC
