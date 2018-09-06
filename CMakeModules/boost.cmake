@@ -1,5 +1,5 @@
 set(Boost_USE_STATIC_LIBS   ON)
-find_package(Boost 1.67 COMPONENTS chrono system filesystem thread regex date_time program_options python27)
+find_package(Boost 1.67 COMPONENTS chrono system filesystem thread regex date_time program_options OPTIONAL_COMPONENTS python27)
 add_definitions(-DBOOST_ALL_NO_LIB)
 if(WIN32)
     add_definitions(-DBOOST_USE_WINDOWS_H)
