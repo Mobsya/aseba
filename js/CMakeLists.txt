@@ -5,27 +5,24 @@ if (NOT NPM_EXECUTABLE)
     message(FATAL_ERROR "Could not find npm")
 endif()
 
-add_custom_target(thymio-js-api ALL DEPENDS package.json  package-lock.json ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js thymio.js ${CMAKE_CURRENT_BINARY_DIR}/mobsya-thymio-api.tgz)
+set(timestamp_file ${CMAKE_CURRENT_BINARY_DIR}/timestamp.cmake)
+set(timestamp_file2 ${CMAKE_CURRENT_BINARY_DIR}/timestamp2.cmake)
 
+add_custom_target(thymio-js-api ALL DEPENDS package.json thymio.js ${timestamp_file} ${timestamp_file2})
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/package-lock.json
+    OUTPUT  ${timestamp_file}
     COMMAND ${NPM_EXECUTABLE} install
+	COMMAND ${CMAKE_COMMAND} -E touch ${timestamp_file}
     COMMENT "thymio-js-api dependencies"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS package.json
 )
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js ${timestamp_file2}
   COMMAND flatc --js --gen-mutable --es6-js-export --gen-object-api -o "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
+  COMMAND ${CMAKE_COMMAND} -E touch ${timestamp_file2}
   DEPENDS flatc thymio-flatbuffers ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
   COMMENT "Generating ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js"
-)
-
-add_custom_command(
-    OUTPUT mobsya-thymio-api.tgz
-    COMMAND ${NPM_EXECUTABLE} pack ${CMAKE_CURRENT_SOURCE_DIR} && mv mobsya-thymio-api-*.tgz mobsya-thymio-api.tgz
-    COMMENT "Building mobsya-thymio-api"
-    DEPENDS thymio-flatbuffers package.json package-lock.json ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.js thymio.js ${timestamp_file}
 )
