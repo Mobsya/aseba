@@ -91,6 +91,8 @@ before_build:
   - git submodule init
   - git submodule update --recursive --remote
   - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
+  - if exist thymio-blockly-standalone\node_modules\ del thymio-blockly-standalone\node_modules\
+  - if exist js\node_modules\ del js\node_modules\
 
 build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
@@ -126,7 +128,6 @@ cache:
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
   - 'C:\Program Files (x86)\NSIS'
-  - '%APPDATA%\npm-cache'
 
 image: Visual Studio 2017
 platform: x64
