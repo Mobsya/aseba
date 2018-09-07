@@ -66,8 +66,9 @@ export class Node {
         this._id = id;
         this._status = status;
         this._type = type
-        this._desc   = undefined;
+        this._desc   = null;
         this._client = client
+        this._name   = null
     }
 
     /** return the node id*/
@@ -85,6 +86,21 @@ export class Node {
      */
     get status() {
         return this._status
+    }
+
+    /** The node name
+     *  @type {mobsya.fb.NodeStatus}
+     */
+    get name() {
+        return this._name
+    }
+
+    /*
+     * Send a request to rename a node
+     */
+    async rename(new_name) {
+        await this._client.rename_node(this._id, new_name)
+        this._set_name(new_name)
     }
 
     /** Whether the node is ready (connected, and locked)
@@ -105,7 +121,20 @@ export class Node {
             case mobsya.fb.NodeStatus.busy: return "busy"
             case mobsya.fb.NodeStatus.disconnected: return "disconnected"
         }
-        return "unknow"
+        return "unknown"
+    }
+
+    /** The node type converted to string.
+     *  @type {string}
+     */
+    get type_str() {
+        switch(this.type) {
+            case mobsya.fb.NodeType.Thymio2: return "Thymio 2"
+            case mobsya.fb.NodeType.Thymio2Wireless: return "Thymio Wireless"
+            case mobsya.fb.NodeType.SimulatedThymio2: return "Simulated Thymio 2"
+            case mobsya.fb.NodeType.DummyNode: return "Dummy Node"
+        }
+        return "unknown"
     }
 
     /** Lock the device
@@ -173,6 +202,15 @@ export class Node {
             }
         }
     }
+
+    _set_name(name) {
+        if(name != this._name) {
+            this._name = name
+            if(this._name) {
+                this.on_name_changed(name)
+            }
+        }
+    }
 }
 
 class InvalidNodeIDException {
@@ -209,7 +247,7 @@ Node.Status = mobsya.fb.NodeStatus;
 /*
  * The type of a node
  */
-Node.Status = mobsya.fb.NodeType;
+Node.Type = mobsya.fb.NodeType;
 
 /*
  * A client. Main entry point of the api
@@ -357,6 +395,22 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
+
+    rename_node(id, name) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const nameOffset = builder.createString(name);
+
+        mobsya.fb.RenameNode.startRenameNode(builder)
+        mobsya.fb.RenameNode.addRequestId(builder, req_id)
+        mobsya.fb.RenameNode.addNodeId(builder, nodeOffset)
+        mobsya.fb.RenameNode.addNewName(builder, nameOffset)
+        let offset = mobsya.fb.RenameNode.endRenameNode(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RenameNode)
+        return this._prepare_request(req_id)
+    }
+
     _nodes_changed_as_node_list(msg) {
         let nodes = []
         for(let i = 0; i < msg.nodesLength(); i++) {
@@ -365,6 +419,7 @@ export class Client {
             let node = this._nodes.get(id.toString())
             if(!node) {
                 node = new Node(this, id, n.status(), n.type())
+                node._name = n.name()
                 this._nodes.set(id.toString(), node)
             }
             if(n.status() == Node.Status.disconnected) {
@@ -372,6 +427,7 @@ export class Client {
             }
             nodes.push(node)
             node._set_status(n.status())
+            node._set_name(n.name())
         }
         return nodes
     }
@@ -451,3 +507,4 @@ export class Client {
         return req._promise
     }
 }
+
