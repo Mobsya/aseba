@@ -1,5 +1,6 @@
 #include "thymiodevicemanagerclientendpoint.h"
 #include <QDataStream>
+#include "thymio-api.h"
 
 namespace mobsya {
 
@@ -8,7 +9,14 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
 
     connect(m_socket, &QTcpSocket::readyRead, this, &ThymioDeviceManagerClientEndpoint::onReadyRead);
     connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::disconnected);
+    connect(m_socket, &QTcpSocket::connected, this, &ThymioDeviceManagerClientEndpoint::onConnected);
     // connect(m_socket, &QTcpSocket::onerror, this, &ThymioDeviceManagerClientEndpoint::disconnected);
+}
+
+void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer& buffer) {
+    uint32_t size = buffer.size();
+    m_socket->write(reinterpret_cast<const char*>(&size), sizeof(size));
+    m_socket->write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
 }
 
 void ThymioDeviceManagerClientEndpoint::onReadyRead() {
@@ -29,6 +37,11 @@ void ThymioDeviceManagerClientEndpoint::onReadyRead() {
         m_message_size = 0;
         Q_EMIT onMessage(fb_message_ptr(std::move(data)));
     }
+}
+
+void ThymioDeviceManagerClientEndpoint::onConnected() {
+    flatbuffers::FlatBufferBuilder builder;
+    write(wrap_fb(builder, fb::CreateConnectionHandshake(builder, minProtocolVersion, protocolVersion)));
 }
 
 

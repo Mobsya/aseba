@@ -23,6 +23,7 @@ add_executable(switch
     node_id.h
     usb_utils.h
     utils.h
+    tdm.h
 )
 
 if(WIN32)
