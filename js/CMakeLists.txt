@@ -17,7 +17,7 @@ set_property(TARGET thymio-js-api PROPERTY DEPENDS ${timestamp_file2})
 
 add_custom_command(
     OUTPUT  ${timestamp_file}
-    COMMAND ${NPM_EXECUTABLE} install
+    COMMAND ${NPM_EXECUTABLE} install --force
     COMMAND ${CMAKE_COMMAND} -E touch ${timestamp_file}
     COMMENT "thymio-js-api dependencies"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
