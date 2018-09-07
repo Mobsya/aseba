@@ -40,4 +40,14 @@ private:
     const fb::Message* m_msg;
 };
 
+template <typename MessageType>
+flatbuffers::DetachedBuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb,
+                                    const flatbuffers::Offset<MessageType>& offset) {
+    auto rootOffset =
+        mobsya::fb::CreateMessage(fb, mobsya::fb::AnyMessageTraits<MessageType>::enum_value, offset.Union());
+    fb.Finish(rootOffset);
+    auto x = fb.ReleaseBufferPointer();
+    return x;
+}
+
 }  // namespace mobsya

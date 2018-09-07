@@ -4,19 +4,10 @@
 #include <flatbuffers/flatbuffers.h>
 #include "aseba_node.h"
 #include "aseba_node_registery.h"
+#include <aseba/flatbuffers/fb_message_ptr.h>
 
 namespace mobsya {
 
-
-template <typename MessageType>
-flatbuffers::DetachedBuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb,
-                                    const flatbuffers::Offset<MessageType>& offset) {
-    auto rootOffset =
-        mobsya::fb::CreateMessage(fb, mobsya::fb::AnyMessageTraits<MessageType>::enum_value, offset.Union());
-    fb.Finish(rootOffset);
-    auto x = fb.ReleaseBufferPointer();
-    return x;
-}
 
 flatbuffers::DetachedBuffer create_nodes_list_request() {
     flatbuffers::FlatBufferBuilder fb;

@@ -2,6 +2,12 @@
 
 namespace mobsya.fb;
 
+//Handshake messages
+table ConnectionHandshake {
+    minProtocolVersion:uint = 1;
+    protocolVersion:uint = 1;
+}
+
 ///A node id
 table NodeId {
    id:[ubyte];
@@ -151,6 +157,7 @@ table RequestCompleted {
 }
 
 union AnyMessage {
+    ConnectionHandshake,
     RequestListOfNodes,
     RequestNodeAsebaVMDescription,
     LockNode,

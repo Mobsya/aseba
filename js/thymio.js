@@ -6,6 +6,10 @@ import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
 import WebSocket from 'isomorphic-ws';
 
+const MIN_PROTOCOL_VERSION = 1
+const PROTOCOL_VERSION = 1
+
+
 /** Class representing Request.
  *  A Request wraps a promise that will be triggered when the corresponding Error/RequestCompleted message get received
  *  @private
@@ -280,7 +284,12 @@ export class Client {
     }
 
     onopen() {
-        console.log("connected")
+        console.log("connected, sending protocol version")
+        const builder = new flatbuffers.Builder();
+        mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
+        mobsya.fb.ConnectionHandshake.addProtocolVersion(builder, PROTOCOL_VERSION)
+        mobsya.fb.ConnectionHandshake.addMinProtocolVersion(builder, MIN_PROTOCOL_VERSION)
+        this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
     onmessage (event) {
@@ -289,6 +298,11 @@ export class Client {
 
         let message = mobsya.fb.Message.getRootAsMessage(buf, null)
         switch(message.messageType()) {
+            case mobsya.fb.AnyMessage.ConnectionHandshake: {
+                const hs = message.message(new mobsya.fb.ConnectionHandshake())
+                console.log(`Handshake complete: Protocol version ${hs.protocolVersion()}`)
+                break;
+            }
             case mobsya.fb.AnyMessage.NodesChanged: {
                 this.on_nodes_changed(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
                 break;

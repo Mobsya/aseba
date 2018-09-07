@@ -88,18 +88,132 @@ mobsya.fb.ErrorType = {
  */
 mobsya.fb.AnyMessage = {
   NONE: 0,
-  RequestListOfNodes: 1,
-  RequestNodeAsebaVMDescription: 2,
-  LockNode: 3,
-  UnlockNode: 4,
-  RenameNode: 5,
-  RequestAsebaCodeLoad: 6,
-  RequestAsebaCodeRun: 7,
-  NodesChanged: 8,
-  NodeAsebaVMDescription: 9,
-  RequestCompleted: 10,
-  Error: 11,
-  CompilationError: 12
+  ConnectionHandshake: 1,
+  RequestListOfNodes: 2,
+  RequestNodeAsebaVMDescription: 3,
+  LockNode: 4,
+  UnlockNode: 5,
+  RenameNode: 6,
+  RequestAsebaCodeLoad: 7,
+  RequestAsebaCodeRun: 8,
+  NodesChanged: 9,
+  NodeAsebaVMDescription: 10,
+  RequestCompleted: 11,
+  Error: 12,
+  CompilationError: 13
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.ConnectionHandshake = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.ConnectionHandshake}
+ */
+mobsya.fb.ConnectionHandshake.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.ConnectionHandshake=} obj
+ * @returns {mobsya.fb.ConnectionHandshake}
+ */
+mobsya.fb.ConnectionHandshake.getRootAsConnectionHandshake = function(bb, obj) {
+  return (obj || new mobsya.fb.ConnectionHandshake).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.ConnectionHandshake.prototype.minProtocolVersion = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 1;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.ConnectionHandshake.prototype.mutate_minProtocolVersion = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.ConnectionHandshake.prototype.protocolVersion = function() {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 1;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.ConnectionHandshake.prototype.mutate_protocolVersion = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.ConnectionHandshake.startConnectionHandshake = function(builder) {
+  builder.startObject(2);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} minProtocolVersion
+ */
+mobsya.fb.ConnectionHandshake.addMinProtocolVersion = function(builder, minProtocolVersion) {
+  builder.addFieldInt32(0, minProtocolVersion, 1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} protocolVersion
+ */
+mobsya.fb.ConnectionHandshake.addProtocolVersion = function(builder, protocolVersion) {
+  builder.addFieldInt32(1, protocolVersion, 1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.ConnectionHandshake.endConnectionHandshake = function(builder) {
+  var offset = builder.endObject();
+  return offset;
 };
 
 /**

@@ -29,13 +29,9 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
 
     else {
         QTcpSocket* socket = new QTcpSocket;
-        socket->connectToHost(service.host(), service.port());
-        if(!socket->waitForConnected(2000)) {
-            delete socket;
-            return;
-        }
         std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint =
             std::make_shared<ThymioDeviceManagerClientEndpoint>(socket);
+        socket->connectToHost(service.host(), service.port());
 
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::onMessage, this,
                 &ThymioDeviceManagerClient::onMessage);

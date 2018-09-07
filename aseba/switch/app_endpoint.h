@@ -7,7 +7,7 @@
 #include "flatbuffers_message_reader.h"
 #include "flatbuffers_messages.h"
 #include "aseba_node_registery.h"
-
+#include "tdm.h"
 #include "log.h"
 
 namespace mobsya {
@@ -19,7 +19,8 @@ template <typename Self, typename Socket>
 class application_endpoint_base : public std::enable_shared_from_this<application_endpoint_base<Self, Socket>> {
 public:
     application_endpoint_base(boost::asio::io_context& ctx) = delete;
-    void read_message() = delete;
+    template <typename CB>
+    void read_message(CB&& handle) = delete;
     void start() = delete;
     void do_write_message(const flatbuffers::DetachedBuffer& buffer) = delete;
     tcp::socket& tcp_socket() = delete;
@@ -32,12 +33,15 @@ class application_endpoint_base<Self, websocket_t>
 public:
     application_endpoint_base(boost::asio::io_context& ctx)
         : m_ctx(ctx), m_strand(ctx.get_executor()), m_socket(tcp::socket(ctx)) {}
-    void read_message() {
+
+    template <typename CB>
+    void read_message(CB handle) {
         auto that = this->shared_from_this();
 
 
         auto cb = boost::asio::bind_executor(
-            m_strand, [that](boost::system::error_code ec, std::size_t bytes_transferred) mutable {
+            m_strand,
+            [that, handle = std::move(handle)](boost::system::error_code ec, std::size_t bytes_transferred) mutable {
                 if(ec) {
                     mLogError("read_message :{}", ec.message());
                     return;
@@ -45,7 +49,7 @@ public:
                 std::vector<uint8_t> buf(boost::asio::buffers_begin(that->m_buffer.data()),
                                          boost::asio::buffers_begin(that->m_buffer.data()) + bytes_transferred);
                 fb_message_ptr msg(std::move(buf));
-                static_cast<Self&>(*that).handle_read(ec, std::move(msg));
+                handle(ec, std::move(msg));
                 that->m_buffer.consume(bytes_transferred);
             });
         m_socket.async_read(m_buffer, std::move(cb));
@@ -86,11 +90,13 @@ class application_endpoint_base<Self, tcp::socket>
 public:
     application_endpoint_base(boost::asio::io_context& ctx)
         : m_ctx(ctx), m_strand(ctx.get_executor()), m_socket(tcp::socket(ctx)) {}
-    void read_message() {
+    template <typename CB>
+    void read_message(CB handle) {
         auto that = this->shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, fb_message_ptr msg) {
-            static_cast<Self&>(*that).handle_read(ec, std::move(msg));
-        });
+        auto cb = boost::asio::bind_executor(
+            m_strand, [that, handle = std::move(handle)](boost::system::error_code ec, fb_message_ptr&& msg) {
+                handle(ec, std::move(msg));
+            });
         mobsya::async_read_flatbuffers_message(m_socket, std::move(cb));
     }
 
@@ -132,23 +138,26 @@ public:
         mLogTrace("on_initialized: {}", ec.message());
 
         // start listening for incomming messages
-        read_message();
+        read_message(
+            [this](boost::system::error_code ec, fb_message_ptr&& msg) { this->handle_handshake(ec, std::move(msg)); });
 
         // Subscribe to node change events
         start_node_monitoring(registery());
+    }
 
-        // Immediately send a list of nodes
-        send_full_node_list();
+    template <typename CB>
+    void read_message(CB&& handle) {
+        base::read_message(std::forward<CB>(handle));
     }
 
     void read_message() {
-        // boost::asio::post(this->m_strand, boost::bind(&base::read_message, this));
-        base::read_message();
+        read_message(
+            [this](boost::system::error_code ec, fb_message_ptr&& msg) { this->handle_read(ec, std::move(msg)); });
     }
 
     void write_message(flatbuffers::DetachedBuffer&& buffer) {
         m_queue.push_back(std::move(buffer));
-        if(m_queue.size() > 1)
+        if(m_queue.size() > 1 || m_protocol_version == 0)
             return;
 
         base::do_write_message(m_queue.front());
@@ -377,6 +386,35 @@ private:
         return callback;
     }
 
+    void handle_handshake(boost::system::error_code ec, fb_message_ptr&& msg) {
+        if(ec)
+            return;
+
+        if(msg.message_type() != mobsya::fb::AnyMessage::ConnectionHandshake) {
+            mLogError("Client did not send a ConnectionHandshake message");
+            return;
+        }
+        auto hs = msg.as<fb::ConnectionHandshake>();
+        if(hs->protocolVersion() < tdm::minProtocolVersion || tdm::protocolVersion < hs->minProtocolVersion()) {
+            mLogError("Client protocol version ({}) is not compatible with this server({}+)", hs->protocolVersion(),
+                      tdm::minProtocolVersion);
+        } else {
+            m_protocol_version = std::min(hs->protocolVersion(), tdm::protocolVersion);
+        }
+        flatbuffers::FlatBufferBuilder builder;
+        write_message(
+            wrap_fb(builder, fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version)));
+
+        // the client do not have a compatible protocol version, bailing out
+        if(m_protocol_version == 0) {
+        }
+
+        // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing messages
+        send_full_node_list();
+
+        read_message();
+    }
+
     std::shared_ptr<application_endpoint<Socket>> shared_from_this() {
         return std::static_pointer_cast<application_endpoint<Socket>>(base::shared_from_this());
     }
@@ -389,7 +427,7 @@ private:
     std::vector<flatbuffers::DetachedBuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
+    uint8_t m_protocol_version = 0;
 };
-
 
 }  // namespace mobsya
