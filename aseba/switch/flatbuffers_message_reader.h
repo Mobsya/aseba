@@ -77,12 +77,17 @@ public:
             return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer),
                                            boost::asio::transfer_exactly(size), std::move(*this));
         }
-        if(bytes_transferred == state.dataBuffer.size()) {
-            auto& b = state.dataBuffer;
-            m_p.invoke(ec, fb_message_ptr(std::move(b)));
+        if(bytes_transferred != state.dataBuffer.size()) {
+            m_p.invoke(ec, fb_message_ptr{});
             return;
         }
-        m_p.invoke(ec, std::move(fb_message_ptr{}));
+        auto& b = state.dataBuffer;
+        flatbuffers::Verifier verifier(b.data(), b.size());
+        if(!fb::VerifyMessageBuffer(verifier)) {
+            m_p.invoke(boost::system::errc::make_error_code(boost::system::errc::bad_message), fb_message_ptr{});
+            return;
+        }
+        m_p.invoke(ec, fb_message_ptr(std::move(b)));
     }
 };
 }  // namespace mobsya
