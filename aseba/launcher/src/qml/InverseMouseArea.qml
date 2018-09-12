@@ -52,7 +52,7 @@ Item {
         MouseArea {
             propagateComposedEvents : true
             anchors.fill: parent
-            z: 200000000
+            z: 100000000
             acceptedButtons: Qt.AllButtons
             onPressed: {
                 mouse.accepted = false;
