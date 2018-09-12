@@ -45,6 +45,7 @@ Item {
                             app_view.currentIndex = index
                             item.selectedApp = app_view.model.get(app_view.currentIndex)
                         }
+                        cursorShape: Qt.PointingHandCursor
                     }
                     anchors.horizontalCenter: parent.horizontalCenter
                 }

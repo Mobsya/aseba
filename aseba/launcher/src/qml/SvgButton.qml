@@ -20,6 +20,7 @@ Item {
         anchors.fill: parent
         onClicked: parent.clicked()
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
     }
 
     BrightnessContrast {
