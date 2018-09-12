@@ -124,6 +124,7 @@ Item {
         }
     }
     InverseMouseArea {
+        enabled: menu && menu.visible
         onPressed:  {
             if(menu) {
                 menu.dismiss()
