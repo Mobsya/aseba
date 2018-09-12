@@ -16,8 +16,8 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   - mkdir C:\projects\deps
   - cd C:\projects\deps
-  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
-  - cmd: appveyor-tools\secure-file -decrypt %SIGNTOOL_PFX%.enc -secret %PFX_SECURE_FILE_DECODE%
+  - IF "%APPVEYOR_PULL_REQUEST_NUMBER%"="" ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+  - IF "%APPVEYOR_PULL_REQUEST_NUMBER%"="" cmd: appveyor-tools\secure-file -decrypt %SIGNTOOL_PFX%.enc -secret %PFX_SECURE_FILE_DECODE%
 
   # Install Bonjour
   - 7z x "%APPVEYOR_BUILD_FOLDER%\third_party\bonjour\bonjoursdksetup.exe"
