@@ -16,11 +16,16 @@ key  = os.environ.get("SIGNTOOL_KEY")
 pfx  = os.environ.get("SIGNTOOL_PFX")
 pss  = os.environ.get("SIGNTOOL_PASSPHRASE")
 
+
+if not ((scp and key) or (pss and pfx)):
+	print("env variables not defined, won't sign")
+	exit(0)
+
 if binary and not exists:
 	print("File {} does not exist".format(binary))
 	exit(1)
 
-elif not exists or not ((scp and key) or (pss and pfx)):
+elif not binary:
 	print(
 """
 Usage {} <binary>
