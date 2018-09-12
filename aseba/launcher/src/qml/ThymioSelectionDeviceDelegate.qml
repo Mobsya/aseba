@@ -34,6 +34,8 @@ Item {
         }
     }
 
+    property bool device_ready: status === ThymioNode.Ready || status === ThymioNode.Available
+
     MouseArea {
         id: device_mouse_area
         anchors.fill: parent
@@ -49,6 +51,8 @@ Item {
             if (mouse.source === Qt.MouseEventNotSynthesized)
                 contextMenu.popup()
         }
+
+        cursorShape: device_ready ? Qt.PointingHandCursor : null
 
         DeviceContextMenu {
             id: contextMenu
