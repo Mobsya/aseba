@@ -53,7 +53,8 @@ if pss and pfx:
 		print("signtool: No PFX File Found ({} does not exist)".format(pfx))
 		exit(1)
 	ret = call([
-		"signtool", "sign"
+		"signtool",
+		"sign" ,
 		"/f"   , pfx,
 		"/p"   , pss,
 		"/fd"  , "sha256",

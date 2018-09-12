@@ -16,6 +16,8 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   - mkdir C:\projects\deps
   - cd C:\projects\deps
+  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+  - cmd: appveyor-tools\secure-file -decrypt %SIGNTOOL_PFX%.enc -secret %PFX_SECURE_FILE_DECODE%
 
   # Install Bonjour
   - 7z x "%APPVEYOR_BUILD_FOLDER%\third_party\bonjour\bonjoursdksetup.exe"
@@ -136,6 +138,11 @@ environment:
   NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip
   SDL_URL: https://libsdl.org/release/SDL2-devel-2.0.7-VC.zip
   CMAKE_URL: https://cmake.org/files/v3.11/cmake-3.11.0-win64-x64.zip
+  SIGNTOOL_PFX: '%APPVEYOR_BUILD_FOLDER%\windows\appveyor\mobsya.pfx'
+  PFX_SECURE_FILE_DECODE:
+    secure: WHOG4xjSEoHk00wq+NAwiQ==
+  SIGNTOOL_PASSPHRASE:
+    secure: VxqFZfqcgZAZ5N0ZmOBa+zrlf3iiY8V0a/de3bhwT+w=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
   BOOST_ROOT: 'C:/Libraries/boost_1_67_0'

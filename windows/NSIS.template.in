@@ -431,3 +431,6 @@ Section "Uninstall"
 	DeleteRegKey HKCU ${REGISTRY_KEY}
 	DetailPrint $(STR_Done)
 SectionEnd
+
+
+!finalize 'python "${INSTALLER_SOURCE_DIRECTORY}\..\CMakeModules\sign.py" "%1"'
