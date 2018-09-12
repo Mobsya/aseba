@@ -26,8 +26,10 @@
 #include "../utils/FormatableString.h"
 #include <dashel/dashel.h>
 #include "zeroconf.h"
-#include "dns_sd.h"
 
+extern "C" {
+#include "dns_sd.h"
+}
 using namespace std;
 
 namespace Aseba {
