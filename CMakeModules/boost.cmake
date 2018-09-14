@@ -31,7 +31,8 @@ if(NOT Boost_FOUND)
             CONFIGURE_COMMAND ${boost_bootstrap}
                 --prefix=${boost_INSTALL}
             BUILD_COMMAND
-            ${boost_b2} install cxxflags=-fPIC cflags=-fPIC link=static variant=release threading=multi runtime-link=static --with-chrono --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options --with-python
+            ${boost_b2} install cxxflags=-fPIC cflags=-fPIC link=static variant=release threading=multi runtime-link=static
+                --with-chrono --with-system --with-thread --with-date_time --with-regex --with-serialization --with-program_options --with-filesystem --with-python
             INSTALL_COMMAND ""
             INSTALL_DIR ${boost_INSTALL}
 

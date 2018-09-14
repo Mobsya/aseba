@@ -1,6 +1,7 @@
 #include <boost/program_options.hpp>
 #include <boost/asio/executor_work_guard.hpp>
-#include <boost/interprocess/sync/named_mutex.hpp>
+#include <boost/interprocess/sync/file_lock.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <errno.h>
@@ -17,39 +18,32 @@
 #    include "serialserver.h"
 #endif
 
-boost::interprocess::named_mutex unique_instance_lock(boost::interprocess::open_or_create, "mobsya-0accdcbf-eeb2");
-
-void release_app_mutex() {
-    static bool released = false;
-    if(!released) {
-        mLogInfo("Destroying mutex...");
-        unique_instance_lock.unlock();
-        released = true;
-    }
-}
+static const auto lock_file_path = boost::filesystem::temp_directory_path() / "mobsya-tdm-0accdcbf-eeb2";
 
 int main() {
     mLogInfo("Starting...");
     boost::asio::io_context ctx;
     boost::asio::signal_set sig(ctx);
+    if(!boost::filesystem::exists(lock_file_path)) {
+        std::ofstream _(lock_file_path.c_str());
+    }
+    boost::interprocess::file_lock lock(lock_file_path.string().c_str());
+
     try {
 
         boost::asio::executor_work_guard<boost::asio::io_context::executor_type> work(make_work_guard(ctx));
 
-        if(!unique_instance_lock.try_lock()) {
-            mLogError("Thymio Device manager already running");
+        if(!lock.try_lock()) {
+            mLogError("Thymio Device manager seems to be already running - delete {} if this is not the case",
+                      lock_file_path.string());
             return EALREADY;
         }
-
-        // Make sure the lock is always released
-        atexit(release_app_mutex);
 
         sig.add(SIGINT);
         sig.add(SIGTERM);
         sig.add(SIGABRT);
         sig.async_wait([](boost::system::error_code, int sig) {
             mLogWarn("Exiting with signal {}", sig);
-            release_app_mutex();
             std::exit(0);
         });
 
