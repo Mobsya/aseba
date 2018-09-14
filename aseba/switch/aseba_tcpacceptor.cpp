@@ -1,5 +1,6 @@
 #include "aseba_tcpacceptor.h"
 #include <iostream>
+#include <regex>
 #include "aseba_endpoint.h"
 #include "log.h"
 
@@ -25,6 +26,10 @@ aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)
 void aseba_tcp_acceptor::accept() {
     mLogInfo("Waiting for aseba node on tcp");
     do_accept();
+}
+
+std::string remove_host_from_name(const std::string& str) {
+    return std::regex_replace(str, std::regex(" on [^ ]+$"), std::string{});
 }
 
 void aseba_tcp_acceptor::do_accept() {
@@ -77,7 +82,6 @@ void aseba_tcp_acceptor::do_accept() {
                     }
                     m_connected_endpoints[key] = session;
                 }
-
                 mLogInfo("[tcp] New aseba node connected: {} on {} (protocol version : {}, type : {})", contact.name(),
                          contact.endpoint(), protocol_version, type_str);
 
@@ -91,8 +95,7 @@ void aseba_tcp_acceptor::do_accept() {
                 it = properties.find("protovers");
                 if(it != std::end(properties))
                     protocol_version = std::atoi(it->second.c_str());
-
-                session->set_endpoint_name(contact.name());
+                session->set_endpoint_name(remove_host_from_name(contact.name()));
                 session->set_endpoint_type(type);
                 session->start();
             });
