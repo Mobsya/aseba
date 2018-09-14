@@ -2,6 +2,7 @@
 #include <aware/aware.hpp>
 #include <map>
 #include <memory>
+#include <mutex>
 
 namespace mobsya {
 class aseba_endpoint;
@@ -18,6 +19,8 @@ private:
     boost::asio::ip::tcp::resolver m_resolver;
     using known_ep = std::pair<std::string, uint16_t>;
     std::map<known_ep, std::weak_ptr<aseba_endpoint>> m_connected_endpoints;
+    std::set<boost::asio::ip::address> m_local_ips;
+    std::mutex m_endpoints_mutex;
 };
 
 
