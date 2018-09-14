@@ -94,10 +94,11 @@ before_build:
   - git submodule init
   - git submodule update --recursive --remote
   - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
-  - if exist thymio-blockly-standalone\node_modules\ del thymio-blockly-standalone\node_modules\
-  - if exist thymio-blockly-standalone\package-lock.json del thymio-blockly-standalone\package-lock.json
-  - if exist js\node_modules\ del js\node_modules\
-  - if exist js\package-lock.json del js\package-lock.json
+  - if exist thymio-blockly-standalone\node_modules\ rd /s /q thymio-blockly-standalone\node_modules\
+             thymio-blockly-standalone\node_modules thymio-blockly-standalone\node_modules
+  - if exist thymio-blockly-standalone\package-lock.json rd /s /q thymio-blockly-standalone\package-lock.json
+  - if exist js\node_modules\ rd /s /q js\node_modules\
+  - if exist js\package-lock.json rd /s /q js\package-lock.json
 
 build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
