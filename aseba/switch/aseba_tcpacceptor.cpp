@@ -10,7 +10,17 @@ static const std::map<std::string, aseba_endpoint::endpoint_type> endpoint_type_
     {"Dummy Node", aseba_endpoint::endpoint_type::simulated_dummy_node}};
 
 aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)
-    : m_iocontext(io_context), m_contact("aseba"), m_monitor(io_context), m_resolver(io_context) {}
+    : m_iocontext(io_context), m_contact("aseba"), m_monitor(io_context), m_resolver(io_context) {
+
+    using tcp = boost::asio::ip::tcp;
+    for(const auto suffix : {"", ".local"}) {
+        tcp::resolver::query query(boost::asio::ip::host_name() + suffix, "", tcp::resolver::query::canonical_name);
+        for(auto it = m_resolver.resolve(query); it != tcp::resolver::iterator(); ++it) {
+            mLogInfo("Local Ip : {}", it->endpoint().address().to_string());
+            m_local_ips.insert(it->endpoint().address());
+        }
+    }
+}
 
 void aseba_tcp_acceptor::accept() {
     mLogInfo("Waiting for aseba node on tcp");
@@ -28,13 +38,17 @@ void aseba_tcp_acceptor::do_accept() {
             do_accept();
             return;
         }
-        known_ep key;
-        bool resolved_to_local = false;
-        for(auto ar : m_resolver.resolve(m_contact.endpoint())) {
-            if(ar.host_name() == boost::asio::ip::host_name()) {
-                resolved_to_local = true;
-            }
-            key = known_ep{ar.host_name(), m_contact.endpoint().port()};
+
+        if(m_local_ips.find(m_contact.endpoint().address()) == m_local_ips.end()) {
+            mLogTrace("Ignoring remote endoint {} (expected: {})", m_contact.endpoint().address().to_string(),
+                      boost::asio::ip::host_name());
+            do_accept();
+            return;
+        }
+
+        const auto key = known_ep{boost::asio::ip::host_name(), m_contact.endpoint().port()};
+        {
+            std::unique_lock<std::mutex> _(m_endpoints_mutex);
             auto it = m_connected_endpoints.find(key);
             if(it != std::end(m_connected_endpoints) && !it->second.expired()) {
                 mLogTrace("[tcp] {} already connected", m_contact.endpoint());
@@ -43,40 +57,45 @@ void aseba_tcp_acceptor::do_accept() {
             }
         }
 
-        if(!resolved_to_local) {
-            mLogTrace("Ignoring remote endoint {} (expected: {})", m_contact.endpoint().address().to_string(),
-                      boost::asio::ip::host_name());
-            do_accept();
-            return;
-        }
+        session->tcp().async_connect(
+            m_contact.endpoint(), [this, contact = m_contact, session, key = key](boost::system::error_code ec) {
+                const auto& properties = contact.properties();
 
-        const auto& properties = m_contact.properties();
-        int protocol_version = 5;
-        aseba_endpoint::endpoint_type type = aseba_endpoint::endpoint_type::unknown;
-        std::string type_str;
+                int protocol_version = 5;
+                aseba_endpoint::endpoint_type type = aseba_endpoint::endpoint_type::unknown;
+                std::string type_str;
+                if(ec) {
+                    mLogWarn("[tcp] Fail to connect to aseba node {} : {}", contact.name(), ec.message());
+                    return;
+                }
+                {
+                    std::unique_lock<std::mutex> _(m_endpoints_mutex);
+                    auto it = m_connected_endpoints.find(key);
+                    if(it != std::end(m_connected_endpoints) && !it->second.expired()) {
+                        mLogTrace("[tcp] {} already connected", m_contact.endpoint());
+                        return;
+                    }
+                    m_connected_endpoints[key] = session;
+                }
 
-        auto it = properties.find("type");
-        if(it != std::end(properties)) {
-            type_str = it->second;
-            auto needle = endpoint_type_mapping.find(type_str);
-            if(needle != std::end(endpoint_type_mapping))
-                type = needle->second;
-        }
-        it = properties.find("protovers");
-        if(it != std::end(properties))
-            protocol_version = std::atoi(it->second.c_str());
-        session->tcp().connect(m_contact.endpoint(), ec);
-        if(!ec) {
-            mLogInfo("[tcp] New aseba node connected: {} on {} (protocol version : {}, type : {})", m_contact.name(),
-                     m_contact.endpoint(), protocol_version, type_str);
-            session->set_endpoint_name(m_contact.name());
-            session->set_endpoint_type(type);
-            session->start();
-            m_connected_endpoints[key] = session;
-        } else {
-            mLogWarn("[tcp] Fail to connect to aseba node {} : {}", m_contact.name(), ec.message());
-        }
+                mLogInfo("[tcp] New aseba node connected: {} on {} (protocol version : {}, type : {})", contact.name(),
+                         contact.endpoint(), protocol_version, type_str);
 
+                auto it = properties.find("type");
+                if(it != std::end(properties)) {
+                    type_str = it->second;
+                    auto needle = endpoint_type_mapping.find(type_str);
+                    if(needle != std::end(endpoint_type_mapping))
+                        type = needle->second;
+                }
+                it = properties.find("protovers");
+                if(it != std::end(properties))
+                    protocol_version = std::atoi(it->second.c_str());
+
+                session->set_endpoint_name(contact.name());
+                session->set_endpoint_type(type);
+                session->start();
+            });
         accept();
     });
 }
