@@ -2,7 +2,7 @@ version: '{build}'
 
 init:
 - git config --global core.autocrlf input
-#- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/cor3ntin/1327dbf8aedab79f9fa305c001190268/raw/05155caad3a68c48be5f6873c3aca6ad8a30e31a/rdp.ps1'))
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/cor3ntin/1327dbf8aedab79f9fa305c001190268/raw/05155caad3a68c48be5f6873c3aca6ad8a30e31a/rdp.ps1'))
 
 matrix:
   fast_finish: true
@@ -95,10 +95,10 @@ before_build:
   - git submodule update --recursive --remote
   - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
   - if exist thymio-blockly-standalone\node_modules\ rd /s /q thymio-blockly-standalone\node_modules\
-             thymio-blockly-standalone\node_modules thymio-blockly-standalone\node_modules
-  - if exist thymio-blockly-standalone\package-lock.json rd /s /q thymio-blockly-standalone\package-lock.json
+  - if exist thymio-blockly-standalone\package-lock.json del /s /q thymio-blockly-standalone\package-lock.json
   - if exist js\node_modules\ rd /s /q js\node_modules\
-  - if exist js\package-lock.json rd /s /q js\package-lock.json
+  - if exist js\package-lock.json del /s /q js\package-lock.json
+
 
 build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
