@@ -76,6 +76,8 @@ enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 #create an empty qt.conf file
 file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "")
+install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
+
 
 # Qt and Qwt
 find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools)
