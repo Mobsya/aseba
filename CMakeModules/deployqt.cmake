@@ -74,7 +74,7 @@ function(windeployqt target directory)
                 env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
                     --dry-run
                     --list mapping
-                    --plugindir plugins
+                    --plugindir bin/plugins
                     --qmldir \${_src_dir}
                     --no-compiler-runtime
                     \${_file}
