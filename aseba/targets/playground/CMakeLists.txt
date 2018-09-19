@@ -17,11 +17,6 @@ set_target_properties(asebasim PROPERTIES VERSION ${LIB_VERSION_STRING}
 
 target_link_libraries(asebasim PUBLIC aseba_conf enki)
 
-install(TARGETS asebasim
-		LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-		ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-)
-
 if (Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
 	find_package(OpenGL REQUIRED)
 	if (Qt5DBus_FOUND AND NOT WIN32)

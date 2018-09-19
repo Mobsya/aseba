@@ -13,14 +13,4 @@ set (ASEBACOMPILER_SRC
 	tree-emit.cpp
 )
 add_library(asebacompiler STATIC ${ASEBACOMPILER_SRC})
-set_target_properties(asebacompiler PROPERTIES VERSION ${LIB_VERSION_STRING}
-                                        SOVERSION ${LIB_VERSION_MAJOR})
-
 target_link_libraries(asebacompiler asebacommon)
-
-codesign(asebacompiler)
-
-install(TARGETS asebacompiler
-                LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-                ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-)
