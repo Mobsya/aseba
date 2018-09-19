@@ -30,7 +30,7 @@ endfunction()
 
 compile_flatbuffers_schema_to_cpp(thymio.fbs FLATBUFFER_HEADER)
 compile_flatbuffers_schema_to_js(thymio.fbs FLATBUFFER_JS)
-add_library(thymio-flatbuffers
+add_library(thymio-flatbuffers STATIC
     thymio-flatbuffers.cpp
     ${FLATBUFFER_HEADER}
     ${FLATBUFFER_JS}

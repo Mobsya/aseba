@@ -17,19 +17,13 @@ if (Qt5Svg_FOUND)
 	qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
 
 	qt5_wrap_cpp(qt_about_MOCS AboutDialog.h)
-	add_library(asebaqtabout AboutDialog.cpp ${qt_about_MOCS} ${resfiles})
+    add_library(asebaqtabout STATIC AboutDialog.cpp ${qt_about_MOCS} ${resfiles})
 	target_link_libraries(asebaqtabout dashel Qt5::Core Qt5::Widgets Qt5::Svg)
 
 	if (HAS_DYN_VERSION)
 		add_dependencies(asebaqtabout versionheader)
 	endif (HAS_DYN_VERSION)
 	set_target_properties(asebaqtabout PROPERTIES VERSION ${LIB_VERSION_STRING})
-
-	install(TARGETS asebaqtabout
-		LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-		ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-	)
-	codesign(asebaqtabout)
 
 endif ()
 add_feature_info(ABOUT_QT QT_USE_QTSVG "About Windows")
