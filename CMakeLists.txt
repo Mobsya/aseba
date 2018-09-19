@@ -14,6 +14,7 @@ cmake_policy(SET CMP0071 NEW)
 # ensure a minimal version of CMake
 cmake_minimum_required(VERSION 3.5)
 include(FeatureSummary)
+include(InstallRequiredSystemLibraries)
 
 # additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)

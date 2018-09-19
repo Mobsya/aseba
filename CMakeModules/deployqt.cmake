@@ -76,7 +76,7 @@ function(windeployqt target directory)
                     --list mapping
                     --plugindir plugins
                     --qmldir \${_src_dir}
-                    --compiler-runtime
+                    --no-compiler-runtime
                     \${_file}
             OUTPUT_VARIABLE _output
             OUTPUT_STRIP_TRAILING_WHITESPACE
