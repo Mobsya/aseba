@@ -122,7 +122,7 @@ Item {
                 anchors.leftMargin: 30
                 anchors.rightMargin: 30
                 Text {
-                    text: qsTr("Choose a Tymio")
+                    text: qsTr("Choose a Thymio")
                     font.family: "Roboto Bold"
                     font.bold: true
                     font.pointSize: 10

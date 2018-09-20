@@ -1,8 +1,8 @@
 Javascript API
 ===============
 
-.. js:autoclass:: tymio.Node
+.. js:autoclass:: thymio.Node
    :members:
 
-.. js:autoclass:: tymio.Client
+.. js:autoclass:: thymio.Client
    :members:
