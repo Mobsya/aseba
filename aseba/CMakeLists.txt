@@ -8,7 +8,7 @@ if(NOT ANDROID)
     add_subdirectory(transport)
 
     add_subdirectory(targets)
-    add_subdirectory(switch)
+    add_subdirectory(thymio-device-manager)
 endif()
 
 add_subdirectory(flatbuffers)
