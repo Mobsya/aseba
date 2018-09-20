@@ -10,6 +10,8 @@
 #endif
 #include <aseba/qt-thymio-dm-client-lib/thymio-api.h>
 #include <QtSingleApplication>
+#include "launcher.h"
+#include "tdmsupervisor.h"
 
 int main(int argc, char** argv) {
 
@@ -28,7 +30,6 @@ int main(int argc, char** argv) {
 
     for(QString& file : QDir(":/fonts").entryList(QDir::Files)) {
         QString path = ":/fonts/" + file;
-        qDebug() << path;
         QFontDatabase::addApplicationFont(path);
     }
 
@@ -36,10 +37,15 @@ int main(int argc, char** argv) {
     format.setSamples(16);
     QSurfaceFormat::setDefaultFormat(format);
 
+    mobsya::Launcher launcher;
+    mobsya::TDMSupervisor supervisor(launcher);
+    supervisor.startLocalTDM();
+
     mobsya::ThymioDeviceManagerClient client;
     mobsya::ThymioDevicesModel model(client);
 
     QQuickWidget w;
+    w.rootContext()->setContextProperty("launcher", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);
