@@ -14,6 +14,10 @@ endif()
 add_executable(thymio-launcher
     ${QT_RESOURCES}
     main.cpp
+    launcher.h
+    launcher.cpp
+    tdmsupervisor.h
+    tdmsupervisor.cpp
 )
 target_link_libraries(thymio-launcher
     Qt5::Widgets
