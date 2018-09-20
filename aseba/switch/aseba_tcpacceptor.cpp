@@ -7,7 +7,7 @@
 namespace mobsya {
 
 static const std::map<std::string, aseba_endpoint::endpoint_type> endpoint_type_mapping = {
-    {"Thymio II", aseba_endpoint::endpoint_type::simulated_tymio},
+    {"Thymio II", aseba_endpoint::endpoint_type::simulated_thymio},
     {"Dummy Node", aseba_endpoint::endpoint_type::simulated_dummy_node}};
 
 aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)

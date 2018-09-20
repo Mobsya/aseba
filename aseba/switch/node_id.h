@@ -20,7 +20,7 @@ public:
     }
 
     /*Return a short node id compatible with thyimio 2, but with much less entropy*/
-    uint16_t short_for_tymio2() const {
+    uint16_t short_for_thymio2() const {
         return *reinterpret_cast<const uint16_t*>(data);
     }
 };

@@ -36,7 +36,7 @@ class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
 
 public:
-    enum class endpoint_type { unknown, thymio, simulated_tymio, simulated_dummy_node };
+    enum class endpoint_type { unknown, thymio, simulated_thymio, simulated_dummy_node };
 
     ~aseba_endpoint() {
         std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });

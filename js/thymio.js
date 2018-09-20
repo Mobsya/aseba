@@ -1,6 +1,6 @@
 /* Wrap a promise to allow external resolve */
 
-/** @module Mobsya/tymio */
+/** @module Mobsya/thymio */
 
 import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';

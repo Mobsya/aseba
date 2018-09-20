@@ -201,7 +201,7 @@ aseba_node::node_type aseba_node::type() const {
     switch(ep->type()) {
         case aseba_endpoint::endpoint_type::thymio:
             return is_wirelessly_connected() ? node_type::Thymio2Wireless : node_type::Thymio2;
-        case aseba_endpoint::endpoint_type::simulated_tymio: return node_type::SimulatedThymio2;
+        case aseba_endpoint::endpoint_type::simulated_thymio: return node_type::SimulatedThymio2;
         case aseba_endpoint::endpoint_type::simulated_dummy_node: return node_type::DummyNode;
         default: break;
     }
