@@ -13,9 +13,6 @@
 [submodule "android/qt-android-cmake"]
 	path = android/qt-android-cmake
 	url = https://github.com/Mobsya/qt-android-cmake.git
-[submodule "third_party/inicpp"]
-	path = third_party/inicpp
-	url = https://github.com/SemaiCZE/inicpp
 [submodule "third_party/spdlog/spdlog"]
 	path = third_party/spdlog/spdlog
 	url = https://github.com/gabime/spdlog
