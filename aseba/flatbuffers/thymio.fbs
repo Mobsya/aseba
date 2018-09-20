@@ -88,16 +88,19 @@ table NodeAsebaVMDescription {
 
 
 table NamedVariable {
+  index: ushort;
   name:string;
   size:uint;
 }
 
 table LocalEvent {
+  index: ushort;
   name:string;
   description:string;
 }
 
 table NativeFunction {
+  index: ushort;
   name:string;
   description:string;
   parameters:[NativeFunctionParameter];

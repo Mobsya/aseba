@@ -1101,11 +1101,34 @@ mobsya.fb.NamedVariable.getRootAsNamedVariable = function(bb, obj) {
 };
 
 /**
+ * @returns {number}
+ */
+mobsya.fb.NamedVariable.prototype.index = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.NamedVariable.prototype.mutate_index = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint16(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
 mobsya.fb.NamedVariable.prototype.name = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 4);
+  var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
@@ -1113,7 +1136,7 @@ mobsya.fb.NamedVariable.prototype.name = function(optionalEncoding) {
  * @returns {number}
  */
 mobsya.fb.NamedVariable.prototype.size = function() {
-  var offset = this.bb.__offset(this.bb_pos, 6);
+  var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
 
@@ -1122,7 +1145,7 @@ mobsya.fb.NamedVariable.prototype.size = function() {
  * @returns {boolean}
  */
 mobsya.fb.NamedVariable.prototype.mutate_size = function(value) {
-  var offset = this.bb.__offset(this.bb_pos, 6);
+  var offset = this.bb.__offset(this.bb_pos, 8);
 
   if (offset === 0) {
     return false;
@@ -1136,7 +1159,15 @@ mobsya.fb.NamedVariable.prototype.mutate_size = function(value) {
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.NamedVariable.startNamedVariable = function(builder) {
-  builder.startObject(2);
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} index
+ */
+mobsya.fb.NamedVariable.addIndex = function(builder, index) {
+  builder.addFieldInt16(0, index, 0);
 };
 
 /**
@@ -1144,7 +1175,7 @@ mobsya.fb.NamedVariable.startNamedVariable = function(builder) {
  * @param {flatbuffers.Offset} nameOffset
  */
 mobsya.fb.NamedVariable.addName = function(builder, nameOffset) {
-  builder.addFieldOffset(0, nameOffset, 0);
+  builder.addFieldOffset(1, nameOffset, 0);
 };
 
 /**
@@ -1152,7 +1183,7 @@ mobsya.fb.NamedVariable.addName = function(builder, nameOffset) {
  * @param {number} size
  */
 mobsya.fb.NamedVariable.addSize = function(builder, size) {
-  builder.addFieldInt32(1, size, 0);
+  builder.addFieldInt32(2, size, 0);
 };
 
 /**
@@ -1200,11 +1231,34 @@ mobsya.fb.LocalEvent.getRootAsLocalEvent = function(bb, obj) {
 };
 
 /**
+ * @returns {number}
+ */
+mobsya.fb.LocalEvent.prototype.index = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.LocalEvent.prototype.mutate_index = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint16(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
 mobsya.fb.LocalEvent.prototype.name = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 4);
+  var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
@@ -1213,7 +1267,7 @@ mobsya.fb.LocalEvent.prototype.name = function(optionalEncoding) {
  * @returns {string|Uint8Array|null}
  */
 mobsya.fb.LocalEvent.prototype.description = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 6);
+  var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
@@ -1221,7 +1275,15 @@ mobsya.fb.LocalEvent.prototype.description = function(optionalEncoding) {
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.LocalEvent.startLocalEvent = function(builder) {
-  builder.startObject(2);
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} index
+ */
+mobsya.fb.LocalEvent.addIndex = function(builder, index) {
+  builder.addFieldInt16(0, index, 0);
 };
 
 /**
@@ -1229,7 +1291,7 @@ mobsya.fb.LocalEvent.startLocalEvent = function(builder) {
  * @param {flatbuffers.Offset} nameOffset
  */
 mobsya.fb.LocalEvent.addName = function(builder, nameOffset) {
-  builder.addFieldOffset(0, nameOffset, 0);
+  builder.addFieldOffset(1, nameOffset, 0);
 };
 
 /**
@@ -1237,7 +1299,7 @@ mobsya.fb.LocalEvent.addName = function(builder, nameOffset) {
  * @param {flatbuffers.Offset} descriptionOffset
  */
 mobsya.fb.LocalEvent.addDescription = function(builder, descriptionOffset) {
-  builder.addFieldOffset(1, descriptionOffset, 0);
+  builder.addFieldOffset(2, descriptionOffset, 0);
 };
 
 /**
@@ -1285,11 +1347,34 @@ mobsya.fb.NativeFunction.getRootAsNativeFunction = function(bb, obj) {
 };
 
 /**
+ * @returns {number}
+ */
+mobsya.fb.NativeFunction.prototype.index = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.NativeFunction.prototype.mutate_index = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint16(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
 mobsya.fb.NativeFunction.prototype.name = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 4);
+  var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
@@ -1298,7 +1383,7 @@ mobsya.fb.NativeFunction.prototype.name = function(optionalEncoding) {
  * @returns {string|Uint8Array|null}
  */
 mobsya.fb.NativeFunction.prototype.description = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 6);
+  var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
@@ -1308,7 +1393,7 @@ mobsya.fb.NativeFunction.prototype.description = function(optionalEncoding) {
  * @returns {mobsya.fb.NativeFunctionParameter}
  */
 mobsya.fb.NativeFunction.prototype.parameters = function(index, obj) {
-  var offset = this.bb.__offset(this.bb_pos, 8);
+  var offset = this.bb.__offset(this.bb_pos, 10);
   return offset ? (obj || new mobsya.fb.NativeFunctionParameter).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 
@@ -1316,7 +1401,7 @@ mobsya.fb.NativeFunction.prototype.parameters = function(index, obj) {
  * @returns {number}
  */
 mobsya.fb.NativeFunction.prototype.parametersLength = function() {
-  var offset = this.bb.__offset(this.bb_pos, 8);
+  var offset = this.bb.__offset(this.bb_pos, 10);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 
@@ -1324,7 +1409,15 @@ mobsya.fb.NativeFunction.prototype.parametersLength = function() {
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.NativeFunction.startNativeFunction = function(builder) {
-  builder.startObject(3);
+  builder.startObject(4);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} index
+ */
+mobsya.fb.NativeFunction.addIndex = function(builder, index) {
+  builder.addFieldInt16(0, index, 0);
 };
 
 /**
@@ -1332,7 +1425,7 @@ mobsya.fb.NativeFunction.startNativeFunction = function(builder) {
  * @param {flatbuffers.Offset} nameOffset
  */
 mobsya.fb.NativeFunction.addName = function(builder, nameOffset) {
-  builder.addFieldOffset(0, nameOffset, 0);
+  builder.addFieldOffset(1, nameOffset, 0);
 };
 
 /**
@@ -1340,7 +1433,7 @@ mobsya.fb.NativeFunction.addName = function(builder, nameOffset) {
  * @param {flatbuffers.Offset} descriptionOffset
  */
 mobsya.fb.NativeFunction.addDescription = function(builder, descriptionOffset) {
-  builder.addFieldOffset(1, descriptionOffset, 0);
+  builder.addFieldOffset(2, descriptionOffset, 0);
 };
 
 /**
@@ -1348,7 +1441,7 @@ mobsya.fb.NativeFunction.addDescription = function(builder, descriptionOffset) {
  * @param {flatbuffers.Offset} parametersOffset
  */
 mobsya.fb.NativeFunction.addParameters = function(builder, parametersOffset) {
-  builder.addFieldOffset(2, parametersOffset, 0);
+  builder.addFieldOffset(3, parametersOffset, 0);
 };
 
 /**
