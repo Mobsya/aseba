@@ -1,5 +1,5 @@
 set(CMAKE_CXX_STANDARD 17)
-add_executable(switch
+add_executable(thymio-device-manager
     main.cpp
     log.h
     log.cpp
@@ -27,16 +27,16 @@ add_executable(switch
 )
 
 if(WIN32)
-    target_sources(switch PRIVATE
+    target_sources(thymio-device-manager PRIVATE
         serialacceptor.h
         serialacceptor.cpp
         serialserver.h
         serialserver.cpp
         serial_usb_device.h
     )
-    target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
+    target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
 else()
-    target_sources(switch PRIVATE
+    target_sources(thymio-device-manager PRIVATE
         usbserver.cpp
         usbserver.h
         usbacceptor.h
@@ -45,21 +45,21 @@ else()
         usbdevice.h
         usbcontext.h
     )
-    target_compile_definitions(switch PUBLIC MOBSYA_TDM_ENABLE_USB)
+    target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_USB)
 endif()
 
 
-target_compile_definitions(switch PUBLIC -DSPDLOG_FMT_EXTERNAL)
-target_link_libraries(switch Boost::program_options Boost::filesystem Boost::asio Boost::date_time spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
+target_compile_definitions(thymio-device-manager PUBLIC -DSPDLOG_FMT_EXTERNAL)
+target_link_libraries(thymio-device-manager Boost::program_options Boost::filesystem Boost::asio Boost::date_time spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
 if(WIN32)
-    target_link_libraries(switch bcrypt)
+    target_link_libraries(thymio-device-manager bcrypt)
 else()
-    target_link_libraries(switch libusb)
+    target_link_libraries(thymio-device-manager libusb)
 endif()
 
 if (MSVC)
-    target_compile_options(switch PRIVATE /bigobj)
+    target_compile_options(thymio-device-manager PRIVATE /bigobj)
 endif()
 
-install(TARGETS switch RUNTIME DESTINATION bin)
-codesign(switch)
+install(TARGETS thymio-device-manager RUNTIME DESTINATION bin)
+codesign(thymio-device-manager)
