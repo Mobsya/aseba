@@ -23,6 +23,7 @@ public:
     void set_node_status(const std::shared_ptr<aseba_node>& node, aseba_node::status);
     void set_node_uuid(const std::shared_ptr<aseba_node> & node, const node_id&);
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
+    void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
 
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
@@ -40,6 +41,10 @@ private:
     node_map m_aseba_nodes;
     aware::announce_socket m_discovery_socket;
     aware::contact m_nodes_service_desc;
+    // Endpoint of the WebSocket - So we can expose the port on zeroconf
+    boost::asio::ip::tcp::endpoint m_ws_endpoint;
+
+
     mutable std::mutex m_discovery_mutex;
     mutable std::mutex m_nodes_mutex;
 

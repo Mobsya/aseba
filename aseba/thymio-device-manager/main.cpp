@@ -60,6 +60,7 @@ int main() {
         // Create a server for websocket
         mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
         websocket_server.accept();
+        node_registery.set_ws_endpoint(websocket_server.endpoint());
 
 #ifdef MOBSYA_TDM_ENABLE_USB
         mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
