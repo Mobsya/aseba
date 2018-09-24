@@ -85,6 +85,11 @@ void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint
     update_discovery();
 }
 
+void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
+    m_ws_endpoint = endpoint;
+    update_discovery();
+}
+
 void aseba_node_registery::update_discovery() {
     std::unique_lock<std::mutex> _(m_discovery_mutex);
     m_nodes_service_desc.properties(build_discovery_properties());
@@ -108,6 +113,8 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
 
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_uid);
+    if(m_ws_endpoint.port())
+        map["ws-port"] = std::to_string(m_ws_endpoint.port());
     return map;
 }
 
