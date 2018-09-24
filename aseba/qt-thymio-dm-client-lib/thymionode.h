@@ -4,6 +4,7 @@
 #include <QString>
 #include <QObject>
 #include <memory>
+#include <QUrl>
 
 namespace mobsya {
 class ThymioDeviceManagerClientEndpoint;
@@ -20,6 +21,8 @@ public:
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(NodeType type READ type CONSTANT)
+    Q_PROPERTY(QUrl websocketEndpoint READ websocketEndpoint CONSTANT)
+
 
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
                mobsya::ThymioNode::NodeType type);
@@ -33,6 +36,7 @@ public:
     QString name() const;
     Status status() const;
     NodeType type() const;
+    QUrl websocketEndpoint() const;
 
     void setName(const QString& name);
     void setStatus(const Status& status);
