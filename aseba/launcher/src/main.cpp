@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
     mobsya::ThymioDevicesModel model(client);
 
     QQuickWidget w;
-    w.rootContext()->setContextProperty("launcher", &launcher);
+    w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);

@@ -5,6 +5,7 @@ Item {
     id: launcher
     visible:true
     property var selectedApp : app_view.selectedApp
+    property var selectedAppLauncher : app_view.selectedAppLauncher
 
     BottomEasingStackView {
         id: main_layout

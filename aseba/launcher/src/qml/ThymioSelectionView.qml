@@ -5,6 +5,8 @@ import org.mobsya  1.0
 
 Item {
     id:selection_view
+    property alias selectedDevice: device_view.selectedDevice
+
     Rectangle  {
         id: app_titlebar
         anchors.top: parent.top
@@ -151,10 +153,21 @@ Item {
 
                 }
                 MouseArea {
+                    enabled: !!(launcher.selectedApp && selection_view.selectedDevice)
                     anchors.fill: parent
                     hoverEnabled: true
                     id: mouse_area
                     cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        const device   = selection_view.selectedDevice
+                        const selectedAppLauncher = launcher.selectedAppLauncher;
+                        if(!selectedAppLauncher) {
+                            console.error("No launch function")
+                        }
+                        else if(!selectedAppLauncher(device)) {
+                            console.error("could not launch %1 with device %2".arg(app.name).arg(device))
+                        }
+                    }
                 }
                 anchors.bottomMargin: 30
             }
@@ -176,6 +189,7 @@ Item {
                 anchors.rightMargin: anchors.leftMargin
 
                 GridView {
+                    property var selectedDevice
                     id: device_view
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: {
