@@ -97,7 +97,8 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
     for(const auto& node : nodes) {
         auto it = m_nodes.find(node.id);
         if(it == m_nodes.end()) {
-            it = m_nodes.insert(node.id, std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type));
+            it = m_nodes.insert(node.id,
+                                std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type, this));
         }
 
         (*it)->setName(node.name);

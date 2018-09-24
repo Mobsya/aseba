@@ -1,11 +1,11 @@
 #include "thymionode.h"
-
+#include "thymiodevicemanagerclientendpoint.h"
 
 namespace mobsya {
 
 ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint, const QUuid& uuid,
-                       const QString& name, NodeType type)
-    : m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::Disconnected), m_type(type) {}
+                       const QString& name, NodeType type, QObject* parent)
+    : QObject(parent), m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::Disconnected), m_type(type) {}
 
 
 QUuid ThymioNode::uuid() const {

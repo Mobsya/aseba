@@ -17,7 +17,7 @@ public:
     Q_ENUM(Status)
     Q_ENUM(NodeType)
 
-    Q_PROPERTY(QUuid uuid READ uuid CONSTANT)
+    Q_PROPERTY(QUuid id READ uuid CONSTANT)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(NodeType type READ type CONSTANT)
@@ -25,7 +25,7 @@ public:
 
 
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
-               mobsya::ThymioNode::NodeType type);
+               mobsya::ThymioNode::NodeType type, QObject* parent = nullptr);
 
 Q_SIGNALS:
     void nameChanged();
@@ -55,5 +55,6 @@ private:
 
 }  // namespace mobsya
 
+Q_DECLARE_METATYPE(mobsya::ThymioNode*)
 Q_DECLARE_METATYPE(mobsya::ThymioNode::Status)
 Q_DECLARE_METATYPE(mobsya::ThymioNode::NodeType)
