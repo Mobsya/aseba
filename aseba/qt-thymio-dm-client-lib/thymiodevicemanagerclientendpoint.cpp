@@ -19,6 +19,20 @@ void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer&
     m_socket->write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
 }
 
+void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {
+    m_ws_port = port;
+}
+
+QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
+    QUrl u;
+    if(!m_ws_port)
+        return {};
+    u.setScheme("ws");
+    u.setHost(m_socket->peerAddress().toString());
+    u.setPort(m_ws_port);
+    return u;
+}
+
 void ThymioDeviceManagerClientEndpoint::onReadyRead() {
     while(true) {
         if(m_message_size == 0) {

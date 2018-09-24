@@ -24,6 +24,11 @@ ThymioNode::NodeType ThymioNode::type() const {
     return m_type;
 }
 
+QUrl ThymioNode::websocketEndpoint() const {
+    return m_endpoint->websocketConnectionUrl();
+}
+
+
 void ThymioNode::setName(const QString& name) {
     if(m_name != name) {
         m_name = name;
