@@ -46,6 +46,7 @@ Item {
                 contextMenu.popup(item)
             else
                 device_view.currentIndex = index
+                device_view.selectedDevice = model.object
         }
         onPressAndHold: {
             if (mouse.source === Qt.MouseEventNotSynthesized)

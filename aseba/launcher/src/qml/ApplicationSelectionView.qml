@@ -3,6 +3,7 @@ import QtQuick 2.0
 Item {
     id:item
     property var selectedApp
+    property var selectedAppLauncher
 
     Rectangle {
         id: bg
@@ -44,6 +45,7 @@ Item {
                             app_view.currentIndex = -1
                             app_view.currentIndex = index
                             item.selectedApp = app_view.model.get(app_view.currentIndex)
+                            item.selectedAppLauncher = app_view.model.launch_function(item.selectedApp)
                         }
                         cursorShape: Qt.PointingHandCursor
                     }
