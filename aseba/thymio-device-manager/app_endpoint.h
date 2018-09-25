@@ -165,8 +165,10 @@ public:
 
 
     void handle_read(boost::system::error_code ec, fb_message_ptr&& msg) {
-        if(ec)
+        if(ec) {
+            mLogError("Network error while reading TDM message {}", ec.message());
             return;
+        }
         read_message();  // queue the next read early
 
 
@@ -392,8 +394,10 @@ private:
     }
 
     void handle_handshake(boost::system::error_code ec, fb_message_ptr&& msg) {
-        if(ec)
+        if(ec) {
+            mLogError("Network error while reading TDM message {}", ec.message());
             return;
+        }
 
         if(msg.message_type() != mobsya::fb::AnyMessage::ConnectionHandshake) {
             mLogError("Client did not send a ConnectionHandshake message");
@@ -405,13 +409,16 @@ private:
                       tdm::minProtocolVersion);
         } else {
             m_protocol_version = std::min(hs->protocolVersion(), tdm::protocolVersion);
+            m_max_out_going_packet_size = hs->maxMessageSize();
         }
         flatbuffers::FlatBufferBuilder builder;
-        write_message(
-            wrap_fb(builder, fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version)));
+        write_message(wrap_fb(builder,
+                              fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version,
+                                                            tdm::maxAppEndPointMessageSize)));
 
         // the client do not have a compatible protocol version, bailing out
         if(m_protocol_version == 0) {
+            return;
         }
 
         // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing messages
@@ -432,7 +439,8 @@ private:
     std::vector<flatbuffers::DetachedBuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
-    uint8_t m_protocol_version = 0;
+    uint16_t m_protocol_version = 0;
+    uint16_t m_max_out_going_packet_size = 0;
 };
 
 }  // namespace mobsya

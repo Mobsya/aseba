@@ -3,9 +3,23 @@
 namespace mobsya.fb;
 
 //Handshake messages
+//The client needs to initiate the session by sending a ConnectionHandshake.
+//If the client sends a message before a ConnectionHandshake, the server will
+//drop the connection.
+//The server reply with the same message
 table ConnectionHandshake {
+    //In the server -> client direction, protocolVersion designs the version of the
+    //protocol both client and SERVER MUST use during the session
+    //If the protocolVersion sent by the server is 0, then the client and the server
+    //Do not share a compatible version, and the connection is dropped.
+    //minProtocolVersion designs the minimal protocol of the protocol supported by the sender
     minProtocolVersion:uint = 1;
     protocolVersion:uint = 1;
+
+    //Maximum size of a message
+    //Each endpoint must advertise the maximum size of message they will accept.
+    //If a message is received that exceed that size, the connection shall be dropped.
+    maxMessageSize:uint = 102400;
 }
 
 ///A node id

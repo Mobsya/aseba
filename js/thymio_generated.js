@@ -185,10 +185,33 @@ mobsya.fb.ConnectionHandshake.prototype.mutate_protocolVersion = function(value)
 };
 
 /**
+ * @returns {number}
+ */
+mobsya.fb.ConnectionHandshake.prototype.maxMessageSize = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 102400;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.ConnectionHandshake.prototype.mutate_maxMessageSize = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.ConnectionHandshake.startConnectionHandshake = function(builder) {
-  builder.startObject(2);
+  builder.startObject(3);
 };
 
 /**
@@ -205,6 +228,14 @@ mobsya.fb.ConnectionHandshake.addMinProtocolVersion = function(builder, minProto
  */
 mobsya.fb.ConnectionHandshake.addProtocolVersion = function(builder, protocolVersion) {
   builder.addFieldInt32(1, protocolVersion, 1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} maxMessageSize
+ */
+mobsya.fb.ConnectionHandshake.addMaxMessageSize = function(builder, maxMessageSize) {
+  builder.addFieldInt32(2, maxMessageSize, 102400);
 };
 
 /**
