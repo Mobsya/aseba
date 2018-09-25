@@ -40,14 +40,14 @@ void aseba_tcp_acceptor::do_accept() {
             return;
         }
         if(m_contact.empty() || m_contact.type() != "aseba") {
-            do_accept();
+            boost::asio::post(m_iocontext, [this] { this->do_accept(); });
             return;
         }
 
         if(m_local_ips.find(m_contact.endpoint().address()) == m_local_ips.end()) {
             mLogTrace("Ignoring remote endoint {} (expected: {})", m_contact.endpoint().address().to_string(),
                       boost::asio::ip::host_name());
-            do_accept();
+            boost::asio::post(m_iocontext, [this] { this->do_accept(); });
             return;
         }
 
@@ -57,7 +57,7 @@ void aseba_tcp_acceptor::do_accept() {
             auto it = m_connected_endpoints.find(key);
             if(it != std::end(m_connected_endpoints) && !it->second.expired()) {
                 mLogTrace("[tcp] {} already connected", m_contact.endpoint());
-                do_accept();
+                boost::asio::post(m_iocontext, [this] { this->do_accept(); });
                 return;
             }
         }
@@ -99,7 +99,7 @@ void aseba_tcp_acceptor::do_accept() {
                 session->set_endpoint_type(type);
                 session->start();
             });
-        accept();
+        boost::asio::post(m_iocontext, [this] { this->accept(); });
     });
 }
 }  // namespace mobsya
