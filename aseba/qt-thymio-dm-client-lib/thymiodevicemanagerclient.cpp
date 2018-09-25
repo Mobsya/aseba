@@ -32,7 +32,7 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
         QTcpSocket* socket = new QTcpSocket;
         std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint =
             std::make_shared<ThymioDeviceManagerClientEndpoint>(socket);
-        socket->connectToHost(service.host(), service.port());
+        socket->connectToHost(service.ip(), service.port());
         const auto properties = service.txt();
         uint16_t port = properties.value("ws-port", 0).toUInt();
         endpoint->setWebSocketMatchingPort(port);
