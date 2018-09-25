@@ -4,6 +4,7 @@
 #include <aseba/flatbuffers/thymio_generated.h>
 #include <aseba/flatbuffers/fb_message_ptr.h>
 #include "log.h"
+#include "tdm.h"
 
 namespace mobsya {
 
@@ -73,9 +74,14 @@ public:
         if(state.dataBuffer.size() == 0) {
             assert(bytes_transferred == 4);
             auto size = reinterpret_cast<uint32_t&>(state.sizeBuffer);
+            if(size > tdm::maxAppEndPointMessageSize) {
+                m_p.invoke(boost::asio::error::make_error_code(boost::asio::error::message_size), fb_message_ptr{});
+                return;
+            }
             state.dataBuffer.resize(size);
-            return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer),
-                                           boost::asio::transfer_exactly(size), std::move(*this));
+            return boost::asio::async_read(
+                state.stream, boost::asio::buffer(state.dataBuffer),
+                boost::asio::transfer_exactly(std::min(size, tdm::maxAppEndPointMessageSize)), std::move(*this));
         }
         if(bytes_transferred != state.dataBuffer.size()) {
             m_p.invoke(ec, fb_message_ptr{});
