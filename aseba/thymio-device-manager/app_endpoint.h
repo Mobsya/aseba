@@ -255,6 +255,10 @@ private:
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
+
+        if(status == aseba_node::status::disconnected) {
+            m_locked_nodes.erase(id);
+        }
     }
 
     void send_full_node_list() {
@@ -300,11 +304,12 @@ private:
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        auto res = node->lock(this);
+        m_locked_nodes[id] = node;
+        bool res = node->lock(this);
         if(!res) {
+            m_locked_nodes.erase(id);
             write_message(create_error_response(request_id, fb::ErrorType::node_busy));
         } else {
-            m_locked_nodes.insert(std::pair<aseba_node_registery::node_id, std::weak_ptr<aseba_node>>{id, node});
             write_message(create_ack_response(request_id));
         }
     }
