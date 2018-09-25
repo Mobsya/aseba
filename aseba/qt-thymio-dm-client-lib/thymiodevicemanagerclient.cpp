@@ -2,6 +2,7 @@
 #include "thymiodevicemanagerclientendpoint.h"
 #include <QDebug>
 #include <QTcpSocket>
+#include <QtEndian>
 
 namespace mobsya {
 
@@ -57,6 +58,11 @@ void ThymioDeviceManagerClient::onMessage(const fb_message_ptr& msg) {
     }
 }
 
+template <typename T>
+T to_uuid_part(const unsigned char* c) {
+    return qToBigEndian(*(reinterpret_cast<const T*>(c)));
+}
+
 void ThymioDeviceManagerClient::onNodesChanged(const fb::NodesChanged& nc_msg) {
     fb::NodesChangedT _t;
     nc_msg.UnPackTo(&_t);
@@ -66,20 +72,17 @@ void ThymioDeviceManagerClient::onNodesChanged(const fb::NodesChanged& nc_msg) {
         const std::vector<uint8_t>& bytes = node.node_id->id;
         if(bytes.size() != 16)
             continue;
-        SimpleNode deserialized{// Sometimes Qt apis aren't that convenient...
-                                QUuid(*(reinterpret_cast<const uint32_t*>(bytes.data())),
-                                      *(reinterpret_cast<const uint16_t*>(bytes.data() + 4)),
-                                      *(reinterpret_cast<const uint16_t*>(bytes.data() + 6)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 8)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 9)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 10)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 11)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 12)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 13)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 14)),
-                                      *(reinterpret_cast<const uint8_t*>(bytes.data() + 15))),
-                                QString::fromStdString(node.name), static_cast<ThymioNode::Status>(node.status),
-                                static_cast<ThymioNode::NodeType>(node.type)};
+
+        SimpleNode deserialized{
+            // Sometimes Qt apis aren't that convenient...
+            QUuid(to_uuid_part<uint32_t>(bytes.data()), to_uuid_part<uint16_t>(bytes.data() + 4),
+                  to_uuid_part<uint16_t>(bytes.data() + 6), to_uuid_part<uint8_t>(bytes.data() + 8),
+                  to_uuid_part<uint8_t>(bytes.data() + 9), to_uuid_part<uint8_t>(bytes.data() + 10),
+                  to_uuid_part<uint8_t>(bytes.data() + 11), to_uuid_part<uint8_t>(bytes.data() + 12),
+                  to_uuid_part<uint8_t>(bytes.data() + 13), to_uuid_part<uint8_t>(bytes.data() + 14),
+                  to_uuid_part<uint8_t>(bytes.data() + 15)),
+            QString::fromStdString(node.name), static_cast<ThymioNode::Status>(node.status),
+            static_cast<ThymioNode::NodeType>(node.type)};
         changed_nodes.emplace_back(std::move(deserialized));
     }
     onNodesChanged(changed_nodes);
