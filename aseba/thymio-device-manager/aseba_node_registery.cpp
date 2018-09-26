@@ -92,8 +92,14 @@ void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint&
 
 void aseba_node_registery::update_discovery() {
     std::unique_lock<std::mutex> _(m_discovery_mutex);
+    if(m_updating_discovery) {
+        m_discovery_needs_update = true;
+        return;
+    }
     m_nodes_service_desc.properties(build_discovery_properties());
 
+    m_discovery_needs_update = false;
+    m_updating_discovery = true;
     m_discovery_socket.async_announce(
         m_nodes_service_desc,
         std::bind(&aseba_node_registery::on_update_discovery_complete, this, std::placeholders::_1));
@@ -104,6 +110,10 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
         mLogError("Discovery : {}", ec.message());
     } else {
         mLogTrace("Discovery : update complete");
+    }
+    m_updating_discovery = false;
+    if(m_discovery_needs_update) {
+        boost::asio::post(get_io_context(), boost::bind(&aseba_node_registery::update_discovery, this));
     }
 }
 
