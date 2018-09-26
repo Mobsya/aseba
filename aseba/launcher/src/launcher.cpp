@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QTemporaryFile>
 #include <QDesktopServices>
+#include <QTimer>
 
 namespace mobsya {
 
@@ -36,7 +37,7 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 }
 
 bool Launcher::openUrl(const QUrl& url) const {
-    QTemporaryFile t("XXXXXX.html");
+    QTemporaryFile t(QDir::tempPath() + "/XXXXXX.html");
     t.setAutoRemove(false);
     if(!t.open())
         return false;
@@ -47,7 +48,7 @@ bool Launcher::openUrl(const QUrl& url) const {
 </head></html>)")
                 .arg(url.toString())
                 .toUtf8());
-    t.close();
+    QTimer::singleShot(10000, [f = t.fileName()] { QFile::remove(f); });
     return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
