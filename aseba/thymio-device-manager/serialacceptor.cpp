@@ -68,6 +68,26 @@ static usb_device_identifier device_id_from_interface_id(const std::string& str)
     return {value("VID_"), value("PID_")};
 }
 
+static std::string get_device_name(HDEVINFO deviceInfoSet, PSP_DEVINFO_DATA deviceInfoData) {
+    DWORD dataType = 0;
+    std::string outputBuffer(MAX_PATH + 1, 0);
+    DWORD bytesRequired = MAX_PATH;
+    for(;;) {
+        if(::SetupDiGetDeviceRegistryPropertyA(deviceInfoSet, deviceInfoData, SPDRP_DEVICEDESC, &dataType,
+                                              reinterpret_cast<PBYTE>(outputBuffer.data()), bytesRequired,
+                                              &bytesRequired)) {
+            break;
+        }
+
+        if(::GetLastError() != ERROR_INSUFFICIENT_BUFFER || (dataType != REG_SZ && dataType != REG_EXPAND_SZ)) {
+            return {};
+        }
+        outputBuffer.resize(bytesRequired);
+    }
+    return outputBuffer;
+}
+
+
 static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_info) {
     const HKEY key = ::SetupDiOpenDevRegKey(info_set, device_info, DICS_FLAG_GLOBAL, 0, DIREG_DEV, KEY_READ);
     if(key == INVALID_HANDLE_VALUE) {
@@ -135,11 +155,13 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             continue;
 
         const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
+        const auto device_name = get_device_name(deviceInfoSet, &deviceInfoData);
 
         mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
         boost::system::error_code ec;
         req.d.open(port_name, ec);
         req.d.m_device_id = id;
+        req.d.m_device_name = device_name;
         if(!ec) {
             auto handler = std::move(req.handler);
             const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
