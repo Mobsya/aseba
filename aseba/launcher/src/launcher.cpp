@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
+#include <QTemporaryFile>
+#include <QDesktopServices>
 
 namespace mobsya {
 
@@ -31,6 +33,22 @@ QStringList Launcher::applicationsSearchPaths() const {
 
 QStringList Launcher::webappsFolderSearchPaths() const {
     return {QFileInfo(QCoreApplication::applicationDirPath()).absolutePath()};
+}
+
+bool Launcher::openUrl(const QUrl& url) const {
+    QTemporaryFile t("XXXXXX.html");
+    t.setAutoRemove(false);
+    if(!t.open())
+        return false;
+
+    t.write(QStringLiteral(R"(
+<html><head>
+  <meta http-equiv="refresh" content="0;URL='%1" />
+</head></html>)")
+                .arg(url.toString())
+                .toUtf8());
+    t.close();
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
 QUrl Launcher::webapp_base_url(const QString& name) const {
