@@ -1,3 +1,4 @@
+#include <iostream>
 #include <QApplication>
 #include <QFontDatabase>
 #include <QDir>
@@ -14,6 +15,23 @@
 #include "tdmsupervisor.h"
 
 int main(int argc, char** argv) {
+
+#ifdef Q_OS_WIN
+    AttachConsole(ATTACH_PARENT_PROCESS);
+    // The std stream are reopen using the console handle
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONIN$", "r", stdin);
+    freopen("CONERR$", "w", stderr);
+
+    // make sure the console handles are returned by GetStdHandle
+    HANDLE newOut = CreateFileW(L"CONOUT$", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+    SetStdHandle(STD_OUTPUT_HANDLE, newOut);
+
+    HANDLE newErr = CreateFileW(L"CONERR$", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+    SetStdHandle(STD_ERROR_HANDLE, newErr);
+    std::cout.clear();
+    std::cerr.clear();
+#endif  // Q_OS_WIN
 
 #ifdef QT_QML_DEBUG
     QQmlDebuggingEnabler enabler;

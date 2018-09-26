@@ -11,7 +11,7 @@ else()
     qt5_add_resources(QT_RESOURCES qml.qrc)
 endif()
 
-add_executable(thymio-launcher
+add_executable(thymio-launcher WIN32
     ${QT_RESOURCES}
     main.cpp
     launcher.h
