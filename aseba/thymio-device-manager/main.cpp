@@ -9,8 +9,10 @@
 #include "interfaces.h"
 #include "aseba_node_registery.h"
 #include "app_server.h"
+#include "app_token_manager.h"
 #include "aseba_endpoint.h"
 #include "aseba_tcpacceptor.h"
+#include <boost/filesystem.hpp>
 
 #ifdef MOBSYA_TDM_ENABLE_USB
 #    include "usbserver.h"
@@ -40,31 +42,41 @@ int main() {
             return EALREADY;
         }
 
+        boost::filesystem::path token_file =
+            boost::filesystem::unique_path(boost::filesystem::temp_directory_path() / "/mobsya-%%%%-%%%%-%%%%-%%%%");
+
         sig.add(SIGINT);
         sig.add(SIGTERM);
         sig.add(SIGABRT);
-        sig.async_wait([](boost::system::error_code, int sig) {
+        sig.async_wait([&token_file](boost::system::error_code, int sig) {
             mLogWarn("Exiting with signal {}", sig);
+            boost::system::error_code ec;
+            boost::filesystem::remove(token_file, ec);
+            if(ec) {
+                mLogWarn("{}", ec.message());
+            }
             std::exit(0);
         });
 
         // Gather a list of local ips so that we can detect connections from
         // the same machine.
-        boost::asio::ip::tcp::resolver resolver(ctx);
         std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
         for(auto&& ip : local_ips) {
             mLogTrace("Local Ip : {}", ip.to_string());
         }
-
         // Create a server for regular tcp connection
         mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
         tcp_server.accept();
 
-        mobsya::aseba_node_registery node_registery(ctx);
+        mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
+        mobsya::app_token_manager& token_manager =
+            boost::asio::make_service<mobsya::app_token_manager>(ctx, std::move(local_token));
+
         node_registery.set_tcp_endpoint(tcp_server.endpoint());
+        node_registery.set_token_file_path(token_file.string());
 
         mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
-        mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
+        mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx, local_ips);
         // Create a server for websocket
         mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
         websocket_server.accept();

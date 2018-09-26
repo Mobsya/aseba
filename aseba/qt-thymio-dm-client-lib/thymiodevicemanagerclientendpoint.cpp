@@ -1,5 +1,6 @@
 #include "thymiodevicemanagerclientendpoint.h"
 #include <QDataStream>
+#include <QFile>
 #include "thymio-api.h"
 
 namespace mobsya {
@@ -21,6 +22,10 @@ void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer&
 
 void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {
     m_ws_port = port;
+}
+
+void ThymioDeviceManagerClientEndpoint::setTokenFilePath(QString filePath) {
+    m_token_file_path = filePath;
 }
 
 QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
@@ -54,8 +59,25 @@ void ThymioDeviceManagerClientEndpoint::onReadyRead() {
 }
 
 void ThymioDeviceManagerClientEndpoint::onConnected() {
+    QByteArray token;
+    if(!m_token_file_path.isEmpty()) {
+        QFile f(m_token_file_path);
+        if(f.open(QIODevice::ReadOnly)) {
+            token = f.readAll();
+            qDebug() << token.toHex();
+        }
+    }
+
     flatbuffers::FlatBufferBuilder builder;
-    write(wrap_fb(builder, fb::CreateConnectionHandshake(builder, minProtocolVersion, protocolVersion)));
+    flatbuffers::Offset<flatbuffers::Vector<uint8_t>> offset;
+    if(!token.isEmpty()) {
+        offset = builder.CreateVector<uint8_t>(reinterpret_cast<uint8_t*>(token.data()), token.size());
+    }
+    fb::ConnectionHandshakeBuilder hsb(builder);
+    hsb.add_token(offset);
+    hsb.add_protocolVersion(protocolVersion);
+    hsb.add_minProtocolVersion(minProtocolVersion);
+    write(wrap_fb(builder, hsb.Finish()));
 }
 
 

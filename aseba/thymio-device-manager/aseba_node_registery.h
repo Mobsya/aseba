@@ -16,7 +16,7 @@ public:
     using node_id = mobsya::node_id;
     using node_map = std::unordered_map<node_id, std::weak_ptr<aseba_node>>;
 
-    aseba_node_registery(boost::asio::io_context& io_context);
+    aseba_node_registery(boost::asio::execution_context& ctx);
 
     void add_node(std::shared_ptr<aseba_node> node);
     void remove_node(const std::shared_ptr<aseba_node> &node);
@@ -24,6 +24,7 @@ public:
     void set_node_uuid(const std::shared_ptr<aseba_node> & node, const node_id&);
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
     void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
+    void set_token_file_path(const std::string& secret_file_path);
 
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
@@ -43,7 +44,7 @@ private:
     aware::contact m_nodes_service_desc;
     // Endpoint of the WebSocket - So we can expose the port on zeroconf
     boost::asio::ip::tcp::endpoint m_ws_endpoint;
-
+    std::string m_token_file_path;
 
     mutable std::mutex m_discovery_mutex;
     mutable std::mutex m_nodes_mutex;

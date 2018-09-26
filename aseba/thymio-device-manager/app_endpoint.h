@@ -9,6 +9,7 @@
 #include "aseba_node_registery.h"
 #include "tdm.h"
 #include "log.h"
+#include "app_token_manager.h"
 
 namespace mobsya {
 using tcp = boost::asio::ip::tcp;
@@ -128,7 +129,7 @@ class application_endpoint : public application_endpoint_base<application_endpoi
                              public node_status_monitor {
 public:
     using base = application_endpoint_base<application_endpoint<Socket>, Socket>;
-    application_endpoint(boost::asio::io_context& ctx) : base(ctx) {}
+    application_endpoint(boost::asio::io_context& ctx) : base(ctx), m_ctx(ctx) {}
     void start() {
         mLogInfo("Starting app endpoint");
         base::start();
@@ -410,6 +411,9 @@ private:
         } else {
             m_protocol_version = std::min(hs->protocolVersion(), tdm::protocolVersion);
             m_max_out_going_packet_size = hs->maxMessageSize();
+            auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
+            m_local_endpoint =
+                token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
         }
         flatbuffers::FlatBufferBuilder builder;
         write_message(wrap_fb(builder,
@@ -435,12 +439,13 @@ private:
         return std::static_pointer_cast<application_endpoint<Socket>>(this->shared_from_this());
     }
 
-
+    boost::asio::io_context& m_ctx;
     std::vector<flatbuffers::DetachedBuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
+    bool m_local_endpoint = false;
 };
 
 }  // namespace mobsya

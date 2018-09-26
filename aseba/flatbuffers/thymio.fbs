@@ -20,6 +20,10 @@ table ConnectionHandshake {
     //Each endpoint must advertise the maximum size of message they will accept.
     //If a message is received that exceed that size, the connection shall be dropped.
     maxMessageSize:uint = 102400;
+
+    //A token represented as a byte sequence.
+    //Tokens are notably used to identify local clients and to give special permissions to applications
+    token:[ubyte];
 }
 
 ///A node id
