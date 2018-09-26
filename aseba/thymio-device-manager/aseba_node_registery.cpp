@@ -8,10 +8,10 @@
 
 namespace mobsya {
 
-aseba_node_registery::aseba_node_registery(boost::asio::io_context& io_context)
-    : boost::asio::detail::service_base<aseba_node_registery>(io_context)
+aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_context)
+    : boost::asio::detail::service_base<aseba_node_registery>(static_cast<boost::asio::io_context&>(io_context))
     , m_uid(boost::uuids::random_generator()())
-    , m_discovery_socket(io_context)
+    , m_discovery_socket(static_cast<boost::asio::io_context&>(io_context))
     , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
 
@@ -90,6 +90,11 @@ void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint&
     update_discovery();
 }
 
+void aseba_node_registery::set_token_file_path(const std::string& secret_file_path) {
+    m_token_file_path = secret_file_path;
+    update_discovery();
+}
+
 void aseba_node_registery::update_discovery() {
     std::unique_lock<std::mutex> _(m_discovery_mutex);
     if(m_updating_discovery) {
@@ -125,6 +130,8 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     map["uuid"] = boost::uuids::to_string(m_uid);
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
+    if(!m_token_file_path.empty())
+        map["token-file"] = m_token_file_path;
     return map;
 }
 

@@ -10,18 +10,9 @@ static const std::map<std::string, aseba_endpoint::endpoint_type> endpoint_type_
     {"Thymio II", aseba_endpoint::endpoint_type::simulated_thymio},
     {"Dummy Node", aseba_endpoint::endpoint_type::simulated_dummy_node}};
 
-aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)
-    : m_iocontext(io_context), m_contact("aseba"), m_monitor(io_context), m_resolver(io_context) {
-
-    using tcp = boost::asio::ip::tcp;
-    for(const auto suffix : {"", ".local"}) {
-        tcp::resolver::query query(boost::asio::ip::host_name() + suffix, "", tcp::resolver::query::canonical_name);
-        for(auto it = m_resolver.resolve(query); it != tcp::resolver::iterator(); ++it) {
-            mLogInfo("Local Ip : {}", it->endpoint().address().to_string());
-            m_local_ips.insert(it->endpoint().address());
-        }
-    }
-}
+aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context,
+                                       const std::set<boost::asio::ip::address>& local_ips)
+    : m_iocontext(io_context), m_contact("aseba"), m_monitor(io_context), m_local_ips(local_ips) {}
 
 void aseba_tcp_acceptor::accept() {
     mLogInfo("Waiting for aseba node on tcp");

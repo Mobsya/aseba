@@ -16,6 +16,7 @@ add_executable(thymio-device-manager
     aseba_tcpacceptor.h
     aseba_tcpacceptor.cpp
     app_server.h
+    app_token_manager.h
     app_endpoint.h
     flatbuffers_message_reader.h
     flatbuffers_message_writer.h

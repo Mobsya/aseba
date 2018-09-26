@@ -208,10 +208,35 @@ mobsya.fb.ConnectionHandshake.prototype.mutate_maxMessageSize = function(value) 
 };
 
 /**
+ * @param {number} index
+ * @returns {number}
+ */
+mobsya.fb.ConnectionHandshake.prototype.token = function(index) {
+  var offset = this.bb.__offset(this.bb_pos, 10);
+  return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.ConnectionHandshake.prototype.tokenLength = function() {
+  var offset = this.bb.__offset(this.bb_pos, 10);
+  return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns {Uint8Array}
+ */
+mobsya.fb.ConnectionHandshake.prototype.tokenArray = function() {
+  var offset = this.bb.__offset(this.bb_pos, 10);
+  return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.ConnectionHandshake.startConnectionHandshake = function(builder) {
-  builder.startObject(3);
+  builder.startObject(4);
 };
 
 /**
@@ -236,6 +261,35 @@ mobsya.fb.ConnectionHandshake.addProtocolVersion = function(builder, protocolVer
  */
 mobsya.fb.ConnectionHandshake.addMaxMessageSize = function(builder, maxMessageSize) {
   builder.addFieldInt32(2, maxMessageSize, 102400);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} tokenOffset
+ */
+mobsya.fb.ConnectionHandshake.addToken = function(builder, tokenOffset) {
+  builder.addFieldOffset(3, tokenOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {Array.<number>} data
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.ConnectionHandshake.createTokenVector = function(builder, data) {
+  builder.startVector(1, data.length, 1);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addInt8(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} numElems
+ */
+mobsya.fb.ConnectionHandshake.startTokenVector = function(builder, numElems) {
+  builder.startVector(1, numElems, 1);
 };
 
 /**
