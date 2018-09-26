@@ -9,9 +9,13 @@ public:
     usb_device_identifier usb_device_id() const {
         return m_device_id;
     }
+	std::string device_name() const {
+        return m_device_name;
+	}
 
 private:
     friend class serial_acceptor_service;
     usb_device_identifier m_device_id;
+    std::string m_device_name;
 };
 }  // namespace mobsya
