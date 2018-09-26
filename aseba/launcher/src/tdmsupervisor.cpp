@@ -72,7 +72,8 @@ void TDMSupervisor::startLocalTDM() {
 
 void TDMSupervisor::stopTDM() {
     if(m_tdm_process) {
-        m_tdm_process->terminate();
+        m_tdm_process->disconnect();
+        m_tdm_process->kill();
     }
 }
 
