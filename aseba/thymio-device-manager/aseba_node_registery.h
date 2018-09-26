@@ -47,6 +47,8 @@ private:
 
     mutable std::mutex m_discovery_mutex;
     mutable std::mutex m_nodes_mutex;
+    bool m_updating_discovery = false;
+    bool m_discovery_needs_update = false;
 
     boost::signals2::signal<void(std::shared_ptr<aseba_node>, node_id, aseba_node::status)>
         m_node_status_changed_signal;
