@@ -1,6 +1,7 @@
 #include "thymiodevicemanagerclientendpoint.h"
 #include <QDataStream>
 #include <QtEndian>
+#include <array>
 #include <QRandomGenerator>
 #include "qflatbuffers.h"
 #include "thymio-api.h"
