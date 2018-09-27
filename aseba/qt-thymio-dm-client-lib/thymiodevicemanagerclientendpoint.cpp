@@ -74,7 +74,7 @@ flatbuffers::Offset<fb::NodeId> ThymioDeviceManagerClientEndpoint::serialize_uui
     *reinterpret_cast<uint16_t*>(data.data() + 6) = qFromBigEndian(uuid.data3);
     memcpy(data.data() + 8, uuid.data4, 8);
 
-    return mobsya::fb::CreateNodeId(fb, fb.CreateVector(data.begin(), data.size()));
+    return mobsya::fb::CreateNodeId(fb, fb.CreateVector(data.data(), data.size()));
 }
 
 ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::renameNode(const ThymioNode& node,
