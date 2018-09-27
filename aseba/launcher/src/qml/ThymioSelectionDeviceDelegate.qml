@@ -137,13 +137,13 @@ Item {
             }
             Item {
                 width: parent.width
-                height: 20
+                height: 10
             }
             EditableDeviceNameInput {
                 id: textfield
                 editable: capabilities & ThymioNode.Rename
                 width: parent.width
-                height: 25
+                height: 40
                 deviceName: name
                 onAccepted: {
                     model.object.name = text
