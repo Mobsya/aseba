@@ -1,4 +1,4 @@
-// Generated from thymio.proto
+//https://google.github.io/flatbuffers/md__schemas.html
 
 namespace mobsya.fb;
 
@@ -41,6 +41,13 @@ enum NodeType : int {
   UnknownType      = 4
 }
 
+/// Capabilities of a node
+/// What a client can do with a node may depends on permissions, firmware version, type of node/device, etc
+enum NodeCapability : ulong {
+  Rename  = 0x01,
+  ForceResetAndStop = 0x02
+}
+
 /// The status of a node represents whether the node is connected and available.
 enum NodeStatus : int {
   /// The status is unknown, this denotes a programmation error or a bug
@@ -73,6 +80,7 @@ table Node {
   status:NodeStatus;
   type:NodeType;
   name:string;
+  capabilities:ulong;
 }
 
 /// Message sent by the server when a node changes status.
