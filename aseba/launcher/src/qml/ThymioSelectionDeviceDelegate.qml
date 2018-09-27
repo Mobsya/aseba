@@ -60,10 +60,11 @@ Item {
 
         DeviceContextMenu {
             id: contextMenu
-            device: device
             onOpen: {
                 if(!menu)
                     return
+
+                menu.device = device
                 if(capabilities & ThymioNode.Rename) {
                     menu.addAction(renameAction)
                 }
