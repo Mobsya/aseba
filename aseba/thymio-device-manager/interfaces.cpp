@@ -60,6 +60,10 @@ std::set<boost::asio::ip::address> network_interfaces_addresses() {
             auto address = address_from_socket(sockaddr);
             if(!address.is_unspecified()) {
                 addresses.insert(address);
+                if(address.is_v6() && address.to_v6().is_v4_mapped()) {
+                    auto v4 = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, address.to_v6());
+                    addresses.insert(v4);
+                }
             }
         }
     }
@@ -85,6 +89,10 @@ std::set<boost::asio::ip::address> network_interfaces_addresses() {
         auto address = address_from_socket(ptr->ifa_addr);
         if(!address.is_unspecified()) {
             addresses.insert(address);
+            if(address.is_v6() && address.to_v6().is_v4_mapped()) {
+                auto v4 = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, address.to_v6());
+                addresses.insert(v4);
+            }
         }
     }
     freeifaddrs(lst);
@@ -98,7 +106,12 @@ bool endpoint_is_local(const boost::asio::ip::tcp::endpoint& ep) {
 }
 bool address_is_local(const boost::asio::ip::address& addr) {
     std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
-    return local_ips.find(addr) != local_ips.end();
+    auto res = local_ips.find(addr) != local_ips.end();
+    if(!res && addr.is_v6() && addr.to_v6().is_v4_mapped()) {
+        auto v4 = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, addr.to_v6());
+        res = local_ips.find(v4) != local_ips.end();
+    }
+    return res;
 }
 
 }  // namespace mobsya
