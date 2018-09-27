@@ -9,7 +9,7 @@ namespace mobsya {
 class aseba_endpoint;
 class aseba_tcp_acceptor {
 public:
-    aseba_tcp_acceptor(boost::asio::io_context& io_context, const std::set<boost::asio::ip::address>& local_ips);
+    aseba_tcp_acceptor(boost::asio::io_context& io_context);
     void accept();
 
 private:
@@ -17,7 +17,6 @@ private:
     boost::asio::io_context& m_iocontext;
     aware::contact m_contact;
     aware::monitor_socket m_monitor;
-    const std::set<boost::asio::ip::address>& m_local_ips;
     using known_ep = std::pair<std::string, uint16_t>;
     std::map<known_ep, std::weak_ptr<aseba_endpoint>> m_connected_endpoints;
     std::mutex m_endpoints_mutex;

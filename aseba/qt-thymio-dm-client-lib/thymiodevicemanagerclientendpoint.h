@@ -14,7 +14,6 @@ public:
 public:
     QUrl websocketConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
-    void setTokenFilePath(QString filePath);
 
 private Q_SLOTS:
     void onReadyRead();
@@ -29,7 +28,6 @@ private:
     QTcpSocket* m_socket;
     quint32 m_message_size;
     quint16 m_ws_port = 0;
-    QString m_token_file_path;
 };
 
 }  // namespace mobsya

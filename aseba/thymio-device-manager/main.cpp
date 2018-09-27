@@ -69,14 +69,12 @@ int main() {
         tcp_server.accept();
 
         mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
-        mobsya::app_token_manager& token_manager =
-            boost::asio::make_service<mobsya::app_token_manager>(ctx, std::move(local_token));
+        mobsya::app_token_manager& token_manager = boost::asio::make_service<mobsya::app_token_manager>(ctx);
 
         node_registery.set_tcp_endpoint(tcp_server.endpoint());
-        node_registery.set_token_file_path(token_file.string());
 
         mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
-        mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx, local_ips);
+        mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
         // Create a server for websocket
         mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
         websocket_server.accept();

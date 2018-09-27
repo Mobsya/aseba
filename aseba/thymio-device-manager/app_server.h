@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include "app_endpoint.h"
 #include "log.h"
+#include "interfaces.h"
 
 namespace mobsya {
 using tcp = boost::asio::ip::tcp;
@@ -27,6 +28,7 @@ public:
         m_acceptor.async_accept(endpoint->tcp_socket(), [this, endpoint](const boost::system::error_code& error) {
             mLogInfo("New connection {}", error.message());
             if(!error) {
+                endpoint->set_local(mobsya::endpoint_is_local(endpoint->tcp_socket().remote_endpoint()));
                 endpoint->start();
             }
             this->accept();
