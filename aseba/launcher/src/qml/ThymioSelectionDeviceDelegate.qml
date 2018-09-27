@@ -6,7 +6,7 @@ Item {
     Action {
         text: "Rename"
         id: renameAction
-        onTriggered: textfield.readOnly = false
+        onTriggered: if(textfield.editable) textfield.readOnly = false
     }
     Action {
         text: "Upgrade Firmware"
@@ -57,14 +57,18 @@ Item {
 
         DeviceContextMenu {
             id: contextMenu
-            deviceName: name
+            device: model.object
             onOpen: {
                 if(!menu)
                     return
-                menu.addAction(renameAction)
-                menu.addAction(resetAction)
-                menu.addAction(stopAction)
-                menu.addAction(upgradeAction)
+                if(capabilities & ThymioNode.Rename) {
+                    menu.addAction(renameAction)
+                }
+                if(capabilities & ThymioNode.ForceResetAndStop) {
+                    menu.addAction(resetAction)
+                    menu.addAction(stopAction)
+                }
+                //menu.addAction(upgradeAction)
             }
         }
 
@@ -137,9 +141,14 @@ Item {
             }
             EditableDeviceNameInput {
                 id: textfield
+                editable: capabilities & ThymioNode.Rename
                 width: parent.width
                 height: 25
-                text: name
+                deviceName: name
+                onAccepted: {
+                    model.object.name = text
+                    text = deviceName
+                }
             }
         }
     }

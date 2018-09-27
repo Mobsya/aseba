@@ -8,6 +8,8 @@
 
 namespace mobsya {
 
+static const uint32_t MAX_FRIENDLY_NAME_SIZE = 30;
+
 const std::string& aseba_node::status_to_string(aseba_node::status s) {
     static std::array<std::string, 5> strs = {"connected", "available", "busy", "ready", "disconnected"};
     int i = int(s) - 1;
@@ -139,8 +141,9 @@ void aseba_node::run_aseba_program(write_callback&& cb) {
     write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
 }
 
-void aseba_node::rename(const std::string&) {
-    set_status(m_status);
+void aseba_node::rename(const std::string& newName) {
+    set_friendly_name(newName);
+    write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
@@ -153,7 +156,6 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
     }
     if(description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
-        // set_friendly_name("The merovingian");
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
         return;
@@ -187,6 +189,8 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
             m_friendly_name.clear();
             m_friendly_name.reserve(info.data.size());
             std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
+            m_node_mutex.unlock();
+            set_status(m_status);
         }
         mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
     }
@@ -220,12 +224,20 @@ std::string aseba_node::friendly_name() const {
 }
 
 void aseba_node::set_friendly_name(const std::string& str) {
+    if(str.empty() || str.size() > MAX_FRIENDLY_NAME_SIZE)
+        return;
     std::vector<uint8_t> data;
     data.reserve(str.size());
     std::copy(str.begin(), str.end(), std::back_inserter(data));
     write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_NAME, data));
     std::unique_lock<std::mutex> _(m_node_mutex);
     m_friendly_name = str;
+}
+
+bool aseba_node::can_be_renamed() const {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    auto ep = m_endpoint.lock();
+    return ep && ep->type() == aseba_endpoint::endpoint_type::thymio && m_description.protocolVersion >= 6;
 }
 
 }  // namespace mobsya

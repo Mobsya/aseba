@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: component
     property Menu menu : null
-    property string deviceName
+    property var device
     signal open()
 
     function popup() {
@@ -32,7 +32,7 @@ Item {
                 width: bg.width - 2 * 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 Text {
-                    text: deviceName
+                    text: device.name
                     font.family: "Roboto"
                     font.pointSize: 9
                     color : "white"

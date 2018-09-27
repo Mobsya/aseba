@@ -80,7 +80,7 @@ table Node {
   status:NodeStatus;
   type:NodeType;
   name:string;
-  capabilities:ulong;
+  capabilities:ulong  = 0;
 }
 
 /// Message sent by the server when a node changes status.

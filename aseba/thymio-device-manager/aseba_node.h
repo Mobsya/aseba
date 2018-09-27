@@ -43,6 +43,7 @@ public:
 
     std::string friendly_name() const;
     void set_friendly_name(const std::string& str);
+    bool can_be_renamed() const;
 
     bool is_wirelessly_connected() const;
 
