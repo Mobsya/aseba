@@ -211,6 +211,11 @@ public:
                 this->run_aseba_program(req->request_id(), req->node_id());
                 break;
             }
+            case mobsya::fb::AnyMessage::StopNode: {
+                auto req = msg.as<fb::StopNode>();
+                this->stop_node(req->request_id(), req->node_id());
+                break;
+            }
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
     }
@@ -375,6 +380,21 @@ private:
         n->run_aseba_program(create_device_write_completion_cb(request_id));
     }
 
+    void stop_node(uint32_t request_id, const aseba_node_registery::node_id& id) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            n = registery().node_from_id(id);
+            if(!n || !(node_capabilities(n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
+                n = {};
+        }
+        if(!n) {
+            mLogWarn("stop_node: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        n->stop_vm(create_device_write_completion_cb(request_id));
+    }
+
     aseba_node_registery& registery() {
         return boost::asio::use_service<aseba_node_registery>(this->m_ctx);
     }
@@ -462,6 +482,6 @@ private:
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;
-};
+};  // namespace mobsya
 
 }  // namespace mobsya

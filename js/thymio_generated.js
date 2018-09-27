@@ -105,13 +105,14 @@ mobsya.fb.AnyMessage = {
   LockNode: 4,
   UnlockNode: 5,
   RenameNode: 6,
-  RequestAsebaCodeLoad: 7,
-  RequestAsebaCodeRun: 8,
-  NodesChanged: 9,
-  NodeAsebaVMDescription: 10,
-  RequestCompleted: 11,
-  Error: 12,
-  CompilationError: 13
+  StopNode: 7,
+  RequestAsebaCodeLoad: 8,
+  RequestAsebaCodeRun: 9,
+  NodesChanged: 10,
+  NodeAsebaVMDescription: 11,
+  RequestCompleted: 12,
+  Error: 13,
+  CompilationError: 14
 };
 
 /**
@@ -2235,6 +2236,105 @@ mobsya.fb.RequestAsebaCodeRun.addNodeId = function(builder, nodeIdOffset) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.StopNode = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.StopNode}
+ */
+mobsya.fb.StopNode.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.StopNode=} obj
+ * @returns {mobsya.fb.StopNode}
+ */
+mobsya.fb.StopNode.getRootAsStopNode = function(bb, obj) {
+  return (obj || new mobsya.fb.StopNode).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.StopNode.prototype.requestId = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.StopNode.prototype.mutate_request_id = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {mobsya.fb.NodeId=} obj
+ * @returns {mobsya.fb.NodeId|null}
+ */
+mobsya.fb.StopNode.prototype.nodeId = function(obj) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.StopNode.startStopNode = function(builder) {
+  builder.startObject(2);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} requestId
+ */
+mobsya.fb.StopNode.addRequestId = function(builder, requestId) {
+  builder.addFieldInt32(0, requestId, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} nodeIdOffset
+ */
+mobsya.fb.StopNode.addNodeId = function(builder, nodeIdOffset) {
+  builder.addFieldOffset(1, nodeIdOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.StopNode.endStopNode = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

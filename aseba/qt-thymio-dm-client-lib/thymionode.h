@@ -53,7 +53,8 @@ public:
         return m_endpoint;
     }
 
-    quint32 rename(const QString& newName);
+    Q_INVOKABLE quint32 rename(const QString& newName);
+    Q_INVOKABLE quint32 stop();
 
 private:
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;

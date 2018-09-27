@@ -62,7 +62,7 @@ public:
     bool send_aseba_program(const std::string& program, write_callback&& cb = {});
     void run_aseba_program(write_callback&& cb = {});
     void rename(const std::string& new_name);
-
+    void stop_vm(write_callback&& cb = {});
     bool lock(void* app);
     bool unlock(void* app);
 
