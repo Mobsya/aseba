@@ -27,6 +27,17 @@ mobsya.fb.NodeType = {
 };
 
 /**
+ * Capabilities of a node
+ * What a client can do with a node may depends on permissions, firmware version, type of node/device, etc
+ *
+ * @enum
+ */
+mobsya.fb.NodeCapability = {
+  Rename: 1,
+  ForceResetAndStop: 2
+};
+
+/**
  * The status of a node represents whether the node is connected and available.
  *
  * @enum
@@ -510,10 +521,33 @@ mobsya.fb.Node.prototype.name = function(optionalEncoding) {
 };
 
 /**
+ * @returns {flatbuffers.Long}
+ */
+mobsya.fb.Node.prototype.capabilities = function() {
+  var offset = this.bb.__offset(this.bb_pos, 12);
+  return offset ? this.bb.readUint64(this.bb_pos + offset) : this.bb.createLong(0, 0);
+};
+
+/**
+ * @param {flatbuffers.Long} value
+ * @returns {boolean}
+ */
+mobsya.fb.Node.prototype.mutate_capabilities = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 12);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint64(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.Node.startNode = function(builder) {
-  builder.startObject(4);
+  builder.startObject(5);
 };
 
 /**
@@ -546,6 +580,14 @@ mobsya.fb.Node.addType = function(builder, type) {
  */
 mobsya.fb.Node.addName = function(builder, nameOffset) {
   builder.addFieldOffset(3, nameOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Long} capabilities
+ */
+mobsya.fb.Node.addCapabilities = function(builder, capabilities) {
+  builder.addFieldInt64(4, capabilities, builder.createLong(0, 0));
 };
 
 /**
