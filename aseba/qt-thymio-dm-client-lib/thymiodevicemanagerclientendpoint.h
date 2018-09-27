@@ -18,6 +18,7 @@ public:
     void setWebSocketMatchingPort(quint16 port);
 
     request_id renameNode(const ThymioNode& node, const QString& newName);
+    request_id stopNode(const ThymioNode& node);
 
 private Q_SLOTS:
     void onReadyRead();

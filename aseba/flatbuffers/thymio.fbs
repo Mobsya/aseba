@@ -171,6 +171,10 @@ table RequestAsebaCodeRun {
     node_id:NodeId;
 }
 
+table StopNode {
+  request_id:uint;
+  node_id:NodeId;
+}
 
 table Error {
   request_id:uint;
@@ -192,6 +196,7 @@ union AnyMessage {
     LockNode,
     UnlockNode,
     RenameNode,
+    StopNode,
     RequestAsebaCodeLoad,
     RequestAsebaCodeRun,
     NodesChanged,

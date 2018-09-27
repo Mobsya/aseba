@@ -92,6 +92,14 @@ ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint:
     return requestId;
 }
 
+ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::stopNode(const ThymioNode& node) {
+    auto requestId = generate_request_id();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    write(wrap_fb(builder, fb::CreateStopNode(builder, requestId, uuidOffset)));
+    return requestId;
+}
+
 ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::generate_request_id() {
     quint32 value = QRandomGenerator::global()->generate();
     return value;

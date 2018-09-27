@@ -3,6 +3,8 @@ import QtQuick.Controls 2.3
 import org.mobsya  1.0
 
 Item {
+    property var device: model.object
+
     Action {
         text: "Rename"
         id: renameAction
@@ -19,6 +21,7 @@ Item {
     Action {
         text: "Stop"
         id: stopAction
+        onTriggered: device.stop()
     }
 
     id:item
@@ -46,7 +49,7 @@ Item {
                 contextMenu.popup(item)
             else
                 device_view.currentIndex = index
-                device_view.selectedDevice = model.object
+                device_view.selectedDevice = device
         }
         onPressAndHold: {
             if (mouse.source === Qt.MouseEventNotSynthesized)
@@ -57,7 +60,7 @@ Item {
 
         DeviceContextMenu {
             id: contextMenu
-            device: model.object
+            device: device
             onOpen: {
                 if(!menu)
                     return
@@ -65,7 +68,6 @@ Item {
                     menu.addAction(renameAction)
                 }
                 if(capabilities & ThymioNode.ForceResetAndStop) {
-                    menu.addAction(resetAction)
                     menu.addAction(stopAction)
                 }
                 //menu.addAction(upgradeAction)
@@ -146,7 +148,7 @@ Item {
                 height: 40
                 deviceName: name
                 onAccepted: {
-                    model.object.name = text
+                    device.name = text
                     text = deviceName
                 }
             }
