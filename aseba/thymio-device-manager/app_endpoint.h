@@ -418,7 +418,8 @@ private:
             m_max_out_going_packet_size = hs->maxMessageSize();
             auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
             // TODO ?
-            token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
+            if(hs->token())
+                token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
         }
         flatbuffers::FlatBufferBuilder builder;
         write_message(wrap_fb(builder,
