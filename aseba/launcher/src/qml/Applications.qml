@@ -10,7 +10,7 @@ ListModel {
             return false;
         }
         const url = "%1/thymio_blockly.en.html#device=%2&ws=%3"
-            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint)
+            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
 
