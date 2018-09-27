@@ -35,9 +35,7 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
         socket->connectToHost(service.ip(), service.port());
         const auto properties = service.txt();
         uint16_t port = properties.value("ws-port", 0).toUInt();
-        QString token_file = properties.value("token-file");
         endpoint->setWebSocketMatchingPort(port);
-        endpoint->setTokenFilePath(token_file);
 
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::onMessage, this,
                 &ThymioDeviceManagerClient::onMessage);

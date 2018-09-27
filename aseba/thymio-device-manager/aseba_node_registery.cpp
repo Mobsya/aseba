@@ -90,11 +90,6 @@ void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint&
     update_discovery();
 }
 
-void aseba_node_registery::set_token_file_path(const std::string& secret_file_path) {
-    m_token_file_path = secret_file_path;
-    update_discovery();
-}
-
 void aseba_node_registery::update_discovery() {
     std::unique_lock<std::mutex> _(m_discovery_mutex);
     if(m_updating_discovery) {
@@ -130,8 +125,6 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     map["uuid"] = boost::uuids::to_string(m_uid);
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
-    if(!m_token_file_path.empty())
-        map["token-file"] = m_token_file_path;
     return map;
 }
 

@@ -130,6 +130,11 @@ class application_endpoint : public application_endpoint_base<application_endpoi
 public:
     using base = application_endpoint_base<application_endpoint<Socket>, Socket>;
     application_endpoint(boost::asio::io_context& ctx) : base(ctx), m_ctx(ctx) {}
+
+    void set_local(bool is_local) {
+        this->m_local_endpoint = is_local;
+    }
+
     void start() {
         mLogInfo("Starting app endpoint");
         base::start();
@@ -412,8 +417,8 @@ private:
             m_protocol_version = std::min(hs->protocolVersion(), tdm::protocolVersion);
             m_max_out_going_packet_size = hs->maxMessageSize();
             auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
-            m_local_endpoint =
-                token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
+            // TODO ?
+            token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
         }
         flatbuffers::FlatBufferBuilder builder;
         write_message(wrap_fb(builder,

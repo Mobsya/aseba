@@ -22,7 +22,7 @@ static boost::asio::ip::address address_from_socket(sockaddr* sa) {
     return {};
 }
 
-#if BOOST_OS_WINDOWS 
+#if BOOST_OS_WINDOWS
 
 std::set<boost::asio::ip::address> network_interfaces_addresses() {
     std::set<boost::asio::ip::address> addresses;
@@ -47,20 +47,20 @@ std::set<boost::asio::ip::address> network_interfaces_addresses() {
         return {};
     }
 
-	// iterate over the list and add the entries to our listing
+    // iterate over the list and add the entries to our listing
     for(PIP_ADAPTER_ADDRESSES ptr = pAdapter; ptr; ptr = ptr->Next) {
         // parse the IP (unicast) addresses
         for(PIP_ADAPTER_UNICAST_ADDRESS addr = ptr->FirstUnicastAddress; addr; addr = addr->Next) {
             // skip addresses in invalid state
             if(addr->DadState == IpDadStateInvalid)
                 continue;
-            auto sockaddr  = addr->Address.lpSockaddr;
+            auto sockaddr = addr->Address.lpSockaddr;
             if(!sockaddr)
                 continue;
             auto address = address_from_socket(sockaddr);
             if(!address.is_unspecified()) {
                 addresses.insert(address);
-            }	
+            }
         }
     }
 
@@ -92,5 +92,13 @@ std::set<boost::asio::ip::address> network_interfaces_addresses() {
 }
 
 #endif
+
+bool endpoint_is_local(const boost::asio::ip::tcp::endpoint& ep) {
+    return address_is_local(ep.address());
+}
+bool address_is_local(const boost::asio::ip::address& addr) {
+    std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
+    return local_ips.find(addr) != local_ips.end();
+}
 
 }  // namespace mobsya

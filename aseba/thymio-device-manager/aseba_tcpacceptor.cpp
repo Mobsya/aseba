@@ -3,6 +3,7 @@
 #include <regex>
 #include "aseba_endpoint.h"
 #include "log.h"
+#include "interfaces.h"
 
 namespace mobsya {
 
@@ -10,9 +11,8 @@ static const std::map<std::string, aseba_endpoint::endpoint_type> endpoint_type_
     {"Thymio II", aseba_endpoint::endpoint_type::simulated_thymio},
     {"Dummy Node", aseba_endpoint::endpoint_type::simulated_dummy_node}};
 
-aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context,
-                                       const std::set<boost::asio::ip::address>& local_ips)
-    : m_iocontext(io_context), m_contact("aseba"), m_monitor(io_context), m_local_ips(local_ips) {}
+aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)
+    : m_iocontext(io_context), m_contact("aseba"), m_monitor(io_context) {}
 
 void aseba_tcp_acceptor::accept() {
     mLogInfo("Waiting for aseba node on tcp");
@@ -34,8 +34,7 @@ void aseba_tcp_acceptor::do_accept() {
             boost::asio::post(m_iocontext, [this] { this->do_accept(); });
             return;
         }
-
-        if(m_local_ips.find(m_contact.endpoint().address()) == m_local_ips.end()) {
+        if(!mobsya::endpoint_is_local(m_contact.endpoint())) {
             mLogTrace("Ignoring remote endoint {} (expected: {})", m_contact.endpoint().address().to_string(),
                       boost::asio::ip::host_name());
             boost::asio::post(m_iocontext, [this] { this->do_accept(); });
