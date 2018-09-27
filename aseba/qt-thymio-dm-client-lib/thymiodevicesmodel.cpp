@@ -10,7 +10,6 @@ ThymioDevicesModel::ThymioDevicesModel(const ThymioDeviceManagerClient& manager,
 
     connect(&manager, &ThymioDeviceManagerClient::nodeAdded, this, &ThymioDevicesModel::updateModel);
     connect(&manager, &ThymioDeviceManagerClient::nodeRemoved, this, &ThymioDevicesModel::updateModel);
-    connect(&manager, &ThymioDeviceManagerClient::nodeModified, this, &ThymioDevicesModel::updateModel);
 }
 int ThymioDevicesModel::rowCount(const QModelIndex&) const {
     return m_manager.m_nodes.size();
@@ -26,6 +25,7 @@ QVariant ThymioDevicesModel::data(const QModelIndex& index, int role) const {
         case StatusRole: return int(item->status());
         case NodeIdRole: return item->uuid().toString();
         case NodeTypeRole: return int(item->type());
+        case NodeCapabilitiesRole: return quint64(item->capabilities());
         case Object: return QVariant::fromValue(item.get());
     }
     return {};
@@ -38,6 +38,7 @@ QHash<int, QByteArray> ThymioDevicesModel::roleNames() const {
     roles.insert(NodeIdRole, "id");
     roles.insert(NodeTypeRole, "type");
     roles.insert(Object, "object");
+    roles.insert(NodeCapabilitiesRole, "capabilities");
     return roles;
 }
 
@@ -50,7 +51,7 @@ bool ThymioDevicesModel::setData(const QModelIndex& index, const QVariant& value
         case Qt::DisplayRole:
             if(!value.canConvert<QString>())
                 return false;
-            item->setName(value.toString());
+            item->rename(value.toString());
             dataChanged(index, index);
             return true;
     }
@@ -62,13 +63,27 @@ Qt::ItemFlags ThymioDevicesModel::flags(const QModelIndex& index) const {
 }
 
 void ThymioDevicesModel::onNodeModified(std::shared_ptr<ThymioNode> node) {
-    auto idx = index(int(
-        std::distance(m_manager.m_nodes.begin(), std::find(m_manager.m_nodes.begin(), m_manager.m_nodes.end(), node))));
+    return onRawNodeModified(node.get());
+}
+
+void ThymioDevicesModel::onRawNodeModified(ThymioNode* n) {
+    if(!n)
+        return;
+    auto idx = index(int(std::distance(m_manager.m_nodes.begin(),
+                                       std::find_if(m_manager.m_nodes.begin(), m_manager.m_nodes.end(),
+                                                    [n](const auto& ptr) { return ptr.get() == n; }))));
     Q_EMIT dataChanged(idx, idx);
+}
+
+void ThymioDevicesModel::onRawNodeSenderModified() {
+    onRawNodeModified(qobject_cast<ThymioNode*>(sender()));
 }
 
 void ThymioDevicesModel::updateModel() {
     layoutAboutToBeChanged();
+    for(auto&& node : m_manager.m_nodes) {
+        connect(node.get(), &ThymioNode::modified, this, &ThymioDevicesModel::onRawNodeSenderModified);
+    }
     layoutChanged();
 }
 

@@ -5,7 +5,12 @@ import QtGraphicalEffects 1.0
 
 
 TextField {
-    property string oldText
+    property string deviceName
+    property bool editable: true
+
+    onDeviceNameChanged: {
+        text = deviceName
+    }
 
     //anchors.horizontalCenter: parent.horizontalCenter
     font.family: "Roboto"
@@ -31,20 +36,23 @@ TextField {
     MouseArea {
         anchors.fill: parent
         onDoubleClicked: {
-            readOnly = false
+            if(editable)
+                readOnly = false
         }
-        enabled: readOnly
+        enabled: editable && readOnly
     }
 
     onReadOnlyChanged: {
         if(!readOnly) {
-            oldText = text
             selectAll()
             forceActiveFocus()
         }
         else {
-            if(!text)
-                text = oldText
+            if(text) {
+                textEdited()
+                accepted()
+            }
+            text = deviceName
         }
     }
 

@@ -1,6 +1,8 @@
 #include "thymiodevicemanagerclientendpoint.h"
 #include <QDataStream>
-#include <QFile>
+#include <QtEndian>
+#include <QRandomGenerator>
+#include "qflatbuffers.h"
 #include "thymio-api.h"
 
 namespace mobsya {
@@ -18,6 +20,7 @@ void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer&
     uint32_t size = buffer.size();
     m_socket->write(reinterpret_cast<const char*>(&size), sizeof(size));
     m_socket->write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+    m_socket->flush();
 }
 
 void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {
@@ -60,6 +63,37 @@ void ThymioDeviceManagerClientEndpoint::onConnected() {
     hsb.add_protocolVersion(protocolVersion);
     hsb.add_minProtocolVersion(minProtocolVersion);
     write(wrap_fb(builder, hsb.Finish()));
+}
+
+flatbuffers::Offset<fb::NodeId> ThymioDeviceManagerClientEndpoint::serialize_uuid(flatbuffers::FlatBufferBuilder& fb,
+                                                                                  const QUuid& uuid) {
+    std::array<uint8_t, 16> data;
+    *reinterpret_cast<uint32_t*>(data.data()) = qFromBigEndian(uuid.data1);
+    *reinterpret_cast<uint16_t*>(data.data() + 4) = qFromBigEndian(uuid.data2);
+    *reinterpret_cast<uint16_t*>(data.data() + 6) = qFromBigEndian(uuid.data3);
+    memcpy(data.data() + 8, uuid.data4, 8);
+
+    return mobsya::fb::CreateNodeId(fb, fb.CreateVector(data.begin(), data.size()));
+}
+
+ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::renameNode(const ThymioNode& node,
+                                                                                            const QString& newName) {
+
+    auto requestId = generate_request_id();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto nameOffset = qfb::add_string(builder, newName);
+    fb::RenameNodeBuilder rn(builder);
+    rn.add_request_id(requestId);
+    rn.add_node_id(uuidOffset);
+    rn.add_new_name(nameOffset);
+    write(wrap_fb(builder, rn.Finish()));
+    return requestId;
+}
+
+ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::generate_request_id() {
+    quint32 value = QRandomGenerator::global()->generate();
+    return value;
 }
 
 

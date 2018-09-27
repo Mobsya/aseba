@@ -5,15 +5,19 @@
 #include <QUrl>
 
 namespace mobsya {
+class ThymioNode;
 class ThymioDeviceManagerClientEndpoint : public QObject {
     Q_OBJECT
 
 public:
+    using request_id = quint32;
     ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QObject* parent = nullptr);
 
 public:
     QUrl websocketConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
+
+    request_id renameNode(const ThymioNode& node, const QString& newName);
 
 private Q_SLOTS:
     void onReadyRead();
@@ -25,6 +29,9 @@ Q_SIGNALS:
     void disconnected();
 
 private:
+    request_id generate_request_id();
+
+    static flatbuffers::Offset<fb::NodeId> serialize_uuid(flatbuffers::FlatBufferBuilder& fb, const QUuid& uuid);
     QTcpSocket* m_socket;
     quint32 m_message_size;
     quint16 m_ws_port = 0;

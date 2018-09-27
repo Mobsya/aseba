@@ -73,6 +73,12 @@ void ThymioDeviceManagerClient::onNodesChanged(const fb::NodesChanged& nc_msg) {
         if(bytes.size() != 16)
             continue;
 
+        ThymioNode::NodeCapabilities caps;
+        if(node.capabilities & uint64_t(fb::NodeCapability::ForceResetAndStop))
+            caps |= ThymioNode::NodeCapability::ForceResetAndStop;
+        if(node.capabilities & uint64_t(fb::NodeCapability::Rename))
+            caps |= ThymioNode::NodeCapability::Rename;
+
         SimpleNode deserialized{
             // Sometimes Qt apis aren't that convenient...
             QUuid(to_uuid_part<uint32_t>(bytes.data()), to_uuid_part<uint16_t>(bytes.data() + 4),
@@ -82,7 +88,7 @@ void ThymioDeviceManagerClient::onNodesChanged(const fb::NodesChanged& nc_msg) {
                   to_uuid_part<uint8_t>(bytes.data() + 13), to_uuid_part<uint8_t>(bytes.data() + 14),
                   to_uuid_part<uint8_t>(bytes.data() + 15)),
             QString::fromStdString(node.name), static_cast<ThymioNode::Status>(node.status),
-            static_cast<ThymioNode::NodeType>(node.type)};
+            static_cast<ThymioNode::NodeType>(node.type), caps};
         changed_nodes.emplace_back(std::move(deserialized));
     }
     onNodesChanged(changed_nodes);
@@ -98,16 +104,19 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
     const auto shared_endpoint = *it;
 
     for(const auto& node : nodes) {
+        bool added = false;
         auto it = m_nodes.find(node.id);
         if(it == m_nodes.end()) {
             it = m_nodes.insert(node.id,
                                 std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type, this));
+            added = true;
         }
 
         (*it)->setName(node.name);
         (*it)->setStatus(node.status);
+        (*it)->setCapabilities(node.capabilities);
 
-        Q_EMIT it == m_nodes.end() ? nodeAdded(it.value()) : nodeModified(it.value());
+        Q_EMIT added ? nodeAdded(it.value()) : nodeModified(it.value());
 
         if(node.status == ThymioNode::Status::Disconnected) {
             auto node = it.value();

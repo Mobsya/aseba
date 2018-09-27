@@ -1,11 +1,17 @@
 #include "thymionode.h"
 #include "thymiodevicemanagerclientendpoint.h"
+#include "qflatbuffers.h"
 
 namespace mobsya {
 
 ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint, const QUuid& uuid,
                        const QString& name, NodeType type, QObject* parent)
-    : QObject(parent), m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::Disconnected), m_type(type) {}
+    : QObject(parent), m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::Disconnected), m_type(type) {
+
+    connect(this, &ThymioNode::nameChanged, this, &ThymioNode::modified);
+    connect(this, &ThymioNode::statusChanged, this, &ThymioNode::modified);
+    connect(this, &ThymioNode::capabilitiesChanged, this, &ThymioNode::modified);
+}
 
 
 QUuid ThymioNode::uuid() const {
@@ -28,6 +34,16 @@ QUrl ThymioNode::websocketEndpoint() const {
     return m_endpoint->websocketConnectionUrl();
 }
 
+ThymioNode::NodeCapabilities ThymioNode::capabilities() {
+    return m_capabilities;
+}
+
+void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {
+    if(m_capabilities != capabilities) {
+        m_capabilities = capabilities;
+        Q_EMIT capabilitiesChanged();
+    }
+}
 
 void ThymioNode::setName(const QString& name) {
     if(m_name != name) {
@@ -35,6 +51,15 @@ void ThymioNode::setName(const QString& name) {
         Q_EMIT nameChanged();
     }
 }
+
+ThymioDeviceManagerClientEndpoint::request_id ThymioNode::rename(const QString& newName) {
+    if(newName != m_name) {
+        return m_endpoint->renameNode(*this, newName);
+        Q_EMIT nameChanged();
+    }
+    return 0;
+}
+
 void ThymioNode::setStatus(const Status& status) {
     if(m_status != status) {
         m_status = status;

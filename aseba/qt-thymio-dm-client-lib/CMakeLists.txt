@@ -13,6 +13,7 @@ add_library(qt-thymio-dm-client-lib STATIC
     thymionode.cpp
     thymionode.h
     thymio-api.h
+    qflatbuffers.h
 )
 target_link_libraries(qt-thymio-dm-client-lib
     Qt5::Core

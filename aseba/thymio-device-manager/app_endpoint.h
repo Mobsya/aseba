@@ -259,7 +259,7 @@ private:
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
         nodes.emplace_back(fb::CreateNodeDirect(builder, id.fb(builder), mobsya::fb::NodeStatus(status), node->type(),
-                                                node->friendly_name().c_str()));
+                                                node->friendly_name().c_str(), node_capabilities(node)));
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
@@ -279,11 +279,21 @@ private:
                 continue;
             nodes.emplace_back(fb::CreateNodeDirect(builder, node.first.fb(builder),
                                                     mobsya::fb::NodeStatus(ptr->get_status()), ptr->type(),
-                                                    ptr->friendly_name().c_str()));
+                                                    ptr->friendly_name().c_str(), node_capabilities(ptr)));
         }
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
+    }
+
+    uint64_t node_capabilities(std::shared_ptr<aseba_node> node) const {
+        uint64_t caps = 0;
+        if(m_local_endpoint) {
+            caps |= uint64_t(fb::NodeCapability::ForceResetAndStop);
+            if(node->can_be_renamed())
+                caps |= uint64_t(fb::NodeCapability::Rename);
+        }
+        return caps;
     }
 
     void send_aseba_vm_description(uint32_t request_id, const aseba_node_registery::node_id& id) {
@@ -296,9 +306,9 @@ private:
     }
 
     void rename_node(uint32_t request_id, const aseba_node_registery::node_id& id, const std::string& new_name) {
-        auto n = get_locked_node(id);
-        if(!n) {
-            mLogWarn("run_aseba_program: node {} not locked", id);
+        auto n = registery().node_from_id(id);
+        if(!n || !(node_capabilities(n) & uint64_t(fb::NodeCapability::Rename))) {
+            mLogWarn("rename_node: node {} does not exist or can not be renamed", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }

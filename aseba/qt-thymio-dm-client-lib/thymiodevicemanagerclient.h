@@ -34,6 +34,7 @@ private:
         QString name;
         ThymioNode::Status status;
         ThymioNode::NodeType type;
+        ThymioNode::NodeCapabilities capabilities;
     };
 
     void onNodesChanged(const fb::NodesChanged&);
