@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.0
 Item {
     id: component
     property Menu menu : null
-    property var device
     signal open()
 
     function popup() {
@@ -18,6 +17,7 @@ Item {
     Component {
         id:builder
         Menu {
+            property var device
             id: menu
 
             onClosed: {
