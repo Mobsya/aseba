@@ -14,6 +14,7 @@ public:
     ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QObject* parent = nullptr);
 
 public:
+    QHostAddress peerAddress() const;
     QUrl websocketConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
 

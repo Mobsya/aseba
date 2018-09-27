@@ -24,6 +24,10 @@ void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer&
     m_socket->flush();
 }
 
+QHostAddress ThymioDeviceManagerClientEndpoint::peerAddress() const {
+    return m_socket->peerAddress();
+}
+
 void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {
     m_ws_port = port;
 }

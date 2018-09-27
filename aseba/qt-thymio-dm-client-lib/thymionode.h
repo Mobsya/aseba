@@ -25,7 +25,6 @@ public:
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(NodeCapabilities capabilities READ capabilities NOTIFY capabilitiesChanged)
     Q_PROPERTY(NodeType type READ type CONSTANT)
-    Q_PROPERTY(QUrl websocketEndpoint READ websocketEndpoint CONSTANT)
 
 
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
@@ -43,7 +42,7 @@ public:
     Status status() const;
     NodeType type() const;
     NodeCapabilities capabilities();
-    QUrl websocketEndpoint() const;
+    Q_INVOKABLE QUrl websocketEndpoint() const;
 
     void setName(const QString& name);
     void setStatus(const Status& status);

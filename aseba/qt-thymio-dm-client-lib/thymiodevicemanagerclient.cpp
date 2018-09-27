@@ -15,6 +15,7 @@ ThymioDeviceManagerClient::ThymioDeviceManagerClient(QObject* parent)
     : QObject(parent), m_register(new QZeroConf(this)) {
 
     connect(m_register, &QZeroConf::serviceAdded, this, &ThymioDeviceManagerClient::onServiceAdded);
+    connect(m_register, &QZeroConf::serviceUpdated, this, &ThymioDeviceManagerClient::onServiceAdded);
     connect(m_register, &QZeroConf::serviceRemoved, this, &ThymioDeviceManagerClient::onServiceRemoved);
     m_register->startBrowser("_mobsya._tcp");
 }
@@ -25,24 +26,24 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     if(id.isNull())
         return;
 
-    if(m_endpoints.contains(id))
-        return;
+    std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint = m_endpoints[id];
 
-    else {
+    if(!endpoint) {
         QTcpSocket* socket = new QTcpSocket;
-        std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint =
-            std::make_shared<ThymioDeviceManagerClientEndpoint>(socket);
+        endpoint = std::make_shared<ThymioDeviceManagerClientEndpoint>(socket);
         socket->connectToHost(service.ip(), service.port());
-        const auto properties = service.txt();
-        uint16_t port = properties.value("ws-port", 0).toUInt();
-        endpoint->setWebSocketMatchingPort(port);
-
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::onMessage, this,
                 &ThymioDeviceManagerClient::onMessage);
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
                 &ThymioDeviceManagerClient::onEndpointDisconnected);
         m_endpoints.insert(id, endpoint);
+    } else if(endpoint->peerAddress() != service.ip()) {
+        return;
     }
+
+    const auto properties = service.txt();
+    uint16_t port = properties.value("ws-port", 0).toUInt();
+    endpoint->setWebSocketMatchingPort(port);
 }
 
 void ThymioDeviceManagerClient::onServiceRemoved(QZeroConfService service) {
