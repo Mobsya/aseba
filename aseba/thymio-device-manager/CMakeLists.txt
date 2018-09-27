@@ -24,6 +24,8 @@ add_executable(thymio-device-manager
     usb_utils.h
     utils.h
     tdm.h
+    interfaces.h
+    interfaces.cpp
 )
 
 if(WIN32)
@@ -35,6 +37,7 @@ if(WIN32)
         serial_usb_device.h
     )
     target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
+	target_link_libraries(thymio-device-manager iphlpapi)
 else()
     target_sources(thymio-device-manager PRIVATE
         usbserver.cpp

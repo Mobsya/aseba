@@ -6,6 +6,7 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <errno.h>
 #include "log.h"
+#include "interfaces.h"
 #include "aseba_node_registery.h"
 #include "app_server.h"
 #include "aseba_endpoint.h"
@@ -47,6 +48,13 @@ int main() {
             std::exit(0);
         });
 
+        // Gather a list of local ips so that we can detect connections from
+        // the same machine.
+        boost::asio::ip::tcp::resolver resolver(ctx);
+        std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
+        for(auto&& ip : local_ips) {
+            mLogTrace("Local Ip : {}", ip.to_string());
+        }
 
         // Create a server for regular tcp connection
         mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
