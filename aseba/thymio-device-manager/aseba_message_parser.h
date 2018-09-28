@@ -30,7 +30,9 @@ class read_aseba_message_op {
     struct state {
         AsyncReadStream& stream;
         uint16_t size = 0;
-        char sizeBuffer[2];
+        uint16_t source = 0;
+        uint16_t type = 0;
+        char headerBuffer[6];
         Aseba::Message::SerializationBuffer dataBuffer;
 
         explicit state(Handler const& handler, AsyncReadStream& stream) : stream(stream) {}
@@ -60,30 +62,31 @@ public:
 
     void operator()() {
         auto& state = *m_p;
-        return boost::asio::async_read(state.stream, boost::asio::buffer(state.sizeBuffer),
-                                       boost::asio::transfer_exactly(2), std::move(*this));
+        return boost::asio::async_read(state.stream, boost::asio::buffer(state.headerBuffer),
+                                       boost::asio::transfer_exactly(6), std::move(*this));
     }
 
     void operator()(boost::system::error_code ec, std::size_t bytes_transferred) {
         auto& state = *m_p;
         if(!ec && bytes_transferred == 0)
             return state.size == 0 ?
-                    boost::asio::async_read(state.stream, boost::asio::buffer(state.sizeBuffer),
-                                           boost::asio::transfer_exactly(2), std::move(*this))
-                        : boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
-                                                  boost::asio::transfer_exactly(state.size + 4), std::move(*this));
+                boost::asio::async_read(state.stream, boost::asio::buffer(state.headerBuffer),
+                                        boost::asio::transfer_exactly(6), std::move(*this)) :
+                boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
+                                        boost::asio::transfer_exactly(state.size), std::move(*this));
         if(!ec && state.size == 0) {
-            assert(bytes_transferred == 2);
-            state.size = boost::endian::little_to_native(reinterpret_cast<uint16_t&>(state.sizeBuffer));
-            state.dataBuffer.rawData.resize(state.size + 4);
+            assert(bytes_transferred == 6);
+            state.size = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(state.headerBuffer));
+            state.source = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(state.headerBuffer + 2));
+            state.type = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(state.headerBuffer + 4));
+            state.dataBuffer.rawData.resize(state.size);
             return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
-                                           boost::asio::transfer_exactly(state.size + 4), std::move(*this));
+                                           boost::asio::transfer_exactly(state.size), std::move(*this));
         }
-        if(!ec && bytes_transferred == state.size + 4) {
+        if(!ec && bytes_transferred == state.size) {
             Aseba::Message::SerializationBuffer& b = state.dataBuffer;
-            auto source = b.get<uint16_t>();
-            auto type = b.get<uint16_t>();
-            auto msg = std::shared_ptr<Aseba::Message>(Aseba::Message::create(source, type, state.dataBuffer));
+            auto msg =
+                std::shared_ptr<Aseba::Message>(Aseba::Message::create(state.source, state.type, state.dataBuffer));
             m_p.invoke(ec, std::move(msg));
             return;
         }
