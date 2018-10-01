@@ -97,7 +97,7 @@ public:
         int16_t sdPresent;
 
         int16_t freeSpace[512];
-    } variables;
+    } variables, variablesOld;
 
 public:
     std::fstream sdCardFile;

@@ -75,6 +75,7 @@ typedef struct {
     // variables
     uint16_t variablesSize; /*!< total amount of variables space */
     int16_t* variables;     /*!< variables of size variableCount */
+    int16_t* variablesOld;
 
     // execution stack
     uint16_t stackSize; /*!< depth of execution stack */
@@ -153,6 +154,9 @@ void AsebaSendMessageWords(AsebaVMState* vm, uint16_t type, const uint16_t* data
 
 /*! Called by AsebaVMDebugMessage when some variables must be sent efficiently */
 void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length);
+
+/*! Only send changed variables */
+void AsebaSendChangedVariables(AsebaVMState* vm);
 
 /*! Called by AsebaVMDebugMessage when VM must send its description on the network. */
 void AsebaSendDescription(AsebaVMState* vm);

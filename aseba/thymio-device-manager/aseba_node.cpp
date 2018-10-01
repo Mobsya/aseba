@@ -62,6 +62,10 @@ void aseba_node::on_message(const Aseba::Message& msg) {
             on_variables_message(static_cast<const Aseba::Variables&>(msg));
             break;
         }
+        case ASEBA_MESSAGE_CHANGED_VARIABLES: {
+            on_variables_message(static_cast<const Aseba::ChangedVariables&>(msg));
+            break;
+        }
         default: break;
     }
 }
@@ -180,6 +184,11 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
 
 // ask the node to dump its memory.
 void aseba_node::request_variables() {
+    if(!m_resend_all_variables && m_description.protocolVersion >= 7) {
+        write_message(std::make_shared<Aseba::GetChangedVariables>(native_id()));
+        return;
+    }
+
     uint16_t start = 0;
     uint16_t size = 0;
     for(const auto& var : m_variables) {
@@ -192,6 +201,7 @@ void aseba_node::request_variables() {
     }
     if(size > 0)
         write_message(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
+    m_resend_all_variables = false;
 }
 
 void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
@@ -206,29 +216,54 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
             m_variables.emplace(insert_point, name, start, size);
         }
     }
+    m_resend_all_variables = true;
 }
 
 void aseba_node::on_variables_message(const Aseba::Variables& msg) {
     std::unordered_map<std::string, mobsya::property> changed;
     std::unique_lock<std::mutex> _(m_node_mutex);
-    auto it = msg.variables.begin();
-    for(auto& var : m_variables) {
-        if(var.start < msg.start)
-            continue;
-        auto end = it + var.size;
-        if(std::distance(it, end) > std::distance(it, std::end(msg.variables)))
-            break;
-        var.value.resize(var.size);
-        if(!std::equal(it, end, std::begin(var.value), std::end(var.value))) {
-            std::copy(it, end, var.value.begin());
-            changed.insert(std::pair{var.name, property::list_from_range(var.value)});
-            mLogTrace("Variable changed {} : {}", var.name, property::list_from_range(var.value));
-        }
-        it = end;
+    set_variables(msg.start, msg.variables, changed);
+    m_node_mutex.unlock();
+    m_variables_changed_signal(shared_from_this(), changed);
+}
+
+void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
+    std::unordered_map<std::string, mobsya::property> changed;
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    for(const auto& area : msg.variables) {
+        set_variables(area.start, area.variables, changed);
     }
     m_node_mutex.unlock();
     m_variables_changed_signal(shared_from_this(), changed);
 }
+
+void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
+                               std::unordered_map<std::string, mobsya::property>& vars) {
+
+    auto data_it = std::begin(data);
+    auto it = m_variables.begin();
+    while(data_it != std::end(data)) {
+        it = std::find_if(it, m_variables.end(),
+                          [start](const variable& var) { return start >= var.start && start < var.start + var.size; });
+        if(it == std::end(m_variables))
+            return;
+        auto& var = *it;
+        const auto var_start = start - var.start;
+        var.value.resize(var.size, 0);
+        const auto count = std::min(std::ptrdiff_t(var.size - var_start), std::distance(data_it, std::end(data)));
+        if(count < 0)
+            break;
+        if(!std::equal(std::begin(var.value) + var_start, std::begin(var.value) + var_start + count, data_it,
+                       data_it + count)) {
+            std::copy(data_it, data_it + count, std::begin(var.value) + var_start);
+            vars.insert(std::pair{var.name, property::list_from_range(var.value)});
+            mLogTrace("Variable changed {} : {}", var.name, property::list_from_range(var.value));
+        }
+        data_it = data_it + count;
+        start += count;
+    }
+}
+
 
 aseba_node::variables_map aseba_node::variables() const {
     variables_map map;

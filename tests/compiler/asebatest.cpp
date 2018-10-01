@@ -70,7 +70,7 @@ struct AsebaNode {
 
     struct Variables {
         int16_t user[256];
-    } variables;
+    } variables, variablesOld;
 
     AsebaNode() {
         // create VM
@@ -84,6 +84,7 @@ struct AsebaNode {
         vm.stackSize = stack.size();
 
         vm.variables = reinterpret_cast<int16_t*>(&variables);
+        vm.variablesOld = reinterpret_cast<int16_t*>(&variablesOld);
         vm.variablesSize = sizeof(variables) / sizeof(int16_t);
 
         AsebaVMInit(&vm);

@@ -390,6 +390,27 @@ protected:
     }
 };
 
+class ChangedVariables : public Message {
+public:
+    struct area {
+        uint16_t start = 0;
+        VariablesDataVector variables;
+    };
+
+    std::vector<area> variables;
+
+public:
+    ChangedVariables() : Message(ASEBA_MESSAGE_CHANGED_VARIABLES) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "changed variables";
+    }
+};
+
 bool operator==(const Variables& lhs, const Variables& rhs);
 
 //! Exception: an array acces attempted to read past memory
@@ -823,6 +844,18 @@ protected:
 };
 
 bool operator==(const GetVariables& lhs, const GetVariables& rhs);
+
+//! Read some variables from a node
+class GetChangedVariables : public CmdMessage {
+public:
+    GetChangedVariables() : CmdMessage(ASEBA_MESSAGE_GET_CHANGED_VARIABLES, ASEBA_DEST_INVALID) {}
+    GetChangedVariables(uint16_t dest);
+
+protected:
+    operator const char*() const override {
+        return "get changed variables";
+    }
+};
 
 //! Set some variables on a node
 class SetVariables : public CmdMessage {
