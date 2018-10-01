@@ -3,10 +3,12 @@
 #include <mutex>
 #include "aseba/common/msg/msg.h"
 #include "node_id.h"
+#include "property.h"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <atomic>
 #include <aseba/flatbuffers/thymio_generated.h>
+#include <boost/signals2.hpp>
 
 namespace mobsya {
 class aseba_endpoint;
@@ -18,6 +20,10 @@ public:
     using node_type = fb::NodeType;
 
     using node_id_t = uint16_t;
+
+    using variables_map = std::unordered_map<std::string, mobsya::property>;
+    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
+
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
     using write_callback = std::function<void(boost::system::error_code)>;
@@ -53,6 +59,8 @@ public:
         return m_description;
     }
 
+    variables_map variables() const;
+
     // Write n messages to the enpoint owning that node, then invoke cb when all message have been written
     void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message, write_callback&& cb = {});
     // Write a message to the enpoint owning that node, then invoke cb
@@ -66,6 +74,13 @@ public:
     void stop_vm(write_callback&& cb = {});
     bool lock(void* app);
     bool unlock(void* app);
+
+    template <typename... ConnectionArgs>
+    auto connect_to_variables_changes(ConnectionArgs... args) {
+        return m_variables_changed_signal.connect(std::forward<ConnectionArgs>(args)...);
+    }
+
+    variables_watch_signal_t& variables_watch_signal() const;
 
 private:
     friend class aseba_endpoint;
@@ -102,6 +117,7 @@ private:
     };
     std::vector<variable> m_variables;
     boost::asio::deadline_timer m_variables_timer;
+    variables_watch_signal_t m_variables_changed_signal;
 };
 
 

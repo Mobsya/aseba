@@ -4,7 +4,7 @@
 #include <aseba/common/utils/utils.h>
 #include <aseba/compiler/compiler.h>
 #include <fmt/format.h>
-#include <fmt/ranges.h>
+//#include <fmt/ranges.h>
 
 namespace mobsya {
 
@@ -60,6 +60,7 @@ void aseba_node::on_message(const Aseba::Message& msg) {
         }
         case ASEBA_MESSAGE_VARIABLES: {
             on_variables_message(static_cast<const Aseba::Variables&>(msg));
+            break;
         }
         default: break;
     }
@@ -208,7 +209,7 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
 }
 
 void aseba_node::on_variables_message(const Aseba::Variables& msg) {
-    std::vector<variable> changed;
+    std::unordered_map<std::string, mobsya::property> changed;
     std::unique_lock<std::mutex> _(m_node_mutex);
     auto it = msg.variables.begin();
     for(auto& var : m_variables) {
@@ -220,21 +221,36 @@ void aseba_node::on_variables_message(const Aseba::Variables& msg) {
         var.value.resize(var.size);
         if(!std::equal(it, end, std::begin(var.value), std::end(var.value))) {
             std::copy(it, end, var.value.begin());
-            changed.push_back(var);
-            mLogTrace("Variable changed {} : {}", var.name, var.value);
+            changed.insert(std::pair{var.name, property::list_from_range(var.value)});
+            mLogTrace("Variable changed {} : {}", var.name, property::list_from_range(var.value));
         }
         it = end;
     }
+    m_node_mutex.unlock();
+    m_variables_changed_signal(shared_from_this(), changed);
+}
+
+aseba_node::variables_map aseba_node::variables() const {
+    variables_map map;
+    map.reserve(m_variables.size());
+    for(auto& var : m_variables) {
+        map.emplace(var.name, property::list_from_range(var.value));
+    }
+    return map;
 }
 
 void aseba_node::schedule_variables_update() {
     m_variables_timer.expires_from_now(boost::posix_time::milliseconds(100));
-    m_variables_timer.async_wait([that = shared_from_this()](boost::system::error_code ec) {
+    std::weak_ptr<aseba_node> ptr = shared_from_this();
+    m_variables_timer.async_wait([ptr](boost::system::error_code ec) {
         if(ec)
             return;
-        if(that->m_status == status::disconnected)
+        auto that = ptr.lock();
+        if(!that || that->m_status == status::disconnected)
             return;
-        that->request_variables();
+
+        if(!that->m_variables_changed_signal.empty())
+            that->request_variables();
         that->schedule_variables_update();
     });
 }
