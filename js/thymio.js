@@ -4,6 +4,7 @@
 
 import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
+import FlexBuffers from "./flexbuffers.js"
 import WebSocket from 'isomorphic-ws';
 
 const MIN_PROTOCOL_VERSION = 1
@@ -73,6 +74,8 @@ export class Node {
         this._desc   = null;
         this._client = client
         this._name   = null
+        this._on_vars_changed_cb = undefined;
+        this._monitoring_flags = 0
     }
 
     /** return the node id*/
@@ -198,6 +201,16 @@ export class Node {
         return await this._client.run_aseba_program(this._id);
     }
 
+    get on_vars_changed() {
+        return this._on_vars_changed_cb;
+    }
+
+    set on_vars_changed(cb) {
+        this._set_monitoring_flags(mobsya.fb.WatchableInfo.Variables, !!cb)
+        this._on_vars_changed_cb = cb;
+    }
+
+
     _set_status(status) {
         if(status != this._status) {
             this._status = status
@@ -213,6 +226,18 @@ export class Node {
             if(this._name) {
                 this.on_name_changed(name)
             }
+        }
+    }
+
+    _set_monitoring_flags(flag, set) {
+        const old = this._monitoring_flags;
+        if(set)
+            this._monitoring_flags |= flag
+        else
+            this._monitoring_flags &= ~flag
+
+        if(old != this._monitoring_flags) {
+            this._client.watch(this._id, this._monitoring_flags)
         }
     }
 }
@@ -272,7 +297,7 @@ export class Client {
         this._requests = new Map();
         //Known nodes (id : node)
         this._nodes    = new Map();
-
+        this._flex     = new FlexBuffers()
     }
 
     /**
@@ -338,6 +363,23 @@ export class Client {
                 if(req) {
                     req._trigger_error(null)
                 }
+                break
+            }
+
+            case mobsya.fb.AnyMessage.NodeVariablesChanged: {
+                const msg = message.message(new mobsya.fb.NodeVariablesChanged())
+                const id = this._id(msg.nodeId())
+                const node = this._nodes.get(id.toString())
+                if(!node || ! node._on_vars_changed_cb)
+                    break;
+                const vars = {}
+                for(let i = 0; i < msg.varsLength(); i++) {
+                    const v = msg.vars(i);
+                    const myarray = Uint8Array.from(v.valueArray())
+                    const val = this._flex.toJSObject(myarray)
+                    vars[v.name()] = val
+                }
+                node._on_vars_changed_cb(vars)
                 break
             }
         }
@@ -422,6 +464,19 @@ export class Client {
         mobsya.fb.RenameNode.addNewName(builder, nameOffset)
         let offset = mobsya.fb.RenameNode.endRenameNode(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RenameNode)
+        return this._prepare_request(req_id)
+    }
+
+    watch(id, monitoring_flags) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        mobsya.fb.WatchNode.startWatchNode(builder)
+        mobsya.fb.WatchNode.addRequestId(builder, req_id)
+        mobsya.fb.WatchNode.addNodeId(builder, nodeOffset)
+        mobsya.fb.WatchNode.addInfoType(builder, monitoring_flags)
+        let offset = mobsya.fb.WatchNode.endWatchNode(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.WatchNode)
         return this._prepare_request(req_id)
     }
 

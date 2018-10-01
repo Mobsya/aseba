@@ -97,6 +97,14 @@ mobsya.fb.ErrorType = {
 /**
  * @enum
  */
+mobsya.fb.WatchableInfo = {
+  StopMonitoring: 0,
+  Variables: 1
+};
+
+/**
+ * @enum
+ */
 mobsya.fb.AnyMessage = {
   NONE: 0,
   ConnectionHandshake: 1,
@@ -112,7 +120,9 @@ mobsya.fb.AnyMessage = {
   NodeAsebaVMDescription: 11,
   RequestCompleted: 12,
   Error: 13,
-  CompilationError: 14
+  CompilationError: 14,
+  WatchNode: 15,
+  NodeVariablesChanged: 16
 };
 
 /**
@@ -596,6 +606,244 @@ mobsya.fb.Node.addCapabilities = function(builder, capabilities) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.Node.endNode = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.NodeVariable = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.NodeVariable}
+ */
+mobsya.fb.NodeVariable.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.NodeVariable=} obj
+ * @returns {mobsya.fb.NodeVariable}
+ */
+mobsya.fb.NodeVariable.getRootAsNodeVariable = function(bb, obj) {
+  return (obj || new mobsya.fb.NodeVariable).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param {flatbuffers.Encoding=} optionalEncoding
+ * @returns {string|Uint8Array|null}
+ */
+mobsya.fb.NodeVariable.prototype.name = function(optionalEncoding) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
+};
+
+/**
+ * @param {number} index
+ * @returns {number}
+ */
+mobsya.fb.NodeVariable.prototype.value = function(index) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index) : 0;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.NodeVariable.prototype.valueLength = function() {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns {Uint8Array}
+ */
+mobsya.fb.NodeVariable.prototype.valueArray = function() {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.NodeVariable.startNodeVariable = function(builder) {
+  builder.startObject(2);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} nameOffset
+ */
+mobsya.fb.NodeVariable.addName = function(builder, nameOffset) {
+  builder.addFieldOffset(0, nameOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} valueOffset
+ */
+mobsya.fb.NodeVariable.addValue = function(builder, valueOffset) {
+  builder.addFieldOffset(1, valueOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {Array.<number>} data
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.NodeVariable.createValueVector = function(builder, data) {
+  builder.startVector(1, data.length, 1);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addInt8(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} numElems
+ */
+mobsya.fb.NodeVariable.startValueVector = function(builder, numElems) {
+  builder.startVector(1, numElems, 1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.NodeVariable.endNodeVariable = function(builder) {
+  var offset = builder.endObject();
+  builder.requiredField(offset, 4); // name
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.NodeVariablesChanged = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.NodeVariablesChanged}
+ */
+mobsya.fb.NodeVariablesChanged.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.NodeVariablesChanged=} obj
+ * @returns {mobsya.fb.NodeVariablesChanged}
+ */
+mobsya.fb.NodeVariablesChanged.getRootAsNodeVariablesChanged = function(bb, obj) {
+  return (obj || new mobsya.fb.NodeVariablesChanged).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param {mobsya.fb.NodeId=} obj
+ * @returns {mobsya.fb.NodeId|null}
+ */
+mobsya.fb.NodeVariablesChanged.prototype.nodeId = function(obj) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+};
+
+/**
+ * @param {number} index
+ * @param {mobsya.fb.NodeVariable=} obj
+ * @returns {mobsya.fb.NodeVariable}
+ */
+mobsya.fb.NodeVariablesChanged.prototype.vars = function(index, obj) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? (obj || new mobsya.fb.NodeVariable).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.NodeVariablesChanged.prototype.varsLength = function() {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.NodeVariablesChanged.startNodeVariablesChanged = function(builder) {
+  builder.startObject(2);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} nodeIdOffset
+ */
+mobsya.fb.NodeVariablesChanged.addNodeId = function(builder, nodeIdOffset) {
+  builder.addFieldOffset(0, nodeIdOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} varsOffset
+ */
+mobsya.fb.NodeVariablesChanged.addVars = function(builder, varsOffset) {
+  builder.addFieldOffset(1, varsOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {Array.<flatbuffers.Offset>} data
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.NodeVariablesChanged.createVarsVector = function(builder, data) {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} numElems
+ */
+mobsya.fb.NodeVariablesChanged.startVarsVector = function(builder, numElems) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.NodeVariablesChanged.endNodeVariablesChanged = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -2335,6 +2583,136 @@ mobsya.fb.StopNode.addNodeId = function(builder, nodeIdOffset) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.StopNode.endStopNode = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.WatchNode = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.WatchNode}
+ */
+mobsya.fb.WatchNode.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.WatchNode=} obj
+ * @returns {mobsya.fb.WatchNode}
+ */
+mobsya.fb.WatchNode.getRootAsWatchNode = function(bb, obj) {
+  return (obj || new mobsya.fb.WatchNode).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.WatchNode.prototype.requestId = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.WatchNode.prototype.mutate_request_id = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {mobsya.fb.NodeId=} obj
+ * @returns {mobsya.fb.NodeId|null}
+ */
+mobsya.fb.WatchNode.prototype.nodeId = function(obj) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.WatchNode.prototype.infoType = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.WatchNode.prototype.mutate_info_type = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.WatchNode.startWatchNode = function(builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} requestId
+ */
+mobsya.fb.WatchNode.addRequestId = function(builder, requestId) {
+  builder.addFieldInt32(0, requestId, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} nodeIdOffset
+ */
+mobsya.fb.WatchNode.addNodeId = function(builder, nodeIdOffset) {
+  builder.addFieldOffset(1, nodeIdOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} infoType
+ */
+mobsya.fb.WatchNode.addInfoType = function(builder, infoType) {
+  builder.addFieldInt32(2, infoType, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.WatchNode.endWatchNode = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
