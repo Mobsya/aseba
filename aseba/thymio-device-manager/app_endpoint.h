@@ -242,9 +242,6 @@ public:
         /* Disconnecting the node monotoring status before unlocking the nodes,
          * otherwise we would receive node status event during destroying the endpoint, leading to a crash */
         disconnect();
-        for(auto&& conn : m_nodes_watched_for_variables_changes) {
-            conn.second.disconnect();
-        }
 
         for(auto& p : m_locked_nodes) {
             auto ptr = p.second.lock();
@@ -519,7 +516,7 @@ private:
     std::vector<flatbuffers::DetachedBuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
-    std::unordered_map<aseba_node_registery::node_id, boost::signals2::connection>
+    std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>
         m_nodes_watched_for_variables_changes;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
