@@ -216,6 +216,12 @@ public:
                 this->stop_node(req->request_id(), req->node_id());
                 break;
             }
+            case mobsya::fb::AnyMessage::WatchNode: {
+                auto req = msg.as<fb::WatchNode>();
+                this->watch_node(req->request_id(), req->node_id(), req->info_type());
+                break;
+            }
+
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
     }
@@ -236,6 +242,9 @@ public:
         /* Disconnecting the node monotoring status before unlocking the nodes,
          * otherwise we would receive node status event during destroying the endpoint, leading to a crash */
         disconnect();
+        for(auto&& conn : m_nodes_watched_for_variables_changes) {
+            conn.second.disconnect();
+        }
 
         for(auto& p : m_locked_nodes) {
             auto ptr = p.second.lock();
@@ -249,6 +258,12 @@ public:
                       aseba_node::status status) {
         boost::asio::post(this->m_strand, [that = this->shared_from_this(), node, id, status]() {
             that->do_node_changed(node, id, status);
+        });
+    }
+
+    void node_variables_changed(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map]() {
+            that->do_node_variables_changed(node, map);
         });
     }
 
@@ -272,6 +287,12 @@ private:
         if(status == aseba_node::status::disconnected) {
             m_locked_nodes.erase(id);
         }
+    }
+
+    void do_node_variables_changed(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
+        if(!node)
+            return;
+        write_message(serialize_changed_variables(*node, map));
     }
 
     void send_full_node_list() {
@@ -395,6 +416,25 @@ private:
         n->stop_vm(create_device_write_completion_cb(request_id));
     }
 
+    void watch_node(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
+        auto node = registery().node_from_id(id);
+        if(!node) {
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        if(flags & uint32_t(fb::WatchableInfo::Variables)) {
+            if(!m_nodes_watched_for_variables_changes.count(id)) {
+                auto variables = node->variables();
+                this->node_variables_changed(node, variables);
+            }
+            m_nodes_watched_for_variables_changes[id] = node->connect_to_variables_changes(std::bind(
+                &application_endpoint::node_variables_changed, this, std::placeholders::_1, std::placeholders::_2));
+        } else {
+            m_nodes_watched_for_variables_changes.erase(id);
+        }
+        write_message(create_ack_response(request_id));
+    }
+
     aseba_node_registery& registery() {
         return boost::asio::use_service<aseba_node_registery>(this->m_ctx);
     }
@@ -479,6 +519,8 @@ private:
     std::vector<flatbuffers::DetachedBuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
+    std::unordered_map<aseba_node_registery::node_id, boost::signals2::connection>
+        m_nodes_watched_for_variables_changes;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;

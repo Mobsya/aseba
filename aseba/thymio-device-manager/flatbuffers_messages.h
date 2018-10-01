@@ -2,8 +2,10 @@
 #include <aseba/common/utils/utils.h>
 #include <aseba/flatbuffers/thymio_generated.h>
 #include <flatbuffers/flatbuffers.h>
+#include <flatbuffers/flexbuffers.h>
 #include "aseba_node.h"
 #include "aseba_node_registery.h"
+#include "property_flexbuffer.h"
 #include <aseba/flatbuffers/fb_message_ptr.h>
 
 namespace mobsya {
@@ -71,4 +73,25 @@ flatbuffers::DetachedBuffer serialize_aseba_vm_description(uint32_t request_id, 
                                                fb.CreateVector(events_vector), fb.CreateVector(functions_vector));
     return wrap_fb(fb, offset);
 }
+
+flatbuffers::DetachedBuffer serialize_changed_variables(const mobsya::aseba_node& n,
+                                                        const mobsya::aseba_node::variables_map& vars) {
+    flatbuffers::FlatBufferBuilder fb;
+    flexbuffers::Builder flexbuilder;
+    auto id = n.uuid().fb(fb);
+    std::vector<flatbuffers::Offset<fb::NodeVariable>> varsOffsets;
+    varsOffsets.reserve(vars.size());
+    for(auto&& var : vars) {
+        property_to_flexbuffer(var.second, flexbuilder);
+        auto& vec = flexbuilder.GetBuffer();
+        auto vecOffset = fb.CreateVector(vec);
+        auto keyOffset = fb.CreateString(var.first);
+        varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset));
+        flexbuilder.Clear();
+    }
+    auto offset = fb::CreateNodeVariablesChanged(fb, id, fb.CreateVectorOfSortedTables(&varsOffsets));
+    return wrap_fb(fb, offset);
+}
+
+
 }  // namespace mobsya

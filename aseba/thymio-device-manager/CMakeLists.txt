@@ -27,6 +27,8 @@ add_executable(thymio-device-manager
     tdm.h
     interfaces.h
     interfaces.cpp
+    property.h
+    property_flexbuffer.h
 )
 
 if(WIN32)

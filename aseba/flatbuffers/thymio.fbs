@@ -74,6 +74,13 @@ enum ErrorType : int {
   node_busy = 2,
 }
 
+//see WatchNode
+enum WatchableInfo : int {
+    StopMonitoring = 0,
+    //Monitor for variables changes
+    Variables = 0x01,
+}
+
 /// Represent a node
 table Node {
   node_id:NodeId;
@@ -81,6 +88,16 @@ table Node {
   type:NodeType;
   name:string;
   capabilities:ulong  = 0;
+}
+
+table NodeVariable {
+    name: string (key);
+    value: [ubyte] (flexbuffer);
+}
+
+table NodeVariablesChanged {
+   node_id:NodeId;
+   vars:[NodeVariable];
 }
 
 /// Message sent by the server when a node changes status.
@@ -176,6 +193,14 @@ table StopNode {
   node_id:NodeId;
 }
 
+// Ask the server to receive events pertaining to a node
+table WatchNode {
+    request_id:uint;
+    node_id:NodeId;
+    //bitflag of WatchableInfo
+    info_type:uint;
+}
+
 table Error {
   request_id:uint;
   error:ErrorType;
@@ -203,7 +228,9 @@ union AnyMessage {
     NodeAsebaVMDescription,
     RequestCompleted,
     Error,
-    CompilationError
+    CompilationError,
+    WatchNode,
+    NodeVariablesChanged
 }
 
 table Message {
