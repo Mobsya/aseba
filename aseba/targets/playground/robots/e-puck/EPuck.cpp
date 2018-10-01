@@ -158,6 +158,7 @@ AsebaFeedableEPuck::AsebaFeedableEPuck(std::string robotName, int16_t nodeId)
     vm.stackSize = stack.size();
 
     vm.variables = reinterpret_cast<int16_t*>(&variables);
+    vm.variablesOld = reinterpret_cast<int16_t*>(&variablesOld);
     vm.variablesSize = sizeof(variables) / sizeof(int16_t);
 
     AsebaVMInit(&vm);

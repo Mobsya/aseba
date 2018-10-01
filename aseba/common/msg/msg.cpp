@@ -58,6 +58,7 @@ public:
         registerMessageType<NativeFunctionDescription>(ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION);
         registerMessageType<Disconnected>(ASEBA_MESSAGE_DISCONNECTED);
         registerMessageType<Variables>(ASEBA_MESSAGE_VARIABLES);
+        registerMessageType<ChangedVariables>(ASEBA_MESSAGE_CHANGED_VARIABLES);
         registerMessageType<ArrayAccessOutOfBounds>(ASEBA_MESSAGE_ARRAY_ACCESS_OUT_OF_BOUNDS);
         registerMessageType<DivisionByZero>(ASEBA_MESSAGE_DIVISION_BY_ZERO);
         registerMessageType<EventExecutionKilled>(ASEBA_MESSAGE_EVENT_EXECUTION_KILLED);
@@ -81,6 +82,8 @@ public:
         registerMessageType<BreakpointClear>(ASEBA_MESSAGE_BREAKPOINT_CLEAR);
         registerMessageType<BreakpointClearAll>(ASEBA_MESSAGE_BREAKPOINT_CLEAR_ALL);
         registerMessageType<GetVariables>(ASEBA_MESSAGE_GET_VARIABLES);
+        registerMessageType<SetVariables>(ASEBA_MESSAGE_SET_VARIABLES);
+        registerMessageType<GetChangedVariables>(ASEBA_MESSAGE_GET_CHANGED_VARIABLES);
         registerMessageType<SetVariables>(ASEBA_MESSAGE_SET_VARIABLES);
         registerMessageType<WriteBytecode>(ASEBA_MESSAGE_WRITE_BYTECODE);
         registerMessageType<Reboot>(ASEBA_MESSAGE_REBOOT);
@@ -691,6 +694,36 @@ bool operator==(const Variables& lhs, const Variables& rhs) {
 
 //
 
+void ChangedVariables::serializeSpecific(SerializationBuffer& buffer) const {
+    assert(false && "Unimplemented");
+}
+
+void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
+    while(2 * sizeof(int16_t) + buffer.readPos <= buffer.rawData.size()) {
+        auto start = buffer.get<uint16_t>();
+        auto size = buffer.get<uint16_t>();
+        if(size == 0)
+            continue;
+        VariablesDataVector v;
+        v.reserve(size);
+        for(int i = 0; i < size; i++) {
+            v.push_back(buffer.get<int16_t>());
+        }
+        variables.push_back(area{start, v});
+    }
+}
+
+void ChangedVariables::dumpSpecific(wostream& stream) const {
+    for(auto& v : variables) {
+        stream << v.start << " : [ ";
+        for(size_t i = 0; i < v.variables.size(); i++)
+            stream << v.variables[i] << ", ";
+        stream << " ]";
+    }
+}
+
+//
+
 void ArrayAccessOutOfBounds::serializeSpecific(SerializationBuffer& buffer) const {
     buffer.add(pc);
     buffer.add(size);
@@ -1122,6 +1155,8 @@ bool operator==(const GetVariables& lhs, const GetVariables& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.start == rhs.start &&
         lhs.length == rhs.length;
 }
+
+GetChangedVariables::GetChangedVariables(uint16_t dest) : CmdMessage(ASEBA_MESSAGE_GET_CHANGED_VARIABLES, dest) {}
 
 //
 

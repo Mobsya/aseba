@@ -120,6 +120,54 @@ void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length) {
 #endif
 }
 
+void AsebaSendChangedVariables(AsebaVMState* vm) {
+    buffer_pos = 0;
+    int has_modified = 0;
+    unsigned size_pos = 0;
+    uint16_t first_idx = 0;
+    buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
+    size_pos = buffer_pos;
+    buffer_add_uint16(0);
+    buffer_add_uint16(0);
+    for(uint16_t idx = 0; vm->variablesOld && idx < vm->variablesSize; idx++) {
+        int modified = vm->variablesOld[idx] != vm->variables[idx];
+        if(modified) {
+            if(!has_modified) {
+                has_modified = 1;
+                first_idx = idx;
+            }
+            buffer_add_int16(vm->variables[idx]);
+            vm->variablesOld[idx] = vm->variables[idx];
+        }
+        if((!modified && has_modified) || buffer_pos >= ASEBA_MAX_OUTER_PACKET_SIZE) {
+            unsigned old_pos = buffer_pos;
+            buffer_pos = size_pos;
+            buffer_add_uint16(first_idx);
+            buffer_add_uint16(idx - first_idx);
+            buffer_pos = old_pos;
+            if(buffer_pos >= ASEBA_MAX_OUTER_PACKET_SIZE) {
+                AsebaSendBuffer(vm, buffer, buffer_pos);
+                buffer_pos = 0;
+                buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
+            }
+            has_modified = 0;
+            size_pos = buffer_pos;
+            buffer_add_uint16(0);
+            buffer_add_uint16(0);
+            first_idx = idx + 1;
+        }
+    }
+
+    if(has_modified) {
+        unsigned old_pos = buffer_pos;
+        buffer_pos = size_pos;
+        buffer_add_uint16(first_idx);
+        buffer_add_uint16(vm->variablesSize - first_idx);
+        buffer_pos = old_pos;
+    }
+    AsebaSendBuffer(vm, buffer, buffer_pos);
+}
+
 void AsebaSendDescription(AsebaVMState* vm) {
     const AsebaVMDescription* vmDescription = AsebaGetVMDescription(vm);
     const AsebaVariableDescription* namedVariables = vmDescription->variables;

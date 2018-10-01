@@ -49,6 +49,7 @@ void AsebaVMInit(AsebaVMState* vm) {
     // fill with no event
     vm->bytecode[0] = 0;
     memset(vm->variables, 0, vm->variablesSize * sizeof(int16_t));
+    memset(vm->variablesOld, 0, vm->variablesSize * sizeof(int16_t));
 }
 
 uint16_t AsebaVMGetEventAddress(AsebaVMState* vm, uint16_t event) {
@@ -776,6 +777,11 @@ void AsebaVMDebugMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t
 #endif
             AsebaSendVariables(vm, start, length);
         } break;
+
+        case ASEBA_MESSAGE_GET_CHANGED_VARIABLES: {
+             AsebaSendChangedVariables(vm);
+             break;
+        }
 
         case ASEBA_MESSAGE_SET_VARIABLES: {
             uint16_t start = bswap16(data[0]);

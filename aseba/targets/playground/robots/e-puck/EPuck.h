@@ -87,7 +87,7 @@ public:
         int16_t camB[60];  // camera blue (left, middle, right) [0..100] %
         int16_t energy;
         int16_t user[256];
-    } variables;
+    } variables, variablesOld;
 
 public:
     AsebaFeedableEPuck(std::string robotName, int16_t nodeId);

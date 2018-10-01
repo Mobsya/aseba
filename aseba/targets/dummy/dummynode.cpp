@@ -53,7 +53,7 @@ private:
         int16_t productId;
         int16_t timerPeriod;
         int16_t user[1024];
-    } variables;
+    } variables, variablesOld;
     char mutableName[12];
 
     // stream for listening to incoming connections
@@ -90,6 +90,7 @@ public:
         vm.stackSize = stack.size();
 
         vm.variables = reinterpret_cast<int16_t*>(&variables);
+        vm.variablesOld = reinterpret_cast<int16_t*>(&variablesOld);
         vm.variablesSize = sizeof(variables) / sizeof(int16_t);
     }
 

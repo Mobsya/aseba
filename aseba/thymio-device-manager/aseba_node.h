@@ -77,10 +77,9 @@ public:
 
     template <typename... ConnectionArgs>
     auto connect_to_variables_changes(ConnectionArgs... args) {
+        m_resend_all_variables = true;
         return m_variables_changed_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
-
-    variables_watch_signal_t& variables_watch_signal() const;
 
 private:
     friend class aseba_endpoint;
@@ -95,6 +94,9 @@ private:
     void reset_known_variables(const Aseba::VariablesMap& variables);
     void request_variables();
     void on_variables_message(const Aseba::Variables& msg);
+    void on_variables_message(const Aseba::ChangedVariables& msg);
+    void set_variables(uint16_t start, const std::vector<int16_t>& data,
+                       std::unordered_map<std::string, mobsya::property>& vars);
     void schedule_variables_update();
 
     node_id_t m_id;
@@ -118,6 +120,7 @@ private:
     std::vector<variable> m_variables;
     boost::asio::deadline_timer m_variables_timer;
     variables_watch_signal_t m_variables_changed_signal;
+    std::atomic<bool> m_resend_all_variables = true;
 };
 
 

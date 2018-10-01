@@ -54,6 +54,10 @@ extern "C" void AsebaSendMessageWords(AsebaVMState* vm, uint16_t type, const uin
 }
 #endif
 
+extern "C" void AsebaSendChangedVariables(AsebaVMState* vm) {
+    std::cerr << "AsebaSendChangedVariables";
+}
+
 extern "C" void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length) {
     std::cerr << "AsebaSendVariables at pos " << start << ", length " << length << std::endl;
 }
