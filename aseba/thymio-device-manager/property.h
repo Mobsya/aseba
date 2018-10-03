@@ -2,7 +2,11 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <variant>
+#ifndef WIN32
+#    include "variant.hpp"
+#else
+#    include <variant>
+#endif
 #include <iostream>
 
 namespace mobsya {
