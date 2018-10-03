@@ -32,3 +32,6 @@
 [submodule "third_party/qt-solutions/qt-solutions"]
 	path = third_party/qt-solutions/qt-solutions
 	url = https://github.com/qtproject/qt-solutions.git
+[submodule "third_party/mpark.variant"]
+	path = third_party/mpark.variant
+	url = https://github.com/mpark/variant

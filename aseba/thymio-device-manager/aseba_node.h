@@ -9,6 +9,7 @@
 #include <atomic>
 #include <aseba/flatbuffers/thymio_generated.h>
 #include <boost/signals2.hpp>
+#include <unordered_map>
 
 namespace mobsya {
 class aseba_endpoint;

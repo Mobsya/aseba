@@ -709,7 +709,7 @@ void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
         for(int i = 0; i < size; i++) {
             v.push_back(buffer.get<int16_t>());
         }
-        variables.push_back(area{start, v});
+        variables.emplace_back(start, v);
     }
 }
 

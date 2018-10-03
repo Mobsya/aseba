@@ -2,12 +2,8 @@
 #include <vector>
 #include <string>
 #include <map>
-#ifndef WIN32
-#    include "variant.hpp"
-#else
-#    include <variant>
-#endif
 #include <iostream>
+#include "variant_compat.h"
 
 namespace mobsya {
 
@@ -94,12 +90,12 @@ public:
     using array_t = typename types::template array_type<this_t>;
     using object_t = typename types::template object_type<key_t, this_t>;
 
-
-    static auto constexpr null = std::monostate{};
-
-    using value_t = std::variant<std::monostate, bool_t, integral_t, floating_t, string_t, array_t, object_t>;
+    using value_t =
+        variant_ns::variant<variant_ns::monostate, bool_t, integral_t, floating_t, string_t, array_t, object_t>;
     template <typename T>
     friend class is_compatible;
+
+    // static auto constexpr null = value_t{};
 
     static constexpr auto max_scalar_type_index = 3;
 
@@ -122,8 +118,8 @@ public:
 
     basic_property() {}
 
-    basic_property(const std::monostate&) {}
-    basic_property(std::monostate&&) {}
+    basic_property(const variant_ns::monostate&) {}
+    basic_property(variant_ns::monostate&&) {}
 
 
     template <typename T,
@@ -175,39 +171,39 @@ public:
     basic_property& operator=(this_t&& other) = default;
 
     bool is_null() const noexcept {
-        return value.valueless_by_exception() || std::holds_alternative<std::monostate>(value);
+        return value.valueless_by_exception() || variant_ns::holds_alternative<variant_ns::monostate>(value);
     }
     bool is_boolean() const noexcept {
-        return std::holds_alternative<bool_t>(value);
+        return variant_ns::holds_alternative<bool_t>(value);
     }
     bool is_integral() const noexcept {
-        return std::holds_alternative<integral_t>(value);
+        return variant_ns::holds_alternative<integral_t>(value);
     }
     bool is_double() const noexcept {
-        return std::holds_alternative<floating_t>(value);
+        return variant_ns::holds_alternative<floating_t>(value);
     }
     bool is_number() const noexcept {
         return is_double() || is_integral();
     }
 
     bool is_string() const noexcept {
-        return std::holds_alternative<string_t>(value);
+        return variant_ns::holds_alternative<string_t>(value);
     }
     bool is_array() const noexcept {
-        return std::holds_alternative<array_t>(value);
+        return variant_ns::holds_alternative<array_t>(value);
     }
     bool is_object() const noexcept {
-        return std::holds_alternative<object_t>(value);
+        return variant_ns::holds_alternative<object_t>(value);
     }
 
     bool is_empty() {
-        return is_null() || (is_array() && std::get<array_t>(value).empty()) ||
-            (is_object() && std::get<object_t>(value).empty());
+        return is_null() || (is_array() && variant_ns::get<array_t>(value).empty()) ||
+            (is_object() && variant_ns::get<object_t>(value).empty());
     }
 
     std::size_t size() const {
 
-        return std::visit(
+        return variant_ns::visit(
             [](auto&& e) {
                 // static_assert (std::is_same_v<decltype (e)::size_t, std::size_t>);
                 return detail::entity_size<decltype(e)>::get(e);
@@ -216,43 +212,43 @@ public:
     }
 
     const basic_property<types>& operator[](typename array_t::size_type idx) const {
-        return std::get<array_t>(value)[idx];
+        return variant_ns::get<array_t>(value)[idx];
     }
 
     basic_property<types>& operator[](typename array_t::size_type idx) {
         if(!is_array())
             value = array_t();
-        return std::get<array_t>(value)[idx];
+        return variant_ns::get<array_t>(value)[idx];
     }
 
     const basic_property<types>& operator[](const key_t& key) const {
-        return std::get<object_t>(value)[key];
+        return variant_ns::get<object_t>(value)[key];
     }
     basic_property<types>& operator[](const key_t& key) {
         if(!is_object())
             value = object_t();
-        return std::get<object_t>(value)[key];
+        return variant_ns::get<object_t>(value)[key];
     }
 
     explicit operator bool_t() const {
         const bool null = is_null();
         if(!null && is_boolean())
-            return std::get<bool_t>(value);
+            return variant_ns::get<bool_t>(value);
         return !null;
     }
     template <typename type,
               std::enable_if_t<std::is_floating_point_v<type> && std::is_convertible_v<type, floating_t>, int> = 0>
     explicit operator type() const {
         if(is_double())
-            return std::get<floating_t>(value);
-        return std::get<integral_t>(value);
+            return variant_ns::get<floating_t>(value);
+        return variant_ns::get<integral_t>(value);
     }
 
     template <typename T, std::enable_if_t<std::is_integral_v<T> && std::is_convertible_v<T, integral_t>, int> = 0>
     explicit operator T() const {
         if(is_double())
-            return std::get<floating_t>(value);
-        return std::get<integral_t>(value);
+            return variant_ns::get<floating_t>(value);
+        return variant_ns::get<integral_t>(value);
     }
 
 
@@ -260,15 +256,15 @@ public:
               std::enable_if_t<std::is_floating_point_v<T> && std::is_convertible_v<T, floating_t>, int> = 0>
     bool operator==(const T& t) const {
         if(is_double())
-            return std::get<floating_t>(value) == t;
-        return std::get<integral_t>(value) == t;
+            return variant_ns::get<floating_t>(value) == t;
+        return variant_ns::get<integral_t>(value) == t;
     }
 
     template <typename T, std::enable_if_t<std::is_integral_v<T> && std::is_convertible_v<T, integral_t>, int> = 0>
     bool operator==(const T& t) const {
         if(is_integral())
-            return std::get<integral_t>(value) == t;
-        return std::get<floating_t>(value) == t;
+            return variant_ns::get<integral_t>(value) == t;
+        return variant_ns::get<floating_t>(value) == t;
     }
 
     bool operator==(const this_t& t) const {
@@ -302,12 +298,12 @@ public:
               std::enable_if_t<std::is_same_v<T, array_t> || std::is_same_v<T, object_t> || std::is_same_v<T, string_t>,
                                int> = 0>
     explicit operator T const&() const {
-        return std::get<T>(value);
+        return variant_ns::get<T>(value);
     }
 
     template <typename T, std::enable_if_t<std::is_same_v<T, array_t> || std::is_same_v<T, object_t>>>
     explicit operator T&() {
-        if(!std::holds_alternative<object_t>(value))
+        if(!variant_ns::holds_alternative<object_t>(value))
             value = T();
         return value;
     }
@@ -317,7 +313,7 @@ public:
     basic_property(list&& d) : value(std::move(d.array)) {}
 
 
-    value_t value = std::monostate{};
+    value_t value;
     struct dict {
         dict() = default;
         dict(const dict& other) = delete;
@@ -382,8 +378,8 @@ using property = basic_property<detail::types<char>>;
 template <typename types>
 std::ostream& operator<<(std::ostream& os, const mobsya::basic_property<types>& p) {
     using namespace mobsya;
-    std::visit(
-        detail::overloaded{[&os](const std::monostate&) { os << "null"; },
+    variant_ns::visit(
+        detail::overloaded{[&os](const variant_ns::monostate&) { os << "null"; },
                            [&os](const typename basic_property<types>::bool_t& e) { os << (e ? "true" : "false"); },
                            [&os](const typename basic_property<types>::integral_t& e) { os << e; },
                            [&os](const typename basic_property<types>::floating_t& e) { os << e; },
