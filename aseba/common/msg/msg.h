@@ -395,6 +395,7 @@ public:
     struct area {
         uint16_t start = 0;
         VariablesDataVector variables;
+        area(uint16_t start, VariablesDataVector v) : start(start), variables(std::move(v)) {}
     };
 
     std::vector<area> variables;

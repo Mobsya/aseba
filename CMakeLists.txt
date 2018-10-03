@@ -46,7 +46,10 @@ add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
 
-
+add_library(mpark_variant INTERFACE)
+target_include_directories(mpark_variant INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/third_party/mpark.variant/include>
+  $<INSTALL_INTERFACE:include>)
 
 if (ANDROID)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)

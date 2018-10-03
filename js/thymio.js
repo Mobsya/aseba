@@ -2,7 +2,7 @@
 
 /** @module Mobsya/thymio */
 
-import {flatbuffers} from 'flatbuffers';
+import {flatbuffers} from './flatbuffers.js';
 import {mobsya} from './thymio_generated';
 import FlexBuffers from "./flexbuffers.js"
 import WebSocket from 'isomorphic-ws';

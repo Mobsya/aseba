@@ -29,6 +29,8 @@ add_executable(thymio-device-manager
     interfaces.cpp
     property.h
     property_flexbuffer.h
+    property_flexbuffer.cpp
+    variant_compat.h
 )
 
 if(WIN32)
@@ -56,7 +58,7 @@ endif()
 
 
 target_compile_definitions(thymio-device-manager PUBLIC -DSPDLOG_FMT_EXTERNAL)
-target_link_libraries(thymio-device-manager Boost::program_options Boost::filesystem Boost::asio Boost::date_time spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
+target_link_libraries(thymio-device-manager Boost::program_options Boost::filesystem Boost::asio Boost::date_time spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only mpark_variant)
 if(WIN32)
     target_link_libraries(thymio-device-manager bcrypt)
 else()
