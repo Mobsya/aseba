@@ -107,22 +107,17 @@ public:
     struct list;
 
     template <typename T>
-    struct is_convertible {
-        static constexpr bool value = (std::is_convertible_v<T, bool_t> || std::is_convertible_v<T, floating_t> ||
-                                       std::is_convertible_v<T, string_t> || std::is_convertible_v<T, array_t> ||
-                                       std::is_convertible_v<T, object_t>)
-
-            &&!std::is_same_v<std::decay_t<T>, std::decay_t<this_t>>;
-    };
-    template <typename T>
-    static constexpr bool is_convertible_v = is_convertible<T>::value;
-
+    struct is_convertible
+        : std::bool_constant<(
+              (std::is_convertible_v<T, bool_t> || std::is_convertible_v<T, floating_t> ||
+               std::is_convertible_v<T, string_t> || std::is_convertible_v<T, array_t> ||
+               std::is_convertible_v<T, object_t>)&&!std::is_same_v<std::decay_t<T>, std::decay_t<this_t>>)> {};
 
 public:
     basic_property(const this_t& other) = default;
     basic_property(this_t&& other) = default;
 
-    template <typename T, typename _ = std::enable_if_t<is_convertible_v<T>>>
+    template <typename T, typename _ = std::enable_if_t<is_convertible<T>::value>>
     basic_property(T&& t) : value(detail::to_compatible_value<T, types, array_t, object_t>(std::forward<T>(t))) {}
 
     basic_property() {}
@@ -131,14 +126,14 @@ public:
     basic_property(std::monostate&&) {}
 
 
-    template <
-        typename T,
-        typename _ = std::enable_if_t<is_convertible_v<T> || std::is_same_v<std::decay_t<T>, std::decay_t<this_t>>>>
+    template <typename T,
+              typename _ =
+                  std::enable_if_t<is_convertible<T>::value || std::is_same_v<std::decay_t<T>, std::decay_t<this_t>>>>
     basic_property(std::pair<key_t, T>&&) {}
 
-    template <
-        typename T,
-        typename _ = std::enable_if_t<is_convertible_v<T> || std::is_same_v<std::decay_t<T>, std::decay_t<this_t>>>>
+    template <typename T,
+              typename _ =
+                  std::enable_if_t<is_convertible<T>::value || std::is_same_v<std::decay_t<T>, std::decay_t<this_t>>>>
     basic_property(key_t&& k, T&& t) {
         value = object_t{std::forward_as_tuple(k, t)};
     }
@@ -170,7 +165,7 @@ public:
         }
         value = std::move(object);
     }
-    template <typename T, std::enable_if_t<is_convertible_v<T>, int> = 0>
+    template <typename T, std::enable_if_t<is_convertible<T>::value, int> = 0>
     basic_property& operator=(T&& t) {
         value = detail::to_compatible_value<T, types, array_t, object_t>(std::forward<T>(t));
         return *this;
