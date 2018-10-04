@@ -2,7 +2,7 @@ version: '{build}'
 
 init:
 - git config --global core.autocrlf input
-#- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/cor3ntin/1327dbf8aedab79f9fa305c001190268/raw/05155caad3a68c48be5f6873c3aca6ad8a30e31a/rdp.ps1'))
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/cor3ntin/1327dbf8aedab79f9fa305c001190268/raw/05155caad3a68c48be5f6873c3aca6ad8a30e31a/rdp.ps1'))
 
 matrix:
   fast_finish: true
@@ -10,6 +10,13 @@ matrix:
 skip_branch_with_pr: true
 
 install:
+  # Install npm, which we need for blockly and scratch
+  - ps: Install-Product node '8'
+  - npm install --global npm@latest
+  - set PATH=%APPDATA%\npm;%PATH%
+  - cd "%APPVEYOR_BUILD_FOLDER%"
+  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+  - if ["%APPVEYOR_PULL_REQUEST_NUMBER%"]==[""] appveyor-tools\secure-file -decrypt %SIGNTOOL_PFX%.enc -secret %PFX_SECURE_FILE_DECODE%
   - mkdir C:\projects\deps
   - cd C:\projects\deps
 
@@ -86,7 +93,12 @@ before_build:
     )
   - git submodule init
   - git submodule update --recursive --remote
-  - if NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER git clone https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --branch master --recurse-submodules
+  - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
+  - if exist thymio-blockly-standalone\node_modules\ rd /s /q thymio-blockly-standalone\node_modules\
+  - if exist thymio-blockly-standalone\package-lock.json del /s /q thymio-blockly-standalone\package-lock.json
+  - if exist js\node_modules\ rd /s /q js\node_modules\
+  - if exist js\package-lock.json del /s /q js\package-lock.json
+
 
 build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
@@ -130,20 +142,34 @@ environment:
   NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip
   SDL_URL: https://libsdl.org/release/SDL2-devel-2.0.7-VC.zip
   CMAKE_URL: https://cmake.org/files/v3.11/cmake-3.11.0-win64-x64.zip
+  SIGNTOOL_PFX: '%APPVEYOR_BUILD_FOLDER%\windows\appveyor\mobsya.pfx'
+  PFX_SECURE_FILE_DECODE:
+    secure: WHOG4xjSEoHk00wq+NAwiQ==
+  SIGNTOOL_PASSPHRASE:
+    secure: VxqFZfqcgZAZ5N0ZmOBa+zrlf3iiY8V0a/de3bhwT+w=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
   BOOST_ROOT: 'C:/Libraries/boost_1_67_0'
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=5"
   matrix:
-    - ARCH: x86
-      QT5: C:\Qt\5.10\msvc2015
-      COMPILER: MSVC
+    - platform: x64
+      COMPILER: ClangCL
+      ARCH: x64
+      LLVM_URL: http://prereleases.llvm.org/7.0.0/rc1/LLVM-7.0.0-rc1-win64.exe
+      LLVM_VERSION: 7.0
       USE_VS_TOOLCHAIN: true
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib32-msvc-14.1'
+      QT5: C:\Qt\5.11.1\msvc2017_64
+      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
+
+    #- ARCH: x86
+      #QT5: C:\Qt\5.10\msvc2015
+      #COMPILER: MSVC
+      #USE_VS_TOOLCHAIN: true
+      #BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib32-msvc-14.1'
 
     - ARCH: x64
       COMPILER: MSVC
-      QT5: C:\Qt\5.10\msvc2017_64
+      QT5: C:\Qt\5.11.1\msvc2017_64
       USE_VS_TOOLCHAIN: true
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
@@ -157,15 +183,6 @@ environment:
       #ARCH: x64
       #BASH: C:\msys64\usr\bin\bash
       #MSYS_CACHE: C:\msys64\var\cache\pacman\pkg
-
-    - platform: x64
-      COMPILER: ClangCL
-      ARCH: x64
-      LLVM_URL: http://prereleases.llvm.org/win-snapshots/LLVM-7.0.0-r323406-win64.exe
-      LLVM_VERSION: 7.0
-      USE_VS_TOOLCHAIN: true
-      QT5: C:\Qt\5.10\msvc2017_64
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
 deploy:
   tag: nightly

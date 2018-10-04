@@ -7,10 +7,11 @@ if(NOT ANDROID)
     add_subdirectory(vm)
     add_subdirectory(transport)
 
-    # User programs
-    add_subdirectory(switches)
     add_subdirectory(targets)
-
-    add_subdirectory(flatbuffers)
-    add_subdirectory(switch)
+    add_subdirectory(thymio-device-manager)
 endif()
+
+add_subdirectory(flatbuffers)
+
+add_subdirectory(qt-thymio-dm-client-lib)
+add_subdirectory(launcher)

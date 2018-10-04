@@ -48,25 +48,35 @@ function(windeployqt target directory)
     file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${target}"
         CONTENT "$<TARGET_FILE:${target}>"
     )
+    get_target_property(_TARGET_SOURCE_DIR ${target} SOURCE_DIR)
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${target}.src"
+        CONTENT "${_TARGET_SOURCE_DIR}"
+    )
+
+
+    file (GLOB DIRECTORIES LIST_DIRECTORIES true ${_TARGET_SOURCE_DIR}*/qml)
 
     # Before installation, run a series of commands that copy each of the Qt
     # runtime files to the appropriate directory for installation
     install(CODE
         "
         function(clean_win_deployqt_path path var)
-			if(${CMAKE_HOST_SYSTEM} MATCHES \"Linux\")
-				execute_process(COMMAND winepath -u \${path} OUTPUT_VARIABLE path_cleaned OUTPUT_STRIP_TRAILING_WHITESPACE)
-				set (\${var} \${path_cleaned} PARENT_SCOPE)
-			endif()
-		endfunction()
+            if(${CMAKE_HOST_SYSTEM} MATCHES \"Linux\")
+                execute_process(COMMAND winepath -u \${path} OUTPUT_VARIABLE path_cleaned OUTPUT_STRIP_TRAILING_WHITESPACE)
+                set (\${var} \${path_cleaned} PARENT_SCOPE)
+            endif()
+        endfunction()
 
+        file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}.src\" _src_dir)
         file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}\" _file)
         execute_process(
             COMMAND \"${CMAKE_COMMAND}\" -E
                 env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
                     --dry-run
                     --list mapping
-                    --plugindir plugins
+                    --plugindir bin/plugins
+                    --qmldir \${_src_dir}
+                    --no-compiler-runtime
                     \${_file}
             OUTPUT_VARIABLE _output
             OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -76,13 +86,13 @@ function(windeployqt target directory)
             list(GET _files 0 _src)
             list(GET _files 1 _dest)
             if(NOT EXISTS \"\${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\")
-				get_filename_component(_path \${_dest} DIRECTORY)
-				clean_win_deployqt_path(\${_src} _src)
-				message(\"-- Installing: \${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\")
-				if(EXISTS \${_src})
+                get_filename_component(_path \${_dest} DIRECTORY)
+                clean_win_deployqt_path(\${_src} _src)
+                message(\"-- Installing: \${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\")
+                if(EXISTS \${_src})
                     configure_file(\${_src} \"\${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\" COPYONLY)
-				endif()
-			endif()
+                endif()
+            endif()
             list(REMOVE_AT _files 0 1)
         endwhile()
         "
@@ -94,8 +104,8 @@ mark_as_advanced(WINDEPLOYQT_EXECUTABLE)
 
 
 macro(install_qt_app target)
-	install(TARGETS ${target} RUNTIME DESTINATION bin)
-	if(WIN32)
-		windeployqt(${target} bin)
-	endif()
+    install(TARGETS ${target} RUNTIME DESTINATION bin)
+    if(WIN32)
+        windeployqt(${target} bin)
+    endif()
 endmacro()

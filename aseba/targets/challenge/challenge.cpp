@@ -947,6 +947,10 @@ extern "C" uint16_t AsebaGetBuffer(AsebaVMState* vm, uint8_t* data, uint16_t max
     return asebaEPuckMap[vm]->lastMessageData.size();
 }
 
+extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {
+    return 1;
+}
+
 extern "C" const AsebaVMDescription* AsebaGetVMDescription(AsebaVMState* vm) {
     if(localName == "fr")
         return &vmDescription_fr;

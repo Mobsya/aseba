@@ -143,9 +143,6 @@ FunctionEnd
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Aseba"
-  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU"
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY}
-  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   !insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
@@ -434,3 +431,6 @@ Section "Uninstall"
 	DeleteRegKey HKCU ${REGISTRY_KEY}
 	DetailPrint $(STR_Done)
 SectionEnd
+
+
+!finalize 'python "${INSTALLER_SOURCE_DIRECTORY}\..\CMakeModules\sign.py" "%1"'

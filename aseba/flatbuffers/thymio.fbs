@@ -1,8 +1,32 @@
-// Generated from thymio.proto
+//https://google.github.io/flatbuffers/md__schemas.html
 
 namespace mobsya.fb;
 
-///>A node id
+//Handshake messages
+//The client needs to initiate the session by sending a ConnectionHandshake.
+//If the client sends a message before a ConnectionHandshake, the server will
+//drop the connection.
+//The server reply with the same message
+table ConnectionHandshake {
+    //In the server -> client direction, protocolVersion designs the version of the
+    //protocol both client and SERVER MUST use during the session
+    //If the protocolVersion sent by the server is 0, then the client and the server
+    //Do not share a compatible version, and the connection is dropped.
+    //minProtocolVersion designs the minimal protocol of the protocol supported by the sender
+    minProtocolVersion:uint = 1;
+    protocolVersion:uint = 1;
+
+    //Maximum size of a message
+    //Each endpoint must advertise the maximum size of message they will accept.
+    //If a message is received that exceed that size, the connection shall be dropped.
+    maxMessageSize:uint = 102400;
+
+    //A token represented as a byte sequence.
+    //Tokens are notably used to identify local clients and to give special permissions to applications
+    token:[ubyte];
+}
+
+///A node id
 table NodeId {
    id:[ubyte];
 }
@@ -11,7 +35,17 @@ table NodeId {
 /// A node can designate either a robot, a simulator, each with various capabilities.
 enum NodeType : int {
   Thymio2 = 0,
-  ThymioWireless = 1,
+  Thymio2Wireless  = 1,
+  SimulatedThymio2 = 2,
+  DummyNode        = 3,
+  UnknownType      = 4
+}
+
+/// Capabilities of a node
+/// What a client can do with a node may depends on permissions, firmware version, type of node/device, etc
+enum NodeCapability : ulong {
+  Rename  = 0x01,
+  ForceResetAndStop = 0x02
 }
 
 /// The status of a node represents whether the node is connected and available.
@@ -46,6 +80,7 @@ table Node {
   status:NodeStatus;
   type:NodeType;
   name:string;
+  capabilities:ulong  = 0;
 }
 
 /// Message sent by the server when a node changes status.
@@ -79,16 +114,19 @@ table NodeAsebaVMDescription {
 
 
 table NamedVariable {
+  index: ushort;
   name:string;
   size:uint;
 }
 
 table LocalEvent {
+  index: ushort;
   name:string;
   description:string;
 }
 
 table NativeFunction {
+  index: ushort;
   name:string;
   description:string;
   parameters:[NativeFunctionParameter];
@@ -97,6 +135,13 @@ table NativeFunction {
 table NativeFunctionParameter {
   name:string;
   size:uint;
+}
+
+/// Set a new name for this nùode
+table RenameNode {
+   request_id:uint;
+   node_id:NodeId;
+   new_name:string;
 }
 
 /// Ask the server to give this client sole ownership of the node.
@@ -126,6 +171,10 @@ table RequestAsebaCodeRun {
     node_id:NodeId;
 }
 
+table StopNode {
+  request_id:uint;
+  node_id:NodeId;
+}
 
 table Error {
   request_id:uint;
@@ -141,10 +190,13 @@ table RequestCompleted {
 }
 
 union AnyMessage {
+    ConnectionHandshake,
     RequestListOfNodes,
     RequestNodeAsebaVMDescription,
     LockNode,
     UnlockNode,
+    RenameNode,
+    StopNode,
     RequestAsebaCodeLoad,
     RequestAsebaCodeRun,
     NodesChanged,

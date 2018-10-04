@@ -195,7 +195,7 @@ void __attribute__((weak)) AsebaVMErrorCB(AsebaVMState* vm, const char* message)
 #endif  // DISABLE_WEAK_CALLBACKS
 
 #ifdef DISABLE_WEAK_CALLBACKS
-static int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {}
+extern int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength);
 #else   // DISABLE_WEAK_CALLBACKS
 int __attribute__((weak))
 AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength);
@@ -227,6 +227,6 @@ extern void AsebaAssert(AsebaVMState* vm, AsebaAssertReason reason);
 
 #ifdef __cplusplus
 } /* closing brace for extern "C" */
-#    endif
+#endif
 
 #endif

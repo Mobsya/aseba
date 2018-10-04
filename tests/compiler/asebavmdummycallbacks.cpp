@@ -82,6 +82,11 @@ extern "C" void AsebaResetIntoBootloader(AsebaVMState* vm) {
     std::cerr << "AsebaResetIntoBootloader" << std::endl;
 }
 
+extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {
+    return 1;
+}
+
+
 extern "C" void AsebaAssert(AsebaVMState* vm, AsebaAssertReason reason) {
     std::cerr << "\nFatal error, internal VM exception: ";
     switch(reason) {

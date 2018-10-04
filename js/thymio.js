@@ -1,10 +1,14 @@
 /* Wrap a promise to allow external resolve */
 
-/** @module Mobsya/tymio */
+/** @module Mobsya/thymio */
 
 import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
 import WebSocket from 'isomorphic-ws';
+
+const MIN_PROTOCOL_VERSION = 1
+const PROTOCOL_VERSION = 1
+
 
 /** Class representing Request.
  *  A Request wraps a promise that will be triggered when the corresponding Error/RequestCompleted message get received
@@ -62,11 +66,13 @@ class AsebaVMDescription {
 
 /** Node */
 export class Node {
-    constructor(client, id, status) {
+    constructor(client, id, status, type) {
         this._id = id;
         this._status = status;
-        this._desc   = undefined;
+        this._type = type
+        this._desc   = null;
         this._client = client
+        this._name   = null
     }
 
     /** return the node id*/
@@ -74,11 +80,31 @@ export class Node {
         return this._id
     }
 
+    /** return the node type*/
+    get type() {
+        return this._type
+    }
+
     /** The node status
      *  @type {mobsya.fb.NodeStatus}
      */
     get status() {
         return this._status
+    }
+
+    /** The node name
+     *  @type {mobsya.fb.NodeStatus}
+     */
+    get name() {
+        return this._name
+    }
+
+    /*
+     * Send a request to rename a node
+     */
+    async rename(new_name) {
+        await this._client.rename_node(this._id, new_name)
+        this._set_name(new_name)
     }
 
     /** Whether the node is ready (connected, and locked)
@@ -99,7 +125,20 @@ export class Node {
             case mobsya.fb.NodeStatus.busy: return "busy"
             case mobsya.fb.NodeStatus.disconnected: return "disconnected"
         }
-        return "unknow"
+        return "unknown"
+    }
+
+    /** The node type converted to string.
+     *  @type {string}
+     */
+    get type_str() {
+        switch(this.type) {
+            case mobsya.fb.NodeType.Thymio2: return "Thymio 2"
+            case mobsya.fb.NodeType.Thymio2Wireless: return "Thymio Wireless"
+            case mobsya.fb.NodeType.SimulatedThymio2: return "Simulated Thymio 2"
+            case mobsya.fb.NodeType.DummyNode: return "Dummy Node"
+        }
+        return "unknown"
     }
 
     /** Lock the device
@@ -167,6 +206,15 @@ export class Node {
             }
         }
     }
+
+    _set_name(name) {
+        if(name != this._name) {
+            this._name = name
+            if(this._name) {
+                this.on_name_changed(name)
+            }
+        }
+    }
 }
 
 class InvalidNodeIDException {
@@ -201,6 +249,11 @@ class NodeId {
 Node.Status = mobsya.fb.NodeStatus;
 
 /*
+ * The type of a node
+ */
+Node.Type = mobsya.fb.NodeType;
+
+/*
  * A client. Main entry point of the api
  */
 export class Client {
@@ -231,7 +284,12 @@ export class Client {
     }
 
     onopen() {
-        console.log("connected")
+        console.log("connected, sending protocol version")
+        const builder = new flatbuffers.Builder();
+        mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
+        mobsya.fb.ConnectionHandshake.addProtocolVersion(builder, PROTOCOL_VERSION)
+        mobsya.fb.ConnectionHandshake.addMinProtocolVersion(builder, MIN_PROTOCOL_VERSION)
+        this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
     onmessage (event) {
@@ -240,6 +298,11 @@ export class Client {
 
         let message = mobsya.fb.Message.getRootAsMessage(buf, null)
         switch(message.messageType()) {
+            case mobsya.fb.AnyMessage.ConnectionHandshake: {
+                const hs = message.message(new mobsya.fb.ConnectionHandshake())
+                console.log(`Handshake complete: Protocol version ${hs.protocolVersion()}`)
+                break;
+            }
             case mobsya.fb.AnyMessage.NodesChanged: {
                 this.on_nodes_changed(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
                 break;
@@ -346,6 +409,22 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
+
+    rename_node(id, name) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const nameOffset = builder.createString(name);
+
+        mobsya.fb.RenameNode.startRenameNode(builder)
+        mobsya.fb.RenameNode.addRequestId(builder, req_id)
+        mobsya.fb.RenameNode.addNodeId(builder, nodeOffset)
+        mobsya.fb.RenameNode.addNewName(builder, nameOffset)
+        let offset = mobsya.fb.RenameNode.endRenameNode(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RenameNode)
+        return this._prepare_request(req_id)
+    }
+
     _nodes_changed_as_node_list(msg) {
         let nodes = []
         for(let i = 0; i < msg.nodesLength(); i++) {
@@ -353,7 +432,8 @@ export class Client {
             const id = this._id(n.nodeId())
             let node = this._nodes.get(id.toString())
             if(!node) {
-                node = new Node(this, id, n.status())
+                node = new Node(this, id, n.status(), n.type())
+                node._name = n.name()
                 this._nodes.set(id.toString(), node)
             }
             if(n.status() == Node.Status.disconnected) {
@@ -361,6 +441,7 @@ export class Client {
             }
             nodes.push(node)
             node._set_status(n.status())
+            node._set_name(n.name())
         }
         return nodes
     }
@@ -440,3 +521,4 @@ export class Client {
         return req._promise
     }
 }
+

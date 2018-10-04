@@ -26,11 +26,6 @@ else()
     target_link_libraries(asebacommon PUBLIC dashel)
 endif()
 
-install(TARGETS asebacommon
-	LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-)
-
 add_subdirectory(about)
 
 if(HAS_ZEROCONF_SUPPORT)
