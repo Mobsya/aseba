@@ -154,6 +154,13 @@ table NativeFunctionParameter {
   size:uint;
 }
 
+/// Modify the value of specified variables
+table SetNodeVariables {
+   request_id:uint;
+   node_id:NodeId;
+   vars:[NodeVariable];
+}
+
 /// Set a new name for this nùode
 table RenameNode {
    request_id:uint;
@@ -230,7 +237,8 @@ union AnyMessage {
     Error,
     CompilationError,
     WatchNode,
-    NodeVariablesChanged
+    NodeVariablesChanged,
+    SetNodeVariables
 }
 
 table Message {

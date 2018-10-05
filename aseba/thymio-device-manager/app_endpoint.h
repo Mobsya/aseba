@@ -186,6 +186,11 @@ public:
                 send_aseba_vm_description(req->request_id(), req->node_id());
                 break;
             }
+            case mobsya::fb::AnyMessage::SetNodeVariables: {
+                auto vars_msg = msg.as<fb::SetNodeVariables>();
+                this->set_node_variables(vars_msg->request_id(), vars_msg->node_id(), variables(*vars_msg));
+                break;
+            }
             case mobsya::fb::AnyMessage::RenameNode: {
                 auto rename_msg = msg.as<fb::RenameNode>();
                 this->rename_node(rename_msg->request_id(), rename_msg->node_id(), rename_msg->new_name()->str());
@@ -372,6 +377,10 @@ private:
         } else {
             write_message(create_ack_response(request_id));
         }
+    }
+
+    void set_node_variables(uint32_t request_id, const aseba_node_registery::node_id& id, aseba_node::variables_map m) {
+        write_message(create_ack_response(request_id));
     }
 
     void send_aseba_program(uint32_t request_id, const aseba_node_registery::node_id& id, std::string program) {
