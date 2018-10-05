@@ -19,11 +19,11 @@ mobsya.fb = mobsya.fb || {};
  * @enum
  */
 mobsya.fb.NodeType = {
-  Thymio2: 0,
-  Thymio2Wireless: 1,
-  SimulatedThymio2: 2,
-  DummyNode: 3,
-  UnknownType: 4
+  Thymio2: 0, 0: 'Thymio2',
+  Thymio2Wireless: 1, 1: 'Thymio2Wireless',
+  SimulatedThymio2: 2, 2: 'SimulatedThymio2',
+  DummyNode: 3, 3: 'DummyNode',
+  UnknownType: 4, 4: 'UnknownType'
 };
 
 /**
@@ -33,8 +33,8 @@ mobsya.fb.NodeType = {
  * @enum
  */
 mobsya.fb.NodeCapability = {
-  Rename: 1,
-  ForceResetAndStop: 2
+  Rename: 1, 1: 'Rename',
+  ForceResetAndStop: 2, 2: 'ForceResetAndStop'
 };
 
 /**
@@ -46,32 +46,32 @@ mobsya.fb.NodeStatus = {
   /**
    * The status is unknown, this denotes a programmation error or a bug
    */
-  unknown: 0,
+  unknown: 0, 0: 'unknown',
 
   /**
    * The node is just connected. However, sending code or requesting a VM desciption is unspecified in this state
    */
-  connected: 1,
+  connected: 1, 1: 'connected',
 
   /**
    * The node is available. It needs to be sent a LockNode message before any action that would mutate it state, such as sending code can take place
    */
-  available: 2,
+  available: 2, 2: 'available',
 
   /**
    * The node is busy - this will be sent to all clients, except the one who locked the node
    */
-  busy: 3,
+  busy: 3, 3: 'busy',
 
   /**
    * The node is ready - this will be sent the client that optained a lock on the node
    */
-  ready: 4,
+  ready: 4, 4: 'ready',
 
   /**
    * The node is disconnected. Any reference to it will be destroyed on the server side, and sending further messages to it will fail
    */
-  disconnected: 5
+  disconnected: 5, 5: 'disconnected'
 };
 
 /**
@@ -81,48 +81,49 @@ mobsya.fb.ErrorType = {
   /**
    * Genric error
    */
-  unknown_error: 0,
+  unknown_error: 0, 0: 'unknown_error',
 
   /**
    * The node ddoes not exist or was disconnected
    */
-  unknown_node: 1,
+  unknown_node: 1, 1: 'unknown_node',
 
   /**
    * The node is busy (locked by another client)
    */
-  node_busy: 2
+  node_busy: 2, 2: 'node_busy'
 };
 
 /**
  * @enum
  */
 mobsya.fb.WatchableInfo = {
-  StopMonitoring: 0,
-  Variables: 1
+  StopMonitoring: 0, 0: 'StopMonitoring',
+  Variables: 1, 1: 'Variables'
 };
 
 /**
  * @enum
  */
 mobsya.fb.AnyMessage = {
-  NONE: 0,
-  ConnectionHandshake: 1,
-  RequestListOfNodes: 2,
-  RequestNodeAsebaVMDescription: 3,
-  LockNode: 4,
-  UnlockNode: 5,
-  RenameNode: 6,
-  StopNode: 7,
-  RequestAsebaCodeLoad: 8,
-  RequestAsebaCodeRun: 9,
-  NodesChanged: 10,
-  NodeAsebaVMDescription: 11,
-  RequestCompleted: 12,
-  Error: 13,
-  CompilationError: 14,
-  WatchNode: 15,
-  NodeVariablesChanged: 16
+  NONE: 0, 0: 'NONE',
+  ConnectionHandshake: 1, 1: 'ConnectionHandshake',
+  RequestListOfNodes: 2, 2: 'RequestListOfNodes',
+  RequestNodeAsebaVMDescription: 3, 3: 'RequestNodeAsebaVMDescription',
+  LockNode: 4, 4: 'LockNode',
+  UnlockNode: 5, 5: 'UnlockNode',
+  RenameNode: 6, 6: 'RenameNode',
+  StopNode: 7, 7: 'StopNode',
+  RequestAsebaCodeLoad: 8, 8: 'RequestAsebaCodeLoad',
+  RequestAsebaCodeRun: 9, 9: 'RequestAsebaCodeRun',
+  NodesChanged: 10, 10: 'NodesChanged',
+  NodeAsebaVMDescription: 11, 11: 'NodeAsebaVMDescription',
+  RequestCompleted: 12, 12: 'RequestCompleted',
+  Error: 13, 13: 'Error',
+  CompilationError: 14, 14: 'CompilationError',
+  WatchNode: 15, 15: 'WatchNode',
+  NodeVariablesChanged: 16, 16: 'NodeVariablesChanged',
+  SetNodeVariables: 17, 17: 'SetNodeVariables'
 };
 
 /**
@@ -1945,6 +1946,154 @@ mobsya.fb.NativeFunctionParameter.addSize = function(builder, size) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.NativeFunctionParameter.endNativeFunctionParameter = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * Modify the value of specified variables
+ *
+ * @constructor
+ */
+mobsya.fb.SetNodeVariables = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.SetNodeVariables}
+ */
+mobsya.fb.SetNodeVariables.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.SetNodeVariables=} obj
+ * @returns {mobsya.fb.SetNodeVariables}
+ */
+mobsya.fb.SetNodeVariables.getRootAsSetNodeVariables = function(bb, obj) {
+  return (obj || new mobsya.fb.SetNodeVariables).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.SetNodeVariables.prototype.requestId = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.SetNodeVariables.prototype.mutate_request_id = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {mobsya.fb.NodeId=} obj
+ * @returns {mobsya.fb.NodeId|null}
+ */
+mobsya.fb.SetNodeVariables.prototype.nodeId = function(obj) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+};
+
+/**
+ * @param {number} index
+ * @param {mobsya.fb.NodeVariable=} obj
+ * @returns {mobsya.fb.NodeVariable}
+ */
+mobsya.fb.SetNodeVariables.prototype.vars = function(index, obj) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? (obj || new mobsya.fb.NodeVariable).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.SetNodeVariables.prototype.varsLength = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.SetNodeVariables.startSetNodeVariables = function(builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} requestId
+ */
+mobsya.fb.SetNodeVariables.addRequestId = function(builder, requestId) {
+  builder.addFieldInt32(0, requestId, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} nodeIdOffset
+ */
+mobsya.fb.SetNodeVariables.addNodeId = function(builder, nodeIdOffset) {
+  builder.addFieldOffset(1, nodeIdOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} varsOffset
+ */
+mobsya.fb.SetNodeVariables.addVars = function(builder, varsOffset) {
+  builder.addFieldOffset(2, varsOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {Array.<flatbuffers.Offset>} data
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.SetNodeVariables.createVarsVector = function(builder, data) {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} numElems
+ */
+mobsya.fb.SetNodeVariables.startVarsVector = function(builder, numElems) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.SetNodeVariables.endSetNodeVariables = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

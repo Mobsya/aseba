@@ -93,5 +93,23 @@ flatbuffers::DetachedBuffer serialize_changed_variables(const mobsya::aseba_node
     return wrap_fb(fb, offset);
 }
 
+mobsya::aseba_node::variables_map variables(const fb::SetNodeVariables& msg) {
+    if(!msg.vars())
+        return {};
+    mobsya::aseba_node::variables_map vars;
+    vars.reserve(msg.vars()->size());
+    for(const auto& offset : *msg.vars()) {
+        if(!offset->name() || !offset->value())
+            continue;
+        auto k  = offset->name()->string_view();
+        auto v  = offset->value_flexbuffer_root();
+        auto p  = flexbuffer_to_property(v);
+        if(!p)
+            continue;
+        vars.insert_or_assign(std::string(k), std::move(*p));
+    }
+    return vars;
+}
+
 
 }  // namespace mobsya
