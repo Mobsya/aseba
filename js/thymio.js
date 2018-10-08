@@ -2,7 +2,7 @@
 
 /** @module Mobsya/thymio */
 
-import {flatbuffers} from './flatbuffers.js';
+import flatbuffers from './flatbuffers.js';
 import {mobsya} from './thymio_generated';
 import FlexBuffers from "./flexbuffers.js"
 import WebSocket from 'isomorphic-ws';
@@ -199,6 +199,10 @@ export class Node {
      */
     async run_aseba_program() {
         return await this._client.run_aseba_program(this._id);
+    }
+
+    async set_variables(map) {
+        return await this._client.set_node_variables(this._id, map);
     }
 
     get on_vars_changed() {
@@ -422,6 +426,40 @@ export class Client {
         const offset = mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeRun)
         return this._prepare_request(req_id)
+    }
+
+    //TODO : check variable types, etc
+    set_node_variables(id, variables) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const offsets = []
+
+        if (!(variables instanceof Map)) {
+            variables = new Map(Object.entries(variables))
+        }
+
+        variables.forEach( (value, name, _map) => {
+            offsets.push(this.__serialize_node_variable(builder, name, value))
+        })
+        const varsOffset = mobsya.fb.SetNodeVariables.createVarsVector(builder, offsets)
+        mobsya.fb.SetNodeVariables.startSetNodeVariables(builder)
+        mobsya.fb.SetNodeVariables.addNodeId(builder, nodeOffset)
+        mobsya.fb.SetNodeVariables.addRequestId(builder, req_id)
+        mobsya.fb.SetNodeVariables.addVars(builder, varsOffset)
+        const tableOffset = mobsya.fb.SetNodeVariables.endSetNodeVariables(builder)
+        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SetNodeVariables)
+        return this._prepare_request(req_id)
+    }
+
+    __serialize_node_variable(builder, name, value) {
+        const nameOffset = builder.createString(name)
+        const buffer = this._flex.fromJSObject(value)
+        const bufferOffset = mobsya.fb.NodeVariable.createValueVector(builder, buffer)
+        mobsya.fb.NodeVariable.startNodeVariable(builder)
+        mobsya.fb.NodeVariable.addName(builder, nameOffset)
+        mobsya.fb.NodeVariable.addValue(builder, bufferOffset)
+        return mobsya.fb.NodeVariable.endNodeVariable(builder)
     }
 
     /* request the description of the aseba vm for the node with the given id */

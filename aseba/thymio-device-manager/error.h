@@ -6,6 +6,39 @@
 #include "utils.h"
 
 namespace mobsya {
+
+enum class error_code {
+    invalid_object   = 0x01,
+    no_such_variable,
+    incompatible_variable_type
+};
+
+class tdm_error_category : public boost::system::error_category {
+public:
+    tdm_error_category() : boost::system::error_category() {}
+    const char* name() const noexcept override;
+    std::string message(int ev) const override;
+};
+
+const boost::system::error_category& get_tdm_error_category();
+
+inline boost::system::error_code make_error_code(error_code e) {
+    return boost::system::error_code(static_cast<int>(e), tdm_error_category());
+}
+
+inline boost::system::error_code make_error_code(int e) {
+    return boost::system::error_code(e, tdm_error_category());
+}
+
+inline auto make_unexpected(error_code e) {
+    return tl::make_unexpected(make_error_code(e));
+}
+
+inline auto make_unexpected(int e) {
+    return make_unexpected(error_code(e));
+}
+
+
 #ifdef MOBSYA_TDM_ENABLE_USB
 namespace usb {
 
@@ -75,6 +108,10 @@ namespace boost {
 namespace system {
     template <>
     struct is_error_code_enum<mobsya::usb::error_code> {
+        static const bool value = true;
+    };
+    template <>
+    struct is_error_code_enum<mobsya::tdm_error_category> {
         static const bool value = true;
     };
 }  // namespace system
