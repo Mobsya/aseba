@@ -35,7 +35,7 @@ void property_to_flexbuffer(const property& p, flexbuffers::Builder& b) {
     b.Finish();
 }
 
-nonstd::expected<property, std::errc> flexbuffer_to_property(const flexbuffers::Reference& r) {
+tl::expected<property, error_code> flexbuffer_to_property(const flexbuffers::Reference& r) {
     if(r.IsIntOrUint()) {
         return property{r.As<property::integral_t>()};
     }
@@ -58,7 +58,7 @@ nonstd::expected<property, std::errc> flexbuffer_to_property(const flexbuffers::
         for(size_t i = 0; i < v.size(); i++) {
             auto p = flexbuffer_to_property(v[i]);
             if(!p) {
-                return nonstd::make_unexpected(p.error());
+                return tl::make_unexpected(p.error());
             }
             l.push_back(p.value());
         }
@@ -71,16 +71,16 @@ nonstd::expected<property, std::errc> flexbuffer_to_property(const flexbuffers::
         for(size_t i = 0; i < keys.size(); i++) {
             auto k = keys[i].AsKey();
             if(!k)
-                return nonstd::make_unexpected(std::errc::not_supported);
+                return tl::make_unexpected(error_code::invalid_object);
             auto p = flexbuffer_to_property(m[k]);
             if(!p) {
-                return nonstd::make_unexpected(p.error());
+                return tl::make_unexpected(p.error());
             }
             o.insert_or_assign(k, p.value());
         }
         return o;
     }
-    return nonstd::make_unexpected(std::errc::not_supported);
+    return tl::make_unexpected(error_code::invalid_object);
 }
 
 }  // namespace mobsya

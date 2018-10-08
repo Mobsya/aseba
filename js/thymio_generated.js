@@ -91,7 +91,12 @@ mobsya.fb.ErrorType = {
   /**
    * The node is busy (locked by another client)
    */
-  node_busy: 2, 2: 'node_busy'
+  node_busy: 2, 2: 'node_busy',
+
+  /**
+   *Unsuported variable type - For SetNodeVariables and Events
+   */
+  unsupported_variable_type: 3, 3: 'unsupported_variable_type'
 };
 
 /**

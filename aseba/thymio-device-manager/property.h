@@ -12,7 +12,7 @@ namespace detail {
     template <typename char_type>
     struct types {
         using bool_type = bool;
-        using integral_type = long;
+        using integral_type = int64_t;
         using floating_type = double;
         using string_type = std::basic_string<char_type>;
         using key_type = string_type;
@@ -135,9 +135,6 @@ public:
     }
 
     basic_property(std::initializer_list<this_t> args) {
-        int x = args.begin()->value.index();
-        int s = args.begin()->size();
-        // assert(x + s);
         if(args.size() == 2) {
             if(args.begin()->is_string()) {
                 object_t object;

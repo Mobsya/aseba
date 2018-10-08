@@ -1,6 +1,27 @@
 #include "error.h"
 
 namespace mobsya {
+
+const boost::system::error_category& get_tdm_error_category() {
+    static const tdm_error_category tdm_error_cat;
+    return tdm_error_cat;
+}
+
+
+const char* tdm_error_category::name() const noexcept {
+    return "tdm";
+}
+
+std::string tdm_error_category::message(int ev) const {
+    switch(error_code(ev)) {
+        case error_code::invalid_object: return "invalid object";
+        case error_code::no_such_variable: return "no such variable";
+        case error_code::incompatible_variable_type: return "incompatible variable type";
+    }
+    return {};
+}
+
+
 #ifdef MOBSYA_TDM_ENABLE_USB
 namespace usb {
 

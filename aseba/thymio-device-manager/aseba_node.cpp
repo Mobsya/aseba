@@ -151,6 +151,59 @@ void aseba_node::run_aseba_program(write_callback&& cb) {
     write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
 }
 
+
+tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_variable(const property& p, uint16_t size) {
+    if(size == 1 && p.is_integral()) {
+        property::integral_t v(p);
+        auto n = numeric_cast<int16_t>(v);
+        if(!n)
+            return make_unexpected(error_code::incompatible_variable_type);
+        return std::vector({*n});
+    }
+    if(p.is_array() && size == p.size()) {
+        std::vector<int16_t> vars;
+        vars.reserve(p.size());
+        for(auto i = 0; i < p.size(); i++) {
+            auto e = p[i];
+            if(!e.is_integral()) {
+                return make_unexpected(error_code::incompatible_variable_type);
+            }
+            auto v = property::integral_t(e);
+            auto n = numeric_cast<int16_t>(v);
+            if(!n)
+                return make_unexpected(error_code::incompatible_variable_type);
+            vars.push_back(*n);
+        }
+        return vars;
+    }
+    return make_unexpected(error_code::incompatible_variable_type);
+}
+
+boost::system::error_code aseba_node::set_node_variables(const aseba_node::variables_map& map, write_callback&& cb) {
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    messages.reserve(map.size());
+
+    {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        for(auto&& var : map) {
+            auto it = std::find_if(m_variables.begin(), m_variables.end(),
+                                   [name = var.first](const variable& v) { return v.name == name; });
+            if(it == std::end(m_variables)) {
+                return make_error_code(error_code::no_such_variable);
+            }
+            const auto& object = *it;
+            auto bytes = to_aseba_variable(var.second, object.size);
+            if(!bytes) {
+                return bytes.error();
+            }
+            auto msg = std::make_shared<Aseba::SetVariables>(native_id(), object.start, bytes.value());
+            messages.push_back(std::move(msg));
+        }
+    }
+    write_messages(std::move(messages), std::move(cb));
+    return {};
+}
+
 void aseba_node::rename(const std::string& newName) {
     set_friendly_name(newName);
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));

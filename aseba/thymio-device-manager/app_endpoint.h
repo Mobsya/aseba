@@ -27,7 +27,6 @@ public:
     tcp::socket& tcp_socket() = delete;
 };
 
-
 template <typename Self>
 class application_endpoint_base<Self, websocket_t>
     : public std::enable_shared_from_this<application_endpoint_base<Self, websocket_t>> {
@@ -380,7 +379,17 @@ private:
     }
 
     void set_node_variables(uint32_t request_id, const aseba_node_registery::node_id& id, aseba_node::variables_map m) {
-        write_message(create_ack_response(request_id));
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("set_node_variables: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto err = n->set_node_variables(m, create_device_write_completion_cb(request_id));
+        if(err) {
+            mLogWarn("set_node_variables: invalid variables", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+        }
     }
 
     void send_aseba_program(uint32_t request_id, const aseba_node_registery::node_id& id, std::string program) {
