@@ -25,6 +25,7 @@ private Q_SLOTS:
     void onReadyRead();
     void onConnected();
     void write(const flatbuffers::DetachedBuffer& buffer);
+    void write(const tagged_detached_flatbuffer& buffer);
 
 Q_SIGNALS:
     void onMessage(const fb_message_ptr& msg);

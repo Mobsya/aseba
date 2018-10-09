@@ -40,14 +40,18 @@ private:
     const fb::Message* m_msg;
 };
 
+struct tagged_detached_flatbuffer {
+    flatbuffers::DetachedBuffer buffer;
+    mobsya::fb::AnyMessage tag;
+};
+
 template <typename MessageType>
-flatbuffers::DetachedBuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb,
-                                    const flatbuffers::Offset<MessageType>& offset) {
-    auto rootOffset =
-        mobsya::fb::CreateMessage(fb, mobsya::fb::AnyMessageTraits<MessageType>::enum_value, offset.Union());
+tagged_detached_flatbuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb, const flatbuffers::Offset<MessageType>& offset) {
+    constexpr auto type = mobsya::fb::AnyMessageTraits<MessageType>::enum_value;
+    auto rootOffset = mobsya::fb::CreateMessage(fb, type, offset.Union());
     fb.Finish(rootOffset);
     auto x = fb.ReleaseBufferPointer();
-    return x;
+    return tagged_detached_flatbuffer{std::move(x), type};
 }
 
 }  // namespace mobsya

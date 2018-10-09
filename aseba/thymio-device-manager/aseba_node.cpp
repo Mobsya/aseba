@@ -237,24 +237,31 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
 
 // ask the node to dump its memory.
 void aseba_node::request_variables() {
-    if(!m_resend_all_variables && m_description.protocolVersion >= 7) {
-        write_message(std::make_shared<Aseba::GetChangedVariables>(native_id()));
-        return;
-    }
 
-    uint16_t start = 0;
-    uint16_t size = 0;
-    for(const auto& var : m_variables) {
-        if(size + var.size > ASEBA_MAX_EVENT_ARG_COUNT - 2) {  // cut at variable boundaries
-            write_message(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
-            start += size;
-            size = 0;
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    messages.reserve(3);
+
+    {
+        std::unique_lock<std::mutex> lock(m_node_mutex);
+        if(!m_resend_all_variables && m_description.protocolVersion >= 7) {
+            messages.emplace_back(std::make_shared<Aseba::GetChangedVariables>(native_id()));
+        } else {
+            uint16_t start = 0;
+            uint16_t size = 0;
+            for(const auto& var : m_variables) {
+                if(size + var.size > ASEBA_MAX_EVENT_ARG_COUNT - 2) {  // cut at variable boundaries
+                    messages.emplace_back(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
+                    start += size;
+                    size = 0;
+                }
+                size += var.size;
+            }
+            if(size > 0)
+                messages.emplace_back(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
+            m_resend_all_variables = false;
         }
-        size += var.size;
     }
-    if(size > 0)
-        write_message(std::make_shared<Aseba::GetVariables>(native_id(), start, size));
-    m_resend_all_variables = false;
+    write_messages(std::move(messages));
 }
 
 void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
@@ -336,9 +343,10 @@ void aseba_node::schedule_variables_update() {
         if(ec)
             return;
         auto that = ptr.lock();
-        if(!that || that->m_status == status::disconnected)
+        if(!that || that->get_status() == status::disconnected)
             return;
 
+        // Only ask variables if we have at least 1 watcher
         if(!that->m_variables_changed_signal.empty())
             that->request_variables();
         that->schedule_variables_update();

@@ -168,7 +168,7 @@ public:
             mLogError("Error while reading aseba message {}", ec.message());
             return;
         }
-        mLogTrace("Message received : {} {}", ec.message(), msg->type);
+        mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
 
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
@@ -312,14 +312,14 @@ private:
     }
 
     void handle_write(boost::system::error_code ec) {
-        mLogDebug("Message sent : {}", ec.message());
+        std::unique_lock<std::mutex> _(m_msg_queue_lock);
+        mLogDebug("Message '{}' sent : {}", m_msg_queue.begin()->first->message_name(), ec.message());
         if(ec) {
             variant_ns::visit([](auto& underlying) { underlying.cancel(); }, m_endpoint);
             m_msg_queue.clear();
             return;
         }
 
-        std::unique_lock<std::mutex> _(m_msg_queue_lock);
         auto cb = m_msg_queue.begin()->second;
         if(cb) {
             boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
