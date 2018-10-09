@@ -10,6 +10,7 @@
 #include "tdm.h"
 #include "log.h"
 #include "app_token_manager.h"
+#include <pugixml.hpp>
 
 namespace mobsya {
 using tcp = boost::asio::ip::tcp;
