@@ -302,11 +302,13 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
             return;
         auto& var = *it;
         const auto var_start = start - var.start;
+        bool force_change = var.size != var.value.size();
         var.value.resize(var.size, 0);
         const auto count = std::min(std::ptrdiff_t(var.size - var_start), std::distance(data_it, std::end(data)));
         if(count < 0)
             break;
-        if(!std::equal(std::begin(var.value) + var_start, std::begin(var.value) + var_start + count, data_it,
+        if(force_change ||
+           !std::equal(std::begin(var.value) + var_start, std::begin(var.value) + var_start + count, data_it,
                        data_it + count)) {
             std::copy(data_it, data_it + count, std::begin(var.value) + var_start);
             vars.insert(std::pair{var.name, property::list_from_range(var.value)});
