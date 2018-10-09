@@ -463,14 +463,14 @@ void DashelInterface::sendMessage(const Message& message) {
 void DashelInterface::nodeProtocolVersionMismatch(unsigned nodeId, const std::wstring& nodeName,
                                                   uint16_t protocolVersion) {
     // show a different warning in function of the mismatch
-    if(protocolVersion > ASEBA_PROTOCOL_VERSION) {
+    if(protocolVersion > ASEBA_MAX_TARGET_PROTOCOL_VERSION) {
         QMessageBox::warning(nullptr, QApplication::tr("Protocol version mismatch"),
                              QApplication::tr("Aseba Studio uses an older protocol (%1) than node "
                                               "%0 (%2), please upgrade Aseba Studio.")
                                  .arg(QString::fromStdWString(nodeName.c_str()))
                                  .arg(ASEBA_PROTOCOL_VERSION)
                                  .arg(protocolVersion));
-    } else if(protocolVersion < ASEBA_PROTOCOL_VERSION) {
+    } else if(protocolVersion < ASEBA_MIN_TARGET_PROTOCOL_VERSION) {
         QMessageBox::warning(nullptr, QApplication::tr("Protocol version mismatch"),
                              QApplication::tr("Node %0 uses an older protocol (%2) than Aseba "
                                               "Studio (%1), please upgrade the node firmware.")
