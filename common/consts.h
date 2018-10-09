@@ -39,6 +39,9 @@
 /*! minimal accepted protocol version in targets */
 #define ASEBA_MIN_TARGET_PROTOCOL_VERSION 4
 
+/*! maximal accepted protocol version - this is an escape hatch if a breaking change happens !*/
+#define ASEBA_MAX_TARGET_PROTOCOL_VERSION 100
+
 /*! default listen target for aseba */
 #define ASEBA_DEFAULT_LISTEN_TARGET "tcpin:33333"
 
