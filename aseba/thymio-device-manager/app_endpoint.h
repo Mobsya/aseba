@@ -160,12 +160,12 @@ public:
             [this](boost::system::error_code ec, fb_message_ptr&& msg) { this->handle_read(ec, std::move(msg)); });
     }
 
-    void write_message(flatbuffers::DetachedBuffer&& buffer) {
+    void write_message(tagged_detached_flatbuffer&& buffer) {
         m_queue.push_back(std::move(buffer));
         if(m_queue.size() > 1 || m_protocol_version == 0)
             return;
 
-        base::do_write_message(m_queue.front());
+        base::do_write_message(m_queue.front().buffer);
     }
 
 
@@ -177,7 +177,7 @@ public:
         read_message();  // queue the next read early
 
 
-        mLogTrace("{} -> {} ", ec.message(), EnumNameAnyMessage(msg.message_type()));
+        mLogTrace("-> {}", EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
             case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription: {
@@ -231,12 +231,13 @@ public:
     }
 
     void handle_write(boost::system::error_code ec) {
+        mLogTrace("<- {} : {} ", EnumNameAnyMessage(m_queue.front().tag), ec.message());
         if(ec) {
             mLogError("handle_write : error {}", ec.message());
         }
         m_queue.erase(m_queue.begin());
         if(!m_queue.empty()) {
-            base::do_write_message(m_queue.front());
+            base::do_write_message(m_queue.front().buffer);
         }
     }
 
@@ -531,7 +532,7 @@ private:
     }
 
     boost::asio::io_context& m_ctx;
-    std::vector<flatbuffers::DetachedBuffer> m_queue;
+    std::vector<tagged_detached_flatbuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
     std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>

@@ -24,6 +24,11 @@ void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer&
     m_socket->flush();
 }
 
+void ThymioDeviceManagerClientEndpoint::write(const tagged_detached_flatbuffer& buffer) {
+    write(buffer.buffer);
+}
+
+
 QHostAddress ThymioDeviceManagerClientEndpoint::peerAddress() const {
     return m_socket->peerAddress();
 }

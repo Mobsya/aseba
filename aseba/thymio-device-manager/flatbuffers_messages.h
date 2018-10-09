@@ -11,32 +11,32 @@
 namespace mobsya {
 
 
-flatbuffers::DetachedBuffer create_nodes_list_request() {
+tagged_detached_flatbuffer create_nodes_list_request() {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateRequestListOfNodes(fb);
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer create_error_response(uint32_t request_id, fb::ErrorType error) {
+tagged_detached_flatbuffer create_error_response(uint32_t request_id, fb::ErrorType error) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateError(fb, request_id, error);
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer create_compilation_error_response(uint32_t request_id) {
+tagged_detached_flatbuffer create_compilation_error_response(uint32_t request_id) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateCompilationError(fb, request_id);
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer create_ack_response(uint32_t request_id) {
+tagged_detached_flatbuffer create_ack_response(uint32_t request_id) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateRequestCompleted(fb, request_id);
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
-                                                           const aseba_node_registery::node_id& id) {
+tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
+                                                          const aseba_node_registery::node_id& id) {
 
     Aseba::TargetDescription desc = n.vm_description();
     flatbuffers::FlatBufferBuilder fb;
@@ -74,8 +74,8 @@ flatbuffers::DetachedBuffer serialize_aseba_vm_description(uint32_t request_id, 
     return wrap_fb(fb, offset);
 }
 
-flatbuffers::DetachedBuffer serialize_changed_variables(const mobsya::aseba_node& n,
-                                                        const mobsya::aseba_node::variables_map& vars) {
+tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n,
+                                                       const mobsya::aseba_node::variables_map& vars) {
     flatbuffers::FlatBufferBuilder fb;
     flexbuffers::Builder flexbuilder;
     auto id = n.uuid().fb(fb);
@@ -101,9 +101,9 @@ mobsya::aseba_node::variables_map variables(const fb::SetNodeVariables& msg) {
     for(const auto& offset : *msg.vars()) {
         if(!offset->name() || !offset->value())
             continue;
-        auto k  = offset->name()->string_view();
-        auto v  = offset->value_flexbuffer_root();
-        auto p  = flexbuffer_to_property(v);
+        auto k = offset->name()->string_view();
+        auto v = offset->value_flexbuffer_root();
+        auto p = flexbuffer_to_property(v);
         if(!p)
             continue;
         vars.insert_or_assign(std::string(k), std::move(*p));

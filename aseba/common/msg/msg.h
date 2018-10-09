@@ -100,6 +100,11 @@ public:
     virtual void deserializeSpecific(SerializationBuffer& buffer) = 0;
     virtual void dumpSpecific(std::wostream& stream) const = 0;
 
+public:
+    const char* message_name() const {
+        return operator const char*();
+    }
+
 protected:
     virtual operator const char*() const {
         return "message super class";
