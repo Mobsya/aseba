@@ -103,6 +103,16 @@ table NodeVariablesChanged {
    vars:[NodeVariable];
 }
 
+table Event {
+    name: string (key);
+    value: [ubyte] (flexbuffer);
+}
+
+table EventsEmitted {
+   node_id:NodeId;
+   events:[Event];
+}
+
 /// Message sent by the server when a node changes status.
 /// This messages is automatically sent when the application first connects and each time one or more node change status
 table NodesChanged {
@@ -192,6 +202,12 @@ table RequestAsebaCodeLoad {
     program:string;
 }
 
+table RequestAeslCodeLoad {
+    request_id:uint;
+    node_id:NodeId;
+    aesl:string;
+}
+
 table RequestAsebaCodeRun {
     request_id:uint;
     node_id:NodeId;
@@ -220,7 +236,18 @@ table CompilationError {
 }
 
 table RequestCompleted {
-  request_id:uint;
+    request_id:uint;
+}
+
+table EventDescription {
+    name:string;
+    fixed_sized:uint;
+}
+
+table RegisterEvent {
+    request_id:uint;
+    node_id:NodeId;
+    events:[EventDescription];
 }
 
 union AnyMessage {
@@ -240,7 +267,10 @@ union AnyMessage {
     CompilationError,
     WatchNode,
     NodeVariablesChanged,
-    SetNodeVariables
+    SetNodeVariables,
+    RegisterEvent,
+    EventsEmitted,
+
 }
 
 table Message {
