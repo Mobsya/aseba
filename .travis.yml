@@ -125,6 +125,7 @@ script:
     #export PATH="(brew --prefix llvm)/bin:${PATH}"
     cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
     ninja -v
+    ctest .
   fi
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
       ls /opt/qt510/
@@ -132,6 +133,7 @@ script:
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
       cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
       ninja -v
+      ctest .
   fi
   if [[ "$ANDROID" ]]; then
       export ANDROID_NDK=$HOME/android-ndk-r10e
@@ -140,6 +142,7 @@ script:
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.11.1/android_armv7/"
       cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake "-DCMAKE_PROGRAM_PATH=$(dirname $(which npm))"
       ninja -v
+      ctest .
   fi
   set +e
 
