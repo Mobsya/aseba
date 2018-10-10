@@ -7,4 +7,4 @@ add_executable(tdm_tests
 )
 set_property(TARGET tdm_tests PROPERTY CXX_STANDARD 17)
 target_link_libraries(tdm_tests catch2 thymio-device-manager-lib)
-add_test(tdm_tests tdm_tests)
+add_test(NAME tdm_tests COMMAND tdm_tests)
