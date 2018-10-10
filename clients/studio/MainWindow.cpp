@@ -2857,7 +2857,8 @@ namespace Aseba
 	void MainWindow::addErrorEvent(unsigned node, unsigned line, const QString& message)
 	{
 		NodeTab* tab = getTabFromId(node);
-		Q_ASSERT(tab);
+		if(!tab)
+			return;
 		
 		if (tab->setEditorProperty("executionError", QVariant(), line, true))
 		{
@@ -2880,7 +2881,8 @@ namespace Aseba
 	void MainWindow::executionPosChanged(unsigned node, unsigned line)
 	{
 		NodeTab* tab = getTabFromId(node);
-		Q_ASSERT(tab);
+		if(!tab)
+			return;
 		
 		tab->executionPosChanged(line);
 	}
@@ -2889,7 +2891,8 @@ namespace Aseba
 	void MainWindow::executionModeChanged(unsigned node, Target::ExecutionMode mode)
 	{
 		NodeTab* tab = getTabFromId(node);
-		Q_ASSERT(tab);
+		if(!tab)
+			return;
 		
 		tab->executionModeChanged(mode);
 	}
@@ -2898,7 +2901,8 @@ namespace Aseba
 	void MainWindow::variablesMemoryEstimatedDirty(unsigned node)
 	{
 		NodeTab* tab = getTabFromId(node);
-		Q_ASSERT(tab);
+		if(!tab)
+			return;
 		
 		tab->refreshMemoryClicked();
 	}
@@ -2907,7 +2911,8 @@ namespace Aseba
 	void MainWindow::variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector &variables)
 	{
 		NodeTab* tab = getTabFromId(node);
-		Q_ASSERT(tab);
+		if(!tab)
+			return;
 		
 		tab->vmMemoryModel->setVariablesData(start, variables);
 	}
@@ -2916,7 +2921,8 @@ namespace Aseba
 	void MainWindow::breakpointSetResult(unsigned node, unsigned line, bool success)
 	{
 		NodeTab* tab = getTabFromId(node);
-		Q_ASSERT(tab);
+		if(!tab)
+			return;
 		
 		tab->breakpointSetResult(line, success);
 	}
