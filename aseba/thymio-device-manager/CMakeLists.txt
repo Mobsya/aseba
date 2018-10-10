@@ -5,6 +5,9 @@ add_library(thymio-device-manager-lib STATIC
     log.cpp
     error.cpp
     error.h
+    events.h
+    aesl_parser.h
+    aesl_parser.cpp
     aseba_message_parser.h
     aseba_description_receiver.h
     aseba_message_writer.h
