@@ -4,7 +4,7 @@
 #include <aseba/common/utils/utils.h>
 #include <aseba/compiler/compiler.h>
 #include <fmt/format.h>
-//#include <fmt/ranges.h>
+#include "aesl_parser.h"
 
 namespace mobsya {
 
@@ -118,16 +118,47 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
     endpoint->write_messages(std::move(messages), std::move(cb));
 }
 
-bool aseba_node::send_aseba_program(const std::string& program, write_callback&& cb) {
+bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb) {
     std::unique_lock<std::mutex> _(m_node_mutex);
 
     Aseba::Compiler compiler;
     Aseba::CommonDefinitions defs;
     compiler.setTargetDescription(&m_description);
     compiler.setCommonDefinitions(&defs);
+    std::wstring code;
 
-    auto wprogram = Aseba::UTF8ToWString(program);
-    std::wistringstream is(wprogram);
+    if(language == fb::ProgrammingLanguage::Aesl) {
+        auto aesl = load_aesl(program);
+        if(!aesl) {
+            mLogError("Invalid Aesl");
+            return false;
+        }
+        auto [constants, events, nodes] = aesl->parse_all();
+        if(!constants || !events || !nodes || nodes->size() != 1) {
+            mLogError("Invalid Aesl");
+            return false;
+        }
+
+        for(const auto& constant : *constants) {
+            // Let poorly defined constants fail the compilation later
+            if(!constant.second.is_integral())
+                continue;
+            auto v = numeric_cast<int16_t>(property::integral_t(constant.second));
+            if(v)
+                defs.constants.emplace_back(Aseba::UTF8ToWString(constant.first), *v);
+        }
+        for(const auto& event : *events) {
+            // Let poorly defined events fail the compilation later
+            if(event.type != event_type::aseba)
+                continue;
+            defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
+        }
+        code = Aseba::UTF8ToWString((*nodes)[0].code);
+    } else {
+        code = Aseba::UTF8ToWString(program);
+    }
+
+    std::wistringstream is(code);
     Aseba::Error error;
     Aseba::BytecodeVector bytecode;
     unsigned allocatedVariablesCount;

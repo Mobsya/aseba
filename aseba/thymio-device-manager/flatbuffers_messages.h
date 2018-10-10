@@ -10,6 +10,7 @@
 
 namespace mobsya {
 
+using vm_language = fb::ProgrammingLanguage;
 
 tagged_detached_flatbuffer create_nodes_list_request() {
     flatbuffers::FlatBufferBuilder fb;

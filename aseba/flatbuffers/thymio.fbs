@@ -84,6 +84,11 @@ enum WatchableInfo : int {
     Variables = 0x01,
 }
 
+enum ProgrammingLanguage : int {
+    Aseba = 1,
+    Aesl  = 2,
+}
+
 /// Represent a node
 table Node {
   node_id:NodeId;
@@ -196,19 +201,14 @@ table UnlockNode {
   node_id:NodeId;
 }
 
-table RequestAsebaCodeLoad {
+table RequestCodeLoad {
     request_id:uint;
     node_id:NodeId;
+    language:ProgrammingLanguage =Aseba;
     program:string;
 }
 
-table RequestAeslCodeLoad {
-    request_id:uint;
-    node_id:NodeId;
-    aesl:string;
-}
-
-table RequestAsebaCodeRun {
+table RequestCodeRun {
     request_id:uint;
     node_id:NodeId;
 }
@@ -258,8 +258,8 @@ union AnyMessage {
     UnlockNode,
     RenameNode,
     StopNode,
-    RequestAsebaCodeLoad,
-    RequestAsebaCodeRun,
+    RequestCodeLoad,
+    RequestCodeRun,
     NodesChanged,
     NodeAsebaVMDescription,
     RequestCompleted,
@@ -270,7 +270,6 @@ union AnyMessage {
     SetNodeVariables,
     RegisterEvent,
     EventsEmitted,
-
 }
 
 table Message {

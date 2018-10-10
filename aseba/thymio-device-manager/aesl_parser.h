@@ -33,6 +33,10 @@ public:
     expected<std::vector<event>> global_events() const;
     expected<std::vector<node_info>> nodes() const;
 
+    auto parse_all() const {
+        return std::tuple{constants(), global_events(), nodes()};
+    }
+
 private:
     pugi::xml_document m_doc;
 };
