@@ -1,5 +1,9 @@
 ## Authors
 
+VPL2 was originally developed in a separate repository:
+  https://github.com/aseba-community/thymio-vpl2/
+The exact contribution of each author can be found there.
+
 * [Dr. Stéphane Magnenat](http://stephane.magnenat.net), EPFL<sup>[1](#mobots)</sup> (8/2015–7/2016) and ETH GTC<sup>[2](#gtc)</sup> (8/2016–)
 * [Martin Voelkle](http://sampla.ch), EPFL<sup>[1](#mobots)</sup> (8/2015–7/2016) and Mobsya<sup>[3](#mobsya)</sup> (8/2016–)
 * [Maria María Beltrán](http://mariamari-a.com), EPFL<sup>[1](#mobots)</sup> (8/2015–7/2016)
@@ -16,13 +20,6 @@ During early testing, this project received feedback from:
 * [Dr. Michael Bonani](http://mobsya.org)<sup>[3](#mobsya)</sup>
 * [Christophe Barraud](http://mobsya.org)<sup>[3](#mobsya)</sup>
 
-## Dependencies
-
-Thymio VPL mobile builds on the following libraries:
-* [Aseba](https://github.com/aseba-community/aseba)
-* [Enki](https://github.com/enki-community/enki/)
-* [Dashel](http://aseba-community.github.io/dashel/)
-* [Qt 5](http://doc.qt.io/qt-5/)
 
 ## Institutions
 
