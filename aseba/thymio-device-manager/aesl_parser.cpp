@@ -62,7 +62,7 @@ aesl_parser::expected<std::vector<aesl_parser::node_info>> aesl_parser::nodes() 
             return tl::make_unexpected(error::invalid_event_type);
         }
         node_info node_info;
-        node_info.name = std::optional<std::string>{name_attr.as_string()};
+        node_info.name = std::optional<std::string>{std::string(name_attr.as_string())};
         node_info.code = txt.as_string();
         try {
             auto uuid = boost::uuids::string_generator()(id_attr.as_string());
