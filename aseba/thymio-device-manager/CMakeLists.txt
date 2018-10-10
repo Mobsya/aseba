@@ -45,7 +45,7 @@ if(WIN32)
         serial_usb_device.h
     )
     target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
-    target_link_libraries(thymio-device-manager-lib iphlpapi)
+    target_link_libraries(thymio-device-manager-lib PUBLIC iphlpapi)
 else()
     target_sources(thymio-device-manager-lib PRIVATE
         usbserver.cpp
@@ -61,7 +61,7 @@ endif()
 
 
 target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL)
-target_link_libraries(thymio-device-manager-lib
+target_link_libraries(thymio-device-manager-lib PUBLIC
     asebacommon
     asebacompiler
     thymio-flatbuffers
@@ -76,9 +76,9 @@ target_link_libraries(thymio-device-manager-lib
     pugixml
        )
 if(WIN32)
-    target_link_libraries(thymio-device-manager-lib bcrypt)
+    target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt)
 else()
-    target_link_libraries(thymio-device-manager-lib libusb)
+    target_link_libraries(thymio-device-manager-lib PUBLIC libusb)
 endif()
 
 if (MSVC)
@@ -86,7 +86,7 @@ if (MSVC)
 endif()
 
 add_executable(thymio-device-manager main.cpp)
-target_link_libraries(thymio-device-manager thymio-device-manager-lib)
+target_link_libraries(thymio-device-manager PUBLIC thymio-device-manager-lib)
 
 install(TARGETS thymio-device-manager RUNTIME DESTINATION bin)
 codesign(thymio-device-manager)
