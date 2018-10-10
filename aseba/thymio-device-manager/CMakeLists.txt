@@ -1,5 +1,5 @@
 set(CMAKE_CXX_STANDARD 17)
-add_executable(thymio-device-manager
+add_library(thymio-device-manager-lib STATIC
     main.cpp
     log.h
     log.cpp
@@ -34,17 +34,17 @@ add_executable(thymio-device-manager
 )
 
 if(WIN32)
-    target_sources(thymio-device-manager PRIVATE
+    target_sources(thymio-device-manager-lib PRIVATE
         serialacceptor.h
         serialacceptor.cpp
         serialserver.h
         serialserver.cpp
         serial_usb_device.h
     )
-    target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
-	target_link_libraries(thymio-device-manager iphlpapi)
+    target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
+    target_link_libraries(thymio-device-manager-lib iphlpapi)
 else()
-    target_sources(thymio-device-manager PRIVATE
+    target_sources(thymio-device-manager-lib PRIVATE
         usbserver.cpp
         usbserver.h
         usbacceptor.h
@@ -53,12 +53,12 @@ else()
         usbdevice.h
         usbcontext.h
     )
-    target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_USB)
+    target_compile_definitions(thymio-device-manager-lib PUBLIC MOBSYA_TDM_ENABLE_USB)
 endif()
 
 
-target_compile_definitions(thymio-device-manager PUBLIC -DSPDLOG_FMT_EXTERNAL)
-target_link_libraries(thymio-device-manager
+target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL)
+target_link_libraries(thymio-device-manager-lib
     asebacommon
     asebacompiler
     thymio-flatbuffers
@@ -73,14 +73,17 @@ target_link_libraries(thymio-device-manager
     pugixml
        )
 if(WIN32)
-    target_link_libraries(thymio-device-manager bcrypt)
+    target_link_libraries(thymio-device-manager-lib bcrypt)
 else()
-    target_link_libraries(thymio-device-manager libusb)
+    target_link_libraries(thymio-device-manager-lib libusb)
 endif()
 
 if (MSVC)
-    target_compile_options(thymio-device-manager PRIVATE /bigobj)
+    target_compile_options(thymio-device-manager-lib PUBLIC /bigobj)
 endif()
+
+add_executable(thymio-device-manager main.cpp)
+target_link_libraries(thymio-device-manager thymio-device-manager-lib)
 
 install(TARGETS thymio-device-manager RUNTIME DESTINATION bin)
 codesign(thymio-device-manager)
