@@ -127,32 +127,31 @@ table NodeAsebaVMDescription {
   bytecode_size:uint;
   data_size:uint;
   stack_size:uint;
-  variables:[NamedVariable];
-  events:[LocalEvent];
-  functions:[NativeFunction];
+  variables:[AsebaNamedVariable];
+  events:[AsebaEvent];
+  functions:[AsebaNativeFunction];
 }
 
-
-table NamedVariable {
+table AsebaNamedVariable {
   index: ushort;
   name:string;
   size:uint;
 }
 
-table LocalEvent {
+table AsebaEvent {
   index: ushort;
   name:string;
   description:string;
 }
 
-table NativeFunction {
+table AsebaNativeFunction {
   index: ushort;
   name:string;
   description:string;
-  parameters:[NativeFunctionParameter];
+  parameters:[AsebaNativeFunctionParameter];
 }
 
-table NativeFunctionParameter {
+table AsebaNativeFunctionParameter {
   name:string;
   size:uint;
 }
