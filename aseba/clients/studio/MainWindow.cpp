@@ -2533,7 +2533,8 @@ void MainWindow::nodeSpecificError(unsigned node, unsigned line, const QString& 
 //! Generic part of error events reporting
 void MainWindow::addErrorEvent(unsigned node, unsigned line, const QString& message) {
     NodeTab* tab = getTabFromId(node);
-    Q_ASSERT(tab);
+    if(!tab)
+        return;
 
     if(tab->setEditorProperty("executionError", QVariant(), line, true)) {
         // tab->rehighlighting = true;
@@ -2554,7 +2555,8 @@ void MainWindow::addErrorEvent(unsigned node, unsigned line, const QString& mess
 //! The program counter of a node has changed, causing a change of position in source code.
 void MainWindow::executionPosChanged(unsigned node, unsigned line) {
     NodeTab* tab = getTabFromId(node);
-    Q_ASSERT(tab);
+    if(!tab)
+        return;
 
     tab->executionPosChanged(line);
 }
@@ -2562,7 +2564,8 @@ void MainWindow::executionPosChanged(unsigned node, unsigned line) {
 //! The mode of execution of a node (stop, run, step by step) has changed.
 void MainWindow::executionModeChanged(unsigned node, Target::ExecutionMode mode) {
     NodeTab* tab = getTabFromId(node);
-    Q_ASSERT(tab);
+    if(!tab)
+        return;
 
     tab->executionModeChanged(mode);
 }
@@ -2570,7 +2573,8 @@ void MainWindow::executionModeChanged(unsigned node, Target::ExecutionMode mode)
 //! The execution state logic thinks variables might need a refresh
 void MainWindow::variablesMemoryEstimatedDirty(unsigned node) {
     NodeTab* tab = getTabFromId(node);
-    Q_ASSERT(tab);
+    if(!tab)
+        return;
 
     tab->refreshMemoryClicked();
 }
@@ -2578,7 +2582,8 @@ void MainWindow::variablesMemoryEstimatedDirty(unsigned node) {
 //! The content of the variables memory of a node has changed.
 void MainWindow::variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables) {
     NodeTab* tab = getTabFromId(node);
-    Q_ASSERT(tab);
+    if(!tab)
+        return;
 
     tab->vmMemoryModel->setVariablesData(start, variables);
 }
@@ -2586,7 +2591,8 @@ void MainWindow::variablesMemoryChanged(unsigned node, unsigned start, const Var
 //! The result of a set breakpoint is known
 void MainWindow::breakpointSetResult(unsigned node, unsigned line, bool success) {
     NodeTab* tab = getTabFromId(node);
-    Q_ASSERT(tab);
+    if(!tab)
+        return;
 
     tab->breakpointSetResult(line, success);
 }
