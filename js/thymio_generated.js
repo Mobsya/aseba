@@ -110,6 +110,14 @@ mobsya.fb.WatchableInfo = {
 /**
  * @enum
  */
+mobsya.fb.ProgrammingLanguage = {
+  Aseba: 1, 1: 'Aseba',
+  Aesl: 2, 2: 'Aesl'
+};
+
+/**
+ * @enum
+ */
 mobsya.fb.AnyMessage = {
   NONE: 0, 0: 'NONE',
   ConnectionHandshake: 1, 1: 'ConnectionHandshake',
@@ -119,8 +127,8 @@ mobsya.fb.AnyMessage = {
   UnlockNode: 5, 5: 'UnlockNode',
   RenameNode: 6, 6: 'RenameNode',
   StopNode: 7, 7: 'StopNode',
-  RequestAsebaCodeLoad: 8, 8: 'RequestAsebaCodeLoad',
-  RequestAsebaCodeRun: 9, 9: 'RequestAsebaCodeRun',
+  RequestCodeLoad: 8, 8: 'RequestCodeLoad',
+  RequestCodeRun: 9, 9: 'RequestCodeRun',
   NodesChanged: 10, 10: 'NodesChanged',
   NodeAsebaVMDescription: 11, 11: 'NodeAsebaVMDescription',
   RequestCompleted: 12, 12: 'RequestCompleted',
@@ -2670,7 +2678,7 @@ mobsya.fb.UnlockNode.endUnlockNode = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.RequestAsebaCodeLoad = function() {
+mobsya.fb.RequestCodeLoad = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -2685,9 +2693,9 @@ mobsya.fb.RequestAsebaCodeLoad = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.RequestAsebaCodeLoad}
+ * @returns {mobsya.fb.RequestCodeLoad}
  */
-mobsya.fb.RequestAsebaCodeLoad.prototype.__init = function(i, bb) {
+mobsya.fb.RequestCodeLoad.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -2695,17 +2703,17 @@ mobsya.fb.RequestAsebaCodeLoad.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.RequestAsebaCodeLoad=} obj
- * @returns {mobsya.fb.RequestAsebaCodeLoad}
+ * @param {mobsya.fb.RequestCodeLoad=} obj
+ * @returns {mobsya.fb.RequestCodeLoad}
  */
-mobsya.fb.RequestAsebaCodeLoad.getRootAsRequestAsebaCodeLoad = function(bb, obj) {
-  return (obj || new mobsya.fb.RequestAsebaCodeLoad).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.RequestCodeLoad.getRootAsRequestCodeLoad = function(bb, obj) {
+  return (obj || new mobsya.fb.RequestCodeLoad).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-mobsya.fb.RequestAsebaCodeLoad.prototype.requestId = function() {
+mobsya.fb.RequestCodeLoad.prototype.requestId = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -2714,7 +2722,7 @@ mobsya.fb.RequestAsebaCodeLoad.prototype.requestId = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.RequestAsebaCodeLoad.prototype.mutate_request_id = function(value) {
+mobsya.fb.RequestCodeLoad.prototype.mutate_request_id = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 4);
 
   if (offset === 0) {
@@ -2729,32 +2737,55 @@ mobsya.fb.RequestAsebaCodeLoad.prototype.mutate_request_id = function(value) {
  * @param {mobsya.fb.NodeId=} obj
  * @returns {mobsya.fb.NodeId|null}
  */
-mobsya.fb.RequestAsebaCodeLoad.prototype.nodeId = function(obj) {
+mobsya.fb.RequestCodeLoad.prototype.nodeId = function(obj) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+};
+
+/**
+ * @returns {mobsya.fb.ProgrammingLanguage}
+ */
+mobsya.fb.RequestCodeLoad.prototype.language = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? /** @type {mobsya.fb.ProgrammingLanguage} */ (this.bb.readInt32(this.bb_pos + offset)) : mobsya.fb.ProgrammingLanguage.Aseba;
+};
+
+/**
+ * @param {mobsya.fb.ProgrammingLanguage} value
+ * @returns {boolean}
+ */
+mobsya.fb.RequestCodeLoad.prototype.mutate_language = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeInt32(this.bb_pos + offset, value);
+  return true;
 };
 
 /**
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.RequestAsebaCodeLoad.prototype.program = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 8);
+mobsya.fb.RequestCodeLoad.prototype.program = function(optionalEncoding) {
+  var offset = this.bb.__offset(this.bb_pos, 10);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.RequestAsebaCodeLoad.startRequestAsebaCodeLoad = function(builder) {
-  builder.startObject(3);
+mobsya.fb.RequestCodeLoad.startRequestCodeLoad = function(builder) {
+  builder.startObject(4);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {number} requestId
  */
-mobsya.fb.RequestAsebaCodeLoad.addRequestId = function(builder, requestId) {
+mobsya.fb.RequestCodeLoad.addRequestId = function(builder, requestId) {
   builder.addFieldInt32(0, requestId, 0);
 };
 
@@ -2762,23 +2793,31 @@ mobsya.fb.RequestAsebaCodeLoad.addRequestId = function(builder, requestId) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nodeIdOffset
  */
-mobsya.fb.RequestAsebaCodeLoad.addNodeId = function(builder, nodeIdOffset) {
+mobsya.fb.RequestCodeLoad.addNodeId = function(builder, nodeIdOffset) {
   builder.addFieldOffset(1, nodeIdOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {mobsya.fb.ProgrammingLanguage} language
+ */
+mobsya.fb.RequestCodeLoad.addLanguage = function(builder, language) {
+  builder.addFieldInt32(2, language, mobsya.fb.ProgrammingLanguage.Aseba);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} programOffset
  */
-mobsya.fb.RequestAsebaCodeLoad.addProgram = function(builder, programOffset) {
-  builder.addFieldOffset(2, programOffset, 0);
+mobsya.fb.RequestCodeLoad.addProgram = function(builder, programOffset) {
+  builder.addFieldOffset(3, programOffset, 0);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.RequestAsebaCodeLoad.endRequestAsebaCodeLoad = function(builder) {
+mobsya.fb.RequestCodeLoad.endRequestCodeLoad = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -2786,7 +2825,7 @@ mobsya.fb.RequestAsebaCodeLoad.endRequestAsebaCodeLoad = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.RequestAeslCodeLoad = function() {
+mobsya.fb.RequestCodeRun = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -2801,9 +2840,9 @@ mobsya.fb.RequestAeslCodeLoad = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.RequestAeslCodeLoad}
+ * @returns {mobsya.fb.RequestCodeRun}
  */
-mobsya.fb.RequestAeslCodeLoad.prototype.__init = function(i, bb) {
+mobsya.fb.RequestCodeRun.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -2811,17 +2850,17 @@ mobsya.fb.RequestAeslCodeLoad.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.RequestAeslCodeLoad=} obj
- * @returns {mobsya.fb.RequestAeslCodeLoad}
+ * @param {mobsya.fb.RequestCodeRun=} obj
+ * @returns {mobsya.fb.RequestCodeRun}
  */
-mobsya.fb.RequestAeslCodeLoad.getRootAsRequestAeslCodeLoad = function(bb, obj) {
-  return (obj || new mobsya.fb.RequestAeslCodeLoad).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.RequestCodeRun.getRootAsRequestCodeRun = function(bb, obj) {
+  return (obj || new mobsya.fb.RequestCodeRun).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-mobsya.fb.RequestAeslCodeLoad.prototype.requestId = function() {
+mobsya.fb.RequestCodeRun.prototype.requestId = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -2830,7 +2869,7 @@ mobsya.fb.RequestAeslCodeLoad.prototype.requestId = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.RequestAeslCodeLoad.prototype.mutate_request_id = function(value) {
+mobsya.fb.RequestCodeRun.prototype.mutate_request_id = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 4);
 
   if (offset === 0) {
@@ -2845,123 +2884,7 @@ mobsya.fb.RequestAeslCodeLoad.prototype.mutate_request_id = function(value) {
  * @param {mobsya.fb.NodeId=} obj
  * @returns {mobsya.fb.NodeId|null}
  */
-mobsya.fb.RequestAeslCodeLoad.prototype.nodeId = function(obj) {
-  var offset = this.bb.__offset(this.bb_pos, 6);
-  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
-};
-
-/**
- * @param {flatbuffers.Encoding=} optionalEncoding
- * @returns {string|Uint8Array|null}
- */
-mobsya.fb.RequestAeslCodeLoad.prototype.aesl = function(optionalEncoding) {
-  var offset = this.bb.__offset(this.bb_pos, 8);
-  return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- */
-mobsya.fb.RequestAeslCodeLoad.startRequestAeslCodeLoad = function(builder) {
-  builder.startObject(3);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {number} requestId
- */
-mobsya.fb.RequestAeslCodeLoad.addRequestId = function(builder, requestId) {
-  builder.addFieldInt32(0, requestId, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} nodeIdOffset
- */
-mobsya.fb.RequestAeslCodeLoad.addNodeId = function(builder, nodeIdOffset) {
-  builder.addFieldOffset(1, nodeIdOffset, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} aeslOffset
- */
-mobsya.fb.RequestAeslCodeLoad.addAesl = function(builder, aeslOffset) {
-  builder.addFieldOffset(2, aeslOffset, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @returns {flatbuffers.Offset}
- */
-mobsya.fb.RequestAeslCodeLoad.endRequestAeslCodeLoad = function(builder) {
-  var offset = builder.endObject();
-  return offset;
-};
-
-/**
- * @constructor
- */
-mobsya.fb.RequestAsebaCodeRun = function() {
-  /**
-   * @type {flatbuffers.ByteBuffer}
-   */
-  this.bb = null;
-
-  /**
-   * @type {number}
-   */
-  this.bb_pos = 0;
-};
-
-/**
- * @param {number} i
- * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.RequestAsebaCodeRun}
- */
-mobsya.fb.RequestAsebaCodeRun.prototype.__init = function(i, bb) {
-  this.bb_pos = i;
-  this.bb = bb;
-  return this;
-};
-
-/**
- * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.RequestAsebaCodeRun=} obj
- * @returns {mobsya.fb.RequestAsebaCodeRun}
- */
-mobsya.fb.RequestAsebaCodeRun.getRootAsRequestAsebaCodeRun = function(bb, obj) {
-  return (obj || new mobsya.fb.RequestAsebaCodeRun).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @returns {number}
- */
-mobsya.fb.RequestAsebaCodeRun.prototype.requestId = function() {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-};
-
-/**
- * @param {number} value
- * @returns {boolean}
- */
-mobsya.fb.RequestAsebaCodeRun.prototype.mutate_request_id = function(value) {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-
-  if (offset === 0) {
-    return false;
-  }
-
-  this.bb.writeUint32(this.bb_pos + offset, value);
-  return true;
-};
-
-/**
- * @param {mobsya.fb.NodeId=} obj
- * @returns {mobsya.fb.NodeId|null}
- */
-mobsya.fb.RequestAsebaCodeRun.prototype.nodeId = function(obj) {
+mobsya.fb.RequestCodeRun.prototype.nodeId = function(obj) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
 };
@@ -2969,7 +2892,7 @@ mobsya.fb.RequestAsebaCodeRun.prototype.nodeId = function(obj) {
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.RequestAsebaCodeRun.startRequestAsebaCodeRun = function(builder) {
+mobsya.fb.RequestCodeRun.startRequestCodeRun = function(builder) {
   builder.startObject(2);
 };
 
@@ -2977,7 +2900,7 @@ mobsya.fb.RequestAsebaCodeRun.startRequestAsebaCodeRun = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {number} requestId
  */
-mobsya.fb.RequestAsebaCodeRun.addRequestId = function(builder, requestId) {
+mobsya.fb.RequestCodeRun.addRequestId = function(builder, requestId) {
   builder.addFieldInt32(0, requestId, 0);
 };
 
@@ -2985,7 +2908,7 @@ mobsya.fb.RequestAsebaCodeRun.addRequestId = function(builder, requestId) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nodeIdOffset
  */
-mobsya.fb.RequestAsebaCodeRun.addNodeId = function(builder, nodeIdOffset) {
+mobsya.fb.RequestCodeRun.addNodeId = function(builder, nodeIdOffset) {
   builder.addFieldOffset(1, nodeIdOffset, 0);
 };
 
@@ -2993,7 +2916,7 @@ mobsya.fb.RequestAsebaCodeRun.addNodeId = function(builder, nodeIdOffset) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun = function(builder) {
+mobsya.fb.RequestCodeRun.endRequestCodeRun = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

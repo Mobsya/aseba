@@ -206,13 +206,14 @@ public:
                 this->unlock_node(lock_msg->request_id(), lock_msg->node_id());
                 break;
             }
-            case mobsya::fb::AnyMessage::RequestAsebaCodeLoad: {
-                auto req = msg.as<fb::RequestAsebaCodeLoad>();
-                this->send_aseba_program(req->request_id(), req->node_id(), req->program()->str());
+            case mobsya::fb::AnyMessage::RequestCodeLoad: {
+                auto req = msg.as<fb::RequestCodeLoad>();
+                this->send_program(req->request_id(), req->node_id(), vm_language(req->language()),
+                                   req->program()->str());
                 break;
             }
-            case mobsya::fb::AnyMessage::RequestAsebaCodeRun: {
-                auto req = msg.as<fb::RequestAsebaCodeRun>();
+            case mobsya::fb::AnyMessage::RequestCodeRun: {
+                auto req = msg.as<fb::RequestCodeRun>();
                 this->run_aseba_program(req->request_id(), req->node_id());
                 break;
             }
@@ -394,14 +395,15 @@ private:
         }
     }
 
-    void send_aseba_program(uint32_t request_id, const aseba_node_registery::node_id& id, std::string program) {
+    void send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
+                      std::string program) {
         auto n = get_locked_node(id);
         if(!n) {
             mLogWarn("send_aseba_code: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        bool res = n->send_aseba_program(program, create_device_write_completion_cb(request_id));
+        bool res = n->send_program(language, program, create_device_write_completion_cb(request_id));
         if(!res) {
             mLogWarn("send_aseba_code: compilation to node {} failed", id);
             write_message(create_compilation_error_response(request_id));

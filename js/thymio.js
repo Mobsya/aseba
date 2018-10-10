@@ -189,7 +189,17 @@ export class Node {
      *  @see lock
      */
     async send_aseba_program(code) {
-        return await this._client.send_aseba_program(this._id, code);
+        return await this._client.send_aseba_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
+    }
+
+    /** Load an aesl program on the VM
+     *  The device must be locked & ready before calling this function
+     *  @param {external:String} code - the aseba code to load
+     *  @throws {mobsya.fb.Error}
+     *  @see lock
+     */
+    async send_aesl_program(code) {
+        return await this._client.send_aseba_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
     }
 
     /** Run the code currently loaded on the vm
@@ -197,8 +207,12 @@ export class Node {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
+    async run_program() {
+        return await this._client.run_program(this._id);
+    }
+
     async run_aseba_program() {
-        return await this._client.run_aseba_program(this._id);
+        return  await this.run_program();
     }
 
     async set_variables(map) {
@@ -402,29 +416,30 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    send_aseba_program(id, code) {
+    send_program(id, code, language) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const codeOffset = builder.createString(code)
         const nodeOffset = this._create_node_id(builder, id)
-        mobsya.fb.RequestAsebaCodeLoad.startRequestAsebaCodeLoad(builder)
-        mobsya.fb.RequestAsebaCodeLoad.addRequestId(builder, req_id)
-        mobsya.fb.RequestAsebaCodeLoad.addNodeId(builder, nodeOffset)
-        mobsya.fb.RequestAsebaCodeLoad.addProgram(builder, codeOffset)
-        const offset = mobsya.fb.RequestAsebaCodeLoad.endRequestAsebaCodeLoad(builder)
-        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeLoad)
+        mobsya.fb.RequestCodeLoad.startRequestCodeLoad(builder)
+        mobsya.fb.RequestCodeLoad.addRequestId(builder, req_id)
+        mobsya.fb.RequestCodeLoad.addNodeId(builder, nodeOffset)
+        mobsya.fb.RequestCodeLoad.addProgram(builder, codeOffset)
+        mobsya.fb.RequestCodeLoad.addLanguage(builder, language)
+        const offset = mobsya.fb.RequestCodeLoad.endRequestCodeLoad(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestCodeLoad)
         return this._prepare_request(req_id)
     }
 
-    run_aseba_program(id) {
+    run_program(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
-        mobsya.fb.RequestAsebaCodeRun.startRequestAsebaCodeRun(builder)
-        mobsya.fb.RequestAsebaCodeRun.addRequestId(builder, req_id)
-        mobsya.fb.RequestAsebaCodeRun.addNodeId(builder, nodeOffset)
-        const offset = mobsya.fb.RequestAsebaCodeRun.endRequestAsebaCodeRun(builder)
-        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestAsebaCodeRun)
+        mobsya.fb.RequestCodeRun.startRequestCodeRun(builder)
+        mobsya.fb.RequestCodeRun.addRequestId(builder, req_id)
+        mobsya.fb.RequestCodeRun.addNodeId(builder, nodeOffset)
+        const offset = mobsya.fb.RequestCodeRun.endRequestCodeRun(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestCodeRun)
         return this._prepare_request(req_id)
     }
 
