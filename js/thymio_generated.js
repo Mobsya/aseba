@@ -1252,12 +1252,12 @@ mobsya.fb.NodeAsebaVMDescription.prototype.mutate_stack_size = function(value) {
 
 /**
  * @param {number} index
- * @param {mobsya.fb.NamedVariable=} obj
- * @returns {mobsya.fb.NamedVariable}
+ * @param {mobsya.fb.AsebaNamedVariable=} obj
+ * @returns {mobsya.fb.AsebaNamedVariable}
  */
 mobsya.fb.NodeAsebaVMDescription.prototype.variables = function(index, obj) {
   var offset = this.bb.__offset(this.bb_pos, 14);
-  return offset ? (obj || new mobsya.fb.NamedVariable).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+  return offset ? (obj || new mobsya.fb.AsebaNamedVariable).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 
 /**
@@ -1270,12 +1270,12 @@ mobsya.fb.NodeAsebaVMDescription.prototype.variablesLength = function() {
 
 /**
  * @param {number} index
- * @param {mobsya.fb.LocalEvent=} obj
- * @returns {mobsya.fb.LocalEvent}
+ * @param {mobsya.fb.AsebaEvent=} obj
+ * @returns {mobsya.fb.AsebaEvent}
  */
 mobsya.fb.NodeAsebaVMDescription.prototype.events = function(index, obj) {
   var offset = this.bb.__offset(this.bb_pos, 16);
-  return offset ? (obj || new mobsya.fb.LocalEvent).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+  return offset ? (obj || new mobsya.fb.AsebaEvent).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 
 /**
@@ -1288,12 +1288,12 @@ mobsya.fb.NodeAsebaVMDescription.prototype.eventsLength = function() {
 
 /**
  * @param {number} index
- * @param {mobsya.fb.NativeFunction=} obj
- * @returns {mobsya.fb.NativeFunction}
+ * @param {mobsya.fb.AsebaNativeFunction=} obj
+ * @returns {mobsya.fb.AsebaNativeFunction}
  */
 mobsya.fb.NodeAsebaVMDescription.prototype.functions = function(index, obj) {
   var offset = this.bb.__offset(this.bb_pos, 18);
-  return offset ? (obj || new mobsya.fb.NativeFunction).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+  return offset ? (obj || new mobsya.fb.AsebaNativeFunction).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 
 /**
@@ -1450,7 +1450,7 @@ mobsya.fb.NodeAsebaVMDescription.endNodeAsebaVMDescription = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.NamedVariable = function() {
+mobsya.fb.AsebaNamedVariable = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -1465,9 +1465,9 @@ mobsya.fb.NamedVariable = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.NamedVariable}
+ * @returns {mobsya.fb.AsebaNamedVariable}
  */
-mobsya.fb.NamedVariable.prototype.__init = function(i, bb) {
+mobsya.fb.AsebaNamedVariable.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -1475,17 +1475,17 @@ mobsya.fb.NamedVariable.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.NamedVariable=} obj
- * @returns {mobsya.fb.NamedVariable}
+ * @param {mobsya.fb.AsebaNamedVariable=} obj
+ * @returns {mobsya.fb.AsebaNamedVariable}
  */
-mobsya.fb.NamedVariable.getRootAsNamedVariable = function(bb, obj) {
-  return (obj || new mobsya.fb.NamedVariable).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.AsebaNamedVariable.getRootAsAsebaNamedVariable = function(bb, obj) {
+  return (obj || new mobsya.fb.AsebaNamedVariable).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-mobsya.fb.NamedVariable.prototype.index = function() {
+mobsya.fb.AsebaNamedVariable.prototype.index = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -1494,7 +1494,7 @@ mobsya.fb.NamedVariable.prototype.index = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.NamedVariable.prototype.mutate_index = function(value) {
+mobsya.fb.AsebaNamedVariable.prototype.mutate_index = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 4);
 
   if (offset === 0) {
@@ -1509,7 +1509,7 @@ mobsya.fb.NamedVariable.prototype.mutate_index = function(value) {
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.NamedVariable.prototype.name = function(optionalEncoding) {
+mobsya.fb.AsebaNamedVariable.prototype.name = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
@@ -1517,7 +1517,7 @@ mobsya.fb.NamedVariable.prototype.name = function(optionalEncoding) {
 /**
  * @returns {number}
  */
-mobsya.fb.NamedVariable.prototype.size = function() {
+mobsya.fb.AsebaNamedVariable.prototype.size = function() {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -1526,7 +1526,7 @@ mobsya.fb.NamedVariable.prototype.size = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.NamedVariable.prototype.mutate_size = function(value) {
+mobsya.fb.AsebaNamedVariable.prototype.mutate_size = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 8);
 
   if (offset === 0) {
@@ -1540,7 +1540,7 @@ mobsya.fb.NamedVariable.prototype.mutate_size = function(value) {
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.NamedVariable.startNamedVariable = function(builder) {
+mobsya.fb.AsebaNamedVariable.startAsebaNamedVariable = function(builder) {
   builder.startObject(3);
 };
 
@@ -1548,7 +1548,7 @@ mobsya.fb.NamedVariable.startNamedVariable = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {number} index
  */
-mobsya.fb.NamedVariable.addIndex = function(builder, index) {
+mobsya.fb.AsebaNamedVariable.addIndex = function(builder, index) {
   builder.addFieldInt16(0, index, 0);
 };
 
@@ -1556,7 +1556,7 @@ mobsya.fb.NamedVariable.addIndex = function(builder, index) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nameOffset
  */
-mobsya.fb.NamedVariable.addName = function(builder, nameOffset) {
+mobsya.fb.AsebaNamedVariable.addName = function(builder, nameOffset) {
   builder.addFieldOffset(1, nameOffset, 0);
 };
 
@@ -1564,7 +1564,7 @@ mobsya.fb.NamedVariable.addName = function(builder, nameOffset) {
  * @param {flatbuffers.Builder} builder
  * @param {number} size
  */
-mobsya.fb.NamedVariable.addSize = function(builder, size) {
+mobsya.fb.AsebaNamedVariable.addSize = function(builder, size) {
   builder.addFieldInt32(2, size, 0);
 };
 
@@ -1572,7 +1572,7 @@ mobsya.fb.NamedVariable.addSize = function(builder, size) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.NamedVariable.endNamedVariable = function(builder) {
+mobsya.fb.AsebaNamedVariable.endAsebaNamedVariable = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -1580,7 +1580,7 @@ mobsya.fb.NamedVariable.endNamedVariable = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.LocalEvent = function() {
+mobsya.fb.AsebaEvent = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -1595,9 +1595,9 @@ mobsya.fb.LocalEvent = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.LocalEvent}
+ * @returns {mobsya.fb.AsebaEvent}
  */
-mobsya.fb.LocalEvent.prototype.__init = function(i, bb) {
+mobsya.fb.AsebaEvent.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -1605,17 +1605,17 @@ mobsya.fb.LocalEvent.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.LocalEvent=} obj
- * @returns {mobsya.fb.LocalEvent}
+ * @param {mobsya.fb.AsebaEvent=} obj
+ * @returns {mobsya.fb.AsebaEvent}
  */
-mobsya.fb.LocalEvent.getRootAsLocalEvent = function(bb, obj) {
-  return (obj || new mobsya.fb.LocalEvent).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.AsebaEvent.getRootAsAsebaEvent = function(bb, obj) {
+  return (obj || new mobsya.fb.AsebaEvent).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-mobsya.fb.LocalEvent.prototype.index = function() {
+mobsya.fb.AsebaEvent.prototype.index = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -1624,7 +1624,7 @@ mobsya.fb.LocalEvent.prototype.index = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.LocalEvent.prototype.mutate_index = function(value) {
+mobsya.fb.AsebaEvent.prototype.mutate_index = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 4);
 
   if (offset === 0) {
@@ -1639,7 +1639,7 @@ mobsya.fb.LocalEvent.prototype.mutate_index = function(value) {
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.LocalEvent.prototype.name = function(optionalEncoding) {
+mobsya.fb.AsebaEvent.prototype.name = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
@@ -1648,7 +1648,7 @@ mobsya.fb.LocalEvent.prototype.name = function(optionalEncoding) {
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.LocalEvent.prototype.description = function(optionalEncoding) {
+mobsya.fb.AsebaEvent.prototype.description = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
@@ -1656,7 +1656,7 @@ mobsya.fb.LocalEvent.prototype.description = function(optionalEncoding) {
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.LocalEvent.startLocalEvent = function(builder) {
+mobsya.fb.AsebaEvent.startAsebaEvent = function(builder) {
   builder.startObject(3);
 };
 
@@ -1664,7 +1664,7 @@ mobsya.fb.LocalEvent.startLocalEvent = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {number} index
  */
-mobsya.fb.LocalEvent.addIndex = function(builder, index) {
+mobsya.fb.AsebaEvent.addIndex = function(builder, index) {
   builder.addFieldInt16(0, index, 0);
 };
 
@@ -1672,7 +1672,7 @@ mobsya.fb.LocalEvent.addIndex = function(builder, index) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nameOffset
  */
-mobsya.fb.LocalEvent.addName = function(builder, nameOffset) {
+mobsya.fb.AsebaEvent.addName = function(builder, nameOffset) {
   builder.addFieldOffset(1, nameOffset, 0);
 };
 
@@ -1680,7 +1680,7 @@ mobsya.fb.LocalEvent.addName = function(builder, nameOffset) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} descriptionOffset
  */
-mobsya.fb.LocalEvent.addDescription = function(builder, descriptionOffset) {
+mobsya.fb.AsebaEvent.addDescription = function(builder, descriptionOffset) {
   builder.addFieldOffset(2, descriptionOffset, 0);
 };
 
@@ -1688,7 +1688,7 @@ mobsya.fb.LocalEvent.addDescription = function(builder, descriptionOffset) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.LocalEvent.endLocalEvent = function(builder) {
+mobsya.fb.AsebaEvent.endAsebaEvent = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -1696,7 +1696,7 @@ mobsya.fb.LocalEvent.endLocalEvent = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.NativeFunction = function() {
+mobsya.fb.AsebaNativeFunction = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -1711,9 +1711,9 @@ mobsya.fb.NativeFunction = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.NativeFunction}
+ * @returns {mobsya.fb.AsebaNativeFunction}
  */
-mobsya.fb.NativeFunction.prototype.__init = function(i, bb) {
+mobsya.fb.AsebaNativeFunction.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -1721,17 +1721,17 @@ mobsya.fb.NativeFunction.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.NativeFunction=} obj
- * @returns {mobsya.fb.NativeFunction}
+ * @param {mobsya.fb.AsebaNativeFunction=} obj
+ * @returns {mobsya.fb.AsebaNativeFunction}
  */
-mobsya.fb.NativeFunction.getRootAsNativeFunction = function(bb, obj) {
-  return (obj || new mobsya.fb.NativeFunction).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.AsebaNativeFunction.getRootAsAsebaNativeFunction = function(bb, obj) {
+  return (obj || new mobsya.fb.AsebaNativeFunction).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-mobsya.fb.NativeFunction.prototype.index = function() {
+mobsya.fb.AsebaNativeFunction.prototype.index = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint16(this.bb_pos + offset) : 0;
 };
@@ -1740,7 +1740,7 @@ mobsya.fb.NativeFunction.prototype.index = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.NativeFunction.prototype.mutate_index = function(value) {
+mobsya.fb.AsebaNativeFunction.prototype.mutate_index = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 4);
 
   if (offset === 0) {
@@ -1755,7 +1755,7 @@ mobsya.fb.NativeFunction.prototype.mutate_index = function(value) {
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.NativeFunction.prototype.name = function(optionalEncoding) {
+mobsya.fb.AsebaNativeFunction.prototype.name = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
@@ -1764,25 +1764,25 @@ mobsya.fb.NativeFunction.prototype.name = function(optionalEncoding) {
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.NativeFunction.prototype.description = function(optionalEncoding) {
+mobsya.fb.AsebaNativeFunction.prototype.description = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
  * @param {number} index
- * @param {mobsya.fb.NativeFunctionParameter=} obj
- * @returns {mobsya.fb.NativeFunctionParameter}
+ * @param {mobsya.fb.AsebaNativeFunctionParameter=} obj
+ * @returns {mobsya.fb.AsebaNativeFunctionParameter}
  */
-mobsya.fb.NativeFunction.prototype.parameters = function(index, obj) {
+mobsya.fb.AsebaNativeFunction.prototype.parameters = function(index, obj) {
   var offset = this.bb.__offset(this.bb_pos, 10);
-  return offset ? (obj || new mobsya.fb.NativeFunctionParameter).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+  return offset ? (obj || new mobsya.fb.AsebaNativeFunctionParameter).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 
 /**
  * @returns {number}
  */
-mobsya.fb.NativeFunction.prototype.parametersLength = function() {
+mobsya.fb.AsebaNativeFunction.prototype.parametersLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 10);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -1790,7 +1790,7 @@ mobsya.fb.NativeFunction.prototype.parametersLength = function() {
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.NativeFunction.startNativeFunction = function(builder) {
+mobsya.fb.AsebaNativeFunction.startAsebaNativeFunction = function(builder) {
   builder.startObject(4);
 };
 
@@ -1798,7 +1798,7 @@ mobsya.fb.NativeFunction.startNativeFunction = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {number} index
  */
-mobsya.fb.NativeFunction.addIndex = function(builder, index) {
+mobsya.fb.AsebaNativeFunction.addIndex = function(builder, index) {
   builder.addFieldInt16(0, index, 0);
 };
 
@@ -1806,7 +1806,7 @@ mobsya.fb.NativeFunction.addIndex = function(builder, index) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nameOffset
  */
-mobsya.fb.NativeFunction.addName = function(builder, nameOffset) {
+mobsya.fb.AsebaNativeFunction.addName = function(builder, nameOffset) {
   builder.addFieldOffset(1, nameOffset, 0);
 };
 
@@ -1814,7 +1814,7 @@ mobsya.fb.NativeFunction.addName = function(builder, nameOffset) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} descriptionOffset
  */
-mobsya.fb.NativeFunction.addDescription = function(builder, descriptionOffset) {
+mobsya.fb.AsebaNativeFunction.addDescription = function(builder, descriptionOffset) {
   builder.addFieldOffset(2, descriptionOffset, 0);
 };
 
@@ -1822,7 +1822,7 @@ mobsya.fb.NativeFunction.addDescription = function(builder, descriptionOffset) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} parametersOffset
  */
-mobsya.fb.NativeFunction.addParameters = function(builder, parametersOffset) {
+mobsya.fb.AsebaNativeFunction.addParameters = function(builder, parametersOffset) {
   builder.addFieldOffset(3, parametersOffset, 0);
 };
 
@@ -1831,7 +1831,7 @@ mobsya.fb.NativeFunction.addParameters = function(builder, parametersOffset) {
  * @param {Array.<flatbuffers.Offset>} data
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.NativeFunction.createParametersVector = function(builder, data) {
+mobsya.fb.AsebaNativeFunction.createParametersVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addOffset(data[i]);
@@ -1843,7 +1843,7 @@ mobsya.fb.NativeFunction.createParametersVector = function(builder, data) {
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-mobsya.fb.NativeFunction.startParametersVector = function(builder, numElems) {
+mobsya.fb.AsebaNativeFunction.startParametersVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
 };
 
@@ -1851,7 +1851,7 @@ mobsya.fb.NativeFunction.startParametersVector = function(builder, numElems) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.NativeFunction.endNativeFunction = function(builder) {
+mobsya.fb.AsebaNativeFunction.endAsebaNativeFunction = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -1859,7 +1859,7 @@ mobsya.fb.NativeFunction.endNativeFunction = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.NativeFunctionParameter = function() {
+mobsya.fb.AsebaNativeFunctionParameter = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -1874,9 +1874,9 @@ mobsya.fb.NativeFunctionParameter = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.NativeFunctionParameter}
+ * @returns {mobsya.fb.AsebaNativeFunctionParameter}
  */
-mobsya.fb.NativeFunctionParameter.prototype.__init = function(i, bb) {
+mobsya.fb.AsebaNativeFunctionParameter.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -1884,18 +1884,18 @@ mobsya.fb.NativeFunctionParameter.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.NativeFunctionParameter=} obj
- * @returns {mobsya.fb.NativeFunctionParameter}
+ * @param {mobsya.fb.AsebaNativeFunctionParameter=} obj
+ * @returns {mobsya.fb.AsebaNativeFunctionParameter}
  */
-mobsya.fb.NativeFunctionParameter.getRootAsNativeFunctionParameter = function(bb, obj) {
-  return (obj || new mobsya.fb.NativeFunctionParameter).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.AsebaNativeFunctionParameter.getRootAsAsebaNativeFunctionParameter = function(bb, obj) {
+  return (obj || new mobsya.fb.AsebaNativeFunctionParameter).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array|null}
  */
-mobsya.fb.NativeFunctionParameter.prototype.name = function(optionalEncoding) {
+mobsya.fb.AsebaNativeFunctionParameter.prototype.name = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
@@ -1903,7 +1903,7 @@ mobsya.fb.NativeFunctionParameter.prototype.name = function(optionalEncoding) {
 /**
  * @returns {number}
  */
-mobsya.fb.NativeFunctionParameter.prototype.size = function() {
+mobsya.fb.AsebaNativeFunctionParameter.prototype.size = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -1912,7 +1912,7 @@ mobsya.fb.NativeFunctionParameter.prototype.size = function() {
  * @param {number} value
  * @returns {boolean}
  */
-mobsya.fb.NativeFunctionParameter.prototype.mutate_size = function(value) {
+mobsya.fb.AsebaNativeFunctionParameter.prototype.mutate_size = function(value) {
   var offset = this.bb.__offset(this.bb_pos, 6);
 
   if (offset === 0) {
@@ -1926,7 +1926,7 @@ mobsya.fb.NativeFunctionParameter.prototype.mutate_size = function(value) {
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.NativeFunctionParameter.startNativeFunctionParameter = function(builder) {
+mobsya.fb.AsebaNativeFunctionParameter.startAsebaNativeFunctionParameter = function(builder) {
   builder.startObject(2);
 };
 
@@ -1934,7 +1934,7 @@ mobsya.fb.NativeFunctionParameter.startNativeFunctionParameter = function(builde
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nameOffset
  */
-mobsya.fb.NativeFunctionParameter.addName = function(builder, nameOffset) {
+mobsya.fb.AsebaNativeFunctionParameter.addName = function(builder, nameOffset) {
   builder.addFieldOffset(0, nameOffset, 0);
 };
 
@@ -1942,7 +1942,7 @@ mobsya.fb.NativeFunctionParameter.addName = function(builder, nameOffset) {
  * @param {flatbuffers.Builder} builder
  * @param {number} size
  */
-mobsya.fb.NativeFunctionParameter.addSize = function(builder, size) {
+mobsya.fb.AsebaNativeFunctionParameter.addSize = function(builder, size) {
   builder.addFieldInt32(1, size, 0);
 };
 
@@ -1950,7 +1950,7 @@ mobsya.fb.NativeFunctionParameter.addSize = function(builder, size) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.NativeFunctionParameter.endNativeFunctionParameter = function(builder) {
+mobsya.fb.AsebaNativeFunctionParameter.endAsebaNativeFunctionParameter = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

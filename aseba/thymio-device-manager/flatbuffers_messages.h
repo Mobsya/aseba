@@ -40,32 +40,32 @@ tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, c
 
     Aseba::TargetDescription desc = n.vm_description();
     flatbuffers::FlatBufferBuilder fb;
-    std::vector<flatbuffers::Offset<fb::NamedVariable>> variables_vector;
-    std::vector<flatbuffers::Offset<fb::LocalEvent>> events_vector;
-    std::vector<flatbuffers::Offset<fb::NativeFunction>> functions_vector;
+    std::vector<flatbuffers::Offset<fb::AsebaNamedVariable>> variables_vector;
+    std::vector<flatbuffers::Offset<fb::AsebaEvent>> events_vector;
+    std::vector<flatbuffers::Offset<fb::AsebaNativeFunction>> functions_vector;
 
     int i = 0;
     for(auto&& v : desc.namedVariables) {
         variables_vector.emplace_back(
-            fb::CreateNamedVariable(fb, i++, fb.CreateString(Aseba::WStringToUTF8(v.name)), v.size));
+            fb::CreateAsebaNamedVariable(fb, i++, fb.CreateString(Aseba::WStringToUTF8(v.name)), v.size));
     }
 
     i = 0;
     for(auto&& v : desc.localEvents) {
-        events_vector.emplace_back(fb::CreateLocalEvent(fb, i++, fb.CreateString(Aseba::WStringToUTF8(v.name)),
+        events_vector.emplace_back(fb::CreateAsebaEvent(fb, i++, fb.CreateString(Aseba::WStringToUTF8(v.name)),
                                                         fb.CreateString(Aseba::WStringToUTF8(v.description))));
     }
 
     i = 0;
     for(auto&& v : desc.nativeFunctions) {
-        std::vector<flatbuffers::Offset<fb::NativeFunctionParameter>> params;
+        std::vector<flatbuffers::Offset<fb::AsebaNativeFunctionParameter>> params;
         for(auto&& p : v.parameters) {
             params.emplace_back(
-                fb::CreateNativeFunctionParameter(fb, fb.CreateString(Aseba::WStringToUTF8(p.name)), p.size));
+                fb::CreateAsebaNativeFunctionParameter(fb, fb.CreateString(Aseba::WStringToUTF8(p.name)), p.size));
         }
-        functions_vector.emplace_back(fb::CreateNativeFunction(fb, i++, fb.CreateString(Aseba::WStringToUTF8(v.name)),
-                                                               fb.CreateString(Aseba::WStringToUTF8(v.description)),
-                                                               fb.CreateVector(params)));
+        functions_vector.emplace_back(fb::CreateAsebaNativeFunction(
+            fb, i++, fb.CreateString(Aseba::WStringToUTF8(v.name)),
+            fb.CreateString(Aseba::WStringToUTF8(v.description)), fb.CreateVector(params)));
     }
 
     auto offset = CreateNodeAsebaVMDescription(fb, request_id, id.fb(fb), desc.bytecodeSize, desc.variablesSize,
