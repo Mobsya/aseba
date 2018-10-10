@@ -2,6 +2,7 @@
 
 #include <tl/expected.hpp>
 #include <limits>
+#include <boost/lexical_cast.hpp>
 
 namespace mobsya {
 namespace detail {
@@ -42,17 +43,25 @@ namespace detail {
     static_assert(std::is_same_v<largest_common_type_t<int16_t, uint32_t>, int32_t>);
 }  // namespace detail
 
-enum class numeric_cast_error { narrowing };
+enum class cast_error { bad_cast, narrowing };
 
 template <typename T, typename V>
-tl::expected<T, numeric_cast_error> numeric_cast(V v) {
+tl::expected<T, cast_error> numeric_cast(V v) {
     if(!std::is_signed_v<T> && std::is_signed_v<V> && v < 0)
         return {};
     using common_type = typename detail::largest_common_type<T, V>::type;
     if(common_type(std::numeric_limits<T>::min()) > common_type(v))
-        return tl::make_unexpected(numeric_cast_error::narrowing);
+        return tl::make_unexpected(cast_error::narrowing);
     if(common_type(v) > common_type(std::numeric_limits<T>::max()))
-        return tl::make_unexpected(numeric_cast_error::narrowing);
+        return tl::make_unexpected(cast_error::narrowing);
     return T(v);
 }
+template <typename T, typename S>
+tl::expected<T, cast_error> lexical_cast(S&& s) {
+    T t;
+    if(!boost::conversion::try_lexical_convert(std::forward<S>(s), t))
+        return tl::make_unexpected(cast_error::bad_cast);
+    return t;
+}
+
 }  // namespace mobsya
