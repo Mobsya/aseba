@@ -82,6 +82,7 @@ enum WatchableInfo : int {
     StopMonitoring = 0,
     //Monitor for variables changes
     Variables = 0x01,
+    Events    = 0x02,
 }
 
 enum ProgrammingLanguage : int {
@@ -108,14 +109,15 @@ table NodeVariablesChanged {
    vars:[NodeVariable];
 }
 
-table Event {
-    name: string (key);
-    value: [ubyte] (flexbuffer);
+table SendEvents {
+   request_id:uint;
+   node_id:NodeId;
+   events:[NodeVariable];
 }
 
 table EventsEmitted {
    node_id:NodeId;
-   events:[Event];
+   events:[NodeVariable];
 }
 
 /// Message sent by the server when a node changes status.
@@ -269,6 +271,7 @@ union AnyMessage {
     NodeVariablesChanged,
     SetNodeVariables,
     RegisterEvent,
+    SendEvents,
     EventsEmitted,
 }
 

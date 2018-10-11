@@ -75,6 +75,7 @@ export class Node {
         this._client = client
         this._name   = null
         this._on_vars_changed_cb = undefined;
+        this._on_events_cb = undefined;
         this._monitoring_flags = 0
     }
 
@@ -189,7 +190,7 @@ export class Node {
      *  @see lock
      */
     async send_aseba_program(code) {
-        return await this._client.send_aseba_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
+        return await this._client.send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
     }
 
     /** Load an aesl program on the VM
@@ -199,7 +200,7 @@ export class Node {
      *  @see lock
      */
     async send_aesl_program(code) {
-        return await this._client.send_aseba_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
+        return await this._client.send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
     }
 
     /** Run the code currently loaded on the vm
@@ -219,6 +220,15 @@ export class Node {
         return await this._client.set_node_variables(this._id, map);
     }
 
+    async emit(map_or_key, value) {
+        if(typeof value !== "undefined") {
+            const tmp = new Map();
+            tmp.set(map_or_key, value);
+            map_or_key = tmp
+        }
+        return await this._client.send_events(this._id, map_or_key);
+    }
+
     get on_vars_changed() {
         return this._on_vars_changed_cb;
     }
@@ -226,6 +236,15 @@ export class Node {
     set on_vars_changed(cb) {
         this._set_monitoring_flags(mobsya.fb.WatchableInfo.Variables, !!cb)
         this._on_vars_changed_cb = cb;
+    }
+
+    get on_events() {
+        return this._on_events_cb;
+    }
+
+    set on_events(cb) {
+        this._set_monitoring_flags(mobsya.fb.WatchableInfo.Events, !!cb)
+        this._on_events_cb = cb;
     }
 
 
@@ -296,6 +315,28 @@ Node.Status = mobsya.fb.NodeStatus;
  */
 Node.Type = mobsya.fb.NodeType;
 
+class WaitCB {
+    constructor() {
+        var then    = undefined;
+        var onerror = undefined;
+        this._promise = new Promise((resolve, reject) => {
+            then    = resolve;
+            onerror = reject;
+        });
+        this._then = then
+        this._onerror = onerror
+    }
+
+    _trigger_error(err) {
+        this._onerror(err)
+    }
+
+    _trigger_then(...args) {
+        console.log("ready")
+        return this._then.apply(this, args);
+    }
+}
+
 /*
  * A client. Main entry point of the api
  */
@@ -306,16 +347,18 @@ export class Client {
      *  @see lock
      */
     constructor(url) {
-        this._socket = new WebSocket(url)
-        this._socket.binaryType = 'arraybuffer';
-        this._socket.onopen = this.onopen.bind(this)
-        this._socket.onmessage = this.onmessage.bind(this)
 
         //In progress requests (id : node)
         this._requests = new Map();
         //Known nodes (id : node)
         this._nodes    = new Map();
         this._flex     = new FlexBuffers()
+        this._flex.onRuntimeInitialized = () => {
+            this._socket = new WebSocket(url)
+            this._socket.binaryType = 'arraybuffer';
+            this._socket.onopen = this.onopen.bind(this)
+            this._socket.onmessage = this.onmessage.bind(this)
+        }
     }
 
     /**
@@ -400,6 +443,23 @@ export class Client {
                 node._on_vars_changed_cb(vars)
                 break
             }
+
+            case mobsya.fb.AnyMessage.EventsEmitted: {
+                const msg = message.message(new mobsya.fb.EventsEmitted())
+                const id = this._id(msg.nodeId())
+                const node = this._nodes.get(id.toString())
+                if(!node || ! node._on_events_cb)
+                    break;
+                const vars = {}
+                for(let i = 0; i < msg.eventsLength(); i++) {
+                    const v = msg.events(i);
+                    const myarray = Uint8Array.from(v.valueArray())
+                    const val = this._flex.toJSObject(myarray)
+                    vars[v.name()] = val
+                }
+                node._on_events_cb(vars)
+                break
+            }
         }
     }
 
@@ -448,16 +508,7 @@ export class Client {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
-        const offsets = []
-
-        if (!(variables instanceof Map)) {
-            variables = new Map(Object.entries(variables))
-        }
-
-        variables.forEach( (value, name, _map) => {
-            offsets.push(this.__serialize_node_variable(builder, name, value))
-        })
-        const varsOffset = mobsya.fb.SetNodeVariables.createVarsVector(builder, offsets)
+        const varsOffset = this.__serialize_node_variables(builder, variables)
         mobsya.fb.SetNodeVariables.startSetNodeVariables(builder)
         mobsya.fb.SetNodeVariables.addNodeId(builder, nodeOffset)
         mobsya.fb.SetNodeVariables.addRequestId(builder, req_id)
@@ -465,6 +516,32 @@ export class Client {
         const tableOffset = mobsya.fb.SetNodeVariables.endSetNodeVariables(builder)
         this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SetNodeVariables)
         return this._prepare_request(req_id)
+    }
+
+    send_events(id, variables) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const varsOffset = this.__serialize_node_variables(builder, variables)
+        mobsya.fb.SendEvents.startSendEvents(builder)
+        mobsya.fb.SendEvents.addNodeId(builder, nodeOffset)
+        mobsya.fb.SendEvents.addRequestId(builder, req_id)
+        mobsya.fb.SendEvents.addEvents(builder, varsOffset)
+        const tableOffset = mobsya.fb.SendEvents.endSendEvents(builder)
+        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SendEvents)
+        return this._prepare_request(req_id)
+    }
+
+    __serialize_node_variables(builder, variables) {
+        const offsets = []
+        if (!(variables instanceof Map)) {
+            variables = new Map(Object.entries(variables))
+        }
+
+        variables.forEach( (value, name, _map) => {
+            offsets.push(this.__serialize_node_variable(builder, name, value))
+        })
+        return mobsya.fb.SetNodeVariables.createVarsVector(builder, offsets)
     }
 
     __serialize_node_variable(builder, name, value) {
@@ -629,4 +706,3 @@ export class Client {
         return req._promise
     }
 }
-
