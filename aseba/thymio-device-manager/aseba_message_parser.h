@@ -74,14 +74,18 @@ public:
                                         boost::asio::transfer_exactly(6), std::move(*this)) :
                 boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
                                         boost::asio::transfer_exactly(state.size), std::move(*this));
+
         if(!ec && state.size == 0) {
             assert(bytes_transferred == 6);
             state.size = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(state.headerBuffer));
             state.source = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(state.headerBuffer + 2));
             state.type = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(state.headerBuffer + 4));
             state.dataBuffer.rawData.resize(state.size);
-            return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
-                                           boost::asio::transfer_exactly(state.size), std::move(*this));
+            if(state.size != 0)
+                return boost::asio::async_read(state.stream, boost::asio::buffer(state.dataBuffer.rawData),
+                                               boost::asio::transfer_exactly(state.size), std::move(*this));
+            // support empty messages
+            bytes_transferred = 0;
         }
         if(!ec && bytes_transferred == state.size) {
             Aseba::Message::SerializationBuffer& b = state.dataBuffer;

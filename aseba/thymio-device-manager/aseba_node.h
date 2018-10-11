@@ -2,6 +2,7 @@
 #include <memory>
 #include <mutex>
 #include "aseba/common/msg/msg.h"
+#include "aseba/compiler/compiler.h"
 #include "node_id.h"
 #include "property.h"
 #include <boost/asio/io_context.hpp>
@@ -72,6 +73,7 @@ public:
     bool send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb = {});
     void run_aseba_program(write_callback&& cb = {});
     boost::system::error_code set_node_variables(const aseba_node::variables_map& map, write_callback&& cb = {});
+    boost::system::error_code emit_events(const aseba_node::variables_map& map, write_callback&& cb = {});
     void rename(const std::string& new_name);
     void stop_vm(write_callback&& cb = {});
     bool lock(void* app);
@@ -83,6 +85,11 @@ public:
         return m_variables_changed_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
+    template <typename... ConnectionArgs>
+    auto connect_to_events(ConnectionArgs... args) {
+        return m_events_signal.connect(std::forward<ConnectionArgs>(args)...);
+    }
+
 private:
     friend class aseba_endpoint;
     void set_status(status);
@@ -92,6 +99,7 @@ private:
     void on_message(const Aseba::Message& msg);
     void on_description(Aseba::TargetDescription description);
     void on_device_info(const Aseba::DeviceInfo& info);
+    void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def);
 
     void reset_known_variables(const Aseba::VariablesMap& variables);
     void request_variables();
@@ -101,6 +109,9 @@ private:
                        std::unordered_map<std::string, mobsya::property>& vars);
     void schedule_variables_update();
 
+    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
+    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
+
     node_id_t m_id;
     node_id m_uuid;
     std::string m_friendly_name;
@@ -109,6 +120,7 @@ private:
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
     mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;
+    Aseba::CommonDefinitions m_defs;
     boost::asio::io_context& m_io_ctx;
 
     struct variable {
@@ -122,6 +134,7 @@ private:
     std::vector<variable> m_variables;
     boost::asio::deadline_timer m_variables_timer;
     variables_watch_signal_t m_variables_changed_signal;
+    variables_watch_signal_t m_events_signal;
     std::atomic<bool> m_resend_all_variables = true;
 };
 

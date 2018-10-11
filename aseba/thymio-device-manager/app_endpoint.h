@@ -191,6 +191,11 @@ public:
                 this->set_node_variables(vars_msg->request_id(), vars_msg->node_id(), variables(*vars_msg));
                 break;
             }
+            case mobsya::fb::AnyMessage::SendEvents: {
+                auto vars_msg = msg.as<fb::SendEvents>();
+                this->emit_events(vars_msg->request_id(), vars_msg->node_id(), events(*vars_msg));
+                break;
+            }
             case mobsya::fb::AnyMessage::RenameNode: {
                 auto rename_msg = msg.as<fb::RenameNode>();
                 this->rename_node(rename_msg->request_id(), rename_msg->node_id(), rename_msg->new_name()->str());
@@ -271,6 +276,12 @@ public:
         });
     }
 
+    void node_emmitted_events(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map]() {
+            that->do_node_emmitted_events(node, map);
+        });
+    }
+
 private:
     void do_node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
                          aseba_node::status status) {
@@ -297,6 +308,12 @@ private:
         if(!node)
             return;
         write_message(serialize_changed_variables(*node, map));
+    }
+
+    void do_node_emmitted_events(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
+        if(!node)
+            return;
+        write_message(serialize_events(*node, map));
     }
 
     void send_full_node_list() {
@@ -395,6 +412,20 @@ private:
         }
     }
 
+    void emit_events(uint32_t request_id, const aseba_node_registery::node_id& id, aseba_node::variables_map m) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("emits_events: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto err = n->emit_events(m, create_device_write_completion_cb(request_id));
+        if(err) {
+            mLogWarn("emits_events: invalid variables", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+        }
+    }
+
     void send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
                       std::string program) {
         auto n = get_locked_node(id);
@@ -451,6 +482,14 @@ private:
         } else {
             m_nodes_watched_for_variables_changes.erase(id);
         }
+
+        if(flags & uint32_t(fb::WatchableInfo::Events)) {
+            m_nodes_watched_for_events[id] = node->connect_to_events(std::bind(
+                &application_endpoint::node_emmitted_events, this, std::placeholders::_1, std::placeholders::_2));
+        } else {
+            m_nodes_watched_for_events.erase(id);
+        }
+
         write_message(create_ack_response(request_id));
     }
 
@@ -540,6 +579,7 @@ private:
         m_locked_nodes;
     std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>
         m_nodes_watched_for_variables_changes;
+    std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection> m_nodes_watched_for_events;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;

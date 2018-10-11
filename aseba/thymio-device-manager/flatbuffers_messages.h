@@ -75,41 +75,71 @@ tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, c
     return wrap_fb(fb, offset);
 }
 
+namespace detail {
+    auto serialize_variables(flatbuffers::FlatBufferBuilder& fb, const mobsya::aseba_node::variables_map& vars) {
+        flexbuffers::Builder flexbuilder;
+        std::vector<flatbuffers::Offset<fb::NodeVariable>> varsOffsets;
+        varsOffsets.reserve(vars.size());
+        for(auto&& var : vars) {
+            property_to_flexbuffer(var.second, flexbuilder);
+            auto& vec = flexbuilder.GetBuffer();
+            auto vecOffset = fb.CreateVector(vec);
+            auto keyOffset = fb.CreateString(var.first);
+            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset));
+            flexbuilder.Clear();
+        }
+        return fb.CreateVectorOfSortedTables(&varsOffsets);
+    }
+}  // namespace detail
+
 tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n,
                                                        const mobsya::aseba_node::variables_map& vars) {
     flatbuffers::FlatBufferBuilder fb;
-    flexbuffers::Builder flexbuilder;
-    auto id = n.uuid().fb(fb);
-    std::vector<flatbuffers::Offset<fb::NodeVariable>> varsOffsets;
-    varsOffsets.reserve(vars.size());
-    for(auto&& var : vars) {
-        property_to_flexbuffer(var.second, flexbuilder);
-        auto& vec = flexbuilder.GetBuffer();
-        auto vecOffset = fb.CreateVector(vec);
-        auto keyOffset = fb.CreateString(var.first);
-        varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset));
-        flexbuilder.Clear();
-    }
-    auto offset = fb::CreateNodeVariablesChanged(fb, id, fb.CreateVectorOfSortedTables(&varsOffsets));
+    auto idOffset = n.uuid().fb(fb);
+    auto varsOffset = serialize_variables(fb, vars);
+    auto offset = fb::CreateNodeVariablesChanged(fb, idOffset, varsOffset);
     return wrap_fb(fb, offset);
 }
+
+tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n,
+                                            const mobsya::aseba_node::variables_map& vars) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto idOffset = n.uuid().fb(fb);
+    auto varsOffset = serialize_variables(fb, vars);
+    auto offset = fb::CreateEventsEmitted(fb, idOffset, varsOffset);
+    return wrap_fb(fb, offset);
+}
+
+
+namespace detail {
+    mobsya::aseba_node::variables_map
+    variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {
+        mobsya::aseba_node::variables_map vars;
+        vars.reserve(vars.size());
+        for(const auto& offset : buff) {
+            if(!offset->name() || !offset->value())
+                continue;
+            auto k = offset->name()->string_view();
+            auto v = offset->value_flexbuffer_root();
+            auto p = flexbuffer_to_property(v);
+            if(!p)
+                continue;
+            vars.insert_or_assign(std::string(k), std::move(*p));
+        }
+        return vars;
+    }
+}  // namespace detail
 
 mobsya::aseba_node::variables_map variables(const fb::SetNodeVariables& msg) {
     if(!msg.vars())
         return {};
-    mobsya::aseba_node::variables_map vars;
-    vars.reserve(msg.vars()->size());
-    for(const auto& offset : *msg.vars()) {
-        if(!offset->name() || !offset->value())
-            continue;
-        auto k = offset->name()->string_view();
-        auto v = offset->value_flexbuffer_root();
-        auto p = flexbuffer_to_property(v);
-        if(!p)
-            continue;
-        vars.insert_or_assign(std::string(k), std::move(*p));
-    }
-    return vars;
+    return detail::variables(*msg.vars());
+}
+
+mobsya::aseba_node::variables_map events(const fb::SendEvents& msg) {
+    if(!msg.events())
+        return {};
+    return detail::variables(*msg.events());
 }
 
 
