@@ -3,6 +3,7 @@
 #include <boost/beast.hpp>
 #include <memory>
 #include <type_traits>
+#include <queue>
 #include "flatbuffers_message_writer.h"
 #include "flatbuffers_message_reader.h"
 #include "flatbuffers_messages.h"
@@ -162,7 +163,7 @@ public:
     }
 
     void write_message(tagged_detached_flatbuffer&& buffer) {
-        m_queue.push_back(std::move(buffer));
+        m_queue.emplace(std::move(buffer));
         if(m_queue.size() > 1 || m_protocol_version == 0)
             return;
 
@@ -242,7 +243,7 @@ public:
         if(ec) {
             mLogError("handle_write : error {}", ec.message());
         }
-        m_queue.erase(m_queue.begin());
+        m_queue.pop();
         if(!m_queue.empty()) {
             base::do_write_message(m_queue.front().buffer);
         }
@@ -574,7 +575,7 @@ private:
     }
 
     boost::asio::io_context& m_ctx;
-    std::vector<tagged_detached_flatbuffer> m_queue;
+    std::queue<tagged_detached_flatbuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
     std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>
