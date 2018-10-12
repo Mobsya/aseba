@@ -110,6 +110,21 @@ tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n,
     return wrap_fb(fb, offset);
 }
 
+tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::aseba_node& n,
+                                                         const mobsya::aseba_node::events_description_type& descs) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto idOffset = n.uuid().fb(fb);
+    std::vector<flatbuffers::Offset<fb::EventDescription>> descOffsets;
+    descOffsets.reserve(descs.size());
+    int i = 0;
+    for(auto&& desc : descs) {
+        auto str_offset = fb.CreateString(desc.name);
+        auto descTable = fb::CreateEventDescription(fb, str_offset, desc.size, i++);
+        descOffsets.push_back(descTable);
+    }
+    auto offset = fb::CreateEventsDescriptionChanged(fb, idOffset, fb.CreateVector(descOffsets));
+    return wrap_fb(fb, offset);
+}
 
 namespace detail {
     mobsya::aseba_node::variables_map

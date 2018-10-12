@@ -200,8 +200,23 @@ void aseba_node::run_aseba_program(write_callback&& cb) {
     write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
 }
 
+aseba_node::events_description_type aseba_node::events_description() const {
+    std::vector<mobsya::event> table;
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    const auto& events = m_defs.events;
+    table.reserve(events.size());
+    for(const auto& e : events) {
+        table.emplace_back(Aseba::WStringToUTF8(e.name), e.value);
+    }
+    return table;
+}
 
-tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_variable(const property& p, uint16_t size) {
+void aseba_node::send_events_table() {
+    m_events_signal(shared_from_this(), events_description());
+}
+
+static tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_variable(const property& p,
+                                                                                       uint16_t size) {
     if(p.is_null() && size == 0) {
         return {};
     }

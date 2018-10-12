@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include "variant_compat.h"
+#include "utils.h"
 
 namespace mobsya {
 
@@ -21,14 +22,6 @@ namespace detail {
         template <typename... Args>
         using object_type = std::map<Args...>;
     };
-
-    template <class... Ts>
-    struct overloaded : Ts... {
-        using Ts::operator()...;
-    };
-    template <class... Ts>
-    overloaded(Ts...)->overloaded<Ts...>;
-
 
     template <typename T, typename types, typename array_type, typename object_type>
     std::enable_if_t<std::is_integral_v<std::decay_t<T>>, typename types::integral_type> to_compatible_value(T&& t) {
@@ -376,31 +369,31 @@ template <typename types>
 std::ostream& operator<<(std::ostream& os, const mobsya::basic_property<types>& p) {
     using namespace mobsya;
     variant_ns::visit(
-        detail::overloaded{[&os](const variant_ns::monostate&) { os << "null"; },
-                           [&os](const typename basic_property<types>::bool_t& e) { os << (e ? "true" : "false"); },
-                           [&os](const typename basic_property<types>::integral_t& e) { os << e; },
-                           [&os](const typename basic_property<types>::floating_t& e) { os << e; },
-                           [&os](const typename basic_property<types>::string_t& e) { os << '"' << e << '"'; },
-                           [&os](const typename basic_property<types>::array_t& e) {
-                               os << "[";
-                               for(auto it = std::begin(e); !e.empty();) {
-                                   os << *it;
-                                   if(++it == std::end(e))
-                                       break;
-                                   os << ", ";
-                               }
-                               os << "]";
-                           },
-                           [&os](const typename basic_property<types>::object_t& e) {
-                               os << "{";
-                               for(auto it = std::begin(e); !e.empty();) {
-                                   os << '"' << it->first << '"' << " : " << it->second;
-                                   if(++it == std::end(e))
-                                       break;
-                                   os << ", ";
-                               }
-                               os << "}";
-                           }
+        overloaded{[&os](const variant_ns::monostate&) { os << "null"; },
+                   [&os](const typename basic_property<types>::bool_t& e) { os << (e ? "true" : "false"); },
+                   [&os](const typename basic_property<types>::integral_t& e) { os << e; },
+                   [&os](const typename basic_property<types>::floating_t& e) { os << e; },
+                   [&os](const typename basic_property<types>::string_t& e) { os << '"' << e << '"'; },
+                   [&os](const typename basic_property<types>::array_t& e) {
+                       os << "[";
+                       for(auto it = std::begin(e); !e.empty();) {
+                           os << *it;
+                           if(++it == std::end(e))
+                               break;
+                           os << ", ";
+                       }
+                       os << "]";
+                   },
+                   [&os](const typename basic_property<types>::object_t& e) {
+                       os << "{";
+                       for(auto it = std::begin(e); !e.empty();) {
+                           os << '"' << it->first << '"' << " : " << it->second;
+                           if(++it == std::end(e))
+                               break;
+                           os << ", ";
+                       }
+                       os << "}";
+                   }
 
         },
         p.value);

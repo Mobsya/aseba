@@ -244,10 +244,16 @@ table RequestCompleted {
 table EventDescription {
     name:string;
     fixed_sized:uint;
+    index:uint;
 }
 
-table RegisterEvent {
+table RegisterEvents {
     request_id:uint;
+    node_id:NodeId;
+    events:[EventDescription];
+}
+
+table EventsDescriptionChanged {
     node_id:NodeId;
     events:[EventDescription];
 }
@@ -270,7 +276,8 @@ union AnyMessage {
     WatchNode,
     NodeVariablesChanged,
     SetNodeVariables,
-    RegisterEvent,
+    EventsDescriptionChanged,
+    RegisterEvents,
     SendEvents,
     EventsEmitted,
 }

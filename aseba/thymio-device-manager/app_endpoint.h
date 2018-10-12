@@ -11,6 +11,7 @@
 #include "tdm.h"
 #include "log.h"
 #include "app_token_manager.h"
+#include "utils.h"
 #include <pugixml.hpp>
 
 namespace mobsya {
@@ -277,16 +278,16 @@ public:
         });
     }
 
-    void node_emmitted_events(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
-        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map]() {
-            that->do_node_emmitted_events(node, map);
+    void node_emitted_events(std::shared_ptr<aseba_node> node, const aseba_node::event_changed_payload& payload) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, payload]() {
+            that->do_node_emitted_events(node, payload);
         });
     }
 
 private:
     void do_node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
                          aseba_node::status status) {
-        //mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
+        // mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
 
         if(status == aseba_node::status::busy && get_locked_node(id)) {
             status = aseba_node::status::ready;
@@ -311,10 +312,16 @@ private:
         write_message(serialize_changed_variables(*node, map));
     }
 
-    void do_node_emmitted_events(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
+    void do_node_emitted_events(std::shared_ptr<aseba_node> node, const aseba_node::event_changed_payload& payload) {
         if(!node)
             return;
-        write_message(serialize_events(*node, map));
+        variant_ns::visit(overloaded{[this, &node](const aseba_node::variables_map& map) {
+                                         write_message(serialize_events(*node, map));
+                                     },
+                                     [this, &node](const aseba_node::events_description_type& desc) {
+                                         write_message(serialize_events_descriptions(*node, desc));
+                                     }},
+                          payload);
     }
 
     void send_full_node_list() {
@@ -486,7 +493,8 @@ private:
 
         if(flags & uint32_t(fb::WatchableInfo::Events)) {
             m_nodes_watched_for_events[id] = node->connect_to_events(std::bind(
-                &application_endpoint::node_emmitted_events, this, std::placeholders::_1, std::placeholders::_2));
+                &application_endpoint::node_emitted_events, this, std::placeholders::_1, std::placeholders::_2));
+            this->node_emitted_events(node, node->events_description());
         } else {
             m_nodes_watched_for_events.erase(id);
         }
@@ -560,7 +568,8 @@ private:
             return;
         }
 
-        // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing messages
+        // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing
+        // messages
         send_full_node_list();
 
         read_message();
