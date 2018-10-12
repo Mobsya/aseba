@@ -699,10 +699,33 @@ mobsya.fb.NodeVariable.prototype.valueArray = function() {
 };
 
 /**
+ * @returns {boolean}
+ */
+mobsya.fb.NodeVariable.prototype.constant = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? !!this.bb.readInt8(this.bb_pos + offset) : false;
+};
+
+/**
+ * @param {boolean} value
+ * @returns {boolean}
+ */
+mobsya.fb.NodeVariable.prototype.mutate_constant = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeInt8(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.NodeVariable.startNodeVariable = function(builder) {
-  builder.startObject(2);
+  builder.startObject(3);
 };
 
 /**
@@ -740,6 +763,14 @@ mobsya.fb.NodeVariable.createValueVector = function(builder, data) {
  */
 mobsya.fb.NodeVariable.startValueVector = function(builder, numElems) {
   builder.startVector(1, numElems, 1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {boolean} constant
+ */
+mobsya.fb.NodeVariable.addConstant = function(builder, constant) {
+  builder.addFieldInt8(2, +constant, +false);
 };
 
 /**
