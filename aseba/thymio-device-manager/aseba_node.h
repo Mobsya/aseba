@@ -25,7 +25,22 @@ public:
 
     using node_id_t = uint16_t;
 
-    using variables_map = std::unordered_map<std::string, mobsya::property>;
+    struct variable {
+        static const bool constant_tag = true;
+        variable(property p) : value(std::move(p)) {}
+        variable(property p, bool c) : value(std::move(p)), is_constant(c) {}
+        mobsya::property value;
+        bool is_constant = false;
+
+        operator mobsya::property&() {
+            return value;
+        }
+        operator const mobsya::property&() const {
+            return value;
+        }
+    };
+
+    using variables_map = std::unordered_map<std::string, variable>;
     using events_description_type = std::vector<mobsya::event>;
     using event_changed_payload = variant_ns::variant<events_description_type, variables_map>;
     using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
@@ -112,7 +127,7 @@ private:
     void on_variables_message(const Aseba::Variables& msg);
     void on_variables_message(const Aseba::ChangedVariables& msg);
     void set_variables(uint16_t start, const std::vector<int16_t>& data,
-                       std::unordered_map<std::string, mobsya::property>& vars);
+                       std::unordered_map<std::string, variable>& vars);
     void schedule_variables_update();
     void send_events_table();
 
@@ -130,15 +145,16 @@ private:
     Aseba::CommonDefinitions m_defs;
     boost::asio::io_context& m_io_ctx;
 
-    struct variable {
+    struct aseba_vm_variable {
         std::string name;
         uint16_t start;
         uint16_t size;
         std::vector<int16_t> value;
 
-        variable(const std::string& name, uint16_t start, uint16_t size) : name(name), start(start), size(size) {}
+        aseba_vm_variable(const std::string& name, uint16_t start, uint16_t size)
+            : name(name), start(start), size(size) {}
     };
-    std::vector<variable> m_variables;
+    std::vector<aseba_vm_variable> m_variables;
     boost::asio::deadline_timer m_variables_timer;
     variables_watch_signal_t m_variables_changed_signal;
     events_watch_signal_t m_events_signal;

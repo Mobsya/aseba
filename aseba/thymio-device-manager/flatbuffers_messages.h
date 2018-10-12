@@ -85,7 +85,7 @@ namespace detail {
             auto& vec = flexbuilder.GetBuffer();
             auto vecOffset = fb.CreateVector(vec);
             auto keyOffset = fb.CreateString(var.first);
-            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset));
+            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset, var.second.is_constant));
             flexbuilder.Clear();
         }
         return fb.CreateVectorOfSortedTables(&varsOffsets);
@@ -96,7 +96,7 @@ tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node&
                                                        const mobsya::aseba_node::variables_map& vars) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
-    auto varsOffset = serialize_variables(fb, vars);
+    auto varsOffset = detail::serialize_variables(fb, vars);
     auto offset = fb::CreateNodeVariablesChanged(fb, idOffset, varsOffset);
     return wrap_fb(fb, offset);
 }
@@ -105,7 +105,7 @@ tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n,
                                             const mobsya::aseba_node::variables_map& vars) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
-    auto varsOffset = serialize_variables(fb, vars);
+    auto varsOffset = detail::serialize_variables(fb, vars);
     auto offset = fb::CreateEventsEmitted(fb, idOffset, varsOffset);
     return wrap_fb(fb, offset);
 }
@@ -137,9 +137,10 @@ namespace detail {
             auto k = offset->name()->string_view();
             auto v = offset->value_flexbuffer_root();
             auto p = flexbuffer_to_property(v);
+            auto constant = offset->constant();
             if(!p)
                 continue;
-            vars.insert_or_assign(std::string(k), std::move(*p));
+            vars.insert_or_assign(std::string(k), aseba_node::variable(std::move(*p), constant));
         }
         return vars;
     }

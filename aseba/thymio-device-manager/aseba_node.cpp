@@ -193,6 +193,8 @@ bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::strin
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
     write_messages(std::move(messages), std::move(cb));
+    m_variables_changed_signal(shared_from_this(), this->variables());
+    send_events_table();
     return true;
 }
 
@@ -254,7 +256,7 @@ boost::system::error_code aseba_node::set_node_variables(const aseba_node::varia
         std::unique_lock<std::mutex> _(m_node_mutex);
         for(auto&& var : map) {
             auto it = std::find_if(m_variables.begin(), m_variables.end(),
-                                   [name = var.first](const variable& v) { return v.name == name; });
+                                   [name = var.first](const aseba_vm_variable& v) { return v.name == name; });
             if(it == std::end(m_variables)) {
                 return make_error_code(error_code::no_such_variable);
             }
@@ -359,8 +361,9 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
         const auto name = Aseba::WStringToUTF8(var.first);
         const auto start = var.second.first;
         const auto size = var.second.second;
-        auto insert_point = std::lower_bound(m_variables.begin(), m_variables.end(), start,
-                                             [](const variable& v, unsigned start) { return v.start < start; });
+        auto insert_point =
+            std::lower_bound(m_variables.begin(), m_variables.end(), start,
+                             [](const aseba_vm_variable& v, unsigned start) { return v.start < start; });
         if(insert_point == m_variables.end() || insert_point->start != start) {
             m_variables.emplace(insert_point, name, start, size);
         }
@@ -369,7 +372,7 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
 }
 
 void aseba_node::on_variables_message(const Aseba::Variables& msg) {
-    std::unordered_map<std::string, mobsya::property> changed;
+    std::unordered_map<std::string, variable> changed;
     std::unique_lock<std::mutex> _(m_node_mutex);
     set_variables(msg.start, msg.variables, changed);
     m_node_mutex.unlock();
@@ -377,7 +380,7 @@ void aseba_node::on_variables_message(const Aseba::Variables& msg) {
 }
 
 void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
-    std::unordered_map<std::string, mobsya::property> changed;
+    std::unordered_map<std::string, variable> changed;
     std::unique_lock<std::mutex> _(m_node_mutex);
     for(const auto& area : msg.variables) {
         set_variables(area.start, area.variables, changed);
@@ -387,13 +390,14 @@ void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
 }
 
 void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
-                               std::unordered_map<std::string, mobsya::property>& vars) {
+                               std::unordered_map<std::string, variable>& vars) {
 
     auto data_it = std::begin(data);
     auto it = m_variables.begin();
     while(data_it != std::end(data)) {
-        it = std::find_if(it, m_variables.end(),
-                          [start](const variable& var) { return start >= var.start && start < var.start + var.size; });
+        it = std::find_if(it, m_variables.end(), [start](const aseba_vm_variable& var) {
+            return start >= var.start && start < var.start + var.size;
+        });
         if(it == std::end(m_variables))
             return;
         auto& var = *it;
@@ -418,9 +422,13 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
 
 aseba_node::variables_map aseba_node::variables() const {
     variables_map map;
+    std::unique_lock<std::mutex> _(m_node_mutex);
     map.reserve(m_variables.size());
     for(auto& var : m_variables) {
         map.emplace(var.name, detail::aseba_variable_from_range(var.value));
+    }
+    for(auto& var : m_defs.constants) {
+        map.emplace(Aseba::WStringToUTF8(var.name), variable(var.value, variable::constant_tag));
     }
     return map;
 }
@@ -475,7 +483,7 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
 }
 
 void aseba_node::on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def) {
-    std::unordered_map<std::string, mobsya::property> events;
+    variables_map events;
     auto p = detail::aseba_variable_from_range(event.data);
     if((p.is_integral() && def.value != 1) || p.size() != def.value)
         return;
