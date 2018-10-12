@@ -5,6 +5,14 @@
 #include <boost/lexical_cast.hpp>
 
 namespace mobsya {
+
+template <class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...)->overloaded<Ts...>;
+
 namespace detail {
     // common_signess evaluates to the signed version of the first parameters, unless both are unsigned
     template <typename T, typename V, typename _ = void>

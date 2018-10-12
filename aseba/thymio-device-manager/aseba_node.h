@@ -1,10 +1,12 @@
 #pragma once
 #include <memory>
 #include <mutex>
+#include <boost/asio/post.hpp>
 #include "aseba/common/msg/msg.h"
 #include "aseba/compiler/compiler.h"
 #include "node_id.h"
 #include "property.h"
+#include "events.h"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <atomic>
@@ -24,7 +26,10 @@ public:
     using node_id_t = uint16_t;
 
     using variables_map = std::unordered_map<std::string, mobsya::property>;
+    using events_description_type = std::vector<mobsya::event>;
+    using event_changed_payload = variant_ns::variant<events_description_type, variables_map>;
     using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
+    using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, event_changed_payload)>;
 
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
@@ -62,6 +67,7 @@ public:
     }
 
     variables_map variables() const;
+    events_description_type events_description() const;
 
     // Write n messages to the enpoint owning that node, then invoke cb when all message have been written
     void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message, write_callback&& cb = {});
@@ -108,6 +114,7 @@ private:
     void set_variables(uint16_t start, const std::vector<int16_t>& data,
                        std::unordered_map<std::string, mobsya::property>& vars);
     void schedule_variables_update();
+    void send_events_table();
 
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
@@ -134,7 +141,7 @@ private:
     std::vector<variable> m_variables;
     boost::asio::deadline_timer m_variables_timer;
     variables_watch_signal_t m_variables_changed_signal;
-    variables_watch_signal_t m_events_signal;
+    events_watch_signal_t m_events_signal;
     std::atomic<bool> m_resend_all_variables = true;
 };
 
