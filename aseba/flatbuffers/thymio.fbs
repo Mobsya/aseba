@@ -211,6 +211,51 @@ table RequestCodeLoad {
     program:string;
 }
 
+enum VMExecutionStateCommand : short {
+    Stop,
+    Run,
+    Step,
+    Pause,
+    Reset,
+    Reboot,
+    Suspend,
+    WriteProgramToDeviceMemory,
+}
+
+enum VMExecutionState : short {
+    Stopped,
+    Running,
+    Paused,
+}
+
+enum VMExecutionError : short {
+    NoError,
+    Killed,
+    OutOfBoundAccess,
+    DivisionByZero,
+    GenericError,
+}
+
+table SetVMExecutionState {
+    request_id:uint;
+    node_id:NodeId;
+    command:VMExecutionStateCommand;
+}
+
+table VMExecutionStateChanged {
+    node_id:NodeId;
+    state:VMExecutionState;
+    line:uint;
+    error:VMExecutionError = NoError;
+    errorMsg:string;
+}
+
+table SetBreakpoints {
+    request_id:uint;
+    node_id:NodeId;
+    breakpoints:[uint];
+}
+
 table RequestCodeRun {
     request_id:uint;
     node_id:NodeId;
