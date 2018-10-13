@@ -13,8 +13,8 @@ static const uint32_t MAX_FRIENDLY_NAME_SIZE = 30;
 namespace detail {
     template <typename Rng>
     static auto aseba_variable_from_range(Rng&& rng) {
-        if(rng.size() == 1)
-            return property(rng[0]);
+        if(rng.size() == 0)
+            return property();
         return property(property::list::from_range(std::forward<Rng>(rng)));
     }
 }  // namespace detail

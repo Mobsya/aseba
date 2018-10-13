@@ -441,7 +441,8 @@ export class Client {
                     if(!isNaN(val)) {
                         val = new Number(val)
                     }
-                    val.isConstant = v.constant()
+                    if(val)
+                        val.isConstant = v.constant()
                     vars[v.name()] = val
                 }
                 node._on_vars_changed_cb(vars)
