@@ -437,7 +437,11 @@ export class Client {
                 for(let i = 0; i < msg.varsLength(); i++) {
                     const v = msg.vars(i);
                     const myarray = Uint8Array.from(v.valueArray())
-                    const val = this._flex.toJSObject(myarray)
+                    let val = this._flex.toJSObject(myarray)
+                    if(!isNaN(val)) {
+                        val = new Number(val)
+                    }
+                    val.isConstant = v.constant()
                     vars[v.name()] = val
                 }
                 node._on_vars_changed_cb(vars)
