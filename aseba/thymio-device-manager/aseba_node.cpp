@@ -150,6 +150,7 @@ bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::strin
     std::unique_lock<std::mutex> _(m_node_mutex);
 
     Aseba::Compiler compiler;
+    m_defs.clear();
     compiler.setTargetDescription(&m_description);
     compiler.setCommonDefinitions(&m_defs);
     std::wstring code;
