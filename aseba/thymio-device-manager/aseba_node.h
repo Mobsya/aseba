@@ -45,6 +45,7 @@ public:
     using event_changed_payload = variant_ns::variant<events_description_type, variables_map>;
     using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
     using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, event_changed_payload)>;
+    using vm_execution_state_command = fb::VMExecutionStateCommand;
 
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
@@ -92,11 +93,10 @@ public:
     // Compile a program and send it to the node, invoking cb once the assossiated message is written out
     // If the code can not be compiled, returns false without invoking cb
     bool send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb = {});
-    void run_aseba_program(write_callback&& cb = {});
+    void set_vm_execution_state(vm_execution_state_command state, write_callback&& cb = {});
     boost::system::error_code set_node_variables(const aseba_node::variables_map& map, write_callback&& cb = {});
     boost::system::error_code emit_events(const aseba_node::variables_map& map, write_callback&& cb = {});
     void rename(const std::string& new_name);
-    void stop_vm(write_callback&& cb = {});
     bool lock(void* app);
     bool unlock(void* app);
 

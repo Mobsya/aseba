@@ -219,14 +219,9 @@ public:
                                    req->program()->str());
                 break;
             }
-            case mobsya::fb::AnyMessage::RequestCodeRun: {
-                auto req = msg.as<fb::RequestCodeRun>();
-                this->run_aseba_program(req->request_id(), req->node_id());
-                break;
-            }
-            case mobsya::fb::AnyMessage::StopNode: {
-                auto req = msg.as<fb::StopNode>();
-                this->stop_node(req->request_id(), req->node_id());
+            case mobsya::fb::AnyMessage::SetVMExecutionState: {
+                auto req = msg.as<fb::SetVMExecutionState>();
+                this->set_vm_execution_state(req->request_id(), req->node_id(), req->command());
                 break;
             }
             case mobsya::fb::AnyMessage::WatchNode: {
@@ -449,29 +444,15 @@ private:
         }
     }
 
-    void run_aseba_program(uint32_t request_id, aseba_node_registery::node_id id) {
+    void set_vm_execution_state(uint32_t request_id, aseba_node_registery::node_id id,
+                                fb::VMExecutionStateCommand cmd) {
         auto n = get_locked_node(id);
         if(!n) {
-            mLogWarn("run_aseba_program: node {} not locked", id);
+            mLogWarn("set_vm_execution_state: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        n->run_aseba_program(create_device_write_completion_cb(request_id));
-    }
-
-    void stop_node(uint32_t request_id, const aseba_node_registery::node_id& id) {
-        auto n = get_locked_node(id);
-        if(!n) {
-            n = registery().node_from_id(id);
-            if(!n || !(node_capabilities(n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
-                n = {};
-        }
-        if(!n) {
-            mLogWarn("stop_node: node {} not locked", id);
-            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
-            return;
-        }
-        n->stop_vm(create_device_write_completion_cb(request_id));
+        n->set_vm_execution_state(cmd, create_device_write_completion_cb(request_id));
     }
 
     void watch_node(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {

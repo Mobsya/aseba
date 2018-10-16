@@ -198,8 +198,31 @@ bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::strin
     return true;
 }
 
-void aseba_node::run_aseba_program(write_callback&& cb) {
-    write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
+void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_callback&& cb) {
+    switch(state) {
+        case vm_execution_state_command::Run:
+            write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::Reset:
+        case vm_execution_state_command::Stop:
+            write_message(std::make_shared<Aseba::Reset>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::Pause:
+            write_message(std::make_shared<Aseba::Pause>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::Step:
+            write_message(std::make_shared<Aseba::Step>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::Suspend:
+            write_message(std::make_shared<Aseba::Sleep>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::Reboot:
+            write_message(std::make_shared<Aseba::Reboot>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::WriteProgramToDeviceMemory:
+            write_message(std::make_shared<Aseba::WriteBytecode>(native_id()), std::move(cb));
+            break;
+    }
 }
 
 aseba_node::events_description_type aseba_node::events_description() const {
@@ -298,10 +321,6 @@ boost::system::error_code aseba_node::emit_events(const aseba_node::variables_ma
 void aseba_node::rename(const std::string& newName) {
     set_friendly_name(newName);
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
-}
-
-void aseba_node::stop_vm(write_callback&& cb) {
-    write_message(std::make_shared<Aseba::Reset>(native_id()), std::move(cb));
 }
 
 void aseba_node::on_description(Aseba::TargetDescription description) {
