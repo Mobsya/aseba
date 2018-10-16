@@ -42,7 +42,7 @@ public:
 
     struct vm_execution_state {
         fb::VMExecutionState state;
-        uint line;
+        uint32_t line;
         fb::VMExecutionError error;
         std::optional<std::string> error_message;
     };
