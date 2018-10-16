@@ -105,7 +105,8 @@ mobsya.fb.ErrorType = {
 mobsya.fb.WatchableInfo = {
   StopMonitoring: 0, 0: 'StopMonitoring',
   Variables: 1, 1: 'Variables',
-  Events: 2, 2: 'Events'
+  Events: 2, 2: 'Events',
+  VMExecutionState: 4, 4: 'VMExecutionState'
 };
 
 /**

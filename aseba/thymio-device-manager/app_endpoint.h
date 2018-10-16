@@ -279,6 +279,12 @@ public:
         });
     }
 
+    void node_execution_state_changed(std::shared_ptr<aseba_node> node, const aseba_node::vm_execution_state& state) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, state]() {
+            that->do_node_execution_state_changed(node, state);
+        });
+    }
+
 private:
     void do_node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
                          aseba_node::status status) {
@@ -318,6 +324,14 @@ private:
                                      }},
                           payload);
     }
+
+    void do_node_execution_state_changed(std::shared_ptr<aseba_node> node,
+                                         const aseba_node::vm_execution_state& state) {
+        if(!node)
+            return;
+        write_message(serialize_execution_state(*node, state));
+    }
+
 
     void send_full_node_list() {
         flatbuffers::FlatBufferBuilder builder;
@@ -462,23 +476,34 @@ private:
             return;
         }
         if(flags & uint32_t(fb::WatchableInfo::Variables)) {
-            if(!m_nodes_watched_for_variables_changes.count(id)) {
+            if(!m_watch_nodes[fb::WatchableInfo::Variables].count(id)) {
                 auto variables = node->variables();
                 this->node_variables_changed(node, variables);
             }
-            m_nodes_watched_for_variables_changes[id] = node->connect_to_variables_changes(std::bind(
+            m_watch_nodes[fb::WatchableInfo::Variables][id] = node->connect_to_variables_changes(std::bind(
                 &application_endpoint::node_variables_changed, this, std::placeholders::_1, std::placeholders::_2));
         } else {
-            m_nodes_watched_for_variables_changes.erase(id);
+            m_watch_nodes[fb::WatchableInfo::Variables].erase(id);
         }
 
         if(flags & uint32_t(fb::WatchableInfo::Events)) {
-            m_nodes_watched_for_events[id] = node->connect_to_events(std::bind(
+            m_watch_nodes[fb::WatchableInfo::Events][id] = node->connect_to_events(std::bind(
                 &application_endpoint::node_emitted_events, this, std::placeholders::_1, std::placeholders::_2));
             this->node_emitted_events(node, node->events_description());
         } else {
-            m_nodes_watched_for_events.erase(id);
+            m_watch_nodes[fb::WatchableInfo::Events].erase(id);
         }
+
+        if(flags & uint32_t(fb::WatchableInfo::VMExecutionState)) {
+            m_watch_nodes[fb::WatchableInfo::VMExecutionState][id] =
+                node->connect_to_execution_state_changes(std::bind(&application_endpoint::node_execution_state_changed,
+                                                                   this, std::placeholders::_1, std::placeholders::_2));
+            this->node_execution_state_changed(node, node->execution_state());
+
+        } else {
+            m_watch_nodes[fb::WatchableInfo::VMExecutionState].erase(id);
+        }
+
 
         write_message(create_ack_response(request_id));
     }
@@ -568,9 +593,9 @@ private:
     std::queue<tagged_detached_flatbuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
-    std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>
-        m_nodes_watched_for_variables_changes;
-    std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection> m_nodes_watched_for_events;
+    std::unordered_map<fb::WatchableInfo,
+                       std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>>
+        m_watch_nodes;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;
