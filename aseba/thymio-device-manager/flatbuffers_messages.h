@@ -36,6 +36,17 @@ tagged_detached_flatbuffer create_ack_response(uint32_t request_id) {
     return wrap_fb(fb, offset);
 }
 
+tagged_detached_flatbuffer create_set_breakpoint_response(uint32_t request_id, fb::ErrorType error,
+                                                          const aseba_node::breakpoints& fbs) {
+    flatbuffers::FlatBufferBuilder fb;
+    std::vector<flatbuffers::Offset<fb::Breakpoint>> offsets;
+    std::transform(fbs.begin(), fbs.end(), std::back_inserter(offsets),
+                   [&fb](const breakpoint& bp) { return mobsya::fb::CreateBreakpoint(fb, bp.line); });
+    auto vecOffset = fb.CreateVector(offsets);
+    auto offset = mobsya::fb::CreateSetBreakpointsResponse(fb, request_id, error, vecOffset);
+    return wrap_fb(fb, offset);
+}
+
 tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
                                                           const aseba_node_registery::node_id& id) {
 
@@ -166,6 +177,19 @@ mobsya::aseba_node::variables_map events(const fb::SendEvents& msg) {
     if(!msg.events())
         return {};
     return detail::variables(*msg.events());
+}
+
+
+std::vector<mobsya::breakpoint> breakpoints(const fb::SetBreakpoints& msg) {
+    if(!msg.breakpoints())
+        return {};
+    std::vector<mobsya::breakpoint> bps;
+    for(auto&& offset : *msg.breakpoints()) {
+        if(!offset)
+            continue;
+        bps.emplace_back(offset->line());
+    }
+    return bps;
 }
 
 

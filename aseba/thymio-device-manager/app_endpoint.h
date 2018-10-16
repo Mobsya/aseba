@@ -229,6 +229,12 @@ public:
                 this->watch_node(req->request_id(), req->node_id(), req->info_type());
                 break;
             }
+            case mobsya::fb::AnyMessage::SetBreakpoints: {
+                auto req = msg.as<fb::SetBreakpoints>();
+                this->set_breakpoints(req->request_id(), req->node_id(), breakpoints(*req));
+                break;
+            }
+
 
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
@@ -467,6 +473,27 @@ private:
             return;
         }
         n->set_vm_execution_state(cmd, create_device_write_completion_cb(request_id));
+    }
+
+    void set_breakpoints(uint32_t request_id, aseba_node_registery::node_id id, std::vector<breakpoint> breakpoints) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("set_breakpoints: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto callback = [request_id, strand = this->m_strand, ptr = weak_from_this()](boost::system::error_code ec,
+                                                                                      aseba_node::breakpoints bps) {
+            boost::asio::post(strand, [ec, bps, request_id, ptr]() {
+                auto that = ptr.lock();
+                if(!that)
+                    return;
+                that->write_message(create_set_breakpoint_response(
+                    request_id, ec ? fb::ErrorType::unknown_error : fb::ErrorType::no_error, bps));
+            });
+        };
+
+        n->set_breakpoints(breakpoints, callback);
     }
 
     void watch_node(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {

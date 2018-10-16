@@ -78,25 +78,27 @@ mobsya.fb.NodeStatus = {
  * @enum
  */
 mobsya.fb.ErrorType = {
+  no_error: 0, 0: 'no_error',
+
   /**
    * Genric error
    */
-  unknown_error: 0, 0: 'unknown_error',
+  unknown_error: 1, 1: 'unknown_error',
 
   /**
    * The node ddoes not exist or was disconnected
    */
-  unknown_node: 1, 1: 'unknown_node',
+  unknown_node: 2, 2: 'unknown_node',
 
   /**
    * The node is busy (locked by another client)
    */
-  node_busy: 2, 2: 'node_busy',
+  node_busy: 3, 3: 'node_busy',
 
   /**
    *Unsuported variable type - For SetNodeVariables and Events
    */
-  unsupported_variable_type: 3, 3: 'unsupported_variable_type'
+  unsupported_variable_type: 4, 4: 'unsupported_variable_type'
 };
 
 /**
@@ -176,8 +178,9 @@ mobsya.fb.AnyMessage = {
   SendEvents: 18, 18: 'SendEvents',
   EventsEmitted: 19, 19: 'EventsEmitted',
   SetBreakpoints: 20, 20: 'SetBreakpoints',
-  SetVMExecutionState: 21, 21: 'SetVMExecutionState',
-  VMExecutionStateChanged: 22, 22: 'VMExecutionStateChanged'
+  SetBreakpointsResponse: 21, 21: 'SetBreakpointsResponse',
+  SetVMExecutionState: 22, 22: 'SetVMExecutionState',
+  VMExecutionStateChanged: 23, 23: 'VMExecutionStateChanged'
 };
 
 /**
@@ -3226,6 +3229,88 @@ mobsya.fb.VMExecutionStateChanged.endVMExecutionStateChanged = function(builder)
 /**
  * @constructor
  */
+mobsya.fb.Breakpoint = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.Breakpoint}
+ */
+mobsya.fb.Breakpoint.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.Breakpoint=} obj
+ * @returns {mobsya.fb.Breakpoint}
+ */
+mobsya.fb.Breakpoint.getRootAsBreakpoint = function(bb, obj) {
+  return (obj || new mobsya.fb.Breakpoint).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.Breakpoint.prototype.line = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.Breakpoint.prototype.mutate_line = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.Breakpoint.startBreakpoint = function(builder) {
+  builder.startObject(1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} line
+ */
+mobsya.fb.Breakpoint.addLine = function(builder, line) {
+  builder.addFieldInt32(0, line, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.Breakpoint.endBreakpoint = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
 mobsya.fb.SetBreakpoints = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
@@ -3292,11 +3377,12 @@ mobsya.fb.SetBreakpoints.prototype.nodeId = function(obj) {
 
 /**
  * @param {number} index
- * @returns {number}
+ * @param {mobsya.fb.Breakpoint=} obj
+ * @returns {mobsya.fb.Breakpoint}
  */
-mobsya.fb.SetBreakpoints.prototype.breakpoints = function(index) {
+mobsya.fb.SetBreakpoints.prototype.breakpoints = function(index, obj) {
   var offset = this.bb.__offset(this.bb_pos, 8);
-  return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
+  return offset ? (obj || new mobsya.fb.Breakpoint).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
 
 /**
@@ -3305,14 +3391,6 @@ mobsya.fb.SetBreakpoints.prototype.breakpoints = function(index) {
 mobsya.fb.SetBreakpoints.prototype.breakpointsLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 8);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
-};
-
-/**
- * @returns {Uint32Array}
- */
-mobsya.fb.SetBreakpoints.prototype.breakpointsArray = function() {
-  var offset = this.bb.__offset(this.bb_pos, 8);
-  return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -3348,13 +3426,13 @@ mobsya.fb.SetBreakpoints.addBreakpoints = function(builder, breakpointsOffset) {
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {Array.<number>} data
+ * @param {Array.<flatbuffers.Offset>} data
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.SetBreakpoints.createBreakpointsVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt32(data[i]);
+    builder.addOffset(data[i]);
   }
   return builder.endVector();
 };
@@ -3372,6 +3450,166 @@ mobsya.fb.SetBreakpoints.startBreakpointsVector = function(builder, numElems) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.SetBreakpoints.endSetBreakpoints = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.SetBreakpointsResponse = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.SetBreakpointsResponse}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.SetBreakpointsResponse=} obj
+ * @returns {mobsya.fb.SetBreakpointsResponse}
+ */
+mobsya.fb.SetBreakpointsResponse.getRootAsSetBreakpointsResponse = function(bb, obj) {
+  return (obj || new mobsya.fb.SetBreakpointsResponse).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.requestId = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.mutate_request_id = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @returns {mobsya.fb.ErrorType}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.error = function() {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? /** @type {mobsya.fb.ErrorType} */ (this.bb.readInt32(this.bb_pos + offset)) : mobsya.fb.ErrorType.no_error;
+};
+
+/**
+ * @param {mobsya.fb.ErrorType} value
+ * @returns {boolean}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.mutate_error = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeInt32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {number} index
+ * @param {mobsya.fb.Breakpoint=} obj
+ * @returns {mobsya.fb.Breakpoint}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.breakpoints = function(index, obj) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? (obj || new mobsya.fb.Breakpoint).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.SetBreakpointsResponse.prototype.breakpointsLength = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.SetBreakpointsResponse.startSetBreakpointsResponse = function(builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} requestId
+ */
+mobsya.fb.SetBreakpointsResponse.addRequestId = function(builder, requestId) {
+  builder.addFieldInt32(0, requestId, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {mobsya.fb.ErrorType} error
+ */
+mobsya.fb.SetBreakpointsResponse.addError = function(builder, error) {
+  builder.addFieldInt32(1, error, mobsya.fb.ErrorType.no_error);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Offset} breakpointsOffset
+ */
+mobsya.fb.SetBreakpointsResponse.addBreakpoints = function(builder, breakpointsOffset) {
+  builder.addFieldOffset(2, breakpointsOffset, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {Array.<flatbuffers.Offset>} data
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.SetBreakpointsResponse.createBreakpointsVector = function(builder, data) {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} numElems
+ */
+mobsya.fb.SetBreakpointsResponse.startBreakpointsVector = function(builder, numElems) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.SetBreakpointsResponse.endSetBreakpointsResponse = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -3569,7 +3807,7 @@ mobsya.fb.Error.prototype.mutate_request_id = function(value) {
  */
 mobsya.fb.Error.prototype.error = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
-  return offset ? /** @type {mobsya.fb.ErrorType} */ (this.bb.readInt32(this.bb_pos + offset)) : mobsya.fb.ErrorType.unknown_error;
+  return offset ? /** @type {mobsya.fb.ErrorType} */ (this.bb.readInt32(this.bb_pos + offset)) : mobsya.fb.ErrorType.no_error;
 };
 
 /**
@@ -3607,7 +3845,7 @@ mobsya.fb.Error.addRequestId = function(builder, requestId) {
  * @param {mobsya.fb.ErrorType} error
  */
 mobsya.fb.Error.addError = function(builder, error) {
-  builder.addFieldInt32(1, error, mobsya.fb.ErrorType.unknown_error);
+  builder.addFieldInt32(1, error, mobsya.fb.ErrorType.no_error);
 };
 
 /**

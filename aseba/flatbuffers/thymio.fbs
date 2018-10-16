@@ -66,12 +66,13 @@ enum NodeStatus : int {
 
 // Represent various errors a request can fail with.
 enum ErrorType : int {
+  no_error = 0,
   /// Genric error
-  unknown_error = 0,
+  unknown_error = 1,
   /// The node ddoes not exist or was disconnected
-  unknown_node = 1,
+  unknown_node = 2,
   /// The node is busy (locked by another client)
-  node_busy = 2,
+  node_busy = 3,
 
   ///Unsuported variable type - For SetNodeVariables and Events
   unsupported_variable_type
@@ -251,10 +252,20 @@ table VMExecutionStateChanged {
     errorMsg:string;
 }
 
+table Breakpoint {
+    line:uint;
+}
+
 table SetBreakpoints {
     request_id:uint;
     node_id:NodeId;
-    breakpoints:[uint];
+    breakpoints:[Breakpoint];
+}
+
+table SetBreakpointsResponse {
+    request_id:uint;
+    error:ErrorType;
+    breakpoints:[Breakpoint];
 }
 
 // Ask the server to receive events pertaining to a node
@@ -316,6 +327,7 @@ union AnyMessage {
     SendEvents,
     EventsEmitted,
     SetBreakpoints,
+    SetBreakpointsResponse,
     SetVMExecutionState,
     VMExecutionStateChanged,
 }

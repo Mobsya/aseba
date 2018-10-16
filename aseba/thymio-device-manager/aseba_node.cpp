@@ -46,10 +46,12 @@ std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, nod
 
 
 void aseba_node::disconnect() {
+    cancel_pending_breakpoint_request();
     set_status(status::disconnected);
 }
 
 aseba_node::~aseba_node() {
+    cancel_pending_breakpoint_request();
     if(m_status.load() != status::disconnected) {
         mLogWarn("Node destroyed before being disconnected");
     }
@@ -83,6 +85,9 @@ void aseba_node::on_message(const Aseba::Message& msg) {
         case ASEBA_MESSAGE_DIVISION_BY_ZERO:
         case ASEBA_MESSAGE_EVENT_EXECUTION_KILLED:
         case ASEBA_MESSAGE_NODE_SPECIFIC_ERROR: on_vm_runtime_error(msg); break;
+        case ASEBA_MESSAGE_BREAKPOINT_SET_RESULT:
+            on_breakpoint_set_result(static_cast<const Aseba::BreakpointSetResult&>(msg));
+            break;
 
         default: {
             if(msg.type >= 0x8000)  // first non-event message
@@ -149,8 +154,12 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
 bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb) {
     std::unique_lock<std::mutex> _(m_node_mutex);
 
-    Aseba::Compiler compiler;
     m_defs.clear();
+    m_breakpoints.clear();
+    cancel_pending_breakpoint_request();
+
+    Aseba::Compiler compiler;
+
     compiler.setTargetDescription(&m_description);
     compiler.setCommonDefinitions(&m_defs);
     std::wstring code;
@@ -297,6 +306,92 @@ void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
     }
 
     m_vm_state_watch_signal(shared_from_this(), state);
+}
+
+void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb) {
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    auto cb_data = std::make_shared<break_point_cb_data>();
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    {
+        std::vector<unsigned> pc;
+        cb_data->cb = std::move(cb);
+
+        auto pc_from_line = [this](int line) -> int {
+            for(std::size_t i = 0; i < m_bytecode.size(); i++) {
+                if(m_bytecode[i].line == line)
+                    return i;
+            }
+            return 0;
+        };
+
+        if(breakpoints.empty()) {
+            messages.push_back(std::make_shared<Aseba::BreakpointClearAll>(native_id()));
+        } else {
+            for(auto b : breakpoints) {
+                if(m_breakpoints.count(b)) {
+                    cb_data->set.insert(b);
+                } else {
+                    auto pc = pc_from_line(b.line);
+                    if(pc) {
+                        messages.push_back(std::make_shared<Aseba::BreakpointSet>(native_id(), pc));
+                        cb_data->pending.insert_or_assign(pc, b);
+                    }
+                }
+            }
+            for(auto b : m_breakpoints) {
+                auto pc = pc_from_line(b.line);
+                if(pc > 0 && std::find(breakpoints.begin(), breakpoints.end(), b) == breakpoints.end())
+                    messages.push_back(std::make_shared<Aseba::BreakpointClear>(native_id(), pc));
+            }
+        }
+        m_breakpoints = aseba_node::breakpoints(breakpoints.begin(), breakpoints.end());
+        cancel_pending_breakpoint_request();
+        if(cb)
+            m_pending_breakpoint_request = cb_data;
+    }
+    auto write_cb = [that = shared_from_this(), ptr = std::weak_ptr(cb_data)](boost::system::error_code ec) {
+        auto data = ptr.lock();
+        if(!data)
+            return;
+        data->error = ec;
+        if(ec || data->pending.empty()) {
+            std::unique_lock<std::mutex> _(that->m_node_mutex);
+            {
+                that->m_breakpoints = data->set;
+                that->m_pending_breakpoint_request.reset();
+            }
+            boost::asio::post(that->m_io_ctx.get_executor(), std::bind(std::move(data->cb), data->error, data->set));
+        }
+    };
+    write_messages(std::move(messages), std::move(write_cb));
+}
+
+void aseba_node::on_breakpoint_set_result(const Aseba::BreakpointSetResult& res) {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    if(!m_pending_breakpoint_request)
+        return;
+    auto& r = *m_pending_breakpoint_request;
+    auto it = r.pending.find(res.pc);
+    if(it == std::end(r.pending))
+        return;
+    if(res.success)
+        r.set.insert(it->second);
+    r.pending.erase(it);
+    if(r.pending.empty()) {
+        m_breakpoints = r.set;
+        boost::asio::post(m_io_ctx.get_executor(), std::bind(std::move(r.cb), r.error, r.set));
+        m_pending_breakpoint_request.reset();
+    }
+}
+
+void aseba_node::cancel_pending_breakpoint_request() {
+    if(m_pending_breakpoint_request && m_pending_breakpoint_request->cb) {
+        boost::asio::post(m_io_ctx.get_executor(),
+                          std::bind(std::move(m_pending_breakpoint_request->cb),
+                                    boost::system::errc::make_error_code(boost::system::errc::operation_canceled),
+                                    breakpoints{}));
+    }
+    m_pending_breakpoint_request.reset();
 }
 
 aseba_node::events_description_type aseba_node::events_description() const {

@@ -13,9 +13,33 @@
 #include <aseba/flatbuffers/thymio_generated.h>
 #include <boost/signals2.hpp>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace mobsya {
 class aseba_endpoint;
+
+struct breakpoint {
+    uint32_t line;
+    breakpoint(uint32_t line) : line(line) {}
+};
+
+inline bool operator==(const breakpoint& a, const breakpoint& b) {
+    return a.line == b.line;
+}
+
+}  // namespace mobsya
+
+namespace std {
+template <>
+struct hash<mobsya::breakpoint> {
+    auto operator()(mobsya::breakpoint const& b) const noexcept {
+        return std::hash<uint32_t>()(b.line);
+    }
+};
+
+}  // namespace std
+
+namespace mobsya {
 
 class aseba_node : public std::enable_shared_from_this<aseba_node> {
 public:
@@ -47,6 +71,8 @@ public:
         std::optional<std::string> error_message;
     };
 
+    using breakpoints = std::unordered_set<breakpoint>;
+
     using variables_map = std::unordered_map<std::string, variable>;
     using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
 
@@ -60,6 +86,7 @@ public:
 
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
     using write_callback = std::function<void(boost::system::error_code)>;
+    using breakpoints_callback = std::function<void(boost::system::error_code, breakpoints)>;
 
     ~aseba_node();
 
@@ -105,6 +132,8 @@ public:
     // If the code can not be compiled, returns false without invoking cb
     bool send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb = {});
     void set_vm_execution_state(vm_execution_state_command state, write_callback&& cb = {});
+    void set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb = {});
+
     boost::system::error_code set_node_variables(const aseba_node::variables_map& map, write_callback&& cb = {});
     boost::system::error_code emit_events(const aseba_node::variables_map& map, write_callback&& cb = {});
     void rename(const std::string& new_name);
@@ -150,6 +179,10 @@ private:
     void on_vm_runtime_error(const Aseba::Message&);
     void force_execution_state_update();
 
+    void on_breakpoint_set_result(const Aseba::BreakpointSetResult&);
+    void cancel_pending_breakpoint_request();
+
+
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
 
@@ -163,6 +196,7 @@ private:
     Aseba::TargetDescription m_description;
     Aseba::CommonDefinitions m_defs;
     Aseba::BytecodeVector m_bytecode;
+    breakpoints m_breakpoints;
     boost::asio::io_context& m_io_ctx;
 
     struct {
@@ -187,7 +221,15 @@ private:
     events_watch_signal_t m_events_signal;
     vm_state_watch_signal_t m_vm_state_watch_signal;
     std::atomic<bool> m_resend_all_variables = true;
-};
 
+
+    struct break_point_cb_data {
+        std::map<unsigned, breakpoint> pending;  // pc -> line
+        breakpoints set;
+        boost::system::error_code error;
+        breakpoints_callback cb;
+    };
+    std::shared_ptr<break_point_cb_data> m_pending_breakpoint_request;
+};
 
 }  // namespace mobsya
