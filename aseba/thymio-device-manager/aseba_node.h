@@ -202,7 +202,7 @@ private:
     struct {
         int pc = 0;
         int flags = 0;
-        uint line = 0;
+        uint32_t line = 0;
         fb::VMExecutionState state = fb::VMExecutionState::Stopped;
     } m_vm_state;
 
