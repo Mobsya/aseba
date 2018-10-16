@@ -126,6 +126,16 @@ tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::aseba_nod
     return wrap_fb(fb, offset);
 }
 
+tagged_detached_flatbuffer serialize_execution_state(const mobsya::aseba_node& n,
+                                                     const mobsya::aseba_node::vm_execution_state& state) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto idOffset = n.uuid().fb(fb);
+    auto error_msg_offset = state.error_message ? fb.CreateString(*state.error_message) : 0;
+    auto offset =
+        fb::CreateVMExecutionStateChanged(fb, idOffset, state.state, state.line, state.error, error_msg_offset);
+    return wrap_fb(fb, offset);
+}
+
 namespace detail {
     mobsya::aseba_node::variables_map
     variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {

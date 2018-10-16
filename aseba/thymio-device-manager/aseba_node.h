@@ -40,11 +40,21 @@ public:
         }
     };
 
+    struct vm_execution_state {
+        fb::VMExecutionState state;
+        uint line;
+        fb::VMExecutionError error;
+        std::optional<std::string> error_message;
+    };
+
     using variables_map = std::unordered_map<std::string, variable>;
+    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
+
     using events_description_type = std::vector<mobsya::event>;
     using event_changed_payload = variant_ns::variant<events_description_type, variables_map>;
-    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
     using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, event_changed_payload)>;
+
+    using vm_state_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, vm_execution_state)>;
     using vm_execution_state_command = fb::VMExecutionStateCommand;
 
 
@@ -84,6 +94,7 @@ public:
 
     variables_map variables() const;
     events_description_type events_description() const;
+    vm_execution_state execution_state() const;
 
     // Write n messages to the enpoint owning that node, then invoke cb when all message have been written
     void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& message, write_callback&& cb = {});
@@ -111,6 +122,11 @@ public:
         return m_events_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
+    template <typename... ConnectionArgs>
+    auto connect_to_execution_state_changes(ConnectionArgs... args) {
+        return m_vm_state_watch_signal.connect(std::forward<ConnectionArgs>(args)...);
+    }
+
 private:
     friend class aseba_endpoint;
     void set_status(status);
@@ -130,6 +146,9 @@ private:
                        std::unordered_map<std::string, variable>& vars);
     void schedule_variables_update();
     void send_events_table();
+    void on_execution_state_message(const Aseba::ExecutionStateChanged&);
+    void on_vm_runtime_error(const Aseba::Message&);
+    void force_execution_state_update();
 
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
@@ -143,7 +162,15 @@ private:
     mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;
     Aseba::CommonDefinitions m_defs;
+    Aseba::BytecodeVector m_bytecode;
     boost::asio::io_context& m_io_ctx;
+
+    struct {
+        int pc = 0;
+        int flags = 0;
+        uint line = 0;
+        fb::VMExecutionState state = fb::VMExecutionState::Stopped;
+    } m_vm_state;
 
     struct aseba_vm_variable {
         std::string name;
@@ -158,6 +185,7 @@ private:
     boost::asio::deadline_timer m_variables_timer;
     variables_watch_signal_t m_variables_changed_signal;
     events_watch_signal_t m_events_signal;
+    vm_state_watch_signal_t m_vm_state_watch_signal;
     std::atomic<bool> m_resend_all_variables = true;
 };
 

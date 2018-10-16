@@ -83,6 +83,7 @@ enum WatchableInfo : int {
     //Monitor for variables changes
     Variables = 0x01,
     Events    = 0x02,
+    VMExecutionState = 0x04,
 }
 
 enum ProgrammingLanguage : int {

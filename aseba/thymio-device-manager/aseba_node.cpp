@@ -75,6 +75,15 @@ void aseba_node::on_message(const Aseba::Message& msg) {
             on_variables_message(static_cast<const Aseba::ChangedVariables&>(msg));
             break;
         }
+        case ASEBA_MESSAGE_EXECUTION_STATE_CHANGED: {
+            on_execution_state_message(static_cast<const Aseba::ExecutionStateChanged&>(msg));
+            break;
+        }
+        case ASEBA_MESSAGE_ARRAY_ACCESS_OUT_OF_BOUNDS:
+        case ASEBA_MESSAGE_DIVISION_BY_ZERO:
+        case ASEBA_MESSAGE_EVENT_EXECUTION_KILLED:
+        case ASEBA_MESSAGE_NODE_SPECIFIC_ERROR: on_vm_runtime_error(msg); break;
+
         default: {
             if(msg.type >= 0x8000)  // first non-event message
                 break;
@@ -178,9 +187,9 @@ bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::strin
 
     std::wistringstream is(code);
     Aseba::Error error;
-    Aseba::BytecodeVector bytecode;
+    m_bytecode.clear();
     unsigned allocatedVariablesCount;
-    bool result = compiler.compile(is, bytecode, allocatedVariablesCount, error);
+    bool result = compiler.compile(is, m_bytecode, allocatedVariablesCount, error);
     if(!result) {
         mLogWarn("Compilation failed on node {} : {}", m_id, Aseba::WStringToUTF8(error.message));
         return false;
@@ -191,7 +200,7 @@ bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::strin
     m_node_mutex.unlock();
 
     std::vector<std::shared_ptr<Aseba::Message>> messages;
-    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(bytecode.begin(), bytecode.end()));
+    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
     write_messages(std::move(messages), std::move(cb));
     m_variables_changed_signal(shared_from_this(), this->variables());
     send_events_table();
@@ -225,6 +234,70 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
     }
 }
 
+void aseba_node::force_execution_state_update() {
+    write_message(std::make_shared<Aseba::GetExecutionState>(native_id()));
+}
+
+void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& es) {
+    vm_execution_state state;
+    {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        if(m_vm_state.pc == es.pc && m_vm_state.flags == es.flags)
+            return;
+
+        m_vm_state.state = fb::VMExecutionState::Running;
+        m_vm_state.pc = es.pc;
+        m_vm_state.flags = es.flags;
+        if(m_vm_state.flags & ASEBA_VM_STEP_BY_STEP_MASK) {
+            m_vm_state.state = m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK ? fb::VMExecutionState::Paused :
+                                                                               fb::VMExecutionState::Stopped;
+        }
+        m_vm_state.line = es.pc < m_bytecode.size() ? m_bytecode[es.pc].line : 0;
+        state.state = m_vm_state.state;
+        state.line = m_vm_state.line;
+    }
+    m_vm_state_watch_signal(shared_from_this(), state);
+}
+
+void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
+    vm_execution_state state;
+    int pc;
+    switch(msg.type) {
+        case ASEBA_MESSAGE_ARRAY_ACCESS_OUT_OF_BOUNDS: {
+            auto message = static_cast<const Aseba::ArrayAccessOutOfBounds&>(msg);
+            state.error = fb::VMExecutionError::OutOfBoundAccess;
+            pc = message.pc;
+        }
+        case ASEBA_MESSAGE_DIVISION_BY_ZERO: {
+            auto message = static_cast<const Aseba::DivisionByZero&>(msg);
+            state.error = fb::VMExecutionError::DivisionByZero;
+            pc = message.pc;
+        }
+        case ASEBA_MESSAGE_EVENT_EXECUTION_KILLED: {
+            auto message = static_cast<const Aseba::EventExecutionKilled&>(msg);
+            state.error = fb::VMExecutionError::Killed;
+            pc = message.pc;
+        }
+        case ASEBA_MESSAGE_NODE_SPECIFIC_ERROR: {
+            auto message = static_cast<const Aseba::NodeSpecificError&>(msg);
+            state.error = fb::VMExecutionError::GenericError;
+            state.error_message = Aseba::WStringToUTF8(message.message);
+            pc = message.pc;
+        }
+    }
+
+    {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+        m_vm_state.pc = pc;
+        m_vm_state.state = fb::VMExecutionState::Stopped;
+        m_vm_state.line = pc < m_bytecode.size() ? m_bytecode[pc].line : 0;
+        state.state = m_vm_state.state;
+        state.line = m_vm_state.line;
+    }
+
+    m_vm_state_watch_signal(shared_from_this(), state);
+}
+
 aseba_node::events_description_type aseba_node::events_description() const {
     std::vector<mobsya::event> table;
     std::unique_lock<std::mutex> _(m_node_mutex);
@@ -234,6 +307,11 @@ aseba_node::events_description_type aseba_node::events_description() const {
         table.emplace_back(Aseba::WStringToUTF8(e.name), e.value);
     }
     return table;
+}
+
+aseba_node::vm_execution_state aseba_node::execution_state() const {
+    std::unique_lock<std::mutex> _(m_node_mutex);
+    return {m_vm_state.state, m_vm_state.line};
 }
 
 void aseba_node::send_events_table() {
@@ -334,6 +412,7 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
         reset_known_variables(m_description.getVariablesMap(count));
         schedule_variables_update();
     }
+    force_execution_state_update();
 
     if(description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
