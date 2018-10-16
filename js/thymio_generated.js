@@ -161,21 +161,22 @@ mobsya.fb.AnyMessage = {
   LockNode: 4, 4: 'LockNode',
   UnlockNode: 5, 5: 'UnlockNode',
   RenameNode: 6, 6: 'RenameNode',
-  StopNode: 7, 7: 'StopNode',
-  RequestCodeLoad: 8, 8: 'RequestCodeLoad',
-  RequestCodeRun: 9, 9: 'RequestCodeRun',
-  NodesChanged: 10, 10: 'NodesChanged',
-  NodeAsebaVMDescription: 11, 11: 'NodeAsebaVMDescription',
-  RequestCompleted: 12, 12: 'RequestCompleted',
-  Error: 13, 13: 'Error',
-  CompilationError: 14, 14: 'CompilationError',
-  WatchNode: 15, 15: 'WatchNode',
-  NodeVariablesChanged: 16, 16: 'NodeVariablesChanged',
-  SetNodeVariables: 17, 17: 'SetNodeVariables',
-  EventsDescriptionChanged: 18, 18: 'EventsDescriptionChanged',
-  RegisterEvents: 19, 19: 'RegisterEvents',
-  SendEvents: 20, 20: 'SendEvents',
-  EventsEmitted: 21, 21: 'EventsEmitted'
+  RequestCodeLoad: 7, 7: 'RequestCodeLoad',
+  NodesChanged: 8, 8: 'NodesChanged',
+  NodeAsebaVMDescription: 9, 9: 'NodeAsebaVMDescription',
+  RequestCompleted: 10, 10: 'RequestCompleted',
+  Error: 11, 11: 'Error',
+  CompilationError: 12, 12: 'CompilationError',
+  WatchNode: 13, 13: 'WatchNode',
+  NodeVariablesChanged: 14, 14: 'NodeVariablesChanged',
+  SetNodeVariables: 15, 15: 'SetNodeVariables',
+  EventsDescriptionChanged: 16, 16: 'EventsDescriptionChanged',
+  RegisterEvents: 17, 17: 'RegisterEvents',
+  SendEvents: 18, 18: 'SendEvents',
+  EventsEmitted: 19, 19: 'EventsEmitted',
+  SetBreakpoints: 20, 20: 'SetBreakpoints',
+  SetVMExecutionState: 21, 21: 'SetVMExecutionState',
+  VMExecutionStateChanged: 22, 22: 'VMExecutionStateChanged'
 };
 
 /**
@@ -3370,204 +3371,6 @@ mobsya.fb.SetBreakpoints.startBreakpointsVector = function(builder, numElems) {
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.SetBreakpoints.endSetBreakpoints = function(builder) {
-  var offset = builder.endObject();
-  return offset;
-};
-
-/**
- * @constructor
- */
-mobsya.fb.RequestCodeRun = function() {
-  /**
-   * @type {flatbuffers.ByteBuffer}
-   */
-  this.bb = null;
-
-  /**
-   * @type {number}
-   */
-  this.bb_pos = 0;
-};
-
-/**
- * @param {number} i
- * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.RequestCodeRun}
- */
-mobsya.fb.RequestCodeRun.prototype.__init = function(i, bb) {
-  this.bb_pos = i;
-  this.bb = bb;
-  return this;
-};
-
-/**
- * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.RequestCodeRun=} obj
- * @returns {mobsya.fb.RequestCodeRun}
- */
-mobsya.fb.RequestCodeRun.getRootAsRequestCodeRun = function(bb, obj) {
-  return (obj || new mobsya.fb.RequestCodeRun).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @returns {number}
- */
-mobsya.fb.RequestCodeRun.prototype.requestId = function() {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-};
-
-/**
- * @param {number} value
- * @returns {boolean}
- */
-mobsya.fb.RequestCodeRun.prototype.mutate_request_id = function(value) {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-
-  if (offset === 0) {
-    return false;
-  }
-
-  this.bb.writeUint32(this.bb_pos + offset, value);
-  return true;
-};
-
-/**
- * @param {mobsya.fb.NodeId=} obj
- * @returns {mobsya.fb.NodeId|null}
- */
-mobsya.fb.RequestCodeRun.prototype.nodeId = function(obj) {
-  var offset = this.bb.__offset(this.bb_pos, 6);
-  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- */
-mobsya.fb.RequestCodeRun.startRequestCodeRun = function(builder) {
-  builder.startObject(2);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {number} requestId
- */
-mobsya.fb.RequestCodeRun.addRequestId = function(builder, requestId) {
-  builder.addFieldInt32(0, requestId, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} nodeIdOffset
- */
-mobsya.fb.RequestCodeRun.addNodeId = function(builder, nodeIdOffset) {
-  builder.addFieldOffset(1, nodeIdOffset, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @returns {flatbuffers.Offset}
- */
-mobsya.fb.RequestCodeRun.endRequestCodeRun = function(builder) {
-  var offset = builder.endObject();
-  return offset;
-};
-
-/**
- * @constructor
- */
-mobsya.fb.StopNode = function() {
-  /**
-   * @type {flatbuffers.ByteBuffer}
-   */
-  this.bb = null;
-
-  /**
-   * @type {number}
-   */
-  this.bb_pos = 0;
-};
-
-/**
- * @param {number} i
- * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.StopNode}
- */
-mobsya.fb.StopNode.prototype.__init = function(i, bb) {
-  this.bb_pos = i;
-  this.bb = bb;
-  return this;
-};
-
-/**
- * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.StopNode=} obj
- * @returns {mobsya.fb.StopNode}
- */
-mobsya.fb.StopNode.getRootAsStopNode = function(bb, obj) {
-  return (obj || new mobsya.fb.StopNode).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @returns {number}
- */
-mobsya.fb.StopNode.prototype.requestId = function() {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-};
-
-/**
- * @param {number} value
- * @returns {boolean}
- */
-mobsya.fb.StopNode.prototype.mutate_request_id = function(value) {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-
-  if (offset === 0) {
-    return false;
-  }
-
-  this.bb.writeUint32(this.bb_pos + offset, value);
-  return true;
-};
-
-/**
- * @param {mobsya.fb.NodeId=} obj
- * @returns {mobsya.fb.NodeId|null}
- */
-mobsya.fb.StopNode.prototype.nodeId = function(obj) {
-  var offset = this.bb.__offset(this.bb_pos, 6);
-  return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- */
-mobsya.fb.StopNode.startStopNode = function(builder) {
-  builder.startObject(2);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {number} requestId
- */
-mobsya.fb.StopNode.addRequestId = function(builder, requestId) {
-  builder.addFieldInt32(0, requestId, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {flatbuffers.Offset} nodeIdOffset
- */
-mobsya.fb.StopNode.addNodeId = function(builder, nodeIdOffset) {
-  builder.addFieldOffset(1, nodeIdOffset, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @returns {flatbuffers.Offset}
- */
-mobsya.fb.StopNode.endStopNode = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

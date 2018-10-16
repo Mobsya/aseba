@@ -209,7 +209,7 @@ export class Node {
      *  @see lock
      */
     async run_program() {
-        return await this._client.run_program(this._id);
+        return await this._client.set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
     }
 
     async run_aseba_program() {
@@ -496,15 +496,16 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    run_program(id) {
+    set_vm_execution_state(id, command) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
-        mobsya.fb.RequestCodeRun.startRequestCodeRun(builder)
-        mobsya.fb.RequestCodeRun.addRequestId(builder, req_id)
-        mobsya.fb.RequestCodeRun.addNodeId(builder, nodeOffset)
-        const offset = mobsya.fb.RequestCodeRun.endRequestCodeRun(builder)
-        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.RequestCodeRun)
+        mobsya.fb.SetVMExecutionState.startSetVMExecutionState(builder)
+        mobsya.fb.SetVMExecutionState.addRequestId(builder, req_id)
+        mobsya.fb.SetVMExecutionState.addNodeId(builder, nodeOffset)
+        mobsya.fb.SetVMExecutionState.addCommand(builder, command)
+        const offset = mobsya.fb.SetVMExecutionState.endSetVMExecutionState(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.SetVMExecutionState)
         return this._prepare_request(req_id)
     }
 

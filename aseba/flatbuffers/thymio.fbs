@@ -256,16 +256,6 @@ table SetBreakpoints {
     breakpoints:[uint];
 }
 
-table RequestCodeRun {
-    request_id:uint;
-    node_id:NodeId;
-}
-
-table StopNode {
-  request_id:uint;
-  node_id:NodeId;
-}
-
 // Ask the server to receive events pertaining to a node
 table WatchNode {
     request_id:uint;
@@ -311,9 +301,7 @@ union AnyMessage {
     LockNode,
     UnlockNode,
     RenameNode,
-    StopNode,
     RequestCodeLoad,
-    RequestCodeRun,
     NodesChanged,
     NodeAsebaVMDescription,
     RequestCompleted,
@@ -326,6 +314,9 @@ union AnyMessage {
     RegisterEvents,
     SendEvents,
     EventsEmitted,
+    SetBreakpoints,
+    SetVMExecutionState,
+    VMExecutionStateChanged,
 }
 
 table Message {

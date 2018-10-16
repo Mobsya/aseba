@@ -105,7 +105,8 @@ ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint:
     auto requestId = generate_request_id();
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
-    write(wrap_fb(builder, fb::CreateStopNode(builder, requestId, uuidOffset)));
+    write(wrap_fb(builder,
+                  fb::CreateSetVMExecutionState(builder, requestId, uuidOffset, fb::VMExecutionStateCommand::Stop)));
     return requestId;
 }
 
