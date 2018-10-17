@@ -21,6 +21,10 @@ ThymioDeviceManagerClient::ThymioDeviceManagerClient(QObject* parent)
 }
 
 
+std::shared_ptr<ThymioNode> ThymioDeviceManagerClient::node(const QUuid& id) const {
+    return m_nodes.value(id, {});
+}
+
 void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     QUuid id = service_id(service);
     if(id.isNull())
@@ -108,8 +112,7 @@ void ThymioDeviceManagerClient::onNodesChanged(const std::vector<SimpleNode>& no
         bool added = false;
         auto it = m_nodes.find(node.id);
         if(it == m_nodes.end()) {
-            it = m_nodes.insert(node.id,
-                                std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type, this));
+            it = m_nodes.insert(node.id, std::make_shared<ThymioNode>(shared_endpoint, node.id, node.name, node.type));
             added = true;
         }
 

@@ -52,23 +52,32 @@ void ThymioNode::setName(const QString& name) {
     }
 }
 
-Request ThymioNode::rename(const QString& newName) {
-    if(newName != m_name) {
-        Q_EMIT nameChanged();
-        return m_endpoint->renameNode(*this, newName);
-    }
-    // return 0;
-}
-
-Request ThymioNode::stop() {
-    return m_endpoint->stopNode(*this);
-}
-
 void ThymioNode::setStatus(const Status& status) {
     if(m_status != status) {
         m_status = status;
         Q_EMIT statusChanged();
     }
 }
+
+Request ThymioNode::rename(const QString& newName) {
+    if(newName != m_name) {
+        Q_EMIT nameChanged();
+        return m_endpoint->renameNode(*this, newName);
+    }
+    return Request();
+}
+
+Request ThymioNode::lock() {
+    m_endpoint->lock(*this);
+}
+
+Request ThymioNode::unlock() {
+    m_endpoint->unlock(*this);
+}
+
+Request ThymioNode::stop() {
+    return m_endpoint->stopNode(*this);
+}
+
 
 }  // namespace mobsya
