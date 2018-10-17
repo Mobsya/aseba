@@ -467,6 +467,11 @@ private:
     void set_vm_execution_state(uint32_t request_id, aseba_node_registery::node_id id,
                                 fb::VMExecutionStateCommand cmd) {
         auto n = get_locked_node(id);
+        if(!n && cmd == fb::VMExecutionStateCommand::Stop) {
+            n = registery().node_from_id(id);
+            if(n && (node_capabilities(n) & uint64_t(fb::NodeCapability::Rename)))
+                n = {};
+        }
         if(!n) {
             mLogWarn("set_vm_execution_state: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
