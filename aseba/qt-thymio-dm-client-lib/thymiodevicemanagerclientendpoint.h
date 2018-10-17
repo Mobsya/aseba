@@ -11,7 +11,6 @@ class ThymioDeviceManagerClientEndpoint : public QObject {
     Q_OBJECT
 
 public:
-    using request_id = quint32;
     ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QObject* parent = nullptr);
     ~ThymioDeviceManagerClientEndpoint();
 
@@ -22,6 +21,8 @@ public:
 
     Request renameNode(const ThymioNode& node, const QString& newName);
     Request stopNode(const ThymioNode& node);
+    Request lock(const ThymioNode& node);
+    Request unlock(const ThymioNode& node);
 
 private Q_SLOTS:
     void onReadyRead();

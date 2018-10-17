@@ -15,6 +15,7 @@ class ThymioDeviceManagerClient : public QObject {
     Q_OBJECT
 public:
     ThymioDeviceManagerClient(QObject* parent = nullptr);
+    std::shared_ptr<ThymioNode> node(const QUuid& id) const;
 
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);

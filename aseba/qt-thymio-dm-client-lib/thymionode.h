@@ -55,6 +55,8 @@ public:
 
     Q_INVOKABLE Request rename(const QString& newName);
     Q_INVOKABLE Request stop();
+    Q_INVOKABLE Request lock();
+    Q_INVOKABLE Request unlock();
 
 private:
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;

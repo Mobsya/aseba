@@ -2,6 +2,7 @@
 #include <QDataStream>
 #include <QtEndian>
 #include <array>
+#include <QtGlobal>
 #include <QRandomGenerator>
 #include "qflatbuffers.h"
 #include "thymio-api.h"
@@ -15,7 +16,7 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::disconnected);
     connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
     connect(m_socket, &QTcpSocket::connected, this, &ThymioDeviceManagerClientEndpoint::onConnected);
-    connect(m_socket, qOverload<QAbstractSocket::SocketError>(&QAbstractSocket::error), this,
+    connect(m_socket, qOverload<QAbstractSocket::SocketError>(QAbstractSocket::error), this,
             &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
 }
 
@@ -153,6 +154,21 @@ Request ThymioDeviceManagerClientEndpoint::stopNode(const ThymioNode& node) {
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     write(wrap_fb(builder,
                   fb::CreateSetVMExecutionState(builder, r.id(), uuidOffset, fb::VMExecutionStateCommand::Stop)));
+    return r;
+}
+
+auto ThymioDeviceManagerClientEndpoint::lock(const ThymioNode& node) -> Request {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    write(wrap_fb(builder, fb::CreateLockNode(builder, r.id(), uuidOffset)));
+    return r;
+}
+auto ThymioDeviceManagerClientEndpoint::unlock(const ThymioNode& node) -> Request {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    write(wrap_fb(builder, fb::CreateUnlockNode(builder, r.id(), uuidOffset)));
     return r;
 }
 
