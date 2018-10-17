@@ -9,9 +9,8 @@ if(NOT ANDROID)
 
     add_subdirectory(targets)
     add_subdirectory(thymio-device-manager)
+    add_subdirectory(qt-thymio-dm-client-lib)
+    add_subdirectory(launcher)
 endif()
 
 add_subdirectory(flatbuffers)
-
-add_subdirectory(qt-thymio-dm-client-lib)
-add_subdirectory(launcher)
