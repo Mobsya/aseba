@@ -47,30 +47,31 @@ namespace qml {
         if(m_engine.isNull()) {
             return;
         }
-        /*
-                QString qml = "import QtQuick 2.0\n"
-                              "QtObject { \n"
-                              "function create(request) {\n"
-                              "    var promise = Q.promise();\n"
-                              "    request.onFinished(request, function(value) {\n"
-                              "        if (request.isCanceled(request)) {\n"
-                              "            promise.reject();\n"
-                              "        } else {\n"
-                              "            promise.resolve(value);\n"
-                              "        }\n"
-                              "    });\n"
-                              "    return promise;\n"
-                              "}\n"
-                              "}\n";
 
-                QQmlComponent comp(engine);
-                comp.setData(qml.toUtf8(), QUrl());
-                QObject* holder = comp.create();
-                if(holder == 0) {
-                    return;
-                }*/
+        QString qml = R"(
+import QtQuick 2.0
+import org.mobsya 1.0
+QtObject {
+    function create(request) {
+        var promise = new Promise(function(resolve, reject) {
+            Request.onFinished(request, function(res, value) {
+                if(res)
+                    resolve(value)
+                else reject(value)
+            });
+        });
+        return promise;
+    }
+})";
 
-        // promiseCreator = engine->newQObject(holder);
+        QQmlComponent comp(engine);
+        comp.setData(qml.toUtf8(), QUrl());
+        QObject* holder = comp.create();
+        if(holder == 0) {
+            return;
+        }
+
+        promiseCreator = engine->newQObject(holder);
     }
 
     bool QmlRequest::isFinished(const QVariant& request) {
@@ -124,19 +125,16 @@ namespace qml {
 
 
     QJSValue QmlRequest::promise(QJSValue request) {
-        /*QJSValue create = promiseCreator.property("create");
+        QJSValue create = promiseCreator.property("create");
         QJSValueList args;
         args << request;
 
         QJSValue result = create.call(args);
         if(result.isError() || result.isUndefined()) {
-            qWarning() << "request.promise: QuickPromise is not installed or setup properly";
+            qWarning() << "Can't create a promise - Qt too old ?";
             result = QJSValue();
         }
-
         return result;
-        */
-        return {};
     }
 
     static QObject* provider(QQmlEngine* engine, QJSEngine* scriptEngine) {
