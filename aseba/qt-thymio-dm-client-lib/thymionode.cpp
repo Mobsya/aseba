@@ -52,15 +52,15 @@ void ThymioNode::setName(const QString& name) {
     }
 }
 
-ThymioDeviceManagerClientEndpoint::request_id ThymioNode::rename(const QString& newName) {
+Request ThymioNode::rename(const QString& newName) {
     if(newName != m_name) {
         Q_EMIT nameChanged();
         return m_endpoint->renameNode(*this, newName);
     }
-    return 0;
+    // return 0;
 }
 
-ThymioDeviceManagerClientEndpoint::request_id ThymioNode::stop() {
+Request ThymioNode::stop() {
     return m_endpoint->stopNode(*this);
 }
 

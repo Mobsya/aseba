@@ -3,6 +3,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 cmake_policy(SET CMP0071 NEW)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(Qt5QuickCompiler)
 if(Qt5QuickCompiler_FOUND)
@@ -25,6 +26,7 @@ target_link_libraries(thymio-launcher
     Qt5::Quick
     Qt5::QuickWidgets
     qt-thymio-dm-client-lib
+    qt-thymio-dm-client-lib-qml
     qtsingleapplication
 )
 codesign(thymio-launcher)

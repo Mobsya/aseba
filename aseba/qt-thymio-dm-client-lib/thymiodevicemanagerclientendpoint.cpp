@@ -13,8 +13,14 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
 
     connect(m_socket, &QTcpSocket::readyRead, this, &ThymioDeviceManagerClientEndpoint::onReadyRead);
     connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::disconnected);
+    connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
     connect(m_socket, &QTcpSocket::connected, this, &ThymioDeviceManagerClientEndpoint::onConnected);
-    // connect(m_socket, &QTcpSocket::onerror, this, &ThymioDeviceManagerClientEndpoint::disconnected);
+    connect(m_socket, qOverload<QAbstractSocket::SocketError>(&QAbstractSocket::error), this,
+            &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
+}
+
+ThymioDeviceManagerClientEndpoint::~ThymioDeviceManagerClientEndpoint() {
+    cancelAllRequests();
 }
 
 void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer& buffer) {
@@ -63,8 +69,49 @@ void ThymioDeviceManagerClientEndpoint::onReadyRead() {
         auto s = m_socket->read(reinterpret_cast<char*>(data.data()), m_message_size);
         Q_ASSERT(s == m_message_size);
         m_message_size = 0;
-        Q_EMIT onMessage(fb_message_ptr(std::move(data)));
+        handleIncommingMessage(fb_message_ptr(std::move(data)));
     }
+}
+
+void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
+    switch(msg.message_type()) {
+        case mobsya::fb::AnyMessage::RequestCompleted: {
+            auto message = msg.as<mobsya::fb::RequestCompleted>();
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            if(auto req = basic_req->as<Request::internal_ptr_type>()) {
+                req->setResult();
+            }
+            break;
+        }
+        case mobsya::fb::AnyMessage::Error: {
+            auto message = msg.as<mobsya::fb::Error>();
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            basic_req->setError(message->error());
+            break;
+        }
+        default: Q_EMIT onMessage(msg);
+    }
+}
+
+detail::RequestDataBase::shared_ptr
+ThymioDeviceManagerClientEndpoint::get_request(detail::RequestDataBase::request_id id) {
+    auto it = m_pending_requests.find(id);
+    if(it == m_pending_requests.end())
+        return {};
+    auto res = *it;
+    m_pending_requests.erase(it);
+    return res;
+}
+
+void ThymioDeviceManagerClientEndpoint::cancelAllRequests() {
+    for(auto&& r : m_pending_requests) {
+        r->cancel();
+    }
+    m_pending_requests.clear();
 }
 
 void ThymioDeviceManagerClientEndpoint::onConnected() {
@@ -86,34 +133,27 @@ flatbuffers::Offset<fb::NodeId> ThymioDeviceManagerClientEndpoint::serialize_uui
     return mobsya::fb::CreateNodeId(fb, fb.CreateVector(data.data(), data.size()));
 }
 
-ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::renameNode(const ThymioNode& node,
-                                                                                            const QString& newName) {
+Request ThymioDeviceManagerClientEndpoint::renameNode(const ThymioNode& node, const QString& newName) {
 
-    auto requestId = generate_request_id();
+    Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     auto nameOffset = qfb::add_string(builder, newName);
     fb::RenameNodeBuilder rn(builder);
-    rn.add_request_id(requestId);
+    rn.add_request_id(r.id());
     rn.add_node_id(uuidOffset);
     rn.add_new_name(nameOffset);
     write(wrap_fb(builder, rn.Finish()));
-    return requestId;
+    return r;
 }
 
-ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::stopNode(const ThymioNode& node) {
-    auto requestId = generate_request_id();
+Request ThymioDeviceManagerClientEndpoint::stopNode(const ThymioNode& node) {
+    Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     write(wrap_fb(builder,
-                  fb::CreateSetVMExecutionState(builder, requestId, uuidOffset, fb::VMExecutionStateCommand::Stop)));
-    return requestId;
+                  fb::CreateSetVMExecutionState(builder, r.id(), uuidOffset, fb::VMExecutionStateCommand::Stop)));
+    return r;
 }
-
-ThymioDeviceManagerClientEndpoint::request_id ThymioDeviceManagerClientEndpoint::generate_request_id() {
-    quint32 value = QRandomGenerator::global()->generate();
-    return value;
-}
-
 
 }  // namespace mobsya
