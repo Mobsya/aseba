@@ -16,7 +16,7 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::disconnected);
     connect(m_socket, &QTcpSocket::disconnected, this, &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
     connect(m_socket, &QTcpSocket::connected, this, &ThymioDeviceManagerClientEndpoint::onConnected);
-    connect(m_socket, qOverload<QAbstractSocket::SocketError>(QAbstractSocket::error), this,
+    connect(m_socket, qOverload<QAbstractSocket::SocketError>(&QAbstractSocket::error), this,
             &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
 }
 
