@@ -40,7 +40,6 @@
 #include <memory>
 
 #include "../../Plugin.h"
-#include "../../DashelTarget.h"
 
 namespace Aseba {
 struct ThymioVPLStandaloneInterface;

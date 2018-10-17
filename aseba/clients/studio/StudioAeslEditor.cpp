@@ -18,7 +18,7 @@
 */
 
 #include "StudioAeslEditor.h"
-#include "MainWindow.h"
+#include "NodeTab.h"
 #include <QtWidgets>
 #include <QtGlobal>
 
@@ -47,6 +47,7 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
         const QString startText(cursor.block().text().left(posInBlock));
         startOfLine = !startText.contains(QRegExp("\\S"));
     }
+    /*
 
     // if beginning of a line and source widget is known, add some helper text
     if(dropSourceWidget && startOfLine) {
@@ -101,7 +102,7 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
         this->setTextCursor(cursor);
     } else
         cursor.insertText(source->text());
+        */
 }
 
-/*@}*/
 }  // namespace Aseba

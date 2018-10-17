@@ -51,13 +51,15 @@ FixedWidthTableView::FixedWidthTableView() {
 }
 
 void FixedWidthTableView::setSecondColumnLongestContent(const QString& content) {
-    Q_ASSERT((model()->columnCount() == 2) || (model()->columnCount() == 3));
+    // Q_ASSERT((model()->columnCount() == 2) || (model()->columnCount() == 3));
     QFontMetrics fm(font());
     col1Width = fm.width(content);
 }
 
 void FixedWidthTableView::resizeEvent(QResizeEvent* event) {
-    Q_ASSERT((model()->columnCount() == 2) || (model()->columnCount() == 3));
+    return;
+
+    // Q_ASSERT((model()->columnCount() == 2) || (model()->columnCount() == 3));
     if(model()->columnCount() == 2) {
         int col0Width = event->size().width() - col1Width;
         setColumnWidth(0, col0Width);
