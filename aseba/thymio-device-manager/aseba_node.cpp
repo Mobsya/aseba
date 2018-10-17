@@ -349,7 +349,8 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
         if(cb)
             m_pending_breakpoint_request = cb_data;
     }
-    auto write_cb = [that = shared_from_this(), ptr = std::weak_ptr(cb_data)](boost::system::error_code ec) {
+    auto write_cb = [that = shared_from_this(),
+                     ptr = std::weak_ptr<break_point_cb_data>(cb_data)](boost::system::error_code ec) {
         auto data = ptr.lock();
         if(!data)
             return;
