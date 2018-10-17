@@ -265,7 +265,7 @@ ConstantsModel::ConstantsModel(NamedValuesVector* namedValues, QObject* parent)
 bool ConstantsModel::validateName(const QString& name) const {
     Q_ASSERT(namedValues);
 
-    if(namedValues->contains(name.toStdWString())) {
+    /*if(namedValues->contains(name.toStdWString())) {
         QMessageBox::warning(nullptr, tr("Constant already defined"), tr("Constant %0 is already defined.").arg(name));
         return false;
     }
@@ -277,7 +277,7 @@ bool ConstantsModel::validateName(const QString& name) const {
                                  .arg(name));
         return false;
     }
-
+*/
     return true;
 }
 

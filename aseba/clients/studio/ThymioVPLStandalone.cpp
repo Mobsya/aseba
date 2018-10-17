@@ -106,12 +106,12 @@ QString ThymioVPLStandaloneInterface::openedFileName() const {
 
 //////
 
-ThymioVPLStandalone::ThymioVPLStandalone(QVector<QTranslator*> translators, const QString& commandLineTarget,
+ThymioVPLStandalone::ThymioVPLStandalone(const QString& commandLineTarget,
                                          bool useAnyTarget, bool debugLog, bool execFeedback)
     : VariableListener(new TargetVariablesModel(this))
     ,
     // create target
-    target(new DashelTarget(translators, commandLineTarget))
+    target(new DashelTarget(commandLineTarget))
     ,
     // options
     useAnyTarget(useAnyTarget)

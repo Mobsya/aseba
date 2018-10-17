@@ -675,23 +675,18 @@ void AeslEditor::keyPressEvent(QKeyEvent* event) {
 }
 
 bool AeslEditor::handleCompleter(QKeyEvent* event) {
-    // clang-format off
-		// if the popup is visible, forward special keys to the completer
-		if (completer && completer->popup()->isVisible())
-		{
-			switch (event->key())
-			{
-				case Qt::Key_Enter:
-				case Qt::Key_Return:
-				case Qt::Key_Escape:
-				case Qt::Key_Tab:
-				case Qt::Key_Backtab:
-					event->ignore();
-					return true;	// let the completer do default behavior
-				default:
-					break;
-			}
-		}
+
+    // if the popup is visible, forward special keys to the completer
+    if(completer && completer->popup()->isVisible()) {
+        switch(event->key()) {
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
+            case Qt::Key_Escape:
+            case Qt::Key_Tab:
+            case Qt::Key_Backtab: event->ignore(); return true;  // let the completer do default behavior
+            default: break;
+        }
+    }
     // clang-format on
 
     // not the case, go on with other handlers
@@ -712,14 +707,12 @@ bool AeslEditor::handleTab(QKeyEvent* event) {
         cursor.movePosition(QTextCursor::StartOfBlock);
         if(event->modifiers() & Qt::ControlModifier) {
             cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
-            // clang-format off
-				if ((cursor.selectedText() == "\t") ||
-					(	(cursor.selectedText() == " ") &&
-						(cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
-						(cursor.selectedText() == "    ")
-					)
-				)
-					cursor.removeSelectedText();
+
+            if((cursor.selectedText() == "\t") ||
+               ((cursor.selectedText() == " ") &&
+                (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
+                (cursor.selectedText() == "    ")))
+                cursor.removeSelectedText();
             // clang-format on
         } else
             cursor.insertText("\t");
@@ -730,14 +723,11 @@ bool AeslEditor::handleTab(QKeyEvent* event) {
     cursor.movePosition(QTextCursor::StartOfBlock);
     if(event->modifiers() & Qt::ControlModifier) {
         cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
-        // clang-format off
-			if ((cursor.selectedText() == "\t") ||
-				(	(cursor.selectedText() == " ") &&
-					(cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
-					(cursor.selectedText() == "    ")
-				)
-			)
-				cursor.removeSelectedText();
+
+        if((cursor.selectedText() == "\t") ||
+           ((cursor.selectedText() == " ") && (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
+            (cursor.selectedText() == "    ")))
+            cursor.removeSelectedText();
         // clang-format on
     } else
         cursor.insertText("\t");

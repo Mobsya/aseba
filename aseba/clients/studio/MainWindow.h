@@ -50,10 +50,11 @@
 #include <string>
 #include "Target.h"
 #include "TargetModels.h"
-#include "Plugin.h"
-#include "PluginRegistry.h"
 #include "HelpViewer.h"
 #include "ConfigDialog.h"
+
+#include <aseba/qt-thymio-dm-client-lib/thymionode.h>
+#include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 
 class QLabel;
 class QSpinBox;
@@ -82,34 +83,11 @@ class AeslLineNumberSidebar;
 class AeslBreakpointSidebar;
 class AeslHighlighter;
 class EventViewer;
-class EditorsPlotsTabWidget;
+class NodeTabsManager;
 class DraggableListWidget;
 class FindDialog;
 class NodeTab;
 class MainWindow;
-
-//! To access private members of MainWindow and its children, a plugin must inherit from this class
-struct StudioInterface : DevelopmentEnvironmentInterface {
-    NodeTab* nodeTab;
-    MainWindow* mainWindow;
-
-    StudioInterface(NodeTab* nodeTab);
-
-    Target* getTarget() override;
-    unsigned getNodeId() const override;
-    unsigned getProductId() const override;
-    void setCommonDefinitions(const CommonDefinitions& commonDefinitions) override;
-    void displayCode(const QList<QString>& code, int elementToHighlight) override;
-    void loadAndRun() override;
-    void stop() override;
-    TargetVariablesModel* getVariablesModel() override;
-    void setVariableValues(unsigned, const VariablesDataVector&) override;
-    bool saveFile(bool as = false) override;
-    void openFile() override;
-    bool newFile() override;
-    void clearOpenedFileName(bool isModified) override;
-    QString openedFileName() const override;
-};
 
 class CompilationLogDialog : public QDialog {
     Q_OBJECT
@@ -125,250 +103,6 @@ signals:
 protected:
     void hideEvent(QHideEvent* event) override;
     QTextEdit* te;
-};
-
-class EditorsPlotsTabWidget : public QTabWidget {
-    Q_OBJECT
-
-public:
-    EditorsPlotsTabWidget();
-    ~EditorsPlotsTabWidget() override;
-    void addTab(QWidget* widget, const QString& label, bool closable = false);
-    void highlightTab(int index, QColor color = Qt::red);
-    void setExecutionMode(int index, Target::ExecutionMode state);
-
-public slots:
-    void removeAndDeleteTab(int index = -1);
-
-protected slots:
-    void vmMemoryResized(int, int, int);  // for vmMemoryView QTreeView child widget
-    void tabChanged(int index);
-
-protected:
-    virtual void resetHighlight(int index);
-    virtual void vmMemoryViewResize(NodeTab* tab);
-    virtual void readSettings();
-    virtual void writeSettings();
-
-    int vmMemorySize[2];
-};
-
-//! Tab holding code (instead of plot)
-class ScriptTab {
-public:
-    using SavedContent = NodeToolInterface::SavedContent;
-    using SavedPlugins = QList<SavedContent>;
-
-    ScriptTab(const unsigned id) : id(id) {}
-    virtual ~ScriptTab() = default;
-
-    unsigned nodeId() const {
-        return id;
-    }
-    virtual SavedPlugins savePlugins() const = 0;
-
-protected:
-    void createEditor();
-
-    unsigned id;  //!< node identifier
-
-    friend class MainWindow;
-    StudioAeslEditor* editor;
-    AeslLineNumberSidebar* linenumbers;
-    AeslBreakpointSidebar* breakpoints;
-    AeslHighlighter* highlighter;
-};
-
-//! Tab for a target node that is not connected
-class AbsentNodeTab : public QWidget, public ScriptTab {
-    Q_OBJECT
-
-public:
-    AbsentNodeTab(const unsigned id, QString name, const QString& sourceCode, SavedPlugins savedPlugins);
-
-    SavedPlugins savePlugins() const override {
-        return savedPlugins;
-    }
-
-    const QString name;
-    SavedPlugins savedPlugins;
-};
-
-//! Tab for a connected target node
-class NodeTab : public QSplitter, public ScriptTab, public VariableListener {
-    Q_OBJECT
-
-public:
-    struct CompilationResult {
-        bool dump;
-        bool success;
-        BytecodeVector bytecode;
-        unsigned allocatedVariablesCount;
-        VariablesMap variablesMap;
-        Compiler::SubroutineTable subroutineTable;
-        Error error;
-        std::wostringstream compilationMessages;
-
-        CompilationResult(bool dump) : dump(dump), success(false), allocatedVariablesCount(0) {}
-    };
-
-
-public:
-    NodeTab(MainWindow* mainWindow, Target* target, const CommonDefinitions* commonDefinitions, const unsigned id,
-            QWidget* parent = nullptr);
-    ~NodeTab() override;
-    unsigned productId() const {
-        return pid;
-    }
-
-    void variablesMemoryChanged(unsigned start, const VariablesDataVector& variables);
-
-signals:
-    void uploadReadynessChanged(bool);
-
-protected:
-    void timerEvent(QTimerEvent* event) override;
-    void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
-    void setupWidgets();
-    void setupConnections();
-    SavedPlugins savePlugins() const override;
-    void notifyPluginsAboutToLoad();
-    void restorePlugins(const SavedPlugins& savedPlugins, bool fromFile);
-    void updateToolList();
-
-public slots:
-    void clearExecutionErrors();
-    void refreshCompleterModel(LocalContext context);
-    // void sortCompleterModel();
-
-protected slots:
-    void resetClicked();
-    void loadClicked();
-    void runInterruptClicked();
-    void nextClicked();
-    void refreshMemoryClicked();
-    void autoRefreshMemoryClicked(int state);
-
-    void writeBytecode();
-    void reboot();
-    void saveBytecode();
-
-    void setVariableValues(unsigned, const VariablesDataVector&);
-    void insertVariableName(const QModelIndex&);
-
-    void editorContentChanged();
-    void recompile();
-    void markTargetUnsynced();
-
-    // keywords
-    void keywordClicked(QString);
-    void showKeywords(bool show);
-
-    void showMemoryUsage(bool show);
-
-    void cursorMoved();
-    void goToError();
-
-    void setBreakpoint(unsigned line);
-    void clearBreakpoint(unsigned line);
-    void breakpointClearedAll();
-
-    void executionPosChanged(unsigned line);
-    void executionModeChanged(Target::ExecutionMode mode);
-
-    void breakpointSetResult(unsigned line, bool success);
-
-    void closePlugins();
-
-    void updateHidden();
-
-    void compilationCompleted();
-
-protected:
-    void processCompilationResult(CompilationResult* result);
-    void rehighlight();
-    void reSetBreakpoints();
-
-    // editor properties code
-    bool setEditorProperty(const QString& property, const QVariant& value, unsigned line, bool removeOld = false);
-    bool clearEditorProperty(const QString& property, unsigned line);
-    bool clearEditorProperty(const QString& property);
-    void switchEditorProperty(const QString& oldProperty, const QString& newProperty);
-
-protected:
-    friend class MainWindow;
-    friend class StudioAeslEditor;
-    friend class EditorsPlotsTabWidget;
-
-    unsigned pid;  //!< node product identifier
-    friend struct StudioInterface;
-    Target* target;                              //!< pointer to target
-    const CommonDefinitions* commonDefinitions;  //!< pointer to common definitions
-
-    MainWindow* mainWindow;
-    QLabel* cursorPosText;
-    QLabel* compilationResultImage;
-    QLabel* compilationResultText;
-    QLabel* memoryUsageText;
-
-    QLabel* executionModeLabel;
-    QPushButton* loadButton;
-    QPushButton* resetButton;
-    QPushButton* runInterruptButton;
-    QPushButton* nextButton;
-    QPushButton* refreshMemoryButton;
-    QCheckBox* autoRefreshMemoryCheck;
-
-    // keywords
-    QToolButton* varButton;
-    QToolButton* ifButton;
-    QToolButton* elseifButton;
-    QToolButton* elseButton;
-    QToolButton* oneventButton;
-    QToolButton* whileButton;
-    QToolButton* forButton;
-    QToolButton* subroutineButton;
-    QToolButton* callsubButton;
-    QToolBar* keywordsToolbar;
-    QSignalMapper* signalMapper;
-
-    TargetVariablesModel* vmMemoryModel;
-    TargetSubroutinesModel* vmSubroutinesModel;
-    QTreeView* vmMemoryView;
-    QLineEdit* vmMemoryFilter;
-
-    TargetFunctionsModel* vmFunctionsModel;
-    QTreeView* vmFunctionsView;
-
-    DraggableListWidget* vmLocalEvents;
-
-    QCompleter* completer;
-    QAbstractItemModel* eventAggregator;
-    QAbstractItemModel* variableAggregator;
-    QSortFilterProxyModel* sortingProxy;
-    TreeChainsawFilter* functionsFlatModel;
-
-    QToolBox* toolBox;
-    QVBoxLayout* toolListLayout;
-    int toolListIndex;
-    NodeToolInterfaces tools;
-
-    int refreshTimer;  //!< id of timer for auto refresh of variables, if active
-
-    QString lastCompiledSource;  //!< content of last source considered for compilation following
-                                 //!< a textChanged signal
-    int errorPos;                //!< position of last error, -1 if compilation was success
-    int currentPC;               //!< current program counter
-    Target::ExecutionMode previousMode;
-    bool showHidden;
-
-    QFuture<CompilationResult*> compilationFuture;
-    QFutureWatcher<CompilationResult*> compilationWatcher;
-    bool compilationDirty;
-    bool isSynchronized;
-
-    BytecodeVector bytecode;           //!< bytecode resulting of last successfull compilation
-    unsigned allocatedVariablesCount;  //!< number of allocated variables
 };
 
 class NewNamedValueDialog : public QDialog {
@@ -398,14 +132,14 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QVector<QTranslator*> translators, const QString& commandLineTarget, bool autoRefresh,
+    MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QVector<QUuid>& targetUuids,
                QWidget* parent = nullptr);
     ~MainWindow() override;
 
-signals:
+Q_SIGNALS:
     void MainWindowClosed();
 
-private slots:
+private Q_SLOTS:
     void about();
     bool newFile();
     void openFile(const QString& path = QString());
@@ -413,7 +147,6 @@ private slots:
     bool save();
     bool saveFile(const QString& previousFileName = QString());
     void exportMemoriesContent();
-    void importMemoriesContent();
     void copyAll();
     void findTriggered();
     void replaceTriggered();
@@ -501,8 +234,6 @@ private:
     NodeTab* getTabFromId(unsigned node) const;
     NodeTab* getTabFromName(const QString& name, unsigned preferedId = 0, bool* isPrefered = nullptr,
                             QSet<int>* filledList = nullptr) const;
-    int getAbsentIndexFromId(unsigned node) const;
-    AbsentNodeTab* getAbsentTabFromId(unsigned node) const;
     void addErrorEvent(unsigned node, unsigned line, const QString& message);
     void clearDocumentSpecificTabs();
     bool askUserBeforeDiscarding();
@@ -524,8 +255,7 @@ private:
     // tabs and nodes
     friend class NodeTab;
     friend class StudioAeslEditor;
-    friend struct StudioInterface;
-    EditorsPlotsTabWidget* nodes;
+    NodeTabsManager* nodes;
     ScriptTab* currentScriptTab;
 
 #ifdef HAVE_QWT
@@ -547,16 +277,12 @@ private:
     QListWidget* logger;
     QPushButton* clearLogger;
     QLabel* statusText;  // Jiwon
-    FixedWidthTableView* eventsDescriptionsView;
+    // FixedWidthTableView* eventsDescriptionsView;
 
     // constants
     QPushButton* addConstantButton;
     QPushButton* removeConstantButton;
-    FixedWidthTableView* constantsView;
-
-    // models
-    MaskableNamedValuesVectorModel* eventsDescriptionsModel;
-    ConstantsModel* constantsDefinitionsModel;
+    // FixedWidthTableView* constantsView;
 
     // global buttons
     QAction* loadAllAct;
@@ -572,7 +298,6 @@ private:
     QMenu* writeBytecodeMenu;
     QAction* writeAllBytecodesAct;
     QMenu* rebootMenu;
-    QMenu* saveBytecodeMenu;
     QMenu* helpMenu;
     using ActionList = QList<QAction*>;
     QAction* helpMenuTargetSpecificSeparator;
@@ -603,13 +328,7 @@ private:
     CompilationLogDialog* compilationMessageBox;  //!< box to show last compilation messages
     FindDialog* findDialog;                       //!< find dialog
     QString actualFileName;                       //!< name of opened file, "" if new
-    bool sourceModified;                          //!< true if source code has been modified since last save
-    bool autoMemoryRefresh;                       //! < true if auto memory refresh is on by default
     HelpViewer helpViewer;
-
-    // compiler and source code related stuff
-    CommonDefinitions commonDefinitions;
-    Target* target;
 };
 
 /*@}*/

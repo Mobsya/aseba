@@ -66,8 +66,7 @@ class ThymioVPLStandalone : public QSplitter, public VariableListener {
     Q_OBJECT
 
 public:
-    ThymioVPLStandalone(QVector<QTranslator*> translators, const QString& commandLineTarget, bool useAnyTarget,
-                        bool debugLog, bool execFeedback);
+    ThymioVPLStandalone();
     ~ThymioVPLStandalone() override;
 
 protected:
