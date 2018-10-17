@@ -140,7 +140,7 @@ platform: x64
 environment:
   NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip
   SDL_URL: https://libsdl.org/release/SDL2-devel-2.0.7-VC.zip
-  CMAKE_URL: https://cmake.org/files/v3.11/cmake-3.11.0-win64-x64.zip
+  CMAKE_URL: https://cmake.org/files/v3.12/cmake-3.12.3-win64-x64.zip
   SIGNTOOL_PFX: '%APPVEYOR_BUILD_FOLDER%\windows\appveyor\mobsya.pfx'
   PFX_SECURE_FILE_DECODE:
     secure: WHOG4xjSEoHk00wq+NAwiQ==
