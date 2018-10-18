@@ -90,6 +90,8 @@ protected slots:
 
 private:
     void rehighlight();
+    void handleCompletion();
+
     void reSetBreakpoints();
 
     // editor properties code
@@ -105,6 +107,7 @@ private:
     friend class NodeTabsManager;
 
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
+    mobsya::CompilationResultWatcher* m_compilation_watcher;
 
     QLabel* cursorPosText;
     QLabel* compilationResultImage;

@@ -31,6 +31,7 @@ void ScriptTab::createEditor() {
 NodeTab::NodeTab(QWidget* parent)
     : QSplitter(parent)
     , ScriptTab()
+    , m_compilation_watcher(new mobsya::CompilationResultWatcher(this))
     , currentPC(0)
     , previousMode(Target::EXECUTION_UNKNOWN)
     , compilationDirty(false)
@@ -39,6 +40,8 @@ NodeTab::NodeTab(QWidget* parent)
     // rehighlighting = false;
     errorPos = -1;
     allocatedVariablesCount = 0;
+
+    connect(m_compilation_watcher, &mobsya::CompilationResultWatcher::finished, this, &NodeTab::compilationCompleted);
 
     /*  // create models
       vmFunctionsModel = new TargetFunctionsModel(target->getDescription(id), showHidden, this);
@@ -223,71 +226,6 @@ void NodeTab::editorContentChanged() {
     if(editor->toPlainText() == lastCompiledSource)
         return;
     lastCompiledSource = editor->toPlainText();
-
-    // handle completion
-    QTextCursor cursor(editor->textCursor());
-    if(ConfigDialog::getAutoCompletion() && cursor.atBlockEnd()) {
-        // language completion
-        const QString& line(cursor.block().text());
-        QString keyword(line);
-
-        // make sure the string does not have any trailing space
-        int nonWhitespace(0);
-        while((nonWhitespace < keyword.size()) &&
-              ((keyword.at(nonWhitespace) == ' ') || (keyword.at(nonWhitespace) == '\t')))
-            ++nonWhitespace;
-        keyword.remove(0, nonWhitespace);
-
-        if(!keyword.trimmed().isEmpty()) {
-            QString prefix;
-            QString postfix;
-            if(keyword == "if") {
-                const QString headSpace = line.left(line.indexOf("if"));
-                prefix = " ";
-                postfix = " then\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if(keyword == "when") {
-                const QString headSpace = line.left(line.indexOf("when"));
-                prefix = " ";
-                postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if(keyword == "for") {
-                const QString headSpace = line.left(line.indexOf("for"));
-                prefix = " ";
-                postfix = "i in 0:0 do\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if(keyword == "while") {
-                const QString headSpace = line.left(line.indexOf("while"));
-                prefix = " ";
-                postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if((keyword == "else") && cursor.block().next().isValid()) {
-                const QString tab = QString("\t");
-                QString headSpace = line.left(line.indexOf("else"));
-
-                if(headSpace.size() >= tab.size()) {
-                    headSpace = headSpace.left(headSpace.size() - tab.size());
-                    if(cursor.block().next().text() == headSpace + "end") {
-                        prefix = "\n" + headSpace + "else";
-                        postfix = "\n" + headSpace + "\t";
-
-                        cursor.select(QTextCursor::BlockUnderCursor);
-                        cursor.removeSelectedText();
-                    }
-                }
-            } else if(keyword == "elseif") {
-                const QString headSpace = line.left(line.indexOf("elseif"));
-                prefix = " ";
-                postfix = " then";
-            }
-
-            if(!prefix.isNull() || !postfix.isNull()) {
-                cursor.beginEditBlock();
-                cursor.insertText(prefix);
-                const int pos = cursor.position();
-                cursor.insertText(postfix);
-                cursor.setPosition(pos);
-                cursor.endEditBlock();
-                editor->setTextCursor(cursor);
-            }
-        }
-    }
     // recompile
     recompile();
     // mainWindow->sourceChanged();
@@ -356,104 +294,46 @@ return result;
 //}
 
 void NodeTab::recompile() {
-    /*    // compile
-        if(compilationFuture.isRunning())
-            compilationDirty = true;
-        else {
-            bool dump(mainWindow->nodes->currentWidget() == this);
-            compilationFuture = QtConcurrent::run(compilationThread, *target->getDescription(id), *commonDefinitions,
-                                                  editor->toPlainText(), dump);
-            compilationWatcher.setFuture(compilationFuture);
-            compilationDirty = false;
-
-            // show progress icon
-            compilationResultImage->setPixmap(QPixmap(QString(":/images/busy.png")));
-        }
-    */
+    if(!m_thymio)
+        return;
+    auto code = editor->toPlainText().simplified();
+    m_compilation_watcher->setRequest(m_thymio->compile_aseba_code(code.toUtf8()));
 }
 
 void NodeTab::compilationCompleted() {
-    /*    CompilationResult* result(compilationFuture.result());
-        assert(result);
+    if(m_compilation_watcher->isCanceled()) {
+        return;
+    }
+    if(!m_compilation_watcher->success()) {
+        // Deal with network error
+        return;
+    }
 
-        // as long as result is dirty, continue compilation
-        if(compilationDirty) {
-            delete result;
-            recompile();
-            return;
-        }
-
-        // process results
-        processCompilationResult(result);
-    */
-}
-
-/*void NodeTab::processCompilationResult(CompilationResult* result) {
-    // clear old user data
-    // doRehighlight is required to prevent infinite recursion because there are no slot
-    // to differentiate user changes from highlight changes in documents
+    auto res = m_compilation_watcher->getResult();
     bool doRehighlight = clearEditorProperty("errorPos");
 
-    if(result->dump) {
-        mainWindow->compilationMessageBox->setWindowTitle(
-            tr("Aseba Studio: Output of last compilation for %0").arg(target->getName(id)));
-
-        if(result->success)
-            mainWindow->compilationMessageBox->setText(tr("Compilation success.") + QString("\n\n") +
-                                                       QString::fromStdWString(result->compilationMessages.str()));
-        //      else
-        //          mainWindow->compilationMessageBox->setText(QString::fromStdWString(result->error.toWString()) +
-        //          ".\n\n" +
-        // QString::fromStdWString(result->compilationMessages.str()));
-    }
-
-    // show memory usage
-    if(result->success) {
-        const unsigned variableCount = result->allocatedVariablesCount;
-        const unsigned variableTotal = (*target->getDescription(id)).variablesSize;
-        const unsigned bytecodeCount = result->bytecode.size();
-        const unsigned bytecodeTotal = (*target->getDescription(id)).bytecodeSize;
-        assert(variableCount);
-        assert(bytecodeCount);
-        const QString variableText = tr("variables: %1 on %2 (%3\\%)")
-                                         .arg(variableCount)
-                                         .arg(variableTotal)
-                                         .arg((double)variableCount * 100. / variableTotal, 0, 'f', 1);
-        const QString bytecodeText = tr("bytecode: %1 on %2 (%3\\%)")
-                                         .arg(bytecodeCount)
-                                         .arg(bytecodeTotal)
-                                         .arg((double)bytecodeCount * 100. / bytecodeTotal, 0, 'f', 1);
+    if(res.success()) {
+        const QString variableText =
+            tr("variables: %1/%2 (%3 %%)")
+                .arg(res.variables_size())
+                .arg(res.variables_total_size())
+                .arg((double)res.variables_size() * 100. / res.variables_total_size(), 0, 'f', 1);
+        const QString bytecodeText =
+            tr("bytecode: %1/%2 (%3 %%)")
+                .arg(res.bytecode_size())
+                .arg(res.variables_total_size())
+                .arg((double)res.bytecode_size() * 100. / res.bytecode_total_size(), 0, 'f', 1);
         memoryUsageText->setText(trUtf8("<b>Memory usage</b> : %1, %2").arg(variableText).arg(bytecodeText));
-    }
-
-    // update state following result
-    if(result->success) {
-        bytecode = result->bytecode;
-        allocatedVariablesCount = result->allocatedVariablesCount;
-        vmMemoryModel->updateVariablesStructure(&result->variablesMap);
-        // This is disabled because we do not want to override the user's choice.
-        // The best would be to use this until the user has done any change, and
-        // then stop using it. But as sizes are reloaded from settings, the
-        // gain is not worth the implementation work.
-        // vmMemoryView->resizeColumnToContents(0);
-        vmSubroutinesModel->updateSubroutineTable(result->subroutineTable);
-
-        updateHidden();
-        compilationResultText->setText(tr("Compilation success."));
-        compilationResultImage->setPixmap(QPixmap(QString(":/images/ok.png")));
-        loadButton->setEnabled(true);
-        emit uploadReadynessChanged(true);
-
         errorPos = -1;
     } else {
-        //      compilationResultText->setText(QString::fromStdWString(result->error.toWString()));
+        compilationResultText->setText(res.error().errorMessage());
         compilationResultImage->setPixmap(QPixmap(QString(":/images/warning.png")));
         loadButton->setEnabled(false);
         emit uploadReadynessChanged(false);
 
         // we have an error, set the correct user data
-        if(result->error.pos.valid) {
-            errorPos = result->error.pos.character;
+        if(res.error().charater()) {
+            errorPos = res.error().charater();
             QTextBlock textBlock = editor->document()->findBlock(errorPos);
             int posInBlock = errorPos - textBlock.position();
             if(textBlock.userData())
@@ -463,10 +343,6 @@ void NodeTab::compilationCompleted() {
             doRehighlight = true;
         }
     }
-
-    // we have finished with the results
-    delete result;
-
     // clear bearkpoints of target if currently in debugging mode
     if(editor->debugging) {
         // target->stop(id);
@@ -476,8 +352,7 @@ void NodeTab::compilationCompleted() {
 
     if(doRehighlight)
         rehighlight();
-*/
-//}
+}
 
 //! When code is changed or target is rebooted, remove breakpoints from target but keep them locally
 //! as pending for next code load
@@ -657,13 +532,81 @@ void NodeTab::rehighlight() {
     highlighter->rehighlight();
 }
 
+void NodeTab::handleCompletion() {
+    // handle completion
+    QTextCursor cursor(editor->textCursor());
+    if(ConfigDialog::getAutoCompletion() && cursor.atBlockEnd()) {
+        // language completion
+        const QString& line(cursor.block().text());
+        QString keyword(line);
+
+        // make sure the string does not have any trailing space
+        int nonWhitespace(0);
+        while((nonWhitespace < keyword.size()) &&
+              ((keyword.at(nonWhitespace) == ' ') || (keyword.at(nonWhitespace) == '\t')))
+            ++nonWhitespace;
+        keyword.remove(0, nonWhitespace);
+
+        if(!keyword.trimmed().isEmpty()) {
+            QString prefix;
+            QString postfix;
+            if(keyword == "if") {
+                const QString headSpace = line.left(line.indexOf("if"));
+                prefix = " ";
+                postfix = " then\n" + headSpace + "\t\n" + headSpace + "end";
+            } else if(keyword == "when") {
+                const QString headSpace = line.left(line.indexOf("when"));
+                prefix = " ";
+                postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
+            } else if(keyword == "for") {
+                const QString headSpace = line.left(line.indexOf("for"));
+                prefix = " ";
+                postfix = "i in 0:0 do\n" + headSpace + "\t\n" + headSpace + "end";
+            } else if(keyword == "while") {
+                const QString headSpace = line.left(line.indexOf("while"));
+                prefix = " ";
+                postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
+            } else if((keyword == "else") && cursor.block().next().isValid()) {
+                const QString tab = QString("\t");
+                QString headSpace = line.left(line.indexOf("else"));
+
+                if(headSpace.size() >= tab.size()) {
+                    headSpace = headSpace.left(headSpace.size() - tab.size());
+                    if(cursor.block().next().text() == headSpace + "end") {
+                        prefix = "\n" + headSpace + "else";
+                        postfix = "\n" + headSpace + "\t";
+
+                        cursor.select(QTextCursor::BlockUnderCursor);
+                        cursor.removeSelectedText();
+                    }
+                }
+            } else if(keyword == "elseif") {
+                const QString headSpace = line.left(line.indexOf("elseif"));
+                prefix = " ";
+                postfix = " then";
+            }
+
+            if(!prefix.isNull() || !postfix.isNull()) {
+                cursor.beginEditBlock();
+                cursor.insertText(prefix);
+                const int pos = cursor.position();
+                cursor.insertText(postfix);
+                cursor.setPosition(pos);
+                cursor.endEditBlock();
+                editor->setTextCursor(cursor);
+            }
+        }
+    }
+}
+
 void NodeTab::reSetBreakpoints() {
     // target->clearBreakpoints(id);
     QTextBlock block = editor->document()->begin();
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
         auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
-        //   if(uData && (uData->properties.contains("breakpoint") || uData->properties.contains("breakpointPending")))
+        //   if(uData && (uData->properties.contains("breakpoint") ||
+        //   uData->properties.contains("breakpointPending")))
         //       target->setBreakpoint(id, lineCounter);
         block = block.next();
         lineCounter++;

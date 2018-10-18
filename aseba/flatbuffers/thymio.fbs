@@ -207,11 +207,37 @@ table UnlockNode {
   node_id:NodeId;
 }
 
-table RequestCodeLoad {
+
+//see WatchNode
+enum CompilationOptions : int (bit_flags) {
+    NoOption,
+    LoadOnTarget,
+    FetchBytecode,
+}
+
+
+table CompileAndLoadCodeOnVM{
     request_id:uint;
     node_id:NodeId;
-    language:ProgrammingLanguage =Aseba;
-    program:string;
+    language:ProgrammingLanguage = Aseba;
+    program:string (required);
+    options:CompilationOptions = 0;
+}
+
+table CompilationResultFailure {
+    request_id:uint;
+    message:string (required);
+    character:uint;
+    line:uint;
+    column:uint;
+}
+
+table CompilationResultSuccess {
+    request_id:uint;
+    bytecode_size:uint;
+    total_bytecode_size:uint;
+    variables_size:uint;
+    total_variables_size:uint;
 }
 
 enum VMExecutionStateCommand : short {
@@ -282,10 +308,6 @@ table Error {
   error:ErrorType;
 }
 
-table CompilationError {
-  request_id:uint;
-}
-
 table RequestCompleted {
     request_id:uint;
 }
@@ -314,12 +336,13 @@ union AnyMessage {
     LockNode,
     UnlockNode,
     RenameNode,
-    RequestCodeLoad,
+    CompileAndLoadCodeOnVM,
     NodesChanged,
     NodeAsebaVMDescription,
     RequestCompleted,
     Error,
-    CompilationError,
+    CompilationResultFailure,
+    CompilationResultSuccess,
     WatchNode,
     NodeVariablesChanged,
     SetNodeVariables,
