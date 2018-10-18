@@ -109,13 +109,13 @@ void HelpViewer::setupWidgets() {
 }
 
 void HelpViewer::setupConnections() {
-    connect(previous, SIGNAL(clicked()), this, SLOT(previousClicked()));
-    connect(next, SIGNAL(clicked()), this, SLOT(nextClicked()));
-    connect(home, SIGNAL(clicked()), this, SLOT(homeClicked()));
-    connect(viewer, SIGNAL(backwardAvailable(bool)), this, SLOT(backwardAvailable(bool)));
-    connect(viewer, SIGNAL(forwardAvailable(bool)), this, SLOT(forwardAvailable(bool)));
+    connect(previous, &QAbstractButton::clicked, this, &HelpViewer::previousClicked);
+    connect(next, &QAbstractButton::clicked, this, &HelpViewer::nextClicked);
+    connect(home, &QAbstractButton::clicked, this, &HelpViewer::homeClicked);
+    connect(viewer, &QTextBrowser::backwardAvailable, this, &HelpViewer::backwardAvailable);
+    connect(viewer, &QTextBrowser::forwardAvailable, this, &HelpViewer::forwardAvailable);
     connect(helpEngine->contentWidget(), SIGNAL(linkActivated(const QUrl&)), viewer, SLOT(setSource(const QUrl&)));
-    connect(viewer, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(sourceChanged(const QUrl&)));
+    connect(viewer, &QTextBrowser::sourceChanged, this, &HelpViewer::sourceChanged);
 }
 
 void HelpViewer::setLanguage(const QString& lang) {

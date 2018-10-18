@@ -71,7 +71,7 @@ QCheckBox* ConfigPage::newCheckbox(QString label, QString ID, bool checked) {
     WidgetCache<bool> cache(widget, checked);
     checkboxCache.insert(std::pair<QString, WidgetCache<bool> >(ID, cache));
     connect(widget, SIGNAL(released()), ConfigDialog::getInstance(), SLOT(flushCache()));
-    connect(widget, SIGNAL(released()), ConfigDialog::getInstance(), SIGNAL(settingsChanged()));
+    connect(widget, &QAbstractButton::released, ConfigDialog::getInstance(), &ConfigDialog::settingsChanged);
     return widget;
 }
 
@@ -251,7 +251,7 @@ void ConfigDialog::setupWidgets() {
     editorpage = new EditorPage();
     configStack->addWidget(editorpage);
 
-    connect(topicList, SIGNAL(currentRowChanged(int)), configStack, SLOT(setCurrentIndex(int)));
+    connect(topicList, &QListWidget::currentRowChanged, configStack, &QStackedWidget::setCurrentIndex);
     topicList->setCurrentRow(0);
 
     // buttons
