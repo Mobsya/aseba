@@ -87,6 +87,8 @@ NodeTab::~NodeTab() {
 void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     m_thymio = node;
     if(node) {
+        if(node->status() == mobsya::ThymioNode::Status::Available)
+            node->lock();
         auto ptr = node.get();
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
             if(node->status() == mobsya::ThymioNode::Status::Available)
