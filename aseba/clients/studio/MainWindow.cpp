@@ -59,7 +59,7 @@ CompilationLogDialog::CompilationLogDialog(QWidget* parent) : QDialog(parent), t
     setLayout(l);
 
     QFont font;
-    font.setFamily("");
+    font.setFamily(QLatin1String(""));
     font.setStyleHint(QFont::TypeWriter);
     font.setFixedPitch(true);
     font.setPointSize(10);
@@ -86,7 +86,7 @@ NewNamedValueDialog::NewNamedValueDialog(QString* name, int* value, int min, int
     line2 = new QSpinBox();
     line2->setRange(min, max);
     line2->setValue(*value);
-    QLabel* lineHelp = new QLabel(QString("(%1 ... %2)").arg(min).arg(max));
+    QLabel* lineHelp = new QLabel(QStringLiteral("(%1 ... %2)").arg(min).arg(max));
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
     // create the layout
@@ -130,7 +130,7 @@ void NewNamedValueDialog::okSlot() {
 }
 
 void NewNamedValueDialog::cancelSlot() {
-    *name = "";
+    *name = QLatin1String("");
     *value = -1;
     reject();
 }
@@ -229,16 +229,16 @@ void MainWindow::openFile(const QString& path) {
         } else {
             // no document is opened, try recent files
             QSettings settings;
-            QStringList recentFiles = settings.value("recent files").toStringList();
+            QStringList recentFiles = settings.value(QStringLiteral("recent files")).toStringList();
             if(recentFiles.size() > 0) {
                 dir = recentFiles[0];
             } else {
                 const QStringList stdLocations(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
-                dir = !stdLocations.empty() ? stdLocations[0] : "";
+                dir = !stdLocations.empty() ? stdLocations[0] : QLatin1String("");
             }
         }
 
-        fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), dir, "Aseba scripts (*.aesl)");
+        fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), dir, QStringLiteral("Aseba scripts (*.aesl)"));
     }
 
     QFile file(fileName);
@@ -246,7 +246,7 @@ void MainWindow::openFile(const QString& path) {
         return;
 
     // load the document
-    QDomDocument document("aesl-source");
+    QDomDocument document(QStringLiteral("aesl-source"));
     QString errorMsg;
     int errorLine;
     int errorColumn;
@@ -290,7 +290,7 @@ void MainWindow::openFile(const QString& path) {
         while(!domNode.isNull()) {
             if(domNode.isElement()) {
                 QDomElement element = domNode.toElement();
-                if(element.tagName() == "node") {
+                if(element.tagName() == QLatin1String("node")) {
                     // load plugins xml data
 
                     // get text
@@ -303,8 +303,8 @@ void MainWindow::openFile(const QString& path) {
 
                     // reconstruct nodes
                     bool prefered;
-                    const QString nodeName(element.attribute("name"));
-                    const unsigned nodeId(element.attribute("nodeId", nullptr).toUInt());
+                    const QString nodeName(element.attribute(QStringLiteral("name")));
+                    const unsigned nodeId(element.attribute(QStringLiteral("nodeId"), nullptr).toUInt());
                     NodeTab* tab = nullptr;  // getTabFromName(nodeName, nodeId, &prefered, &filledList);
                     if(tab) {
                         // matching tab name
@@ -672,7 +672,7 @@ void MainWindow::clearAllExecutionError() {
         if(tab)
             tab->clearExecutionErrors();
     }
-    logger->setStyleSheet("");
+    logger->setStyleSheet(QLatin1String(""));
 }
 
 void MainWindow::uploadReadynessChanged() {
@@ -1029,8 +1029,8 @@ void MainWindow::setupWidgets() {
     splitter->addWidget(nodes);
     setCentralWidget(splitter);
 
-    addConstantButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
-    removeConstantButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
+    addConstantButton = new QPushButton(QPixmap(QString(":/images/add.png")), QLatin1String(""));
+    removeConstantButton = new QPushButton(QPixmap(QString(":/images/remove.png")), QLatin1String(""));
     addConstantButton->setToolTip(tr("Add a new constant"));
     removeConstantButton->setToolTip(tr("Remove this constant"));
     removeConstantButton->setEnabled(false);
@@ -1092,10 +1092,10 @@ void MainWindow::setupWidgets() {
     eventsDockLayout->addWidget(eventsDescriptionsView, 1);*/
 
 
-    addEventNameButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
-    removeEventNameButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
+    addEventNameButton = new QPushButton(QPixmap(QString(":/images/add.png")), QLatin1String(""));
+    removeEventNameButton = new QPushButton(QPixmap(QString(":/images/remove.png")), QLatin1String(""));
     removeEventNameButton->setEnabled(false);
-    sendEventButton = new QPushButton(QPixmap(QString(":/images/newmsg.png")), "");
+    sendEventButton = new QPushButton(QPixmap(QString(":/images/newmsg.png")), QLatin1String(""));
     sendEventButton->setEnabled(false);
 
     addEventNameButton->setToolTip(tr("Add a new event"));
@@ -1267,7 +1267,7 @@ void MainWindow::regenerateOpenRecentMenu() {
 
     // Add all other actions excepted the one we are processing
     QSettings settings;
-    QStringList recentFiles = settings.value("recent files").toStringList();
+    QStringList recentFiles = settings.value(QStringLiteral("recent files")).toStringList();
     for(int i = 0; i < recentFiles.size(); i++) {
         const QString& fileName(recentFiles.at(i));
         openRecentMenu->addAction(fileName, this, SLOT(openRecentFile()));
@@ -1276,14 +1276,14 @@ void MainWindow::regenerateOpenRecentMenu() {
 
 void MainWindow::updateRecentFiles(const QString& fileName) {
     QSettings settings;
-    QStringList recentFiles = settings.value("recent files").toStringList();
+    QStringList recentFiles = settings.value(QStringLiteral("recent files")).toStringList();
     if(recentFiles.contains(fileName))
         recentFiles.removeAt(recentFiles.indexOf(fileName));
     recentFiles.push_front(fileName);
     const int maxRecentFiles = 8;
     if(recentFiles.size() > maxRecentFiles)
         recentFiles.pop_back();
-    settings.setValue("recent files", recentFiles);
+    settings.setValue(QStringLiteral("recent files"), recentFiles);
 }
 
 void MainWindow::regenerateToolsMenus() {
@@ -1537,7 +1537,7 @@ void MainWindow::setupMenu() {
 
     // Debug toolbar
     globalToolBar = addToolBar(tr("Debug"));
-    globalToolBar->setObjectName("debug toolbar");
+    globalToolBar->setObjectName(QStringLiteral("debug toolbar"));
     globalToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     globalToolBar->addAction(loadAllAct);
     globalToolBar->addAction(resetAllAct);
@@ -1604,7 +1604,7 @@ bool MainWindow::askUserBeforeDiscarding() {
 
     QString docName(tr("Untitled"));
     if(!actualFileName.isEmpty())
-        docName = actualFileName.mid(actualFileName.lastIndexOf("/") + 1);
+        docName = actualFileName.mid(actualFileName.lastIndexOf(QLatin1String("/")) + 1);
 
     QMessageBox msgBox;
     msgBox.setWindowTitle(tr("Aseba Studio - Confirmation Dialog"));
@@ -1650,15 +1650,15 @@ bool MainWindow::readSettings() {
     bool result;
 
     QSettings settings;
-    result = restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
-    restoreState(settings.value("MainWindow/windowState").toByteArray());
+    result = restoreGeometry(settings.value(QStringLiteral("MainWindow/geometry")).toByteArray());
+    restoreState(settings.value(QStringLiteral("MainWindow/windowState")).toByteArray());
     return result;
 }
 
 void MainWindow::writeSettings() {
     QSettings settings;
-    settings.setValue("MainWindow/geometry", saveGeometry());
-    settings.setValue("MainWindow/windowState", saveState());
+    settings.setValue(QStringLiteral("MainWindow/geometry"), saveGeometry());
+    settings.setValue(QStringLiteral("MainWindow/windowState"), saveState());
 }
 
 void MainWindow::updateWindowTitle() {
@@ -1672,7 +1672,7 @@ void MainWindow::updateWindowTitle() {
 
     QString docName(tr("Untitled"));
     if(!actualFileName.isEmpty())
-        docName = actualFileName.mid(actualFileName.lastIndexOf("/") + 1);
+        docName = actualFileName.mid(actualFileName.lastIndexOf(QLatin1String("/")) + 1);
 
     setWindowTitle(tr("%0 %1- Aseba Studio").arg(docName).arg(modifiedText));
 }

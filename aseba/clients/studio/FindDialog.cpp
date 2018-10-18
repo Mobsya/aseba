@@ -60,7 +60,7 @@ FindDialog::FindDialog(QWidget* parent, QTextEdit* editor) : QDialog(parent), ed
     buttonsLayout->addWidget(findFromTopButton);
 
     warningText = new QLabel;
-    warningText->setStyleSheet("color: darkred; font-weight: bold");
+    warningText->setStyleSheet(QStringLiteral("color: darkred; font-weight: bold"));
 
     replaceGroupBox = new QGroupBox(tr("&Replace"));
     replaceGroupBox->setCheckable(true);
@@ -167,7 +167,7 @@ bool FindDialog::find(const QTextCursor cc, const QTextDocument::FindFlag dir) {
         editor->setTextCursor(nc);
         return false;
     } else {
-        warningText->setText("");
+        warningText->setText(QLatin1String(""));
         editor->setTextCursor(nc);
         return true;
     }

@@ -89,8 +89,8 @@ Qt::ItemFlags NamedValuesVectorModel::flags(const QModelIndex& index) const {
 
 QStringList NamedValuesVectorModel::mimeTypes() const {
     QStringList types;
-    types << "text/plain";
-    if(privateMimeType != "")
+    types << QStringLiteral("text/plain");
+    if(privateMimeType != QLatin1String(""))
         types << privateMimeType;
     return types;
 }
@@ -108,7 +108,7 @@ QMimeData* NamedValuesVectorModel::mimeData(const QModelIndexList& indexes) cons
     }
     mimeData->setText(texts);
 
-    if(privateMimeType == "")
+    if(privateMimeType == QLatin1String(""))
         return mimeData;
 
     // privateMimeType
@@ -301,8 +301,8 @@ QVariant MaskableNamedValuesVectorModel::data(const QModelIndex& index, int role
     if(role == Qt::DisplayRole) {
         return QVariant();
     } else if(role == Qt::DecorationRole) {
-        return viewEvent[index.row()] ? QPixmap(QString(":/images/eye.png")) :
-                                        QPixmap(QString(":/images/eyeclose.png"));
+        return viewEvent[index.row()] ? QPixmap(QStringLiteral(":/images/eye.png")) :
+                                        QPixmap(QStringLiteral(":/images/eyeclose.png"));
     } else if(role == Qt::ToolTipRole) {
         return viewEvent[index.row()] ? tr("Hide") : tr("View");
     } else

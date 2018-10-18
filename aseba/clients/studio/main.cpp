@@ -42,11 +42,11 @@ int main(int argc, char* argv[]) {
     // Information used by QSettings with default constructor
     QCoreApplication::setOrganizationName(ASEBA_ORGANIZATION_NAME);
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
-    QCoreApplication::setApplicationName("Aseba Studio");
+    QCoreApplication::setApplicationName(QStringLiteral("Aseba Studio"));
 
 
     QCommandLineParser parser;
-    QCommandLineOption uuid("uuid", "Uuid of the targets to connect to", "uuid");
+    QCommandLineOption uuid(QStringLiteral("uuid"), QStringLiteral("Uuid of the targets to connect to"), QStringLiteral("uuid"));
     parser.addOption(uuid);
     parser.process(qApp->arguments());
 
