@@ -35,30 +35,30 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
     QTextCharFormat keywordFormat;
     keywordFormat.setForeground(Qt::darkRed);
     QStringList keywordPatterns;
-    keywordPatterns << "\\bemit\\b"
-                    << "\\bwhile\\b"
-                    << "\\bdo\\b"
-                    << "\\bfor\\b"
-                    << "\\bin\\b"
-                    << "\\bstep\\b"
-                    << "\\bif\\b"
-                    << "\\bthen\\b"
-                    << "\\belse\\b"
-                    << "\\belseif\\b"
-                    << "\\bend\\b"
-                    << "\\bvar\\b"
-                    << "\\bconst\\b"
-                    << "\\bcall\\b"
-                    << "\\bonevent\\b"
-                    << "\\bontimer\\b"
-                    << "\\bwhen\\b"
-                    << "\\band\\b"
-                    << "\\bor\\b"
-                    << "\\bnot\\b"
-                    << "\\babs\\b"
-                    << "\\bsub\\b"
-                    << "\\bcallsub\\b"
-                    << "\\breturn\\b";
+    keywordPatterns << QStringLiteral("\\bemit\\b")
+                    << QStringLiteral("\\bwhile\\b")
+                    << QStringLiteral("\\bdo\\b")
+                    << QStringLiteral("\\bfor\\b")
+                    << QStringLiteral("\\bin\\b")
+                    << QStringLiteral("\\bstep\\b")
+                    << QStringLiteral("\\bif\\b")
+                    << QStringLiteral("\\bthen\\b")
+                    << QStringLiteral("\\belse\\b")
+                    << QStringLiteral("\\belseif\\b")
+                    << QStringLiteral("\\bend\\b")
+                    << QStringLiteral("\\bvar\\b")
+                    << QStringLiteral("\\bconst\\b")
+                    << QStringLiteral("\\bcall\\b")
+                    << QStringLiteral("\\bonevent\\b")
+                    << QStringLiteral("\\bontimer\\b")
+                    << QStringLiteral("\\bwhen\\b")
+                    << QStringLiteral("\\band\\b")
+                    << QStringLiteral("\\bor\\b")
+                    << QStringLiteral("\\bnot\\b")
+                    << QStringLiteral("\\babs\\b")
+                    << QStringLiteral("\\bsub\\b")
+                    << QStringLiteral("\\bcallsub\\b")
+                    << QStringLiteral("\\breturn\\b");
     foreach(QString pattern, keywordPatterns) {
         rule.pattern = QRegExp(pattern);
         rule.format = keywordFormat;
@@ -106,10 +106,10 @@ void AeslHighlighter::highlightBlock(const QString& text) {
     auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(currentBlockUserData());
 
     // current line background blue
-    bool isActive = uData && uData->properties.contains("active");
-    bool isExecutionError = uData && uData->properties.contains("executionError");
-    bool isBreakpointPending = uData && uData->properties.contains("breakpointPending");
-    bool isBreakpoint = uData && uData->properties.contains("breakpoint");
+    bool isActive = uData && uData->properties.contains(QStringLiteral("active"));
+    bool isExecutionError = uData && uData->properties.contains(QStringLiteral("executionError"));
+    bool isBreakpointPending = uData && uData->properties.contains(QStringLiteral("breakpointPending"));
+    bool isBreakpoint = uData && uData->properties.contains(QStringLiteral("breakpoint"));
 
     QColor breakpointPendingColor(255, 240, 178);
     QColor breakpointColor(255, 211, 178);
@@ -214,8 +214,8 @@ void AeslHighlighter::highlightBlock(const QString& text) {
     }
 
     // error word in red
-    if(uData && uData->properties.contains("errorPos")) {
-        int pos = uData->properties["errorPos"].toInt();
+    if(uData && uData->properties.contains(QStringLiteral("errorPos"))) {
+        int pos = uData->properties[QStringLiteral("errorPos")].toInt();
         int len = 0;
 
         if(pos + len < text.length()) {
@@ -414,7 +414,7 @@ AeslEditor::AeslEditor()
     , previousContext(UnknownContext)
     , editingLeftValue(false) {
     QFont font;
-    font.setFamily("");
+    font.setFamily(QLatin1String(""));
     font.setStyleHint(QFont::TypeWriter);
     font.setFixedPitch(true);
     // font.setPointSize(10);
@@ -513,7 +513,7 @@ void AeslEditor::insertKeyword(QString kw) {
 
 bool AeslEditor::isBreakpoint(QTextBlock block) {
     auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
-    return (uData && (uData->properties.contains("breakpoint") || uData->properties.contains("breakpointPending")));
+    return (uData && (uData->properties.contains(QStringLiteral("breakpoint")) || uData->properties.contains(QStringLiteral("breakpointPending"))));
 }
 
 bool AeslEditor::isBreakpoint(int line) {
@@ -540,10 +540,10 @@ void AeslEditor::setBreakpoint(QTextBlock block) {
     auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
     if(!uData) {
         // create user data
-        uData = new AeslEditorUserData("breakpointPending");
+        uData = new AeslEditorUserData(QStringLiteral("breakpointPending"));
         block.setUserData(uData);
     } else
-        uData->properties.insert("breakpointPending", QVariant());
+        uData->properties.insert(QStringLiteral("breakpointPending"), QVariant());
     emit breakpointSet(block.blockNumber());
 }
 
@@ -553,8 +553,8 @@ void AeslEditor::clearBreakpoint() {
 
 void AeslEditor::clearBreakpoint(QTextBlock block) {
     auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
-    uData->properties.remove("breakpointPending");
-    uData->properties.remove("breakpoint");
+    uData->properties.remove(QStringLiteral("breakpointPending"));
+    uData->properties.remove(QStringLiteral("breakpoint"));
     if(uData->properties.isEmpty()) {
         // garbage collect UserData
         block.setUserData(nullptr);
@@ -566,8 +566,8 @@ void AeslEditor::clearAllBreakpoints() {
     for(QTextBlock it = document()->begin(); it != document()->end(); it = it.next()) {
         auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(it.userData());
         if(uData) {
-            uData->properties.remove("breakpoint");
-            uData->properties.remove("breakpointPending");
+            uData->properties.remove(QStringLiteral("breakpoint"));
+            uData->properties.remove(QStringLiteral("breakpointPending"));
         }
     }
     emit breakpointClearedAll();
@@ -601,7 +601,7 @@ void AeslEditor::commentAndUncommentSelection(CommentOperation commentOperation)
 
         if(commentOperation == CommentSelection) {
             // insert #
-            cursor.insertText("#");
+            cursor.insertText(QStringLiteral("#"));
         } else if(commentOperation == UncommentSelection) {
             // delete #
             if(cursor.block().text().at(0) == QChar('#'))
@@ -730,14 +730,14 @@ bool AeslEditor::handleTab(QKeyEvent* event) {
         if(event->modifiers() & Qt::ControlModifier) {
             cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
 
-            if((cursor.selectedText() == "\t") ||
-               ((cursor.selectedText() == " ") &&
+            if((cursor.selectedText() == QLatin1String("\t")) ||
+               ((cursor.selectedText() == QLatin1String(" ")) &&
                 (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
-                (cursor.selectedText() == "    ")))
+                (cursor.selectedText() == QLatin1String("    "))))
                 cursor.removeSelectedText();
             // clang-format on
         } else
-            cursor.insertText("\t");
+            cursor.insertText(QStringLiteral("\t"));
         cursor.movePosition(QTextCursor::NextBlock);
         cursor.movePosition(QTextCursor::EndOfBlock);
     }
@@ -746,13 +746,13 @@ bool AeslEditor::handleTab(QKeyEvent* event) {
     if(event->modifiers() & Qt::ControlModifier) {
         cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
 
-        if((cursor.selectedText() == "\t") ||
-           ((cursor.selectedText() == " ") && (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
-            (cursor.selectedText() == "    ")))
+        if((cursor.selectedText() == QLatin1String("\t")) ||
+           ((cursor.selectedText() == QLatin1String(" ")) && (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
+            (cursor.selectedText() == QLatin1String("    "))))
             cursor.removeSelectedText();
         // clang-format on
     } else
-        cursor.insertText("\t");
+        cursor.insertText(QStringLiteral("\t"));
 
     cursor.endEditBlock();
 
@@ -766,7 +766,7 @@ bool AeslEditor::handleNewLine(QKeyEvent* event) {
         // I won't handle this event
         return false;
 
-    QString headingSpace("\n");
+    QString headingSpace(QStringLiteral("\n"));
     const QString& line = textCursor().block().text();
     for(size_t i = 0; i < (size_t)line.length(); i++) {
         const QChar c(line[(unsigned)i]);
@@ -787,11 +787,11 @@ void AeslEditor::detectLocalContextChange(QKeyEvent* event) {
     QString previous = previousWord();
     QString line = currentLine();
 
-    if(previous == "call")
+    if(previous == QLatin1String("call"))
         currentContext = FunctionContext;
-    else if(previous == "callsub")
+    else if(previous == QLatin1String("callsub"))
         currentContext = SubroutineCallContext;
-    else if(previous == "onevent" || previous == "emit")
+    else if(previous == QLatin1String("onevent") || previous == QLatin1String("emit"))
         currentContext = EventContext;
     else if(vardefRegexp.indexIn(line) != -1 || constdefRegexp.indexIn(line) != -1)
         currentContext = VarDefContext;
@@ -808,7 +808,7 @@ void AeslEditor::detectLocalContextChange(QKeyEvent* event) {
 }
 
 void AeslEditor::doCompletion(QKeyEvent* event) {
-    static QString eow("~!@#$%^&*()+{}|:\"<>?,/;'[]\\-=");  // end of word
+    static QString eow(QStringLiteral("~!@#$%^&*()+{}|:\"<>?,/;'[]\\-="));  // end of word
     QString completionPrefix = textUnderCursor();
     //		qDebug() << "Completion prefix: " << completionPrefix;
 

@@ -30,7 +30,7 @@ namespace Aseba {
 
 QStringList DraggableListWidget::mimeTypes() const {
     QStringList types;
-    types << "text/plain";
+    types << QStringLiteral("text/plain");
     return types;
 }
 

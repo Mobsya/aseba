@@ -159,7 +159,7 @@ void NodeTab::compilationCompleted() {
     updateMemoryUsage(res);
     handleCompilationError(res);
 
-    bool doRehighlight = clearEditorProperty("errorPos");
+    bool doRehighlight = clearEditorProperty(QStringLiteral("errorPos"));
 
     if(res.success()) {
         Q_EMIT compilationSucceed();
@@ -201,16 +201,16 @@ void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
         return;
     }
     compilationResultText->setText(res.error().errorMessage());
-    compilationResultImage->setPixmap(QPixmap(QString(":/images/warning.png")));
+    compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/warning.png")));
 
     if(res.error().charater()) {
         errorPos = res.error().charater();
         QTextBlock textBlock = editor->document()->findBlock(errorPos);
         int posInBlock = errorPos - textBlock.position();
         if(textBlock.userData())
-            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties["errorPos"] = posInBlock;
+            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] = posInBlock;
         else
-            textBlock.setUserData(new AeslEditorUserData("errorPos", posInBlock));
+            textBlock.setUserData(new AeslEditorUserData(QStringLiteral("errorPos"), posInBlock));
     }
 }
 
@@ -315,14 +315,14 @@ void NodeTab::markTargetUnsynced() {
     runButton->setEnabled(false);
     nextButton->setEnabled(false);
     // target->clearBreakpoints(id);
-    switchEditorProperty("breakpoint", "breakpointPending");
+    switchEditorProperty(QStringLiteral("breakpoint"), QStringLiteral("breakpointPending"));
     executionModeLabel->setText(tr("unknown"));
     // mainWindow->nodes->setExecutionMode(mainWindow->getIndexFromId(id), Target::EXECUTION_UNKNOWN);
 }
 
 void NodeTab::cursorMoved() {
     // fix tab
-    cursorPosText->setText(QString("Line: %0 Col: %1")
+    cursorPosText->setText(QStringLiteral("Line: %0 Col: %1")
                                .arg(editor->textCursor().blockNumber() + 1)
                                .arg(editor->textCursor().columnNumber() + 1));
 }
@@ -338,7 +338,7 @@ void NodeTab::goToError() {
 
 void NodeTab::clearExecutionErrors() {
     // remove execution error
-    if(clearEditorProperty("executionError"))
+    if(clearEditorProperty(QStringLiteral("executionError")))
         rehighlight();
 }
 
@@ -400,9 +400,9 @@ void NodeTab::breakpointClearedAll() {
 }
 
 void NodeTab::breakpointSetResult(unsigned line, bool success) {
-    clearEditorProperty("breakpointPending", line);
+    clearEditorProperty(QStringLiteral("breakpointPending"), line);
     if(success)
-        setEditorProperty("breakpoint", QVariant(), line);
+        setEditorProperty(QStringLiteral("breakpoint"), QVariant(), line);
     rehighlight();
 }
 
@@ -423,7 +423,7 @@ void NodeTab::reSetBreakpoints() {
 void NodeTab::executionPosChanged(unsigned line) {
     // change active state
     currentPC = line;
-    if(setEditorProperty("active", QVariant(), line, true))
+    if(setEditorProperty(QStringLiteral("active"), QVariant(), line, true))
         rehighlight();
 }
 
@@ -434,7 +434,7 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
 
     resetButton->setEnabled(true);
     runButton->setEnabled(true);
-    compilationResultImage->setPixmap(QPixmap(QString(":/images/ok.png")));
+    compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/ok.png")));
 
     /*
     // Filter spurious messages, to detect a stop at a breakpoint
@@ -456,7 +456,7 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
         executionModeLabel->setText(tr("running"));
         nextButton->setEnabled(false);
 
-        if(clearEditorProperty("active"))
+        if(clearEditorProperty(QStringLiteral("active")))
             rehighlight();
     } else if(mode == Target::EXECUTION_STEP_BY_STEP) {
         executionModeLabel->setText(tr("step by step"));
@@ -472,7 +472,7 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
 
         nextButton->setEnabled(false);
 
-        if(clearEditorProperty("active"))
+        if(clearEditorProperty(QStringLiteral("active")))
             rehighlight();
     }
 
@@ -504,25 +504,25 @@ void NodeTab::handleCompletion() {
         if(!keyword.trimmed().isEmpty()) {
             QString prefix;
             QString postfix;
-            if(keyword == "if") {
-                const QString headSpace = line.left(line.indexOf("if"));
-                prefix = " ";
+            if(keyword == QLatin1String("if")) {
+                const QString headSpace = line.left(line.indexOf(QLatin1String("if")));
+                prefix = QLatin1String(" ");
                 postfix = " then\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if(keyword == "when") {
-                const QString headSpace = line.left(line.indexOf("when"));
-                prefix = " ";
+            } else if(keyword == QLatin1String("when")) {
+                const QString headSpace = line.left(line.indexOf(QLatin1String("when")));
+                prefix = QLatin1String(" ");
                 postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if(keyword == "for") {
-                const QString headSpace = line.left(line.indexOf("for"));
-                prefix = " ";
+            } else if(keyword == QLatin1String("for")) {
+                const QString headSpace = line.left(line.indexOf(QLatin1String("for")));
+                prefix = QLatin1String(" ");
                 postfix = "i in 0:0 do\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if(keyword == "while") {
-                const QString headSpace = line.left(line.indexOf("while"));
-                prefix = " ";
+            } else if(keyword == QLatin1String("while")) {
+                const QString headSpace = line.left(line.indexOf(QLatin1String("while")));
+                prefix = QLatin1String(" ");
                 postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
-            } else if((keyword == "else") && cursor.block().next().isValid()) {
-                const QString tab = QString("\t");
-                QString headSpace = line.left(line.indexOf("else"));
+            } else if((keyword == QLatin1String("else")) && cursor.block().next().isValid()) {
+                const QString tab = QStringLiteral("\t");
+                QString headSpace = line.left(line.indexOf(QLatin1String("else")));
 
                 if(headSpace.size() >= tab.size()) {
                     headSpace = headSpace.left(headSpace.size() - tab.size());
@@ -534,10 +534,10 @@ void NodeTab::handleCompletion() {
                         cursor.removeSelectedText();
                     }
                 }
-            } else if(keyword == "elseif") {
-                const QString headSpace = line.left(line.indexOf("elseif"));
-                prefix = " ";
-                postfix = " then";
+            } else if(keyword == QLatin1String("elseif")) {
+                const QString headSpace = line.left(line.indexOf(QLatin1String("elseif")));
+                prefix = QLatin1String(" ");
+                postfix = QLatin1String(" then");
             }
 
             if(!prefix.isNull() || !postfix.isNull()) {
@@ -717,8 +717,8 @@ void NodeTab::setupWidgets() {
     // vmMemoryView->setModel(vmMemoryModel);
     vmMemoryView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     // vmMemoryView->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
-    vmMemoryView->setColumnWidth(0, 235 - QFontMetrics(QFont()).width("-88888##"));
-    vmMemoryView->setColumnWidth(1, QFontMetrics(QFont()).width("-88888##"));
+    vmMemoryView->setColumnWidth(0, 235 - QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
+    vmMemoryView->setColumnWidth(1, QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
     vmMemoryView->setSelectionMode(QAbstractItemView::SingleSelection);
     vmMemoryView->setSelectionBehavior(QAbstractItemView::SelectItems);
     vmMemoryView->setDragDropMode(QAbstractItemView::DragOnly);

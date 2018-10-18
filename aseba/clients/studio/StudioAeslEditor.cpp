@@ -56,9 +56,9 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
     // if beginning of a line and source widget is known, add some helper text
     const auto* nodeTab(dynamic_cast<const NodeTab*>(tab));
     assert(nodeTab);
-    QString prefix("");   // before the text
-    QString midfix("");   // between the text and the cursor
-    QString postfix("");  // after the curser
+    QString prefix(QLatin1String(""));   // before the text
+    QString midfix(QLatin1String(""));   // between the text and the cursor
+    QString postfix(QLatin1String(""));  // after the curser
     /*if(dropSourceWidget == nodeTab->vmFunctionsView) {
         // inserting function
         prefix = "call ";
