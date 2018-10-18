@@ -202,6 +202,9 @@ protected:
     const QRegExp leftValueRegexp;
     LocalContext previousContext;
     bool editingLeftValue;
+
+private:
+    void insertKeyword(QString kw);
 };
 
 /*@}*/

@@ -446,47 +446,69 @@ AeslEditor::AeslEditor()
 
 void AeslEditor::contextMenuEvent(QContextMenuEvent* e) {
     // create menu
-    QMenu* menu = createStandardContextMenu();
-    if(!isReadOnly()) {
-        QAction* breakpointAction;
-        menu->addSeparator();
-
-        // check for breakpoint
-        QTextBlock block = cursorForPosition(e->pos()).block();
-        // AeslEditorUserData *uData = polymorphic_downcast<AeslEditorUserData *>(block.userData());
-        bool breakpointPresent = isBreakpoint(block);
-
-        // add action
-        if(breakpointPresent)
-            breakpointAction = menu->addAction(tr("Clear breakpoint"));
-        else
-            breakpointAction = menu->addAction(tr("Set breakpoint"));
-        QAction* breakpointClearAllAction = menu->addAction(tr("Clear all breakpoints"));
-
-        // execute menu
-        QAction* selectedAction = menu->exec(e->globalPos());
-
-        // do actions
-        if(selectedAction == breakpointAction) {
-            // modify editor state
-            if(breakpointPresent) {
-                // clear breakpoint
-                clearBreakpoint(block);
-            } else {
-                // set breakpoint
-                setBreakpoint(block);
-            }
-        }
-        if(selectedAction == breakpointClearAllAction) {
-            clearAllBreakpoints();
-        }
-    } else
+    auto menu = QSharedPointer<QMenu>(createStandardContextMenu());
+    if(isReadOnly()) {
         menu->exec(e->globalPos());
-    delete menu;
+        return;
+    }
+    QAction* breakpointAction;
+    menu->addSeparator();
+
+    // check for breakpoint
+    QTextBlock block = cursorForPosition(e->pos()).block();
+    // AeslEditorUserData *uData = polymorphic_downcast<AeslEditorUserData *>(block.userData());
+    bool breakpointPresent = isBreakpoint(block);
+
+    // add action
+    if(breakpointPresent)
+        breakpointAction = menu->addAction(tr("Clear breakpoint"));
+    else
+        breakpointAction = menu->addAction(tr("Set breakpoint"));
+    QAction* breakpointClearAllAction = menu->addAction(tr("Clear all breakpoints"));
+
+    auto kwMenu = menu->addMenu(tr("Insert keyword..."));
+    for(auto kw : {"var", "if", "else", "elseif", "onevent", "while", "for", "sub", "callsub"}) {
+        auto act = kwMenu->addAction(kw);
+        act->setProperty("aseba_keyword", kw);
+    }
+    // execute menu
+    QAction* selectedAction = menu->exec(e->globalPos());
+    if(selectedAction) {
+        auto kw = selectedAction->property("aseba_keyword");
+        if(!kw.isNull()) {
+            insertKeyword(kw.toString());
+        }
+    }
+
+    // do actions
+    if(selectedAction == breakpointAction) {
+        // modify editor state
+        if(breakpointPresent) {
+            // clear breakpoint
+            clearBreakpoint(block);
+        } else {
+            // set breakpoint
+            setBreakpoint(block);
+        }
+    }
+    if(selectedAction == breakpointClearAllAction) {
+        clearAllBreakpoints();
+    }
 }
 
 bool AeslEditor::isBreakpoint() {
     return isBreakpoint(textCursor().block());
+}
+
+void AeslEditor::insertKeyword(QString kw) {
+    static const QMap<QString, QString> rules = {
+        {"var", "var "}, {"else", "else\n\t"}, {"onevent", "onevent "}, {"sub", "sub "}, {"callsub", "callsub "}};
+    auto transformed = rules.value(kw, kw);
+
+    QTextCursor cursor(textCursor());
+    cursor.beginEditBlock();
+    cursor.insertText(transformed);
+    cursor.endEditBlock();
 }
 
 bool AeslEditor::isBreakpoint(QTextBlock block) {

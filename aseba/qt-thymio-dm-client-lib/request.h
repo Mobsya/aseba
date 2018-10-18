@@ -346,10 +346,10 @@ public:
         return m_errors.empty() ? CompilationError{} : m_errors.first();
     }
 
-    Q_INVOKABLE size_t bytecode_total_size() {
+    Q_INVOKABLE size_t bytecode_total_size() const {
         return m_bytecode_total_size;
     }
-    Q_INVOKABLE size_t variables_total_size() {
+    Q_INVOKABLE size_t variables_total_size() const {
         return m_variables_total_size;
     }
 

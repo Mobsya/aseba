@@ -16,14 +16,21 @@ public:
     enum class NodeType { Thymio2 = 0, Thymio2Wireless = 1, SimulatedThymio2 = 2, DummyNode = 3, UnknownType = 4 };
     enum class NodeCapability { Rename = 0x01, ForceResetAndStop = 0x02 };
 
+    using WatchableInfo = fb::WatchableInfo;
+    using VMExecutionState = fb::VMExecutionState;
+
     Q_ENUM(Status)
+    Q_ENUM(VMExecutionState)
     Q_ENUM(NodeType)
     Q_ENUM(NodeCapability)
+    Q_ENUM(WatchableInfo)
+    Q_DECLARE_FLAGS(WatchFlags, WatchableInfo)
     Q_DECLARE_FLAGS(NodeCapabilities, NodeCapability)
 
     Q_PROPERTY(QUuid id READ uuid CONSTANT)
     Q_PROPERTY(QString name READ name WRITE rename NOTIFY nameChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(VMExecutionState vmExecutionState READ vmExecutionState NOTIFY vmExecutionStateChanged)
     Q_PROPERTY(NodeCapabilities capabilities READ capabilities NOTIFY capabilitiesChanged)
     Q_PROPERTY(NodeType type READ type CONSTANT)
 
@@ -36,11 +43,16 @@ Q_SIGNALS:
     void nameChanged();
     void statusChanged();
     void capabilitiesChanged();
+    void vmExecutionStateChanged();
+    void vmExecutionStarted();
+    void vmExecutionStopped();
+    void vmExecutionPaused(int line = 0);
 
 public:
     QUuid uuid() const;
     QString name() const;
     Status status() const;
+    VMExecutionState vmExecutionState() const;
     NodeType type() const;
     NodeCapabilities capabilities();
     Q_INVOKABLE QUrl websocketEndpoint() const;
@@ -54,19 +66,37 @@ public:
     }
 
     Q_INVOKABLE Request rename(const QString& newName);
-    Q_INVOKABLE Request stop();
     Q_INVOKABLE Request lock();
     Q_INVOKABLE Request unlock();
+
     Q_INVOKABLE CompilationRequest compile_aseba_code(const QByteArray& code);
     Q_INVOKABLE CompilationRequest load_aseba_code(const QByteArray& code);
 
+    Q_INVOKABLE Request stop();
+    Q_INVOKABLE Request run();
+    Q_INVOKABLE Request pause();
+    Q_INVOKABLE Request reboot();
+    Q_INVOKABLE Request step();
+
+    Q_INVOKABLE Request setWatchVariablesEnabled(bool enabled);
+    Q_INVOKABLE Request setWatchEventsEnabled(bool enabled);
+    Q_INVOKABLE Request setWatchVMExecutionStateEnabled(bool enabled);
+
 private:
+    void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
+
+
+    Request updateWatchedInfos();
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;
     QUuid m_uuid;
     QString m_name;
     Status m_status;
+    VMExecutionState m_executionState;
     NodeCapabilities m_capabilities;
     NodeType m_type;
+    WatchFlags m_watched_infos;
+
+    friend ThymioDeviceManagerClientEndpoint;
 };
 
 }  // namespace mobsya

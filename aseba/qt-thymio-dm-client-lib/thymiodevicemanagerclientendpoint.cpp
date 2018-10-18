@@ -70,12 +70,22 @@ void ThymioDeviceManagerClientEndpoint::onReadyRead() {
         auto s = m_socket->read(reinterpret_cast<char*>(data.data()), m_message_size);
         Q_ASSERT(s == m_message_size);
         m_message_size = 0;
+        // TODO VERIFY MESSAGE
         handleIncommingMessage(fb_message_ptr(std::move(data)));
     }
 }
 
+std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid& id) const {
+    return m_nodes.value(id);
+}
+
 void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
     switch(msg.message_type()) {
+        case mobsya::fb::AnyMessage::NodesChanged: {
+            auto message = msg.as<mobsya::fb::NodesChanged>();
+            onNodesChanged(*(message->UnPack()));
+            break;
+        }
         case mobsya::fb::AnyMessage::RequestCompleted: {
             auto message = msg.as<mobsya::fb::RequestCompleted>();
             auto basic_req = get_request(message->request_id());
@@ -117,9 +127,58 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                                                     message->total_bytecode_size(), message->total_variables_size());
                 req->setResult(std::move(r));
             }
+            break;
+        }
+
+        case mobsya::fb::AnyMessage::VMExecutionStateChanged: {
+            auto message = msg.as<mobsya::fb::VMExecutionStateChanged>()->UnPack();
+            if(!message)
+                break;
+            auto id = qfb::uuid(message->node_id->id);
+            if(auto node = m_nodes.value(id)) {
+                node->onExecutionStateChanged(*message);
+            }
+            break;
         }
 
         default: Q_EMIT onMessage(msg);
+    }
+}
+
+void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& nodes) {
+    for(const auto& ptr : nodes.nodes) {
+        const fb::NodeT& node = *ptr;
+        const QUuid id = qfb::uuid(*node.node_id);
+        if(id.isNull())
+            continue;
+        ThymioNode::NodeCapabilities caps;
+        if(node.capabilities & uint64_t(fb::NodeCapability::ForceResetAndStop))
+            caps |= ThymioNode::NodeCapability::ForceResetAndStop;
+        if(node.capabilities & uint64_t(fb::NodeCapability::Rename))
+            caps |= ThymioNode::NodeCapability::Rename;
+        QString name = QString::fromStdString(node.name);
+        auto status = static_cast<ThymioNode::Status>(node.status);
+        auto type = static_cast<ThymioNode::NodeType>(node.type);
+
+
+        bool added = false;
+        auto it = m_nodes.find(id);
+        if(it == m_nodes.end()) {
+            it = m_nodes.insert(id, std::make_shared<ThymioNode>(shared_from_this(), id, name, type));
+            added = true;
+        }
+
+        (*it)->setName(name);
+        (*it)->setStatus(status);
+        (*it)->setCapabilities(caps);
+
+        Q_EMIT added ? nodeAdded(it.value()) : nodeModified(it.value());
+
+        if(status == ThymioNode::Status::Disconnected) {
+            auto node = it.value();
+            m_nodes.erase(it);
+            Q_EMIT nodeRemoved(node);
+        }
     }
 }
 
@@ -173,12 +232,12 @@ Request ThymioDeviceManagerClientEndpoint::renameNode(const ThymioNode& node, co
     return r;
 }
 
-Request ThymioDeviceManagerClientEndpoint::stopNode(const ThymioNode& node) {
+Request ThymioDeviceManagerClientEndpoint::setNodeExecutionState(const ThymioNode& node,
+                                                                 fb::VMExecutionStateCommand cmd) {
     Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
-    write(wrap_fb(builder,
-                  fb::CreateSetVMExecutionState(builder, r.id(), uuidOffset, fb::VMExecutionStateCommand::Stop)));
+    write(wrap_fb(builder, fb::CreateSetVMExecutionState(builder, r.id(), uuidOffset, cmd)));
     return r;
 }
 
@@ -206,6 +265,14 @@ auto ThymioDeviceManagerClientEndpoint::send_code(const ThymioNode& node, const 
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     auto codedOffset = builder.CreateString(code.data(), code.size());
     write(wrap_fb(builder, fb::CreateCompileAndLoadCodeOnVM(builder, r.id(), uuidOffset, language, codedOffset, opts)));
+    return r;
+}
+
+Request ThymioDeviceManagerClientEndpoint::set_watch_flags(const ThymioNode& node, int flags) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    write(wrap_fb(builder, fb::CreateWatchNode(builder, r.id(), uuidOffset, flags)));
     return r;
 }
 

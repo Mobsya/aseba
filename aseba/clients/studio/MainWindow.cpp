@@ -140,9 +140,6 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
     : QMainWindow(parent) {
 
     nodes = new NodeTabsManager(client);
-    for(auto&& id : targetUuids) {
-        nodes->addTab(id);
-    }
 
     // create target
 
@@ -171,6 +168,10 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
     updateWindowTitle();
     if(readSettings() == false)
         resize(1000, 700);
+
+    for(auto&& id : targetUuids) {
+        nodes->addTab(id);
+    }
 }
 
 MainWindow::~MainWindow() {}
@@ -268,7 +269,7 @@ void MainWindow::openFile(const QString& path) {
         while(!domNode.isNull()) {
             if(domNode.isElement()) {
                 QDomElement element = domNode.toElement();
-                if(element.tagName() == "node") {
+                /*if(element.tagName() == "node") {
                     bool prefered;
                     NodeTab* tab = getTabFromName(element.attribute("name"),
                                                   element.attribute("nodeId", nullptr).toUInt(), &prefered);
@@ -277,7 +278,7 @@ void MainWindow::openFile(const QString& path) {
                         assert(index >= 0);
                         filledList.insert(index);
                     }
-                }
+                }*/
             }
             domNode = domNode.nextSibling();
         }
@@ -304,7 +305,7 @@ void MainWindow::openFile(const QString& path) {
                     bool prefered;
                     const QString nodeName(element.attribute("name"));
                     const unsigned nodeId(element.attribute("nodeId", nullptr).toUInt());
-                    NodeTab* tab = getTabFromName(nodeName, nodeId, &prefered, &filledList);
+                    NodeTab* tab = nullptr;  // getTabFromName(nodeName, nodeId, &prefered, &filledList);
                     if(tab) {
                         // matching tab name
                         if(prefered) {
@@ -620,15 +621,7 @@ void MainWindow::resetAll() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
-            tab->resetClicked();
-    }
-}
-
-void MainWindow::loadAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->loadClicked();
+            tab->reset();
     }
 }
 
@@ -673,15 +666,6 @@ void MainWindow::showHidden(bool show) {
     */
 }
 
-void MainWindow::showKeywords(bool show) {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->showKeywords(show);
-    }
-    ConfigDialog::setShowKeywordToolbar(show);
-}
-
 void MainWindow::clearAllExecutionError() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
@@ -692,19 +676,20 @@ void MainWindow::clearAllExecutionError() {
 }
 
 void MainWindow::uploadReadynessChanged() {
-    bool ready = true;
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab) {
-            if(!tab->loadButton->isEnabled()) {
-                ready = false;
-                break;
-            }
-        }
-    }
+    /* bool ready = true;
+     for(int i = 0; i < nodes->count(); i++) {
+         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+         if(tab) {
+             if(!tab->loadButton->isEnabled()) {
+                 ready = false;
+                 break;
+             }
+         }
+     }
 
-    loadAllAct->setEnabled(ready);
-    writeAllBytecodesAct->setEnabled(ready);
+     loadAllAct->setEnabled(ready);
+     writeAllBytecodesAct->setEnabled(ready);
+     */
 }
 
 void MainWindow::sendEvent() {
@@ -802,7 +787,7 @@ void MainWindow::logEntryDoubleClicked(QListWidgetItem* item) {
         int node = item->data(Qt::UserRole).toPoint().x();
         int line = item->data(Qt::UserRole).toPoint().y();
 
-        NodeTab* tab = getTabFromId(node);
+        NodeTab* tab = nullptr;  // getTabFromId(node);
         Q_ASSERT(tab);
         nodes->setCurrentWidget(tab);
         tab->editor->setTextCursor(QTextCursor(tab->editor->document()->findBlockByLineNumber(line)));
@@ -811,88 +796,53 @@ void MainWindow::logEntryDoubleClicked(QListWidgetItem* item) {
 }
 
 void MainWindow::tabChanged(int index) {
-    /*    // remove old connections, if any
-        if(currentScriptTab) {
-            disconnect(cutAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(cut()));
-            disconnect(copyAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(copy()));
-            disconnect(pasteAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(paste()));
-            disconnect(undoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(undo()));
-            disconnect(redoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(redo()));
+    findDialog->hide();
+    auto* tab = dynamic_cast<ScriptTab*>(nodes->widget(index));
+    if(currentScriptTab && tab != currentScriptTab) {
+        disconnect(cutAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(cut()));
+        disconnect(copyAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(copy()));
+        disconnect(pasteAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(paste()));
+        disconnect(undoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(undo()));
+        disconnect(redoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(redo()));
+        disconnect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+        disconnect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+        disconnect(currentScriptTab->editor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+        disconnect(currentScriptTab->editor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+    }
+    currentScriptTab = tab;
+    if(tab) {
+        connect(cutAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(cut()));
+        connect(copyAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(copy()));
+        connect(pasteAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(paste()));
+        connect(undoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(undo()));
+        connect(redoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(redo()));
+        connect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+        connect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+        connect(currentScriptTab->editor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+        connect(currentScriptTab->editor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
 
-            disconnect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
-            disconnect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
-            disconnect(currentScriptTab->editor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
-            disconnect(currentScriptTab->editor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+        findDialog->editor = tab->editor;
+    } else {
+        findDialog->editor = nullptr;
+    }
 
-            pasteAct->setEnabled(false);
-            findDialog->hide();
-            findDialog->editor = nullptr;
-            findAct->setEnabled(false);
-            replaceAct->setEnabled(false);
-            goToLineAct->setEnabled(false);
-            zoomInAct->setEnabled(false);
-            zoomOutAct->setEnabled(false);
-        }
-
-        // reconnect to new
-        if(index >= 0) {
-            auto* tab = dynamic_cast<ScriptTab*>(nodes->widget(index));
-            if(tab) {
-                connect(copyAct, SIGNAL(triggered()), tab->editor, SLOT(copy()));
-                connect(tab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
-
-                findDialog->editor = tab->editor;
-                findAct->setEnabled(true);
-                goToLineAct->setEnabled(true);
-                zoomInAct->setEnabled(true);
-                zoomOutAct->setEnabled(true);
-
-                auto* nodeTab = dynamic_cast<NodeTab*>(tab);
-                if(nodeTab) {
-                    connect(cutAct, SIGNAL(triggered()), tab->editor, SLOT(cut()));
-                    connect(pasteAct, SIGNAL(triggered()), tab->editor, SLOT(paste()));
-                    connect(undoAct, SIGNAL(triggered()), tab->editor, SLOT(undo()));
-                    connect(redoAct, SIGNAL(triggered()), tab->editor, SLOT(redo()));
-
-                    connect(tab->editor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
-                    connect(tab->editor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
-                    connect(tab->editor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
-
-                    if(compilationMessageBox->isVisible())
-                        nodeTab->recompile();
-
-                    // because this is a new tab, get content of variables
-                    target->getVariables(nodeTab->id, 0, nodeTab->allocatedVariablesCount);
-
-                    showCompilationMsg->setEnabled(true);
-                    findDialog->replaceGroupBox->setEnabled(true);
-                    // paste and replace are only available when the editor is in read/write mode
-                    pasteAct->setEnabled(true);
-                    replaceAct->setEnabled(true);
-                } else {
-                    showCompilationMsg->setEnabled(false);
-                    findDialog->replaceGroupBox->setEnabled(false);
-                }
-
-                // TODO: it would be nice to find a way to setup this correctly
-                cutAct->setEnabled(false);
-                copyAct->setEnabled(false);
-                undoAct->setEnabled(false);
-                redoAct->setEnabled(false);
-
-                currentScriptTab = tab;
-            } else
-                currentScriptTab = nullptr;
-        } else
-            currentScriptTab = nullptr;
-    */
+    cutAct->setEnabled(currentScriptTab);
+    copyAct->setEnabled(currentScriptTab);
+    pasteAct->setEnabled(currentScriptTab);
+    findAct->setEnabled(currentScriptTab);
+    undoAct->setEnabled(currentScriptTab);
+    redoAct->setEnabled(currentScriptTab);
+    goToLineAct->setEnabled(currentScriptTab);
+    zoomInAct->setEnabled(currentScriptTab);
+    zoomOutAct->setEnabled(currentScriptTab);
+    findDialog->replaceGroupBox->setEnabled(currentScriptTab);
 }
 
 void MainWindow::showCompilationMessages(bool doShow) {
     // this slot shouldn't be callable when an unactive tab is show
     compilationMessageBox->setVisible(doShow);
     if(nodes->currentWidget())
-        dynamic_cast<NodeTab*>(nodes->currentWidget())->recompile();
+        dynamic_cast<NodeTab*>(nodes->currentWidget())->compileCodeOnTarget();
 }
 
 void MainWindow::compilationMessagesWasHidden() {
@@ -1022,15 +972,15 @@ void MainWindow::recompileAll() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
         if(tab)
-            tab->recompile();
+            tab->compileCodeOnTarget();
     }
 }
 
 void MainWindow::writeAllBytecodes() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->writeBytecode();
+        // if(tab)
+        //    tab->wr();
     }
 }
 
@@ -1048,251 +998,6 @@ void MainWindow::sourceChanged() {
 
 void MainWindow::showUserManual() {
     helpViewer.showHelp(HelpViewer::USERMANUAL);
-}
-
-//! A new node has connected to the network.
-void MainWindow::nodeConnected(unsigned node) {
-    /*    // create a new tab for the node
-        auto* tab = new NodeTab(this, target, &commonDefinitions, node);
-        tab->showKeywords(showKeywordsAct->isChecked());
-        tab->linenumbers->showLineNumbers(showLineNumbers->isChecked());
-        tab->showMemoryUsage(showMemoryUsageAct->isChecked());
-
-        // check if there is an absent node tab with this id and name, and copy data
-        const int absentIndex(getAbsentIndexFromId(node));
-        const AbsentNodeTab* absentTab(getAbsentTabFromId(node));
-        if(absentTab && nodes->tabText(absentIndex).replace(QString("&"), QString("")) == target->getName(node)) {
-            tab->editor->document()->setPlainText(absentTab->editor->document()->toPlainText());
-            tab->restorePlugins(absentTab->savePlugins(), false);
-            tab->updateToolList();
-            nodes->removeAndDeleteTab(absentIndex);
-        }
-
-        // connect and show new tab
-        connect(tab, SIGNAL(uploadReadynessChanged(bool)), SLOT(uploadReadynessChanged()));
-        nodes->addTab(tab, target->getName(node));
-
-        regenerateToolsMenus();
-    */
-}
-
-//! A node has disconnected from the network.
-void MainWindow::nodeDisconnected(unsigned node) {
-    /*    const int index = getIndexFromId(node);
-        // Double disconnection might happen if the reception of the target description
-        // hang. Studio handles this nicely, simply ignoring the message, but prints a warning
-        // because this behaviour likely indicates a problem with the node or a bug somewhere.
-        if(index < 0) {
-            std::cerr << "Warning: Received double disconnection from node " << node
-                      << ", the node might experience connection problems!" << std::endl;
-            return;
-        }
-        const NodeTab* tab = getTabFromId(node);
-        auto tabName = nodes->tabText(index).replace(QString("&"), QString(""));
-
-        // clang-format off
-            nodes->addTab(
-                new AbsentNodeTab(
-                    node,
-                    tabName,
-                    tab->editor->document()->toPlainText(),
-                    tab->savePlugins()
-                ),
-                tabName
-            );
-        // clang-format on
-
-        nodes->removeAndDeleteTab(index);
-
-        regenerateToolsMenus();
-        regenerateHelpMenu();
-    */
-}
-
-//! A user event has arrived from the network.
-void MainWindow::userEvent(unsigned id, const VariablesDataVector& data) {
-    /*    if(eventsDescriptionsModel->isVisible(id)) {
-            QString text = QTime::currentTime().toString("hh:mm:ss.zzz");
-
-            if(id < commonDefinitions.events.size())
-                text += QString("\n%0 : ").arg(QString::fromStdWString(commonDefinitions.events[id].name));
-            else
-                text += tr("\nevent %0 : ").arg(id);
-
-            for(size_t i = 0; i < data.size(); i++)
-                text += QString("%0 ").arg(data[i]);
-
-            if(logger->count() > 50)
-                delete logger->takeItem(0);
-            QListWidgetItem* item = new QListWidgetItem(QIcon(":/images/info.png"), text, logger);
-            logger->scrollToBottom();
-            Q_UNUSED(item);
-        }
-
-    #ifdef HAVE_QWT
-
-        // iterate over all viewer for this event
-        QList<EventViewer*> viewers = eventsViewers.values(id);
-        for(int i = 0; i < viewers.size(); ++i)
-            viewers.at(i)->addData(data);
-
-    #endif  // HAVE_QWT
-    */
-}
-
-//! Some user events have been dropped, i.e. not sent to the gui
-void MainWindow::userEventsDropped(unsigned amount) {
-    /*    QString text = QTime::currentTime().toString("hh:mm:ss.zzz");
-        text += QString("\n%0 user events not shown").arg(amount);
-
-        if(logger->count() > 50)
-            delete logger->takeItem(0);
-        QListWidgetItem* item = new QListWidgetItem(QIcon(":/images/info.png"), text, logger);
-        logger->scrollToBottom();
-        Q_UNUSED(item);
-        logger->setStyleSheet(" QListView::item { background: rgb(255,128,128); }");
-    */
-}
-
-//! A node did an access out of array bounds exception.
-void MainWindow::arrayAccessOutOfBounds(unsigned node, unsigned line, unsigned size, unsigned index) {
-    addErrorEvent(node, line, tr("array access at %0 out of bounds [0..%1]").arg(index).arg(size - 1));
-}
-
-//! A node did a division by zero exception.
-void MainWindow::divisionByZero(unsigned node, unsigned line) {
-    addErrorEvent(node, line, tr("division by zero"));
-}
-
-//! A new event was run and the current killed on a node
-void MainWindow::eventExecutionKilled(unsigned node, unsigned line) {
-    addErrorEvent(node, line, tr("event execution killed"));
-}
-
-//! A node has produced an error specific to it
-void MainWindow::nodeSpecificError(unsigned node, unsigned line, const QString& message) {
-    addErrorEvent(node, line, message);
-}
-
-//! Generic part of error events reporting
-void MainWindow::addErrorEvent(unsigned node, unsigned line, const QString& message) {
-    /*    NodeTab* tab = getTabFromId(node);
-        if(!tab)
-            return;
-
-        if(tab->setEditorProperty("executionError", QVariant(), line, true)) {
-            // tab->rehighlighting = true;
-            tab->highlighter->rehighlight();
-        }
-
-        QString text = QTime::currentTime().toString("hh:mm:ss.zzz");
-        text += "\n" + tr("%0:%1: %2").arg(target->getName(node)).arg(line + 1).arg(message);
-
-        if(logger->count() > 50)
-            delete logger->takeItem(0);
-        QListWidgetItem* item = new QListWidgetItem(QIcon(":/images/warning.png"), text, logger);
-        item->setData(Qt::UserRole, QPoint(node, line));
-        logger->scrollToBottom();
-    */
-}
-
-
-//! The program counter of a node has changed, causing a change of position in source code.
-void MainWindow::executionPosChanged(unsigned node, unsigned line) {
-    NodeTab* tab = getTabFromId(node);
-    if(!tab)
-        return;
-
-    tab->executionPosChanged(line);
-}
-
-//! The mode of execution of a node (stop, run, step by step) has changed.
-void MainWindow::executionModeChanged(unsigned node, Target::ExecutionMode mode) {
-    NodeTab* tab = getTabFromId(node);
-    if(!tab)
-        return;
-
-    tab->executionModeChanged(mode);
-}
-
-//! The execution state logic thinks variables might need a refresh
-void MainWindow::variablesMemoryEstimatedDirty(unsigned node) {
-    NodeTab* tab = getTabFromId(node);
-    if(!tab)
-        return;
-
-    tab->refreshMemoryClicked();
-}
-
-//! The content of the variables memory of a node has changed.
-void MainWindow::variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables) {
-    NodeTab* tab = getTabFromId(node);
-    if(!tab)
-        return;
-
-    // tab->vmMemoryModel->setVariablesData(start, variables);
-}
-
-//! The result of a set breakpoint is known
-void MainWindow::breakpointSetResult(unsigned node, unsigned line, bool success) {
-    NodeTab* tab = getTabFromId(node);
-    if(!tab)
-        return;
-
-    tab->breakpointSetResult(line, success);
-}
-
-//! Get the tab widget index of a corresponding node id
-int MainWindow::getIndexFromId(unsigned node) const {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab) {
-            // if(tab->nodeId() == node)
-            //    return i;
-        }
-    }
-    return -1;
-}
-
-//! Get the tab widget pointer of a corresponding node id
-NodeTab* MainWindow::getTabFromId(unsigned node) const {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab) {
-            // if(tab->nodeId() == node)
-            //    return tab;
-        }
-    }
-    return nullptr;
-}
-
-//! Get the tab widget pointer of a corresponding node name, and of preferedId if found, but the
-//! first found otherwise. Do not consider tabs indices in filledList for non-prefered tabs
-NodeTab* MainWindow::getTabFromName(const QString& name, unsigned preferedId, bool* isPrefered,
-                                    QSet<int>* filledList) const {
-
-    /*
-        NodeTab* freeSlotFound(nullptr);
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab) {
-                const unsigned id(tab->nodeId());
-                if(target->getName(id) == name) {
-                    if(id == preferedId) {
-                        if(isPrefered)
-                            *isPrefered = true;
-                        return tab;
-                    } else if(!freeSlotFound) {
-                        if(!filledList || !filledList->contains(i))
-                            freeSlotFound = tab;
-                    }
-                }
-            }
-        }
-        if(isPrefered)
-            *isPrefered = false;
-        return freeSlotFound;
-    */
 }
 
 void MainWindow::clearDocumentSpecificTabs() {
@@ -1779,10 +1484,6 @@ void MainWindow::setupMenu() {
     editMenu->addAction(uncommentAct);
 
     // View menu
-    showKeywordsAct = new QAction(tr("Show &keywords"), this);
-    showKeywordsAct->setCheckable(true);
-    connect(showKeywordsAct, SIGNAL(toggled(bool)), SLOT(showKeywords(bool)));
-
     showMemoryUsageAct = new QAction(tr("Show &memory usage"), this);
     showMemoryUsageAct->setCheckable(true);
     connect(showMemoryUsageAct, SIGNAL(toggled(bool)), SLOT(showMemoryUsage(bool)));
@@ -1807,7 +1508,6 @@ void MainWindow::setupMenu() {
     connect(zoomOutAct, SIGNAL(triggered()), SLOT(zoomOut()));
 
     QMenu* viewMenu = new QMenu(tr("&View"), this);
-    viewMenu->addAction(showKeywordsAct);
     viewMenu->addAction(showMemoryUsageAct);
     viewMenu->addAction(showHiddenAct);
     viewMenu->addAction(showLineNumbers);
@@ -1978,7 +1678,6 @@ void MainWindow::updateWindowTitle() {
 }
 
 void MainWindow::applySettings() {
-    showKeywordsAct->setChecked(ConfigDialog::getShowKeywordToolbar());
     showMemoryUsageAct->setChecked(ConfigDialog::getShowMemoryUsage());
     showHiddenAct->setChecked(ConfigDialog::getShowHidden());
     showLineNumbers->setChecked(ConfigDialog::getShowLineNumbers());
