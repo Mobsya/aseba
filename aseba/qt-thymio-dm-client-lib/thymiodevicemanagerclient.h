@@ -20,7 +20,8 @@ public:
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);
     void onServiceRemoved(QZeroConfService);
-    void onMessage(const fb_message_ptr& msg);
+    void onNodeAdded(std::shared_ptr<ThymioNode>);
+    void onNodeRemoved(std::shared_ptr<ThymioNode>);
 
 Q_SIGNALS:
     void nodeAdded(std::shared_ptr<ThymioNode>);
@@ -29,17 +30,6 @@ Q_SIGNALS:
 
 private:
     friend class ThymioDevicesModel;
-
-    struct SimpleNode {
-        QUuid id;
-        QString name;
-        ThymioNode::Status status;
-        ThymioNode::NodeType type;
-        ThymioNode::NodeCapabilities capabilities;
-    };
-
-    void onNodesChanged(const fb::NodesChanged&);
-    void onNodesChanged(const std::vector<SimpleNode>& nodes);
     void onEndpointDisconnected();
 
     QVector<QZeroConfService> m_services;

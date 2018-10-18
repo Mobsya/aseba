@@ -158,12 +158,10 @@ private Q_SLOTS:
     void zoomOut();
     void showSettings();
     void showHidden(bool show);
-    void showKeywords(bool show);
 
     void toggleBreakpoint();
     void clearAllBreakpoints();
 
-    void loadAll();
     void resetAll();
     void runAll();
     void pauseAll();
@@ -196,24 +194,6 @@ private Q_SLOTS:
     void removeConstantClicked();
     void constantsSelectionChanged();
 
-    void nodeConnected(unsigned node);
-    void nodeDisconnected(unsigned node);
-
-    void userEventsDropped(unsigned amount);
-    void userEvent(unsigned id, const VariablesDataVector& data);
-    void arrayAccessOutOfBounds(unsigned node, unsigned line, unsigned size, unsigned index);
-    void divisionByZero(unsigned node, unsigned line);
-    void eventExecutionKilled(unsigned node, unsigned line);
-    void nodeSpecificError(unsigned node, unsigned line, const QString& message);
-
-    void executionPosChanged(unsigned node, unsigned line);
-    void executionModeChanged(unsigned node, Target::ExecutionMode mode);
-    void variablesMemoryEstimatedDirty(unsigned node);
-
-    void variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables);
-
-    void breakpointSetResult(unsigned node, unsigned line, bool success);
-
     void recompileAll();
     void writeAllBytecodes();
     void rebootAllNodes();
@@ -234,7 +214,6 @@ private:
     NodeTab* getTabFromId(unsigned node) const;
     NodeTab* getTabFromName(const QString& name, unsigned preferedId = 0, bool* isPrefered = nullptr,
                             QSet<int>* filledList = nullptr) const;
-    void addErrorEvent(unsigned node, unsigned line, const QString& message);
     void clearDocumentSpecificTabs();
     bool askUserBeforeDiscarding();
 
@@ -320,7 +299,6 @@ private:
     QAction* toggleBreakpointAct;
     QAction* clearAllBreakpointsAct;
     QAction* showHiddenAct;
-    QAction* showKeywordsAct;
     QAction* showCompilationMsg;
     QAction* showMemoryUsageAct;
 

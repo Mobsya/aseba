@@ -33,13 +33,10 @@ NodeTab::NodeTab(QWidget* parent)
     , ScriptTab()
     , m_compilation_watcher(new mobsya::CompilationResultWatcher(this))
     , currentPC(0)
-    , previousMode(Target::EXECUTION_UNKNOWN)
-    , compilationDirty(false)
-    , isSynchronized(true) {
+    , previousMode(Target::EXECUTION_UNKNOWN) {
     // setup some variables
     // rehighlighting = false;
     errorPos = -1;
-    allocatedVariablesCount = 0;
 
     connect(m_compilation_watcher, &mobsya::CompilationResultWatcher::finished, this, &NodeTab::compilationCompleted);
 
@@ -83,9 +80,7 @@ NodeTab::NodeTab(QWidget* parent)
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 }
 
-NodeTab::~NodeTab() {
-    // wait until thread has finished
-}
+NodeTab::~NodeTab() {}
 
 void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     m_thymio = node;
@@ -93,6 +88,14 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         if(node->status() == mobsya::ThymioNode::Status::Available)
             node->lock();
         auto ptr = node.get();
+        node->setWatchVariablesEnabled(true);
+        node->setWatchEventsEnabled(true);
+        node->setWatchVMExecutionStateEnabled(true);
+
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
+
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
             if(node->status() == mobsya::ThymioNode::Status::Available)
                 node->lock();
@@ -100,63 +103,115 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     }
 }
 
-void NodeTab::resetClicked() {
+void NodeTab::reset() {
     clearExecutionErrors();
+    m_thymio->stop();
 }
-
-void NodeTab::loadClicked() {
-    /*if(errorPos == -1) {
-        clearEditorProperty("executionError");
-        target->uploadBytecode(id, bytecode);
-        // target->getVariables(id, 0, allocatedVariablesCount);
-        editor->debugging = true;
-        reSetBreakpoints();
-        rehighlight();
+void NodeTab::run() {
+    auto code = editor->toPlainText().simplified();
+    if(code == lastLoadedSource) {
+        m_thymio->run();
+        return;
     }
-
-    isSynchronized = true;
-    mainWindow->resetStatusText();
-    */
+    lastLoadedSource = code;
+    QMetaObject::Connection* con = new QMetaObject::Connection;
+    *con = connect(m_compilation_watcher, &mobsya::CompilationResultWatcher::finished, [code, this, con] {
+        if(m_compilation_watcher->success() && m_compilation_watcher->getResult().success()) {
+            disconnect(*con);
+            delete con;
+            m_thymio->run();
+        }
+    });
+    m_compilation_watcher->setRequest(m_thymio->load_aseba_code(code.toUtf8()));
 }
 
-void NodeTab::runInterruptClicked() {
-    /*    if(!runInterruptButton->property("isRunning").toBool())
-            target->run(id);
-        else
-            target->pause(id);
-    */
+void NodeTab::pause() {
+    m_thymio->run();
 }
 
-void NodeTab::nextClicked() {
-    //   target->next(id);
+void NodeTab::compileCodeOnTarget() {
+    auto code = editor->toPlainText().simplified();
+    m_compilation_watcher->setRequest(m_thymio->compile_aseba_code(code.toUtf8()));
 }
 
-void NodeTab::refreshMemoryClicked() {
-    // as we explicitely clicked, refresh all variables
-    //    target->getVariables(id, 0, allocatedVariablesCount);
-}
-
-/*void NodeTab::autoRefreshMemoryClicked(int state) {
-    if(state == Qt::Checked) {
-        refreshMemoryButton->setEnabled(false);
-        refreshTimer = startTimer(200);  // 5 Hz
-    } else {
-        refreshMemoryButton->setEnabled(true);
-        killTimer(refreshTimer);
-        refreshMemoryClicked();
-    }
-}*/
-
-void NodeTab::writeBytecode() {
-    if(errorPos == -1) {
-        loadClicked();
-        // target->writeBytecode(id);
-    }
+void NodeTab::step() {
+    m_thymio->step();
 }
 
 void NodeTab::reboot() {
     markTargetUnsynced();
-    // target->reboot(id);
+    m_thymio->reboot();
+}
+
+void NodeTab::compilationCompleted() {
+    if(m_compilation_watcher->isCanceled()) {
+        Q_EMIT compilationFailed();
+        return;
+    }
+    if(!m_compilation_watcher->success()) {
+        // Deal with network error
+        Q_EMIT compilationFailed();
+        return;
+    }
+
+    auto res = m_compilation_watcher->getResult();
+
+    updateMemoryUsage(res);
+    handleCompilationError(res);
+
+    bool doRehighlight = clearEditorProperty("errorPos");
+
+    if(res.success()) {
+        Q_EMIT compilationSucceed();
+        errorPos = -1;
+    } else {
+        emit uploadReadynessChanged(false);
+    }
+    // clear bearkpoints of target if currently in debugging mode
+    if(editor->debugging) {
+        this->reset();
+        markTargetUnsynced();
+    }
+
+    if(doRehighlight)
+        rehighlight();
+}
+
+void NodeTab::updateMemoryUsage(const mobsya::CompilationResult& res) {
+    if(res.success()) {
+        const QString variableText =
+            tr("variables: %1/%2 (%3 %)")
+                .arg(res.variables_size())
+                .arg(res.variables_total_size())
+                .arg((double)res.variables_size() * 100. / res.variables_total_size(), 0, 'f', 1);
+        const QString bytecodeText =
+            tr("bytecode: %1/%2 (%3 %)")
+                .arg(res.bytecode_size())
+                .arg(res.variables_total_size())
+                .arg((double)res.bytecode_size() * 100. / res.bytecode_total_size(), 0, 'f', 1);
+        memoryUsageText->setText(trUtf8("<b>Memory usage</b> : %1, %2").arg(variableText).arg(bytecodeText));
+    }
+    memoryUsageText->setVisible(res.success());
+}
+
+void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
+    compilationResultText->setVisible(!res.success());
+    compilationResultImage->setVisible(!res.success());
+    if(res.success()) {
+        return;
+    }
+    compilationResultText->setText(res.error().errorMessage());
+    compilationResultImage->setPixmap(QPixmap(QString(":/images/warning.png")));
+
+    if(res.error().charater()) {
+        errorPos = res.error().charater();
+        QTextBlock textBlock = editor->document()->findBlock(errorPos);
+        int posInBlock = errorPos - textBlock.position();
+        if(textBlock.userData())
+            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties["errorPos"] = posInBlock;
+        else
+            textBlock.setUserData(new AeslEditorUserData("errorPos", posInBlock));
+    }
 }
 
 static void write16(QIODevice& dev, const uint16_t v) {
@@ -227,24 +282,8 @@ void NodeTab::editorContentChanged() {
         return;
     lastCompiledSource = editor->toPlainText();
     // recompile
-    recompile();
+    compileCodeOnTarget();
     // mainWindow->sourceChanged();
-}
-
-void NodeTab::keywordClicked(QString keyword) {
-    QTextCursor cursor(editor->textCursor());
-
-    cursor.beginEditBlock();
-    cursor.insertText(keyword);
-    cursor.endEditBlock();
-    editorContentChanged();
-}
-
-void NodeTab::showKeywords(bool show) {
-    if(show)
-        keywordsToolbar->show();
-    else
-        keywordsToolbar->hide();
 }
 
 void NodeTab::showMemoryUsage(bool show) {
@@ -267,99 +306,13 @@ void NodeTab::updateHidden() {
     */
 }
 
-// NodeTab::CompilationResult* compilationThread(const TargetDescription targetDescription,
-//                                              const CommonDefinitions commonDefinitions, QString source, bool dump) {
-/*auto* result(new NodeTab::CompilationResult(dump));
-
-Compiler compiler;
-compiler.setTargetDescription(&targetDescription);
-compiler.setCommonDefinitions(&commonDefinitions);
-compiler.setTranslateCallback(CompilerTranslator::translate);
-
-std::wistringstream is(source.toStdWString());
-
-if(dump)
-    result->success = compiler.compile(is, result->bytecode, result->allocatedVariablesCount, result->error,
-                                       &result->compilationMessages);
-else
-    result->success = compiler.compile(is, result->bytecode, result->allocatedVariablesCount, result->error);
-
-if(result->success) {
-    result->variablesMap = *compiler.getVariablesMap();
-    result->subroutineTable = *compiler.getSubroutineTable();
-}
-
-return result;
-*/
-//}
-
-void NodeTab::recompile() {
-    if(!m_thymio)
-        return;
-    auto code = editor->toPlainText().simplified();
-    m_compilation_watcher->setRequest(m_thymio->compile_aseba_code(code.toUtf8()));
-}
-
-void NodeTab::compilationCompleted() {
-    if(m_compilation_watcher->isCanceled()) {
-        return;
-    }
-    if(!m_compilation_watcher->success()) {
-        // Deal with network error
-        return;
-    }
-
-    auto res = m_compilation_watcher->getResult();
-    bool doRehighlight = clearEditorProperty("errorPos");
-
-    if(res.success()) {
-        const QString variableText =
-            tr("variables: %1/%2 (%3 %%)")
-                .arg(res.variables_size())
-                .arg(res.variables_total_size())
-                .arg((double)res.variables_size() * 100. / res.variables_total_size(), 0, 'f', 1);
-        const QString bytecodeText =
-            tr("bytecode: %1/%2 (%3 %%)")
-                .arg(res.bytecode_size())
-                .arg(res.variables_total_size())
-                .arg((double)res.bytecode_size() * 100. / res.bytecode_total_size(), 0, 'f', 1);
-        memoryUsageText->setText(trUtf8("<b>Memory usage</b> : %1, %2").arg(variableText).arg(bytecodeText));
-        errorPos = -1;
-    } else {
-        compilationResultText->setText(res.error().errorMessage());
-        compilationResultImage->setPixmap(QPixmap(QString(":/images/warning.png")));
-        loadButton->setEnabled(false);
-        emit uploadReadynessChanged(false);
-
-        // we have an error, set the correct user data
-        if(res.error().charater()) {
-            errorPos = res.error().charater();
-            QTextBlock textBlock = editor->document()->findBlock(errorPos);
-            int posInBlock = errorPos - textBlock.position();
-            if(textBlock.userData())
-                polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties["errorPos"] = posInBlock;
-            else
-                textBlock.setUserData(new AeslEditorUserData("errorPos", posInBlock));
-            doRehighlight = true;
-        }
-    }
-    // clear bearkpoints of target if currently in debugging mode
-    if(editor->debugging) {
-        // target->stop(id);
-        markTargetUnsynced();
-        doRehighlight = true;
-    }
-
-    if(doRehighlight)
-        rehighlight();
-}
 
 //! When code is changed or target is rebooted, remove breakpoints from target but keep them locally
 //! as pending for next code load
 void NodeTab::markTargetUnsynced() {
     editor->debugging = false;
     resetButton->setEnabled(false);
-    runInterruptButton->setEnabled(false);
+    runButton->setEnabled(false);
     nextButton->setEnabled(false);
     // target->clearBreakpoints(id);
     switchEditorProperty("breakpoint", "breakpointPending");
@@ -446,6 +399,27 @@ void NodeTab::breakpointClearedAll() {
     //    target->clearBreakpoints(id);
 }
 
+void NodeTab::breakpointSetResult(unsigned line, bool success) {
+    clearEditorProperty("breakpointPending", line);
+    if(success)
+        setEditorProperty("breakpoint", QVariant(), line);
+    rehighlight();
+}
+
+void NodeTab::reSetBreakpoints() {
+    // target->clearBreakpoints(id);
+    QTextBlock block = editor->document()->begin();
+    unsigned lineCounter = 0;
+    while(block != editor->document()->end()) {
+        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        //   if(uData && (uData->properties.contains("breakpoint") ||
+        //   uData->properties.contains("breakpointPending")))
+        //       target->setBreakpoint(id, lineCounter);
+        block = block.next();
+        lineCounter++;
+    }
+}
+
 void NodeTab::executionPosChanged(unsigned line) {
     // change active state
     currentPC = line;
@@ -459,7 +433,7 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
         return;
 
     resetButton->setEnabled(true);
-    runInterruptButton->setEnabled(true);
+    runButton->setEnabled(true);
     compilationResultImage->setPixmap(QPixmap(QString(":/images/ok.png")));
 
     /*
@@ -480,22 +454,12 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
 
     if(mode == Target::EXECUTION_RUN) {
         executionModeLabel->setText(tr("running"));
-
-        runInterruptButton->setText(tr("Pause"));
-        runInterruptButton->setIcon(QIcon(":/images/pause.png"));
-
-        runInterruptButton->setProperty("isRunning", true);
-
         nextButton->setEnabled(false);
 
         if(clearEditorProperty("active"))
             rehighlight();
     } else if(mode == Target::EXECUTION_STEP_BY_STEP) {
         executionModeLabel->setText(tr("step by step"));
-
-        runInterruptButton->setText(tr("Run"));
-        runInterruptButton->setIcon(QIcon(":/images/play.png"));
-        runInterruptButton->setProperty("isRunning", false);
 
         nextButton->setEnabled(true);
 
@@ -505,10 +469,6 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
         editor->setTextCursor(QTextCursor(editor->document()->findBlockByLineNumber(currentPC)));
     } else if(mode == Target::EXECUTION_STOP) {
         executionModeLabel->setText(tr("stopped"));
-
-        runInterruptButton->setText(tr("Run"));
-        runInterruptButton->setIcon(QIcon(":/images/play.png"));
-        runInterruptButton->setProperty("isRunning", false);
 
         nextButton->setEnabled(false);
 
@@ -520,12 +480,6 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
     // mainWindow->nodes->setExecutionMode(mainWindow->getIndexFromId(id), mode);
 }
 
-void NodeTab::breakpointSetResult(unsigned line, bool success) {
-    clearEditorProperty("breakpointPending", line);
-    if(success)
-        setEditorProperty("breakpoint", QVariant(), line);
-    rehighlight();
-}
 
 void NodeTab::rehighlight() {
     // rehighlighting = true;
@@ -599,19 +553,6 @@ void NodeTab::handleCompletion() {
     }
 }
 
-void NodeTab::reSetBreakpoints() {
-    // target->clearBreakpoints(id);
-    QTextBlock block = editor->document()->begin();
-    unsigned lineCounter = 0;
-    while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
-        //   if(uData && (uData->properties.contains("breakpoint") ||
-        //   uData->properties.contains("breakpointPending")))
-        //       target->setBreakpoint(id, lineCounter);
-        block = block.next();
-        lineCounter++;
-    }
-}
 
 bool NodeTab::setEditorProperty(const QString& property, const QVariant& value, unsigned line, bool removeOld) {
     bool changed = false;
@@ -735,67 +676,41 @@ void NodeTab::setupWidgets() {
     editorAreaLayout->addWidget(linenumbers);
     editorAreaLayout->addWidget(editor);
 
-    // keywords
-    keywordsToolbar = new QToolBar();
-    varButton = new QToolButton();
-    varButton->setText("var");
-    ifButton = new QToolButton();
-    ifButton->setText("if");
-    elseifButton = new QToolButton();
-    elseifButton->setText("elseif");
-    elseButton = new QToolButton();
-    elseButton->setText("else");
-    oneventButton = new QToolButton();
-    oneventButton->setText("onevent");
-    whileButton = new QToolButton();
-    whileButton->setText("while");
-    forButton = new QToolButton();
-    forButton->setText("for");
-    subroutineButton = new QToolButton();
-    subroutineButton->setText("sub");
-    callsubButton = new QToolButton();
-    callsubButton->setText("callsub");
-    keywordsToolbar->addWidget(new QLabel(tr("<b>Keywords</b>")));
-    keywordsToolbar->addSeparator();
-    keywordsToolbar->addWidget(varButton);
-    keywordsToolbar->addWidget(ifButton);
-    keywordsToolbar->addWidget(elseifButton);
-    keywordsToolbar->addWidget(elseButton);
-    keywordsToolbar->addWidget(oneventButton);
-    keywordsToolbar->addWidget(whileButton);
-    keywordsToolbar->addWidget(forButton);
-    keywordsToolbar->addWidget(subroutineButton);
-    keywordsToolbar->addWidget(callsubButton);
-
-    auto* editorLayout = new QVBoxLayout;
-    editorLayout->addWidget(keywordsToolbar);
-    editorLayout->addLayout(editorAreaLayout);
-    editorLayout->addLayout(compilationResultLayout);
-    editorLayout->addWidget(memoryUsageText);
+    auto topLayout = new QHBoxLayout;
+    auto editorLayout = new QVBoxLayout;
 
     // panel
 
     // buttons
     executionModeLabel = new QLabel(tr("unknown"));
-
-    loadButton = new QPushButton(QIcon(":/images/upload.png"), tr("Load"));
     resetButton = new QPushButton(QIcon(":/images/reset.png"), tr("Reset"));
     resetButton->setEnabled(false);
-    runInterruptButton = new QPushButton(QIcon(":/images/play.png"), tr("Run"));
-    runInterruptButton->setEnabled(false);
-    runInterruptButton->setProperty("isRunning", false);
+
+    runButton = new QPushButton(QIcon(":/images/play.png"), tr("Run"));
+
+    pauseButton = new QPushButton(QIcon(":/images/pause.png"), tr("Pause"));
+
     nextButton = new QPushButton(QIcon(":/images/step.png"), tr("Next"));
     nextButton->setEnabled(false);
-    refreshMemoryButton = new QPushButton(QIcon(":/images/rescan.png"), tr("refresh"));
-    autoRefreshMemoryCheck = new QCheckBox(tr("auto"));
+
+    synchronizeVariablesToogle = new QCheckBox(tr("Synchronize"));
+
+    topLayout->addStretch();
+    topLayout->addWidget(resetButton);
+    topLayout->addWidget(runButton);
+    topLayout->addWidget(pauseButton);
+    topLayout->addWidget(nextButton);
+
+
+    editorLayout->addLayout(topLayout);
+    editorLayout->addLayout(editorAreaLayout);
+    editorLayout->addLayout(compilationResultLayout);
+    editorLayout->addWidget(memoryUsageText);
 
     auto* buttonsLayout = new QGridLayout;
     buttonsLayout->addWidget(new QLabel(tr("<b>Execution</b>")), 0, 0);
     buttonsLayout->addWidget(executionModeLabel, 0, 1);
-    buttonsLayout->addWidget(loadButton, 1, 0);
-    buttonsLayout->addWidget(runInterruptButton, 1, 1);
-    buttonsLayout->addWidget(resetButton, 2, 0);
-    buttonsLayout->addWidget(nextButton, 2, 1);
+
 
     // memory
     vmMemoryView = new QTreeView;
@@ -815,8 +730,7 @@ void NodeTab::setupWidgets() {
     auto* memorySubLayout = new QHBoxLayout;
     memorySubLayout->addWidget(new QLabel(tr("<b>Variables</b>")));
     memorySubLayout->addStretch();
-    memorySubLayout->addWidget(autoRefreshMemoryCheck);
-    memorySubLayout->addWidget(refreshMemoryButton);
+    memorySubLayout->addWidget(synchronizeVariablesToogle);
     memoryLayout->addLayout(memorySubLayout);
     memoryLayout->addWidget(vmMemoryView);
     memorySubLayout = new QHBoxLayout;
@@ -881,16 +795,13 @@ void NodeTab::setupWidgets() {
 }
 
 void NodeTab::setupConnections() {
-    // compiler
-    // connect(&compilationWatcher, SIGNAL(finished()), SLOT(compilationCompleted()));
 
     // execution
-    connect(loadButton, SIGNAL(clicked()), SLOT(loadClicked()));
-    connect(resetButton, SIGNAL(clicked()), SLOT(resetClicked()));
-    connect(runInterruptButton, SIGNAL(clicked()), SLOT(runInterruptClicked()));
-    connect(nextButton, SIGNAL(clicked()), SLOT(nextClicked()));
-    connect(refreshMemoryButton, SIGNAL(clicked()), SLOT(refreshMemoryClicked()));
-    connect(autoRefreshMemoryCheck, SIGNAL(stateChanged(int)), SLOT(autoRefreshMemoryClicked(int)));
+    connect(resetButton, SIGNAL(clicked()), SLOT(reset()));
+    connect(runButton, SIGNAL(clicked()), SLOT(run()));
+    connect(pauseButton, SIGNAL(clicked()), SLOT(pause()));
+    connect(nextButton, SIGNAL(clicked()), SLOT(step()));
+    connect(synchronizeVariablesToogle, &QCheckBox::toggled, this, &NodeTab::synchronizeVariablesChecked);
 
     // memory
     // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),
@@ -908,31 +819,14 @@ void NodeTab::setupConnections() {
     connect(compilationResultImage, SIGNAL(clicked()), SLOT(goToError()));
     connect(compilationResultText, SIGNAL(clicked()), SLOT(goToError()));
 
-    // keywords
-    signalMapper = new QSignalMapper(this);
-    signalMapper->setMapping(varButton, QString("var "));
-    signalMapper->setMapping(ifButton, QString("if"));
-    signalMapper->setMapping(elseifButton, QString("elseif"));
-    signalMapper->setMapping(elseButton, QString("else\n\t"));
-    signalMapper->setMapping(oneventButton, QString("onevent "));
-    signalMapper->setMapping(whileButton, QString("while"));
-    signalMapper->setMapping(forButton, QString("for"));
-    signalMapper->setMapping(subroutineButton, QString("sub "));
-    signalMapper->setMapping(callsubButton, QString("callsub "));
-
-    connect(varButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(ifButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(elseifButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(elseButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(oneventButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(whileButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(forButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(subroutineButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-    connect(callsubButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-
-    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(keywordClicked(QString)));
-
-    autoRefreshMemoryCheck->setChecked(true);
+    synchronizeVariablesToogle->setChecked(true);
 }
+
+void NodeTab::synchronizeVariablesChecked(bool checked) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(checked);
+    }
+}
+
 
 }  // namespace Aseba

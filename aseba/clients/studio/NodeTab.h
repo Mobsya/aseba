@@ -39,36 +39,37 @@ public:
 
 Q_SIGNALS:
     void uploadReadynessChanged(bool);
+    void compilationSucceed();
+    void compilationFailed();
+    void executionStarted();
+    void executionPaused();
+    void executionStopped();
 
 protected:
     void setupWidgets();
     void setupConnections();
 
-public slots:
+public Q_SLOTS:
     void clearExecutionErrors();
     void refreshCompleterModel(LocalContext context);
+
     // void sortCompleterModel();
 
-protected slots:
-    void resetClicked();
-    void loadClicked();
-    void runInterruptClicked();
-    void nextClicked();
-    void refreshMemoryClicked();
-
-    void writeBytecode();
+protected Q_SLOTS:
+    void reset();
+    void run();
+    void pause();
+    void step();
     void reboot();
+    void synchronizeVariablesChecked(bool checked);
+
 
     void setVariableValues(unsigned, const VariablesDataVector&);
     void insertVariableName(const QModelIndex&);
 
     void editorContentChanged();
-    void recompile();
+    void compileCodeOnTarget();
     void markTargetUnsynced();
-
-    // keywords
-    void keywordClicked(QString);
-    void showKeywords(bool show);
 
     void showMemoryUsage(bool show);
 
@@ -78,17 +79,21 @@ protected slots:
     void setBreakpoint(unsigned line);
     void clearBreakpoint(unsigned line);
     void breakpointClearedAll();
+    void breakpointSetResult(unsigned line, bool success);
 
     void executionPosChanged(unsigned line);
     void executionModeChanged(Target::ExecutionMode mode);
 
-    void breakpointSetResult(unsigned line, bool success);
 
     void updateHidden();
 
     void compilationCompleted();
 
 private:
+    void updateMemoryUsage(const mobsya::CompilationResult& res);
+    void handleCompilationError(const mobsya::CompilationResult& res);
+
+
     void rehighlight();
     void handleCompletion();
 
@@ -115,25 +120,13 @@ private:
     QLabel* memoryUsageText;
 
     QLabel* executionModeLabel;
-    QPushButton* loadButton;
     QPushButton* resetButton;
-    QPushButton* runInterruptButton;
+    QPushButton* pauseButton;
+    QPushButton* runButton;
     QPushButton* nextButton;
-    QPushButton* refreshMemoryButton;
-    QCheckBox* autoRefreshMemoryCheck;
+    QCheckBox* synchronizeVariablesToogle;
 
     // keywords
-    QToolButton* varButton;
-    QToolButton* ifButton;
-    QToolButton* elseifButton;
-    QToolButton* elseButton;
-    QToolButton* oneventButton;
-    QToolButton* whileButton;
-    QToolButton* forButton;
-    QToolButton* subroutineButton;
-    QToolButton* callsubButton;
-    QToolBar* keywordsToolbar;
-    QSignalMapper* signalMapper;
 
     // TargetVariablesModel* vmMemoryModel;
     // TargetSubroutinesModel* vmSubroutinesModel;
@@ -154,16 +147,13 @@ private:
     QToolBox* toolBox;
 
     QString lastCompiledSource;  //!< content of last source considered for compilation following
-                                 //!< a textChanged signal
-    int errorPos;                //!< position of last error, -1 if compilation was success
-    int currentPC;               //!< current program counter
+    QString lastLoadedSource;
+
+    //!< a textChanged signal
+    int errorPos;   //!< position of last error, -1 if compilation was success
+    int currentPC;  //!< current program counter
     Target::ExecutionMode previousMode;
     bool showHidden;
-
-    bool compilationDirty;
-    bool isSynchronized;
-
-    unsigned allocatedVariablesCount;  //!< number of allocated variables
 };
 
 }  // namespace Aseba

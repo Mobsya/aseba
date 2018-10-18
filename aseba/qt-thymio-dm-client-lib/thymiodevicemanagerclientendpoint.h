@@ -7,7 +7,8 @@
 
 namespace mobsya {
 class ThymioNode;
-class ThymioDeviceManagerClientEndpoint : public QObject {
+class ThymioDeviceManagerClientEndpoint : public QObject,
+                                          public std::enable_shared_from_this<ThymioDeviceManagerClientEndpoint> {
     Q_OBJECT
 
 public:
@@ -15,16 +16,19 @@ public:
     ~ThymioDeviceManagerClientEndpoint();
 
 public:
+    std::shared_ptr<ThymioNode> node(const QUuid& id) const;
+
     QHostAddress peerAddress() const;
     QUrl websocketConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
 
     Request renameNode(const ThymioNode& node, const QString& newName);
-    Request stopNode(const ThymioNode& node);
+    Request setNodeExecutionState(const ThymioNode& node, fb::VMExecutionStateCommand cmd);
     Request lock(const ThymioNode& node);
     Request unlock(const ThymioNode& node);
     CompilationRequest send_code(const ThymioNode& node, const QByteArray& code, fb::ProgrammingLanguage language,
                                  fb::CompilationOptions opts);
+    Request set_watch_flags(const ThymioNode& node, int flags);
 
 private Q_SLOTS:
     void onReadyRead();
@@ -34,6 +38,10 @@ private Q_SLOTS:
     void write(const tagged_detached_flatbuffer& buffer);
 
 Q_SIGNALS:
+    void nodeAdded(std::shared_ptr<ThymioNode>);
+    void nodeRemoved(std::shared_ptr<ThymioNode>);
+    void nodeModified(std::shared_ptr<ThymioNode>);
+
     void onMessage(const fb_message_ptr& msg) const;
     void disconnected();
 
@@ -45,11 +53,13 @@ private:
         return r;
     }
 
+    void onNodesChanged(const fb::NodesChangedT& nc_msg);
     void handleIncommingMessage(const fb_message_ptr& msg);
     detail::RequestDataBase::shared_ptr get_request(detail::RequestDataBase::request_id);
 
 
     static flatbuffers::Offset<fb::NodeId> serialize_uuid(flatbuffers::FlatBufferBuilder& fb, const QUuid& uuid);
+    QMap<QUuid, std::shared_ptr<ThymioNode>> m_nodes;
     QTcpSocket* m_socket;
     quint32 m_message_size;
     quint16 m_ws_port = 0;

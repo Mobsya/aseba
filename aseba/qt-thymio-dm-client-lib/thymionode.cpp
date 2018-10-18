@@ -6,7 +6,13 @@ namespace mobsya {
 
 ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint, const QUuid& uuid,
                        const QString& name, NodeType type, QObject* parent)
-    : QObject(parent), m_endpoint(endpoint), m_uuid(uuid), m_name(name), m_status(Status::Disconnected), m_type(type) {
+    : QObject(parent)
+    , m_endpoint(endpoint)
+    , m_uuid(uuid)
+    , m_name(name)
+    , m_status(Status::Disconnected)
+    , m_executionState(VMExecutionState::Stopped)
+    , m_type(type) {
 
     connect(this, &ThymioNode::nameChanged, this, &ThymioNode::modified);
     connect(this, &ThymioNode::statusChanged, this, &ThymioNode::modified);
@@ -24,6 +30,10 @@ QString ThymioNode::name() const {
 
 ThymioNode::Status ThymioNode::status() const {
     return m_status;
+}
+
+ThymioNode::VMExecutionState ThymioNode::vmExecutionState() const {
+    return m_executionState;
 }
 
 ThymioNode::NodeType ThymioNode::type() const {
@@ -76,7 +86,22 @@ Request ThymioNode::unlock() {
 }
 
 Request ThymioNode::stop() {
-    return m_endpoint->stopNode(*this);
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Stop);
+}
+
+Request ThymioNode::run() {
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Run);
+}
+
+Request ThymioNode::pause() {
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Pause);
+}
+Request ThymioNode::reboot() {
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Reboot);
+}
+
+Request ThymioNode::step() {
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Step);
 }
 
 CompilationRequest ThymioNode::compile_aseba_code(const QByteArray& code) {
@@ -85,6 +110,41 @@ CompilationRequest ThymioNode::compile_aseba_code(const QByteArray& code) {
 
 CompilationRequest ThymioNode::load_aseba_code(const QByteArray& code) {
     return m_endpoint->send_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions::LoadOnTarget);
+}
+
+Request ThymioNode::setWatchVariablesEnabled(bool enabled) {
+    m_watched_infos.setFlag(WatchableInfo::Variables, enabled);
+    return updateWatchedInfos();
+}
+
+Request ThymioNode::setWatchEventsEnabled(bool enabled) {
+    m_watched_infos.setFlag(WatchableInfo::Events, enabled);
+    return updateWatchedInfos();
+}
+
+Request ThymioNode::setWatchVMExecutionStateEnabled(bool enabled) {
+    m_watched_infos.setFlag(WatchableInfo::VMExecutionState, enabled);
+    return updateWatchedInfos();
+}
+
+Request ThymioNode::updateWatchedInfos() {
+    return m_endpoint->set_watch_flags(*this, int(m_watched_infos));
+}
+
+void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg) {
+    if(msg.error == fb::VMExecutionError::NoError) {
+        m_executionState = msg.state;
+        Q_EMIT vmExecutionStateChanged();
+        if(m_executionState == VMExecutionState::Paused) {
+            Q_EMIT vmExecutionPaused(msg.line);
+        } else if(m_executionState == VMExecutionState::Running) {
+            Q_EMIT vmExecutionStarted();
+        } else if(m_executionState == VMExecutionState::Stopped) {
+            Q_EMIT vmExecutionStopped();
+        }
+    } else {
+        Q_EMIT vmExecutionStopped();
+    }
 }
 
 
