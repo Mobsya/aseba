@@ -68,11 +68,11 @@ Request ThymioNode::rename(const QString& newName) {
 }
 
 Request ThymioNode::lock() {
-    m_endpoint->lock(*this);
+    return m_endpoint->lock(*this);
 }
 
 Request ThymioNode::unlock() {
-    m_endpoint->unlock(*this);
+    return m_endpoint->unlock(*this);
 }
 
 Request ThymioNode::stop() {

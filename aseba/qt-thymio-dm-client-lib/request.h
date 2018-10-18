@@ -240,6 +240,7 @@ private:
 namespace detail {
     class RequestWatcherBase : public QObject {
         Q_OBJECT
+        using QObject::QObject;
 
     Q_SIGNALS:
         void finished();
@@ -251,11 +252,23 @@ namespace detail {
 template <typename Result>
 class BasicRequestWatcher : public detail::RequestWatcherBase, public BasicRequest<Result> {
 public:
-    BasicRequestWatcher(const BasicRequest<Result>& req) : BasicRequest<Result>(req) {
-        connect(this->get_ptr().get(), &detail::RequestDataBase::finished, this, &BasicRequestWatcher<Result>::finished,
-                Qt::QueuedConnection);
-        connect(this->get_ptr().get(), &detail::RequestDataBase::canceled, this, &BasicRequestWatcher<Result>::canceled,
-                Qt::QueuedConnection);
+    BasicRequestWatcher(QObject* parent = nullptr) : detail::RequestWatcherBase(parent) {}
+    BasicRequestWatcher(const BasicRequest<Result>& req, QObject* parent = nullptr)
+        : detail::RequestWatcherBase(parent) {
+
+        setRequest(req);
+    }
+
+    void setRequest(BasicRequest<Result> req) {
+        if(this->ptr)
+            disconnect(this->ptr.get());
+        this->ptr = req.ptr;
+        if(this->ptr) {
+            connect(this->ptr.get(), &detail::RequestDataBase::finished, this, &BasicRequestWatcher<Result>::finished,
+                    Qt::QueuedConnection);
+            connect(this->ptr.get(), &detail::RequestDataBase::canceled, this, &BasicRequestWatcher<Result>::canceled,
+                    Qt::QueuedConnection);
+        }
     }
 };
 
@@ -368,5 +381,6 @@ using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
 using CompilationRequest = BasicRequest<CompilationResult>;
+using CompilationResultWatcher = BasicRequestWatcher<CompilationResult>;
 
 }  // namespace mobsya
