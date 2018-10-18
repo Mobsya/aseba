@@ -265,8 +265,10 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
             write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
             break;
         case vm_execution_state_command::Reset:
-        case vm_execution_state_command::Stop:
             write_message(std::make_shared<Aseba::Reset>(native_id()), std::move(cb));
+            break;
+        case vm_execution_state_command::Stop:
+            write_message(std::make_shared<Aseba::Stop>(native_id()), std::move(cb));
             break;
         case vm_execution_state_command::Pause:
             write_message(std::make_shared<Aseba::Pause>(native_id()), std::move(cb));
@@ -301,12 +303,13 @@ void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& 
         m_vm_state.pc = es.pc;
         m_vm_state.flags = es.flags;
         if(m_vm_state.flags & ASEBA_VM_STEP_BY_STEP_MASK) {
-            m_vm_state.state = m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK ? fb::VMExecutionState::Paused :
-                                                                               fb::VMExecutionState::Stopped;
+            m_vm_state.state = (m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK) ? fb::VMExecutionState::Paused :
+                                                                                 fb::VMExecutionState::Stopped;
         }
         m_vm_state.line = es.pc < m_bytecode.size() ? m_bytecode[es.pc].line : 0;
         state.state = m_vm_state.state;
         state.line = m_vm_state.line;
+        state.error = fb::VMExecutionError::NoError;
     }
     m_vm_state_watch_signal(shared_from_this(), state);
 }

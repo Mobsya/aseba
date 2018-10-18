@@ -40,13 +40,9 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
                 &ThymioDeviceManagerClient::onEndpointDisconnected);
 
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
-                &ThymioDeviceManagerClient::nodeAdded);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
                 &ThymioDeviceManagerClient::onNodeAdded);
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeModified, this,
                 &ThymioDeviceManagerClient::nodeModified);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
-                &ThymioDeviceManagerClient::nodeRemoved);
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
                 &ThymioDeviceManagerClient::onNodeRemoved);
 
@@ -63,10 +59,12 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
 
 void ThymioDeviceManagerClient::onNodeAdded(std::shared_ptr<ThymioNode> node) {
     m_nodes.insert(node->uuid(), node);
+    Q_EMIT nodeAdded(node);
 }
 
 void ThymioDeviceManagerClient::onNodeRemoved(std::shared_ptr<ThymioNode> node) {
     m_nodes.remove(node->uuid());
+    Q_EMIT nodeRemoved(node);
 }
 
 void ThymioDeviceManagerClient::onServiceRemoved(QZeroConfService service) {

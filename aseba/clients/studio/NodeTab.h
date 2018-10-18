@@ -44,6 +44,7 @@ Q_SIGNALS:
     void executionStarted();
     void executionPaused();
     void executionStopped();
+    void executionStateChanged();
 
 protected:
     void setupWidgets();
@@ -120,7 +121,7 @@ private:
     QLabel* memoryUsageText;
 
     QLabel* executionModeLabel;
-    QPushButton* resetButton;
+    QPushButton* stopButton;
     QPushButton* pauseButton;
     QPushButton* runButton;
     QPushButton* nextButton;

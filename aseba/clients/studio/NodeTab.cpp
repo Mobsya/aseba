@@ -88,13 +88,14 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         if(node->status() == mobsya::ThymioNode::Status::Available)
             node->lock();
         auto ptr = node.get();
-        node->setWatchVariablesEnabled(true);
+        // node->setWatchVariablesEnabled(true);
         node->setWatchEventsEnabled(true);
         node->setWatchVMExecutionStateEnabled(true);
 
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
 
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
             if(node->status() == mobsya::ThymioNode::Status::Available)
@@ -105,11 +106,13 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
 
 void NodeTab::reset() {
     clearExecutionErrors();
+    m_thymio->load_aseba_code({});
     m_thymio->stop();
+    lastLoadedSource.clear();
 }
 void NodeTab::run() {
     auto code = editor->toPlainText().simplified();
-    if(code == lastLoadedSource) {
+    if(!code.isEmpty() && code == lastLoadedSource) {
         m_thymio->run();
         return;
     }
@@ -126,7 +129,7 @@ void NodeTab::run() {
 }
 
 void NodeTab::pause() {
-    m_thymio->run();
+    m_thymio->pause();
 }
 
 void NodeTab::compileCodeOnTarget() {
@@ -165,6 +168,7 @@ void NodeTab::compilationCompleted() {
         Q_EMIT compilationSucceed();
         errorPos = -1;
     } else {
+        Q_EMIT compilationFailed();
         emit uploadReadynessChanged(false);
     }
     // clear bearkpoints of target if currently in debugging mode
@@ -310,7 +314,7 @@ void NodeTab::updateHidden() {
 //! When code is changed or target is rebooted, remove breakpoints from target but keep them locally
 //! as pending for next code load
 void NodeTab::markTargetUnsynced() {
-    editor->debugging = false;
+    /*editor->debugging = false;
     resetButton->setEnabled(false);
     runButton->setEnabled(false);
     nextButton->setEnabled(false);
@@ -318,6 +322,7 @@ void NodeTab::markTargetUnsynced() {
     switchEditorProperty(QStringLiteral("breakpoint"), QStringLiteral("breakpointPending"));
     executionModeLabel->setText(tr("unknown"));
     // mainWindow->nodes->setExecutionMode(mainWindow->getIndexFromId(id), Target::EXECUTION_UNKNOWN);
+    */
 }
 
 void NodeTab::cursorMoved() {
@@ -432,7 +437,7 @@ void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
     if(!editor->debugging)
         return;
 
-    resetButton->setEnabled(true);
+    stopButton->setEnabled(true);
     runButton->setEnabled(true);
     compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/ok.png")));
 
@@ -683,20 +688,20 @@ void NodeTab::setupWidgets() {
 
     // buttons
     executionModeLabel = new QLabel(tr("unknown"));
-    resetButton = new QPushButton(QIcon(":/images/reset.png"), tr("Reset"));
-    resetButton->setEnabled(false);
+    stopButton = new QPushButton(QIcon(":/images/reset.png"), tr("Reset"));
+    // resetButton->setEnabled(false);
 
     runButton = new QPushButton(QIcon(":/images/play.png"), tr("Run"));
 
     pauseButton = new QPushButton(QIcon(":/images/pause.png"), tr("Pause"));
 
     nextButton = new QPushButton(QIcon(":/images/step.png"), tr("Next"));
-    nextButton->setEnabled(false);
+    // nextButton->setEnabled(false);
 
     synchronizeVariablesToogle = new QCheckBox(tr("Synchronize"));
 
     topLayout->addStretch();
-    topLayout->addWidget(resetButton);
+    topLayout->addWidget(stopButton);
     topLayout->addWidget(runButton);
     topLayout->addWidget(pauseButton);
     topLayout->addWidget(nextButton);
@@ -797,11 +802,49 @@ void NodeTab::setupWidgets() {
 void NodeTab::setupConnections() {
 
     // execution
-    connect(resetButton, &QAbstractButton::clicked, this, &NodeTab::reset);
+    connect(stopButton, &QAbstractButton::clicked, this, &NodeTab::reset);
     connect(runButton, &QAbstractButton::clicked, this, &NodeTab::run);
     connect(pauseButton, &QAbstractButton::clicked, this, &NodeTab::pause);
     connect(nextButton, &QAbstractButton::clicked, this, &NodeTab::step);
     connect(synchronizeVariablesToogle, &QCheckBox::toggled, this, &NodeTab::synchronizeVariablesChecked);
+
+
+    connect(this, &NodeTab::executionStateChanged, [this] {
+        runButton->setEnabled(true);
+        runButton->setVisible(true);
+        pauseButton->setEnabled(true);
+        pauseButton->setVisible(true);
+        nextButton->setEnabled(true);
+        nextButton->setVisible(true);
+        stopButton->setVisible(true);
+        stopButton->setEnabled(true);
+
+        auto state = m_thymio->vmExecutionState();
+        switch(state) {
+            case mobsya::ThymioNode::VMExecutionState::Running: {
+                runButton->setEnabled(false);
+                nextButton->setEnabled(false);
+                break;
+            };
+            case mobsya::ThymioNode::VMExecutionState::Paused: {
+                pauseButton->setEnabled(false);
+                break;
+            };
+            case mobsya::ThymioNode::VMExecutionState::Stopped: {
+                pauseButton->hide();
+                nextButton->hide();
+                stopButton->setEnabled(false);
+                break;
+            };
+            default: break;
+        }
+    });
+
+    connect(this, &NodeTab::compilationFailed, [this] { runButton->setEnabled(false); });
+    connect(this, &NodeTab::compilationSucceed, [this] {
+        runButton->setEnabled(m_thymio->vmExecutionState() != mobsya::ThymioNode::VMExecutionState::Running);
+    });
+
 
     // memory
     // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),
