@@ -234,4 +234,7 @@ namespace qml {
 
 Q_DECLARE_METATYPE(mobsya::Error)
 Q_DECLARE_METATYPE(mobsya::Request)
+Q_DECLARE_METATYPE(mobsya::CompilationRequest)
 Q_DECLARE_METATYPE(mobsya::SimpleRequestResult)
+Q_DECLARE_METATYPE(mobsya::CompilationResult)
+Q_DECLARE_METATYPE(mobsya::CompilationError)

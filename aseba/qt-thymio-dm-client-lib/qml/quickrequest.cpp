@@ -155,7 +155,9 @@ QtObject {
         QObject::connect(new QObject(qApp), &QObject::destroyed, [=]() { qDeleteAll(m_wrappers); });
         qmlRegisterSingletonType<QmlRequest>("org.mobsya", 1, 0, "Request", provider);
         QmlRequest::registerType<SimpleRequestResult>();
+        QmlRequest::registerType<CompilationResult>();
         qRegisterMetaType<Request>("Request");
+        qRegisterMetaType<CompilationError>();
     }
 
     Q_COREAPP_STARTUP_FUNCTION(init)

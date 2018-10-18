@@ -23,6 +23,8 @@ public:
     Request stopNode(const ThymioNode& node);
     Request lock(const ThymioNode& node);
     Request unlock(const ThymioNode& node);
+    CompilationRequest send_code(const ThymioNode& node, const QByteArray& code, fb::ProgrammingLanguage language,
+                                 fb::CompilationOptions opts);
 
 private Q_SLOTS:
     void onReadyRead();

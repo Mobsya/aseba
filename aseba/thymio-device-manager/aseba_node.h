@@ -71,6 +71,23 @@ public:
         std::optional<std::string> error_message;
     };
 
+    struct compilation_result {
+        struct error_data {
+            unsigned character;
+            unsigned line;
+            unsigned colum;
+            std::string msg;
+        };
+        struct result_data {
+            size_t bytecode_size;
+            size_t variables_size;
+            size_t bytecode_total_size;
+            size_t variables_total_size;
+        };
+        std::optional<error_data> error;
+        std::optional<result_data> result;
+    };
+
     using breakpoints = std::unordered_set<breakpoint>;
 
     using variables_map = std::unordered_map<std::string, variable>;
@@ -87,6 +104,7 @@ public:
     aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
     using write_callback = std::function<void(boost::system::error_code)>;
     using breakpoints_callback = std::function<void(boost::system::error_code, breakpoints)>;
+    using compilation_callback = std::function<void(boost::system::error_code, compilation_result)>;
 
     ~aseba_node();
 
@@ -129,8 +147,9 @@ public:
     void write_message(std::shared_ptr<Aseba::Message> message, write_callback&& cb = {});
 
     // Compile a program and send it to the node, invoking cb once the assossiated message is written out
-    // If the code can not be compiled, returns false without invoking cb
-    bool send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb = {});
+    void compile_program(fb::ProgrammingLanguage language, const std::string& program, compilation_callback&& cb = {});
+    void compile_and_send_program(fb::ProgrammingLanguage language, const std::string& program,
+                                  compilation_callback&& cb = {});
     void set_vm_execution_state(vm_execution_state_command state, write_callback&& cb = {});
     void set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb = {});
 
@@ -159,6 +178,9 @@ public:
 private:
     friend class aseba_endpoint;
     void set_status(status);
+    tl::expected<compilation_result, boost::system::error_code>
+    do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs, fb::ProgrammingLanguage language,
+                       const std::string& program, Aseba::BytecodeVector& bytecode);
 
     // Must be called before destructor !
     void disconnect();

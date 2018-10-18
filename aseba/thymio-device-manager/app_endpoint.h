@@ -213,10 +213,10 @@ public:
                 this->unlock_node(lock_msg->request_id(), lock_msg->node_id());
                 break;
             }
-            case mobsya::fb::AnyMessage::RequestCodeLoad: {
-                auto req = msg.as<fb::RequestCodeLoad>();
-                this->send_program(req->request_id(), req->node_id(), vm_language(req->language()),
-                                   req->program()->str());
+            case mobsya::fb::AnyMessage::CompileAndLoadCodeOnVM: {
+                auto req = msg.as<fb::CompileAndLoadCodeOnVM>();
+                this->compile_and_send_program(req->request_id(), req->node_id(), vm_language(req->language()),
+                                               req->program()->str(), req->options());
                 break;
             }
             case mobsya::fb::AnyMessage::SetVMExecutionState: {
@@ -449,18 +449,31 @@ private:
         }
     }
 
-    void send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
-                      std::string program) {
+    void compile_and_send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
+                                  std::string program, fb::CompilationOptions opts) {
         auto n = get_locked_node(id);
         if(!n) {
             mLogWarn("send_aseba_code: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        bool res = n->send_program(language, program, create_device_write_completion_cb(request_id));
-        if(!res) {
-            mLogWarn("send_aseba_code: compilation to node {} failed", id);
-            write_message(create_compilation_error_response(request_id));
+        auto callback = [request_id, strand = this->m_strand,
+                         ptr = weak_from_this()](boost::system::error_code ec, aseba_node::compilation_result result) {
+            boost::asio::post(strand, [ec, result, request_id, ptr]() {
+                auto that = ptr.lock();
+                if(!that)
+                    return;
+                if(ec) {
+                    that->write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+                    return;
+                }
+                that->write_message(create_compilation_result_response(request_id, result));
+            });
+        };
+        if((int32_t(opts) & int32_t(fb::CompilationOptions::LoadOnTarget))) {
+            n->compile_and_send_program(language, program, callback);
+        } else {
+            n->compile_program(language, program, callback);
         }
     }
 
