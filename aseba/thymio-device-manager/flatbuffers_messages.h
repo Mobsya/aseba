@@ -24,12 +24,6 @@ tagged_detached_flatbuffer create_error_response(uint32_t request_id, fb::ErrorT
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer create_compilation_error_response(uint32_t request_id) {
-    flatbuffers::FlatBufferBuilder fb;
-    auto offset = mobsya::fb::CreateCompilationError(fb, request_id);
-    return wrap_fb(fb, offset);
-}
-
 tagged_detached_flatbuffer create_ack_response(uint32_t request_id) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateRequestCompleted(fb, request_id);
@@ -44,6 +38,21 @@ tagged_detached_flatbuffer create_set_breakpoint_response(uint32_t request_id, f
                    [&fb](const breakpoint& bp) { return mobsya::fb::CreateBreakpoint(fb, bp.line); });
     auto vecOffset = fb.CreateVector(offsets);
     auto offset = mobsya::fb::CreateSetBreakpointsResponse(fb, request_id, error, vecOffset);
+    return wrap_fb(fb, offset);
+}
+
+tagged_detached_flatbuffer create_compilation_result_response(uint32_t request_id,
+                                                              const aseba_node::compilation_result& result) {
+    flatbuffers::FlatBufferBuilder fb;
+    if(result.error) {
+        auto msgOffset = fb.CreateString(result.error->msg);
+        auto offset = mobsya::fb::CreateCompilationResultFailure(fb, request_id, msgOffset, result.error->character,
+                                                                 result.error->line, result.error->colum);
+        return wrap_fb(fb, offset);
+    }
+    auto offset = mobsya::fb::CreateCompilationResultSuccess(
+        fb, request_id, result.result->bytecode_size, result.result->bytecode_total_size, result.result->variables_size,
+        result.result->variables_total_size);
     return wrap_fb(fb, offset);
 }
 

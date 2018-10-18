@@ -57,6 +57,8 @@ public:
     Q_INVOKABLE Request stop();
     Q_INVOKABLE Request lock();
     Q_INVOKABLE Request unlock();
+    Q_INVOKABLE CompilationRequest compile_aseba_code(const QByteArray& code);
+    Q_INVOKABLE CompilationRequest load_aseba_code(const QByteArray& code);
 
 private:
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;

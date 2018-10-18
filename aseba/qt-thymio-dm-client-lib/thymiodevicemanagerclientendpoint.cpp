@@ -94,6 +94,31 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             basic_req->setError(message->error());
             break;
         }
+        case mobsya::fb::AnyMessage::CompilationResultFailure: {
+            auto message = msg.as<mobsya::fb::CompilationResultFailure>();
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            if(auto req = basic_req->as<CompilationRequest::internal_ptr_type>()) {
+                auto r = CompilationResult::make_error(QString(message->message()->c_str()), message->character(),
+                                                       message->line(), message->column());
+                req->setResult(std::move(r));
+            }
+            break;
+        }
+        case mobsya::fb::AnyMessage::CompilationResultSuccess: {
+            auto message = msg.as<mobsya::fb::CompilationResultSuccess>();
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            if(auto req = basic_req->as<CompilationRequest::internal_ptr_type>()) {
+                auto r =
+                    CompilationResult::make_success(message->bytecode_size(), message->variables_size(),
+                                                    message->total_bytecode_size(), message->total_variables_size());
+                req->setResult(std::move(r));
+            }
+        }
+
         default: Q_EMIT onMessage(msg);
     }
 }
@@ -169,6 +194,18 @@ auto ThymioDeviceManagerClientEndpoint::unlock(const ThymioNode& node) -> Reques
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     write(wrap_fb(builder, fb::CreateUnlockNode(builder, r.id(), uuidOffset)));
+    return r;
+}
+
+auto ThymioDeviceManagerClientEndpoint::send_code(const ThymioNode& node, const QByteArray& code,
+                                                  fb::ProgrammingLanguage language, fb::CompilationOptions opts)
+    -> CompilationRequest {
+
+    CompilationRequest r = prepare_request<CompilationRequest>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto codedOffset = builder.CreateString(code.data(), code.size());
+    write(wrap_fb(builder, fb::CreateCompileAndLoadCodeOnVM(builder, r.id(), uuidOffset, language, codedOffset, opts)));
     return r;
 }
 

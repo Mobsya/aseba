@@ -79,5 +79,13 @@ Request ThymioNode::stop() {
     return m_endpoint->stopNode(*this);
 }
 
+CompilationRequest ThymioNode::compile_aseba_code(const QByteArray& code) {
+    return m_endpoint->send_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions(0));
+}
+
+CompilationRequest ThymioNode::load_aseba_code(const QByteArray& code) {
+    return m_endpoint->send_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions::LoadOnTarget);
+}
+
 
 }  // namespace mobsya

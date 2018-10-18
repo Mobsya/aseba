@@ -151,29 +151,71 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
     endpoint->write_messages(std::move(messages), std::move(cb));
 }
 
-bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::string& program, write_callback&& cb) {
+void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::string& program,
+                                 compilation_callback&& cb) {
     std::unique_lock<std::mutex> _(m_node_mutex);
+    Aseba::CommonDefinitions defs = m_defs;
+    Aseba::TargetDescription desc = m_description;
+    m_node_mutex.unlock();
 
+    Aseba::Compiler compiler;
+    compiler.setTargetDescription(&desc);
+    compiler.setCommonDefinitions(&defs);
+
+
+    Aseba::BytecodeVector bytecode;
+    auto result = do_compile_program(compiler, defs, language, program, bytecode);
+    if(!result)
+        boost::asio::post(m_io_ctx.get_executor(), std::bind(std::move(cb), result.error(), compilation_result{}));
+    else
+        boost::asio::post(m_io_ctx.get_executor(),
+                          std::bind(std::move(cb), boost::system::error_code{}, result.value()));
+}
+
+void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, const std::string& program,
+                                          compilation_callback&& cb) {
+
+    std::unique_lock<std::mutex> _(m_node_mutex);
     m_defs.clear();
     m_breakpoints.clear();
     cancel_pending_breakpoint_request();
-
     Aseba::Compiler compiler;
-
     compiler.setTargetDescription(&m_description);
     compiler.setCommonDefinitions(&m_defs);
+    auto result = do_compile_program(compiler, m_defs, language, program, m_bytecode);
+    if(!result) {
+        cb(result.error(), {});
+        return;
+    }
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
+    reset_known_variables(*compiler.getVariablesMap());
+    m_node_mutex.unlock();
+    write_messages(std::move(messages),
+                   [that = shared_from_this(), cb = std::move(cb), result](boost::system::error_code ec) {
+                       cb(ec, result.value());
+                   });
+
+    send_events_table();
+    m_variables_changed_signal(shared_from_this(), this->variables());
+}
+
+tl::expected<aseba_node::compilation_result, boost::system::error_code>
+aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs,
+                               fb::ProgrammingLanguage language, const std::string& program,
+                               Aseba::BytecodeVector& bytecode) {
     std::wstring code;
 
     if(language == fb::ProgrammingLanguage::Aesl) {
         auto aesl = load_aesl(program);
         if(!aesl) {
             mLogError("Invalid Aesl");
-            return false;
+            return tl::make_unexpected(mobsya::make_error_code(mobsya::error_code::invalid_aesl));
         }
         auto [constants, events, nodes] = aesl->parse_all();
         if(!constants || !events || !nodes || nodes->size() != 1) {
             mLogError("Invalid Aesl");
-            return false;
+            return tl::make_unexpected(mobsya::make_error_code(mobsya::error_code::invalid_aesl));
         }
 
         for(const auto& constant : *constants) {
@@ -182,39 +224,39 @@ bool aseba_node::send_program(fb::ProgrammingLanguage language, const std::strin
                 continue;
             auto v = numeric_cast<int16_t>(property::integral_t(constant.second));
             if(v)
-                m_defs.constants.emplace_back(Aseba::UTF8ToWString(constant.first), *v);
+                defs.constants.emplace_back(Aseba::UTF8ToWString(constant.first), *v);
         }
         for(const auto& event : *events) {
             // Let poorly defined events fail the compilation later
             if(event.type != event_type::aseba)
                 continue;
-            m_defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
+            defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
         }
         code = Aseba::UTF8ToWString((*nodes)[0].code);
     } else {
         code = Aseba::UTF8ToWString(program);
     }
 
+    compilation_result result;
     std::wistringstream is(code);
     Aseba::Error error;
-    m_bytecode.clear();
+    bytecode.clear();
     unsigned allocatedVariablesCount;
-    bool result = compiler.compile(is, m_bytecode, allocatedVariablesCount, error);
-    if(!result) {
+    bool success = compiler.compile(is, bytecode, allocatedVariablesCount, error);
+    if(!success) {
         mLogWarn("Compilation failed on node {} : {}", m_id, Aseba::WStringToUTF8(error.message));
-        return false;
+        compilation_result::error_data err{error.pos.character, error.pos.row, error.pos.column,
+                                           Aseba::WStringToUTF8(error.message)};
+        result.error = err;
+        return result;
     }
-
-    reset_known_variables(*compiler.getVariablesMap());
-
-    m_node_mutex.unlock();
-
-    std::vector<std::shared_ptr<Aseba::Message>> messages;
-    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
-    write_messages(std::move(messages), std::move(cb));
-    m_variables_changed_signal(shared_from_this(), this->variables());
-    send_events_table();
-    return true;
+    compilation_result::result_data data;
+    data.bytecode_size = bytecode.size();
+    data.variables_size = allocatedVariablesCount;
+    data.bytecode_total_size = compiler.getTargetDescription()->bytecodeSize;
+    data.variables_total_size = compiler.getTargetDescription()->variablesSize;
+    result.result = data;
+    return result;
 }
 
 void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_callback&& cb) {

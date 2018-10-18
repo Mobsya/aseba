@@ -269,8 +269,104 @@ public:
         return {};
     }
 };
+
+struct CompilationError {
+
+    CompilationError(const QString& msg, quint32 pos, quint32 line, quint32 column)
+        : m_message(msg), m_character(pos), m_line(line), m_column(column) {}
+
+    CompilationError() = default;
+
+    Q_INVOKABLE QString errorMessage() const {
+        return m_message;
+    }
+
+    Q_INVOKABLE quint32 line() const {
+        return m_line;
+    }
+
+    Q_INVOKABLE quint32 column() const {
+        return m_column;
+    }
+
+    Q_INVOKABLE quint32 charater() const {
+        return m_character;
+    }
+
+private:
+    QString m_message;
+    quint32 m_character = 0;
+    quint32 m_line = 0;
+    quint32 m_column = 0;
+};
+
+
+struct CompilationResult {
+    static constexpr quint32 type = 0x61513229;
+    Q_GADGET
+public:
+public:
+    Q_INVOKABLE QString toString() const {
+        if(m_errors.empty()) {
+            return QStringLiteral("Compilation ok - bytecode: %1, variables %2").arg(m_bytecode_size, m_variables_size);
+        }
+        return QStringLiteral("Compilation error :").arg(m_errors.first().errorMessage());
+    }
+
+    Q_INVOKABLE bool success() const {
+        return m_errors.empty();
+    }
+
+    Q_INVOKABLE size_t variables_size() const {
+        return m_variables_size;
+    }
+
+    Q_INVOKABLE size_t bytecode_size() const {
+        return m_bytecode_size;
+    }
+
+    Q_INVOKABLE QVector<CompilationError> errors() const {
+        return m_errors;
+    }
+
+    Q_INVOKABLE CompilationError error() const {
+        return m_errors.empty() ? CompilationError{} : m_errors.first();
+    }
+
+    Q_INVOKABLE size_t bytecode_total_size() {
+        return m_bytecode_total_size;
+    }
+    Q_INVOKABLE size_t variables_total_size() {
+        return m_variables_total_size;
+    }
+
+    static CompilationResult make_error(const QString& msg, quint32 pos, quint32 line, quint32 column) {
+        CompilationResult r;
+        r.m_errors.append(CompilationError(msg, pos, line, column));
+        return r;
+    }
+
+    static CompilationResult make_success(size_t bytecode_size, size_t variables_size, size_t bytecode_total_size,
+                                          size_t variables_total_size) {
+        CompilationResult r;
+        r.m_bytecode_size = bytecode_size;
+        r.m_bytecode_size = variables_size;
+        r.m_bytecode_total_size = bytecode_total_size;
+        r.m_variables_total_size = variables_total_size;
+        return r;
+    }
+
+private:
+    QVector<CompilationError> m_errors;
+    size_t m_bytecode_size = 0;
+    size_t m_variables_size = 0;
+    size_t m_bytecode_total_size = 0;
+    size_t m_variables_total_size = 0;
+};
+
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
+using CompilationRequest = BasicRequest<CompilationResult>;
 
 }  // namespace mobsya
