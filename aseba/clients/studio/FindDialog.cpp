@@ -92,12 +92,12 @@ FindDialog::FindDialog(QWidget* parent, QTextEdit* editor) : QDialog(parent), ed
 
     setLayout(layout);
 
-    connect(findNextButton, SIGNAL(clicked()), SLOT(findNext()));
-    connect(findPreviousButton, SIGNAL(clicked()), SLOT(findPrevious()));
-    connect(findFromTopButton, SIGNAL(clicked()), SLOT(findFromTop()));
-    connect(replaceFindNextButton, SIGNAL(clicked()), SLOT(replaceFindNext()));
-    connect(replaceFindPreviousButton, SIGNAL(clicked()), SLOT(replaceFindPrevious()));
-    connect(replaceAllButton, SIGNAL(clicked()), SLOT(replaceAll()));
+    connect(findNextButton, &QAbstractButton::clicked, this, &FindDialog::findNext);
+    connect(findPreviousButton, &QAbstractButton::clicked, this, &FindDialog::findPrevious);
+    connect(findFromTopButton, &QAbstractButton::clicked, this, &FindDialog::findFromTop);
+    connect(replaceFindNextButton, &QAbstractButton::clicked, this, &FindDialog::replaceFindNext);
+    connect(replaceFindPreviousButton, &QAbstractButton::clicked, this, &FindDialog::replaceFindPrevious);
+    connect(replaceAllButton, &QAbstractButton::clicked, this, &FindDialog::replaceAll);
 }
 
 void FindDialog::setFindText(const QString& text) {

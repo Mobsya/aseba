@@ -103,8 +103,8 @@ NewNamedValueDialog::NewNamedValueDialog(QString* name, int* value, int min, int
     setModal(true);
 
     // connections
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(okSlot()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelSlot()));
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &NewNamedValueDialog::okSlot);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &NewNamedValueDialog::cancelSlot);
 }
 
 bool NewNamedValueDialog::getNamedValue(QString* name, int* value, int min, int max, QString title, QString valueName,
@@ -799,27 +799,27 @@ void MainWindow::tabChanged(int index) {
     findDialog->hide();
     auto* tab = dynamic_cast<ScriptTab*>(nodes->widget(index));
     if(currentScriptTab && tab != currentScriptTab) {
-        disconnect(cutAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(cut()));
-        disconnect(copyAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(copy()));
-        disconnect(pasteAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(paste()));
-        disconnect(undoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(undo()));
-        disconnect(redoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(redo()));
-        disconnect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
-        disconnect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
-        disconnect(currentScriptTab->editor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
-        disconnect(currentScriptTab->editor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+        disconnect(cutAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::cut);
+        disconnect(copyAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::copy);
+        disconnect(pasteAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::paste);
+        disconnect(undoAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::undo);
+        disconnect(redoAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::redo);
+        disconnect(currentScriptTab->editor, &QTextEdit::copyAvailable, cutAct, &QAction::setEnabled);
+        disconnect(currentScriptTab->editor, &QTextEdit::copyAvailable, copyAct, &QAction::setEnabled);
+        disconnect(currentScriptTab->editor, &QTextEdit::undoAvailable, undoAct, &QAction::setEnabled);
+        disconnect(currentScriptTab->editor, &QTextEdit::redoAvailable, redoAct, &QAction::setEnabled);
     }
     currentScriptTab = tab;
     if(tab) {
-        connect(cutAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(cut()));
-        connect(copyAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(copy()));
-        connect(pasteAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(paste()));
-        connect(undoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(undo()));
-        connect(redoAct, SIGNAL(triggered()), currentScriptTab->editor, SLOT(redo()));
-        connect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
-        connect(currentScriptTab->editor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
-        connect(currentScriptTab->editor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
-        connect(currentScriptTab->editor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+        connect(cutAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::cut);
+        connect(copyAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::copy);
+        connect(pasteAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::paste);
+        connect(undoAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::undo);
+        connect(redoAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::redo);
+        connect(currentScriptTab->editor, &QTextEdit::copyAvailable, cutAct, &QAction::setEnabled);
+        connect(currentScriptTab->editor, &QTextEdit::copyAvailable, copyAct, &QAction::setEnabled);
+        connect(currentScriptTab->editor, &QTextEdit::undoAvailable, undoAct, &QAction::setEnabled);
+        connect(currentScriptTab->editor, &QTextEdit::redoAvailable, redoAct, &QAction::setEnabled);
 
         findDialog->editor = tab->editor;
     } else {
@@ -1181,29 +1181,29 @@ void MainWindow::setupWidgets() {
 
     // dialog box
     compilationMessageBox = new CompilationLogDialog(this);
-    connect(this, SIGNAL(MainWindowClosed()), compilationMessageBox, SLOT(close()));
+    connect(this, &MainWindow::MainWindowClosed, compilationMessageBox, &QWidget::close);
     findDialog = new FindDialog(this);
-    connect(this, SIGNAL(MainWindowClosed()), findDialog, SLOT(close()));
+    connect(this, &MainWindow::MainWindowClosed, findDialog, &QWidget::close);
 
-    connect(this, SIGNAL(MainWindowClosed()), &helpViewer, SLOT(close()));
+    connect(this, &MainWindow::MainWindowClosed, &helpViewer, &QWidget::close);
 }
 
 void MainWindow::setupConnections() {
     // general connections
-    connect(nodes, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
-    connect(logger, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(logEntryDoubleClicked(QListWidgetItem*)));
-    connect(ConfigDialog::getInstance(), SIGNAL(settingsChanged()), SLOT(applySettings()));
+    connect(nodes, &QTabWidget::currentChanged, this, &MainWindow::tabChanged);
+    connect(logger, &QListWidget::itemDoubleClicked, this, &MainWindow::logEntryDoubleClicked);
+    connect(ConfigDialog::getInstance(), &ConfigDialog::settingsChanged, this, &MainWindow::applySettings);
 
     // global actions
     connect(loadAllAct, SIGNAL(triggered()), SLOT(loadAll()));
-    connect(resetAllAct, SIGNAL(triggered()), SLOT(resetAll()));
-    connect(runAllAct, SIGNAL(triggered()), SLOT(runAll()));
-    connect(pauseAllAct, SIGNAL(triggered()), SLOT(pauseAll()));
+    connect(resetAllAct, &QAction::triggered, this, &MainWindow::resetAll);
+    connect(runAllAct, &QAction::triggered, this, &MainWindow::runAll);
+    connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
 
     // events
-    connect(addEventNameButton, SIGNAL(clicked()), SLOT(addEventNameClicked()));
-    connect(removeEventNameButton, SIGNAL(clicked()), SLOT(removeEventNameClicked()));
-    connect(sendEventButton, SIGNAL(clicked()), SLOT(sendEvent()));
+    connect(addEventNameButton, &QAbstractButton::clicked, this, &MainWindow::addEventNameClicked);
+    connect(removeEventNameButton, &QAbstractButton::clicked, this, &MainWindow::removeEventNameClicked);
+    connect(sendEventButton, &QAbstractButton::clicked, this, &MainWindow::sendEvent);
 #ifdef HAVE_QWT
     connect(plotEventButton, SIGNAL(clicked()), SLOT(plotEvent()));
 #endif  // HAVE_QWT
@@ -1221,12 +1221,12 @@ void MainWindow::setupConnections() {
             SLOT(eventContextMenuRequested(const QPoint&)));*/
 
     // logger
-    connect(clearLogger, SIGNAL(clicked()), logger, SLOT(clear()));
-    connect(clearLogger, SIGNAL(clicked()), SLOT(clearAllExecutionError()));
+    connect(clearLogger, &QAbstractButton::clicked, logger, &QListWidget::clear);
+    connect(clearLogger, &QAbstractButton::clicked, this, &MainWindow::clearAllExecutionError);
 
     // constants
-    connect(addConstantButton, SIGNAL(clicked()), SLOT(addConstantClicked()));
-    connect(removeConstantButton, SIGNAL(clicked()), SLOT(removeConstantClicked()));
+    connect(addConstantButton, &QAbstractButton::clicked, this, &MainWindow::addConstantClicked);
+    connect(removeConstantButton, &QAbstractButton::clicked, this, &MainWindow::removeConstantClicked);
     // connect(constantsView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     //        SLOT(constantsSelectionChanged()));
     // connect(constantsDefinitionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
@@ -1357,12 +1357,12 @@ void MainWindow::regenerateHelpMenu() {
         switch(*it) {
             case ASEBA_PID_THYMIO2:
                 action = new QAction(tr("Thymio programming tutorial..."), helpMenu);
-                connect(action, SIGNAL(triggered()), SLOT(openToUrlFromAction()));
+                connect(action, &QAction::triggered, this, &MainWindow::openToUrlFromAction);
                 action->setData(QUrl(tr("http://aseba.wikidot.com/en:thymiotutoriel")));
                 targetSpecificHelp.append(action);
                 helpMenu->insertAction(helpMenuTargetSpecificSeparator, action);
                 action = new QAction(tr("Thymio programming interface..."), helpMenu);
-                connect(action, SIGNAL(triggered()), SLOT(openToUrlFromAction()));
+                connect(action, &QAction::triggered, this, &MainWindow::openToUrlFromAction);
                 action->setData(QUrl(tr("http://aseba.wikidot.com/en:thymioapi")));
                 targetSpecificHelp.append(action);
                 helpMenu->insertAction(helpMenuTargetSpecificSeparator, action);
@@ -1370,7 +1370,7 @@ void MainWindow::regenerateHelpMenu() {
 
             case ASEBA_PID_CHALLENGE:
                 action = new QAction(tr("Challenge tutorial..."), helpMenu);
-                connect(action, SIGNAL(triggered()), SLOT(openToUrlFromAction()));
+                connect(action, &QAction::triggered, this, &MainWindow::openToUrlFromAction);
                 action->setData(QUrl(tr("http://aseba.wikidot.com/en:gettingstarted")));
                 targetSpecificHelp.append(action);
                 helpMenu->insertAction(helpMenuTargetSpecificSeparator, action);
@@ -1378,7 +1378,7 @@ void MainWindow::regenerateHelpMenu() {
 
             case ASEBA_PID_MARXBOT:
                 action = new QAction(tr("MarXbot user manual..."), helpMenu);
-                connect(action, SIGNAL(triggered()), SLOT(openToUrlFromAction()));
+                connect(action, &QAction::triggered, this, &MainWindow::openToUrlFromAction);
                 action->setData(QUrl(tr("http://mobots.epfl.ch/data/robots/marxbot-user-manual.pdf")));
                 targetSpecificHelp.append(action);
                 helpMenu->insertAction(helpMenuTargetSpecificSeparator, action);
@@ -1443,26 +1443,26 @@ void MainWindow::setupMenu() {
 
     findAct = new QAction(QIcon(":/images/find.png"), tr("&Find..."), this);
     findAct->setShortcut(QKeySequence::Find);
-    connect(findAct, SIGNAL(triggered()), SLOT(findTriggered()));
+    connect(findAct, &QAction::triggered, this, &MainWindow::findTriggered);
     findAct->setEnabled(false);
 
     replaceAct = new QAction(QIcon(":/images/edit.png"), tr("&Replace..."), this);
     replaceAct->setShortcut(QKeySequence::Replace);
-    connect(replaceAct, SIGNAL(triggered()), SLOT(replaceTriggered()));
+    connect(replaceAct, &QAction::triggered, this, &MainWindow::replaceTriggered);
     replaceAct->setEnabled(false);
 
     goToLineAct = new QAction(QIcon(":/images/goto.png"), tr("&Go To Line..."), this);
     goToLineAct->setShortcut(tr("Ctrl+G", "Edit|Go To Line"));
     goToLineAct->setEnabled(false);
-    connect(goToLineAct, SIGNAL(triggered()), SLOT(goToLine()));
+    connect(goToLineAct, &QAction::triggered, this, &MainWindow::goToLine);
 
     commentAct = new QAction(tr("Comment the selection"), this);
     commentAct->setShortcut(tr("Ctrl+D", "Edit|Comment the selection"));
-    connect(commentAct, SIGNAL(triggered()), SLOT(commentTriggered()));
+    connect(commentAct, &QAction::triggered, this, &MainWindow::commentTriggered);
 
     uncommentAct = new QAction(tr("Uncomment the selection"), this);
     uncommentAct->setShortcut(tr("Shift+Ctrl+D", "Edit|Uncomment the selection"));
-    connect(uncommentAct, SIGNAL(triggered()), SLOT(uncommentTriggered()));
+    connect(uncommentAct, &QAction::triggered, this, &MainWindow::uncommentTriggered);
 
     QMenu* editMenu = new QMenu(tr("&Edit"), this);
     menuBar()->addMenu(editMenu);
@@ -1486,26 +1486,26 @@ void MainWindow::setupMenu() {
     // View menu
     showMemoryUsageAct = new QAction(tr("Show &memory usage"), this);
     showMemoryUsageAct->setCheckable(true);
-    connect(showMemoryUsageAct, SIGNAL(toggled(bool)), SLOT(showMemoryUsage(bool)));
+    connect(showMemoryUsageAct, &QAction::toggled, this, &MainWindow::showMemoryUsage);
 
     showHiddenAct = new QAction(tr("S&how hidden variables and functions"), this);
     showHiddenAct->setCheckable(true);
-    connect(showHiddenAct, SIGNAL(toggled(bool)), SLOT(showHidden(bool)));
+    connect(showHiddenAct, &QAction::toggled, this, &MainWindow::showHidden);
 
     showLineNumbers = new QAction(tr("Show &Line Numbers"), this);
     showLineNumbers->setShortcut(tr("F11", "View|Show Line Numbers"));
     showLineNumbers->setCheckable(true);
-    connect(showLineNumbers, SIGNAL(toggled(bool)), SLOT(showLineNumbersChanged(bool)));
+    connect(showLineNumbers, &QAction::toggled, this, &MainWindow::showLineNumbersChanged);
 
     zoomInAct = new QAction(tr("&Increase font size"), this);
     zoomInAct->setShortcut(QKeySequence::ZoomIn);
     zoomInAct->setEnabled(false);
-    connect(zoomInAct, SIGNAL(triggered()), SLOT(zoomIn()));
+    connect(zoomInAct, &QAction::triggered, this, &MainWindow::zoomIn);
 
     zoomOutAct = new QAction(tr("&Decrease font size"), this);
     zoomOutAct->setShortcut(QKeySequence::ZoomOut);
     zoomOutAct->setEnabled(false);
-    connect(zoomOutAct, SIGNAL(triggered()), SLOT(zoomOut()));
+    connect(zoomOutAct, &QAction::triggered, this, &MainWindow::zoomOut);
 
     QMenu* viewMenu = new QMenu(tr("&View"), this);
     viewMenu->addAction(showMemoryUsageAct);
@@ -1547,11 +1547,11 @@ void MainWindow::setupMenu() {
     // Debug menu
     toggleBreakpointAct = new QAction(tr("Toggle breakpoint"), this);
     toggleBreakpointAct->setShortcut(tr("Ctrl+B", "Debug|Toggle breakpoint"));
-    connect(toggleBreakpointAct, SIGNAL(triggered()), SLOT(toggleBreakpoint()));
+    connect(toggleBreakpointAct, &QAction::triggered, this, &MainWindow::toggleBreakpoint);
 
     clearAllBreakpointsAct = new QAction(tr("Clear all breakpoints"), this);
     // clearAllBreakpointsAct->setShortcut();
-    connect(clearAllBreakpointsAct, SIGNAL(triggered()), SLOT(clearAllBreakpoints()));
+    connect(clearAllBreakpointsAct, &QAction::triggered, this, &MainWindow::clearAllBreakpoints);
 
     QMenu* debugMenu = new QMenu(tr("&Debug"), this);
     menuBar()->addMenu(debugMenu);
@@ -1572,8 +1572,8 @@ void MainWindow::setupMenu() {
     showCompilationMsg = new QAction(QIcon(":/images/view_text.png"), tr("&Show last compilation messages"), this);
     showCompilationMsg->setCheckable(true);
     toolMenu->addAction(showCompilationMsg);
-    connect(showCompilationMsg, SIGNAL(toggled(bool)), SLOT(showCompilationMessages(bool)));
-    connect(compilationMessageBox, SIGNAL(hidden()), SLOT(compilationMessagesWasHidden()));
+    connect(showCompilationMsg, &QAction::toggled, this, &MainWindow::showCompilationMessages);
+    connect(compilationMessageBox, &CompilationLogDialog::hidden, this, &MainWindow::compilationMessagesWasHidden);
     toolMenu->addSeparator();
     writeBytecodeMenu = new QMenu(tr("Write the program(s)..."), toolMenu);
     toolMenu->addMenu(writeBytecodeMenu);

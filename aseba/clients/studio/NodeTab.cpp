@@ -797,24 +797,24 @@ void NodeTab::setupWidgets() {
 void NodeTab::setupConnections() {
 
     // execution
-    connect(resetButton, SIGNAL(clicked()), SLOT(reset()));
-    connect(runButton, SIGNAL(clicked()), SLOT(run()));
-    connect(pauseButton, SIGNAL(clicked()), SLOT(pause()));
-    connect(nextButton, SIGNAL(clicked()), SLOT(step()));
+    connect(resetButton, &QAbstractButton::clicked, this, &NodeTab::reset);
+    connect(runButton, &QAbstractButton::clicked, this, &NodeTab::run);
+    connect(pauseButton, &QAbstractButton::clicked, this, &NodeTab::pause);
+    connect(nextButton, &QAbstractButton::clicked, this, &NodeTab::step);
     connect(synchronizeVariablesToogle, &QCheckBox::toggled, this, &NodeTab::synchronizeVariablesChecked);
 
     // memory
     // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),
     //        SLOT(setVariableValues(unsigned, const VariablesDataVector&)));
-    connect(vmMemoryFilter, SIGNAL(textChanged(const QString&)), SLOT(updateHidden()));
+    connect(vmMemoryFilter, &QLineEdit::textChanged, this, &NodeTab::updateHidden);
 
     // editor
-    connect(editor, SIGNAL(textChanged()), SLOT(editorContentChanged()));
-    connect(editor, SIGNAL(cursorPositionChanged()), SLOT(cursorMoved()));
-    connect(editor, SIGNAL(breakpointSet(unsigned)), SLOT(setBreakpoint(unsigned)));
-    connect(editor, SIGNAL(breakpointCleared(unsigned)), SLOT(clearBreakpoint(unsigned)));
-    connect(editor, SIGNAL(breakpointClearedAll()), SLOT(breakpointClearedAll()));
-    connect(editor, SIGNAL(refreshModelRequest(LocalContext)), SLOT(refreshCompleterModel(LocalContext)));
+    connect(editor, &QTextEdit::textChanged, this, &NodeTab::editorContentChanged);
+    connect(editor, &QTextEdit::cursorPositionChanged, this, &NodeTab::cursorMoved);
+    connect(editor, &AeslEditor::breakpointSet, this, &NodeTab::setBreakpoint);
+    connect(editor, &AeslEditor::breakpointCleared, this, &NodeTab::clearBreakpoint);
+    connect(editor, &AeslEditor::breakpointClearedAll, this, &NodeTab::breakpointClearedAll);
+    connect(editor, &AeslEditor::refreshModelRequest, this, &NodeTab::refreshCompleterModel);
 
     connect(compilationResultImage, SIGNAL(clicked()), SLOT(goToError()));
     connect(compilationResultText, SIGNAL(clicked()), SLOT(goToError()));
