@@ -31,15 +31,11 @@ endif ()
 
 # code common to the use of Aseba under Qt
 set(qt_common_SRCS
-    Target.cpp
-    TargetModels.cpp
     CustomWidgets.cpp
     AeslEditor.cpp
     translations/CompilerTranslator.cpp
 )
 qt5_wrap_cpp(qt_common_MOCS
-    Target.h
-    TargetModels.h
     AeslEditor.h
     translations/CompilerTranslator.h
 )

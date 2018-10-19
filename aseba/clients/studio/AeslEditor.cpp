@@ -511,12 +511,14 @@ void AeslEditor::insertKeyword(QString kw) {
     cursor.endEditBlock();
 }
 
-bool AeslEditor::isBreakpoint(QTextBlock block) {
+bool AeslEditor::isBreakpoint(QTextBlock block) const {
     auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
-    return (uData && (uData->properties.contains(QStringLiteral("breakpoint")) || uData->properties.contains(QStringLiteral("breakpointPending"))));
+    return (uData &&
+            (uData->properties.contains(QStringLiteral("breakpoint")) ||
+             uData->properties.contains(QStringLiteral("breakpointPending"))));
 }
 
-bool AeslEditor::isBreakpoint(int line) {
+bool AeslEditor::isBreakpoint(int line) const {
     QTextBlock block = document()->findBlockByNumber(line);
     return isBreakpoint(block);
 }
@@ -572,6 +574,19 @@ void AeslEditor::clearAllBreakpoints() {
     }
     emit breakpointClearedAll();
 }
+
+
+QVector<unsigned> AeslEditor::breakpoints() const {
+    QVector<unsigned> breakpoints;
+    QTextBlock block = document()->begin();
+    while(block != document()->end()) {
+        if(this->isBreakpoint(block))
+            breakpoints.append(block.blockNumber());
+        block = block.next();
+    }
+    return breakpoints;
+}
+
 
 void AeslEditor::commentAndUncommentSelection(CommentOperation commentOperation) {
     QTextCursor cursor = textCursor();

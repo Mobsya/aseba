@@ -158,8 +158,8 @@ public:
     void contextMenuEvent(QContextMenuEvent* e) override;
 
     bool isBreakpoint();  // apply to the current line
-    bool isBreakpoint(QTextBlock block);
-    bool isBreakpoint(int line);
+    bool isBreakpoint(QTextBlock block) const;
+    bool isBreakpoint(int line) const;
     void toggleBreakpoint();  // apply to the current line
     void toggleBreakpoint(QTextBlock block);
     void setBreakpoint();  // apply to the current line
@@ -167,6 +167,7 @@ public:
     void clearBreakpoint();  // apply to the current line
     void clearBreakpoint(QTextBlock block);
     void clearAllBreakpoints();
+    QVector<unsigned> breakpoints() const;
 
     void setCompleterModel(QAbstractItemModel* model);
 

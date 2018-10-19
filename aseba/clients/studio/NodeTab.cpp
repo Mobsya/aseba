@@ -23,7 +23,7 @@ namespace Aseba {
 void ScriptTab::createEditor() {
     // editor widget
     editor = new StudioAeslEditor(this);
-    breakpoints = new AeslBreakpointSidebar(editor);
+    m_breakpointsSidebar = new AeslBreakpointSidebar(editor);
     linenumbers = new AeslLineNumberSidebar(editor);
     highlighter = new AeslHighlighter(editor, editor->document());
 }
@@ -31,14 +31,16 @@ void ScriptTab::createEditor() {
 NodeTab::NodeTab(QWidget* parent)
     : QSplitter(parent)
     , ScriptTab()
-    , m_compilation_watcher(new mobsya::CompilationResultWatcher(this))
-    , currentPC(0)
+    , m_compilation_watcher(new mobsya::CompilationRequestWatcher(this))
+    , m_breakpoints_watcher(new mobsya::BreakpointsRequestWatcher(this))
+    , currentPC(-1)
     , previousMode(Target::EXECUTION_UNKNOWN) {
     // setup some variables
     // rehighlighting = false;
     errorPos = -1;
 
-    connect(m_compilation_watcher, &mobsya::CompilationResultWatcher::finished, this, &NodeTab::compilationCompleted);
+    connect(m_compilation_watcher, &mobsya::CompilationRequestWatcher::finished, this, &NodeTab::compilationCompleted);
+    connect(m_breakpoints_watcher, &mobsya::BreakpointsRequestWatcher::finished, this, &NodeTab::breakpointsChanged);
 
     /*  // create models
       vmFunctionsModel = new TargetFunctionsModel(target->getDescription(id), showHidden, this);
@@ -94,8 +96,11 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
 
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::onExecutionPosChanged);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
+
 
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
             if(node->status() == mobsya::ThymioNode::Status::Available)
@@ -109,35 +114,69 @@ void NodeTab::reset() {
     m_thymio->load_aseba_code({});
     m_thymio->stop();
     lastLoadedSource.clear();
+    editor->debugging = false;
+    currentPC = -1;
 }
 void NodeTab::run() {
-    auto code = editor->toPlainText().simplified();
-    if(!code.isEmpty() && code == lastLoadedSource) {
-        m_thymio->run();
+    editor->debugging = false;
+
+    auto set_breakpoints_and_run = [this] {
+        auto bpwatcher = new mobsya::BreakpointsRequestWatcher(this);
+        connect(bpwatcher, &mobsya::BreakpointsRequestWatcher::finished, [this, bpwatcher] {
+            bpwatcher->deleteLater();
+            auto bps = [bpwatcher]() -> QVector<unsigned> {
+                if(!bpwatcher->success())
+                    return {};
+                auto bps = bpwatcher->getResult().breakpoints();
+                std::sort(bps.begin(), bps.end());
+                return bps;
+            }();
+            if(bps.empty() || bps.first() != 1)
+                m_thymio->run();
+            // else
+        });
+        auto bps = breakpoints();
+        auto req = m_thymio->setBreakPoints(bps);
+        bpwatcher->setRequest(req);
+        m_breakpoints_watcher->setRequest(req);
+    };
+
+    auto code = editor->toPlainText();
+    /*if(m_thymio->vmExecutionState() == mobsya::ThymioNode::VMExecutionState::Paused ||
+       (!code.isEmpty() && code == lastLoadedSource)) {
+        currentPC = -1;
+        set_breakpoints_and_run();
         return;
-    }
-    lastLoadedSource = code;
-    QMetaObject::Connection* con = new QMetaObject::Connection;
-    *con = connect(m_compilation_watcher, &mobsya::CompilationResultWatcher::finished, [code, this, con] {
-        if(m_compilation_watcher->success() && m_compilation_watcher->getResult().success()) {
-            disconnect(*con);
-            delete con;
-            m_thymio->run();
+    }*/
+    auto watcher = new mobsya::CompilationRequestWatcher(this);
+    connect(watcher, &mobsya::CompilationRequestWatcher::finished, [code, this, watcher, set_breakpoints_and_run] {
+        watcher->deleteLater();
+        if(watcher->success() && watcher->getResult().success()) {
+            lastLoadedSource = code;
+            currentPC = -1;
+            set_breakpoints_and_run();
         }
     });
-    m_compilation_watcher->setRequest(m_thymio->load_aseba_code(code.toUtf8()));
+    auto req = m_thymio->load_aseba_code(code.toUtf8());
+    watcher->setRequest(req);
+    m_compilation_watcher->setRequest(req);
 }
 
 void NodeTab::pause() {
+    editor->debugging = true;
     m_thymio->pause();
 }
 
 void NodeTab::compileCodeOnTarget() {
-    auto code = editor->toPlainText().simplified();
+    if(!m_thymio)
+        return;
+
+    auto code = editor->toPlainText();
     m_compilation_watcher->setRequest(m_thymio->compile_aseba_code(code.toUtf8()));
 }
 
 void NodeTab::step() {
+    editor->debugging = true;
     m_thymio->step();
 }
 
@@ -170,11 +209,6 @@ void NodeTab::compilationCompleted() {
     } else {
         Q_EMIT compilationFailed();
         emit uploadReadynessChanged(false);
-    }
-    // clear bearkpoints of target if currently in debugging mode
-    if(editor->debugging) {
-        this->reset();
-        markTargetUnsynced();
     }
 
     if(doRehighlight)
@@ -212,11 +246,101 @@ void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
         QTextBlock textBlock = editor->document()->findBlock(errorPos);
         int posInBlock = errorPos - textBlock.position();
         if(textBlock.userData())
-            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] = posInBlock;
+            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] =
+                posInBlock;
         else
             textBlock.setUserData(new AeslEditorUserData(QStringLiteral("errorPos"), posInBlock));
     }
 }
+
+void NodeTab::setBreakpoint(unsigned line) {
+    line = line + 1;
+    if(!m_breakpoints.contains(line)) {
+        m_breakpoints.append(line);
+    }
+    updateBreakpoints();
+}
+
+void NodeTab::clearBreakpoint(unsigned line) {
+    line = line + 1;
+    m_breakpoints.removeOne(line);
+    updateBreakpoints();
+}
+
+void NodeTab::breakpointClearedAll() {
+    m_breakpoints.clear();
+    updateBreakpoints();
+}
+
+void NodeTab::updateBreakpoints() {
+    rehighlight();
+    m_breakpoints = breakpoints();
+    auto code = editor->toPlainText();
+    if(code.isEmpty() || code != lastLoadedSource) {
+        return;
+    }
+
+    if(m_thymio->vmExecutionState() != mobsya::ThymioNode::VMExecutionState::Stopped)
+        m_breakpoints_watcher->setRequest(m_thymio->setBreakPoints(m_breakpoints));
+
+    rehighlight();
+}
+
+QVector<unsigned> NodeTab::breakpoints() const {
+    auto bps = editor->breakpoints();
+    std::transform(bps.begin(), bps.end(), bps.begin(), [](auto bp) { return bp + 1; });
+    return bps;
+}
+
+void NodeTab::breakpointsChanged() {
+    QVector<unsigned> set;
+    if(m_breakpoints_watcher->success())
+        set = m_breakpoints_watcher->getResult().breakpoints();
+    for(auto bp : m_breakpoints) {
+        clearEditorProperty(QStringLiteral("breakpointPending"), bp - 1);
+        if(set.contains(bp))
+            setEditorProperty(QStringLiteral("breakpoint"), QVariant(), bp - 1);
+    }
+    m_breakpoints = set;
+    std::sort(m_breakpoints.begin(), m_breakpoints.end());
+    rehighlight();
+}
+
+void NodeTab::onExecutionPosChanged(unsigned line) {
+    if(currentPC == line || line < 1) {
+        step();
+        return;
+    }
+    currentPC = line;
+
+    if(line == 0)
+        return;
+
+    line = line - 1;
+
+
+    if(setEditorProperty(QStringLiteral("active"), QVariant(), line, true))
+        rehighlight();
+}
+
+void NodeTab::onExecutionStateChanged() {
+    editor->debugging = currentPC > 0;
+    if(m_thymio->vmExecutionState() == mobsya::ThymioNode::VMExecutionState::Stopped) {
+        currentPC = -1;
+        if(clearEditorProperty(QStringLiteral("active")))
+            rehighlight();
+    }
+    if(m_thymio->vmExecutionState() != mobsya::ThymioNode::VMExecutionState::Paused) {
+
+        if(clearEditorProperty(QStringLiteral("active")))
+            rehighlight();
+    }
+}
+
+void NodeTab::reSetBreakpoints() {
+    updateBreakpoints();
+}
+
 
 static void write16(QIODevice& dev, const uint16_t v) {
     dev.write((const char*)&v, 2);
@@ -389,48 +513,6 @@ void NodeTab::refreshCompleterModel(LocalContext context) {
 //    vmMemoryModel->setVariablesData(start, variables);
 //}
 
-void NodeTab::setBreakpoint(unsigned line) {
-    rehighlight();
-    // target->setBreakpoint(id, line);
-}
-
-void NodeTab::clearBreakpoint(unsigned line) {
-    rehighlight();
-    // target->clearBreakpoint(id, line);
-}
-
-void NodeTab::breakpointClearedAll() {
-    rehighlight();
-    //    target->clearBreakpoints(id);
-}
-
-void NodeTab::breakpointSetResult(unsigned line, bool success) {
-    clearEditorProperty(QStringLiteral("breakpointPending"), line);
-    if(success)
-        setEditorProperty(QStringLiteral("breakpoint"), QVariant(), line);
-    rehighlight();
-}
-
-void NodeTab::reSetBreakpoints() {
-    // target->clearBreakpoints(id);
-    QTextBlock block = editor->document()->begin();
-    unsigned lineCounter = 0;
-    while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
-        //   if(uData && (uData->properties.contains("breakpoint") ||
-        //   uData->properties.contains("breakpointPending")))
-        //       target->setBreakpoint(id, lineCounter);
-        block = block.next();
-        lineCounter++;
-    }
-}
-
-void NodeTab::executionPosChanged(unsigned line) {
-    // change active state
-    currentPC = line;
-    if(setEditorProperty(QStringLiteral("active"), QVariant(), line, true))
-        rehighlight();
-}
 
 void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
     // ignore those messages if we are not in debugging mode
@@ -677,7 +759,7 @@ void NodeTab::setupWidgets() {
     // editor area
     auto* editorAreaLayout = new QHBoxLayout;
     editorAreaLayout->setSpacing(0);
-    editorAreaLayout->addWidget(breakpoints);
+    editorAreaLayout->addWidget(m_breakpointsSidebar);
     editorAreaLayout->addWidget(linenumbers);
     editorAreaLayout->addWidget(editor);
 
@@ -688,7 +770,7 @@ void NodeTab::setupWidgets() {
 
     // buttons
     executionModeLabel = new QLabel(tr("unknown"));
-    stopButton = new QPushButton(QIcon(":/images/reset.png"), tr("Reset"));
+    stopButton = new QPushButton(QIcon(":/images/stop.png"), tr("Stop"));
     // resetButton->setEnabled(false);
 
     runButton = new QPushButton(QIcon(":/images/play.png"), tr("Run"));
