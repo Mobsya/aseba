@@ -20,7 +20,7 @@ protected:
     friend class MainWindow;
     StudioAeslEditor* editor;
     AeslLineNumberSidebar* linenumbers;
-    AeslBreakpointSidebar* breakpoints;
+    AeslBreakpointSidebar* m_breakpointsSidebar;
     AeslHighlighter* highlighter;
 };
 
@@ -80,9 +80,10 @@ protected Q_SLOTS:
     void setBreakpoint(unsigned line);
     void clearBreakpoint(unsigned line);
     void breakpointClearedAll();
-    void breakpointSetResult(unsigned line, bool success);
+    void breakpointsChanged();
 
-    void executionPosChanged(unsigned line);
+    void onExecutionPosChanged(unsigned line);
+    void onExecutionStateChanged();
     void executionModeChanged(Target::ExecutionMode mode);
 
 
@@ -91,6 +92,9 @@ protected Q_SLOTS:
     void compilationCompleted();
 
 private:
+    QVector<unsigned> breakpoints() const;
+    void updateBreakpoints();
+
     void updateMemoryUsage(const mobsya::CompilationResult& res);
     void handleCompilationError(const mobsya::CompilationResult& res);
 
@@ -108,12 +112,16 @@ private:
     void saveBytecode() const;
 
 private:
+    QVector<unsigned> m_breakpoints;
+
+
     friend class MainWindow;
     friend class StudioAeslEditor;
     friend class NodeTabsManager;
 
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
-    mobsya::CompilationResultWatcher* m_compilation_watcher;
+    mobsya::CompilationRequestWatcher* m_compilation_watcher;
+    mobsya::BreakpointsRequestWatcher* m_breakpoints_watcher;
 
     QLabel* cursorPosText;
     QLabel* compilationResultImage;
