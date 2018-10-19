@@ -198,10 +198,12 @@ void NodeTab::compilationCompleted() {
 
     auto res = m_compilation_watcher->getResult();
 
+
+    clearEditorProperty(QStringLiteral("errorPos"));
+
     updateMemoryUsage(res);
     handleCompilationError(res);
 
-    bool doRehighlight = clearEditorProperty(QStringLiteral("errorPos"));
 
     if(res.success()) {
         Q_EMIT compilationSucceed();
@@ -211,8 +213,7 @@ void NodeTab::compilationCompleted() {
         emit uploadReadynessChanged(false);
     }
 
-    if(doRehighlight)
-        rehighlight();
+    rehighlight();
 }
 
 void NodeTab::updateMemoryUsage(const mobsya::CompilationResult& res) {
@@ -882,7 +883,6 @@ void NodeTab::setupWidgets() {
 }
 
 void NodeTab::setupConnections() {
-
     // execution
     connect(stopButton, &QAbstractButton::clicked, this, &NodeTab::reset);
     connect(runButton, &QAbstractButton::clicked, this, &NodeTab::run);

@@ -762,7 +762,8 @@ bool AeslEditor::handleTab(QKeyEvent* event) {
         cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
 
         if((cursor.selectedText() == QLatin1String("\t")) ||
-           ((cursor.selectedText() == QLatin1String(" ")) && (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
+           ((cursor.selectedText() == QLatin1String(" ")) &&
+            (cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 3)) &&
             (cursor.selectedText() == QLatin1String("    "))))
             cursor.removeSelectedText();
         // clang-format on
