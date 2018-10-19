@@ -104,6 +104,10 @@ Request ThymioNode::step() {
     return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Step);
 }
 
+BreakpointsRequest ThymioNode::setBreakPoints(const QVector<unsigned>& breakpoints) {
+    return m_endpoint->setNodeBreakPoints(*this, breakpoints);
+}
+
 CompilationRequest ThymioNode::compile_aseba_code(const QByteArray& code) {
     return m_endpoint->send_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions(0));
 }

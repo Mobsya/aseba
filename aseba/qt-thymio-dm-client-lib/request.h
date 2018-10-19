@@ -377,10 +377,35 @@ private:
     size_t m_variables_total_size = 0;
 };
 
+struct SetBreakpointRequestResult {
+    Q_GADGET
+
+public:
+    static constexpr quint32 type = 0xf2f36208;
+    SetBreakpointRequestResult(QVector<unsigned> breakpoints) : m_breakpoints(std::move(breakpoints)) {}
+
+
+    Q_INVOKABLE QString toString() {
+        return {};
+    }
+
+    Q_INVOKABLE QVector<unsigned> breakpoints() const {
+        return m_breakpoints;
+    }
+
+private:
+    QVector<unsigned> m_breakpoints;
+};
+
+
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
 using CompilationRequest = BasicRequest<CompilationResult>;
-using CompilationResultWatcher = BasicRequestWatcher<CompilationResult>;
+using CompilationRequestWatcher = BasicRequestWatcher<CompilationResult>;
+
+
+using BreakpointsRequest = BasicRequest<SetBreakpointRequestResult>;
+using BreakpointsRequestWatcher = BasicRequestWatcher<SetBreakpointRequestResult>;
 
 }  // namespace mobsya

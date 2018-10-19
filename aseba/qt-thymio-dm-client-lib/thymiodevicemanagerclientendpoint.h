@@ -24,6 +24,7 @@ public:
 
     Request renameNode(const ThymioNode& node, const QString& newName);
     Request setNodeExecutionState(const ThymioNode& node, fb::VMExecutionStateCommand cmd);
+    BreakpointsRequest setNodeBreakPoints(const ThymioNode& node, const QVector<unsigned>& breakpoints);
     Request lock(const ThymioNode& node);
     Request unlock(const ThymioNode& node);
     CompilationRequest send_code(const ThymioNode& node, const QByteArray& code, fb::ProgrammingLanguage language,
