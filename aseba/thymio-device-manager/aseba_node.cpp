@@ -314,7 +314,7 @@ void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& 
             m_vm_state.state = (m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK) ? fb::VMExecutionState::Paused :
                                                                                  fb::VMExecutionState::Stopped;
         }
-        m_vm_state.line = es.pc < m_bytecode.size() ? m_bytecode[es.pc].line : 0;
+        m_vm_state.line = (es.pc >= 5 && es.pc < m_bytecode.size()) ? m_bytecode[es.pc].line + 1 : 0;
         state.state = m_vm_state.state;
         state.line = m_vm_state.line;
         state.error = fb::VMExecutionError::NoError;
@@ -353,7 +353,7 @@ void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_vm_state.pc = pc;
         m_vm_state.state = fb::VMExecutionState::Stopped;
-        m_vm_state.line = pc < m_bytecode.size() ? m_bytecode[pc].line : 0;
+        m_vm_state.line = (pc >= 5 && pc < m_bytecode.size()) ? m_bytecode[pc].line + 1 : 0;
         state.state = m_vm_state.state;
         state.line = m_vm_state.line;
     }
@@ -364,17 +364,18 @@ void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
 void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     auto cb_data = std::make_shared<break_point_cb_data>();
-    std::unique_lock<std::mutex> _(m_node_mutex);
     {
+        std::unique_lock<std::mutex> _(m_node_mutex);
+
         std::vector<unsigned> pc;
         cb_data->cb = std::move(cb);
 
         auto pc_from_line = [this](int line) -> int {
             for(std::size_t i = 0; i < m_bytecode.size(); i++) {
-                if(m_bytecode[i].line == line)
+                if(m_bytecode[i].line == line - 1)
                     return i;
             }
-            return 0;
+            return -1;
         };
 
         if(breakpoints.empty()) {
@@ -385,7 +386,7 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
                     cb_data->set.insert(b);
                 } else {
                     auto pc = pc_from_line(b.line);
-                    if(pc) {
+                    if(pc >= 0) {
                         messages.push_back(std::make_shared<Aseba::BreakpointSet>(native_id(), pc));
                         cb_data->pending.insert_or_assign(pc, b);
                     }
@@ -393,13 +394,13 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
             }
             for(auto b : m_breakpoints) {
                 auto pc = pc_from_line(b.line);
-                if(pc > 0 && std::find(breakpoints.begin(), breakpoints.end(), b) == breakpoints.end())
+                if(pc >= 0 && std::find(breakpoints.begin(), breakpoints.end(), b) == breakpoints.end())
                     messages.push_back(std::make_shared<Aseba::BreakpointClear>(native_id(), pc));
             }
         }
         m_breakpoints = aseba_node::breakpoints(breakpoints.begin(), breakpoints.end());
         cancel_pending_breakpoint_request();
-        if(cb)
+        if(cb_data->cb)
             m_pending_breakpoint_request = cb_data;
     }
     auto write_cb = [that = shared_from_this(),
@@ -417,6 +418,11 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
             boost::asio::post(that->m_io_ctx.get_executor(), std::bind(std::move(data->cb), data->error, data->set));
         }
     };
+    if(messages.empty()) {
+        m_breakpoints = cb_data->set;
+        m_pending_breakpoint_request.reset();
+        boost::asio::post(m_io_ctx.get_executor(), std::bind(std::move(cb_data->cb), cb_data->error, cb_data->set));
+    }
     write_messages(std::move(messages), std::move(write_cb));
 }
 
