@@ -14,6 +14,7 @@
 #include <boost/signals2.hpp>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
 
 namespace mobsya {
 class aseba_endpoint;
@@ -252,6 +253,7 @@ private:
         breakpoints_callback cb;
     };
     std::shared_ptr<break_point_cb_data> m_pending_breakpoint_request;
+    std::queue<std::function<void()>> m_callbacks_pending_execution_state_change;
 };
 
 }  // namespace mobsya

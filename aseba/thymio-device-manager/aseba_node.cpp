@@ -193,7 +193,10 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
     m_node_mutex.unlock();
     write_messages(std::move(messages),
                    [that = shared_from_this(), cb = std::move(cb), result](boost::system::error_code ec) {
-                       cb(ec, result.value());
+                       if(ec)
+                           cb(ec, result.value());
+                       else
+                           that->m_callbacks_pending_execution_state_change.push(std::bind(cb, ec, result.value()));
                    });
 
     send_events_table();
@@ -296,6 +299,11 @@ void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& 
     vm_execution_state state;
     {
         std::unique_lock<std::mutex> _(m_node_mutex);
+        while(!m_callbacks_pending_execution_state_change.empty()) {
+            boost::asio::post(m_io_ctx.get_executor(), std::move(m_callbacks_pending_execution_state_change.front()));
+            m_callbacks_pending_execution_state_change.pop();
+        }
+
         if(m_vm_state.pc == es.pc && m_vm_state.flags == es.flags)
             return;
 
