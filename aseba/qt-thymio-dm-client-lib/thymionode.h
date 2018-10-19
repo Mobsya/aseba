@@ -78,6 +78,8 @@ public:
     Q_INVOKABLE Request reboot();
     Q_INVOKABLE Request step();
 
+    Q_INVOKABLE BreakpointsRequest setBreakPoints(const QVector<unsigned>& breakpoints);
+
     Q_INVOKABLE Request setWatchVariablesEnabled(bool enabled);
     Q_INVOKABLE Request setWatchEventsEnabled(bool enabled);
     Q_INVOKABLE Request setWatchVMExecutionStateEnabled(bool enabled);

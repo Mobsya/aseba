@@ -130,6 +130,23 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             break;
         }
 
+        case mobsya::fb::AnyMessage::SetBreakpointsResponse: {
+            auto message = msg.as<mobsya::fb::SetBreakpointsResponse>();
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            if(auto req = basic_req->as<BreakpointsRequest::internal_ptr_type>()) {
+                const fb::SetBreakpointsResponseT& r = *(message->UnPack());
+                QVector<unsigned> breakpoints;
+                for(const auto& bp : r.breakpoints) {
+                    if(bp)
+                        breakpoints.append(bp->line);
+                }
+                req->setResult(SetBreakpointRequestResult(breakpoints));
+            }
+            break;
+        }
+
         case mobsya::fb::AnyMessage::VMExecutionStateChanged: {
             auto message = msg.as<mobsya::fb::VMExecutionStateChanged>()->UnPack();
             if(!message)
@@ -238,6 +255,20 @@ Request ThymioDeviceManagerClientEndpoint::setNodeExecutionState(const ThymioNod
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     write(wrap_fb(builder, fb::CreateSetVMExecutionState(builder, r.id(), uuidOffset, cmd)));
+    return r;
+}
+
+BreakpointsRequest ThymioDeviceManagerClientEndpoint::setNodeBreakPoints(const ThymioNode& node,
+                                                                         const QVector<unsigned>& breakpoints) {
+    BreakpointsRequest r = prepare_request<BreakpointsRequest>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    std::vector<flatbuffers::Offset<fb::Breakpoint>> serialized_breakpoints;
+    serialized_breakpoints.reserve(breakpoints.size());
+    std::transform(breakpoints.begin(), breakpoints.end(), std::back_inserter(serialized_breakpoints),
+                   [&builder](const auto bp) { return fb::CreateBreakpoint(builder, bp); });
+    auto vecOffset = builder.CreateVector(serialized_breakpoints);
+    write(wrap_fb(builder, fb::CreateSetBreakpoints(builder, r.id(), uuidOffset, vecOffset)));
     return r;
 }
 
