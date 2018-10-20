@@ -244,6 +244,7 @@ enum VMExecutionStateCommand : short {
     Stop,
     Run,
     Step,
+    StepToNextLine,
     Pause,
     Reset,
     Reboot,

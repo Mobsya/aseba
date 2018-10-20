@@ -104,6 +104,10 @@ Request ThymioNode::step() {
     return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::Step);
 }
 
+Request ThymioNode::stepToNextLine() {
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::StepToNextLine);
+}
+
 BreakpointsRequest ThymioNode::setBreakPoints(const QVector<unsigned>& breakpoints) {
     return m_endpoint->setNodeBreakPoints(*this, breakpoints);
 }

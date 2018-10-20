@@ -205,6 +205,10 @@ private:
     void on_breakpoint_set_result(const Aseba::BreakpointSetResult&);
     void cancel_pending_breakpoint_request();
 
+    void step_to_next_line(write_callback&& cb);
+    void handle_step_request();
+    void cancel_pending_step_request();
+
 
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
@@ -246,6 +250,9 @@ private:
     std::atomic<bool> m_resend_all_variables = true;
 
 
+    unsigned line_from_pc(unsigned pc) const;
+
+
     struct break_point_cb_data {
         std::map<unsigned, breakpoint> pending;  // pc -> line
         breakpoints set;
@@ -254,6 +261,15 @@ private:
     };
     std::shared_ptr<break_point_cb_data> m_pending_breakpoint_request;
     std::queue<std::function<void()>> m_callbacks_pending_execution_state_change;
+
+    struct step_cb_data {
+        uint16_t current_pc = 0;
+        uint16_t current_line = 0;
+        boost::system::error_code error;
+        write_callback cb;
+    };
+
+    std::shared_ptr<step_cb_data> m_pending_step_request;
 };
 
 }  // namespace mobsya

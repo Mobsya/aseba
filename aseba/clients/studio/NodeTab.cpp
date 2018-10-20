@@ -177,7 +177,7 @@ void NodeTab::compileCodeOnTarget() {
 
 void NodeTab::step() {
     editor->debugging = true;
-    m_thymio->step();
+    m_thymio->stepToNextLine();
 }
 
 void NodeTab::reboot() {
