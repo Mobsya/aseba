@@ -46,11 +46,13 @@ std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, nod
 
 
 void aseba_node::disconnect() {
+    cancel_pending_step_request();
     cancel_pending_breakpoint_request();
     set_status(status::disconnected);
 }
 
 aseba_node::~aseba_node() {
+    cancel_pending_step_request();
     cancel_pending_breakpoint_request();
     if(m_status.load() != status::disconnected) {
         mLogWarn("Node destroyed before being disconnected");
@@ -178,6 +180,7 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
     std::unique_lock<std::mutex> _(m_node_mutex);
     m_defs.clear();
     m_breakpoints.clear();
+    cancel_pending_step_request();
     cancel_pending_breakpoint_request();
     Aseba::Compiler compiler;
     compiler.setTargetDescription(&m_description);
@@ -276,6 +279,7 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
         case vm_execution_state_command::Pause:
             write_message(std::make_shared<Aseba::Pause>(native_id()), std::move(cb));
             break;
+        case vm_execution_state_command::StepToNextLine: step_to_next_line(std::move(cb)); break;
         case vm_execution_state_command::Step:
             write_message(std::make_shared<Aseba::Step>(native_id()), std::move(cb));
             break;
@@ -304,25 +308,29 @@ void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& 
             m_callbacks_pending_execution_state_change.pop();
         }
 
-        if(m_vm_state.pc == es.pc && m_vm_state.flags == es.flags)
-            return;
-
         m_vm_state.state = fb::VMExecutionState::Running;
         m_vm_state.pc = es.pc;
+        m_vm_state.line = line_from_pc(es.pc);
         m_vm_state.flags = es.flags;
         if(m_vm_state.flags & ASEBA_VM_STEP_BY_STEP_MASK) {
             m_vm_state.state = (m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK) ? fb::VMExecutionState::Paused :
                                                                                  fb::VMExecutionState::Stopped;
         }
-        m_vm_state.line = (es.pc >= 5 && es.pc < m_bytecode.size()) ? m_bytecode[es.pc].line + 1 : 0;
+
         state.state = m_vm_state.state;
         state.line = m_vm_state.line;
         state.error = fb::VMExecutionError::NoError;
     }
+
+    handle_step_request();
+    if(m_pending_step_request)
+        return;
+
     m_vm_state_watch_signal(shared_from_this(), state);
 }
 
 void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
+    cancel_pending_step_request();
     vm_execution_state state;
     int pc;
     switch(msg.type) {
@@ -353,12 +361,64 @@ void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
         std::unique_lock<std::mutex> _(m_node_mutex);
         m_vm_state.pc = pc;
         m_vm_state.state = fb::VMExecutionState::Stopped;
-        m_vm_state.line = (pc >= 5 && pc < m_bytecode.size()) ? m_bytecode[pc].line + 1 : 0;
+        m_vm_state.line = line_from_pc(pc);
         state.state = m_vm_state.state;
         state.line = m_vm_state.line;
     }
 
     m_vm_state_watch_signal(shared_from_this(), state);
+}
+
+unsigned aseba_node::line_from_pc(unsigned pc) const {
+    return (pc >= 5 && pc < m_bytecode.size()) ? m_bytecode[pc].line + 1 : 0;
+}
+
+void aseba_node::step_to_next_line(write_callback&& cb) {
+    cancel_pending_step_request();
+    m_pending_step_request = std::make_shared<step_cb_data>();
+    m_pending_step_request->current_pc = m_vm_state.pc;
+    m_pending_step_request->current_line = m_vm_state.line;
+    m_pending_step_request->cb = std::move(cb);
+    handle_step_request();
+}
+
+void aseba_node::handle_step_request() {
+    if(!m_pending_step_request)
+        return;
+    if(m_vm_state.state != fb::VMExecutionState::Paused) {
+        cancel_pending_step_request();
+        return;
+    }
+    if(m_vm_state.line != m_pending_step_request->current_line) {
+        boost::asio::post(m_io_ctx.get_executor(),
+                          std::bind(std::move(m_pending_step_request->cb), m_pending_step_request->error));
+        m_pending_step_request.reset();
+        return;
+    }
+    auto write_cb = [that = shared_from_this(),
+                     ptr = std::weak_ptr<step_cb_data>(m_pending_step_request)](boost::system::error_code ec) {
+        if(!ec) {
+            return;
+        }
+        auto data = ptr.lock();
+        if(!data)
+            return;
+        data->error = ec;
+        that->cancel_pending_step_request();
+    };
+    write_message(std::make_shared<Aseba::Step>(native_id()), std::move(write_cb));
+};
+
+void aseba_node::cancel_pending_step_request() {
+    if(m_pending_step_request && m_pending_step_request->cb) {
+        if(!m_pending_step_request->error)
+            m_pending_step_request->error =
+                boost::system::errc::make_error_code(boost::system::errc::operation_canceled);
+
+        boost::asio::post(m_io_ctx.get_executor(),
+                          std::bind(std::move(m_pending_step_request->cb), m_pending_step_request->error));
+    }
+    m_pending_step_request.reset();
 }
 
 void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb) {

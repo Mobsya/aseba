@@ -135,11 +135,12 @@ mobsya.fb.VMExecutionStateCommand = {
   Stop: 0, 0: 'Stop',
   Run: 1, 1: 'Run',
   Step: 2, 2: 'Step',
-  Pause: 3, 3: 'Pause',
-  Reset: 4, 4: 'Reset',
-  Reboot: 5, 5: 'Reboot',
-  Suspend: 6, 6: 'Suspend',
-  WriteProgramToDeviceMemory: 7, 7: 'WriteProgramToDeviceMemory'
+  StepToNextLine: 3, 3: 'StepToNextLine',
+  Pause: 4, 4: 'Pause',
+  Reset: 5, 5: 'Reset',
+  Reboot: 6, 6: 'Reboot',
+  Suspend: 7, 7: 'Suspend',
+  WriteProgramToDeviceMemory: 8, 8: 'WriteProgramToDeviceMemory'
 };
 
 /**

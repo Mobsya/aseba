@@ -77,6 +77,7 @@ public:
     Q_INVOKABLE Request pause();
     Q_INVOKABLE Request reboot();
     Q_INVOKABLE Request step();
+    Q_INVOKABLE Request stepToNextLine();
 
     Q_INVOKABLE BreakpointsRequest setBreakPoints(const QVector<unsigned>& breakpoints);
 
