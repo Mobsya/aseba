@@ -319,6 +319,11 @@ void NodeTab::onExecutionPosChanged(unsigned line) {
 
     line = line - 1;
 
+    // go to this line and next line is visible
+    editor->setTextCursor(QTextCursor(editor->document()->findBlockByLineNumber(currentPC + 1)));
+    editor->ensureCursorVisible();
+    editor->setTextCursor(QTextCursor(editor->document()->findBlockByLineNumber(currentPC)));
+
 
     if(setEditorProperty(QStringLiteral("active"), QVariant(), line, true))
         rehighlight();
@@ -337,11 +342,6 @@ void NodeTab::onExecutionStateChanged() {
             rehighlight();
     }
 }
-
-void NodeTab::reSetBreakpoints() {
-    updateBreakpoints();
-}
-
 
 static void write16(QIODevice& dev, const uint16_t v) {
     dev.write((const char*)&v, 2);
@@ -513,60 +513,6 @@ void NodeTab::refreshCompleterModel(LocalContext context) {
 //    // update memory view
 //    vmMemoryModel->setVariablesData(start, variables);
 //}
-
-
-void NodeTab::executionModeChanged(Target::ExecutionMode mode) {
-    // ignore those messages if we are not in debugging mode
-    if(!editor->debugging)
-        return;
-
-    stopButton->setEnabled(true);
-    runButton->setEnabled(true);
-    compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/ok.png")));
-
-    /*
-    // Filter spurious messages, to detect a stop at a breakpoint
-    if(previousMode != mode) {
-        previousMode = mode;
-        if((mode == Target::EXECUTION_STEP_BY_STEP) && editor->isBreakpoint(currentPC)) {
-            // we are at a breakpoint
-            if(mainWindow->currentScriptTab != this) {
-                // not the current tab -> hidden tab -> highlight me in red
-                mainWindow->nodes->highlightTab(mainWindow->getIndexFromId(id), Qt::red);
-            }
-            // go to this line
-            editor->setTextCursor(QTextCursor(editor->document()->findBlockByLineNumber(currentPC)));
-            editor->ensureCursorVisible();
-        }
-    }*/
-
-    if(mode == Target::EXECUTION_RUN) {
-        executionModeLabel->setText(tr("running"));
-        nextButton->setEnabled(false);
-
-        if(clearEditorProperty(QStringLiteral("active")))
-            rehighlight();
-    } else if(mode == Target::EXECUTION_STEP_BY_STEP) {
-        executionModeLabel->setText(tr("step by step"));
-
-        nextButton->setEnabled(true);
-
-        // go to this line and next line is visible
-        editor->setTextCursor(QTextCursor(editor->document()->findBlockByLineNumber(currentPC + 1)));
-        editor->ensureCursorVisible();
-        editor->setTextCursor(QTextCursor(editor->document()->findBlockByLineNumber(currentPC)));
-    } else if(mode == Target::EXECUTION_STOP) {
-        executionModeLabel->setText(tr("stopped"));
-
-        nextButton->setEnabled(false);
-
-        if(clearEditorProperty(QStringLiteral("active")))
-            rehighlight();
-    }
-
-    // set the tab icon to show the current execution mode
-    // mainWindow->nodes->setExecutionMode(mainWindow->getIndexFromId(id), mode);
-}
 
 
 void NodeTab::rehighlight() {
