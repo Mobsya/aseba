@@ -43,9 +43,9 @@ enum NodeType : int {
 
 /// Capabilities of a node
 /// What a client can do with a node may depends on permissions, firmware version, type of node/device, etc
-enum NodeCapability : ulong {
+enum NodeCapability : int {
   Rename  = 0x01,
-  ForceResetAndStop = 0x02
+  ForceResetAndStop = 0x02,
 }
 
 /// The status of a node represents whether the node is connected and available.
