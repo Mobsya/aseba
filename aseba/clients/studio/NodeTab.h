@@ -84,8 +84,6 @@ protected Q_SLOTS:
 
     void onExecutionPosChanged(unsigned line);
     void onExecutionStateChanged();
-    void executionModeChanged(Target::ExecutionMode mode);
-
 
     void updateHidden();
 
