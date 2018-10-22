@@ -94,10 +94,7 @@ void aseba_node::on_message(const Aseba::Message& msg) {
         default: {
             if(msg.type >= 0x8000)  // first non-event message
                 break;
-            auto event = [this, &msg] {
-                std::unique_lock<std::mutex> _(m_node_mutex);
-                return get_event(msg.type);
-            }();
+            auto event = [this, &msg] { return get_event(msg.type); }();
             if(event) {
                 on_event(static_cast<const Aseba::UserMessage&>(msg), event->first);
             }
@@ -116,7 +113,6 @@ void aseba_node::set_status(status s) {
 }
 
 bool aseba_node::lock(void* app) {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     if(m_connected_app == app) {
         return true;
     }
@@ -124,13 +120,11 @@ bool aseba_node::lock(void* app) {
         return false;
     }
     m_connected_app = app;
-    mLogDebug("Locking node");
     set_status(status::busy);
     return true;
 }
 
 bool aseba_node::unlock(void* app) {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     if(m_connected_app != app) {
         return false;
     }
@@ -145,7 +139,6 @@ void aseba_node::write_message(std::shared_ptr<Aseba::Message> message, write_ca
 }
 
 void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages, write_callback&& cb) {
-    std::unique_lock<std::mutex> _(m_node_mutex);  // Probably not necessary ?
     auto endpoint = m_endpoint.lock();
     if(!endpoint) {
         return;
@@ -155,10 +148,8 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
 
 void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::string& program,
                                  compilation_callback&& cb) {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     Aseba::CommonDefinitions defs = m_defs;
     Aseba::TargetDescription desc = m_description;
-    m_node_mutex.unlock();
 
     Aseba::Compiler compiler;
     compiler.setTargetDescription(&desc);
@@ -176,8 +167,6 @@ void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::st
 
 void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, const std::string& program,
                                           compilation_callback&& cb) {
-
-    std::unique_lock<std::mutex> _(m_node_mutex);
     m_breakpoints.clear();
     cancel_pending_step_request();
     cancel_pending_breakpoint_request();
@@ -192,7 +181,6 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
     reset_known_variables(*compiler.getVariablesMap());
-    m_node_mutex.unlock();
     write_messages(std::move(messages),
                    [that = shared_from_this(), cb = std::move(cb), result](boost::system::error_code ec) {
                        if(ec)
@@ -294,32 +282,31 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
     }
 }
 
+
 void aseba_node::force_execution_state_update() {
     write_message(std::make_shared<Aseba::GetExecutionState>(native_id()));
 }
 
 void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& es) {
     vm_execution_state state;
-    {
-        std::unique_lock<std::mutex> _(m_node_mutex);
-        while(!m_callbacks_pending_execution_state_change.empty()) {
-            boost::asio::post(m_io_ctx.get_executor(), std::move(m_callbacks_pending_execution_state_change.front()));
-            m_callbacks_pending_execution_state_change.pop();
-        }
 
-        m_vm_state.state = fb::VMExecutionState::Running;
-        m_vm_state.pc = es.pc;
-        m_vm_state.line = line_from_pc(es.pc);
-        m_vm_state.flags = es.flags;
-        if(m_vm_state.flags & ASEBA_VM_STEP_BY_STEP_MASK) {
-            m_vm_state.state = (m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK) ? fb::VMExecutionState::Paused :
-                                                                                 fb::VMExecutionState::Stopped;
-        }
-
-        state.state = m_vm_state.state;
-        state.line = m_vm_state.line;
-        state.error = fb::VMExecutionError::NoError;
+    while(!m_callbacks_pending_execution_state_change.empty()) {
+        boost::asio::post(m_io_ctx.get_executor(), std::move(m_callbacks_pending_execution_state_change.front()));
+        m_callbacks_pending_execution_state_change.pop();
     }
+
+    m_vm_state.state = fb::VMExecutionState::Running;
+    m_vm_state.pc = es.pc;
+    m_vm_state.line = line_from_pc(es.pc);
+    m_vm_state.flags = es.flags;
+    if(m_vm_state.flags & ASEBA_VM_STEP_BY_STEP_MASK) {
+        m_vm_state.state = (m_vm_state.flags & ASEBA_VM_EVENT_ACTIVE_MASK) ? fb::VMExecutionState::Paused :
+                                                                             fb::VMExecutionState::Stopped;
+    }
+
+    state.state = m_vm_state.state;
+    state.line = m_vm_state.line;
+    state.error = fb::VMExecutionError::NoError;
 
     handle_step_request();
     if(m_pending_step_request)
@@ -356,14 +343,11 @@ void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
         }
     }
 
-    {
-        std::unique_lock<std::mutex> _(m_node_mutex);
-        m_vm_state.pc = pc;
-        m_vm_state.state = fb::VMExecutionState::Stopped;
-        m_vm_state.line = line_from_pc(pc);
-        state.state = m_vm_state.state;
-        state.line = m_vm_state.line;
-    }
+    m_vm_state.pc = pc;
+    m_vm_state.state = fb::VMExecutionState::Stopped;
+    m_vm_state.line = line_from_pc(pc);
+    state.state = m_vm_state.state;
+    state.line = m_vm_state.line;
 
     m_vm_state_watch_signal(shared_from_this(), state);
 }
@@ -423,45 +407,44 @@ void aseba_node::cancel_pending_step_request() {
 void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     auto cb_data = std::make_shared<break_point_cb_data>();
-    {
-        std::unique_lock<std::mutex> _(m_node_mutex);
 
-        std::vector<unsigned> pc;
-        cb_data->cb = std::move(cb);
 
-        auto pc_from_line = [this](int line) -> int {
-            for(std::size_t i = 0; i < m_bytecode.size(); i++) {
-                if(m_bytecode[i].line == line - 1)
-                    return i;
-            }
-            return -1;
-        };
+    std::vector<unsigned> pc;
+    cb_data->cb = std::move(cb);
 
-        if(breakpoints.empty()) {
-            messages.push_back(std::make_shared<Aseba::BreakpointClearAll>(native_id()));
-        } else {
-            for(auto b : breakpoints) {
-                if(m_breakpoints.count(b)) {
-                    cb_data->set.insert(b);
-                } else {
-                    auto pc = pc_from_line(b.line);
-                    if(pc >= 0) {
-                        messages.push_back(std::make_shared<Aseba::BreakpointSet>(native_id(), pc));
-                        cb_data->pending.insert_or_assign(pc, b);
-                    }
+    auto pc_from_line = [this](int line) -> int {
+        for(std::size_t i = 0; i < m_bytecode.size(); i++) {
+            if(m_bytecode[i].line == line - 1)
+                return i;
+        }
+        return -1;
+    };
+
+    if(breakpoints.empty()) {
+        messages.push_back(std::make_shared<Aseba::BreakpointClearAll>(native_id()));
+    } else {
+        for(auto b : breakpoints) {
+            if(m_breakpoints.count(b)) {
+                cb_data->set.insert(b);
+            } else {
+                auto pc = pc_from_line(b.line);
+                if(pc >= 0) {
+                    messages.push_back(std::make_shared<Aseba::BreakpointSet>(native_id(), pc));
+                    cb_data->pending.insert_or_assign(pc, b);
                 }
             }
-            for(auto b : m_breakpoints) {
-                auto pc = pc_from_line(b.line);
-                if(pc >= 0 && std::find(breakpoints.begin(), breakpoints.end(), b) == breakpoints.end())
-                    messages.push_back(std::make_shared<Aseba::BreakpointClear>(native_id(), pc));
-            }
         }
-        m_breakpoints = aseba_node::breakpoints(breakpoints.begin(), breakpoints.end());
-        cancel_pending_breakpoint_request();
-        if(cb_data->cb)
-            m_pending_breakpoint_request = cb_data;
+        for(auto b : m_breakpoints) {
+            auto pc = pc_from_line(b.line);
+            if(pc >= 0 && std::find(breakpoints.begin(), breakpoints.end(), b) == breakpoints.end())
+                messages.push_back(std::make_shared<Aseba::BreakpointClear>(native_id(), pc));
+        }
     }
+    m_breakpoints = aseba_node::breakpoints(breakpoints.begin(), breakpoints.end());
+    cancel_pending_breakpoint_request();
+    if(cb_data->cb)
+        m_pending_breakpoint_request = cb_data;
+
     auto write_cb = [that = shared_from_this(),
                      ptr = std::weak_ptr<break_point_cb_data>(cb_data)](boost::system::error_code ec) {
         auto data = ptr.lock();
@@ -469,11 +452,8 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
             return;
         data->error = ec;
         if(ec || data->pending.empty()) {
-            std::unique_lock<std::mutex> _(that->m_node_mutex);
-            {
-                that->m_breakpoints = data->set;
-                that->m_pending_breakpoint_request.reset();
-            }
+            that->m_breakpoints = data->set;
+            that->m_pending_breakpoint_request.reset();
             boost::asio::post(that->m_io_ctx.get_executor(), std::bind(std::move(data->cb), data->error, data->set));
         }
     };
@@ -486,7 +466,6 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
 }
 
 void aseba_node::on_breakpoint_set_result(const Aseba::BreakpointSetResult& res) {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     if(!m_pending_breakpoint_request)
         return;
     auto& r = *m_pending_breakpoint_request;
@@ -515,7 +494,6 @@ void aseba_node::cancel_pending_breakpoint_request() {
 
 aseba_node::events_table aseba_node::events_description() const {
     std::vector<mobsya::event> table;
-    std::unique_lock<std::mutex> _(m_node_mutex);
     const auto& events = m_defs.events;
     table.reserve(events.size());
     for(const auto& e : events) {
@@ -525,7 +503,6 @@ aseba_node::events_table aseba_node::events_description() const {
 }
 
 aseba_node::vm_execution_state aseba_node::execution_state() const {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     return {m_vm_state.state, m_vm_state.line};
 }
 
@@ -569,7 +546,6 @@ boost::system::error_code aseba_node::set_node_variables(const aseba_node::varia
     messages.reserve(map.size());
     variables_map modified;
     {
-        std::unique_lock<std::mutex> _(m_node_mutex);
         for(auto&& var : map) {
             if(var.second.is_constant) {
                 auto n = Aseba::UTF8ToWString(var.first);
@@ -630,7 +606,6 @@ boost::system::error_code aseba_node::emit_events(const aseba_node::variables_ma
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     messages.reserve(map.size());
     {
-        std::unique_lock<std::mutex> _(m_node_mutex);
         for(auto&& event : map) {
             auto event_def = get_event(event.first);
             if(!event_def) {
@@ -658,7 +633,6 @@ void aseba_node::on_description(Aseba::TargetDescription description) {
              description.namedVariables.size(), description.nativeFunctions.size(), description.localEvents.size(),
              description.protocolVersion);
     {
-        std::unique_lock<std::mutex> _(m_node_mutex);
         m_description = std::move(description);
         unsigned count;
         reset_known_variables(m_description.getVariablesMap(count));
@@ -683,7 +657,6 @@ void aseba_node::request_variables() {
     messages.reserve(3);
 
     {
-        std::unique_lock<std::mutex> lock(m_node_mutex);
         if(!m_resend_all_variables && m_description.protocolVersion >= 7) {
             messages.emplace_back(std::make_shared<Aseba::GetChangedVariables>(native_id()));
         } else {
@@ -723,19 +696,15 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
 
 void aseba_node::on_variables_message(const Aseba::Variables& msg) {
     std::unordered_map<std::string, variable> changed;
-    std::unique_lock<std::mutex> _(m_node_mutex);
     set_variables(msg.start, msg.variables, changed);
-    m_node_mutex.unlock();
     m_variables_changed_signal(shared_from_this(), changed);
 }
 
 void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
     std::unordered_map<std::string, variable> changed;
-    std::unique_lock<std::mutex> _(m_node_mutex);
     for(const auto& area : msg.variables) {
         set_variables(area.start, area.variables, changed);
     }
-    m_node_mutex.unlock();
     m_variables_changed_signal(shared_from_this(), changed);
 }
 
@@ -772,7 +741,6 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
 
 aseba_node::variables_map aseba_node::variables() const {
     variables_map map;
-    std::unique_lock<std::mutex> _(m_node_mutex);
     map.reserve(m_variables.size());
     for(auto& var : m_variables) {
         map.emplace(var.name, detail::aseba_variable_from_range(var.value));
@@ -806,12 +774,10 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         if(info.data.size() == 16) {
             std::copy(info.data.begin(), info.data.end(), m_uuid.begin());
         }
-        std::unique_lock<std::mutex> lock(m_node_mutex);
         if(m_uuid.is_nil()) {
             m_uuid = boost::uuids::random_generator()();
             std::vector<uint8_t> data;
             std::copy(m_uuid.begin(), m_uuid.end(), std::back_inserter(data));
-            lock.unlock();
             write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_UUID, data));
         }
         mLogInfo("Persistent uuid for {} is now {} ", native_id(), boost::uuids::to_string(m_uuid));
@@ -821,11 +787,9 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
 
     } else if(info.info == DEVICE_INFO_NAME) {
         {
-            std::unique_lock<std::mutex> _(m_node_mutex);
             m_friendly_name.clear();
             m_friendly_name.reserve(info.data.size());
             std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
-            m_node_mutex.unlock();
             set_status(m_status);
         }
         mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
@@ -842,7 +806,6 @@ void aseba_node::on_event(const Aseba::UserMessage& event, const Aseba::EventDes
 }
 
 aseba_node::node_type aseba_node::type() const {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     auto ep = m_endpoint.lock();
     if(!ep) {
         return aseba_node::node_type::UnknownType;
@@ -858,7 +821,6 @@ aseba_node::node_type aseba_node::type() const {
 }
 
 std::string aseba_node::friendly_name() const {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     if(m_friendly_name.empty()) {
         auto ep = m_endpoint.lock();
         if(ep) {
@@ -875,12 +837,10 @@ void aseba_node::set_friendly_name(const std::string& str) {
     data.reserve(str.size());
     std::copy(str.begin(), str.end(), std::back_inserter(data));
     write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_NAME, data));
-    std::unique_lock<std::mutex> _(m_node_mutex);
     m_friendly_name = str;
 }
 
 bool aseba_node::can_be_renamed() const {
-    std::unique_lock<std::mutex> _(m_node_mutex);
     auto ep = m_endpoint.lock();
     return ep && ep->type() == aseba_endpoint::endpoint_type::thymio && m_description.protocolVersion >= 6;
 }

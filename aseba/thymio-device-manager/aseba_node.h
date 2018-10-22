@@ -134,7 +134,6 @@ public:
     bool is_wirelessly_connected() const;
 
     Aseba::TargetDescription vm_description() const {
-        std::unique_lock<std::mutex> _(m_node_mutex);
         return m_description;
     }
 
@@ -221,7 +220,6 @@ private:
     std::atomic<status> m_status;
     std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
-    mutable std::mutex m_node_mutex;
     Aseba::TargetDescription m_description;
     Aseba::CommonDefinitions m_defs;
     Aseba::BytecodeVector m_bytecode;
