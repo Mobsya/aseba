@@ -70,7 +70,10 @@ void ThymioDeviceManagerClientEndpoint::onReadyRead() {
         auto s = m_socket->read(reinterpret_cast<char*>(data.data()), m_message_size);
         Q_ASSERT(s == m_message_size);
         m_message_size = 0;
-        // TODO VERIFY MESSAGE
+        flatbuffers::Verifier verifier(data.data(), data.size());
+        if(!fb::VerifyMessageBuffer(verifier)) {
+            qWarning() << "Invalid incomming message";
+        }
         handleIncommingMessage(fb_message_ptr(std::move(data)));
     }
 }
