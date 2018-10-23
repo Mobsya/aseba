@@ -159,5 +159,13 @@ void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg
     }
 }
 
+void ThymioNode::onVariablesChanged(VariableMap variables) {
+    Q_EMIT variablesChanged(variables);
+}
+
+void ThymioNode::onEvents(VariableMap evs) {
+    Q_EMIT events(evs);
+}
+
 
 }  // namespace mobsya

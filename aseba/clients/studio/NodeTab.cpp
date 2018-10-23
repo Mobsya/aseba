@@ -74,8 +74,8 @@ NodeTab::NodeTab(QWidget* parent)
     sortingProxy->setSortRole(Qt::DisplayRole);
 
     // create the chainsaw filter for native functions
-    // functionsFlatModel = new TreeChainsawFilter(this);
-    // functionsFlatModel->setSourceModel(vmFunctionsModel);
+    functionsFlatModel = new TreeChainsawFilter(this);
+    functionsFlatModel->setSourceModel(&vmFunctionsModel);
 
     // create the model for subroutines
     // vmSubroutinesModel = new TargetSubroutinesModel(this);
@@ -92,7 +92,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         if(node->status() == mobsya::ThymioNode::Status::Available)
             node->lock();
         auto ptr = node.get();
-        // node->setWatchVariablesEnabled(true);
+        node->setWatchVariablesEnabled(true);
         node->setWatchEventsEnabled(true);
         node->setWatchVMExecutionStateEnabled(true);
 

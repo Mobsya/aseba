@@ -7,6 +7,27 @@
 #include <QUrl>
 #include "request.h"
 
+struct ThymioVariable {
+    Q_GADGET
+    Q_PROPERTY(QVariant value READ value)
+    Q_PROPERTY(bool isConstant READ isConstant)
+
+public:
+    ThymioVariable(QVariant value, bool constant = false) : m_value(value), m_constant(constant) {}
+
+    QVariant value() const {
+        return m_value;
+    }
+
+    bool isConstant() const {
+        return m_constant;
+    }
+
+private:
+    QVariant m_value;
+    bool m_constant;
+};
+
 namespace mobsya {
 class ThymioDeviceManagerClientEndpoint;
 class ThymioNode : public QObject {
@@ -18,6 +39,8 @@ public:
 
     using WatchableInfo = fb::WatchableInfo;
     using VMExecutionState = fb::VMExecutionState;
+
+    using VariableMap = QMap<QString, ThymioVariable>;
 
     Q_ENUM(Status)
     Q_ENUM(VMExecutionState)
@@ -47,6 +70,8 @@ Q_SIGNALS:
     void vmExecutionStarted();
     void vmExecutionStopped();
     void vmExecutionPaused(int line = 0);
+    void variablesChanged(const VariableMap& variables);
+    void events(const VariableMap& variables);
 
 public:
     QUuid uuid() const;
@@ -89,6 +114,8 @@ public:
 
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
+    void onVariablesChanged(VariableMap variables);
+    void onEvents(VariableMap variables);
 
 
     Request updateWatchedInfos();

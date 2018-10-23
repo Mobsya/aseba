@@ -162,16 +162,47 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
         }
 
         case mobsya::fb::AnyMessage::NodeVariablesChanged: {
-            auto message = msg.as<mobsya::fb::NodeVariablesChanged>()->UnPack();
-            if(!message)
+            auto message = msg.as<mobsya::fb::NodeVariablesChanged>();
+            if(!message || !message->vars())
                 break;
+            auto id = qfb::uuid(message->node_id()->UnPack());
+            auto node = m_nodes.value(id);
+            if(!node)
+                break;
+
+            ThymioNode::VariableMap vars;
+            for(const auto& var : *(message->vars())) {
+                if(!var)
+                    continue;
+                auto name = qfb::as_qstring(var->name());
+                if(name.isEmpty())
+                    continue;
+                auto value = qfb::to_qvariant(var->value_flexbuffer_root());
+                vars.insert(name, ThymioVariable(value, var->constant()));
+            }
+            node->onVariablesChanged(std::move(vars));
             break;
         }
 
         case mobsya::fb::AnyMessage::EventsEmitted: {
-            auto message = msg.as<mobsya::fb::EventsEmitted>()->UnPack();
-            if(!message)
+            auto message = msg.as<mobsya::fb::EventsEmitted>();
+            if(!message || !message->events())
                 break;
+            auto id = qfb::uuid(message->node_id()->UnPack());
+            auto node = m_nodes.value(id);
+            if(!node)
+                break;
+            ThymioNode::VariableMap events;
+            for(const auto& event : *(message->events())) {
+                if(!event)
+                    continue;
+                auto name = qfb::as_qstring(event->name());
+                if(name.isEmpty())
+                    continue;
+                auto value = qfb::to_qvariant(event->value_flexbuffer_root());
+                events.insert(name, ThymioVariable(value, false));
+            }
+            node->onEvents(std::move(events));
             break;
         }
 
