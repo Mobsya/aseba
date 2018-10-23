@@ -76,6 +76,8 @@ add_executable(asebastudio WIN32
     NodeTab.cpp
     NodeTabsManager.cpp
     NodeTabsManager.h
+    TargetFunctionsModel.cpp
+    TargetFunctionsModel.h
     main.cpp
     FindDialog.cpp
     # EventViewer.cpp

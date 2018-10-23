@@ -158,6 +158,8 @@ QtObject {
         QmlRequest::registerType<CompilationResult>();
         qRegisterMetaType<Request>("Request");
         qRegisterMetaType<CompilationError>();
+        qRegisterMetaType<SetBreakpointRequestResult>();
+        qRegisterMetaType<AsebaVMDescriptionRequestResult>();
     }
 
     Q_COREAPP_STARTUP_FUNCTION(init)

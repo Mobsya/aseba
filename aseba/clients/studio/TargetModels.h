@@ -129,45 +129,6 @@ private:
     VariableListenersNameMap variableListenersMap;
 };
 
-class TargetFunctionsModel : public QAbstractItemModel {
-    Q_OBJECT
-
-public:
-    struct TreeItem;
-
-public:
-    TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent = nullptr);
-    ~TargetFunctionsModel() override;
-
-    Qt::DropActions supportedDropActions() const override;
-
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
-
-    QModelIndex parent(const QModelIndex& index) const override;
-    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
-
-    QStringList mimeTypes() const override;
-    QMimeData* mimeData(const QModelIndexList& indexes) const override;
-
-public slots:
-    void recreateTreeFromDescription(bool showHidden);
-
-private:
-    friend class AeslEditor;
-    friend class StudioAeslEditor;
-    TreeItem* getItem(const QModelIndex& index) const;
-    QString getToolTip(const TargetDescription::NativeFunction& function) const;
-
-    TreeItem* root;                            //!< root of functions description tree
-    const TargetDescription* descriptionRead;  //!< description for read access
-    QRegExp regExp;
-};
-
 class TargetSubroutinesModel : public QStringListModel {
 public:
     TargetSubroutinesModel(QObject* parent = nullptr);

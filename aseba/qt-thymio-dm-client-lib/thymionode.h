@@ -85,6 +85,8 @@ public:
     Q_INVOKABLE Request setWatchEventsEnabled(bool enabled);
     Q_INVOKABLE Request setWatchVMExecutionStateEnabled(bool enabled);
 
+    Q_INVOKABLE AsebaVMDescriptionRequest fetchAsebaVMDescription();
+
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
 
