@@ -59,41 +59,17 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
     QString prefix(QLatin1String(""));   // before the text
     QString midfix(QLatin1String(""));   // between the text and the cursor
     QString postfix(QLatin1String(""));  // after the curser
-    /*if(dropSourceWidget == nodeTab->vmFunctionsView) {
-        // inserting function
+    if(dropSourceWidget == nodeTab->vmFunctionsView) {
         prefix = "call ";
-        midfix = "(";
-        // fill call from doc
-        const TargetDescription* desc = nodeTab->vmFunctionsModel->descriptionRead;
-        const std::wstring funcName = source->text().toStdWString();
-        for(size_t i = 0; i < desc->nativeFunctions.size(); i++) {
-            const TargetDescription::NativeFunction native(desc->nativeFunctions[i]);
-            if(native.name == funcName) {
-                for(size_t j = 0; j < native.parameters.size(); ++j) {
-                    postfix += QString::fromStdWString(native.parameters[j].name);
-                    if(j + 1 < native.parameters.size())
-                        postfix += ", ";
-                }
-                break;
-            }
-        }
-        postfix += ")\n";
-    } else if(dropSourceWidget == nodeTab->vmMemoryView) {
-        const std::wstring varName = source->text().toStdWString();
-        if(nodeTab->vmMemoryModel->getVariableSize(QString::fromStdWString(varName)) > 1) {
-            midfix = "[";
-            postfix = "] ";
-        } else
-            midfix = " ";
     } else if(dropSourceWidget == nodeTab->vmLocalEvents) {
         // inserting local event
         prefix = "onevent ";
         midfix = "\n";
-    } else if(dropSourceWidget == nodeTab->mainWindow->eventsDescriptionsView) {
+    } /*else if(dropSourceWidget == nodeTab->mainWindow->eventsDescriptionsView) {
         // inserting global event
         prefix = "onevent ";
         midfix = "\n";
-    }
+    }*/
 
     cursor.beginEditBlock();
     cursor.insertText(prefix + source->text() + midfix);
@@ -103,7 +79,6 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
     cursor.endEditBlock();
 
     this->setTextCursor(cursor);
-    */
 }
 
 }  // namespace Aseba

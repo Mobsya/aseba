@@ -1,7 +1,11 @@
 #pragma once
 #include <QtWidgets>
-#include "Target.h"
+#include "TargetModels.h"
 #include "AeslEditor.h"
+#include "NamedValuesVectorModel.h"
+#include "TargetFunctionsModel.h"
+#include "ModelAggregator.h"
+#include "CustomWidgets.h"
 #include <aseba/qt-thymio-dm-client-lib/thymionode.h>
 
 namespace Aseba {
@@ -51,6 +55,7 @@ protected:
     void setupConnections();
 
 public Q_SLOTS:
+    void updateAsebaVMDescription();
     void clearExecutionErrors();
     void refreshCompleterModel(LocalContext context);
 
@@ -84,6 +89,7 @@ protected Q_SLOTS:
 
     void onExecutionPosChanged(unsigned line);
     void onExecutionStateChanged();
+    void onAsebaVMDescriptionChanged();
 
     void updateHidden();
 
@@ -120,6 +126,7 @@ private:
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
     mobsya::CompilationRequestWatcher* m_compilation_watcher;
     mobsya::BreakpointsRequestWatcher* m_breakpoints_watcher;
+    mobsya::AsebaVMDescriptionRequestWatcher* m_aseba_vm_description_watcher;
 
     QLabel* cursorPosText;
     QLabel* compilationResultImage;
@@ -140,8 +147,9 @@ private:
     QTreeView* vmMemoryView;
     QLineEdit* vmMemoryFilter;
 
-    // TargetFunctionsModel* vmFunctionsModel;
     QTreeView* vmFunctionsView;
+    DraggableListWidget* vmLocalEvents;
+    TargetFunctionsModel vmFunctionsModel;
 
     // DraggableListWidget* vmLocalEvents;
 
@@ -149,7 +157,7 @@ private:
     QAbstractItemModel* eventAggregator;
     QAbstractItemModel* variableAggregator;
     QSortFilterProxyModel* sortingProxy;
-    // TreeChainsawFilter* functionsFlatModel;
+    TreeChainsawFilter* functionsFlatModel;
 
     QToolBox* toolBox;
 
@@ -159,7 +167,6 @@ private:
     //!< a textChanged signal
     int errorPos;   //!< position of last error, -1 if compilation was success
     int currentPC;  //!< current program counter
-    Target::ExecutionMode previousMode;
     bool showHidden;
 };
 

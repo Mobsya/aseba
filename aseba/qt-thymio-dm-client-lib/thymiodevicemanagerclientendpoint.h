@@ -30,6 +30,7 @@ public:
     CompilationRequest send_code(const ThymioNode& node, const QByteArray& code, fb::ProgrammingLanguage language,
                                  fb::CompilationOptions opts);
     Request set_watch_flags(const ThymioNode& node, int flags);
+    AsebaVMDescriptionRequest fetchAsebaVMDescription(const ThymioNode& node);
 
 private Q_SLOTS:
     void onReadyRead();

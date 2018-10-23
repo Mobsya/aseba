@@ -139,6 +139,10 @@ Request ThymioNode::updateWatchedInfos() {
     return m_endpoint->set_watch_flags(*this, int(m_watched_infos));
 }
 
+AsebaVMDescriptionRequest ThymioNode::fetchAsebaVMDescription() {
+    return m_endpoint->fetchAsebaVMDescription(*this);
+}
+
 void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg) {
     if(msg.error == fb::VMExecutionError::NoError) {
         m_executionState = msg.state;

@@ -161,6 +161,34 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             break;
         }
 
+        case mobsya::fb::AnyMessage::NodeVariablesChanged: {
+            auto message = msg.as<mobsya::fb::NodeVariablesChanged>()->UnPack();
+            if(!message)
+                break;
+            break;
+        }
+
+        case mobsya::fb::AnyMessage::EventsEmitted: {
+            auto message = msg.as<mobsya::fb::EventsEmitted>()->UnPack();
+            if(!message)
+                break;
+            break;
+        }
+
+        case mobsya::fb::AnyMessage::NodeAsebaVMDescription: {
+            auto message = msg.as<mobsya::fb::NodeAsebaVMDescription>();
+            if(!message)
+                break;
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            auto req = basic_req->as<AsebaVMDescriptionRequest::internal_ptr_type>();
+            if(!req)
+                break;
+            const fb::NodeAsebaVMDescriptionT& r = *(message->UnPack());
+            req->setResult(AsebaVMDescriptionRequestResult(r));
+            break;
+        }
         default: Q_EMIT onMessage(msg);
     }
 }
@@ -307,6 +335,14 @@ Request ThymioDeviceManagerClientEndpoint::set_watch_flags(const ThymioNode& nod
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     write(wrap_fb(builder, fb::CreateWatchNode(builder, r.id(), uuidOffset, flags)));
+    return r;
+}
+
+AsebaVMDescriptionRequest ThymioDeviceManagerClientEndpoint::fetchAsebaVMDescription(const ThymioNode& node) {
+    AsebaVMDescriptionRequest r = prepare_request<AsebaVMDescriptionRequest>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    write(wrap_fb(builder, fb::CreateRequestNodeAsebaVMDescription(builder, r.id(), uuidOffset)));
     return r;
 }
 

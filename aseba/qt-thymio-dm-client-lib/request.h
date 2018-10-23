@@ -383,6 +383,7 @@ struct SetBreakpointRequestResult {
 public:
     static constexpr quint32 type = 0xf2f36208;
     SetBreakpointRequestResult(QVector<unsigned> breakpoints) : m_breakpoints(std::move(breakpoints)) {}
+    SetBreakpointRequestResult() = default;
 
 
     Q_INVOKABLE QString toString() {
@@ -398,6 +399,88 @@ private:
 };
 
 
+struct AsebaVMFunctionParameterDescription {
+    Q_GADGET
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(uint16_t size READ size)
+public:
+    AsebaVMFunctionParameterDescription() = default;
+    AsebaVMFunctionParameterDescription(const QString& name, uint16_t size) : m_name(name), m_size(size) {}
+
+    QString name() const {
+        return m_name;
+    }
+    uint16_t size() const {
+        return m_size;
+    }
+
+private:
+    QString m_name;
+    uint16_t m_size;
+};
+
+struct AsebaVMFunctionDescription {
+
+    Q_GADGET
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString description READ description)
+    Q_PROPERTY(QVector<AsebaVMFunctionParameterDescription> parameters READ parameters)
+
+public:
+    AsebaVMFunctionDescription(const QString& name, const QString& description,
+                               const QVector<AsebaVMFunctionParameterDescription>& params = {})
+        : m_name(name), m_description(description), m_parameters(params) {}
+    AsebaVMFunctionDescription() = default;
+
+    QString name() const {
+        return m_name;
+    }
+
+    QString description() const {
+        return m_description;
+    }
+
+    QVector<AsebaVMFunctionParameterDescription> parameters() const {
+        return m_parameters;
+    }
+
+private:
+    QString m_name;
+    QString m_description;
+    QVector<AsebaVMFunctionParameterDescription> m_parameters;
+};
+
+using AsebaVMLocalEventDescription = AsebaVMFunctionDescription;
+
+struct AsebaVMDescriptionRequestResult {
+    Q_GADGET
+    Q_PROPERTY(QVector<AsebaVMFunctionDescription> functions READ functions)
+    Q_PROPERTY(QVector<AsebaVMLocalEventDescription> events READ events)
+
+public:
+    static constexpr quint32 type = 0xdb0d6e14;
+    AsebaVMDescriptionRequestResult() = default;
+    AsebaVMDescriptionRequestResult(const fb::NodeAsebaVMDescriptionT& description);
+
+
+    Q_INVOKABLE QString toString() {
+        return {};
+    }
+
+    QVector<AsebaVMFunctionDescription> functions() {
+        return m_functions;
+    }
+
+    QVector<AsebaVMFunctionDescription> events() {
+        return m_events;
+    }
+
+private:
+    QVector<AsebaVMFunctionDescription> m_functions;
+    QVector<AsebaVMLocalEventDescription> m_events;
+};
+
+
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
@@ -407,5 +490,8 @@ using CompilationRequestWatcher = BasicRequestWatcher<CompilationResult>;
 
 using BreakpointsRequest = BasicRequest<SetBreakpointRequestResult>;
 using BreakpointsRequestWatcher = BasicRequestWatcher<SetBreakpointRequestResult>;
+
+using AsebaVMDescriptionRequest = BasicRequest<AsebaVMDescriptionRequestResult>;
+using AsebaVMDescriptionRequestWatcher = BasicRequestWatcher<AsebaVMDescriptionRequestResult>;
 
 }  // namespace mobsya

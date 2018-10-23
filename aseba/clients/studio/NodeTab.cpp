@@ -33,14 +33,16 @@ NodeTab::NodeTab(QWidget* parent)
     , ScriptTab()
     , m_compilation_watcher(new mobsya::CompilationRequestWatcher(this))
     , m_breakpoints_watcher(new mobsya::BreakpointsRequestWatcher(this))
-    , currentPC(-1)
-    , previousMode(Target::EXECUTION_UNKNOWN) {
+    , m_aseba_vm_description_watcher(new mobsya::AsebaVMDescriptionRequestWatcher(this))
+    , currentPC(-1) {
     // setup some variables
     // rehighlighting = false;
     errorPos = -1;
 
     connect(m_compilation_watcher, &mobsya::CompilationRequestWatcher::finished, this, &NodeTab::compilationCompleted);
     connect(m_breakpoints_watcher, &mobsya::BreakpointsRequestWatcher::finished, this, &NodeTab::breakpointsChanged);
+    connect(m_aseba_vm_description_watcher, &mobsya::AsebaVMDescriptionRequestWatcher::finished, this,
+            &NodeTab::onAsebaVMDescriptionChanged);
 
     /*  // create models
       vmFunctionsModel = new TargetFunctionsModel(target->getDescription(id), showHidden, this);
@@ -106,6 +108,8 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
             if(node->status() == mobsya::ThymioNode::Status::Available)
                 node->lock();
         });
+
+        updateAsebaVMDescription();
     }
 }
 
@@ -142,12 +146,10 @@ void NodeTab::run() {
     };
 
     auto code = editor->toPlainText();
-    /*if(m_thymio->vmExecutionState() == mobsya::ThymioNode::VMExecutionState::Paused ||
-       (!code.isEmpty() && code == lastLoadedSource)) {
-        currentPC = -1;
-        set_breakpoints_and_run();
+    if(m_thymio->vmExecutionState() == mobsya::ThymioNode::VMExecutionState::Paused) {
+        m_thymio->run();
         return;
-    }*/
+    }
     auto watcher = new mobsya::CompilationRequestWatcher(this);
     connect(watcher, &mobsya::CompilationRequestWatcher::finished, [code, this, watcher, set_breakpoints_and_run] {
         watcher->deleteLater();
@@ -308,10 +310,6 @@ void NodeTab::breakpointsChanged() {
 }
 
 void NodeTab::onExecutionPosChanged(unsigned line) {
-    if(currentPC == line || line < 1) {
-        step();
-        return;
-    }
     currentPC = line;
 
     if(line == 0)
@@ -342,6 +340,26 @@ void NodeTab::onExecutionStateChanged() {
             rehighlight();
     }
 }
+
+
+void NodeTab::updateAsebaVMDescription() {
+    if(m_thymio)
+        m_aseba_vm_description_watcher->setRequest(m_thymio->fetchAsebaVMDescription());
+}
+
+void NodeTab::onAsebaVMDescriptionChanged() {
+    if(!m_aseba_vm_description_watcher->success())
+        return;
+    auto desc = m_aseba_vm_description_watcher->getResult();
+    vmFunctionsModel.recreateTreeFromDescription(desc.functions());
+    vmLocalEvents->clear();
+    for(const auto& e : desc.events()) {
+        auto item = new QListWidgetItem(e.name());
+        item->setToolTip(e.description());
+        vmLocalEvents->addItem(item);
+    }
+}  // namespace Aseba
+
 
 static void write16(QIODevice& dev, const uint16_t v) {
     dev.write((const char*)&v, 2);
@@ -473,42 +491,40 @@ void NodeTab::clearExecutionErrors() {
 }
 
 void NodeTab::refreshCompleterModel(LocalContext context) {
-    /*
-        //		qDebug() << "New context: " << context;
-        // disconnect(mainWindow->eventsDescriptionsModel, nullptr, sortingProxy, nullptr);
 
-        switch(context) {
-            case GeneralContext:  // both variables and constants
-            case UnknownContext: sortingProxy->setSourceModel(variableAggregator); break;
-            case LeftValueContext:  // only variables
-                sortingProxy->setSourceModel(vmMemoryModel);
-                break;
-            case FunctionContext:  // native functions
-                sortingProxy->setSourceModel(functionsFlatModel);
-                break;
-            case SubroutineCallContext:  // subroutines
-                sortingProxy->setSourceModel(vmSubroutinesModel);
-                break;
-            case EventContext:  // events
-                sortingProxy->setSourceModel(eventAggregator);
-                break;
-            case VarDefContext:
-            default:  // disable auto-completion in this case
-                editor->setCompleterModel(nullptr);
-                return;
-        }
-        sortingProxy->sort(0);
-        editor->setCompleterModel(sortingProxy);
-       */
-}
-/*
-    void NodeTab::sortCompleterModel()
-    {
-        sortingProxy->sort(0);
-        editor->setCompleterModel(0);
-        editor->setCompleterModel(sortingProxy);
+    //		qDebug() << "New context: " << context;
+    // disconnect(mainWindow->eventsDescriptionsModel, nullptr, sortingProxy, nullptr);
+
+    switch(context) {
+        case GeneralContext:  // both variables and constants
+        case UnknownContext: sortingProxy->setSourceModel(variableAggregator); break;
+        case LeftValueContext:  // only variables
+            // sortingProxy->setSourceModel(vmMemoryModel);
+            break;
+        case FunctionContext:  // native functions
+            sortingProxy->setSourceModel(functionsFlatModel);
+            break;
+        case SubroutineCallContext:  // subroutines
+            // sortingProxy->setSourceModel(vmSubroutinesModel);
+            break;
+        case EventContext:  // events
+            sortingProxy->setSourceModel(eventAggregator);
+            break;
+        case VarDefContext:
+        default:  // disable auto-completion in this case
+            editor->setCompleterModel(nullptr);
+            return;
     }
-*/
+    sortingProxy->sort(0);
+    editor->setCompleterModel(sortingProxy);
+}
+
+/*void NodeTab::sortCompleterModel() {
+    sortingProxy->sort(0);
+    editor->setCompleterModel(0);
+    editor->setCompleterModel(sortingProxy);
+}*/
+
 // void NodeTab::variablesMemoryChanged(unsigned start, const VariablesDataVector& variables) {
 //    // update memory view
 //    vmMemoryModel->setVariablesData(start, variables);
@@ -779,7 +795,7 @@ void NodeTab::setupWidgets() {
     vmFunctionsView = new QTreeView;
     vmFunctionsView->setMinimumHeight(40);
     vmFunctionsView->setMinimumSize(QSize(50, 40));
-    // vmFunctionsView->setModel(vmFunctionsModel);
+    vmFunctionsView->setModel(&vmFunctionsModel);
     vmFunctionsView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     vmFunctionsView->setSelectionMode(QAbstractItemView::SingleSelection);
     vmFunctionsView->setSelectionBehavior(QAbstractItemView::SelectItems);
@@ -789,22 +805,17 @@ void NodeTab::setupWidgets() {
     vmFunctionsView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     vmFunctionsView->setHeaderHidden(true);
     // local events
-    /*vmLocalEvents = new DraggableListWidget;
+    vmLocalEvents = new DraggableListWidget;
     vmLocalEvents->setMinimumHeight(40);
     vmLocalEvents->setSelectionMode(QAbstractItemView::SingleSelection);
     vmLocalEvents->setDragDropMode(QAbstractItemView::DragOnly);
     vmLocalEvents->setDragEnabled(true);
-    for(size_t i = 0; i < target->getDescription(id)->localEvents.size(); i++) {
-        QListWidgetItem* item =
-            new QListWidgetItem(QString::fromStdWString(target->getDescription(id)->localEvents[i].name));
-        item->setToolTip(QString::fromStdWString(target->getDescription(id)->localEvents[i].description));
-        vmLocalEvents->addItem(item);
-    }*/
-
     // toolbox
     toolBox = new QToolBox;
     toolBox->addItem(vmFunctionsView, tr("Native Functions"));
-    // toolBox->addItem(vmLocalEvents, tr("Local Events"));
+    toolBox->addItem(vmLocalEvents, tr("Local Events"));
+
+    memoryLayout->addWidget(toolBox);
 
     // panel
     auto* panelSplitter = new QSplitter(Qt::Vertical);
@@ -818,7 +829,6 @@ void NodeTab::setupWidgets() {
     memoryWidget->setLayout(memoryLayout);
     panelSplitter->addWidget(memoryWidget);
     panelSplitter->setStretchFactor(1, 9);
-
     panelSplitter->setStretchFactor(2, 4);
 
     addWidget(panelSplitter);

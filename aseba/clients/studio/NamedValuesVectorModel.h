@@ -21,9 +21,9 @@
 #define NAMED_VALUES_VECTOR_MODEL_H
 
 #include <QAbstractTableModel>
+#include <aseba/qt-thymio-dm-client-lib/request.h>
 #include <QVector>
 #include <QString>
-#include "compiler/compiler.h"
 
 
 namespace Aseba {
@@ -34,8 +34,8 @@ class NamedValuesVectorModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-    NamedValuesVectorModel(NamedValuesVector* namedValues, QString tooltipText, QObject* parent = nullptr);
-    NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
+    NamedValuesVectorModel(QString tooltipText, QObject* parent = nullptr);
+    NamedValuesVectorModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -67,7 +67,7 @@ public:
     virtual bool validateName(const QString& name) const;
 
 public slots:
-    void addNamedValue(const NamedValue& namedValue, int index = -1);
+    void addNamedValue(const mobsya::AsebaVMFunctionDescription& namedValue, int index = -1);
     void delNamedValue(int index);
     void clear();
 
@@ -76,7 +76,7 @@ signals:
     void publicRowsRemoved();
 
 protected:
-    NamedValuesVector* namedValues;
+    QVector<mobsya::AsebaVMFunctionDescription> namedValues;
     bool wasModified;
     QString privateMimeType;
 
@@ -85,7 +85,7 @@ private:
     bool editable;
 };
 
-class ConstantsModel : public NamedValuesVectorModel {
+/*class ConstantsModel : public NamedValuesVectorModel {
     Q_OBJECT
 
 public:
@@ -120,6 +120,7 @@ public slots:
 private:
     std::vector<bool> viewEvent;
 };
+*/
 
 /*@}*/
 }  // namespace Aseba
