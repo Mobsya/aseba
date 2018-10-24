@@ -71,6 +71,8 @@ protected Q_SLOTS:
     void reboot();
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
+    void setVariable(const QString& k, const mobsya::ThymioVariable& value);
+
     void resetVariables();
 
 
