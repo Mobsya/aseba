@@ -35,8 +35,6 @@ NodeTab::NodeTab(QWidget* parent)
     , m_breakpoints_watcher(new mobsya::BreakpointsRequestWatcher(this))
     , m_aseba_vm_description_watcher(new mobsya::AsebaVMDescriptionRequestWatcher(this))
     , currentPC(-1) {
-    // setup some variables
-    // rehighlighting = false;
     errorPos = -1;
 
     connect(m_compilation_watcher, &mobsya::CompilationRequestWatcher::finished, this, &NodeTab::compilationCompleted);
@@ -102,6 +100,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
+        connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
 
 
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
@@ -115,13 +114,32 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
 
 void NodeTab::reset() {
     clearExecutionErrors();
-    m_thymio->load_aseba_code({});
-    m_thymio->stop();
+    if(m_thymio) {
+        m_thymio->load_aseba_code({});
+        m_thymio->stop();
+    }
     lastLoadedSource.clear();
     editor->debugging = false;
     currentPC = -1;
+    resetVariables();
 }
+
+void NodeTab::resetVariables() {
+    vmVariablesModel.clear();
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(false);
+        if(synchronizeVariablesToogle->isChecked())
+            m_thymio->setWatchVariablesEnabled(true);
+    }
+}
+
 void NodeTab::run() {
+    if(!m_thymio) {
+        return;
+    }
+
+    resetVariables();
+
     editor->debugging = false;
 
     auto set_breakpoints_and_run = [this] {
@@ -137,7 +155,9 @@ void NodeTab::run() {
             }();
             if(bps.empty() || bps.first() != 1)
                 m_thymio->run();
-            // else
+            else {
+                m_thymio->stepToNextLine();
+            }
         });
         auto bps = breakpoints();
         auto req = m_thymio->setBreakPoints(bps);
@@ -358,7 +378,12 @@ void NodeTab::onAsebaVMDescriptionChanged() {
         item->setToolTip(e.description());
         vmLocalEvents->addItem(item);
     }
-}  // namespace Aseba
+}
+
+
+void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    vmVariablesModel.setVariables(vars);
+}
 
 
 static void write16(QIODevice& dev, const uint16_t v) {
@@ -415,12 +440,6 @@ void NodeTab::saveBytecode() const {
 
 void NodeTab::setVariableValues(unsigned index, const VariablesDataVector& values) {
     // target->setVariables(id, index, values);
-}
-
-void NodeTab::insertVariableName(const QModelIndex& index) {
-    // only top level names have to be inserted
-    if(!index.parent().isValid() && (index.column() == 0))
-        editor->insertPlainText(index.data().toString());
 }
 
 void NodeTab::editorContentChanged() {
@@ -763,18 +782,19 @@ void NodeTab::setupWidgets() {
 
 
     // memory
-    vmMemoryView = new QTreeView;
-    // vmMemoryView->setModel(vmMemoryModel);
-    vmMemoryView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    // vmMemoryView->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
-    vmMemoryView->setColumnWidth(0, 235 - QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
-    vmMemoryView->setColumnWidth(1, QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
-    vmMemoryView->setSelectionMode(QAbstractItemView::SingleSelection);
-    vmMemoryView->setSelectionBehavior(QAbstractItemView::SelectItems);
-    vmMemoryView->setDragDropMode(QAbstractItemView::DragOnly);
-    vmMemoryView->setDragEnabled(true);
-    // vmMemoryView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    // vmMemoryView->setHeaderHidden(true);
+    vmVariablesView = new QTreeView;
+    vmVariablesView->setModel(&vmVariablesModel);
+    // vmVariablesView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    vmVariablesView->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
+    vmVariablesView->setColumnWidth(0, 235 - QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
+    vmVariablesView->setColumnWidth(1, QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
+    vmVariablesView->setSelectionMode(QAbstractItemView::SingleSelection);
+    vmVariablesView->setSelectionBehavior(QAbstractItemView::SelectItems);
+    vmVariablesView->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::DoubleClicked);
+    vmVariablesView->setDragDropMode(QAbstractItemView::DragOnly);
+    vmVariablesView->setDragEnabled(true);
+    vmVariablesView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    vmVariablesView->setHeaderHidden(true);
 
     auto* memoryLayout = new QVBoxLayout;
     auto* memorySubLayout = new QHBoxLayout;
@@ -782,7 +802,7 @@ void NodeTab::setupWidgets() {
     memorySubLayout->addStretch();
     memorySubLayout->addWidget(synchronizeVariablesToogle);
     memoryLayout->addLayout(memorySubLayout);
-    memoryLayout->addWidget(vmMemoryView);
+    memoryLayout->addWidget(vmVariablesView);
     memorySubLayout = new QHBoxLayout;
     QLabel* filterLabel(new QLabel(tr("F&ilter:")));
     memorySubLayout->addWidget(filterLabel);
@@ -801,7 +821,7 @@ void NodeTab::setupWidgets() {
     vmFunctionsView->setSelectionBehavior(QAbstractItemView::SelectItems);
     vmFunctionsView->setDragDropMode(QAbstractItemView::DragOnly);
     vmFunctionsView->setDragEnabled(true);
-    vmFunctionsView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // vmFunctionsView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     vmFunctionsView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     vmFunctionsView->setHeaderHidden(true);
     // local events
@@ -887,7 +907,6 @@ void NodeTab::setupConnections() {
     // memory
     // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),
     //        SLOT(setVariableValues(unsigned, const VariablesDataVector&)));
-    connect(vmMemoryFilter, &QLineEdit::textChanged, this, &NodeTab::updateHidden);
 
     // editor
     connect(editor, &QTextEdit::textChanged, this, &NodeTab::editorContentChanged);

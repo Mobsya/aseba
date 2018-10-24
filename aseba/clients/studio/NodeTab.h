@@ -4,6 +4,8 @@
 #include "AeslEditor.h"
 #include "NamedValuesVectorModel.h"
 #include "TargetFunctionsModel.h"
+#include "VariablesModel.h"
+
 #include "ModelAggregator.h"
 #include "CustomWidgets.h"
 #include <aseba/qt-thymio-dm-client-lib/thymionode.h>
@@ -68,10 +70,11 @@ protected Q_SLOTS:
     void step();
     void reboot();
     void synchronizeVariablesChecked(bool checked);
+    void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
+    void resetVariables();
 
 
     void setVariableValues(unsigned, const VariablesDataVector&);
-    void insertVariableName(const QModelIndex&);
 
     void editorContentChanged();
     void compileCodeOnTarget();
@@ -91,14 +94,11 @@ protected Q_SLOTS:
     void onExecutionStateChanged();
     void onAsebaVMDescriptionChanged();
 
-    void updateHidden();
-
     void compilationCompleted();
 
 private:
     QVector<unsigned> breakpoints() const;
     void updateBreakpoints();
-
     void updateMemoryUsage(const mobsya::CompilationResult& res);
     void handleCompilationError(const mobsya::CompilationResult& res);
 
@@ -106,7 +106,6 @@ private:
     void rehighlight();
     void handleCompletion();
 
-    void reSetBreakpoints();
 
     // editor properties code
     bool setEditorProperty(const QString& property, const QVariant& value, unsigned line, bool removeOld = false);
@@ -140,18 +139,15 @@ private:
     QPushButton* nextButton;
     QCheckBox* synchronizeVariablesToogle;
 
-    // keywords
-
-    // TargetVariablesModel* vmMemoryModel;
     // TargetSubroutinesModel* vmSubroutinesModel;
-    QTreeView* vmMemoryView;
+
+    VariablesModel vmVariablesModel;
+    QTreeView* vmVariablesView;
     QLineEdit* vmMemoryFilter;
 
     QTreeView* vmFunctionsView;
     DraggableListWidget* vmLocalEvents;
     TargetFunctionsModel vmFunctionsModel;
-
-    // DraggableListWidget* vmLocalEvents;
 
     QCompleter* completer;
     QAbstractItemModel* eventAggregator;

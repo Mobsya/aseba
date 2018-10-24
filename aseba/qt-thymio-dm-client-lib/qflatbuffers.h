@@ -3,6 +3,7 @@
 #include <QString>
 #include <QUuid>
 #include <QtEndian>
+#include <QVariant>
 
 namespace mobsya {
 namespace qfb {
@@ -47,13 +48,13 @@ namespace qfb {
 
     inline QVariant to_qvariant(const flexbuffers::Reference& r) {
         if(r.IsIntOrUint()) {
-            return QVariant::fromValue<quint64>(r.AsInt64());
+            return QVariant::fromValue<qint64>(r.AsInt64());
         }
         if(r.IsFloat()) {
-            return QVariant::fromValue<quint64>(r.AsDouble());
+            return QVariant::fromValue<double>(r.AsDouble());
         }
         if(r.IsBool()) {
-            return QVariant::fromValue<quint64>(r.AsBool());
+            return QVariant::fromValue<bool>(r.AsBool());
         }
         if(r.IsNull()) {
             return QVariant();
