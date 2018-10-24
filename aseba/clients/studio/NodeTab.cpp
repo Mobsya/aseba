@@ -41,6 +41,7 @@ NodeTab::NodeTab(QWidget* parent)
     connect(m_breakpoints_watcher, &mobsya::BreakpointsRequestWatcher::finished, this, &NodeTab::breakpointsChanged);
     connect(m_aseba_vm_description_watcher, &mobsya::AsebaVMDescriptionRequestWatcher::finished, this,
             &NodeTab::onAsebaVMDescriptionChanged);
+    connect(&vmVariablesModel, &VariablesModel::variableChanged, this, &NodeTab::setVariable);
 
     /*  // create models
       vmFunctionsModel = new TargetFunctionsModel(target->getDescription(id), showHidden, this);
@@ -383,6 +384,14 @@ void NodeTab::onAsebaVMDescriptionChanged() {
 
 void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
     vmVariablesModel.setVariables(vars);
+}
+
+void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value) {
+    if(m_thymio) {
+        mobsya::ThymioNode::VariableMap map;
+        map.insert(k, value);
+        m_thymio->setVariabes(map);
+    }
 }
 
 
@@ -786,15 +795,13 @@ void NodeTab::setupWidgets() {
     vmVariablesView->setModel(&vmVariablesModel);
     // vmVariablesView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     vmVariablesView->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
-    vmVariablesView->setColumnWidth(0, 235 - QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
-    vmVariablesView->setColumnWidth(1, QFontMetrics(QFont()).width(QStringLiteral("-88888##")));
     vmVariablesView->setSelectionMode(QAbstractItemView::SingleSelection);
     vmVariablesView->setSelectionBehavior(QAbstractItemView::SelectItems);
     vmVariablesView->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::DoubleClicked);
     vmVariablesView->setDragDropMode(QAbstractItemView::DragOnly);
     vmVariablesView->setDragEnabled(true);
-    vmVariablesView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     vmVariablesView->setHeaderHidden(true);
+    vmVariablesView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     auto* memoryLayout = new QVBoxLayout;
     auto* memorySubLayout = new QHBoxLayout;

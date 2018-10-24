@@ -377,4 +377,31 @@ AsebaVMDescriptionRequest ThymioDeviceManagerClientEndpoint::fetchAsebaVMDescrip
     return r;
 }
 
+namespace detail {
+    auto serialize_variables(flatbuffers::FlatBufferBuilder& fb, const ThymioNode::VariableMap& vars) {
+        flexbuffers::Builder flexbuilder;
+        std::vector<flatbuffers::Offset<fb::NodeVariable>> varsOffsets;
+        varsOffsets.reserve(vars.size());
+        for(auto&& var : vars.toStdMap()) {
+            qfb::to_flexbuffer(var.second.value(), flexbuilder);
+            auto& vec = flexbuilder.GetBuffer();
+            auto vecOffset = fb.CreateVector(vec);
+            auto keyOffset = qfb::add_string(fb, var.first);
+            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset, var.second.isConstant()));
+            flexbuilder.Clear();
+        }
+        return fb.CreateVectorOfSortedTables(&varsOffsets);
+    }
+}  // namespace detail
+
+Request ThymioDeviceManagerClientEndpoint::setNodeVariabes(const ThymioNode& node,
+                                                           const ThymioNode::VariableMap& vars) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto varsOffset = detail::serialize_variables(builder, vars);
+    write(wrap_fb(builder, fb::CreateSetNodeVariables(builder, r.id(), uuidOffset, varsOffset)));
+    return r;
+}
+
 }  // namespace mobsya

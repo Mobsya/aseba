@@ -12,6 +12,22 @@ struct VariablesModel::TreeItem {
     bool modified = false;
     TreeItem* parent = nullptr;
     std::vector<std::unique_ptr<TreeItem>> children;
+
+
+    bool has_aseba_integer_value() const {
+        if(children.size() != 1)
+            return false;
+        if(value.type() != QVariant::List)
+            return false;
+        auto l = value.toList();
+        if(l.size() == 1) {
+            const auto& item = l[0];
+            if(item.type() == QVariant::UInt || item.type() == QVariant::Int || item.type() == QVariant::ULongLong ||
+               item.type() == QVariant::LongLong)
+                return true;
+        }
+        return false;
+    }
 };
 
 namespace {
@@ -51,6 +67,8 @@ int VariablesModel::rowCount(const QModelIndex& index) const {
     auto item = getItem(index);
     if(!item)
         return 0;
+    if(item->has_aseba_integer_value())
+        return 0;
     return item->children.size();
 }
 
@@ -62,6 +80,9 @@ namespace {
     QVariant pretty_print_variable(const QVariant& v) {
         if(v.type() == QVariant::List) {
             auto l = v.toList();
+            if(l.size() == 1) {
+                return l[0];
+            }
             if(l.size() < 10 && std::all_of(l.begin(), l.end(), [](const QVariant& v) {
                    return v.type() == QVariant::Int || v.type() == QVariant::UInt || v.type() == QVariant::LongLong ||
                        v.type() == QVariant::ULongLong;
@@ -118,31 +139,43 @@ Qt::ItemFlags VariablesModel::flags(const QModelIndex& index) const {
     if(index.column() == 0 && item->constant) {
         flags |= Qt::ItemIsEditable;
     }
-    if(index.column() == 1 && (item->constant || item->children.empty())) {
+    if(index.column() == 1 && (item->constant || item->children.empty() || item->has_aseba_integer_value())) {
         flags |= Qt::ItemIsEditable;
     }
-    flags |= Qt::ItemIsEditable;
     return flags;
 }
 
 bool VariablesModel::setData(const QModelIndex& index, const QVariant& value, int role) {
-    /*if(index.isValid() && role == Qt::EditRole) {
-        if(index.column() == 0) {
-            if(!validateName(value.toString()))
+    auto n = index.row();
+    auto item = getItem(index);
+    if(!item || role != Qt::EditRole)
+        return {};
+    if(!item) {
+        return false;
+    }
+    if(item->parent && item->parent != m_root.get()) {
+        auto v = item->parent->value;
+        if(v.type() == QVariant::List || v.type() == QVariant::List) {
+            auto l = v.toList();
+            if(n < 0 && n >= l.size())
                 return false;
-            namedValues[index.row()].name = value.toString();
-            emit dataChanged(index, index);
-            wasModified = true;
-            return true;
+            l[n] = value;
+            return setData(index.parent(), l, role);
         }
-        if(index.column() == 1) {
-            namedValues->at(index.row()).value = value.toInt();
-            emit dataChanged(index, index);
-            wasModified = true;
-            return true;
+        if(v.type() == QVariant::Map) {
+            auto m = v.toMap();
+            const auto k = item->key.toString();
+            if(!m.contains(k))
+                return false;
+            m[k] = value;
+            return setData(index.parent(), m, role);
         }
-    }*/
-    return false;
+        Q_ASSERT(false);
+    }
+    item->value = value;
+    Q_EMIT dataChanged(index, index);
+    Q_EMIT variableChanged(item->key.toString(), mobsya::ThymioVariable(value, item->constant));
+    return true;
 }
 
 void VariablesModel::setVariables(const mobsya::ThymioNode::VariableMap& vars) {
@@ -153,7 +186,7 @@ void VariablesModel::setVariables(const mobsya::ThymioNode::VariableMap& vars) {
 }
 
 
-void VariablesModel::setVariable(const QString& name, const ThymioVariable& v) {
+void VariablesModel::setVariable(const QString& name, const mobsya::ThymioVariable& v) {
     auto root = get_or_create_root();
     setVariable(*root, name, v.value(), v.isConstant(), {});
 }
@@ -232,7 +265,10 @@ QModelIndex VariablesModel::parent(const QModelIndex& index) const {
     if(!index.isValid())
         return QModelIndex();
 
-    TreeItem* item = getItem(index)->parent;
+    TreeItem* item = getItem(index);
+    if(!item)
+        return {};
+    item = item->parent;
 
     if(item == m_root.get())
         return QModelIndex();

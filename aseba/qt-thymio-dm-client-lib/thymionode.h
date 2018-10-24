@@ -7,6 +7,8 @@
 #include <QUrl>
 #include "request.h"
 
+namespace mobsya {
+
 struct ThymioVariable {
     Q_GADGET
     Q_PROPERTY(QVariant value READ value)
@@ -28,7 +30,7 @@ private:
     bool m_constant;
 };
 
-namespace mobsya {
+
 class ThymioDeviceManagerClientEndpoint;
 class ThymioNode : public QObject {
     Q_OBJECT
@@ -111,6 +113,8 @@ public:
     Q_INVOKABLE Request setWatchVMExecutionStateEnabled(bool enabled);
 
     Q_INVOKABLE AsebaVMDescriptionRequest fetchAsebaVMDescription();
+
+    Q_INVOKABLE Request setVariabes(const VariableMap& variables);
 
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);

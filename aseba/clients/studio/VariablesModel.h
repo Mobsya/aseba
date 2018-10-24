@@ -1,5 +1,6 @@
 #pragma once
 #include <QAbstractItemModel>
+#include <QSortFilterProxyModel>
 #include <memory>
 #include "thymionode.h"
 
@@ -39,13 +40,12 @@ public:
 
 public Q_SLOTS:
     void setVariables(const mobsya::ThymioNode::VariableMap& map);
-    void setVariable(const QString& name, const ThymioVariable& v);
+    void setVariable(const QString& name, const mobsya::ThymioVariable& v);
     void removeVariable(const QString& name);
     void clear();
 
 Q_SIGNALS:
-    void publicRowsInserted();
-    void publicRowsRemoved();
+    void variableChanged(const QString& name, const mobsya::ThymioVariable& value);
 
 public:
     struct TreeItem;

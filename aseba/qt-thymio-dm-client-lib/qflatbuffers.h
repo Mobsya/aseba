@@ -4,6 +4,7 @@
 #include <QUuid>
 #include <QtEndian>
 #include <QVariant>
+#include <QtDebug>
 
 namespace mobsya {
 namespace qfb {
@@ -88,6 +89,64 @@ namespace qfb {
             return o;
         }
         return {};
+    }
+
+    namespace detail {
+        inline void to_flexbuffer(const QVariant& p, flexbuffers::Builder& b) {
+            switch(p.type()) {
+                case QVariant::Invalid: {
+                    b.Null();
+                    break;
+                }
+                case QVariant::Bool: {
+                    b.Bool(p.toBool());
+                    break;
+                }
+                case QVariant::Int:
+                case QVariant::LongLong: {
+                    b.Int(p.toInt());
+                    break;
+                }
+                case QVariant::UInt:
+                case QVariant::ULongLong: {
+                    b.UInt(p.toULongLong());
+                    break;
+                }
+                case QVariant::Double: {
+                    b.Double(p.toDouble());
+                    break;
+                }
+                case QVariant::String: {
+                    QByteArray utf8 = p.toString().toUtf8();
+                    b.String(utf8.data(), utf8.size());
+                    break;
+                }
+                case QVariant::List:
+                case QVariant::StringList: {
+                    auto start = b.StartVector();
+                    for(auto&& v : p.toList()) {
+                        to_flexbuffer(v, b);
+                    }
+                    b.EndVector(start, false, false);
+                    break;
+                }
+                case QVariant::Map: {
+                    auto start = b.StartMap();
+                    for(auto&& v : p.toMap().toStdMap()) {
+                        QByteArray utf8 = v.first.toUtf8();
+                        b.Key(utf8.data(), utf8.size());
+                        to_flexbuffer(v.second, b);
+                    }
+                    b.EndMap(start);
+                    break;
+                }
+                default: qWarning() << QStringLiteral("Cannot serialize %1 to flexbuffer").arg(p.typeName());
+            }
+        }
+    }  // namespace detail
+    inline void to_flexbuffer(const QVariant& p, flexbuffers::Builder& b) {
+        detail::to_flexbuffer(p, b);
+        b.Finish();
     }
 }  // namespace qfb
 }  // namespace mobsya

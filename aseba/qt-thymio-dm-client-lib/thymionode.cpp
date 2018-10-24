@@ -143,6 +143,11 @@ AsebaVMDescriptionRequest ThymioNode::fetchAsebaVMDescription() {
     return m_endpoint->fetchAsebaVMDescription(*this);
 }
 
+Request ThymioNode::setVariabes(const VariableMap& variables) {
+    return m_endpoint->setNodeVariabes(*this, variables);
+}
+
+
 void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg) {
     if(msg.error == fb::VMExecutionError::NoError) {
         m_executionState = msg.state;

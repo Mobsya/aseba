@@ -4,9 +4,9 @@
 #include <aseba/flatbuffers/fb_message_ptr.h>
 #include <QUrl>
 #include "request.h"
+#include "thymionode.h"
 
 namespace mobsya {
-class ThymioNode;
 class ThymioDeviceManagerClientEndpoint : public QObject,
                                           public std::enable_shared_from_this<ThymioDeviceManagerClientEndpoint> {
     Q_OBJECT
@@ -31,6 +31,7 @@ public:
                                  fb::CompilationOptions opts);
     Request set_watch_flags(const ThymioNode& node, int flags);
     AsebaVMDescriptionRequest fetchAsebaVMDescription(const ThymioNode& node);
+    Request setNodeVariabes(const ThymioNode& node, const ThymioNode::VariableMap& map);
 
 private Q_SLOTS:
     void onReadyRead();
