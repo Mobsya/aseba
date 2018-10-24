@@ -54,7 +54,7 @@ void NodeTabsManager::onNodeRemoved(std::shared_ptr<mobsya::ThymioNode> thymio) 
     if(it != m_tabs.end()) {
         (*it)->setThymio({});
         auto idx = QTabWidget::indexOf(*it);
-        QTabWidget::setTabEnabled(idx, false);
+        // QTabWidget::setTabEnabled(idx, false);
     }
 }
 
@@ -127,7 +127,7 @@ void NodeTabsManager::vmMemoryViewResize(NodeTab* tab) {
     // resize the vmMemoryView QTreeView, according to the global value
     for(int i = 0; i < 2; i++)
         if(vmMemorySize[i] != -1)
-            tab->vmMemoryView->header()->resizeSection(i, vmMemorySize[i]);
+            tab->vmVariablesView->header()->resizeSection(i, vmMemorySize[i]);
 }
 
 void NodeTabsManager::readSettings() {

@@ -84,6 +84,8 @@ add_executable(asebastudio WIN32
     HelpViewer.cpp
     ConfigDialog.cpp
     ModelAggregator.cpp
+    VariablesModel.h
+    VariablesModel.cpp
     ${resfiles}
 )
 
