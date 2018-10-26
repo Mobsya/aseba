@@ -147,6 +147,28 @@ Request ThymioNode::setVariabes(const VariableMap& variables) {
     return m_endpoint->setNodeVariabes(*this, variables);
 }
 
+Request ThymioNode::addEvent(const EventDescription& d) {
+    auto table = m_events_table;
+    auto it =
+        std::find_if(table.begin(), table.end(), [&d](const EventDescription& ed) { return d.name() == ed.name(); });
+    if(it != table.end()) {
+        *it = d;
+    } else {
+        table.append(d);
+    }
+    return m_endpoint->setNodeEventsTable(*this, table);
+}
+
+Request ThymioNode::removeEvent(const QString& name) {
+    auto table = m_events_table;
+    auto it =
+        std::find_if(table.begin(), table.end(), [&name](const EventDescription& ed) { return name == ed.name(); });
+    if(it != table.end()) {
+        table.erase(it);
+    }
+    return m_endpoint->setNodeEventsTable(*this, table);
+}
+
 
 void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg) {
     if(msg.error == fb::VMExecutionError::NoError) {
@@ -170,6 +192,11 @@ void ThymioNode::onVariablesChanged(VariableMap variables) {
 
 void ThymioNode::onEvents(VariableMap evs) {
     Q_EMIT events(evs);
+}
+
+void ThymioNode::onEventsTableChanged(const QVector<EventDescription>& events) {
+    m_events_table = events;
+    Q_EMIT eventsTableChanged(m_events_table);
 }
 
 

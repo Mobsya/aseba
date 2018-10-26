@@ -161,12 +161,6 @@ private Q_SLOTS:
     void compilationMessagesWasHidden();
     void showMemoryUsage(bool show);
 
-    void addEventNameClicked();
-    void removeEventNameClicked();
-    void eventsUpdated(bool indexChanged = false);
-    void eventsUpdatedDirty();
-    void eventsDescriptionsSelectionChanged();
-
     void resetStatusText();  // Jiwon
 
     void recompileAll();

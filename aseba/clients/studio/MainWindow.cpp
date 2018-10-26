@@ -797,64 +797,6 @@ void MainWindow::showMemoryUsage(bool show) {
     ConfigDialog::setShowMemoryUsage(show);
 }
 
-void MainWindow::addEventNameClicked() {
-    QString eventName;
-    int eventNbArgs = 0;
-
-    /* // prompt the user for the named value
-     const bool ok = NewNamedValueDialog::getNamedValue(&eventName, &eventNbArgs, 0, ASEBA_MAX_EVENT_ARG_COUNT,
-                                                        tr("Add a new event"), tr("Name:"),
-                                                        tr("Number of arguments", "For the newly created event"));
-
-     eventName = eventName.trimmed();
-     if(ok && !eventName.isEmpty()) {
-         if(commonDefinitions.events.contains(eventName.toStdWString())) {
-             QMessageBox::warning(this, tr("Event already exists"), tr("Event %0 already exists.").arg(eventName));
-         } else if(!QRegExp(R"(\w(\w|\.)*)").exactMatch(eventName) || eventName[0].isDigit()) {
-             QMessageBox::warning(this, tr("Invalid event name"),
-                                  tr("Event %0 has an invalid name. Valid names start with an "
-                                     "alphabetical character or an \"_\", and continue with any "
-                                     "number of alphanumeric characters, \"_\" and \".\"")
-                                      .arg(eventName));
-         } else {
-             eventsDescriptionsModel->addNamedValue(NamedValue(eventName.toStdWString(), eventNbArgs));
-         }
-     }*/
-}
-
-void MainWindow::removeEventNameClicked() {
-    /*    QModelIndex currentRow = eventsDescriptionsView->selectionModel()->currentIndex();
-        Q_ASSERT(currentRow.isValid());
-        // eventsDescriptionsModel->delNamedValue(currentRow.row());
-
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab)
-                tab->isSynchronized = false;
-        }*/
-}
-
-void MainWindow::eventsUpdated(bool indexChanged) {
-    if(indexChanged) {
-        // statusText->setText(tr("Desynchronised! Please reload."));
-        // statusText->show();
-    }
-    recompileAll();
-    updateWindowTitle();
-}
-
-void MainWindow::eventsUpdatedDirty() {
-    eventsUpdated(true);
-}
-
-void MainWindow::eventsDescriptionsSelectionChanged() {
-    // bool isSelected = eventsDescriptionsView->selectionModel()->currentIndex().isValid();
-    // removeEventNameButton->setEnabled(isSelected);
-    // sendEventButton->setEnabled(isSelected);
-#ifdef HAVE_QWT
-    plotEventButton->setEnabled(isSelected);
-#endif  // HAVE_QWT
-}
 
 void MainWindow::resetStatusText() {
     /*bool flag = true;

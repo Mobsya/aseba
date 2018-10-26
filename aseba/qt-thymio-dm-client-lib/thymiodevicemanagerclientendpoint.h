@@ -31,7 +31,8 @@ public:
                                  fb::CompilationOptions opts);
     Request set_watch_flags(const ThymioNode& node, int flags);
     AsebaVMDescriptionRequest fetchAsebaVMDescription(const ThymioNode& node);
-    Request setNodeVariabes(const ThymioNode& node, const ThymioNode::VariableMap& map);
+    Request setNodeVariabes(const ThymioNode& node, const ThymioNode::VariableMap& vars);
+    Request setNodeEventsTable(const ThymioNode& node, const QVector<EventDescription>& events);
 
 private Q_SLOTS:
     void onReadyRead();

@@ -72,14 +72,16 @@ protected Q_SLOTS:
     void pause();
     void step();
     void reboot();
+
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
-    void setVariable(const QString& k, const mobsya::ThymioVariable& value);
+    void onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events);
 
+    void setVariable(const QString& k, const mobsya::ThymioVariable& value);
     void resetVariables();
 
-
-    void setVariableValues(unsigned, const VariablesDataVector&);
+    void addEvent(const QString& name, int size);
+    void removeEvent(const QString& name);
 
     void editorContentChanged();
     void compileCodeOnTarget();
@@ -142,6 +144,10 @@ private:
     ConstantsWidget* m_constantsWidget;
 
 
+    FlatVariablesModel m_events_model;
+    EventsWidget* m_eventsWidget;
+
+
     QLabel* cursorPosText;
     QLabel* compilationResultImage;
     QLabel* compilationResultText;
@@ -168,9 +174,6 @@ private:
     TreeChainsawFilter* functionsFlatModel;
 
     QToolBox* toolBox;
-
-
-    EventsWidget* m_eventsWidget;
 
     QString lastCompiledSource;  //!< content of last source considered for compilation following
     QString lastLoadedSource;
