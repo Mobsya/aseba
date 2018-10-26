@@ -514,7 +514,7 @@ void aseba_node::cancel_pending_breakpoint_request() {
     m_pending_breakpoint_request.reset();
 }
 
-aseba_node::events_description_type aseba_node::events_description() const {
+aseba_node::events_table aseba_node::events_description() const {
     std::vector<mobsya::event> table;
     std::unique_lock<std::mutex> _(m_node_mutex);
     const auto& events = m_defs.events;
@@ -614,6 +614,19 @@ boost::system::error_code aseba_node::set_node_variables(const aseba_node::varia
     }
     return {};
 }
+
+boost::system::error_code aseba_node::set_node_events_table(const aseba_node::events_table& events) {
+    m_defs.events.clear();
+    for(const auto& event : events) {
+        if(event.type != event_type::aseba)
+            continue;
+        m_defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
+    }
+    send_events_table();
+    return {};
+}
+
+
 boost::system::error_code aseba_node::emit_events(const aseba_node::variables_map& map, write_callback&& cb) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     messages.reserve(map.size());

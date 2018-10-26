@@ -94,8 +94,8 @@ public:
     using variables_map = std::unordered_map<std::string, variable>;
     using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
 
-    using events_description_type = std::vector<mobsya::event>;
-    using event_changed_payload = variant_ns::variant<events_description_type, variables_map>;
+    using events_table = std::vector<mobsya::event>;
+    using event_changed_payload = variant_ns::variant<events_table, variables_map>;
     using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, event_changed_payload)>;
 
     using vm_state_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, vm_execution_state)>;
@@ -139,7 +139,7 @@ public:
     }
 
     variables_map variables() const;
-    events_description_type events_description() const;
+    events_table events_description() const;
     vm_execution_state execution_state() const;
 
     // Write n messages to the enpoint owning that node, then invoke cb when all message have been written
@@ -155,6 +155,8 @@ public:
     void set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb = {});
 
     boost::system::error_code set_node_variables(const aseba_node::variables_map& map, write_callback&& cb = {});
+    boost::system::error_code set_node_events_table(const aseba_node::events_table& events);
+
     boost::system::error_code emit_events(const aseba_node::variables_map& map, write_callback&& cb = {});
     void rename(const std::string& new_name);
     bool lock(void* app);
