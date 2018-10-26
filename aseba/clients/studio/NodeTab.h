@@ -108,8 +108,6 @@ private:
 
 
     void rehighlight();
-    void handleCompletion();
-
 
     // editor properties code
     bool setEditorProperty(const QString& property, const QVariant& value, unsigned line, bool removeOld = false);
