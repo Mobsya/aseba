@@ -193,6 +193,11 @@ public:
                 this->set_node_variables(vars_msg->request_id(), vars_msg->node_id(), variables(*vars_msg));
                 break;
             }
+            case mobsya::fb::AnyMessage::RegisterEvents: {
+                auto vars_msg = msg.as<fb::RegisterEvents>();
+                this->set_node_events_table(vars_msg->request_id(), vars_msg->node_id(), events_description(*vars_msg));
+                break;
+            }
             case mobsya::fb::AnyMessage::SendEvents: {
                 auto vars_msg = msg.as<fb::SendEvents>();
                 this->emit_events(vars_msg->request_id(), vars_msg->node_id(), events(*vars_msg));
@@ -325,7 +330,7 @@ private:
         variant_ns::visit(overloaded{[this, &node](const aseba_node::variables_map& map) {
                                          write_message(serialize_events(*node, map));
                                      },
-                                     [this, &node](const aseba_node::events_description_type& desc) {
+                                     [this, &node](const aseba_node::events_table& desc) {
                                          write_message(serialize_events_descriptions(*node, desc));
                                      }},
                           payload);
@@ -432,6 +437,23 @@ private:
         if(err) {
             mLogWarn("set_node_variables: invalid variables", id);
             write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+        }
+    }
+
+    void set_node_events_table(uint32_t request_id, const aseba_node_registery::node_id& id,
+                               aseba_node::events_table events) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("set_node_events_table: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto err = n->set_node_events_table(events);
+        if(err) {
+            mLogWarn("set_node_events_table: invalid events", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+        } else {
+            write_message(create_ack_response(request_id));
         }
     }
 
