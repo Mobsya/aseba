@@ -47,6 +47,7 @@ NodeTab::NodeTab(QWidget* parent)
             &NodeTab::onAsebaVMDescriptionChanged);
     connect(&m_vm_variables_model, &VariablesModel::variableChanged, this, &NodeTab::setVariable);
 
+
     /*  // create models
       vmFunctionsModel = new TargetFunctionsModel(target->getDescription(id), showHidden, this);
       vmMemoryModel = new TargetVariablesModel(this);
@@ -57,6 +58,9 @@ NodeTab::NodeTab(QWidget* parent)
     // create gui
     setupWidgets();
     setupConnections();
+
+
+    m_constantsWidget->setModel(&m_constants_model);
 
     // create aggregated models
     // local and global events
@@ -387,11 +391,21 @@ void NodeTab::onAsebaVMDescriptionChanged() {
 
 
 void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
-    m_vm_variables_model.setVariables(vars);
+    for(auto it = vars.begin(); it != vars.end(); ++it) {
+        if(it->isConstant()) {
+            it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
+                                   m_constants_model.addVariable(it.key(), it.value().value());
+        }
+        it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
+                               m_vm_variables_model.setVariable(it.key(), it.value());
+    }
 }
 
 void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value) {
     if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(true);
+        synchronizeVariablesToogle->setChecked(true);
+
         mobsya::ThymioNode::VariableMap map;
         map.insert(k, value);
         m_thymio->setVariabes(map);
@@ -689,7 +703,7 @@ void NodeTab::setupWidgets() {
     pauseButton = new QPushButton(QIcon(":/images/pause.png"), tr("Pause"));
 
     nextButton = new QPushButton(QIcon(":/images/step.png"), tr("Next"));
-    // nextButton->setEnabled(false);
+    nextButton->setEnabled(false);
 
     synchronizeVariablesToogle = new QCheckBox(tr("Synchronize"));
 
@@ -783,6 +797,18 @@ void NodeTab::setupWidgets() {
     editorWidget->setLayout(editorLayout);
     addWidget(editorWidget);
     setSizes(QList<int>() << 270 << 500);
+
+
+    QVBoxLayout* rightPaneLayout = new QVBoxLayout;
+
+    m_constantsWidget = new ConstantsWidget();
+    m_eventsWidget = new EventsWidget;
+    rightPaneLayout->addWidget(m_constantsWidget);
+    rightPaneLayout->addWidget(m_eventsWidget);
+
+    QWidget* rightPane = new QWidget();
+    rightPane->setLayout(rightPaneLayout);
+    addWidget(rightPane);
 }
 
 void NodeTab::setupConnections() {
@@ -828,6 +854,11 @@ void NodeTab::setupConnections() {
     connect(this, &NodeTab::compilationFailed, [this] { runButton->setEnabled(false); });
     connect(this, &NodeTab::compilationSucceed, [this] {
         runButton->setEnabled(m_thymio->vmExecutionState() != mobsya::ThymioNode::VMExecutionState::Running);
+    });
+
+
+    connect(m_constantsWidget, &ConstantsWidget::constantModified, [this](const auto& name, const QVariant& value) {
+        this->setVariable(name, {value, true});
     });
 
 

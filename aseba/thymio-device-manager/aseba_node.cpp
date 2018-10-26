@@ -568,10 +568,32 @@ static tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_va
 boost::system::error_code aseba_node::set_node_variables(const aseba_node::variables_map& map, write_callback&& cb) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     messages.reserve(map.size());
-
+    variables_map modified;
     {
         std::unique_lock<std::mutex> _(m_node_mutex);
         for(auto&& var : map) {
+            if(var.second.is_constant) {
+                auto n = Aseba::UTF8ToWString(var.first);
+                const auto& p = var.second.value;
+                auto it = std::find_if(m_defs.constants.begin(), m_defs.constants.end(),
+                                       [n](const Aseba::NamedValue& v) { return n == v.name; });
+                if(it != m_defs.constants.end()) {
+                    m_defs.constants.erase(it);
+                    modified.emplace(var.first, var.second);
+                }
+                if(p.is_null())
+                    continue;
+                if(p.is_integral()) {
+                    auto v = numeric_cast<int16_t>(property::integral_t(p));
+                    if(v) {
+                        m_defs.constants.emplace_back(n, *v);
+                        modified.emplace(var.first, var.second);
+                        continue;
+                    }
+                }
+                return make_error_code(error_code::incompatible_variable_type);
+            }
+
             auto it = std::find_if(m_variables.begin(), m_variables.end(),
                                    [name = var.first](const aseba_vm_variable& v) { return v.name == name; });
             if(it == std::end(m_variables)) {
@@ -587,9 +609,11 @@ boost::system::error_code aseba_node::set_node_variables(const aseba_node::varia
         }
     }
     write_messages(std::move(messages), std::move(cb));
+    if(!modified.empty()) {
+        m_variables_changed_signal(shared_from_this(), modified);
+    }
     return {};
 }
-
 boost::system::error_code aseba_node::emit_events(const aseba_node::variables_map& map, write_callback&& cb) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     messages.reserve(map.size());

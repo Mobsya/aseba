@@ -78,63 +78,6 @@ void CompilationLogDialog::hideEvent(QHideEvent* event) {
         emit hidden();
 }
 
-NewNamedValueDialog::NewNamedValueDialog(QString* name, int* value, int min, int max) : name(name), value(value) {
-    // create the widgets
-    label1 = new QLabel(tr("Name", "Name of the named value (can be a constant, event,...)"));
-    line1 = new QLineEdit(*name);
-    label2 = new QLabel(tr("Default description", "When no description is given for the named value"));
-    line2 = new QSpinBox();
-    line2->setRange(min, max);
-    line2->setValue(*value);
-    QLabel* lineHelp = new QLabel(QStringLiteral("(%1 ... %2)").arg(min).arg(max));
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-
-    // create the layout
-    auto* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(label1);
-    mainLayout->addWidget(line1);
-    mainLayout->addWidget(label2);
-    mainLayout->addWidget(line2);
-    mainLayout->addWidget(lineHelp);
-    mainLayout->addWidget(buttonBox);
-    setLayout(mainLayout);
-
-    // set modal
-    setModal(true);
-
-    // connections
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &NewNamedValueDialog::okSlot);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &NewNamedValueDialog::cancelSlot);
-}
-
-bool NewNamedValueDialog::getNamedValue(QString* name, int* value, int min, int max, QString title, QString valueName,
-                                        QString valueDescription) {
-    NewNamedValueDialog dialog(name, value, min, max);
-    dialog.setWindowTitle(title);
-    dialog.label1->setText(valueName);
-    dialog.label2->setText(valueDescription);
-    dialog.resize(500, 0);  // make it wide enough
-
-    int ret = dialog.exec();
-
-    if(ret)
-        return true;
-    else
-        return false;
-}
-
-void NewNamedValueDialog::okSlot() {
-    *name = line1->text();
-    *value = line2->value();
-    accept();
-}
-
-void NewNamedValueDialog::cancelSlot() {
-    *name = QLatin1String("");
-    *value = -1;
-    reject();
-}
-
 MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QVector<QUuid>& targetUuids,
                        QWidget* parent)
     : QMainWindow(parent) {
@@ -932,38 +875,6 @@ void MainWindow::resetStatusText() {
     }*/
 }
 
-void MainWindow::addConstantClicked() {
-    bool ok;
-    QString constantName;
-    int constantValue = 0;
-
-    // prompt the user for the named value
-    ok = NewNamedValueDialog::getNamedValue(&constantName, &constantValue, -32768, 32767, tr("Add a new constant"),
-                                            tr("Name:"), tr("Value", "Value assigned to the constant"));
-
-    if(ok && !constantName.isEmpty()) {
-        /*if(constantsDefinitionsModel->validateName(constantName)) {
-            constantsDefinitionsModel->addNamedValue(NamedValue(constantName.toStdWString(), constantValue));
-            recompileAll();
-            updateWindowTitle();
-        }/*/
-    }
-}
-
-void MainWindow::removeConstantClicked() {
-    // QModelIndex currentRow = constantsView->selectionModel()->currentIndex();
-    // Q_ASSERT(currentRow.isValid());
-    // constantsDefinitionsModel->delNamedValue(currentRow.row());
-
-    recompileAll();
-    updateWindowTitle();
-}
-
-void MainWindow::constantsSelectionChanged() {
-    // bool isSelected = constantsView->selectionModel()->currentIndex().isValid();
-    // removeConstantButton->setEnabled(isSelected);
-}
-
 void MainWindow::recompileAll() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
@@ -1025,78 +936,24 @@ void MainWindow::setupWidgets() {
     splitter->addWidget(nodes);
     setCentralWidget(splitter);
 
-    addConstantButton = new QPushButton(QPixmap(QString(":/images/add.png")), QLatin1String(""));
-    removeConstantButton = new QPushButton(QPixmap(QString(":/images/remove.png")), QLatin1String(""));
-    addConstantButton->setToolTip(tr("Add a new constant"));
-    removeConstantButton->setToolTip(tr("Remove this constant"));
-    removeConstantButton->setEnabled(false);
-
-    /*constantsView = new FixedWidthTableView;
-    constantsView->setShowGrid(false);
-    constantsView->verticalHeader()->hide();
-    constantsView->horizontalHeader()->hide();
-    // constantsView->setModel(constantsDefinitionsModel);
-    constantsView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    constantsView->setSelectionMode(QAbstractItemView::SingleSelection);
-    constantsView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    constantsView->setDragDropMode(QAbstractItemView::InternalMove);
-    constantsView->setDragEnabled(true);
-    constantsView->setDropIndicatorShown(true);
-    constantsView->setItemDelegateForColumn(1, new SpinBoxDelegate(-32768, 32767, this));
-    constantsView->setMinimumHeight(100);
-    // constantsView->setSecondColumnLongestContent("-88888##");
-    // constantsView->resizeRowsToContents();
-
-
-    auto* constantsLayout = new QGridLayout;
-    constantsLayout->addWidget(new QLabel(tr("<b>Constants</b>")), 0, 0);
-    constantsLayout->setColumnStretch(0, 1);
-    constantsLayout->addWidget(addConstantButton, 0, 1);
-    constantsLayout->setColumnStretch(1, 0);
-    constantsLayout->addWidget(removeConstantButton, 0, 2);
-    constantsLayout->setColumnStretch(2, 0);
-    constantsLayout->addWidget(constantsView, 1, 0, 1, 3);
+    /*
     // setColumnStretch
 
-    /*QHBoxLayout* constantsAddRemoveLayout = new QHBoxLayout;;
+    */
+
+    /*QHBoxLayout* constantsAddRemoveLayout = new QHBoxLayout;
+    ;
     constantsAddRemoveLayout->addStretch();
     addConstantButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
     constantsAddRemoveLayout->addWidget(addConstantButton);
     removeConstantButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
     removeConstantButton->setEnabled(false);
     constantsAddRemoveLayout->addWidget(removeConstantButton);
+    */
 
-    eventsDockLayout->addLayout(constantsAddRemoveLayout);
-    eventsDockLayout->addWidget(constantsView, 1);*/
+    // eventsDockLayout->addLayout(constantsAddRemoveLayout);
+    // eventsDockLayout->addWidget(constantsView, 1);
 
-
-    /*eventsDockLayout->addWidget(new QLabel(tr("<b>Events</b>")));
-
-    QHBoxLayout* eventsAddRemoveLayout = new QHBoxLayout;;
-    eventsAddRemoveLayout->addStretch();
-    addEventNameButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
-    eventsAddRemoveLayout->addWidget(addEventNameButton);
-    removeEventNameButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
-    removeEventNameButton->setEnabled(false);
-    eventsAddRemoveLayout->addWidget(removeEventNameButton);
-    sendEventButton = new QPushButton(QPixmap(QString(":/images/newmsg.png")), "");
-    sendEventButton->setEnabled(false);
-    eventsAddRemoveLayout->addWidget(sendEventButton);
-
-    eventsDockLayout->addLayout(eventsAddRemoveLayout);
-
-    eventsDockLayout->addWidget(eventsDescriptionsView, 1);*/
-
-
-    addEventNameButton = new QPushButton(QPixmap(QString(":/images/add.png")), QLatin1String(""));
-    removeEventNameButton = new QPushButton(QPixmap(QString(":/images/remove.png")), QLatin1String(""));
-    removeEventNameButton->setEnabled(false);
-    sendEventButton = new QPushButton(QPixmap(QString(":/images/newmsg.png")), QLatin1String(""));
-    sendEventButton->setEnabled(false);
-
-    addEventNameButton->setToolTip(tr("Add a new event"));
-    removeEventNameButton->setToolTip(tr("Remove this event"));
-    sendEventButton->setToolTip(tr("Send this event"));
 
 #ifdef HAVE_QWT
     plotEventButton = new QPushButton(QPixmap(QString(":/images/plot.png")), "");
@@ -1104,76 +961,6 @@ void MainWindow::setupWidgets() {
     plotEventButton->setToolTip(tr("Plot this event"));
 #endif  // HAVE_QWT
 
-    /*eventsDescriptionsView = new FixedWidthTableView;
-    eventsDescriptionsView->setShowGrid(false);
-    eventsDescriptionsView->verticalHeader()->hide();
-    eventsDescriptionsView->horizontalHeader()->hide();
-    // eventsDescriptionsView->setModel(eventsDescriptionsModel);
-    eventsDescriptionsView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    eventsDescriptionsView->setSelectionMode(QAbstractItemView::SingleSelection);
-    eventsDescriptionsView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    eventsDescriptionsView->setDragDropMode(QAbstractItemView::InternalMove);
-    eventsDescriptionsView->setDragEnabled(true);
-    eventsDescriptionsView->setDropIndicatorShown(true);
-    eventsDescriptionsView->setItemDelegateForColumn(1, new SpinBoxDelegate(0, ASEBA_MAX_EVENT_ARG_COUNT, this));
-    eventsDescriptionsView->setMinimumHeight(100);
-    // eventsDescriptionsView->setSecondColumnLongestContent("255###");
-    eventsDescriptionsView->resizeRowsToContents();
-    eventsDescriptionsView->setContextMenuPolicy(Qt::CustomContextMenu);*/
-
-    /*auto* eventsLayout = new QGridLayout;
-    eventsLayout->addWidget(new QLabel(tr("<b>Global Events</b>")), 0, 0, 1, 4);
-    eventsLayout->addWidget(addEventNameButton, 1, 0);
-    // eventsLayout->setColumnStretch(2, 0);
-    eventsLayout->addWidget(removeEventNameButton, 1, 1);
-    // eventsLayout->setColumnStretch(3, 0);
-    // eventsLayout->setColumnStretch(0, 1);
-    eventsLayout->addWidget(sendEventButton, 1, 2);
-// eventsLayout->setColumnStretch(1, 0);
-#ifdef HAVE_QWT
-    eventsLayout->addWidget(plotEventButton, 1, 3);
-#endif  // HAVE_QWT
-    eventsLayout->addWidget(eventsDescriptionsView, 2, 0, 1, 4);*/
-
-    /*logger = new QListWidget;
-    logger->setMinimumSize(80,100);
-    logger->setSelectionMode(QAbstractItemView::NoSelection);
-    eventsDockLayout->addWidget(logger, 3);
-    clearLogger = new QPushButton(tr("Clear"));
-    eventsDockLayout->addWidget(clearLogger);*/
-
-    logger = new QListWidget;
-    logger->setMinimumSize(80, 100);
-    logger->setSelectionMode(QAbstractItemView::NoSelection);
-    clearLogger = new QPushButton(tr("Clear"));
-    // statusText = new QLabel("Test");
-    // statusText->hide();
-
-    /*auto* loggerLayout = new QVBoxLayout;
-    loggerLayout->addWidget(statusText);
-    loggerLayout->addWidget(logger);
-    loggerLayout->addWidget(clearLogger);
-    */
-
-    // panel
-    // auto* rightPanelSplitter = new QSplitter(Qt::Vertical);
-
-    // QWidget* constantsWidget = new QWidget;
-    // constantsWidget->setLayout(constantsLayout);
-    // rightPanelSplitter->addWidget(constantsWidget);
-
-    // QWidget* eventsWidget = new QWidget;
-    // eventsWidget->setLayout(eventsLayout);
-    // rightPanelSplitter->addWidget(eventsWidget);
-
-    // QWidget* loggerWidget = new QWidget;
-    // loggerWidget->setLayout(loggerLayout);
-    // rightPanelSplitter->addWidget(loggerWidget);
-
-    // main window
-
-    // splitter->addWidget(rightPanelSplitter);
-    splitter->setSizes(QList<int>() << 800 << 200);
 
     // dialog box
     compilationMessageBox = new CompilationLogDialog(this);
@@ -1187,7 +974,7 @@ void MainWindow::setupWidgets() {
 void MainWindow::setupConnections() {
     // general connections
     connect(nodes, &QTabWidget::currentChanged, this, &MainWindow::tabChanged);
-    connect(logger, &QListWidget::itemDoubleClicked, this, &MainWindow::logEntryDoubleClicked);
+    // connect(logger, &QListWidget::itemDoubleClicked, this, &MainWindow::logEntryDoubleClicked);
     connect(ConfigDialog::getInstance(), &ConfigDialog::settingsChanged, this, &MainWindow::applySettings);
 
     // global actions
@@ -1197,9 +984,9 @@ void MainWindow::setupConnections() {
     connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
 
     // events
-    connect(addEventNameButton, &QAbstractButton::clicked, this, &MainWindow::addEventNameClicked);
-    connect(removeEventNameButton, &QAbstractButton::clicked, this, &MainWindow::removeEventNameClicked);
-    connect(sendEventButton, &QAbstractButton::clicked, this, &MainWindow::sendEvent);
+    // connect(addEventNameButton, &QAbstractButton::clicked, this, &MainWindow::addEventNameClicked);
+    // connect(removeEventNameButton, &QAbstractButton::clicked, this, &MainWindow::removeEventNameClicked);
+    // connect(sendEventButton, &QAbstractButton::clicked, this, &MainWindow::sendEvent);
 #ifdef HAVE_QWT
     connect(plotEventButton, SIGNAL(clicked()), SLOT(plotEvent()));
 #endif  // HAVE_QWT
@@ -1209,7 +996,7 @@ void MainWindow::setupConnections() {
     connect(eventsDescriptionsView, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(sendEventIf(const QModelIndex&)));
     connect(eventsDescriptionsView, SIGNAL(clicked(const QModelIndex&)),
             SLOT(toggleEventVisibleButton(const QModelIndex&)));
-    /*connect(eventsDescriptionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+    connect(eventsDescriptionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             SLOT(eventsUpdated()));
     connect(eventsDescriptionsModel, SIGNAL(publicRowsInserted()), SLOT(eventsUpdated()));
     connect(eventsDescriptionsModel, SIGNAL(publicRowsRemoved()), SLOT(eventsUpdatedDirty()));
@@ -1217,12 +1004,12 @@ void MainWindow::setupConnections() {
             SLOT(eventContextMenuRequested(const QPoint&)));*/
 
     // logger
-    connect(clearLogger, &QAbstractButton::clicked, logger, &QListWidget::clear);
-    connect(clearLogger, &QAbstractButton::clicked, this, &MainWindow::clearAllExecutionError);
+    // connect(clearLogger, &QAbstractButton::clicked, logger, &QListWidget::clear);
+    // connect(clearLogger, &QAbstractButton::clicked, this, &MainWindow::clearAllExecutionError);
 
     // constants
-    connect(addConstantButton, &QAbstractButton::clicked, this, &MainWindow::addConstantClicked);
-    connect(removeConstantButton, &QAbstractButton::clicked, this, &MainWindow::removeConstantClicked);
+    // connect(addConstantButton, &QAbstractButton::clicked, this, &MainWindow::addConstantClicked);
+    // connect(removeConstantButton, &QAbstractButton::clicked, this, &MainWindow::removeConstantClicked);
     // connect(constantsView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     //        SLOT(constantsSelectionChanged()));
     // connect(constantsDefinitionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),

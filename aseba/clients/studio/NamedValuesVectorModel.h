@@ -30,12 +30,12 @@ namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-class NamedValuesVectorModel : public QAbstractTableModel {
+class FlatVariablesModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-    NamedValuesVectorModel(QString tooltipText, QObject* parent = nullptr);
-    NamedValuesVectorModel(QObject* parent = nullptr);
+    FlatVariablesModel(QString tooltipText, QObject* parent = nullptr);
+    FlatVariablesModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -49,40 +49,19 @@ public:
         privateMimeType = mime;
     }
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
-    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
-                      const QModelIndex& parent) override;
-    Qt::DropActions supportedDropActions() const override;
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-    bool checkIfModified() {
-        return wasModified;
-    }
-    void clearWasModified() {
-        wasModified = false;
-    }
-    void setEditable(bool editable);
-
-    virtual bool moveRow(int oldRow, int& newRow);
-
-    virtual bool validateName(const QString& name) const;
 
 public slots:
-    void addNamedValue(const mobsya::AsebaVMFunctionDescription& namedValue, int index = -1);
-    void delNamedValue(int index);
+    void addVariable(const QString& name, const QVariant& value);
+    void removeVariable(const QString& name);
     void clear();
 
-signals:
-    void publicRowsInserted();
-    void publicRowsRemoved();
-
 protected:
-    QVector<mobsya::AsebaVMFunctionDescription> namedValues;
-    bool wasModified;
+    QVector<QPair<QString, QVariant>> m_values;
     QString privateMimeType;
 
 private:
-    QString tooltipText;
-    bool editable;
 };
 
 /*class ConstantsModel : public NamedValuesVectorModel {
