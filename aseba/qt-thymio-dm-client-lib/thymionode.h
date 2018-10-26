@@ -31,6 +31,29 @@ private:
 };
 
 
+struct EventDescription {
+    Q_GADGET
+    Q_PROPERTY(QString name READ size)
+    Q_PROPERTY(int size READ size)
+
+public:
+    EventDescription() : m_size(0) {}
+    EventDescription(QString name, int size) : m_name(name), m_size(size) {}
+
+    QString name() const {
+        return m_name;
+    }
+
+    int size() const {
+        return m_size;
+    }
+
+private:
+    QString m_name;
+    int m_size;
+};
+
+
 class ThymioDeviceManagerClientEndpoint;
 class ThymioNode : public QObject {
     Q_OBJECT
@@ -74,6 +97,7 @@ Q_SIGNALS:
     void vmExecutionPaused(int line = 0);
     void variablesChanged(const VariableMap& variables);
     void events(const VariableMap& variables);
+    void eventsTableChanged(const QVector<EventDescription>& events);
 
 public:
     QUuid uuid() const;
@@ -116,10 +140,14 @@ public:
 
     Q_INVOKABLE Request setVariabes(const VariableMap& variables);
 
+    Q_INVOKABLE Request addEvent(const EventDescription& d);
+    Q_INVOKABLE Request removeEvent(const QString& name);
+
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
     void onVariablesChanged(VariableMap variables);
     void onEvents(VariableMap variables);
+    void onEventsTableChanged(const QVector<EventDescription>& events);
 
 
     Request updateWatchedInfos();
@@ -131,6 +159,7 @@ private:
     NodeCapabilities m_capabilities;
     NodeType m_type;
     WatchFlags m_watched_infos;
+    QVector<EventDescription> m_events_table;
 
     friend ThymioDeviceManagerClientEndpoint;
 };

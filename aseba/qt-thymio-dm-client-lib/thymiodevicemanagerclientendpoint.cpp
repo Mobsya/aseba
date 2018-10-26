@@ -205,6 +205,27 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             node->onEvents(std::move(events));
             break;
         }
+        case mobsya::fb::AnyMessage::EventsDescriptionChanged: {
+            auto message = msg.as<mobsya::fb::EventsDescriptionChanged>();
+            if(!message || !message->events())
+                break;
+            auto id = qfb::uuid(message->node_id()->UnPack());
+            auto node = m_nodes.value(id);
+            if(!node)
+                break;
+            QVector<mobsya::EventDescription> events;
+            for(const auto& event : *(message->events())) {
+                if(!event)
+                    continue;
+                auto name = qfb::as_qstring(event->name());
+                if(name.isEmpty())
+                    continue;
+                auto size = event->fixed_sized();
+                events.append(EventDescription(name, size));
+            }
+            node->onEventsTableChanged(std::move(events));
+            break;
+        }
 
         case mobsya::fb::AnyMessage::NodeAsebaVMDescription: {
             auto message = msg.as<mobsya::fb::NodeAsebaVMDescription>();
@@ -401,6 +422,23 @@ Request ThymioDeviceManagerClientEndpoint::setNodeVariabes(const ThymioNode& nod
     auto uuidOffset = serialize_uuid(builder, node.uuid());
     auto varsOffset = detail::serialize_variables(builder, vars);
     write(wrap_fb(builder, fb::CreateSetNodeVariables(builder, r.id(), uuidOffset, varsOffset)));
+    return r;
+}
+
+Request ThymioDeviceManagerClientEndpoint::setNodeEventsTable(const ThymioNode& node,
+                                                              const QVector<EventDescription>& events) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    std::vector<flatbuffers::Offset<fb::EventDescription>> descOffsets;
+    descOffsets.reserve(events.size());
+    int i = 0;
+    for(auto&& desc : events) {
+        auto str_offset = qfb::add_string(builder, desc.name());
+        auto descTable = fb::CreateEventDescription(builder, str_offset, desc.size(), i++);
+        descOffsets.push_back(descTable);
+    }
+    write(wrap_fb(builder, fb::CreateRegisterEvents(builder, r.id(), uuidOffset, builder.CreateVector(descOffsets))));
     return r;
 }
 
