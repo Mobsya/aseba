@@ -3,6 +3,9 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QHeaderView>
+#include <QLineEdit>
+#include <QInputDialog>
+#include <QMessageBox>
 
 #include <aseba/common/consts.h>
 #include "CustomWidgets.h"
@@ -22,7 +25,6 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_view->setShowGrid(false);
     m_view->verticalHeader()->hide();
     m_view->horizontalHeader()->hide();
-    // m_view->setModel(eventsDescriptionsModel);
     m_view->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_view->setSelectionMode(QAbstractItemView::SingleSelection);
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -31,7 +33,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_view->setDropIndicatorShown(true);
     m_view->setItemDelegateForColumn(1, new SpinBoxDelegate(0, ASEBA_MAX_EVENT_ARG_COUNT, this));
     m_view->setMinimumHeight(100);
-    // m_view->setSecondColumnLongestContent("255###");
+    m_view->setSecondColumnLongestContent("255###");
     m_view->resizeRowsToContents();
     m_view->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -43,9 +45,9 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_removeEventButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
     m_removeEventButton->setEnabled(false);
     eventsAddRemoveLayout->addWidget(m_removeEventButton);
-    auto sendEventButton = new QPushButton(QPixmap(QString(":/images/newmsg.png")), "");
-    sendEventButton->setEnabled(false);
-    eventsAddRemoveLayout->addWidget(sendEventButton);
+    m_sendEventButton = new QPushButton(QPixmap(QString(":/images/newmsg.png")), "");
+    m_sendEventButton->setEnabled(false);
+    eventsAddRemoveLayout->addWidget(m_sendEventButton);
 
     eventsDockLayout->addLayout(eventsAddRemoveLayout);
 
@@ -54,17 +56,13 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
 
     addEventNameButton->setToolTip(tr("Add a new event"));
     m_removeEventButton->setToolTip(tr("Remove this event"));
-    sendEventButton->setToolTip(tr("Send this event"));
+    m_sendEventButton->setToolTip(tr("Send this event"));
 
     auto* eventsLayout = new QGridLayout;
     eventsLayout->addWidget(new QLabel(tr("<b>Global Events</b>")), 0, 0, 1, 4);
     eventsLayout->addWidget(addEventNameButton, 1, 0);
-    // eventsLayout->setColumnStretch(2, 0);
     eventsLayout->addWidget(m_removeEventButton, 1, 1);
-    // eventsLayout->setColumnStretch(3, 0);
-    // eventsLayout->setColumnStretch(0, 1);
-    eventsLayout->addWidget(sendEventButton, 1, 2);
-    // eventsLayout->setColumnStretch(1, 0);
+    eventsLayout->addWidget(m_sendEventButton, 1, 2);
     eventsLayout->addWidget(m_view, 2, 0, 1, 4);
 
 
@@ -80,6 +78,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
 
     connect(addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
     connect(m_removeEventButton, &QPushButton::clicked, this, &EventsWidget::removeEvent);
+    connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendEvent);
 }
 
 void EventsWidget::setModel(QAbstractItemModel* model) {
@@ -112,8 +111,51 @@ void EventsWidget::removeEvent() {
 void EventsWidget::eventsSelectionChanged() {
     bool isSelected = m_view->selectionModel()->currentIndex().isValid();
     m_removeEventButton->setEnabled(isSelected);
+    m_sendEventButton->setEnabled(isSelected);
 }
 
+void EventsWidget::sendEvent() {
+    auto r = m_view->selectionModel()->selectedRows();
+    if(r.empty())
+        return;
+    auto name = r.first().data(Qt::DisplayRole).toString();
+    auto count = m_view->selectionModel()->selectedRows(1).first().data(Qt::DisplayRole).toInt();
+    QVariantList data;
+
+    if(count > 0) {
+        QString argList;
+        while(true) {
+            bool ok;
+            argList = QInputDialog::getText(this, tr("Specify event arguments"),
+                                            tr("Please specify the %0 arguments of event %1").arg(count).arg(name),
+                                            QLineEdit::Normal, argList, &ok);
+            if(ok) {
+                QStringList args = argList.split(QRegExp("[\\s,]+"), QString::SkipEmptyParts);
+                if(args.size() != count) {
+                    QMessageBox::warning(
+                        this, tr("Wrong number of arguments"),
+                        tr("You gave %0 arguments where event %1 requires %2").arg(args.size()).arg(name).arg(count));
+                    continue;
+                }
+                for(int i = 0; i < args.size(); i++) {
+                    data.append(args.at(i).toShort(&ok));
+                    if(!ok) {
+                        QMessageBox::warning(this, tr("Invalid value"),
+                                             tr("Invalid value for argument %0 of event %1").arg(i).arg(name));
+                        break;
+                    }
+                }
+                if(ok)
+                    break;
+            } else
+                return;
+        }
+    }
+    Q_EMIT eventEmitted(name, QVariant::fromValue(data));
+
+    //  target->sendEvent(eventId, data);
+    //  userEvent(eventId, data);
+}
 
 // void MainWindow::addEventNameClicked() {
 

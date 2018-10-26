@@ -150,8 +150,6 @@ private Q_SLOTS:
 
     void uploadReadynessChanged();
     void tabChanged(int);
-    void sendEvent();
-    void sendEventIf(const QModelIndex&);
     void toggleEventVisibleButton(const QModelIndex&);
     void plotEvent();
     void eventContextMenuRequested(const QPoint& pos);

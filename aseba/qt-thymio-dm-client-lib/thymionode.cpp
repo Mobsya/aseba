@@ -169,6 +169,12 @@ Request ThymioNode::removeEvent(const QString& name) {
     return m_endpoint->setNodeEventsTable(*this, table);
 }
 
+Request ThymioNode::emitEvent(const QString& name, const QVariant& value) {
+    VariableMap map;
+    map.insert(name, ThymioVariable(value));
+    return m_endpoint->emitNodeEvents(*this, map);
+}
+
 
 void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg) {
     if(msg.error == fb::VMExecutionError::NoError) {

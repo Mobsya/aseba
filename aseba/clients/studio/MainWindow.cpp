@@ -326,6 +326,9 @@ bool MainWindow::save() {
 }
 
 bool MainWindow::saveFile(const QString& previousFileName) {
+    return false;
+
+
     /*    QString fileName = previousFileName;
 
         if(fileName.isEmpty())
@@ -629,56 +632,6 @@ void MainWindow::uploadReadynessChanged() {
      loadAllAct->setEnabled(ready);
      writeAllBytecodesAct->setEnabled(ready);
      */
-}
-
-void MainWindow::sendEvent() {
-    /*    QModelIndex currentRow = eventsDescriptionsView->selectionModel()->currentIndex();
-        Q_ASSERT(currentRow.isValid());
-
-        const unsigned eventId = currentRow.row();
-        const QString eventName = QString::fromStdWString(commonDefinitions.events[eventId].name);
-        const int argsCount = commonDefinitions.events[eventId].value;
-        VariablesDataVector data(argsCount);
-
-        if(argsCount > 0) {
-            QString argList;
-            while(true) {
-                bool ok;
-                argList =
-                    QInputDialog::getText(this, tr("Specify event arguments"),
-                                          tr("Please specify the %0 arguments of event
-       %1").arg(argsCount).arg(eventName), QLineEdit::Normal, argList, &ok); if(ok) { QStringList args =
-       argList.split(QRegExp("[\\s,]+"), QString::SkipEmptyParts); if(args.size() != argsCount) {
-                        QMessageBox::warning(this, tr("Wrong number of arguments"),
-                                             tr("You gave %0 arguments where event %1 requires %2")
-                                                 .arg(args.size())
-                                                 .arg(eventName)
-                                                 .arg(argsCount));
-                        continue;
-                    }
-                    for(int i = 0; i < args.size(); i++) {
-                        data[i] = args.at(i).toShort(&ok);
-                        if(!ok) {
-                            QMessageBox::warning(this, tr("Invalid value"),
-                                                 tr("Invalid value for argument %0 of event %1").arg(i).arg(eventName));
-                            break;
-                        }
-                    }
-                    if(ok)
-                        break;
-                } else
-                    return;
-            }
-        }
-
-        target->sendEvent(eventId, data);
-        userEvent(eventId, data);
-    */
-}
-
-void MainWindow::sendEventIf(const QModelIndex& index) {
-    if(index.column() == 0)
-        sendEvent();
 }
 
 void MainWindow::toggleEventVisibleButton(const QModelIndex& index) {
