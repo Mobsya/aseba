@@ -2,7 +2,8 @@
 #include <QMimeData>
 #include <algorithm>
 #include <QDataStream>
-
+#include <QPalette>
+#include <QApplication>
 
 namespace Aseba {
 struct VariablesModel::TreeItem {
@@ -12,6 +13,11 @@ struct VariablesModel::TreeItem {
     bool modified = false;
     TreeItem* parent = nullptr;
     std::vector<std::unique_ptr<TreeItem>> children;
+
+    bool isHidden() const {
+        auto k = key.toString();
+        return k.startsWith("_") || k.contains("._");
+    }
 
 
     bool has_aseba_integer_value() const {
@@ -31,9 +37,19 @@ struct VariablesModel::TreeItem {
 };
 
 namespace {
+
+    bool lessThan(const QVariant& a, const QVariant& b) {
+        auto sa = a.toString();
+        auto sb = b.toString();
+        auto ah = sa.startsWith("_") || sa.contains("._");
+        auto bh = sb.startsWith("_") || sb.contains("._");
+        if(ah == bh)
+            return a < b;
+        return bh;
+    }
     VariablesModel::TreeItem* child_by_name(const VariablesModel::TreeItem& item, const QVariant& key) {
         auto it = std::lower_bound(item.children.begin(), item.children.end(), key,
-                                   [](const auto& ptr, const QVariant& key) { return ptr->key < key; });
+                                   [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
         return it != item.children.end() && (*it)->key == key ? it->get() : nullptr;
     }
 
@@ -48,7 +64,7 @@ namespace {
 
     VariablesModel::TreeItem* find_or_create_child(VariablesModel::TreeItem& item, const QVariant& key) {
         auto it = std::lower_bound(item.children.begin(), item.children.end(), key,
-                                   [&key](const auto& ptr, const QVariant& key) { return ptr->key < key; });
+                                   [&key](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
         if(it != item.children.end() && (*it)->key == key)
             return it->get();
 
@@ -109,6 +125,14 @@ QVariant VariablesModel::data(const QModelIndex& index, int role) const {
     auto item = getItem(index);
     if(!item)
         return {};
+
+    if(role == HiddenRole) {
+        return item->isHidden();
+    }
+
+    if(role == Qt::ForegroundRole && item->isHidden())
+        return QApplication::palette().color(QPalette::Disabled, QPalette::Text);
+
     if(index.column() == 0 && (role == Qt::DisplayRole || role == Qt::EditRole)) {
         const auto& k = item->key;
         if(k.type() == QVariant::UInt || k.type() == QVariant::Int)
@@ -199,7 +223,6 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
 
     if(created) {
         beginInsertRows(parent, index.row(), index.row());
-        beginInsertColumns(parent, 0, 2);
     }
 
     if(!node)
@@ -212,7 +235,6 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
     node->value = v;
 
     if(created) {
-        endInsertColumns();
         endInsertRows();
     }
 

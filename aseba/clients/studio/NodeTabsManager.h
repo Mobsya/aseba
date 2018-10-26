@@ -26,6 +26,9 @@ protected slots:
     void tabChanged(int index);
     void onTabClosed(int index);
 
+Q_SIGNALS:
+    void tabAdded(int index);
+
 protected:
     void resetHighlight(int index);
     void tabInserted(int index) override;

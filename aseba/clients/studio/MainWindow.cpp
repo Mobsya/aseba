@@ -140,6 +140,7 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
     : QMainWindow(parent) {
 
     nodes = new NodeTabsManager(client);
+    connect(nodes, &NodeTabsManager::tabAdded, this, &MainWindow::tabAdded);
 
     // create target
 
@@ -175,6 +176,15 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
 }
 
 MainWindow::~MainWindow() {}
+
+
+void MainWindow::tabAdded(int index) {
+    NodeTab* tab = qobject_cast<NodeTab*>(nodes->widget(index));
+    if(!tab)
+        return;
+    connect(showHiddenAct, &QAction::toggled, tab, &NodeTab::showHidden);
+    tab->showHidden(showHiddenAct->isChecked());
+}
 
 void MainWindow::about() {
     const AboutBox::Parameters aboutParameters = {
@@ -649,20 +659,6 @@ void MainWindow::stopAll() {
             if(tab)
                 target->stop(tab->nodeId());
         }
-    */
-}
-
-void MainWindow::showHidden(bool show) {
-    /*
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab) {
-                tab->vmFunctionsModel->recreateTreeFromDescription(show);
-                tab->showHidden = show;
-                tab->updateHidden();
-            }
-        }
-        ConfigDialog::setShowHidden(show);
     */
 }
 
@@ -1490,7 +1486,6 @@ void MainWindow::setupMenu() {
 
     showHiddenAct = new QAction(tr("S&how hidden variables and functions"), this);
     showHiddenAct->setCheckable(true);
-    connect(showHiddenAct, &QAction::toggled, this, &MainWindow::showHidden);
 
     showLineNumbers = new QAction(tr("Show &Line Numbers"), this);
     showLineNumbers->setShortcut(tr("F11", "View|Show Line Numbers"));

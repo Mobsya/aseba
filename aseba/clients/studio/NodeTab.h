@@ -98,6 +98,8 @@ protected Q_SLOTS:
 
     void compilationCompleted();
 
+    void showHidden(bool show);
+
 private:
     QVector<unsigned> breakpoints() const;
     void updateBreakpoints();
@@ -143,9 +145,10 @@ private:
 
     // TargetSubroutinesModel* vmSubroutinesModel;
 
-    VariablesModel vmVariablesModel;
-    QTreeView* vmVariablesView;
-    QLineEdit* vmMemoryFilter;
+    VariablesModel m_vm_variables_model;
+    VariablesFilterModel m_vm_variables_filter_model;
+    QTreeView* m_vm_variables_view;
+    QLineEdit* m_vm_variables_filter_input;
 
     QTreeView* vmFunctionsView;
     DraggableListWidget* vmLocalEvents;
@@ -165,7 +168,6 @@ private:
     //!< a textChanged signal
     int errorPos;   //!< position of last error, -1 if compilation was success
     int currentPC;  //!< current program counter
-    bool showHidden;
 };
 
 }  // namespace Aseba
