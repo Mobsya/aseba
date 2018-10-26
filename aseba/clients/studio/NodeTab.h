@@ -8,6 +8,9 @@
 
 #include "ModelAggregator.h"
 #include "CustomWidgets.h"
+#include "ConstantsWidget.h"
+#include "EventsWidget.h"
+
 #include <aseba/qt-thymio-dm-client-lib/thymionode.h>
 
 namespace Aseba {
@@ -129,6 +132,16 @@ private:
     mobsya::BreakpointsRequestWatcher* m_breakpoints_watcher;
     mobsya::AsebaVMDescriptionRequestWatcher* m_aseba_vm_description_watcher;
 
+    VariablesModel m_vm_variables_model;
+    VariablesFilterModel m_vm_variables_filter_model;
+    QTreeView* m_vm_variables_view;
+    QLineEdit* m_vm_variables_filter_input;
+
+
+    FlatVariablesModel m_constants_model;
+    ConstantsWidget* m_constantsWidget;
+
+
     QLabel* cursorPosText;
     QLabel* compilationResultImage;
     QLabel* compilationResultText;
@@ -143,10 +156,6 @@ private:
 
     // TargetSubroutinesModel* vmSubroutinesModel;
 
-    VariablesModel m_vm_variables_model;
-    VariablesFilterModel m_vm_variables_filter_model;
-    QTreeView* m_vm_variables_view;
-    QLineEdit* m_vm_variables_filter_input;
 
     QTreeView* vmFunctionsView;
     DraggableListWidget* vmLocalEvents;
@@ -159,6 +168,9 @@ private:
     TreeChainsawFilter* functionsFlatModel;
 
     QToolBox* toolBox;
+
+
+    EventsWidget* m_eventsWidget;
 
     QString lastCompiledSource;  //!< content of last source considered for compilation following
     QString lastLoadedSource;

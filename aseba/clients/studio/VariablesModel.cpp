@@ -159,6 +159,9 @@ Qt::ItemFlags VariablesModel::flags(const QModelIndex& index) const {
         return flags;
 
     auto item = getItem(index);
+    if(!item) {
+        return {};
+    }
 
     if(index.column() == 0 && item->constant) {
         flags |= Qt::ItemIsEditable;
@@ -234,10 +237,6 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
     }
     node->value = v;
 
-    if(created) {
-        endInsertRows();
-    }
-
     if(v.type() == QVariant::List || v.type() == QVariant::StringList) {
         int idx = 0;
         for(const auto& e : v.toList()) {
@@ -259,13 +258,19 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
 
     auto end = getIndex(key, parent, 1);
     dataChanged(index, end);
+    if(created) {
+        endInsertRows();
+    }
 }
 
 void VariablesModel::removeVariable(const QString& name) {
     auto item = m_root.get();
     if(!item)
         return;
+    auto index = getIndex(name, {}, 0);
+    beginRemoveRows({}, index.row(), index.row());
     remove_child(*item, name);
+    endRemoveRows();
 }
 
 void VariablesModel::clear() {

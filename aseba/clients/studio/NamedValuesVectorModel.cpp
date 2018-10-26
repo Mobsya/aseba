@@ -27,52 +27,43 @@ namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-NamedValuesVectorModel::NamedValuesVectorModel(QString tooltipText, QObject* parent)
-    : QAbstractTableModel(parent), wasModified(false), tooltipText(std::move(tooltipText)), editable(false) {}
+FlatVariablesModel::FlatVariablesModel(QObject* parent) : QAbstractTableModel(parent) {}
 
-NamedValuesVectorModel::NamedValuesVectorModel(QObject* parent)
-    : QAbstractTableModel(parent), wasModified(false), editable(false) {}
-
-int NamedValuesVectorModel::rowCount(const QModelIndex&) const {
-    return namedValues.size();
+int FlatVariablesModel::rowCount(const QModelIndex&) const {
+    return m_values.size();
 }
 
-int NamedValuesVectorModel::columnCount(const QModelIndex&) const {
-    return 1;
+int FlatVariablesModel::columnCount(const QModelIndex&) const {
+    return 2;
 }
 
-QVariant NamedValuesVectorModel::data(const QModelIndex& index, int role) const {
-    if(!index.isValid())
+QVariant FlatVariablesModel::data(const QModelIndex& index, int role) const {
+    if(!index.isValid() || index.row() >= m_values.size())
         return QVariant();
 
+    auto item = m_values[index.row()];
     if(role == Qt::DisplayRole || role == Qt::EditRole) {
         if(index.column() == 0)
-            return namedValues.at(index.row()).name();
-    } else if(role == Qt::ToolTipRole && !tooltipText.isEmpty()) {
-        return tooltipText.arg(index.row());
+            return item.first;
+        if(index.column() == 1)
+            return item.second;
     }
     return QVariant();
 }
 
-QVariant NamedValuesVectorModel::headerData(int, Qt::Orientation, int) const {
+QVariant FlatVariablesModel::headerData(int, Qt::Orientation, int) const {
     return QVariant();
 }
 
-Qt::ItemFlags NamedValuesVectorModel::flags(const QModelIndex& index) const {
+Qt::ItemFlags FlatVariablesModel::flags(const QModelIndex& index) const {
     if(!index.isValid())
         return Qt::ItemIsDropEnabled;
 
     Qt::ItemFlags commonFlags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
-    if(index.column() == 0) {
-        if(editable)
-            return commonFlags | Qt::ItemIsEditable;
-        else
-            return commonFlags;
-    } else
-        return commonFlags | Qt::ItemIsEditable;
+    return commonFlags;
 }
 
-QStringList NamedValuesVectorModel::mimeTypes() const {
+QStringList FlatVariablesModel::mimeTypes() const {
     QStringList types;
     types << QStringLiteral("text/plain");
     if(privateMimeType != QLatin1String(""))
@@ -80,7 +71,7 @@ QStringList NamedValuesVectorModel::mimeTypes() const {
     return types;
 }
 
-QMimeData* NamedValuesVectorModel::mimeData(const QModelIndexList& indexes) const {
+QMimeData* FlatVariablesModel::mimeData(const QModelIndexList& indexes) const {
     auto* mimeData = new QMimeData();
 
     // "text/plain"
@@ -111,39 +102,7 @@ QMimeData* NamedValuesVectorModel::mimeData(const QModelIndexList& indexes) cons
     return mimeData;
 }
 
-bool NamedValuesVectorModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
-                                          const QModelIndex& parent) {
-    if(action == Qt::IgnoreAction)
-        return true;
-
-    if(!data->hasFormat(privateMimeType))
-        return false;
-
-    // decode mime data
-    QByteArray itemData = data->data(privateMimeType);
-    QDataStream dataStream(&itemData, QIODevice::ReadOnly);
-    QString name;
-    int value;
-    dataStream >> name >> value;
-
-    // search for this element
-    int oldIndex = 0;
-    for(auto it = namedValues.begin(); it != namedValues.end(); it++, oldIndex++)
-        if(it->name() == name) {
-            // found! move it
-            moveRow(oldIndex, row);
-            return true;
-        }
-
-    // element not found
-    return false;
-}
-
-Qt::DropActions NamedValuesVectorModel::supportedDropActions() const {
-    return Qt::CopyAction | Qt::MoveAction;
-}
-
-bool NamedValuesVectorModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+bool FlatVariablesModel::setData(const QModelIndex& index, const QVariant& value, int role) {
     /*if(index.isValid() && role == Qt::EditRole) {
         if(index.column() == 0) {
             if(!validateName(value.toString()))
@@ -163,103 +122,42 @@ bool NamedValuesVectorModel::setData(const QModelIndex& index, const QVariant& v
     return false;
 }
 
-void NamedValuesVectorModel::setEditable(bool editable) {
-    this->editable = editable;
-}
-
-void NamedValuesVectorModel::addNamedValue(const mobsya::AsebaVMFunctionDescription& namedValue, int index) {
-    Q_ASSERT(index < (int)namedValues.size());
-
-    if(index < 0) {
-        // insert at the end
-        beginInsertRows(QModelIndex(), namedValues.size(), namedValues.size());
-        namedValues.push_back(namedValue);
-        endInsertRows();
-    } else {
-        beginInsertRows(QModelIndex(), index, index);
-        auto it = namedValues.begin() + index;
-        namedValues.insert(it, namedValue);
-        endInsertRows();
+void FlatVariablesModel::addVariable(const QString& name, const QVariant& value) {
+    auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
+                               [&name](const auto& v, const QString& n) { return v.first < n; });
+    auto dest = std::distance(m_values.begin(), it);
+    if(it != m_values.end() && it->first == name) {
+        it->second = value;
+        Q_EMIT dataChanged(index(dest, 1), index(dest, 1));
+        return;
     }
 
-    wasModified = true;
-    emit publicRowsInserted();
+    beginInsertRows({}, dest, dest);
+    m_values.insert(it, {name, value});
+    endInsertRows();
 }
 
-void NamedValuesVectorModel::delNamedValue(int index) {
-    Q_ASSERT(index < (int)namedValues.size());
-
-    beginRemoveRows(QModelIndex(), index, index);
-
-    namedValues.erase(namedValues.begin() + index);
-    wasModified = true;
-
+void FlatVariablesModel::removeVariable(const QString& name) {
+    auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
+                               [&name](const auto& v, const QString& n) { return v.first < n; });
+    if(it == std::end(m_values))
+        return;
+    if(it->first != name)
+        return;
+    auto dest = std::distance(m_values.begin(), it);
+    beginRemoveRows({}, dest, dest);
+    m_values.erase(it);
     endRemoveRows();
-    emit publicRowsRemoved();
 }
 
-bool NamedValuesVectorModel::moveRow(int oldRow, int& newRow) {
-    if(oldRow == newRow || namedValues.size() <= 1)
-        return false;
-
-    // get values
-    auto value = namedValues[oldRow];
-
-    delNamedValue(oldRow);
-
-    // update index for the new model
-    if(newRow > oldRow && newRow > 0)
-        newRow--;
-
-    addNamedValue(value, newRow);
-
-    return true;
-}
-
-void NamedValuesVectorModel::clear() {
-    if(namedValues.empty())
+void FlatVariablesModel::clear() {
+    if(m_values.empty())
         return;
 
-    beginRemoveRows(QModelIndex(), 0, namedValues.size() - 1);
-
-    namedValues.clear();
-    wasModified = true;
-
-    endRemoveRows();
+    beginResetModel();
+    m_values.clear();
+    endResetModel();
 }
-
-//! Validate name, returns true if valid, false and displays an error message otherwise
-bool NamedValuesVectorModel::validateName(const QString& name) const {
-    return true;
-}
-
-// ****************************************************************************** //
-
-/*ConstantsModel::ConstantsModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent)
-    : NamedValuesVectorModel(namedValues, tooltipText, parent) {}
-
-ConstantsModel::ConstantsModel(NamedValuesVector* namedValues, QObject* parent)
-    : NamedValuesVectorModel(namedValues, parent) {}
-
-//! Name is valid if not already existing and not a keyword
-bool ConstantsModel::validateName(const QString& name) const {
-    Q_ASSERT(namedValues);
-
-    /*if(namedValues->contains(name.toStdWString())) {
-        QMessageBox::warning(nullptr, tr("Constant already defined"), tr("Constant %0 is already defined.").arg(name));
-        return false;
-    }
-
-    if(Compiler::isKeyword(name.toStdWString())) {
-        QMessageBox::warning(nullptr, tr("The name is a keyword"),
-                             tr("The name <tt>%0</tt> cannot be used as a constant, because it is "
-                                "a language keyword.")
-                                 .arg(name));
-        return false;
-    }
-
-    return true;
-}*/
 
 // ****************************************************************************** //
 

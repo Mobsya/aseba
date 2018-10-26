@@ -62,6 +62,10 @@ add_executable(asebastudio WIN32
     NamedValuesVectorModel.h
     ClickableLabel.h
     CustomDelegate.h
+    ConstantsWidget.h
+    ConstantsWidget.cpp
+    EventsWidget.h
+    EventsWidget.cpp
     FindDialog.h
    # EventViewer.h
     HelpViewer.h
@@ -86,6 +90,8 @@ add_executable(asebastudio WIN32
     ModelAggregator.cpp
     VariablesModel.h
     VariablesModel.cpp
+    NewNamedValueDialog.h
+    NewNamedValueDialog.cpp
     ${resfiles}
 )
 

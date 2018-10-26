@@ -37,19 +37,19 @@ void property_to_flexbuffer(const property& p, flexbuffers::Builder& b) {
 
 tl::expected<property, error_code> flexbuffer_to_property(const flexbuffers::Reference& r) {
     if(r.IsIntOrUint()) {
-        return property{r.As<property::integral_t>()};
+        return r.As<property::integral_t>();
     }
     if(r.IsFloat()) {
-        return property{r.As<property::floating_t>()};
+        return r.As<property::floating_t>();
     }
     if(r.IsBool()) {
-        return property{r.AsBool()};
+        return r.AsBool();
     }
     if(r.IsNull()) {
         return property{};
     }
     if(r.IsString()) {
-        return property{r.AsString().c_str()};
+        return r.AsString().c_str();
     }
     if(r.IsVector()) {
         auto v = r.AsVector();
