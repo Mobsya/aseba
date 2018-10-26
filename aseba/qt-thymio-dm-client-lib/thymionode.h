@@ -142,6 +142,7 @@ public:
 
     Q_INVOKABLE Request addEvent(const EventDescription& d);
     Q_INVOKABLE Request removeEvent(const QString& name);
+    Q_INVOKABLE Request emitEvent(const QString& name, const QVariant& value);
 
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);

@@ -103,6 +103,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         node->setWatchVariablesEnabled(true);
         node->setWatchEventsEnabled(true);
         node->setWatchVMExecutionStateEnabled(true);
+        m_vm_variables_model.clear();
 
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
@@ -440,6 +441,12 @@ void NodeTab::removeEvent(const QString& name) {
     if(!m_thymio)
         return;
     m_thymio->removeEvent(name);
+}
+
+void NodeTab::emitEvent(const QString& name, const QVariant& value) {
+    if(!m_thymio)
+        return;
+    m_thymio->emitEvent(name, value);
 }
 
 
@@ -888,6 +895,7 @@ void NodeTab::setupConnections() {
     });
     connect(m_eventsWidget, &EventsWidget::eventAdded, this, &NodeTab::addEvent);
     connect(m_eventsWidget, &EventsWidget::eventRemoved, this, &NodeTab::removeEvent);
+    connect(m_eventsWidget, &EventsWidget::eventEmitted, this, &NodeTab::emitEvent);
 
     // memory
     // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),

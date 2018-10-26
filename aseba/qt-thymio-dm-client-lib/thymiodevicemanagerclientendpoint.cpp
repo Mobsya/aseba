@@ -442,4 +442,14 @@ Request ThymioDeviceManagerClientEndpoint::setNodeEventsTable(const ThymioNode& 
     return r;
 }
 
+Request ThymioDeviceManagerClientEndpoint::emitNodeEvents(const ThymioNode& node,
+                                                          const ThymioNode::VariableMap& events) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto eventsOffset = detail::serialize_variables(builder, events);
+    write(wrap_fb(builder, fb::CreateSendEvents(builder, r.id(), uuidOffset, eventsOffset)));
+    return r;
+}
+
 }  // namespace mobsya

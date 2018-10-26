@@ -225,17 +225,22 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
     auto index = getIndex(key, parent, 0);
 
     if(created) {
+        emit layoutAboutToBeChanged();
         beginInsertRows(parent, index.row(), index.row());
-    }
-
-    if(!node)
         node = find_or_create_child(item, key);
-
+    }
     node->constant = constant;
+
     if(!created && node->value == v) {
         return;
     }
     node->value = v;
+
+    if(created) {
+        endInsertRows();
+        layoutChanged();
+    }
+
 
     if(v.type() == QVariant::List || v.type() == QVariant::StringList) {
         int idx = 0;
@@ -257,15 +262,15 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
     }
 
     auto end = getIndex(key, parent, 1);
+
     dataChanged(index, end);
-    if(created) {
-        endInsertRows();
-    }
 }
 
 void VariablesModel::removeVariable(const QString& name) {
     auto item = m_root.get();
     if(!item)
+        return;
+    if(!child_by_name(*item, name))
         return;
     auto index = getIndex(name, {}, 0);
     beginRemoveRows({}, index.row(), index.row());
@@ -324,7 +329,7 @@ QModelIndex VariablesModel::getIndex(const QVariant& key, const QModelIndex& par
         return {};
     }
     auto it = std::lower_bound(item->children.begin(), item->children.end(), key,
-                               [](const auto& ptr, const QVariant& key) { return ptr->key < key; });
+                               [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
     return index(std::distance(item->children.begin(), it), col, parent);
 }
 

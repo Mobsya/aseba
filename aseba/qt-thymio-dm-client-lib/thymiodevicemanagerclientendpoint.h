@@ -33,6 +33,7 @@ public:
     AsebaVMDescriptionRequest fetchAsebaVMDescription(const ThymioNode& node);
     Request setNodeVariabes(const ThymioNode& node, const ThymioNode::VariableMap& vars);
     Request setNodeEventsTable(const ThymioNode& node, const QVector<EventDescription>& events);
+    Request emitNodeEvents(const ThymioNode& node, const ThymioNode::VariableMap& vars);
 
 private Q_SLOTS:
     void onReadyRead();

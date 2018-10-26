@@ -178,7 +178,6 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
                                           compilation_callback&& cb) {
 
     std::unique_lock<std::mutex> _(m_node_mutex);
-    m_defs.clear();
     m_breakpoints.clear();
     cancel_pending_step_request();
     cancel_pending_breakpoint_request();
