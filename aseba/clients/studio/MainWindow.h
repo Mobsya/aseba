@@ -140,6 +140,8 @@ Q_SIGNALS:
     void MainWindowClosed();
 
 private Q_SLOTS:
+    void tabAdded(int index);
+
     void about();
     bool newFile();
     void openFile(const QString& path = QString());
@@ -157,7 +159,6 @@ private Q_SLOTS:
     void zoomIn();
     void zoomOut();
     void showSettings();
-    void showHidden(bool show);
 
     void toggleBreakpoint();
     void clearAllBreakpoints();
@@ -205,7 +206,7 @@ private Q_SLOTS:
 
     void openToUrlFromAction() const;
 
-public slots:
+public Q_SLOTS:
     void applySettings();
 
 private:

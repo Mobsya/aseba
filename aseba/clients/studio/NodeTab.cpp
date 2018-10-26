@@ -37,11 +37,15 @@ NodeTab::NodeTab(QWidget* parent)
     , currentPC(-1) {
     errorPos = -1;
 
+
+    m_vm_variables_filter_model.setSourceModel(&m_vm_variables_model);
+    m_vm_variables_filter_model.setFilterCaseSensitivity(Qt::CaseInsensitive);
+
     connect(m_compilation_watcher, &mobsya::CompilationRequestWatcher::finished, this, &NodeTab::compilationCompleted);
     connect(m_breakpoints_watcher, &mobsya::BreakpointsRequestWatcher::finished, this, &NodeTab::breakpointsChanged);
     connect(m_aseba_vm_description_watcher, &mobsya::AsebaVMDescriptionRequestWatcher::finished, this,
             &NodeTab::onAsebaVMDescriptionChanged);
-    connect(&vmVariablesModel, &VariablesModel::variableChanged, this, &NodeTab::setVariable);
+    connect(&m_vm_variables_model, &VariablesModel::variableChanged, this, &NodeTab::setVariable);
 
     /*  // create models
       vmFunctionsModel = new TargetFunctionsModel(target->getDescription(id), showHidden, this);
@@ -126,7 +130,7 @@ void NodeTab::reset() {
 }
 
 void NodeTab::resetVariables() {
-    vmVariablesModel.clear();
+    m_vm_variables_model.clear();
     if(m_thymio) {
         m_thymio->setWatchVariablesEnabled(false);
         if(synchronizeVariablesToogle->isChecked())
@@ -383,7 +387,7 @@ void NodeTab::onAsebaVMDescriptionChanged() {
 
 
 void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
-    vmVariablesModel.setVariables(vars);
+    m_vm_variables_model.setVariables(vars);
 }
 
 void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value) {
@@ -464,23 +468,6 @@ void NodeTab::editorContentChanged() {
 void NodeTab::showMemoryUsage(bool show) {
     memoryUsageText->setVisible(show);
 }
-
-void NodeTab::updateHidden() {
-    /*    const QString& filterString(vmMemoryFilter->text());
-        const QRegExp filterRegexp(filterString);
-        // Quick hack to hide hidden variable in the treeview and not in vmMemoryModel
-        // FIXME use a model proxy to perform this task
-        for(int i = 0; i < vmMemoryModel->rowCount(QModelIndex()); i++) {
-            const QString name(vmMemoryModel->data(vmMemoryModel->index(i, 0), Qt::DisplayRole).toString());
-            bool hidden(false);
-            if((!showHidden && ((name.left(1) == "_") || name.contains(QString("._")))) ||
-               (!filterString.isEmpty() && name.indexOf(filterRegexp) == -1))
-                hidden = true;
-            vmMemoryView->setRowHidden(i, QModelIndex(), hidden);
-        }
-    */
-}
-
 
 //! When code is changed or target is rebooted, remove breakpoints from target but keep them locally
 //! as pending for next code load
@@ -791,32 +778,33 @@ void NodeTab::setupWidgets() {
 
 
     // memory
-    vmVariablesView = new QTreeView;
-    vmVariablesView->setModel(&vmVariablesModel);
-    // vmVariablesView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    vmVariablesView->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
-    vmVariablesView->setSelectionMode(QAbstractItemView::SingleSelection);
-    vmVariablesView->setSelectionBehavior(QAbstractItemView::SelectItems);
-    vmVariablesView->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::DoubleClicked);
-    vmVariablesView->setDragDropMode(QAbstractItemView::DragOnly);
-    vmVariablesView->setDragEnabled(true);
-    vmVariablesView->setHeaderHidden(true);
-    vmVariablesView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_vm_variables_view = new QTreeView;
+    m_vm_variables_view->setModel(&m_vm_variables_filter_model);
+    m_vm_variables_view->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
+    m_vm_variables_view->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_vm_variables_view->setSelectionBehavior(QAbstractItemView::SelectItems);
+    m_vm_variables_view->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::DoubleClicked);
+    m_vm_variables_view->setDragDropMode(QAbstractItemView::DragOnly);
+    m_vm_variables_view->setDragEnabled(true);
+    m_vm_variables_view->setHeaderHidden(true);
+    m_vm_variables_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-    auto* memoryLayout = new QVBoxLayout;
+    auto* localVariablesAndEventLayout = new QVBoxLayout;
     auto* memorySubLayout = new QHBoxLayout;
     memorySubLayout->addWidget(new QLabel(tr("<b>Variables</b>")));
     memorySubLayout->addStretch();
     memorySubLayout->addWidget(synchronizeVariablesToogle);
-    memoryLayout->addLayout(memorySubLayout);
-    memoryLayout->addWidget(vmVariablesView);
+    localVariablesAndEventLayout->addLayout(memorySubLayout);
+    localVariablesAndEventLayout->addWidget(m_vm_variables_view);
     memorySubLayout = new QHBoxLayout;
     QLabel* filterLabel(new QLabel(tr("F&ilter:")));
     memorySubLayout->addWidget(filterLabel);
-    vmMemoryFilter = new QLineEdit;
-    filterLabel->setBuddy(vmMemoryFilter);
-    memorySubLayout->addWidget(vmMemoryFilter);
-    memoryLayout->addLayout(memorySubLayout);
+    m_vm_variables_filter_input = new QLineEdit;
+    filterLabel->setBuddy(m_vm_variables_filter_input);
+    memorySubLayout->addWidget(m_vm_variables_filter_input);
+    localVariablesAndEventLayout->addLayout(memorySubLayout);
+    connect(m_vm_variables_filter_input, &QLineEdit::textChanged, &m_vm_variables_filter_model,
+            [this](const QString& text) { m_vm_variables_filter_model.setFilterWildcard("*" + text + "*"); });
 
     // functions
     vmFunctionsView = new QTreeView;
@@ -828,7 +816,6 @@ void NodeTab::setupWidgets() {
     vmFunctionsView->setSelectionBehavior(QAbstractItemView::SelectItems);
     vmFunctionsView->setDragDropMode(QAbstractItemView::DragOnly);
     vmFunctionsView->setDragEnabled(true);
-    // vmFunctionsView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     vmFunctionsView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     vmFunctionsView->setHeaderHidden(true);
     // local events
@@ -842,7 +829,7 @@ void NodeTab::setupWidgets() {
     toolBox->addItem(vmFunctionsView, tr("Native Functions"));
     toolBox->addItem(vmLocalEvents, tr("Local Events"));
 
-    memoryLayout->addWidget(toolBox);
+    localVariablesAndEventLayout->addWidget(toolBox);
 
     // panel
     auto* panelSplitter = new QSplitter(Qt::Vertical);
@@ -852,9 +839,9 @@ void NodeTab::setupWidgets() {
     panelSplitter->addWidget(buttonsWidget);
     panelSplitter->setCollapsible(0, false);
 
-    QWidget* memoryWidget = new QWidget;
-    memoryWidget->setLayout(memoryLayout);
-    panelSplitter->addWidget(memoryWidget);
+    QWidget* localVariablesAndEvent = new QWidget;
+    localVariablesAndEvent->setLayout(localVariablesAndEventLayout);
+    panelSplitter->addWidget(localVariablesAndEvent);
     panelSplitter->setStretchFactor(1, 9);
     panelSplitter->setStretchFactor(2, 4);
 
@@ -933,6 +920,10 @@ void NodeTab::synchronizeVariablesChecked(bool checked) {
     if(m_thymio) {
         m_thymio->setWatchVariablesEnabled(checked);
     }
+}
+
+void NodeTab::showHidden(bool show) {
+    m_vm_variables_filter_model.showHidden(show);
 }
 
 

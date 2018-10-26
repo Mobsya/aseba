@@ -10,6 +10,10 @@ class VariablesModel : public QAbstractItemModel {
     Q_OBJECT
 
 public:
+    enum Role {
+        HiddenRole = Qt::UserRole + 1,
+    };
+
     VariablesModel(QObject* parent = nullptr);
     ~VariablesModel() override;
 
@@ -61,6 +65,30 @@ private:
     QString privateMimeType;
 
 private:
+};
+
+class VariablesFilterModel : public QSortFilterProxyModel {
+    using QSortFilterProxyModel::QSortFilterProxyModel;
+
+protected:
+    bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
+        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+        auto name = sourceModel()->data(index, Qt::DisplayRole).toString();
+        auto hidden = sourceModel()->data(index, VariablesModel::HiddenRole).toBool();
+        if(!m_show_hidden && hidden)
+            return false;
+        auto r = filterRegExp();
+        return r.isEmpty() || r.exactMatch(name);
+    }
+
+public:
+    void showHidden(bool show) {
+        m_show_hidden = show;
+        invalidateFilter();
+    }
+
+private:
+    bool m_show_hidden = false;
 };
 
 }  // namespace Aseba

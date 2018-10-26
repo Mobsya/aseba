@@ -90,8 +90,9 @@ void NodeTabsManager::tabChanged(int index) {
     resetHighlight(index);
 }
 
-void NodeTabsManager::tabInserted(int) {
+void NodeTabsManager::tabInserted(int index) {
     QTabWidget::setTabsClosable(count() > 1);
+    Q_EMIT tabAdded(index);
 }
 void NodeTabsManager::tabRemoved(int) {
     QTabWidget::setTabsClosable(count() > 1);
