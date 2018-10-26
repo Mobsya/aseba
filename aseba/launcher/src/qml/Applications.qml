@@ -15,14 +15,14 @@ ListModel {
     }
 
     function launch_studio(device) {
-        var program = Utils.search_program("thymiovpl")
+        var program = Utils.search_program("asebastudio")
         if(!program)
             return false;
         return Utils.launch_process(program, ["--uuid", device.id])
     }
 
     function launch_vplClassic(device) {
-        var program = Utils.search_program("asebastudio")
+        var program = Utils.search_program("thymiovpl")
         if(!program)
             return false;
         return Utils.launch_process(program, ["--uuid", device.id])
@@ -41,11 +41,11 @@ ListModel {
         return launch_functions[appId]
     }
 
-    ListElement {
-        appId:"vplClassic"
-        name: "VPL"
-        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
-    }
+//    ListElement {
+//        appId:"vplClassic"
+//        name: "VPL"
+//        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
+//    }
     //ListElement {
     //    name: "Scatch"
     //    animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
