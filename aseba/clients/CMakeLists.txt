@@ -19,7 +19,9 @@ if(NOT ANDROID)
 
         if(Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
             set(HAS_STUDIO ON)
+            add_subdirectory(qtcommon)
             add_subdirectory(studio)
+            add_subdirectory(vpl)
         endif()
 
 

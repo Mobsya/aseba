@@ -41,7 +41,6 @@
 #include <cassert>
 #include <QTabWidget>
 #include <QDesktopServices>
-#include <QtConcurrentRun>
 #include <QSvgRenderer>
 #include <utility>
 #include <iostream>
