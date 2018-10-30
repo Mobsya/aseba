@@ -19,7 +19,7 @@
 
 #include "ThymioVPLStandalone.h"
 #include "AeslEditor.h"
-#include "plugins/ThymioVPL/ThymioVisualProgramming.h"
+#include "ThymioVisualProgramming.h"
 #include "common/consts.h"
 #include "common/productids.h"
 #include "translations/CompilerTranslator.h"
@@ -30,6 +30,7 @@
 #include <QSplitter>
 #include <QShortcut>
 #include <QDesktopServices>
+#include <QLabel>
 
 namespace Aseba {
 /** \addtogroup studio */
@@ -40,41 +41,18 @@ using namespace std;
 ThymioVPLStandaloneInterface::ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone)
     : vplStandalone(vplStandalone) {}
 
-Target* ThymioVPLStandaloneInterface::getTarget() {
-    return vplStandalone->target.get();
-}
-
-unsigned ThymioVPLStandaloneInterface::getNodeId() const {
-    return vplStandalone->id;
-}
-
-unsigned ThymioVPLStandaloneInterface::getProductId() const {
-    return ASEBA_PID_THYMIO2;
-}
-
-void ThymioVPLStandaloneInterface::setCommonDefinitions(const CommonDefinitions& commonDefinitions) {
-    // ignore this for VPL Standalone, as it is done once in the main app
-}
 
 void ThymioVPLStandaloneInterface::displayCode(const QList<QString>& code, int elementToHighlight) {
     vplStandalone->editor->replaceAndHighlightCode(code, elementToHighlight);
 }
 
 void ThymioVPLStandaloneInterface::loadAndRun() {
-    getTarget()->uploadBytecode(vplStandalone->id, vplStandalone->bytecode);
-    getTarget()->run(vplStandalone->id);
+    //    getTarget()->uploadBytecode(vplStandalone->id, vplStandalone->bytecode);
+    //    getTarget()->run(vplStandalone->id);
 }
 
 void ThymioVPLStandaloneInterface::stop() {
-    getTarget()->stop(vplStandalone->id);
-}
-
-TargetVariablesModel* ThymioVPLStandaloneInterface::getVariablesModel() {
-    return vplStandalone->variablesModel;
-}
-
-void ThymioVPLStandaloneInterface::setVariableValues(unsigned addr, const VariablesDataVector& data) {
-    getTarget()->setVariables(vplStandalone->id, addr, data);
+    //    getTarget()->stop(vplStandalone->id);
 }
 
 bool ThymioVPLStandaloneInterface::saveFile(bool as) {
@@ -103,26 +81,17 @@ QString ThymioVPLStandaloneInterface::openedFileName() const {
     return vplStandalone->fileName;
 }
 
-
-//////
-
-ThymioVPLStandalone::ThymioVPLStandalone(const QString& commandLineTarget,
-                                         bool useAnyTarget, bool debugLog, bool execFeedback)
-    : VariableListener(new TargetVariablesModel(this))
-    ,
-    // create target
-    target(new DashelTarget(commandLineTarget))
-    ,
-    // options
-    useAnyTarget(useAnyTarget)
-    , debugLog(debugLog)
-    , execFeedback(execFeedback)
-    ,
+ThymioVPLStandalone::ThymioVPLStandalone(/*const QString& commandLineTarget, bool useAnyTarget, bool debugLog,
+                                         bool execFeedback*/)
+    :     // options
+    //useAnyTarget(useAnyTarget)
+    //, debugLog(debugLog)
+    //, execFeedback(execFeedback)
+    //,
     // setup initial values
     id(0)
     , vpl(nullptr)
     , allocatedVariablesCount(0) {
-    subscribeToVariableOfInterest(ASEBA_PID_VAR_NAME);
 
     // create gui
     setupWidgets();
@@ -135,11 +104,7 @@ ThymioVPLStandalone::ThymioVPLStandalone(const QString& commandLineTarget,
 #endif  // ANDROID
 }
 
-ThymioVPLStandalone::~ThymioVPLStandalone() {
-    // delete variablesModel from VariableListener and set it to 0 to prevent double deletion
-    delete variablesModel;
-    variablesModel = nullptr;
-}
+ThymioVPLStandalone::~ThymioVPLStandalone() {}
 
 void ThymioVPLStandalone::setupWidgets() {
     // VPL part
@@ -193,8 +158,8 @@ void ThymioVPLStandalone::setupConnections() {
     connect(editor, SIGNAL(textChanged()), SLOT(editorContentChanged()));
 
     // target events
-    connect(target.get(), SIGNAL(nodeConnected(unsigned)), SLOT(nodeConnected(unsigned)));
-    connect(target.get(), SIGNAL(nodeDisconnected(unsigned)), SLOT(nodeDisconnected(unsigned)));
+    // connect(target.get(), SIGNAL(nodeConnected(unsigned)), SLOT(nodeConnected(unsigned)));
+    // connect(target.get(), SIGNAL(nodeDisconnected(unsigned)), SLOT(nodeDisconnected(unsigned)));
 
     // right now, we ignore errors
     /*connect(target, SIGNAL(arrayAccessOutOfBounds(unsigned, unsigned, unsigned, unsigned)),
@@ -206,10 +171,10 @@ void ThymioVPLStandalone::setupConnections() {
     unsigned, QString)));
     */
 
-    connect(target.get(), SIGNAL(variablesMemoryEstimatedDirty(unsigned)),
-            SLOT(variablesMemoryEstimatedDirty(unsigned)));
-    connect(target.get(), SIGNAL(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)),
-            SLOT(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)));
+    // connect(target.get(), SIGNAL(variablesMemoryEstimatedDirty(unsigned)),
+    //        SLOT(variablesMemoryEstimatedDirty(unsigned)));
+    // connect(target.get(), SIGNAL(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)),
+    //        SLOT(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)));
 }
 
 void ThymioVPLStandalone::resizeEvent(QResizeEvent* event) {
@@ -235,7 +200,7 @@ void ThymioVPLStandalone::resetSizes() {
 }
 
 //! The content of a variable has changed
-void ThymioVPLStandalone::variableValueUpdated(const QString& name, const VariablesDataVector& values) {
+/*void ThymioVPLStandalone::variableValueUpdated(const QString& name, const VariablesDataVector& values) {
     // we do not perform this check if we are forced to use any target
     if(useAnyTarget)
         return;
@@ -248,7 +213,7 @@ void ThymioVPLStandalone::variableValueUpdated(const QString& name, const Variab
             close();
         }
     }
-}
+}*/
 
 //! Received a close event, forward to VPL
 void ThymioVPLStandalone::closeEvent(QCloseEvent* event) {
@@ -303,7 +268,7 @@ bool ThymioVPLStandalone::saveFile(bool as) {
 
     // add a node for VPL
     QDomElement element = document.createElement("node");
-    element.setAttribute("name", target->getName(id));
+    //    element.setAttribute("name", target->getName(id));
     element.setAttribute("nodeId", id);
     element.appendChild(document.createTextNode(editor->toPlainText()));
     QDomDocument vplDocument(vpl->saveToDom());
@@ -365,10 +330,9 @@ void ThymioVPLStandalone::openFile() {
                 QDomElement element = domNode.toElement();
                 if(element.tagName() == "node") {
                     // if node corresponds to the connected robot
-                    if((element.attribute("name") == target->getName(id)) &&
+                    /*if((element.attribute("name") == target->getName(id)) &&
                        ((element.attribute("nodeId").toUInt() == id) || (target->getNodesList().size() == 1))) {
-                        // restore VPL
-                        QDomElement toolsPlugins(element.firstChildElement("toolsPlugins"));
+                        restore VPL QDomElement toolsPlugins(element.firstChildElement("toolsPlugins"));
                         QDomElement toolPlugin(toolsPlugins.firstChildElement());
                         while(!toolPlugin.isNull()) {
                             // if VPL found
@@ -383,20 +347,20 @@ void ThymioVPLStandalone::openFile() {
                             }
                             toolPlugin = toolPlugin.nextSiblingElement();
                         }
-                    }
+                    }*/
                 }
             }
             domNode = domNode.nextSibling();
         }
         // check whether we did load data
-        if(dataLoaded) {
-            fileName = newFileName;
-            QSettings().setValue("ThymioVPLStandalone/fileName", fileName);
-            updateWindowTitle(vpl->isModified());
-        } else {
-            QMessageBox::warning(this, tr("Loading"),
-                                 tr("No Thymio VPL data were found in the script file, file ignored."));
-        }
+        // if(dataLoaded) {
+        //   fileName = newFileName;
+        //   QSettings().setValue("ThymioVPLStandalone/fileName", fileName);
+        //   updateWindowTitle(vpl->isModified());
+        //} else {
+        //    QMessageBox::warning(this, tr("Loading"),
+        //                         tr("No Thymio VPL data were found in the script file, file ignored."));
+        //}
     } else {
         QMessageBox::warning(
             this, tr("Loading"),
@@ -404,11 +368,11 @@ void ThymioVPLStandalone::openFile() {
     }
 
     file.close();
-}
+}  // namespace Aseba
 
 //! The content of the editor was changed by VPL, recompile
 void ThymioVPLStandalone::editorContentChanged() {
-    const TargetDescription* targetDescription(target->getDescription(id));
+    /*const TargetDescription* targetDescription(target->getDescription(id));
     if(targetDescription) {
         CommonDefinitions commonDefinitions;
         commonDefinitions.events.push_back(NamedValue(L"pair_run", 1));
@@ -427,7 +391,7 @@ void ThymioVPLStandalone::editorContentChanged() {
         } else {
             wcerr << "AESL Compilation error: " << error.toWString() << endl;
         }
-    }
+    }*/
 }
 
 //! A new node has connected to the network.
@@ -449,12 +413,12 @@ void ThymioVPLStandalone::nodeConnected(unsigned node) {
     id = node;
 
     // create the VPL widget and add it
-    vpl = new ThymioVPL::ThymioVisualProgramming(new ThymioVPLStandaloneInterface(this), false, debugLog, execFeedback);
-    vplLayout->addWidget(vpl);
+    // vpl = new ThymioVPL::ThymioVisualProgramming(new ThymioVPLStandaloneInterface(this));
+    // vplLayout->addWidget(vpl);
 
     // connect callbacks
-    connect(vpl, SIGNAL(modifiedStatusChanged(bool)), SLOT(updateWindowTitle(bool)));
-    connect(vpl, SIGNAL(compilationOutcome(bool)), editor, SLOT(setEnabled(bool)));
+    // connect(vpl, SIGNAL(modifiedStatusChanged(bool)), SLOT(updateWindowTitle(bool)));
+    // connect(vpl, SIGNAL(compilationOutcome(bool)), editor, SLOT(setEnabled(bool)));
 
     // reload data
     if(!savedContent.isNull())
@@ -467,12 +431,12 @@ void ThymioVPLStandalone::nodeConnected(unsigned node) {
     editorContentChanged();
 
     // read variables once to get PID
-    target->getVariables(id, 0, allocatedVariablesCount);
+    // target->getVariables(id, 0, allocatedVariablesCount);
 }
 
 //! A node has disconnected from the network.
 void ThymioVPLStandalone::nodeDisconnected(unsigned node) {
-    if(vpl && (node == id)) {
+    /*if(vpl && (node == id)) {
         savedContent = vpl->saveToDom();
         vplLayout->removeWidget(vpl);
         // explicitely set no parent to avoid crash on Windows
@@ -482,21 +446,22 @@ void ThymioVPLStandalone::nodeDisconnected(unsigned node) {
         vpl = nullptr;
 
         disconnectedMessage->show();
-    }
+    }*/
 }
 
 //! The execution state logic thinks variables might need a refresh
 void ThymioVPLStandalone::variablesMemoryEstimatedDirty(unsigned node) {
-    if(node == id)
-        target->getVariables(id, 0, allocatedVariablesCount);
+    // if(node == id)
+    //    target->getVariables(id, 0, allocatedVariablesCount);
 }
 
-//! Content of target memory has changed
+/*
+ * //! Content of target memory has changed
 void ThymioVPLStandalone::variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables) {
     // update variables model
     if(node == id)
         variablesModel->setVariablesData(start, variables);
-}
+}*/
 
 //! Update the window title with filename and modification status
 void ThymioVPLStandalone::updateWindowTitle(bool modified) {

@@ -28,10 +28,9 @@
 #include <QDebug>
 #include <iostream>
 #include <stdexcept>
-#include "DashelTarget.h"
-#include "transport/dashel_plugins/dashel-plugins.h"
+#include <aseba/common/consts.h>
 #include "ThymioVPLStandalone.h"
-#include "plugins/ThymioVPL/UsageLogger.h"
+#include "UsageLogger.h"
 
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);

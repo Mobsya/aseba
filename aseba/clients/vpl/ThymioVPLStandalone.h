@@ -20,13 +20,12 @@
 #ifndef THYMIO_VPL_STANDALONE_H
 #define THYMIO_VPL_STANDALONE_H
 
-#include "Plugin.h"
-#include "Target.h"
-#include "TargetModels.h"
 #include <QSplitter>
+#include <QDomDocument>
 
 class QTranslator;
 class QVBoxLayout;
+class QLabel;
 
 namespace Aseba {
 /** \addtogroup studio */
@@ -34,23 +33,16 @@ namespace Aseba {
 
 class ThymioVPLStandalone;
 
-struct ThymioVPLStandaloneInterface : DevelopmentEnvironmentInterface {
+struct ThymioVPLStandaloneInterface {
     ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone);
-
-    Target* getTarget() override;
-    unsigned getNodeId() const override;
-    unsigned getProductId() const override;
-    void setCommonDefinitions(const CommonDefinitions& commonDefinitions) override;
-    void displayCode(const QList<QString>& code, int line) override;
-    void loadAndRun() override;
-    void stop() override;
-    TargetVariablesModel* getVariablesModel() override;
-    void setVariableValues(unsigned, const VariablesDataVector&) override;
-    bool saveFile(bool as = false) override;
-    void openFile() override;
-    bool newFile() override;
-    void clearOpenedFileName(bool isModified) override;
-    QString openedFileName() const override;
+    void displayCode(const QList<QString>& code, int line);
+    void loadAndRun();
+    void stop();
+    bool saveFile(bool as = false);
+    void openFile();
+    bool newFile();
+    void clearOpenedFileName(bool isModified);
+    QString openedFileName() const;
 
 private:
     ThymioVPLStandalone* vplStandalone;
@@ -62,7 +54,7 @@ namespace ThymioVPL {
 class AeslEditor;
 
 //! Container for VPL standalone and its code viewer
-class ThymioVPLStandalone : public QSplitter, public VariableListener {
+class ThymioVPLStandalone : public QSplitter {
     Q_OBJECT
 
 public:
@@ -74,7 +66,7 @@ protected:
     void setupConnections();
     void resizeEvent(QResizeEvent* event) override;
     void resetSizes();
-    void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
+    // void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
     void closeEvent(QCloseEvent* event) override;
     bool saveFile(bool as);
     void openFile();
@@ -84,18 +76,18 @@ protected slots:
     void nodeConnected(unsigned node);
     void nodeDisconnected(unsigned node);
     void variablesMemoryEstimatedDirty(unsigned node);
-    void variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables);
+    // void variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables);
     void updateWindowTitle(bool modified);
     void toggleFullScreen();
 
 protected:
     friend struct ThymioVPLStandaloneInterface;
 
-    std::unique_ptr<Target> target;  //!< pointer to target
+    // std::unique_ptr<Target> target;  //!< pointer to target
 
-    const bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets
-    const bool debugLog;      //!< if true, generate debug log events
-    const bool execFeedback;  //!< if true, blink executed events, imples debugLog = true
+    bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets
+    bool debugLog;      //!< if true, generate debug log events
+    bool execFeedback;  //!< if true, blink executed events, imples debugLog = true
 
     unsigned id;  //!< node identifier
 
@@ -104,10 +96,10 @@ protected:
     QLabel* disconnectedMessage;              //!< message for VPL area when disconnected
     QDomDocument savedContent;                //!< saved VPL content across disconnections
     AeslEditor* editor;                       //! viewer of code produced by VPL
-    BytecodeVector bytecode;                  //!< bytecode resulting of last successfull compilation
-    unsigned allocatedVariablesCount;         //!< number of allocated variables
-    int getDescriptionTimer;                  //!< timer to periodically get description after a reconnection
-    QString fileName;                         //!< file name of last saved/opened file
+    // BytecodeVector bytecode;                  //!< bytecode resulting of last successfull compilation
+    unsigned allocatedVariablesCount;  //!< number of allocated variables
+    int getDescriptionTimer;           //!< timer to periodically get description after a reconnection
+    QString fileName;                  //!< file name of last saved/opened file
 };
 
 /*@}*/
