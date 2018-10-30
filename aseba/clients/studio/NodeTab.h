@@ -83,6 +83,7 @@ protected Q_SLOTS:
     void removeEvent(const QString& name);
     void onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events);
     void emitEvent(const QString& name, const QVariant& value);
+    void onEvents(const mobsya::ThymioNode::VariableMap& events);
 
     void editorContentChanged();
     void compileCodeOnTarget();

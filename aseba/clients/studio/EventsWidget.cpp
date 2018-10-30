@@ -6,6 +6,8 @@
 #include <QLineEdit>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QJsonDocument>
+#include <QTime>
 
 #include <aseba/common/consts.h>
 #include "CustomWidgets.h"
@@ -66,10 +68,10 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     eventsLayout->addWidget(m_view, 2, 0, 1, 4);
 
 
-    auto logger = new QListWidget;
-    logger->setMinimumSize(80, 100);
-    logger->setSelectionMode(QAbstractItemView::NoSelection);
-    eventsDockLayout->addWidget(logger, 3);
+    m_logger = new QListWidget;
+    m_logger->setMinimumSize(80, 100);
+    m_logger->setSelectionMode(QAbstractItemView::NoSelection);
+    eventsDockLayout->addWidget(m_logger, 3);
     auto clearLogger = new QPushButton(tr("Clear"));
     eventsDockLayout->addWidget(clearLogger);
 
@@ -79,6 +81,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     connect(addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
     connect(m_removeEventButton, &QPushButton::clicked, this, &EventsWidget::removeEvent);
     connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendEvent);
+    connect(clearLogger, &QPushButton::clicked, m_logger, &QListWidget::clear);
 }
 
 void EventsWidget::setModel(QAbstractItemModel* model) {
@@ -152,65 +155,18 @@ void EventsWidget::sendEvent() {
         }
     }
     Q_EMIT eventEmitted(name, QVariant::fromValue(data));
-
-    //  target->sendEvent(eventId, data);
-    //  userEvent(eventId, data);
 }
 
-// void MainWindow::addEventNameClicked() {
 
-
-/* // prompt the user for the named value
-
-
- eventName = eventName.trimmed();
- if(ok && !eventName.isEmpty()) {
-     if(commonDefinitions.events.contains(eventName.toStdWString())) {
-         QMessageBox::warning(this, tr("Event already exists"), tr("Event %0 already exists.").arg(eventName));
-     } else if(!QRegExp(R"(\w(\w|\.)*)").exactMatch(eventName) || eventName[0].isDigit()) {
-         QMessageBox::warning(this, tr("Invalid event name"),
-                              tr("Event %0 has an invalid name. Valid names start with an "
-                                 "alphabetical character or an \"_\", and continue with any "
-                                 "number of alphanumeric characters, \"_\" and \".\"")
-                                  .arg(eventName));
-     } else {
-         eventsDescriptionsModel->addNamedValue(NamedValue(eventName.toStdWString(), eventNbArgs));
-     }
- }*/
-//}  // namespace Aseba
-
-/*void MainWindow::removeEventNameClicked() {
-    /*    QModelIndex currentRow = m_view->selectionModel()->currentIndex();
-        Q_ASSERT(currentRow.isValid());
-        // eventsDescriptionsModel->delNamedValue(currentRow.row());
-
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab)
-                tab->isSynchronized = false;
-        }
-}
-
-void MainWindow::eventsUpdated(bool indexChanged) {
-    if(indexChanged) {
-        // statusText->setText(tr("Desynchronised! Please reload."));
-        // statusText->show();
+void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
+    for(auto it = events.begin(); it != events.end(); ++it) {
+        QString arg = QJsonDocument::fromVariant(it.value().value()).toJson(QJsonDocument::Compact);
+        QString text = QStringLiteral("%1\n%2: %3").arg(QTime::currentTime().toString("hh:mm:ss.zzz"), it.key(), arg);
+        if(m_logger->count() > 50)
+            delete m_logger->takeItem(0);
+        m_logger->addItem(new QListWidgetItem(QIcon(":/images/info.png"), text));
+        m_logger->scrollToBottom();
     }
-    recompileAll();
-    updateWindowTitle();
 }
-
-void MainWindow::eventsUpdatedDirty() {
-    eventsUpdated(true);
-}
-
-void MainWindow::eventsDescriptionsSelectionChanged() {
-    // bool isSelected = m_view->selectionModel()->currentIndex().isValid();
-    // removeEventNameButton->setEnabled(isSelected);
-    // sendEventButton->setEnabled(isSelected);
-#ifdef HAVE_QWT
-    plotEventButton->setEnabled(isSelected);
-#endif  // HAVE_QWT
-}*/
 
 }  // namespace Aseba
