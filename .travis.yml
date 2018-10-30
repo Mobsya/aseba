@@ -40,20 +40,20 @@ matrix:
     language: cpp
     osx_image: xcode10
     env: COMPILER=clang  CXX_COMPILER=clang++
-  - os: linux
-    addons:
-      apt:
-        packages:
-        - build-essential
-        - ninja-build
-        - p7zip-full
-        - make
-        - cmake-data
-        - cmake
-    env: ANDROID=1
-    language: cpp
-    node_js: '8'
-    jdk: oraclejdk8
+  #- os: linux
+    #addons:
+      #apt:
+        #packages:
+        #- build-essential
+        #- ninja-build
+        #- p7zip-full
+        #- make
+        #- cmake-data
+        #- cmake
+    #env: ANDROID=1
+    #language: cpp
+    #node_js: '8'
+    #jdk: oraclejdk8
 
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
