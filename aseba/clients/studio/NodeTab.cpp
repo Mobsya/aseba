@@ -113,6 +113,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
+        connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
 
 
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
@@ -448,6 +449,10 @@ void NodeTab::emitEvent(const QString& name, const QVariant& value) {
     if(!m_thymio)
         return;
     m_thymio->emitEvent(name, value);
+}
+
+void NodeTab::onEvents(const mobsya::ThymioNode::VariableMap& events) {
+    m_eventsWidget->onEvents(events);
 }
 
 
