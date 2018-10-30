@@ -100,7 +100,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         if(node->status() == mobsya::ThymioNode::Status::Available)
             node->lock();
         auto ptr = node.get();
-        node->setWatchVariablesEnabled(true);
+        node->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
         node->setWatchEventsEnabled(true);
         node->setWatchVMExecutionStateEnabled(true);
         m_vm_variables_model.clear();
