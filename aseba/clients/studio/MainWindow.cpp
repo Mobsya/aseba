@@ -84,16 +84,6 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
     nodes = new NodeTabsManager(client);
     connect(nodes, &NodeTabsManager::tabAdded, this, &MainWindow::tabAdded);
 
-    // create target
-
-    // create models
-    // eventsDescriptionsModel =
-    //    new MaskableNamedValuesVectorModel(&commonDefinitions.events, tr("Event number %0"), this);
-    // eventsDescriptionsModel->setExtraMimeType("application/aseba-events");
-    // constantsDefinitionsModel = new ConstantsModel(&commonDefinitions.constants, this);
-    // constantsDefinitionsModel->setExtraMimeType("application/aseba-constants");
-    // constantsDefinitionsModel->setEditable(true);
-
     // create help viwer
     helpViewer.setupWidgets();
     helpViewer.setupConnections();
@@ -151,10 +141,6 @@ bool MainWindow::newFile() {
             Q_ASSERT(tab);
             tab->editor->clear();
         }
-        /*constantsDefinitionsModel->clear();
-        constantsDefinitionsModel->clearWasModified();
-        eventsDescriptionsModel->clear();
-        eventsDescriptionsModel->clearWasModified();*/
 
         // reset opened file name
         clearOpenedFileName(false);
@@ -581,21 +567,19 @@ void MainWindow::resetAll() {
 }
 
 void MainWindow::runAll() {
-    /*    for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab)
-                target->run(tab->nodeId());
-        }
-    */
+    for(int i = 0; i < nodes->count(); i++) {
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        if(tab)
+            tab->run();
+    }
 }
 
 void MainWindow::pauseAll() {
-    /*    for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab)
-                target->pause(tab->nodeId());
-        }
-    */
+    for(int i = 0; i < nodes->count(); i++) {
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        if(tab)
+            tab->run();
+    }
 }
 
 void MainWindow::stopAll() {
@@ -964,33 +948,24 @@ void MainWindow::updateRecentFiles(const QString& fileName) {
 }
 
 void MainWindow::regenerateToolsMenus() {
-    /*    writeBytecodeMenu->clear();
-        rebootMenu->clear();
-
-        unsigned activeVMCount(0);
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab) {
-                QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(target->getName(tab->nodeId())), tab,
-                                                            SLOT(writeBytecode()));
-                connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
-
-                rebootMenu->addAction(tr("...%0").arg(target->getName(tab->nodeId())), tab, SLOT(reboot()));
-
-                connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
-
-                ++activeVMCount;
-            }
+    writeBytecodeMenu->clear();
+    rebootMenu->clear();
+    unsigned activeVMCount(0);
+    for(int i = 0; i < nodes->count(); i++) {
+        auto* tab = qobject_cast<NodeTab*>(nodes->widget(i));
+        if(tab && tab->thymio()) {
+            QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(tab->thymio()->name()));
+            connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
+            rebootMenu->addAction(tr("...%0").arg(tab->thymio()->name()), tab, SLOT(reboot()));
+            connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
+            ++activeVMCount;
         }
-
-        writeBytecodeMenu->addSeparator();
-        writeAllBytecodesAct = writeBytecodeMenu->addAction(tr("...inside all nodes"), this, SLOT(writeAllBytecodes()));
-
-        rebootMenu->addSeparator();
-        rebootMenu->addAction(tr("...all nodes"), this, SLOT(rebootAllNodes()));
-
-        globalToolBar->setVisible(activeVMCount > 1);
-    */
+    }
+    writeBytecodeMenu->addSeparator();
+    writeAllBytecodesAct = writeBytecodeMenu->addAction(tr("...inside all nodes"), this, SLOT(writeAllBytecodes()));
+    rebootMenu->addSeparator();
+    rebootMenu->addAction(tr("...all nodes"), this, SLOT(rebootAllNodes()));
+    globalToolBar->setVisible(activeVMCount > 1);
 }
 
 void MainWindow::generateHelpMenu() {

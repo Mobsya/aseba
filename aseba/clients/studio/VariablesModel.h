@@ -34,14 +34,6 @@ public:
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-    bool checkIfModified() {
-        return false;
-        // return wasModified;
-    }
-    void clearWasModified() {
-        // wasModified = false;
-    }
-    // virtual bool moveRow(int oldRow, int& newRow);
 
 public Q_SLOTS:
     void setVariables(const mobsya::ThymioNode::VariableMap& map);

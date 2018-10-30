@@ -45,6 +45,7 @@ public:
     }
 
     void setThymio(std::shared_ptr<mobsya::ThymioNode> node);
+    const std::shared_ptr<const mobsya::ThymioNode> thymio() const;
 
 Q_SIGNALS:
     void uploadReadynessChanged(bool);
@@ -87,7 +88,6 @@ protected Q_SLOTS:
 
     void editorContentChanged();
     void compileCodeOnTarget();
-    void markTargetUnsynced();
 
     void showMemoryUsage(bool show);
 
