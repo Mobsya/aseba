@@ -497,11 +497,13 @@ namespace ThymioVPL {
     bool ThymioVisualProgramming::save() {
         USAGE_LOG(logSave());
         // return de->saveFile(false);
+        return false;
     }
 
     bool ThymioVisualProgramming::saveAs() {
         USAGE_LOG(logSaveAs());
         // return de->saveFile(true);
+        return false;
     }
 
     bool ThymioVisualProgramming::closeFile() {

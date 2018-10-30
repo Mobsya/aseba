@@ -35,6 +35,7 @@ public:
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     bool checkIfModified() {
+        return false;
         // return wasModified;
     }
     void clearWasModified() {
