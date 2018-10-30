@@ -33,13 +33,12 @@
 #include <QPushButton>
 #include <QDomDocument>
 #include <QStack>
+#include <QLabel>
 
 #include <map>
 #include <vector>
 #include <iterator>
 #include <memory>
-
-#include "../../Plugin.h"
 
 namespace Aseba {
 struct ThymioVPLStandaloneInterface;
@@ -55,22 +54,21 @@ namespace ThymioVPL {
     /** \addtogroup studio */
     /*@{*/
 
-    class ThymioVisualProgramming : public QWidget, public NodeToolInterface {
+    class ThymioVisualProgramming : public QWidget {
         Q_OBJECT
 
     public:
-        ThymioVisualProgramming(DevelopmentEnvironmentInterface* _de, bool showCloseButton = true,
-                                bool debugLog = false, bool execFeedback = false);
+        ThymioVisualProgramming();
         ~ThymioVisualProgramming() override;
 
-        QWidget* createMenuEntry() override;
-        void closeAsSoonAsPossible() override;
+        QWidget* createMenuEntry();
+        void closeAsSoonAsPossible();
 
-        void aboutToLoad() override;
-        void loadFromDom(const QDomDocument& content, bool fromFile) override;
+        void aboutToLoad();
+        void loadFromDom(const QDomDocument& content, bool fromFile);
         virtual QDomDocument transformDomToVersion1(const QDomDocument& content0);
-        QDomDocument saveToDom() const override;
-        void codeChangedInEditor() override;
+        QDomDocument saveToDom() const;
+        void codeChangedInEditor();
 
         bool isModified() const;
         qreal getViewScale() const;
@@ -104,7 +102,7 @@ namespace ThymioVPL {
         void redo();
         void processCompilationResult();
         void processHighlightChange();
-        void userEvent(unsigned id, const VariablesDataVector& data);
+        // void userEvent(unsigned id, const VariablesDataVector& data);
 
     private:
         void clearUndo();
@@ -114,14 +112,14 @@ namespace ThymioVPL {
         void setupGlobalEvents();
 
     public:
-        const bool debugLog;
-        const bool execFeedback;
+        bool debugLog;
+        bool execFeedback;
 
     protected:
         friend class Aseba::ThymioVPL::BlockButton;
         friend class Aseba::ThymioVPL::Scene;
 
-        std::unique_ptr<DevelopmentEnvironmentInterface> de;
+        // std::unique_ptr<DevelopmentEnvironmentInterface> de;
         ResizingView* view;
         Scene* scene;
         bool loading;  //!< true during load, to prevent recursion of changes triggered by VPL

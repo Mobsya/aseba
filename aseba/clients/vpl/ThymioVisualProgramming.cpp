@@ -50,7 +50,6 @@
 #include "Utils.h"
 #include "UsageLogger.h"
 
-#include "../../TargetModels.h"
 #include "common/utils/utils.h"
 #include "common/about/AboutDialog.h"
 
@@ -63,12 +62,13 @@ using namespace std;
 namespace Aseba {
 namespace ThymioVPL {
     // Visual Programming
-    ThymioVisualProgramming::ThymioVisualProgramming(DevelopmentEnvironmentInterface* _de, bool showCloseButton,
-                                                     bool debugLog, bool execFeedback)
-        : debugLog(debugLog)
-        , execFeedback(execFeedback)
-        , de(_de)
-        , scene(new Scene(this))
+    ThymioVisualProgramming::ThymioVisualProgramming(/*DevelopmentEnvironmentInterface* _de, bool showCloseButton,
+                                                     bool debugLog, bool execFeedback*/)
+        : //debugLog(debugLog)
+        //, execFeedback(execFeedback)
+        //, de(_de)
+        //,
+          scene(new Scene(this))
         , loading(false)
         , undoPos(-1)
         , runAnimFrame(0)
@@ -284,8 +284,8 @@ namespace ThymioVPL {
         connect(scene, SIGNAL(highlightChanged()), SLOT(processHighlightChange()));
         connect(scene, SIGNAL(modifiedStatusChanged(bool)), SIGNAL(modifiedStatusChanged(bool)));
 
-        connect(de->getTarget(), SIGNAL(userEvent(unsigned, const VariablesDataVector)),
-                SLOT(userEvent(unsigned, const VariablesDataVector)));
+        // connect(de->getTarget(), SIGNAL(userEvent(unsigned, const VariablesDataVector)),
+        //        SLOT(userEvent(unsigned, const VariablesDataVector)));
 
         /*zoomSlider = new QSlider(Qt::Horizontal);
         zoomSlider->setRange(1,10);
@@ -366,10 +366,10 @@ namespace ThymioVPL {
                                     .value("ThymioVPL/snapshotFileName",
                                            QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
                                     .toString());
-        if(initialFileName.isEmpty() && !de->openedFileName().isEmpty()) {
+        /*if(initialFileName.isEmpty() && !de->openedFileName().isEmpty()) {
             const QFileInfo pf(de->openedFileName());
             initialFileName = (pf.absolutePath() + QDir::separator() + pf.baseName() + ".png");
-        }
+        }*/
         QString selectedFilter;
         QString fileName(QFileDialog::getSaveFileName(
             nullptr, tr("Export program as image"), initialFileName,
@@ -390,7 +390,7 @@ namespace ThymioVPL {
             generator.setFileName(fileName);
             generator.setSize(scene->sceneRect().size().toSize());
             generator.setViewBox(scene->sceneRect());
-            generator.setTitle(QString("VPL program %0").arg(de->openedFileName()));
+            // generator.setTitle(QString("VPL program %0").arg(de->openedFileName()));
             generator.setDescription(
                 "This image was generated with Thymio VPL from Aseba, get it at http://thymio.org");
 
@@ -463,45 +463,45 @@ namespace ThymioVPL {
     }
 
     void ThymioVisualProgramming::showVPLModal() {
-        if(de->newFile()) {
+        /*if(de->newFile()) {
             toggleAdvancedMode(false, true);
             scene->reset();
             clearUndo();
             setupGlobalEvents();
             showAtSavedPosition();
             processCompilationResult();
-        }
+        }*/
     }
 
     void ThymioVisualProgramming::setupGlobalEvents() {
-        CommonDefinitions commonDefinitions;
-        commonDefinitions.events.push_back(NamedValue(L"pair_run", 1));
-        de->setCommonDefinitions(commonDefinitions);
+        //   CommonDefinitions commonDefinitions;
+        ///   commonDefinitions.events.push_back(NamedValue(L"pair_run", 1));
+        //  de->setCommonDefinitions(commonDefinitions);
     }
 
     void ThymioVisualProgramming::newFile() {
-        if(de->newFile()) {
-            USAGE_LOG(logNewFile());
-            scene->reset();
-            clearUndo();
-            setupGlobalEvents();
-            processCompilationResult();
-        }
+        /* if(de->newFile()) {
+             USAGE_LOG(logNewFile());
+             scene->reset();
+             clearUndo();
+             setupGlobalEvents();
+             processCompilationResult();
+         }*/
     }
 
     void ThymioVisualProgramming::openFile() {
         USAGE_LOG(logOpenFile());
-        de->openFile();
+        // de->openFile();
     }
 
     bool ThymioVisualProgramming::save() {
         USAGE_LOG(logSave());
-        return de->saveFile(false);
+        // return de->saveFile(false);
     }
 
     bool ThymioVisualProgramming::saveAs() {
         USAGE_LOG(logSaveAs());
-        return de->saveFile(true);
+        // return de->saveFile(true);
     }
 
     bool ThymioVisualProgramming::closeFile() {
@@ -510,12 +510,12 @@ namespace ThymioVPL {
             return true;
 
         if(scene->isEmpty() || preDiscardWarningDialog(true)) {
-            de->clearOpenedFileName(scene->isModified());
+            // de->clearOpenedFileName(scene->isModified());
             clearHighlighting(true);
             clearSceneWithoutRecompilation();
             return true;
         } else {
-            de->clearOpenedFileName(scene->isModified());
+            // de->clearOpenedFileName(scene->isModified());
             return false;
         }
     }
@@ -543,18 +543,19 @@ namespace ThymioVPL {
     void ThymioVisualProgramming::run() {
         USAGE_LOG(logRun());
         if(runButton->isEnabled()) {
-            de->loadAndRun();
+            // de->loadAndRun();
             stopRunButtonAnimationTimer();
         }
     }
 
     void ThymioVisualProgramming::stop() {
-        USAGE_LOG(logStop());
-        de->stop();
-        const unsigned leftSpeedVarPos = de->getVariablesModel()->getVariablePos("motor.left.target");
-        de->setVariableValues(leftSpeedVarPos, VariablesDataVector(1, 0));
-        const unsigned rightSpeedVarPos = de->getVariablesModel()->getVariablePos("motor.right.target");
-        de->setVariableValues(rightSpeedVarPos, VariablesDataVector(1, 0));
+        /*  USAGE_LOG(logStop());
+          de->stop();
+          const unsigned leftSpeedVarPos = de->getVariablesModel()->getVariablePos("motor.left.target");
+          de->setVariableValues(leftSpeedVarPos, VariablesDataVector(1, 0));
+          const unsigned rightSpeedVarPos = de->getVariablesModel()->getVariablePos("motor.right.target");
+          de->setVariableValues(rightSpeedVarPos, VariablesDataVector(1, 0));
+          */
     }
 
     void ThymioVisualProgramming::toggleAdvancedMode() {
@@ -637,10 +638,10 @@ namespace ThymioVPL {
     }
 
     void ThymioVisualProgramming::clearHighlighting(bool keepCode) {
-        if(keepCode && scene->compilationResult().isSuccessful())
-            de->displayCode(scene->getCode(), -1);
-        else
-            de->displayCode(QList<QString>(), -1);
+        // if(keepCode && scene->compilationResult().isSuccessful())
+        ///     de->displayCode(scene->getCode(), -1);
+        // else
+        //     de->displayCode(QList<QString>(), -1);
     }
 
     QDomDocument ThymioVisualProgramming::saveToDom() const {
@@ -901,7 +902,7 @@ namespace ThymioVPL {
         if(compilation.isSuccessful()) {
             compilationResult->setStyleSheet("QLabel { font-size: 10pt; }");
             compilationResultImage->setPixmap(pixmapFromSVG(":/images/vpl/success.svgz", fontSize * 1.2));
-            de->displayCode(scene->getCode(), scene->getSelectedSetCodeId());
+            // de->displayCode(scene->getCode(), scene->getSelectedSetCodeId());
             runButton->setEnabled(true);
             // content changed but not uploaded, show animation
             startRunButtonAnimationTimer();
@@ -937,11 +938,11 @@ namespace ThymioVPL {
     }
 
     void ThymioVisualProgramming::processHighlightChange() {
-        if(scene->compilationResult().isSuccessful())
-            de->displayCode(scene->getCode(), scene->getSelectedSetCodeId());
+        // if(scene->compilationResult().isSuccessful())
+        //    de->displayCode(scene->getCode(), scene->getSelectedSetCodeId());
     }
 
-    void ThymioVisualProgramming::userEvent(unsigned id, const VariablesDataVector& data) {
+    /*void ThymioVisualProgramming::userEvent(unsigned id, const VariablesDataVector& data) {
         // if hidden, do not react
         if(isHidden())
             return;
@@ -959,7 +960,7 @@ namespace ThymioVPL {
             if(index < scene->setsCount())
                 (*(scene->setsBegin() + index))->blink();
         }
-    }
+    }*/
 
     void ThymioVisualProgramming::addEvent() {
         auto* button(polymorphic_downcast<BlockButton*>(sender()));
