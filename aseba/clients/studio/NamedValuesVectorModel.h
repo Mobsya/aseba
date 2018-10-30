@@ -50,9 +50,7 @@ public:
     }
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
-    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-
-public slots:
+public Q_SLOTS:
     void addVariable(const QString& name, const QVariant& value);
     void removeVariable(const QString& name);
     void clear();
@@ -64,17 +62,19 @@ protected:
 private:
 };
 
-/*class ConstantsModel : public NamedValuesVectorModel {
+class ConstantsModel : public FlatVariablesModel {
     Q_OBJECT
 
 public:
-    ConstantsModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
-    ConstantsModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
+    using FlatVariablesModel::FlatVariablesModel;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-    bool validateName(const QString& name) const override;
+Q_SIGNALS:
+    void constantModified(const QString& name, const QVariant& value);
 };
 
-class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
+/*class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
     Q_OBJECT
 
 public:
@@ -99,7 +99,7 @@ public slots:
 private:
     std::vector<bool> viewEvent;
 };
-*/
+* /
 
 /*@}*/
 }  // namespace Aseba
