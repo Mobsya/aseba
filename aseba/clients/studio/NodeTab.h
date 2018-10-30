@@ -142,7 +142,7 @@ private:
     QLineEdit* m_vm_variables_filter_input;
 
 
-    FlatVariablesModel m_constants_model;
+    ConstantsModel m_constants_model;
     ConstantsWidget* m_constantsWidget;
 
 

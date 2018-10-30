@@ -102,26 +102,6 @@ QMimeData* FlatVariablesModel::mimeData(const QModelIndexList& indexes) const {
     return mimeData;
 }
 
-bool FlatVariablesModel::setData(const QModelIndex& index, const QVariant& value, int role) {
-    /*if(index.isValid() && role == Qt::EditRole) {
-        if(index.column() == 0) {
-            if(!validateName(value.toString()))
-                return false;
-            namedValues[index.row()].name = value.toString();
-            emit dataChanged(index, index);
-            wasModified = true;
-            return true;
-        }
-        if(index.column() == 1) {
-            namedValues->at(index.row()).value = value.toInt();
-            emit dataChanged(index, index);
-            wasModified = true;
-            return true;
-        }
-    }*/
-    return false;
-}
-
 void FlatVariablesModel::addVariable(const QString& name, const QVariant& value) {
     auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
                                [&name](const auto& v, const QString& n) { return v.first < n; });
@@ -158,6 +138,27 @@ void FlatVariablesModel::clear() {
     m_values.clear();
     endResetModel();
 }
+
+
+bool ConstantsModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+    if(index.isValid() && role == Qt::EditRole) {
+        if(index.column() == 0) {
+            Q_EMIT constantModified(m_values[index.row()].first, {});
+            Q_EMIT constantModified(value.toString(), m_values[index.row()].second);
+            return true;
+        }
+        if(index.column() == 1) {
+            Q_EMIT constantModified(m_values[index.row()].first, value);
+            return true;
+        }
+    }
+    return false;
+}
+
+Qt::ItemFlags ConstantsModel::flags(const QModelIndex& index) const {
+    return FlatVariablesModel::flags(index) | Qt::ItemIsEditable;
+}
+
 
 // ****************************************************************************** //
 

@@ -225,11 +225,6 @@ private:
     QLabel* statusText;  // Jiwon
     // FixedWidthTableView* eventsDescriptionsView;
 
-    // constants
-    QPushButton* addConstantButton;
-    QPushButton* removeConstantButton;
-    FixedWidthTableView* constantsView;
-
     // global buttons
     QAction* loadAllAct;
     QAction* resetAllAct;

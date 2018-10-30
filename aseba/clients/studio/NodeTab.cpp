@@ -60,6 +60,9 @@ NodeTab::NodeTab(QWidget* parent)
     setupConnections();
 
 
+    connect(&m_constants_model, &ConstantsModel::constantModified, [this](const QString& name, const QVariant& value) {
+        this->setVariable(name, {value, true});
+    });
     m_constantsWidget->setModel(&m_constants_model);
     m_eventsWidget->setModel(&m_events_model);
 
