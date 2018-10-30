@@ -128,6 +128,10 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     }
 }
 
+const std::shared_ptr<const mobsya::ThymioNode> NodeTab::thymio() const {
+    return m_thymio;
+}
+
 void NodeTab::reset() {
     clearExecutionErrors();
     if(m_thymio) {
@@ -219,7 +223,6 @@ void NodeTab::step() {
 }
 
 void NodeTab::reboot() {
-    markTargetUnsynced();
     m_thymio->reboot();
 }
 
@@ -523,20 +526,6 @@ void NodeTab::editorContentChanged() {
 
 void NodeTab::showMemoryUsage(bool show) {
     memoryUsageText->setVisible(show);
-}
-
-//! When code is changed or target is rebooted, remove breakpoints from target but keep them locally
-//! as pending for next code load
-void NodeTab::markTargetUnsynced() {
-    /*editor->debugging = false;
-    resetButton->setEnabled(false);
-    runButton->setEnabled(false);
-    nextButton->setEnabled(false);
-    // target->clearBreakpoints(id);
-    switchEditorProperty(QStringLiteral("breakpoint"), QStringLiteral("breakpointPending"));
-    executionModeLabel->setText(tr("unknown"));
-    // mainWindow->nodes->setExecutionMode(mainWindow->getIndexFromId(id), Target::EXECUTION_UNKNOWN);
-    */
 }
 
 void NodeTab::cursorMoved() {
