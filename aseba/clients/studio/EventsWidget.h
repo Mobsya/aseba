@@ -26,7 +26,8 @@ private Q_SLOTS:
     void addEvent();
     void removeEvent();
     void eventsSelectionChanged();
-    void sendEvent();
+    void sendSelectedEvent();
+    void sendEvent(const QModelIndex& i);
 
 private:
     FixedWidthTableView* m_view;

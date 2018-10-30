@@ -80,8 +80,10 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
 
     connect(addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
     connect(m_removeEventButton, &QPushButton::clicked, this, &EventsWidget::removeEvent);
-    connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendEvent);
+    connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendSelectedEvent);
     connect(clearLogger, &QPushButton::clicked, m_logger, &QListWidget::clear);
+
+    connect(m_view, &FixedWidthTableView::doubleClicked, this, &EventsWidget::sendEvent);
 }
 
 void EventsWidget::setModel(QAbstractItemModel* model) {
@@ -117,12 +119,17 @@ void EventsWidget::eventsSelectionChanged() {
     m_sendEventButton->setEnabled(isSelected);
 }
 
-void EventsWidget::sendEvent() {
-    auto r = m_view->selectionModel()->selectedRows();
+void EventsWidget::sendSelectedEvent() {
+    auto r = m_view->selectionModel()->selectedRows(0);
     if(r.empty())
         return;
-    auto name = r.first().data(Qt::DisplayRole).toString();
-    auto count = m_view->selectionModel()->selectedRows(1).first().data(Qt::DisplayRole).toInt();
+    sendEvent(r.first());
+}
+void EventsWidget::sendEvent(const QModelIndex& idx) {
+    if(!idx.isValid())
+        return;
+    QString name = m_view->model()->data(idx.siblingAtColumn(0)).toString();
+    auto count = m_view->model()->data(idx.siblingAtColumn(1)).toInt();
     QVariantList data;
 
     if(count > 0) {
