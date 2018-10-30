@@ -400,9 +400,10 @@ void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
             it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
                                    m_constants_model.addVariable(it.key(), it.value().value());
             recompile = true;
+        } else {
+            it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
+                                   m_vm_variables_model.setVariable(it.key(), it.value());
         }
-        it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
-                               m_vm_variables_model.setVariable(it.key(), it.value());
     }
 
     if(recompile) {
