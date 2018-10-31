@@ -92,34 +92,6 @@ int VariablesModel::columnCount(const QModelIndex&) const {
     return 2;
 }
 
-namespace {
-    QVariant pretty_print_variable(const QVariant& v) {
-        if(v.type() == QVariant::List) {
-            auto l = v.toList();
-            if(l.size() == 1) {
-                return l[0];
-            }
-            if(l.size() < 10 && std::all_of(l.begin(), l.end(), [](const QVariant& v) {
-                   return v.type() == QVariant::Int || v.type() == QVariant::UInt || v.type() == QVariant::LongLong ||
-                       v.type() == QVariant::ULongLong;
-               })) {
-                QStringList values;
-                std::transform(l.begin(), l.end(), std::back_inserter(values),
-                               [](const QVariant& v) { return QString::number(v.toLongLong()); });
-                QString s = "[" + values.join(", ") + "]";
-                if(s.size() < 30)
-                    return s;
-            }
-        }
-        if(v.type() == QVariant::List || v.type() == QVariant::StringList) {
-            return QObject::tr("list <%1 elements>").arg(v.toList().size());
-        }
-        if(v.type() == QVariant::Map) {
-            return QObject::tr("map <%1 elements>").arg(v.toMap().size());
-        }
-        return v;
-    }
-}  // namespace
 
 QVariant VariablesModel::data(const QModelIndex& index, int role) const {
     auto item = getItem(index);
@@ -140,7 +112,7 @@ QVariant VariablesModel::data(const QModelIndex& index, int role) const {
         return item->key;
     }
     if(index.column() == 1 && role == Qt::DisplayRole) {
-        return pretty_print_variable(item->value);
+        return item->value;
     }
     if(index.column() == 1 && role == Qt::EditRole) {
         return item->value;

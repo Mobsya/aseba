@@ -39,17 +39,10 @@
 #include <QSignalMapper>
 
 #include "StudioAeslEditor.h"
-#include "CustomDelegate.h"
-#include "CustomWidgets.h"
-#include "ModelAggregator.h"
-
-#include "compiler/compiler.h"
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <string>
-#include "Target.h"
-#include "TargetModels.h"
 #include "HelpViewer.h"
 #include "ConfigDialog.h"
 
