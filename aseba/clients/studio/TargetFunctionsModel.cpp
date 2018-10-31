@@ -134,6 +134,8 @@ QModelIndex TargetFunctionsModel::parent(const QModelIndex& index) const {
 
 QModelIndex TargetFunctionsModel::index(int row, int column, const QModelIndex& parent) const {
     TreeItem* parentItem = getItem(parent);
+    if(!parentItem)
+        return {};
     TreeItem* childItem = parentItem->children.value(row);
     Q_ASSERT(childItem);
 

@@ -198,7 +198,6 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
 
     if(created) {
         emit layoutAboutToBeChanged();
-        beginInsertRows(parent, index.row(), index.row());
         node = find_or_create_child(item, key);
     }
     node->constant = constant;
@@ -209,7 +208,6 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
     node->value = v;
 
     if(created) {
-        endInsertRows();
         layoutChanged();
     }
 

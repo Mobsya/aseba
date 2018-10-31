@@ -93,12 +93,12 @@ void VariableDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     // prepare
     painter->save();
     QString text;
-    QRect displayRect;
+    QRect displayRect = opt.rect;
     auto value = index.data(Qt::DisplayRole);
     if(value.isValid() && !value.isNull()) {
         const QVariant fontVal = index.data(Qt::FontRole);
         const QFont fnt = qvariant_cast<QFont>(fontVal).resolve(option.font);
-        auto rect = opt.rect.adjusted(-5, -5, 0, 0);
+        auto rect = displayRect.adjusted(-5, -5, 0, 0);
         auto max_count = rect.width() / QFontMetrics(fnt).averageCharWidth();
         text = pretty_print_variable(value, max_count);
     }
