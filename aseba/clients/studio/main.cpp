@@ -30,13 +30,12 @@
 #include "MainWindow.h"
 #include "HelpViewer.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
+#include <aseba/common/consts.h>
 
 
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);
 
-    bool autoRefresh(false);
-    bool showDoc(false);
     QApplication app(argc, argv);
 
     // Information used by QSettings with default constructor

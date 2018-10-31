@@ -758,7 +758,7 @@ void NodeTab::setupWidgets() {
     // memory
     m_vm_variables_view = new QTreeView;
     m_vm_variables_view->setModel(&m_vm_variables_filter_model);
-    m_vm_variables_view->setItemDelegate(new SpinBoxDelegate(-32768, 32767, this));
+    m_vm_variables_view->setItemDelegateForColumn(1, new VariableDelegate(-32768, 32767, this));
     m_vm_variables_view->setSelectionMode(QAbstractItemView::SingleSelection);
     m_vm_variables_view->setSelectionBehavior(QAbstractItemView::SelectItems);
     m_vm_variables_view->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::DoubleClicked);
