@@ -128,8 +128,8 @@ void EventsWidget::sendSelectedEvent() {
 void EventsWidget::sendEvent(const QModelIndex& idx) {
     if(!idx.isValid())
         return;
-    QString name = m_view->model()->data(idx.siblingAtColumn(0)).toString();
-    auto count = m_view->model()->data(idx.siblingAtColumn(1)).toInt();
+    QString name = m_view->model()->data(m_view->model()->index(idx.row(), 0)).toString();
+    auto count = m_view->model()->data(m_view->model()->index(idx.row(), 1)).toInt();
     QVariantList data;
 
     if(count > 0) {
