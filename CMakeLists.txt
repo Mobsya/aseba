@@ -45,6 +45,7 @@ add_subdirectory(third_party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/pugixml EXCLUDE_FROM_ALL)
 
 add_library(mpark_variant INTERFACE)
 target_include_directories(mpark_variant INTERFACE
@@ -86,19 +87,19 @@ install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
 find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools)
 
 if (NOT ANDROID)
-	find_package(Qt5Help)
-	find_package(Qwt)
+    find_package(Qt5Help)
+    find_package(Qwt)
 endif()
 
 if (UNIX AND NOT APPLE AND NOT ANDROID)
-	find_package(Qt5X11Extras)
-	find_package(Qt5DBus)
+    find_package(Qt5X11Extras)
+    find_package(Qt5DBus)
 endif ()
 
 # Zeroconf
 if (NOT ANDROID)
-	include(CMakeModules/zeroconf.cmake)
-	add_subdirectory(third_party/aware)
+    include(CMakeModules/zeroconf.cmake)
+    add_subdirectory(third_party/aware)
 endif()
 
 # Aseba itself
@@ -113,13 +114,13 @@ add_subdirectory(aseba)
 add_subdirectory(js)
 
 if(NOT ANDROID)
-	# Unit tests
-	add_subdirectory(tests)
+    # Unit tests
+    add_subdirectory(tests)
 endif()
 
 # User entries
 if (UNIX)
-	add_subdirectory(menu)
+    add_subdirectory(menu)
 endif()
 
 
@@ -133,14 +134,14 @@ feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLE
 
 
 if(WIN32)
-	add_subdirectory(third_party/bonjour)
-	set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
-	set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
-	set(CPACK_MONOLITHIC_INSTALL 1)
-	configure_file(
-		${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
-		${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
-	)
+    add_subdirectory(third_party/bonjour)
+    set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
+    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
+    set(CPACK_MONOLITHIC_INSTALL 1)
+    configure_file(
+        ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
+    )
 
 endif()
 

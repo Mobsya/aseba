@@ -108,7 +108,7 @@ public:
     QString language;
 
 public:
-    DashelInterface(QVector<QTranslator*> translators, const QString& commandLineTarget);
+    DashelInterface(const QString& commandLineTarget);
     bool attemptToReconnect();
 
     // from Dashel::Hub
@@ -185,8 +185,7 @@ protected:
                         //!< allowed
 
 public:
-    friend class InvasivePlugin;
-    DashelTarget(QVector<QTranslator*> translators, const QString& commandLineTarget);
+    DashelTarget(const QString& commandLineTarget);
     ~DashelTarget() override;
 
     QString getLanguage() const override {

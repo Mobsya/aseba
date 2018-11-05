@@ -3,6 +3,7 @@
 #include <boost/beast.hpp>
 #include <memory>
 #include <type_traits>
+#include <queue>
 #include "flatbuffers_message_writer.h"
 #include "flatbuffers_message_reader.h"
 #include "flatbuffers_messages.h"
@@ -10,6 +11,8 @@
 #include "tdm.h"
 #include "log.h"
 #include "app_token_manager.h"
+#include "utils.h"
+#include <pugixml.hpp>
 
 namespace mobsya {
 using tcp = boost::asio::ip::tcp;
@@ -161,7 +164,7 @@ public:
     }
 
     void write_message(tagged_detached_flatbuffer&& buffer) {
-        m_queue.push_back(std::move(buffer));
+        m_queue.emplace(std::move(buffer));
         if(m_queue.size() > 1 || m_protocol_version == 0)
             return;
 
@@ -190,6 +193,16 @@ public:
                 this->set_node_variables(vars_msg->request_id(), vars_msg->node_id(), variables(*vars_msg));
                 break;
             }
+            case mobsya::fb::AnyMessage::RegisterEvents: {
+                auto vars_msg = msg.as<fb::RegisterEvents>();
+                this->set_node_events_table(vars_msg->request_id(), vars_msg->node_id(), events_description(*vars_msg));
+                break;
+            }
+            case mobsya::fb::AnyMessage::SendEvents: {
+                auto vars_msg = msg.as<fb::SendEvents>();
+                this->emit_events(vars_msg->request_id(), vars_msg->node_id(), events(*vars_msg));
+                break;
+            }
             case mobsya::fb::AnyMessage::RenameNode: {
                 auto rename_msg = msg.as<fb::RenameNode>();
                 this->rename_node(rename_msg->request_id(), rename_msg->node_id(), rename_msg->new_name()->str());
@@ -205,19 +218,15 @@ public:
                 this->unlock_node(lock_msg->request_id(), lock_msg->node_id());
                 break;
             }
-            case mobsya::fb::AnyMessage::RequestAsebaCodeLoad: {
-                auto req = msg.as<fb::RequestAsebaCodeLoad>();
-                this->send_aseba_program(req->request_id(), req->node_id(), req->program()->str());
+            case mobsya::fb::AnyMessage::CompileAndLoadCodeOnVM: {
+                auto req = msg.as<fb::CompileAndLoadCodeOnVM>();
+                this->compile_and_send_program(req->request_id(), req->node_id(), vm_language(req->language()),
+                                               req->program()->str(), req->options());
                 break;
             }
-            case mobsya::fb::AnyMessage::RequestAsebaCodeRun: {
-                auto req = msg.as<fb::RequestAsebaCodeRun>();
-                this->run_aseba_program(req->request_id(), req->node_id());
-                break;
-            }
-            case mobsya::fb::AnyMessage::StopNode: {
-                auto req = msg.as<fb::StopNode>();
-                this->stop_node(req->request_id(), req->node_id());
+            case mobsya::fb::AnyMessage::SetVMExecutionState: {
+                auto req = msg.as<fb::SetVMExecutionState>();
+                this->set_vm_execution_state(req->request_id(), req->node_id(), req->command());
                 break;
             }
             case mobsya::fb::AnyMessage::WatchNode: {
@@ -225,6 +234,12 @@ public:
                 this->watch_node(req->request_id(), req->node_id(), req->info_type());
                 break;
             }
+            case mobsya::fb::AnyMessage::SetBreakpoints: {
+                auto req = msg.as<fb::SetBreakpoints>();
+                this->set_breakpoints(req->request_id(), req->node_id(), breakpoints(*req));
+                break;
+            }
+
 
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
@@ -235,7 +250,7 @@ public:
         if(ec) {
             mLogError("handle_write : error {}", ec.message());
         }
-        m_queue.erase(m_queue.begin());
+        m_queue.pop();
         if(!m_queue.empty()) {
             base::do_write_message(m_queue.front().buffer);
         }
@@ -269,10 +284,22 @@ public:
         });
     }
 
+    void node_emitted_events(std::shared_ptr<aseba_node> node, const aseba_node::event_changed_payload& payload) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, payload]() {
+            that->do_node_emitted_events(node, payload);
+        });
+    }
+
+    void node_execution_state_changed(std::shared_ptr<aseba_node> node, const aseba_node::vm_execution_state& state) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, state]() {
+            that->do_node_execution_state_changed(node, state);
+        });
+    }
+
 private:
     void do_node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
                          aseba_node::status status) {
-        //mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
+        // mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
 
         if(status == aseba_node::status::busy && get_locked_node(id)) {
             status = aseba_node::status::ready;
@@ -296,6 +323,26 @@ private:
             return;
         write_message(serialize_changed_variables(*node, map));
     }
+
+    void do_node_emitted_events(std::shared_ptr<aseba_node> node, const aseba_node::event_changed_payload& payload) {
+        if(!node)
+            return;
+        variant_ns::visit(overloaded{[this, &node](const aseba_node::variables_map& map) {
+                                         write_message(serialize_events(*node, map));
+                                     },
+                                     [this, &node](const aseba_node::events_table& desc) {
+                                         write_message(serialize_events_descriptions(*node, desc));
+                                     }},
+                          payload);
+    }
+
+    void do_node_execution_state_changed(std::shared_ptr<aseba_node> node,
+                                         const aseba_node::vm_execution_state& state) {
+        if(!node)
+            return;
+        write_message(serialize_execution_state(*node, state));
+    }
+
 
     void send_full_node_list() {
         flatbuffers::FlatBufferBuilder builder;
@@ -393,43 +440,100 @@ private:
         }
     }
 
-    void send_aseba_program(uint32_t request_id, const aseba_node_registery::node_id& id, std::string program) {
+    void set_node_events_table(uint32_t request_id, const aseba_node_registery::node_id& id,
+                               aseba_node::events_table events) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("set_node_events_table: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto err = n->set_node_events_table(events);
+        if(err) {
+            mLogWarn("set_node_events_table: invalid events", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+        } else {
+            write_message(create_ack_response(request_id));
+        }
+    }
+
+    void emit_events(uint32_t request_id, const aseba_node_registery::node_id& id, aseba_node::variables_map m) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("emits_events: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto err = n->emit_events(m, create_device_write_completion_cb(request_id));
+        if(err) {
+            mLogWarn("emits_events: invalid variables", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+        }
+    }
+
+    void compile_and_send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
+                                  std::string program, fb::CompilationOptions opts) {
         auto n = get_locked_node(id);
         if(!n) {
             mLogWarn("send_aseba_code: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        bool res = n->send_aseba_program(program, create_device_write_completion_cb(request_id));
-        if(!res) {
-            mLogWarn("send_aseba_code: compilation to node {} failed", id);
-            write_message(create_compilation_error_response(request_id));
+        auto callback = [request_id, strand = this->m_strand,
+                         ptr = weak_from_this()](boost::system::error_code ec, aseba_node::compilation_result result) {
+            boost::asio::post(strand, [ec, result, request_id, ptr]() {
+                auto that = ptr.lock();
+                if(!that)
+                    return;
+                if(ec) {
+                    that->write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+                    return;
+                }
+                that->write_message(create_compilation_result_response(request_id, result));
+            });
+        };
+        if((int32_t(opts) & int32_t(fb::CompilationOptions::LoadOnTarget))) {
+            n->compile_and_send_program(language, program, callback);
+        } else {
+            n->compile_program(language, program, callback);
         }
     }
 
-    void run_aseba_program(uint32_t request_id, aseba_node_registery::node_id id) {
+    void set_vm_execution_state(uint32_t request_id, aseba_node_registery::node_id id,
+                                fb::VMExecutionStateCommand cmd) {
         auto n = get_locked_node(id);
-        if(!n) {
-            mLogWarn("run_aseba_program: node {} not locked", id);
-            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
-            return;
-        }
-        n->run_aseba_program(create_device_write_completion_cb(request_id));
-    }
-
-    void stop_node(uint32_t request_id, const aseba_node_registery::node_id& id) {
-        auto n = get_locked_node(id);
-        if(!n) {
+        if(!n && cmd == fb::VMExecutionStateCommand::Stop) {
             n = registery().node_from_id(id);
-            if(!n || !(node_capabilities(n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
+            if(n && (node_capabilities(n) & uint64_t(fb::NodeCapability::Rename)))
                 n = {};
         }
         if(!n) {
-            mLogWarn("stop_node: node {} not locked", id);
+            mLogWarn("set_vm_execution_state: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        n->stop_vm(create_device_write_completion_cb(request_id));
+        n->set_vm_execution_state(cmd, create_device_write_completion_cb(request_id));
+    }
+
+    void set_breakpoints(uint32_t request_id, aseba_node_registery::node_id id, std::vector<breakpoint> breakpoints) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            mLogWarn("set_breakpoints: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto callback = [request_id, strand = this->m_strand, ptr = weak_from_this()](boost::system::error_code ec,
+                                                                                      aseba_node::breakpoints bps) {
+            boost::asio::post(strand, [ec, bps, request_id, ptr]() {
+                auto that = ptr.lock();
+                if(!that)
+                    return;
+                that->write_message(create_set_breakpoint_response(
+                    request_id, ec ? fb::ErrorType::unknown_error : fb::ErrorType::no_error, bps));
+            });
+        };
+
+        n->set_breakpoints(breakpoints, callback);
     }
 
     void watch_node(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
@@ -439,15 +543,35 @@ private:
             return;
         }
         if(flags & uint32_t(fb::WatchableInfo::Variables)) {
-            if(!m_nodes_watched_for_variables_changes.count(id)) {
+            if(!m_watch_nodes[fb::WatchableInfo::Variables].count(id)) {
                 auto variables = node->variables();
                 this->node_variables_changed(node, variables);
             }
-            m_nodes_watched_for_variables_changes[id] = node->connect_to_variables_changes(std::bind(
+            m_watch_nodes[fb::WatchableInfo::Variables][id] = node->connect_to_variables_changes(std::bind(
                 &application_endpoint::node_variables_changed, this, std::placeholders::_1, std::placeholders::_2));
         } else {
-            m_nodes_watched_for_variables_changes.erase(id);
+            m_watch_nodes[fb::WatchableInfo::Variables].erase(id);
         }
+
+        if(flags & uint32_t(fb::WatchableInfo::Events)) {
+            m_watch_nodes[fb::WatchableInfo::Events][id] = node->connect_to_events(std::bind(
+                &application_endpoint::node_emitted_events, this, std::placeholders::_1, std::placeholders::_2));
+            this->node_emitted_events(node, node->events_description());
+        } else {
+            m_watch_nodes[fb::WatchableInfo::Events].erase(id);
+        }
+
+        if(flags & uint32_t(fb::WatchableInfo::VMExecutionState)) {
+            m_watch_nodes[fb::WatchableInfo::VMExecutionState][id] =
+                node->connect_to_execution_state_changes(std::bind(&application_endpoint::node_execution_state_changed,
+                                                                   this, std::placeholders::_1, std::placeholders::_2));
+            this->node_execution_state_changed(node, node->execution_state());
+
+        } else {
+            m_watch_nodes[fb::WatchableInfo::VMExecutionState].erase(id);
+        }
+
+
         write_message(create_ack_response(request_id));
     }
 
@@ -517,7 +641,8 @@ private:
             return;
         }
 
-        // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing messages
+        // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing
+        // messages
         send_full_node_list();
 
         read_message();
@@ -532,11 +657,12 @@ private:
     }
 
     boost::asio::io_context& m_ctx;
-    std::vector<tagged_detached_flatbuffer> m_queue;
+    std::queue<tagged_detached_flatbuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
-    std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>
-        m_nodes_watched_for_variables_changes;
+    std::unordered_map<fb::WatchableInfo,
+                       std::unordered_map<aseba_node_registery::node_id, boost::signals2::scoped_connection>>
+        m_watch_nodes;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;

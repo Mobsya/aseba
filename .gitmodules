@@ -35,3 +35,6 @@
 [submodule "third_party/mpark.variant"]
 	path = third_party/mpark.variant
 	url = https://github.com/mpark/variant
+[submodule "third_party/pugixml"]
+	path = third_party/pugixml
+	url = https://github.com/zeux/pugixml.git

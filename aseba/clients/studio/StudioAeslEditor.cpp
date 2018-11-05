@@ -18,7 +18,7 @@
 */
 
 #include "StudioAeslEditor.h"
-#include "MainWindow.h"
+#include "NodeTab.h"
 #include <QtWidgets>
 #include <QtGlobal>
 
@@ -28,7 +28,9 @@ namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-StudioAeslEditor::StudioAeslEditor(const ScriptTab* tab) : tab(tab), dropSourceWidget(nullptr) {}
+StudioAeslEditor::StudioAeslEditor(const ScriptTab* tab) : tab(tab), dropSourceWidget(nullptr) {
+    connect(this, &StudioAeslEditor::textChanged, this, &StudioAeslEditor::handleCompletion);
+}
 
 void StudioAeslEditor::dropEvent(QDropEvent* event) {
     dropSourceWidget = dynamic_cast<QWidget*>(event->source());
@@ -47,61 +49,106 @@ void StudioAeslEditor::insertFromMimeData(const QMimeData* source) {
         const QString startText(cursor.block().text().left(posInBlock));
         startOfLine = !startText.contains(QRegExp("\\S"));
     }
+    if(!(dropSourceWidget && startOfLine)) {
+        cursor.insertText(source->text());
+        return;
+    }
+
 
     // if beginning of a line and source widget is known, add some helper text
-    if(dropSourceWidget && startOfLine) {
-        const auto* nodeTab(dynamic_cast<const NodeTab*>(tab));
-        assert(nodeTab);
-        QString prefix("");   // before the text
-        QString midfix("");   // between the text and the cursor
-        QString postfix("");  // after the curser
-        if(dropSourceWidget == nodeTab->vmFunctionsView) {
-            // inserting function
-            prefix = "call ";
-            midfix = "(";
-            // fill call from doc
-            const TargetDescription* desc = nodeTab->vmFunctionsModel->descriptionRead;
-            const std::wstring funcName = source->text().toStdWString();
-            for(size_t i = 0; i < desc->nativeFunctions.size(); i++) {
-                const TargetDescription::NativeFunction native(desc->nativeFunctions[i]);
-                if(native.name == funcName) {
-                    for(size_t j = 0; j < native.parameters.size(); ++j) {
-                        postfix += QString::fromStdWString(native.parameters[j].name);
-                        if(j + 1 < native.parameters.size())
-                            postfix += ", ";
-                    }
-                    break;
-                }
-            }
-            postfix += ")\n";
-        } else if(dropSourceWidget == nodeTab->vmMemoryView) {
-            const std::wstring varName = source->text().toStdWString();
-            if(nodeTab->vmMemoryModel->getVariableSize(QString::fromStdWString(varName)) > 1) {
-                midfix = "[";
-                postfix = "] ";
-            } else
-                midfix = " ";
-        } else if(dropSourceWidget == nodeTab->vmLocalEvents) {
-            // inserting local event
-            prefix = "onevent ";
-            midfix = "\n";
-        } else if(dropSourceWidget == nodeTab->mainWindow->eventsDescriptionsView) {
-            // inserting global event
-            prefix = "onevent ";
-            midfix = "\n";
-        }
+    const auto* nodeTab(dynamic_cast<const NodeTab*>(tab));
+    assert(nodeTab);
+    QString prefix(QLatin1String(""));   // before the text
+    QString midfix(QLatin1String(""));   // between the text and the cursor
+    QString postfix(QLatin1String(""));  // after the curser
+    if(dropSourceWidget == nodeTab->vmFunctionsView) {
+        prefix = "call ";
+    } else if(dropSourceWidget == nodeTab->vmLocalEvents) {
+        // inserting local event
+        prefix = "onevent ";
+        midfix = "\n";
+    } /*else if(dropSourceWidget == nodeTab->mainWindow->eventsDescriptionsView) {
+        // inserting global event
+        prefix = "onevent ";
+        midfix = "\n";
+    }*/
 
-        cursor.beginEditBlock();
-        cursor.insertText(prefix + source->text() + midfix);
-        const int pos = cursor.position();
-        cursor.insertText(postfix);
-        cursor.setPosition(pos);
-        cursor.endEditBlock();
+    cursor.beginEditBlock();
+    cursor.insertText(prefix + source->text() + midfix);
+    const int pos = cursor.position();
+    cursor.insertText(postfix);
+    cursor.setPosition(pos);
+    cursor.endEditBlock();
 
-        this->setTextCursor(cursor);
-    } else
-        cursor.insertText(source->text());
+    this->setTextCursor(cursor);
 }
 
-/*@}*/
+void StudioAeslEditor::handleCompletion() {
+    // handle completion
+    QTextCursor cursor(textCursor());
+    if(!cursor.atBlockEnd())
+        return;
+
+    // language completion
+    const QString& line(cursor.block().text());
+    QString keyword(line);
+
+    // make sure the string does not have any trailing space
+    int nonWhitespace(0);
+    while((nonWhitespace < keyword.size()) &&
+          ((keyword.at(nonWhitespace) == ' ') || (keyword.at(nonWhitespace) == '\t')))
+        ++nonWhitespace;
+    keyword.remove(0, nonWhitespace);
+
+    if(!keyword.trimmed().isEmpty()) {
+        QString prefix;
+        QString postfix;
+        if(keyword == QLatin1String("if")) {
+            const QString headSpace = line.left(line.indexOf(QLatin1String("if")));
+            prefix = QLatin1String(" ");
+            postfix = " then\n" + headSpace + "\t\n" + headSpace + "end";
+        } else if(keyword == QLatin1String("when")) {
+            const QString headSpace = line.left(line.indexOf(QLatin1String("when")));
+            prefix = QLatin1String(" ");
+            postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
+        } else if(keyword == QLatin1String("for")) {
+            const QString headSpace = line.left(line.indexOf(QLatin1String("for")));
+            prefix = QLatin1String(" ");
+            postfix = "i in 0:0 do\n" + headSpace + "\t\n" + headSpace + "end";
+        } else if(keyword == QLatin1String("while")) {
+            const QString headSpace = line.left(line.indexOf(QLatin1String("while")));
+            prefix = QLatin1String(" ");
+            postfix = " do\n" + headSpace + "\t\n" + headSpace + "end";
+        } else if((keyword == QLatin1String("else")) && cursor.block().next().isValid()) {
+            const QString tab = QStringLiteral("\t");
+            QString headSpace = line.left(line.indexOf(QLatin1String("else")));
+
+            if(headSpace.size() >= tab.size()) {
+                headSpace = headSpace.left(headSpace.size() - tab.size());
+                if(cursor.block().next().text() == headSpace + "end") {
+                    prefix = "\n" + headSpace + "else";
+                    postfix = "\n" + headSpace + "\t";
+
+                    cursor.select(QTextCursor::BlockUnderCursor);
+                    cursor.removeSelectedText();
+                }
+            }
+        } else if(keyword == QLatin1String("elseif")) {
+            const QString headSpace = line.left(line.indexOf(QLatin1String("elseif")));
+            prefix = QLatin1String(" ");
+            postfix = QLatin1String(" then");
+        }
+
+        if(!prefix.isNull() || !postfix.isNull()) {
+            cursor.beginEditBlock();
+            cursor.insertText(prefix);
+            const int pos = cursor.position();
+            cursor.insertText(postfix);
+            cursor.setPosition(pos);
+            cursor.endEditBlock();
+            setTextCursor(cursor);
+        }
+    }
+}
+
 }  // namespace Aseba

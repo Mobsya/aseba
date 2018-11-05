@@ -325,16 +325,9 @@ void DashelConnectionDialog::targetTemplateDoc() {
 }
 
 
-DashelInterface::DashelInterface(QVector<QTranslator*> translators, const QString& commandLineTarget)
-    : isRunning(true), stream(nullptr) {
-    // first use local name
-    const QString& systemLocale(QLocale::system().name());
-    assert(translators.size() == 4);
-    translators[0]->load(QString("qt_") + systemLocale, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    translators[1]->load(QString(":/asebastudio_") + systemLocale);
-    translators[2]->load(QString(":/compiler_") + systemLocale);
-    translators[3]->load(QString(":/qtabout_") + systemLocale);
-
+DashelInterface::DashelInterface(const QString& commandLineTarget)
+ ///  isRunning(true), stream(nullptr) {
+{
     // try to connect to cammand line target, if any
     DashelConnectionDialog targetSelector;
     language = targetSelector.getLocaleName();
@@ -375,12 +368,6 @@ DashelInterface::DashelInterface(QVector<QTranslator*> translators, const QStrin
             stream = Hub::connect(testTarget);
             lastConnectedTarget = testTarget;
             lastConnectedTargetName = stream->getTargetName();
-            assert(translators.size() == 4);
-            language = targetSelector.getLocaleName();
-            translators[0]->load(QString("qt_") + language, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-            translators[1]->load(QString(":/asebastudio_") + language);
-            translators[2]->load(QString(":/compiler_") + language);
-            translators[3]->load(QString(":/qtabout_") + language);
             break;
         } catch(DashelException e) {
             // exception, try again
@@ -497,8 +484,8 @@ enum InNextState { NOT_IN_NEXT, WAITING_INITAL_PC, WAITING_LINE_CHANGE };
 
 DashelTarget::Node::Node() : steppingInNext(NOT_IN_NEXT), lineInNext(0), executionMode(EXECUTION_UNKNOWN) {}
 
-DashelTarget::DashelTarget(QVector<QTranslator*> translators, const QString& commandLineTarget)
-    : dashelInterface(translators, commandLineTarget), writeBlocked(false) {
+DashelTarget::DashelTarget(const QString& commandLineTarget)
+ : dashelInterface(commandLineTarget), writeBlocked(false) {
     userEventsTimer.setSingleShot(true);
     connect(&userEventsTimer, SIGNAL(timeout()), SLOT(updateUserEvents()));
 

@@ -37,6 +37,7 @@ public:
 protected:
     void dropEvent(QDropEvent* event) override;
     void insertFromMimeData(const QMimeData* source) override;
+    void handleCompletion();
 
 protected:
     const ScriptTab* tab;

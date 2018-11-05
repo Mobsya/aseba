@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <unordered_map>
+#include <queue>
 #include <boost/asio.hpp>
 #include <chrono>
 #include "usb_utils.h"
@@ -137,7 +138,7 @@ public:
             return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         for(auto&& m : messages) {
-            m_msg_queue.emplace_back(std::move(m), write_callback{});
+            m_msg_queue.emplace(std::move(m), write_callback{});
         }
         if(cb) {
             m_msg_queue.back().second = std::move(cb);
@@ -313,18 +314,18 @@ private:
 
     void handle_write(boost::system::error_code ec) {
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
-        mLogDebug("Message '{}' sent : {}", m_msg_queue.begin()->first->message_name(), ec.message());
+        mLogDebug("Message '{}' sent : {}", m_msg_queue.front().first->message_name(), ec.message());
         if(ec) {
             variant_ns::visit([](auto& underlying) { underlying.cancel(); }, m_endpoint);
-            m_msg_queue.clear();
+            m_msg_queue = {};
             return;
         }
 
-        auto cb = m_msg_queue.begin()->second;
+        auto cb = m_msg_queue.front().second;
         if(cb) {
             boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
         }
-        m_msg_queue.erase(m_msg_queue.begin());
+        m_msg_queue.pop();
         if(!m_msg_queue.empty()) {
             do_write_message(*(m_msg_queue.front().first));
         }
@@ -342,7 +343,7 @@ private:
     endpoint_type m_endpoint_type;
     std::string m_endpoint_name;
     std::mutex m_msg_queue_lock;
-    std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
+    std::queue<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
 };
 
 }  // namespace mobsya

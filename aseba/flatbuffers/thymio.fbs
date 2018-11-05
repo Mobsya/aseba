@@ -43,9 +43,9 @@ enum NodeType : int {
 
 /// Capabilities of a node
 /// What a client can do with a node may depends on permissions, firmware version, type of node/device, etc
-enum NodeCapability : ulong {
+enum NodeCapability : int {
   Rename  = 0x01,
-  ForceResetAndStop = 0x02
+  ForceResetAndStop = 0x02,
 }
 
 /// The status of a node represents whether the node is connected and available.
@@ -66,22 +66,31 @@ enum NodeStatus : int {
 
 // Represent various errors a request can fail with.
 enum ErrorType : int {
+  no_error = 0,
   /// Genric error
-  unknown_error = 0,
+  unknown_error = 1,
   /// The node ddoes not exist or was disconnected
-  unknown_node = 1,
+  unknown_node = 2,
   /// The node is busy (locked by another client)
-  node_busy = 2,
+  node_busy = 3,
 
   ///Unsuported variable type - For SetNodeVariables and Events
   unsupported_variable_type
 }
+
 
 //see WatchNode
 enum WatchableInfo : int {
     StopMonitoring = 0,
     //Monitor for variables changes
     Variables = 0x01,
+    Events    = 0x02,
+    VMExecutionState = 0x04,
+}
+
+enum ProgrammingLanguage : int {
+    Aseba = 1,
+    Aesl  = 2,
 }
 
 /// Represent a node
@@ -96,11 +105,23 @@ table Node {
 table NodeVariable {
     name: string (key);
     value: [ubyte] (flexbuffer);
+    constant: bool = false;
 }
 
 table NodeVariablesChanged {
    node_id:NodeId;
    vars:[NodeVariable];
+}
+
+table SendEvents {
+   request_id:uint;
+   node_id:NodeId;
+   events:[NodeVariable];
+}
+
+table EventsEmitted {
+   node_id:NodeId;
+   events:[NodeVariable];
 }
 
 /// Message sent by the server when a node changes status.
@@ -127,32 +148,31 @@ table NodeAsebaVMDescription {
   bytecode_size:uint;
   data_size:uint;
   stack_size:uint;
-  variables:[NamedVariable];
-  events:[LocalEvent];
-  functions:[NativeFunction];
+  variables:[AsebaNamedVariable];
+  events:[AsebaEvent];
+  functions:[AsebaNativeFunction];
 }
 
-
-table NamedVariable {
+table AsebaNamedVariable {
   index: ushort;
   name:string;
   size:uint;
 }
 
-table LocalEvent {
+table AsebaEvent {
   index: ushort;
   name:string;
   description:string;
 }
 
-table NativeFunction {
+table AsebaNativeFunction {
   index: ushort;
   name:string;
   description:string;
-  parameters:[NativeFunctionParameter];
+  parameters:[AsebaNativeFunctionParameter];
 }
 
-table NativeFunctionParameter {
+table AsebaNativeFunctionParameter {
   name:string;
   size:uint;
 }
@@ -187,20 +207,93 @@ table UnlockNode {
   node_id:NodeId;
 }
 
-table RequestAsebaCodeLoad {
-    request_id:uint;
-    node_id:NodeId;
-    program:string;
+
+//see WatchNode
+enum CompilationOptions : int (bit_flags) {
+    NoOption,
+    LoadOnTarget,
+    FetchBytecode,
 }
 
-table RequestAsebaCodeRun {
+
+table CompileAndLoadCodeOnVM{
     request_id:uint;
     node_id:NodeId;
+    language:ProgrammingLanguage = Aseba;
+    program:string (required);
+    options:CompilationOptions = 0;
 }
 
-table StopNode {
-  request_id:uint;
-  node_id:NodeId;
+table CompilationResultFailure {
+    request_id:uint;
+    message:string (required);
+    character:uint;
+    line:uint;
+    column:uint;
+}
+
+table CompilationResultSuccess {
+    request_id:uint;
+    bytecode_size:uint;
+    total_bytecode_size:uint;
+    variables_size:uint;
+    total_variables_size:uint;
+}
+
+enum VMExecutionStateCommand : short {
+    Stop,
+    Run,
+    Step,
+    StepToNextLine,
+    Pause,
+    Reset,
+    Reboot,
+    Suspend,
+    WriteProgramToDeviceMemory,
+}
+
+enum VMExecutionState : short {
+    Stopped,
+    Running,
+    Paused,
+}
+
+enum VMExecutionError : short {
+    NoError,
+    Killed,
+    OutOfBoundAccess,
+    DivisionByZero,
+    GenericError,
+}
+
+table SetVMExecutionState {
+    request_id:uint;
+    node_id:NodeId;
+    command:VMExecutionStateCommand;
+}
+
+table VMExecutionStateChanged {
+    node_id:NodeId;
+    state:VMExecutionState;
+    line:uint;
+    error:VMExecutionError = NoError;
+    errorMsg:string;
+}
+
+table Breakpoint {
+    line:uint;
+}
+
+table SetBreakpoints {
+    request_id:uint;
+    node_id:NodeId;
+    breakpoints:[Breakpoint];
+}
+
+table SetBreakpointsResponse {
+    request_id:uint;
+    error:ErrorType;
+    breakpoints:[Breakpoint];
 }
 
 // Ask the server to receive events pertaining to a node
@@ -216,12 +309,25 @@ table Error {
   error:ErrorType;
 }
 
-table CompilationError {
-  request_id:uint;
+table RequestCompleted {
+    request_id:uint;
 }
 
-table RequestCompleted {
-  request_id:uint;
+table EventDescription {
+    name:string;
+    fixed_sized:uint;
+    index:uint;
+}
+
+table RegisterEvents {
+    request_id:uint;
+    node_id:NodeId;
+    events:[EventDescription];
+}
+
+table EventsDescriptionChanged {
+    node_id:NodeId;
+    events:[EventDescription];
 }
 
 union AnyMessage {
@@ -231,17 +337,24 @@ union AnyMessage {
     LockNode,
     UnlockNode,
     RenameNode,
-    StopNode,
-    RequestAsebaCodeLoad,
-    RequestAsebaCodeRun,
+    CompileAndLoadCodeOnVM,
     NodesChanged,
     NodeAsebaVMDescription,
     RequestCompleted,
     Error,
-    CompilationError,
+    CompilationResultFailure,
+    CompilationResultSuccess,
     WatchNode,
     NodeVariablesChanged,
-    SetNodeVariables
+    SetNodeVariables,
+    EventsDescriptionChanged,
+    RegisterEvents,
+    SendEvents,
+    EventsEmitted,
+    SetBreakpoints,
+    SetBreakpointsResponse,
+    SetVMExecutionState,
+    VMExecutionStateChanged,
 }
 
 table Message {

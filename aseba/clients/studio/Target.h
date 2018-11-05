@@ -50,7 +50,7 @@ public:
         EXECUTION_UNKNOWN,
     };
 
-signals:
+Q_SIGNALS:
     //! A new node has connected to the network.
     void nodeConnected(unsigned node);
     //! A node has disconnected from the network.

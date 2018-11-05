@@ -3,6 +3,7 @@ if(NOT ANDROID)
     # text-based using QtCore
     add_subdirectory(massloader)
     add_subdirectory(cmd)
+    set(CMAKE_CXX_STANDARD 17)
 
     # gui
 
@@ -18,7 +19,9 @@ if(NOT ANDROID)
 
         if(Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
             set(HAS_STUDIO ON)
+            add_subdirectory(qtcommon)
             add_subdirectory(studio)
+            add_subdirectory(vpl)
         endif()
 
 

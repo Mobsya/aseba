@@ -8,9 +8,10 @@
 namespace mobsya {
 
 enum class error_code {
-    invalid_object   = 0x01,
+    invalid_object = 0x01,
     no_such_variable,
-    incompatible_variable_type
+    incompatible_variable_type,
+    invalid_aesl,
 };
 
 class tdm_error_category : public boost::system::error_category {
