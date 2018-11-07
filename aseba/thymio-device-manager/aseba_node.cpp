@@ -30,7 +30,7 @@ const std::string& aseba_node::status_to_string(aseba_node::status s) {
 
 aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint)
     : m_id(id)
-    , m_uuid(boost::uuids::nil_uuid())
+    , m_uuid(boost::uuids::random_generator()())
     , m_status(status::disconnected)
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
