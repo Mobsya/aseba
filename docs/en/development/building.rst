@@ -122,7 +122,9 @@ Dependencies On Ubuntu & Debian
                          libqt5opengl5-dev \
                          libqt5svg5-dev \
                          libqt5x11extras5-dev \
-                         libqwt-qt5-dev \
+                         libqwt-qt5-dev \ 
+                         qtdeclarative5-dev \
+                         libboost-all-dev \
                          libudev-dev \
                          libxml2-dev \
                          libsdl2-dev \
