@@ -157,7 +157,7 @@ environment:
       LLVM_URL: http://prereleases.llvm.org/7.0.0/rc1/LLVM-7.0.0-rc1-win64.exe
       LLVM_VERSION: 7.0
       USE_VS_TOOLCHAIN: true
-      QT5: C:\Qt\5.11.1\msvc2017_64
+      QT5: C:\Qt\5.11\msvc2017_64
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
     #- ARCH: x86
@@ -168,7 +168,7 @@ environment:
 
     - ARCH: x64
       COMPILER: MSVC
-      QT5: C:\Qt\5.11.1\msvc2017_64
+      QT5: C:\Qt\5.11\msvc2017_64
       USE_VS_TOOLCHAIN: true
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
