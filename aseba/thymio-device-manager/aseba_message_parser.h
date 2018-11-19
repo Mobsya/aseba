@@ -88,7 +88,6 @@ public:
             bytes_transferred = 0;
         }
         if(!ec && bytes_transferred == state.size) {
-            Aseba::Message::SerializationBuffer& b = state.dataBuffer;
             auto msg =
                 std::shared_ptr<Aseba::Message>(Aseba::Message::create(state.source, state.type, state.dataBuffer));
             m_p.invoke(ec, std::move(msg));

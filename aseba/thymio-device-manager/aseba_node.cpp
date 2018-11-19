@@ -525,7 +525,7 @@ static tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_va
     if(p.is_array() && size == p.size()) {
         std::vector<int16_t> vars;
         vars.reserve(p.size());
-        for(auto i = 0; i < p.size(); i++) {
+        for(std::size_t i = 0; i < p.size(); i++) {
             auto e = p[i];
             if(!e.is_integral()) {
                 return make_unexpected(error_code::incompatible_variable_type);
@@ -799,7 +799,7 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
 void aseba_node::on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def) {
     variables_map events;
     auto p = detail::aseba_variable_from_range(event.data);
-    if((p.is_integral() && def.value != 1) || p.size() != def.value)
+    if((p.is_integral() && def.value != 1) || p.size() != std::size_t(def.value))
         return;
     events.insert(std::pair{Aseba::WStringToUTF8(def.name), p});
     m_events_signal(shared_from_this(), events);
