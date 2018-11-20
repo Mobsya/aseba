@@ -27,7 +27,7 @@ void aseba_tcp_acceptor::do_accept() {
     auto session = aseba_endpoint::create_for_tcp(m_iocontext);
     m_monitor.async_listen(m_contact, [this, session](boost::system::error_code ec) {
         if(ec) {
-            // error ?
+            mLogError("[tcp] Error {} - {}", ec.value(), ec.message());
             return;
         }
         if(m_contact.empty() || m_contact.type() != "aseba") {
