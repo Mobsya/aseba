@@ -121,11 +121,23 @@ void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length) {
 }
 
 void AsebaSendChangedVariables(AsebaVMState* vm) {
+
+   /*
+    * The wirelesss dongle has a max outgoing packet size that isnt really documented
+    * anywhere
+    */
+#ifdef ASEBA_LIMITED_MESSAGE_SIZE
+    const uint16_t MAX_PACKET_SIZE = 90;
+#else
+    const uint16_t MAX_PACKET_SIZE = ASEBA_MAX_OUTER_PACKET_SIZE - 4;
+#endif
+
     buffer_pos = 0;
     int has_modified = 0;
     unsigned size_pos = 0;
     uint16_t first_idx = 0;
     uint16_t idx = 0;
+    uint16_t size = 0;
     buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
     size_pos = buffer_pos;
     buffer_add_uint16(0);
@@ -138,15 +150,17 @@ void AsebaSendChangedVariables(AsebaVMState* vm) {
                 first_idx = idx;
             }
             buffer_add_int16(vm->variables[idx]);
+            size ++;
             vm->variablesOld[idx] = vm->variables[idx];
         }
-        if((!modified && has_modified) || buffer_pos >= ASEBA_MAX_OUTER_PACKET_SIZE) {
-            unsigned old_pos = buffer_pos;
+        if((!modified && has_modified) || buffer_pos >= MAX_PACKET_SIZE) {
+            const unsigned old_pos = buffer_pos;
             buffer_pos = size_pos;
             buffer_add_uint16(first_idx);
-            buffer_add_uint16(idx - first_idx);
+            buffer_add_uint16(size);
+            size = 0;
             buffer_pos = old_pos;
-            if(buffer_pos >= ASEBA_MAX_OUTER_PACKET_SIZE) {
+            if(buffer_pos >= MAX_PACKET_SIZE) {
                 AsebaSendBuffer(vm, buffer, buffer_pos);
                 buffer_pos = 0;
                 buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
@@ -163,7 +177,7 @@ void AsebaSendChangedVariables(AsebaVMState* vm) {
         unsigned old_pos = buffer_pos;
         buffer_pos = size_pos;
         buffer_add_uint16(first_idx);
-        buffer_add_uint16(vm->variablesSize - first_idx);
+        buffer_add_uint16(size);
         buffer_pos = old_pos;
     }
     AsebaSendBuffer(vm, buffer, buffer_pos);
