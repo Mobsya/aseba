@@ -67,7 +67,9 @@ void TDMSupervisor::startLocalTDM() {
                     qInfo("thymio-device-manager stopped with exit code %d", exitCode);
                 }
             });
-    m_tdm_process->start(path);
+    // The empty argument list QStringList{} is necessary to make sure Qt will not try
+    // to split the path if it contains space
+    m_tdm_process->start(path, QStringList{});
 }
 
 void TDMSupervisor::stopTDM() {
