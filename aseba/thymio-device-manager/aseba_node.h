@@ -164,6 +164,7 @@ public:
     template <typename... ConnectionArgs>
     auto connect_to_variables_changes(ConnectionArgs... args) {
         m_resend_all_variables = true;
+        schedule_variables_update();
         return m_variables_changed_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
