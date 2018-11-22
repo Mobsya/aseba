@@ -293,6 +293,26 @@ protected:
 
 bool operator==(const GetNodeDescription& lhs, const GetNodeDescription& rhs);
 
+//! Request a specific node to send its description
+class GetNodeDescriptionFragment : public CmdMessage {
+public:
+    uint16_t version = ASEBA_PROTOCOL_VERSION;
+
+public:
+    GetNodeDescriptionFragment(int16_t fragment, uint16_t dest = ASEBA_DEST_INVALID)
+        : CmdMessage(ASEBA_MESSAGE_GET_NODE_DESCRIPTION_FRAGMENT, dest), m_fragment(fragment) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream&) const override;
+    operator const char*() const override {
+        return "get node description fragment";
+    }
+private:
+    int16_t m_fragment;
+};
+
 //! Description of a node, local events and native functions are omitted and further received by
 //! other messages
 class Description : public Message, public TargetDescription {

@@ -183,7 +183,7 @@ void AsebaSendChangedVariables(AsebaVMState* vm) {
     AsebaSendBuffer(vm, buffer, buffer_pos);
 }
 
-void AsebaSendDescription(AsebaVMState* vm) {
+static void AsebaSendDescriptionHead(AsebaVMState* vm) {
     const AsebaVMDescription* vmDescription = AsebaGetVMDescription(vm);
     const AsebaVariableDescription* namedVariables = vmDescription->variables;
     const AsebaNativeFunctionDescription* const* nativeFunctionsDescription = AsebaGetNativeFunctionsDescriptions(vm);
@@ -219,9 +219,27 @@ void AsebaSendDescription(AsebaVMState* vm) {
 
     // send buffer
     AsebaSendBuffer(vm, buffer, buffer_pos);
+}
+
+void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
+    const AsebaVMDescription* vmDescription = AsebaGetVMDescription(vm);
+    const AsebaVariableDescription* namedVariables = vmDescription->variables;
+    const AsebaNativeFunctionDescription* const* nativeFunctionsDescription = AsebaGetNativeFunctionsDescriptions(vm);
+    const AsebaLocalEventDescription* localEvents = AsebaGetLocalEventsDescriptions(vm);
+
+    if(fragment < 0)
+        AsebaSendDescriptionHead(vm);
+
+    int send_all = fragment == -2;
+    uint16_t total = 0;
+    uint16_t i = 0;
 
     // send named variables description
-    for(i = 0; namedVariables[i].name; i++) {
+    for(i = 0; namedVariables[i].name; i++, total++) {
+
+        if(!send_all  && fragment != total )
+            continue;
+
         buffer_pos = 0;
 
         buffer_add_uint16(ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION);
@@ -234,7 +252,11 @@ void AsebaSendDescription(AsebaVMState* vm) {
     }
 
     // send local events description
-    for(i = 0; localEvents[i].name; i++) {
+    for(i = 0; localEvents[i].name; i++, total++) {
+
+        if(!send_all  && fragment != total )
+            continue;
+
         buffer_pos = 0;
 
         buffer_add_uint16(ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION);
@@ -247,7 +269,11 @@ void AsebaSendDescription(AsebaVMState* vm) {
     }
 
     // send native functions description
-    for(i = 0; nativeFunctionsDescription[i]; i++) {
+    for(i = 0; nativeFunctionsDescription[i]; i++, total++) {
+
+        if(!send_all  && fragment != total )
+            continue;
+
         uint16_t j;
 
         buffer_pos = 0;
@@ -268,6 +294,10 @@ void AsebaSendDescription(AsebaVMState* vm) {
         // send buffer
         AsebaSendBuffer(vm, buffer, buffer_pos);
     }
+}
+
+void AsebaSendDescription(AsebaVMState* vm) {
+    AsebaSendDescriptionFragment(vm, -2);
 }
 
 void AsebaProcessIncomingEvents(AsebaVMState* vm) {
