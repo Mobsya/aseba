@@ -31,7 +31,7 @@ extern const char*  ASEBA_VERSION;
 extern const char*  ASEBA_REVISION;
 
 /*! version of aseba protocol, including bytecodes types and constants */
-#define ASEBA_PROTOCOL_VERSION 7
+#define ASEBA_PROTOCOL_VERSION 8
 
 /*! minimal accepted protocol version in targets */
 #define ASEBA_MIN_TARGET_PROTOCOL_VERSION 4
@@ -206,6 +206,7 @@ typedef enum
 	ASEBA_MESSAGE_GET_DEVICE_INFO,  // v6
 	ASEBA_MESSAGE_SET_DEVICE_INFO,  // v6
 	ASEBA_MESSAGE_GET_CHANGED_VARIABLES, // v7
+	ASEBA_MESSAGE_GET_NODE_DESCRIPTION_FRAGMENT, //v8
 
 	ASEBA_MESSAGE_INVALID = 0xFFFF
 } AsebaSystemMessagesTypes;

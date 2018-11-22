@@ -180,7 +180,7 @@ public:
                                 {aseba_node::create(m_io_context, node_id, shared_from_this()),
                                  std::chrono::steady_clock::now()}});
                 // Reading move this, we need to return immediately after
-                read_aseba_node_description(node_id);
+                read_aseba_node_description(node_id, static_cast<Aseba::NodePresent*>(msg.get())->version);
                 return;
             }
             // Update node status
@@ -277,7 +277,7 @@ private:
         return needs_health_check();
     }
 
-    void read_aseba_node_description(uint16_t node) {
+    void read_aseba_node_description(uint16_t nodeId, uint16_t protocol_version) {
         auto that = shared_from_this();
         auto cb = boost::asio::bind_executor(
             m_strand, [that](boost::system::error_code ec, uint16_t id, Aseba::TargetDescription msg) {
@@ -290,14 +290,34 @@ private:
                 node->on_description(msg);
             });
 
-        mLogInfo("Asking for description of node {}", node);
-        write_message(std::make_unique<Aseba::GetNodeDescription>(node));
+        mLogInfo("Asking for description of node {}", nodeId);
+        if(protocol_version >= 8) {
+            write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(-1, nodeId));
 
-        variant_ns::visit(
-            [&cb, &node](auto& underlying) {
-                return mobsya::async_read_aseba_description_message(underlying, node, std::move(cb));
-            },
-            m_endpoint);
+
+            auto get_next_fragment_cb = [nodeId, ep =  weak_from_this()](int16_t fragment) -> bool {
+                auto endpoint = ep.lock();
+                if(!endpoint)
+                    return false;
+                endpoint->write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(fragment, nodeId));
+                return true;
+            };
+            variant_ns::visit(
+                [&cb, &nodeId, &get_next_fragment_cb](auto& underlying) {
+                    return mobsya::async_read_aseba_fragmented_description_message(underlying, nodeId, std::move(cb), std::move(get_next_fragment_cb));
+                },
+                m_endpoint);
+        }
+        else {
+            write_message(std::make_unique<Aseba::GetNodeDescription>(nodeId));
+            variant_ns::visit(
+                [&cb, &nodeId](auto& underlying) {
+                    return mobsya::async_read_aseba_description_message(underlying, nodeId, std::move(cb));
+                },
+                m_endpoint);
+        }
+
+
     }
 
     void do_write_message(const Aseba::Message& message) {

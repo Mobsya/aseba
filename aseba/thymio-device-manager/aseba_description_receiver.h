@@ -1,6 +1,7 @@
 #pragma once
 #include "aseba_message_parser.h"
 #include "log.h"
+#include <functional>
 
 namespace mobsya {
 
@@ -22,6 +23,19 @@ async_read_aseba_description_message(AsyncReadStream& stream, uint16_t node, Com
     return init.result.get();
 }
 
+template <class AsyncReadStream, class CompletionToken, class WriteFragmentCallBack>
+BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, read_aseba_message_op_cb_t)
+async_read_aseba_fragmented_description_message(AsyncReadStream& stream, uint16_t node, CompletionToken&& token, WriteFragmentCallBack && cb) {
+    static_assert(boost::beast::is_async_read_stream<AsyncReadStream>::value, "AsyncReadStream requirements not met");
+
+    boost::asio::async_completion<CompletionToken, read_description_message_op_cb_t> init{token};
+    read_aseba_description_message_op<AsyncReadStream,
+                                      BOOST_ASIO_HANDLER_TYPE(CompletionToken, read_aseba_message_op_cb_t)>{
+        stream, node, std::forward<WriteFragmentCallBack>(cb), std::forward<CompletionToken>(init.completion_handler)}();
+
+    return init.result.get();
+}
+
 
 template <class AsyncReadStream, class Handler>
 class read_aseba_description_message_op {
@@ -33,7 +47,10 @@ class read_aseba_description_message_op {
             uint16_t variables{0}, event{0}, functions{0};
         } message_counter;
 
-        explicit state(Handler const&, uint16_t node, AsyncReadStream& stream) : stream(stream), node(node) {}
+        std::function<bool(int16_t)> writeFragmentCB;
+
+        explicit state(Handler const&, uint16_t node, AsyncReadStream& stream, std::function<bool(int16_t)> writeFragmentCB = {})
+            : node(node), stream(stream), writeFragmentCB(writeFragmentCB) {}
     };
     boost::beast::handler_ptr<state, Handler> m_p;
 
@@ -44,6 +61,10 @@ public:
     template <class DeducedHandler, class... Args>
     read_aseba_description_message_op(AsyncReadStream& stream, uint16_t node, DeducedHandler&& handler)
         : m_p(std::forward<DeducedHandler>(handler), node, stream) {}
+
+    template <class DeducedHandler, class... Args>
+    read_aseba_description_message_op(AsyncReadStream& stream, uint16_t node, std::function<bool(int16_t)> cb, DeducedHandler&& handler)
+        : m_p(std::forward<DeducedHandler>(handler), node, stream, cb) {}
 
     using allocator_type = boost::asio::associated_allocator_t<Handler>;
 
@@ -116,6 +137,9 @@ public:
             counter.event == desc.localEvents.size() && counter.functions == desc.nativeFunctions.size();
 
         if(!ready) {
+            if(s.writeFragmentCB) {
+                s.writeFragmentCB(counter.variables + counter.event + counter.functions);
+            }
             return mobsya::async_read_aseba_message(s.stream, std::move(*this));
         }
         Aseba::TargetDescription sd = std::move(s.description);

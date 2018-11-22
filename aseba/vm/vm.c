@@ -803,6 +803,11 @@ void AsebaVMDebugMessage(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t
 
         case ASEBA_MESSAGE_GET_NODE_DESCRIPTION: AsebaSendDescription(vm); break;
 
+        case ASEBA_MESSAGE_GET_NODE_DESCRIPTION_FRAGMENT: {
+            uint16_t version  = bswap16(data[0]);
+            int16_t  fragment = (int16_t)(bswap16(data[1]));
+            AsebaSendDescriptionFragment(vm, fragment); break;
+        }
         default: break;
     }
 }

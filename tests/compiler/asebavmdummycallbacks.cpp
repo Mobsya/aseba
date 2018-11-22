@@ -66,6 +66,10 @@ extern "C" void AsebaSendDescription(AsebaVMState* vm) {
     std::cerr << "AsebaSendDescription" << std::endl;
 }
 
+extern "C" void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
+    std::cerr << "AsebaSendDescriptionFragment" << std::endl;
+}
+
 extern "C" void AsebaPutVmToSleep(AsebaVMState* vm) {
     std::cerr << "AsebaPutVmToSleep" << std::endl;
 }
