@@ -363,7 +363,7 @@ public:
                                           size_t variables_total_size) {
         CompilationResult r;
         r.m_bytecode_size = bytecode_size;
-        r.m_bytecode_size = variables_size;
+        r.m_variables_size = variables_size;
         r.m_bytecode_total_size = bytecode_total_size;
         r.m_variables_total_size = variables_total_size;
         return r;

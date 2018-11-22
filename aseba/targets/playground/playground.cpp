@@ -406,7 +406,7 @@ int main(int argc, char* argv[]) {
 
     // Scan for external processes
     QList<QProcess*> processes;
-    QDomElement procssE(domDocument.documentElement().firstChildElement("process"));
+    /*QDomElement procssE(domDocument.documentElement().firstChildElement("process"));
     while(!procssE.isNull()) {
         QString command(procssE.attribute("command"));
         // create process
@@ -440,7 +440,7 @@ int main(int argc, char* argv[]) {
                 processes.back()->start(program, args, QIODevice::ReadOnly);
         }
         procssE = procssE.nextSiblingElement("process");
-    }
+    }*/
 
     // Show and run
     viewer.setWindowTitle(app.tr("Aseba Playground - Simulate your robots!"));
