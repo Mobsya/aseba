@@ -1,0 +1,7 @@
+// Microsoft Visual C++ generated resource script.
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APPLICATION	ICON	"${PROJECT_SOURCE_DIR}\\menu\\windows\\thymio-launcher.ico"
+
