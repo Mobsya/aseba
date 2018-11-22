@@ -12,6 +12,11 @@ else()
     qt5_add_resources(QT_RESOURCES qml.qrc)
 endif()
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/launcher.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc)
+
+
 add_executable(thymio-launcher WIN32
     ${QT_RESOURCES}
     main.cpp
@@ -19,6 +24,7 @@ add_executable(thymio-launcher WIN32
     launcher.cpp
     tdmsupervisor.h
     tdmsupervisor.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc
 )
 target_link_libraries(thymio-launcher
     Qt5::Widgets

@@ -45,5 +45,6 @@
         <file>qml/BottomEasingStackView.qml</file>
         <file>apps/blockly/blockly-icon.svg</file>
         <file>apps/blockly/description.jpeg</file>
+        <file>assets/thymio-launcher.ico</file>
     </qresource>
 </RCC>

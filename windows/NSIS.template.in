@@ -185,6 +185,7 @@ SectionGroup /e "-Aseba" GroupAseba
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiovpl.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymioupgrader.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebahelp.ico"
+		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymio-launcher.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiownetconfig.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiowebbridge.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\scratchblock.ico"
@@ -220,7 +221,6 @@ SectionGroup /e "-Aseba" GroupAseba
 			; Application
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Uninstall).lnk" "$INSTDIR\Uninstall.exe"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Package_Name).lnk" "$INSTDIR\bin\asebastudio.exe" "" "$INSTDIR\asebastudio.ico"		; Regular Aseba Studio
 			; Doc
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)"
 ;  			${If} $Language == '1036'
@@ -236,19 +236,13 @@ SectionGroup /e "-Aseba" GroupAseba
 ;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/en:start" "$INSTDIR\asebahelp.ico" "0"
 ;  			${EndIf}
 			; Thymio stuff?
-			; Aseba Thymio without auto-refresh
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Package_Name_Thymio).lnk" "$INSTDIR\bin\asebastudio.exe" "ser:name=Thymio-II" "$INSTDIR\asebastudiothymio.ico"
-			; Thymio VPL
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio VPL.lnk" "$INSTDIR\bin\thymiovpl.exe" "ser:name=Thymio" "$INSTDIR\thymiovpl.ico"
-			; Thymio Blockly
-			!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\Thymio Blockly" "file://$INSTDIR/thymio-blockly-standalone/index.html" "$INSTDIR\scratchblock.ico" "0"
+			; Launcher
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Package_Name_Thymio).lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 			; Thymio flasher
 			; CreateDirectory "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader.lnk" "$INSTDIR\bin\thymioupgrader.exe" "" "$INSTDIR\thymioupgrader.ico"
 			; Thymio wireless configurator
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Wireless Thymio Network Configurator.lnk" "$INSTDIR\bin\thymiownetconfig.exe" "" "$INSTDIR\thymiownetconfig.ico"
-			; Thymio asebahttp bridge
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Web Bridge.lnk" "$INSTDIR\bin\asebahttp.exe" "--autorestart -s 33333 ser:name=Thymio" "$INSTDIR\thymiowebbridge.ico"
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Challenge.lnk" "$INSTDIR\bin\asebachallenge.exe" "" "$INSTDIR\asebachallenge.ico"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
