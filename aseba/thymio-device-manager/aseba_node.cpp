@@ -698,6 +698,7 @@ void aseba_node::on_variables_message(const Aseba::Variables& msg) {
     std::unordered_map<std::string, variable> changed;
     set_variables(msg.start, msg.variables, changed);
     m_variables_changed_signal(shared_from_this(), changed);
+    schedule_variables_update();
 }
 
 void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
@@ -706,6 +707,7 @@ void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
         set_variables(area.start, area.variables, changed);
     }
     m_variables_changed_signal(shared_from_this(), changed);
+    schedule_variables_update();
 }
 
 void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
@@ -764,7 +766,6 @@ void aseba_node::schedule_variables_update() {
         // Only ask variables if we have at least 1 watcher
         if(!that->m_variables_changed_signal.empty())
             that->request_variables();
-        that->schedule_variables_update();
     });
 }
 
