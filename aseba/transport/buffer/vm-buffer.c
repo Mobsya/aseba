@@ -138,12 +138,23 @@ void AsebaSendChangedVariables(AsebaVMState* vm) {
     uint16_t first_idx = 0;
     uint16_t idx = 0;
     uint16_t size = 0;
-    buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
-    size_pos = buffer_pos;
-    buffer_add_uint16(0);
-    buffer_add_uint16(0);
-    for(idx = 0; vm->variablesOld && idx < vm->variablesSize; idx++) {
-        int modified = vm->variablesOld[idx] != vm->variables[idx];
+    unsigned old_pos = buffer_pos;
+
+    int has_header = 0;
+    for(idx = 0; vm->variablesOld && idx <= vm->variablesSize; idx++) {
+
+        int at_end = idx == vm->variablesSize;
+
+        if(!has_header) {
+            if(buffer_pos == 0)
+                buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
+            size_pos = buffer_pos;
+            buffer_add_uint16(0);  //reserve  2 for start
+            buffer_add_uint16(0);  //reserve 2 for size
+            has_header = 1;
+        }
+
+        int modified = !at_end && vm->variablesOld[idx] != vm->variables[idx];
         if(modified) {
             if(!has_modified) {
                 has_modified = 1;
@@ -153,34 +164,26 @@ void AsebaSendChangedVariables(AsebaVMState* vm) {
             size ++;
             vm->variablesOld[idx] = vm->variables[idx];
         }
-        if((!modified && has_modified) || buffer_pos >= MAX_PACKET_SIZE) {
-            const unsigned old_pos = buffer_pos;
-            buffer_pos = size_pos;
-            buffer_add_uint16(first_idx);
-            buffer_add_uint16(size);
-            size = 0;
+
+        int need_to_send_packet = buffer_pos >= MAX_PACKET_SIZE || at_end;
+
+        if((!modified && has_modified) || need_to_send_packet) {
+            old_pos = buffer_pos; //save the buffer pos
+            buffer_pos = size_pos; //then place the cursor where to read the size
+            buffer_add_uint16(first_idx); //write start
+            buffer_add_uint16(size); //write size
             buffer_pos = old_pos;
-            if(buffer_pos >= MAX_PACKET_SIZE) {
-                AsebaSendBuffer(vm, buffer, buffer_pos);
-                buffer_pos = 0;
-                buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
-            }
             has_modified = 0;
-            size_pos = buffer_pos;
-            buffer_add_uint16(0);
-            buffer_add_uint16(0);
-            first_idx = idx + 1;
+            size = 0;
+            first_idx = 0;
+            has_header = 0;
+        }
+
+        if(need_to_send_packet) {
+            AsebaSendBuffer(vm, buffer, buffer_pos);
+            buffer_pos = 0;
         }
     }
-
-    if(has_modified) {
-        unsigned old_pos = buffer_pos;
-        buffer_pos = size_pos;
-        buffer_add_uint16(first_idx);
-        buffer_add_uint16(size);
-        buffer_pos = old_pos;
-    }
-    AsebaSendBuffer(vm, buffer, buffer_pos);
 }
 
 static void AsebaSendDescriptionHead(AsebaVMState* vm) {
