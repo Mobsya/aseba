@@ -131,7 +131,9 @@ public:
                 safe_description_update(*static_cast<const Aseba::NativeFunctionDescription*>(msg.get()),
                                         desc.nativeFunctions, counter.functions);
                 break;
-            default: break;
+            default:
+                return mobsya::async_read_aseba_message(s.stream, std::move(*this));
+            break;
         }
         const bool ready = !desc.name.empty() && counter.variables == desc.namedVariables.size() &&
             counter.event == desc.localEvents.size() && counter.functions == desc.nativeFunctions.size();

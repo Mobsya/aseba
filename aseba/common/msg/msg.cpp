@@ -724,6 +724,10 @@ void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
         auto size = buffer.get<uint16_t>();
         if(size == 0)
             continue;
+
+        if((buffer.rawData.size() - buffer.readPos) < size * sizeof (int16_t))
+             return;
+
         VariablesDataVector v;
         v.reserve(size);
         for(int i = 0; i < size; i++) {
