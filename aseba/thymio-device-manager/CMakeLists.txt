@@ -9,7 +9,6 @@ add_library(thymio-device-manager-lib STATIC
     aesl_parser.h
     aesl_parser.cpp
     aseba_message_parser.h
-    aseba_description_receiver.h
     aseba_message_writer.h
     aseba_node_registery.h
     aseba_node_registery.cpp
