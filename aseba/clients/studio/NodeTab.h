@@ -146,7 +146,7 @@ private:
     ConstantsWidget* m_constantsWidget;
 
 
-    FlatVariablesModel m_events_model;
+    MaskableVariablesModel m_events_model;
     EventsWidget* m_eventsWidget;
 
 

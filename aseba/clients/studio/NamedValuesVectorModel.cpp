@@ -24,8 +24,6 @@
 #include <utility>
 
 namespace Aseba {
-/** \addtogroup studio */
-/*@{*/
 
 FlatVariablesModel::FlatVariablesModel(QObject* parent) : QAbstractTableModel(parent) {}
 
@@ -159,84 +157,51 @@ Qt::ItemFlags ConstantsModel::flags(const QModelIndex& index) const {
     return FlatVariablesModel::flags(index) | Qt::ItemIsEditable;
 }
 
-
-// ****************************************************************************** //
-
-/*MaskableNamedValuesVectorModel::MaskableNamedValuesVectorModel(NamedValuesVector* namedValues,
-                                                               const QString& tooltipText, QObject* parent)
-    : NamedValuesVectorModel(namedValues, tooltipText, parent), viewEvent() {}
-
-MaskableNamedValuesVectorModel::MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent)
-    : NamedValuesVectorModel(namedValues, parent), viewEvent() {}
-
-int MaskableNamedValuesVectorModel::columnCount(const QModelIndex& parent) const {
-    return 3;
-}
-
-QVariant MaskableNamedValuesVectorModel::data(const QModelIndex& index, int role) const {
+QVariant MaskableVariablesModel::data(const QModelIndex& index, int role) const {
     if(index.column() != 2)
-        return NamedValuesVectorModel::data(index, role);
+        return FlatVariablesModel::data(index, role);
+    bool visible = true;
+    if(m_events_visibility.size() > index.row())
+        visible = m_events_visibility[index.row()];
+
 
     if(role == Qt::DisplayRole) {
         return QVariant();
     } else if(role == Qt::DecorationRole) {
-        return viewEvent[index.row()] ? QPixmap(QStringLiteral(":/images/eye.png")) :
-                                        QPixmap(QStringLiteral(":/images/eyeclose.png"));
+        return visible ? QPixmap(QStringLiteral(":/images/eye.png")) : QPixmap(QStringLiteral(":/images/eyeclose.png"));
     } else if(role == Qt::ToolTipRole) {
-        return viewEvent[index.row()] ? tr("Hide") : tr("View");
+        return visible ? tr("Hide") : tr("View");
     } else
         return QVariant();
 }
 
-Qt::ItemFlags MaskableNamedValuesVectorModel::flags(const QModelIndex& index) const {
-    if(index.column() == 2)
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
-    else
-        return NamedValuesVectorModel::flags(index);
+int MaskableVariablesModel::columnCount(const QModelIndex& parent) const {
+    return FlatVariablesModel::columnCount(parent) + 1;
 }
-
-bool MaskableNamedValuesVectorModel::isVisible(const unsigned id) {
-    if(id >= viewEvent.size() || viewEvent[id])
+bool MaskableVariablesModel::isVisible(const unsigned id) const {
+    if(id >= m_events_visibility.size() || m_events_visibility[id])
         return true;
-
     return false;
 }
 
-void MaskableNamedValuesVectorModel::addNamedValue(const NamedValue& namedValue) {
-    NamedValuesVectorModel::addNamedValue(namedValue);
-    viewEvent.push_back(true);
-}
-
-void MaskableNamedValuesVectorModel::delNamedValue(int index) {
-    viewEvent.erase(viewEvent.begin() + index);
-    NamedValuesVectorModel::delNamedValue(index);
-}
-
-bool MaskableNamedValuesVectorModel::moveRow(int oldRow, int& newRow) {
-    if(!NamedValuesVectorModel::moveRow(oldRow, newRow))
-        return false;
-
-    // get value
-    bool value = viewEvent.at(oldRow);
-
-    viewEvent.erase(viewEvent.begin() + oldRow);
-
-    if(newRow < 0)
-        viewEvent.push_back(value);
-    else
-        viewEvent.insert(viewEvent.begin() + newRow, value);
-
+bool MaskableVariablesModel::isVisible(const QString& key) const {
+    int i = 0;
+    for(auto&& v : m_values) {
+        if(v.first == key) {
+            return isVisible(i);
+        }
+        i++;
+    }
     return true;
 }
 
-void MaskableNamedValuesVectorModel::toggle(const QModelIndex& index) {
-    Q_ASSERT(namedValues);
-    Q_ASSERT(index.row() < (int)namedValues->size());
+void MaskableVariablesModel::toggle(const QModelIndex& index) {
+    if(index.row() >= m_events_visibility.size())
+        m_events_visibility.resize(index.row() + 1);
 
-    viewEvent[index.row()] = !viewEvent[index.row()];
-    wasModified = true;
+    m_events_visibility[index.row()] = !m_events_visibility[index.row()];
+    const auto changed = this->index(index.row(), 2);
+    Q_EMIT dataChanged(changed, changed);
 }
-*/
 
-/*@}*/
 }  // namespace Aseba

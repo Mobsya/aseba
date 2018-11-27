@@ -13,6 +13,7 @@
 #include "CustomWidgets.h"
 #include "CustomDelegate.h"
 #include "NewNamedValueDialog.h"
+#include "NamedValuesVectorModel.h"
 
 
 namespace Aseba {
@@ -167,6 +168,10 @@ void EventsWidget::sendEvent(const QModelIndex& idx) {
 
 void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
     for(auto it = events.begin(); it != events.end(); ++it) {
+        const auto model = static_cast<const MaskableVariablesModel*>(m_view->model());
+        bool filter_out = !model->isVisible(it.key());
+        if(filter_out)
+            continue;
         QString arg = QJsonDocument::fromVariant(it.value().value()).toJson(QJsonDocument::Compact);
         QString text = QStringLiteral("%1\n%2: %3").arg(QTime::currentTime().toString("hh:mm:ss.zzz"), it.key(), arg);
         if(m_logger->count() > 50)
@@ -177,7 +182,7 @@ void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
 }
 
 void EventsWidget::onDoubleClick(const QModelIndex& index) {
-    if(index.column() == 1) {
+    if(index.column() == 1) {  // value
         QString name = m_view->model()->data(m_view->model()->index(index.row(), 0)).toString();
         auto count = m_view->model()->data(m_view->model()->index(index.row(), 1)).toInt();
         const bool ok = NewNamedValueDialog::modifyNamedValue(&name, &count, 0, ASEBA_MAX_EVENT_ARG_COUNT,
@@ -187,6 +192,8 @@ void EventsWidget::onDoubleClick(const QModelIndex& index) {
             Q_EMIT eventRemoved(name);
             Q_EMIT eventAdded(name, count);
         }
+    } else if(index.column() == 2) {  // show / hide
+        static_cast<MaskableVariablesModel*>(m_view->model())->toggle(index);
     } else {
         sendEvent(index);
     }
