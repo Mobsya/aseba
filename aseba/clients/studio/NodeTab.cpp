@@ -46,6 +46,7 @@ NodeTab::NodeTab(QWidget* parent)
     connect(m_aseba_vm_description_watcher, &mobsya::AsebaVMDescriptionRequestWatcher::finished, this,
             &NodeTab::onAsebaVMDescriptionChanged);
     connect(&m_vm_variables_model, &VariablesModel::variableChanged, this, &NodeTab::setVariable);
+    connect(&m_variables_cache_handling_timer, &QTimer::timeout, this, &NodeTab::handleVariablesCache);
 
 
     /*  // create models
@@ -408,14 +409,23 @@ void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
                                    m_constants_model.addVariable(it.key(), it.value().value());
             recompile = true;
         } else {
-            it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
-                                   m_vm_variables_model.setVariable(it.key(), it.value());
+            m_cached_variables.insert(it.key(), it.value());
+            if(!m_variables_cache_handling_timer.isActive())
+                m_variables_cache_handling_timer.start(150);
         }
     }
 
     if(recompile) {
         this->compileCodeOnTarget();
     }
+}
+
+void NodeTab::handleVariablesCache() {
+    for(auto it = m_cached_variables.begin(); it != m_cached_variables.end(); ++it) {
+        it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
+                               m_vm_variables_model.setVariable(it.key(), it.value());
+    }
+    m_cached_variables.clear();
 }
 
 void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value) {
