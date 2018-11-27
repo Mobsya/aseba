@@ -12,6 +12,8 @@ public:
     NewNamedValueDialog(QString* name, int* value, int min, int max);
     static bool getNamedValue(QString* name, int* value, int min, int max, QString title, QString valueName,
                               QString valueDescription);
+    static bool modifyNamedValue(QString* name, int* value, int min, int max, QString title, QString valueName,
+                                 QString valueDescription);
 
 protected slots:
     void okSlot();

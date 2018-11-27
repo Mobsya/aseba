@@ -83,7 +83,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendSelectedEvent);
     connect(clearLogger, &QPushButton::clicked, m_logger, &QListWidget::clear);
 
-    connect(m_view, &FixedWidthTableView::doubleClicked, this, &EventsWidget::sendEvent);
+    connect(m_view, &FixedWidthTableView::doubleClicked, this, &EventsWidget::onDoubleClick);
 }
 
 void EventsWidget::setModel(QAbstractItemModel* model) {
@@ -173,6 +173,22 @@ void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
             delete m_logger->takeItem(0);
         m_logger->addItem(new QListWidgetItem(QIcon(":/images/info.png"), text));
         m_logger->scrollToBottom();
+    }
+}
+
+void EventsWidget::onDoubleClick(const QModelIndex& index) {
+    if(index.column() == 1) {
+        QString name = m_view->model()->data(m_view->model()->index(index.row(), 0)).toString();
+        auto count = m_view->model()->data(m_view->model()->index(index.row(), 1)).toInt();
+        const bool ok = NewNamedValueDialog::modifyNamedValue(&name, &count, 0, ASEBA_MAX_EVENT_ARG_COUNT,
+                                                              tr("Modify an existing event"), tr("Name:"),
+                                                              tr("Number of arguments", "For the event"));
+        if(ok) {
+            Q_EMIT eventRemoved(name);
+            Q_EMIT eventAdded(name, count);
+        }
+    } else {
+        sendEvent(index);
     }
 }
 
