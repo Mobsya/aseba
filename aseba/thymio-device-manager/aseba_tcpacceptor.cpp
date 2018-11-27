@@ -36,6 +36,7 @@ void aseba_tcp_acceptor::monitor_next() {
         }
         mLogTrace("New contact {} : {}", m_contact.name(), m_contact.domain());
         this->push_contact(m_contact);
+        boost::asio::post(m_iocontext, boost::bind(&aseba_tcp_acceptor::do_accept, this));
         if(!m_stopped.load())
             monitor_next();
     });
@@ -53,7 +54,6 @@ std::string remove_host_from_name(const std::string& str) {
 void aseba_tcp_acceptor::do_accept() {
     std::unique_lock<std::mutex> _(m_queue_mutex);
     if(m_pending_contacts.empty()) {
-        boost::asio::post(m_iocontext, boost::bind(&aseba_tcp_acceptor::do_accept, this));
         return;
     }
     auto session = aseba_endpoint::create_for_tcp(m_iocontext);
