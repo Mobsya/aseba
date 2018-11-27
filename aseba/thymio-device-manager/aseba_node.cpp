@@ -28,18 +28,20 @@ const std::string& aseba_node::status_to_string(aseba_node::status s) {
 }
 
 
-aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint)
+aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, uint16_t protocol_version,
+                       std::weak_ptr<mobsya::aseba_endpoint> endpoint)
     : m_id(id)
     , m_uuid(boost::uuids::random_generator()())
     , m_status(status::disconnected)
+    , m_protocol_version(protocol_version)
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
     , m_io_ctx(ctx)
     , m_variables_timer(ctx) {}
 
-std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id,
+std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id, uint16_t protocol_version,
                                                std::weak_ptr<mobsya::aseba_endpoint> endpoint) {
-    auto node = std::make_shared<aseba_node>(ctx, id, std::move(endpoint));
+    auto node = std::make_shared<aseba_node>(ctx, id, protocol_version, std::move(endpoint));
     node->set_status(status::connected);
     return node;
 }
@@ -90,6 +92,14 @@ void aseba_node::on_message(const Aseba::Message& msg) {
         case ASEBA_MESSAGE_BREAKPOINT_SET_RESULT:
             on_breakpoint_set_result(static_cast<const Aseba::BreakpointSetResult&>(msg));
             break;
+
+        case ASEBA_MESSAGE_DESCRIPTION:
+        case ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION:
+        case ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION:
+        case ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION: {
+            handle_description_messages(msg);
+            break;
+        }
 
         default: {
             if(msg.type >= 0x8000)  // first non-event message
@@ -628,19 +638,16 @@ void aseba_node::rename(const std::string& newName) {
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
 }
 
-void aseba_node::on_description(Aseba::TargetDescription description) {
+void aseba_node::on_description_received() {
     mLogInfo("Got description for {} [{} variables, {} functions, {} events - protocol {}]", native_id(),
-             description.namedVariables.size(), description.nativeFunctions.size(), description.localEvents.size(),
-             description.protocolVersion);
-    {
-        m_description = std::move(description);
-        unsigned count;
-        reset_known_variables(m_description.getVariablesMap(count));
-        schedule_variables_update();
-    }
+             m_description.namedVariables.size(), m_description.nativeFunctions.size(),
+             m_description.localEvents.size(), m_description.protocolVersion);
+    unsigned count;
+    reset_known_variables(m_description.getVariablesMap(count));
+    schedule_variables_update();
     force_execution_state_update();
 
-    if(description.protocolVersion >= 6 &&
+    if(m_description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
@@ -698,6 +705,7 @@ void aseba_node::on_variables_message(const Aseba::Variables& msg) {
     std::unordered_map<std::string, variable> changed;
     set_variables(msg.start, msg.variables, changed);
     m_variables_changed_signal(shared_from_this(), changed);
+    schedule_variables_update();
 }
 
 void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
@@ -706,6 +714,7 @@ void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
         set_variables(area.start, area.variables, changed);
     }
     m_variables_changed_signal(shared_from_this(), changed);
+    schedule_variables_update();
 }
 
 void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
@@ -751,8 +760,8 @@ aseba_node::variables_map aseba_node::variables() const {
     return map;
 }
 
-void aseba_node::schedule_variables_update() {
-    m_variables_timer.expires_from_now(boost::posix_time::milliseconds(100));
+void aseba_node::schedule_variables_update(boost::posix_time::time_duration delay) {
+    m_variables_timer.expires_from_now(delay);
     std::weak_ptr<aseba_node> ptr = shared_from_this();
     m_variables_timer.async_wait([ptr](boost::system::error_code ec) {
         if(ec)
@@ -764,7 +773,12 @@ void aseba_node::schedule_variables_update() {
         // Only ask variables if we have at least 1 watcher
         if(!that->m_variables_changed_signal.empty())
             that->request_variables();
-        that->schedule_variables_update();
+
+        // schedule_variables_update is called in on_variables_message
+        // every 100ms or so
+        // However, the packet might be dropped, so this is a fail safe to make
+        // sure we ask for variables at least once every second
+        that->schedule_variables_update(boost::posix_time::seconds(1));
     });
 }
 
@@ -860,6 +874,77 @@ std::optional<std::pair<Aseba::EventDescription, std::size_t>> aseba_node::get_e
     if(m_defs.events.size() <= id)
         return {};
     return std::optional<std::pair<Aseba::EventDescription, std::size_t>>(std::pair{m_defs.events[id], id});
+}
+
+void aseba_node::get_description() {
+    if(m_protocol_version >= 8) {
+        write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(-1, m_id));
+    } else {
+        write_message(std::make_unique<Aseba::GetNodeDescription>(m_id));
+    }
+}
+void aseba_node::handle_description_messages(const Aseba::Message& msg) {
+    // recycle the variable timer to retrigger a description fragment message in case
+    // it's dropped by the wireless key
+    m_variables_timer.cancel();
+
+    Aseba::TargetDescription& desc = m_description;
+    auto& counter = m_description_message_counter;
+
+    const auto safe_description_update = [](auto&& description, auto& list, uint16_t& counter) {
+        if(counter >= list.size())
+            return;
+        auto it = std::find_if(std::begin(list), std::end(list),
+                               [&description](const auto& variable) { return variable.name == description.name; });
+        if(it != std::end(list))
+            return;
+        list[counter++] = std::forward<decltype(description)>(description);
+    };
+
+    switch(msg.type) {
+        case ASEBA_MESSAGE_DESCRIPTION:
+            if(!desc.name.empty()) {
+                mLogWarn("Received an Aseba::Description but we already got one");
+            }
+            desc = static_cast<const Aseba::Description&>(msg);
+            break;
+        case ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION:
+            safe_description_update(static_cast<const Aseba::NamedVariableDescription&>(msg), desc.namedVariables,
+                                    counter.variables);
+            break;
+        case ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION:
+            safe_description_update(static_cast<const Aseba::LocalEventDescription&>(msg), desc.localEvents,
+                                    counter.events);
+            break;
+        case ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION:
+            safe_description_update(static_cast<const Aseba::NativeFunctionDescription&>(msg), desc.nativeFunctions,
+                                    counter.functions);
+            break;
+        default: return;
+    }
+
+    const bool ready = !desc.name.empty() && counter.variables == desc.namedVariables.size() &&
+        counter.events == desc.localEvents.size() && counter.functions == desc.nativeFunctions.size();
+
+    if(!ready && m_protocol_version >= 8) {
+        write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(
+            counter.variables + counter.events + counter.functions, m_id));
+
+        m_variables_timer.expires_from_now(boost::posix_time::seconds(1));
+        m_variables_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
+            if(ec)
+                return;
+            auto that = ptr.lock();
+            if(!that)
+                return;
+            auto& counter = that->m_description_message_counter;
+            that->write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(
+                counter.variables + counter.events + counter.functions, that->m_id));
+        });
+    }
+
+    if(ready)
+        on_description_received();
 }
 
 }  // namespace mobsya

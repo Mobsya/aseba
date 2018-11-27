@@ -102,14 +102,15 @@ public:
     using vm_execution_state_command = fb::VMExecutionStateCommand;
 
 
-    aseba_node(boost::asio::io_context& ctx, node_id_t id, std::weak_ptr<mobsya::aseba_endpoint> endpoint);
+    aseba_node(boost::asio::io_context& ctx, node_id_t id, uint16_t protocol_version,
+               std::weak_ptr<mobsya::aseba_endpoint> endpoint);
     using write_callback = std::function<void(boost::system::error_code)>;
     using breakpoints_callback = std::function<void(boost::system::error_code, breakpoints)>;
     using compilation_callback = std::function<void(boost::system::error_code, compilation_result)>;
 
     ~aseba_node();
 
-    static std::shared_ptr<aseba_node> create(boost::asio::io_context& ctx, node_id_t id,
+    static std::shared_ptr<aseba_node> create(boost::asio::io_context& ctx, node_id_t id, uint16_t protocol_version,
                                               std::weak_ptr<mobsya::aseba_endpoint> endpoint);
 
     static const std::string& status_to_string(aseba_node::status);
@@ -164,6 +165,7 @@ public:
     template <typename... ConnectionArgs>
     auto connect_to_variables_changes(ConnectionArgs... args) {
         m_resend_all_variables = true;
+        schedule_variables_update();
         return m_variables_changed_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
@@ -187,7 +189,8 @@ private:
     // Must be called before destructor !
     void disconnect();
     void on_message(const Aseba::Message& msg);
-    void on_description(Aseba::TargetDescription description);
+    void get_description();
+    void on_description_received();
     void on_device_info(const Aseba::DeviceInfo& info);
     void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def);
 
@@ -197,7 +200,7 @@ private:
     void on_variables_message(const Aseba::ChangedVariables& msg);
     void set_variables(uint16_t start, const std::vector<int16_t>& data,
                        std::unordered_map<std::string, variable>& vars);
-    void schedule_variables_update();
+    void schedule_variables_update(boost::posix_time::time_duration delay = boost::posix_time::milliseconds(100));
     void send_events_table();
     void on_execution_state_message(const Aseba::ExecutionStateChanged&);
     void on_vm_runtime_error(const Aseba::Message&);
@@ -209,6 +212,7 @@ private:
     void step_to_next_line(write_callback&& cb);
     void handle_step_request();
     void cancel_pending_step_request();
+    void handle_description_messages(const Aseba::Message& m);
 
 
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
@@ -218,9 +222,13 @@ private:
     node_id m_uuid;
     std::string m_friendly_name;
     std::atomic<status> m_status;
+    const uint16_t m_protocol_version;
     std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
     Aseba::TargetDescription m_description;
+    struct {
+        uint16_t variables{0}, events{0}, functions{0};
+    } m_description_message_counter;
     Aseba::CommonDefinitions m_defs;
     Aseba::BytecodeVector m_bytecode;
     breakpoints m_breakpoints;

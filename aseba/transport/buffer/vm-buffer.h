@@ -66,6 +66,8 @@ extern uint16_t AsebaGetBuffer(AsebaVMState* vm, uint8_t* data, uint16_t maxLeng
 
 extern const AsebaVMDescription* AsebaGetVMDescription(AsebaVMState* vm);
 
+extern const AsebaVMDescription* AsebaGetVMDescriptionFragment(AsebaVMState* vm);
+
 extern const AsebaLocalEventDescription* AsebaGetLocalEventsDescriptions(AsebaVMState* vm);
 
 extern const AsebaNativeFunctionDescription* const* AsebaGetNativeFunctionsDescriptions(AsebaVMState* vm);

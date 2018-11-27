@@ -517,6 +517,26 @@ bool operator==(const GetNodeDescription& lhs, const GetNodeDescription& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.version == rhs.version;
 }
 
+void GetNodeDescriptionFragment::serializeSpecific(SerializationBuffer& buffer) const {
+    CmdMessage::serializeSpecific(buffer);
+
+    buffer.add(version);
+    buffer.add(m_fragment);
+}
+
+void GetNodeDescriptionFragment::deserializeSpecific(SerializationBuffer& buffer) {
+    CmdMessage::deserializeSpecific(buffer);
+
+    version = buffer.get<uint16_t>();
+    m_fragment = buffer.get<int16_t>();
+}
+
+void GetNodeDescriptionFragment::dumpSpecific(wostream& stream) const {
+    CmdMessage::dumpSpecific(stream);
+
+    stream << "protocol version " << version;
+}
+
 //
 
 void Description::serializeSpecific(SerializationBuffer& buffer) const {
@@ -704,6 +724,10 @@ void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
         auto size = buffer.get<uint16_t>();
         if(size == 0)
             continue;
+
+        if((buffer.rawData.size() - buffer.readPos) < size * sizeof (int16_t))
+             return;
+
         VariablesDataVector v;
         v.reserve(size);
         for(int i = 0; i < size; i++) {

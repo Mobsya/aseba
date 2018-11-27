@@ -161,6 +161,9 @@ void AsebaSendChangedVariables(AsebaVMState* vm);
 /*! Called by AsebaVMDebugMessage when VM must send its description on the network. */
 void AsebaSendDescription(AsebaVMState* vm);
 
+/*! Called by AsebaVMDebugMessage when VM must send its description on the network. */
+void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment);
+
 /*! Called by AsebaStep to perform a native function call. */
 void AsebaNativeFunction(AsebaVMState* vm, uint16_t id);
 

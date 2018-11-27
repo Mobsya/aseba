@@ -14,7 +14,6 @@
 #endif
 #include "aseba_message_parser.h"
 #include "aseba_message_writer.h"
-#include "aseba_description_receiver.h"
 #include "aseba_node.h"
 #include "log.h"
 #include "variant_compat.h"
@@ -176,18 +175,21 @@ public:
         auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
         if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             if(!node) {
-                m_nodes.insert({node_id,
-                                {aseba_node::create(m_io_context, node_id, shared_from_this()),
-                                 std::chrono::steady_clock::now()}});
+                const auto protocol_version = static_cast<Aseba::NodePresent*>(msg.get())->version;
+                it = m_nodes
+                         .insert({node_id,
+                                  {aseba_node::create(m_io_context, node_id, protocol_version, shared_from_this()),
+                                   std::chrono::steady_clock::now()}})
+                         .first;
                 // Reading move this, we need to return immediately after
-                read_aseba_node_description(node_id);
-                return;
+                it->second.node->get_description();
             }
-            // Update node status
-            it->second.last_seen = std::chrono::steady_clock::now();
-
         } else if(node) {
             node->on_message(*msg);
+        }
+        if(node) {
+            // Update node status
+            it->second.last_seen = std::chrono::steady_clock::now();
         }
         read_aseba_message();
     }
@@ -229,7 +231,7 @@ private:
         timer->async_wait(std::move(cb));
     }
 
-    void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
+    void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(5)) {
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
         std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();
@@ -241,7 +243,7 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(d.count() >= 10) {
+                if(d.count() >= 5) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
@@ -275,29 +277,6 @@ private:
             return true;
 #endif
         return needs_health_check();
-    }
-
-    void read_aseba_node_description(uint16_t node) {
-        auto that = shared_from_this();
-        auto cb = boost::asio::bind_executor(
-            m_strand, [that](boost::system::error_code ec, uint16_t id, Aseba::TargetDescription msg) {
-                if(ec) {
-                    mLogError("Error while waiting for a node description");
-                    return;
-                }
-                auto node = that->find_node(id);
-                that->read_aseba_message();
-                node->on_description(msg);
-            });
-
-        mLogInfo("Asking for description of node {}", node);
-        write_message(std::make_unique<Aseba::GetNodeDescription>(node));
-
-        variant_ns::visit(
-            [&cb, &node](auto& underlying) {
-                return mobsya::async_read_aseba_description_message(underlying, node, std::move(cb));
-            },
-            m_endpoint);
     }
 
     void do_write_message(const Aseba::Message& message) {
@@ -344,6 +323,6 @@ private:
     std::string m_endpoint_name;
     std::mutex m_msg_queue_lock;
     std::queue<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
-};
+};  // namespace mobsya
 
 }  // namespace mobsya
