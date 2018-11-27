@@ -48,10 +48,12 @@ public:
     struct TreeItem;
 
 private:
-    void setVariable(TreeItem&, const QVariant& key, const QVariant& v, bool constant, const QModelIndex& parent);
+    void setVariable(TreeItem&, const QVariant& key, const QVariant& v, bool constant, const QModelIndex& parent,
+                     QVector<QModelIndex>& updated_indexes);
     TreeItem* get_or_create_root();
     TreeItem* getItem(const QModelIndex& idx) const;
     QModelIndex getIndex(const QVariant& key, const QModelIndex& parent, int col);
+    void emit_data_changed(const QVector<QModelIndex>& updated_indexes);
 
 
     std::unique_ptr<TreeItem> m_root;
