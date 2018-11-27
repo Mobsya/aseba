@@ -17,8 +17,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NAMED_VALUES_VECTOR_MODEL_H
-#define NAMED_VALUES_VECTOR_MODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
 #include <aseba/qt-thymio-dm-client-lib/request.h>
@@ -78,34 +77,21 @@ Q_SIGNALS:
     void constantModified(const QString& name, const QVariant& value);
 };
 
-/*class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
+class MaskableVariablesModel : public FlatVariablesModel {
     Q_OBJECT
 
 public:
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText,
-                                   QObject* parent = nullptr);
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
-
-    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
-
+    using FlatVariablesModel::FlatVariablesModel;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    bool isVisible(const unsigned id) const;
+    bool isVisible(const QString& key) const;
 
-    bool isVisible(const unsigned id);
-
-    bool moveRow(int oldRow, int& newRow) override;
-
-public slots:
-    void addNamedValue(const NamedValue& namedValue);
-    void delNamedValue(int index);
+public Q_SLOTS:
     void toggle(const QModelIndex& index);
 
 private:
-    std::vector<bool> viewEvent;
+    std::vector<bool> m_events_visibility;
 };
-* /
 
-/*@}*/
 }  // namespace Aseba
-
-#endif
