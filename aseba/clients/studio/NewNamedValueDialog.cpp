@@ -50,6 +50,24 @@ bool NewNamedValueDialog::getNamedValue(QString* name, int* value, int min, int 
         return false;
 }
 
+bool NewNamedValueDialog::modifyNamedValue(QString* name, int* value, int min, int max, QString title,
+                                           QString valueName, QString valueDescription) {
+    NewNamedValueDialog dialog(name, value, min, max);
+    dialog.setWindowTitle(title);
+    dialog.label1->setText(valueName);
+    dialog.line1->setReadOnly(true);
+    dialog.label2->setText(valueDescription);
+    dialog.resize(500, 0);  // make it wide enough
+
+    int ret = dialog.exec();
+
+    if(ret)
+        return true;
+    else
+        return false;
+}
+
+
 void NewNamedValueDialog::okSlot() {
     *name = line1->text();
     *value = line2->value();

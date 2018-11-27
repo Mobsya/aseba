@@ -28,6 +28,7 @@ private Q_SLOTS:
     void eventsSelectionChanged();
     void sendSelectedEvent();
     void sendEvent(const QModelIndex& i);
+    void onDoubleClick(const QModelIndex& index);
 
 private:
     FixedWidthTableView* m_view;
