@@ -181,6 +181,16 @@ void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
     }
 }
 
+void EventsWidget::logError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
+    QString text = QTime::currentTime().toString("hh:mm:ss.zzz");
+    text += "\n" + tr("Line %1: %2").arg(line + 1).arg(message);
+
+    if(m_logger->count() > 50)
+        delete m_logger->takeItem(0);
+    m_logger->addItem(new QListWidgetItem(QIcon(":/images/warning.png"), text));
+    m_logger->scrollToBottom();
+}
+
 void EventsWidget::onDoubleClick(const QModelIndex& index) {
     if(index.column() == 1) {  // value
         QString name = m_view->model()->data(m_view->model()->index(index.row(), 0)).toString();

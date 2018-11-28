@@ -189,6 +189,7 @@ void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg
         }
     } else {
         Q_EMIT vmExecutionStopped();
+        Q_EMIT vmExecutionError(msg.error, QString::fromStdString(msg.errorMsg), msg.line);
     }
 }
 

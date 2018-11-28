@@ -333,23 +333,30 @@ void aseba_node::on_vm_runtime_error(const Aseba::Message& msg) {
         case ASEBA_MESSAGE_ARRAY_ACCESS_OUT_OF_BOUNDS: {
             auto message = static_cast<const Aseba::ArrayAccessOutOfBounds&>(msg);
             state.error = fb::VMExecutionError::OutOfBoundAccess;
+            state.error_message = "Out of bound access";
             pc = message.pc;
+            break;
         }
         case ASEBA_MESSAGE_DIVISION_BY_ZERO: {
             auto message = static_cast<const Aseba::DivisionByZero&>(msg);
             state.error = fb::VMExecutionError::DivisionByZero;
+            state.error_message = "Division by 0";
             pc = message.pc;
+            break;
         }
         case ASEBA_MESSAGE_EVENT_EXECUTION_KILLED: {
             auto message = static_cast<const Aseba::EventExecutionKilled&>(msg);
             state.error = fb::VMExecutionError::Killed;
+            state.error_message = "VM Execution killed";
             pc = message.pc;
+            break;
         }
         case ASEBA_MESSAGE_NODE_SPECIFIC_ERROR: {
             auto message = static_cast<const Aseba::NodeSpecificError&>(msg);
             state.error = fb::VMExecutionError::GenericError;
             state.error_message = Aseba::WStringToUTF8(message.message);
             pc = message.pc;
+            break;
         }
     }
 
