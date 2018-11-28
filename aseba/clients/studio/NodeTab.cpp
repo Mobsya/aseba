@@ -115,6 +115,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
@@ -379,6 +380,12 @@ void NodeTab::onExecutionStateChanged() {
         if(clearEditorProperty(QStringLiteral("active")))
             rehighlight();
     }
+}
+
+void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
+    setEditorProperty("executionError", QVariant(), line, true);
+    highlighter->rehighlight();
+    m_eventsWidget->logError(error, message, line);
 }
 
 

@@ -16,6 +16,7 @@ public:
 
 public Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::VariableMap& events);
+    void logError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
 
 Q_SIGNALS:
     void eventAdded(const QString& name, int size);
