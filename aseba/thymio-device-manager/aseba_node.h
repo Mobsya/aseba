@@ -213,6 +213,7 @@ private:
     void handle_step_request();
     void cancel_pending_step_request();
     void handle_description_messages(const Aseba::Message& m);
+    void request_next_description_fragment();
 
 
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;

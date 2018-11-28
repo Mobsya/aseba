@@ -884,10 +884,6 @@ void aseba_node::get_description() {
     }
 }
 void aseba_node::handle_description_messages(const Aseba::Message& msg) {
-    // recycle the variable timer to retrigger a description fragment message in case
-    // it's dropped by the wireless key
-    m_variables_timer.cancel();
-
     Aseba::TargetDescription& desc = m_description;
     auto& counter = m_description_message_counter;
 
@@ -923,28 +919,33 @@ void aseba_node::handle_description_messages(const Aseba::Message& msg) {
         default: return;
     }
 
+    // recycle the variable timer to retrigger a description fragment message in case
+    // it's dropped by the wireless key
+    m_variables_timer.cancel();
+
     const bool ready = !desc.name.empty() && counter.variables == desc.namedVariables.size() &&
         counter.events == desc.localEvents.size() && counter.functions == desc.nativeFunctions.size();
 
     if(!ready && m_protocol_version >= 8) {
-        write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(
-            counter.variables + counter.events + counter.functions, m_id));
-
-        m_variables_timer.expires_from_now(boost::posix_time::seconds(1));
-        m_variables_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
-            if(ec)
-                return;
-            auto that = ptr.lock();
-            if(!that)
-                return;
-            auto& counter = that->m_description_message_counter;
-            that->write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(
-                counter.variables + counter.events + counter.functions, that->m_id));
-        });
+        request_next_description_fragment();
     }
-
     if(ready)
         on_description_received();
+}
+
+void aseba_node::request_next_description_fragment() {
+    auto& counter = m_description_message_counter;
+    write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(
+        counter.variables + counter.events + counter.functions, m_id));
+    m_variables_timer.expires_from_now(boost::posix_time::seconds(1));
+    m_variables_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
+        if(ec)
+            return;
+        auto that = ptr.lock();
+        if(!that)
+            return;
+        that->request_next_description_fragment();
+    });
 }
 
 }  // namespace mobsya
