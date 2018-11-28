@@ -76,6 +76,7 @@ protected Q_SLOTS:
 
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
+    void handleVariablesCache();
 
     void setVariable(const QString& k, const mobsya::ThymioVariable& value);
     void resetVariables();
@@ -141,6 +142,8 @@ private:
     QTreeView* m_vm_variables_view;
     QLineEdit* m_vm_variables_filter_input;
 
+    mobsya::ThymioNode::VariableMap m_cached_variables;
+    QTimer m_variables_cache_handling_timer;
 
     ConstantsModel m_constants_model;
     ConstantsWidget* m_constantsWidget;

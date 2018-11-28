@@ -55,27 +55,26 @@ QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
 }
 
 void ThymioDeviceManagerClientEndpoint::onReadyRead() {
-    while(true) {
-        if(m_message_size == 0) {
-            if(m_socket->bytesAvailable() < 4)
-                return;
-            char data[4];
-            m_socket->read(data, 4);
-            m_message_size = *reinterpret_cast<quint32*>(data);
-        }
-        if(m_socket->bytesAvailable() < m_message_size)
+    if(m_message_size == 0) {
+        if(m_socket->bytesAvailable() < 4)
             return;
-        std::vector<uint8_t> data;
-        data.resize(m_message_size);
-        auto s = m_socket->read(reinterpret_cast<char*>(data.data()), m_message_size);
-        Q_ASSERT(s == m_message_size);
-        m_message_size = 0;
-        flatbuffers::Verifier verifier(data.data(), data.size());
-        if(!fb::VerifyMessageBuffer(verifier)) {
-            qWarning() << "Invalid incomming message";
-        }
-        handleIncommingMessage(fb_message_ptr(std::move(data)));
+        char data[4];
+        m_socket->read(data, 4);
+        m_message_size = *reinterpret_cast<quint32*>(data);
     }
+    if(m_socket->bytesAvailable() < m_message_size)
+        return;
+    std::vector<uint8_t> data;
+    data.resize(m_message_size);
+    auto s = m_socket->read(reinterpret_cast<char*>(data.data()), m_message_size);
+    Q_ASSERT(s == m_message_size);
+    m_message_size = 0;
+    flatbuffers::Verifier verifier(data.data(), data.size());
+    if(!fb::VerifyMessageBuffer(verifier)) {
+        qWarning() << "Invalid incomming message";
+    }
+    handleIncommingMessage(fb_message_ptr(std::move(data)));
+    QMetaObject::invokeMethod(this, "onReadyRead", Qt::QueuedConnection);
 }
 
 std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid& id) const {
