@@ -64,6 +64,8 @@ public:
 
     using WatchableInfo = fb::WatchableInfo;
     using VMExecutionState = fb::VMExecutionState;
+    using VMExecutionError = fb::VMExecutionError;
+
 
     using VariableMap = QMap<QString, ThymioVariable>;
 
@@ -98,6 +100,7 @@ Q_SIGNALS:
     void variablesChanged(const VariableMap& variables);
     void events(const VariableMap& variables);
     void eventsTableChanged(const QVector<EventDescription>& events);
+    void vmExecutionError(VMExecutionError error, const QString& message, uint32_t line);
 
 public:
     QUuid uuid() const;

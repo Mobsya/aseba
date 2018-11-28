@@ -46,6 +46,7 @@ NodeTab::NodeTab(QWidget* parent)
     connect(m_aseba_vm_description_watcher, &mobsya::AsebaVMDescriptionRequestWatcher::finished, this,
             &NodeTab::onAsebaVMDescriptionChanged);
     connect(&m_vm_variables_model, &VariablesModel::variableChanged, this, &NodeTab::setVariable);
+    connect(&m_variables_cache_handling_timer, &QTimer::timeout, this, &NodeTab::handleVariablesCache);
 
 
     /*  // create models
@@ -114,6 +115,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
@@ -380,6 +382,12 @@ void NodeTab::onExecutionStateChanged() {
     }
 }
 
+void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
+    setEditorProperty("executionError", QVariant(), line, true);
+    highlighter->rehighlight();
+    m_eventsWidget->logError(error, message, line);
+}
+
 
 void NodeTab::updateAsebaVMDescription() {
     if(m_thymio)
@@ -408,14 +416,23 @@ void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
                                    m_constants_model.addVariable(it.key(), it.value().value());
             recompile = true;
         } else {
-            it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
-                                   m_vm_variables_model.setVariable(it.key(), it.value());
+            m_cached_variables.insert(it.key(), it.value());
+            if(!m_variables_cache_handling_timer.isActive())
+                m_variables_cache_handling_timer.start(150);
         }
     }
 
     if(recompile) {
         this->compileCodeOnTarget();
     }
+}
+
+void NodeTab::handleVariablesCache() {
+    for(auto it = m_cached_variables.begin(); it != m_cached_variables.end(); ++it) {
+        it->value().isNull() ? m_vm_variables_model.removeVariable(it.key()) :
+                               m_vm_variables_model.setVariable(it.key(), it.value());
+    }
+    m_cached_variables.clear();
 }
 
 void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value) {

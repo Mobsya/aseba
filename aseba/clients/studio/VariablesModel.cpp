@@ -41,12 +41,20 @@ namespace {
     bool lessThan(const QVariant& a, const QVariant& b) {
         auto sa = a.toString();
         auto sb = b.toString();
-        auto ah = sa.startsWith("_") || sa.contains("._");
-        auto bh = sb.startsWith("_") || sb.contains("._");
+        if(sa.isEmpty())
+            return true;
+        if(sb.isEmpty())
+            return false;
+
+        static auto const hidden_needle = QLatin1String("._");
+        auto ah = sa[0] == '_' || sa.contains(hidden_needle);
+        auto bh = sa[0] == '_' || sb.contains(hidden_needle);
+
         if(ah == bh)
             return a < b;
         return bh;
     }
+
     VariablesModel::TreeItem* child_by_name(const VariablesModel::TreeItem& item, const QVariant& key) {
         auto it = std::lower_bound(item.children.begin(), item.children.end(), key,
                                    [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
@@ -178,27 +186,30 @@ bool VariablesModel::setData(const QModelIndex& index, const QVariant& value, in
 }
 
 void VariablesModel::setVariables(const mobsya::ThymioNode::VariableMap& vars) {
+    QVector<QModelIndex> updated_indexes;
     for(const auto& v : vars.toStdMap()) {
         auto root = get_or_create_root();
-        setVariable(*root, v.first, v.second.value(), v.second.isConstant(), {});
+        setVariable(*root, v.first, v.second.value(), v.second.isConstant(), {}, updated_indexes);
     }
+    emit_data_changed(updated_indexes);
 }
 
 
 void VariablesModel::setVariable(const QString& name, const mobsya::ThymioVariable& v) {
     auto root = get_or_create_root();
-    setVariable(*root, name, v.value(), v.isConstant(), {});
+    QVector<QModelIndex> updated_indexes;
+    setVariable(*root, name, v.value(), v.isConstant(), {}, updated_indexes);
+    emit_data_changed(updated_indexes);
 }
 
-void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVariant& v, bool constant,
-                                 const QModelIndex& parent) {
-    auto node = child_by_name(item, key);
+void VariablesModel::setVariable(TreeItem& parentItem, const QVariant& key, const QVariant& v, bool constant,
+                                 const QModelIndex& parent, QVector<QModelIndex>& updated_indexes) {
+    auto [node, index] = getIndexedItem(parentItem, key, parent, 0);
     bool created = !node;
-    auto index = getIndex(key, parent, 0);
 
     if(created) {
         emit layoutAboutToBeChanged();
-        node = find_or_create_child(item, key);
+        node = find_or_create_child(parentItem, key);
     }
     node->constant = constant;
 
@@ -215,7 +226,7 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
     if(v.type() == QVariant::List || v.type() == QVariant::StringList) {
         int idx = 0;
         for(const auto& e : v.toList()) {
-            setVariable(*node, QVariant::fromValue(idx), e, constant, index);
+            setVariable(*node, QVariant::fromValue(idx), e, constant, index, updated_indexes);
             idx++;
         }
         node->children.resize(idx);
@@ -227,14 +238,26 @@ void VariablesModel::setVariable(TreeItem& item, const QVariant& key, const QVar
                                       [&keys](const auto& item) { return keys.contains(item->key.toString()); }),
                        std::end(children));
         for(const auto& k : keys) {
-            setVariable(*node, k, m[k], constant, index);
+            setVariable(*node, k, m[k], constant, index, updated_indexes);
         }
     }
 
-    auto end = getIndex(key, parent, 1);
-
-    dataChanged(index, end);
+    updated_indexes.append(index);
 }
+
+void VariablesModel::emit_data_changed(const QVector<QModelIndex>& updated_indexes) {
+    auto it = updated_indexes.begin();
+    auto last = it;
+    while(it != updated_indexes.end()) {
+        auto tmp = it;
+        it++;
+        if(it == updated_indexes.end() || it->parent() != last->parent() || it->row() != tmp->row() + 1) {
+            Q_EMIT dataChanged(*last, index(tmp->row(), columnCount(*tmp) - 1, tmp->parent()));
+            last = tmp;
+        }
+    }
+}
+
 
 void VariablesModel::removeVariable(const QString& name) {
     auto item = m_root.get();
@@ -298,10 +321,28 @@ QModelIndex VariablesModel::getIndex(const QVariant& key, const QModelIndex& par
     if(!item) {
         return {};
     }
-    auto it = std::lower_bound(item->children.begin(), item->children.end(), key,
-                               [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
-    return index(std::distance(item->children.begin(), it), col, parent);
+    return getIndex(key, parent, *item, col);
 }
+QModelIndex VariablesModel::getIndex(const QVariant& key, const QModelIndex& parent, const TreeItem& parentItem,
+                                     int col) {
+
+    auto it = std::lower_bound(parentItem.children.begin(), parentItem.children.end(), key,
+                               [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
+    return index(std::distance(parentItem.children.begin(), it), col, parent);
+}
+
+std::pair<VariablesModel::TreeItem*, QModelIndex> VariablesModel::getIndexedItem(const VariablesModel::TreeItem& item,
+                                                                                 const QVariant& key,
+                                                                                 QModelIndex parentIndex, int col) {
+    auto it = std::lower_bound(item.children.begin(), item.children.end(), key,
+                               [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
+    if(it == item.children.end())
+        return {};
+    auto idx = this->index(std::distance(item.children.begin(), it), col, parentIndex);
+    VariablesModel::TreeItem* res = it != item.children.end() && (*it)->key == key ? it->get() : nullptr;
+    return {res, idx};
+}
+
 
 VariablesModel::TreeItem* VariablesModel::get_or_create_root() {
     if(!m_root)
