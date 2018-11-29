@@ -28,6 +28,7 @@ void NodeTabsManager::addTab(const QUuid& device) {
     } else {
         QTabWidget::setTabEnabled(index, false);
     }
+    connect(tab, &NodeTab::executionStateChanged, this, &NodeTabsManager::nodeStatusChanged);
 }
 
 

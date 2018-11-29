@@ -83,6 +83,7 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
 
     nodes = new NodeTabsManager(client);
     connect(nodes, &NodeTabsManager::tabAdded, this, &MainWindow::tabAdded);
+    connect(nodes, &NodeTabsManager::nodeStatusChanged, this, &MainWindow::regenerateToolsMenus);
 
     // create help viwer
     helpViewer.setupWidgets();
@@ -583,12 +584,11 @@ void MainWindow::pauseAll() {
 }
 
 void MainWindow::stopAll() {
-    /*    for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab)
-                target->stop(tab->nodeId());
-        }
-    */
+    for(int i = 0; i < nodes->count(); i++) {
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        if(tab)
+            tab->reset();
+    }
 }
 
 void MainWindow::clearAllExecutionError() {
@@ -598,37 +598,6 @@ void MainWindow::clearAllExecutionError() {
             tab->clearExecutionErrors();
     }
     logger->setStyleSheet(QLatin1String(""));
-}
-
-void MainWindow::uploadReadynessChanged() {
-    /* bool ready = true;
-     for(int i = 0; i < nodes->count(); i++) {
-         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-         if(tab) {
-             if(!tab->loadButton->isEnabled()) {
-                 ready = false;
-                 break;
-             }
-         }
-     }
-
-     loadAllAct->setEnabled(ready);
-     writeAllBytecodesAct->setEnabled(ready);
-     */
-}
-
-void MainWindow::toggleEventVisibleButton(const QModelIndex& index) {
-    // if(index.column() == 2)
-    //    eventsDescriptionsModel->toggle(index);
-}
-
-void MainWindow::plotEvent() {
-#ifdef HAVE_QWT
-    QModelIndex currentRow = eventsDescriptionsView->selectionModel()->currentIndex();
-    Q_ASSERT(currentRow.isValid());
-    const unsigned eventId = currentRow.row();
-    plotEvent(eventId);
-#endif  // HAVE_QWT
 }
 
 void MainWindow::eventContextMenuRequested(const QPoint& pos) {
@@ -645,29 +614,6 @@ void MainWindow::eventContextMenuRequested(const QPoint& pos) {
         }
     }
 #endif  // HAVE_QWT
-}
-
-void MainWindow::plotEvent(const unsigned eventId) {
-#ifdef HAVE_QWT
-    const unsigned eventVariablesCount(
-        eventsDescriptionsModel->data(eventsDescriptionsModel->index(eventId, 1)).toUInt());
-    const QString eventName(eventsDescriptionsModel->data(eventsDescriptionsModel->index(eventId, 0)).toString());
-    const QString tabTitle(tr("plot of %1").arg(eventName));
-    nodes->addTab(new EventViewer(eventId, eventName, eventVariablesCount, &eventsViewers), tabTitle, true);
-#endif  // HAVE_QWT
-}
-
-void MainWindow::logEntryDoubleClicked(QListWidgetItem* item) {
-    if(item->data(Qt::UserRole).type() == QVariant::Point) {
-        int node = item->data(Qt::UserRole).toPoint().x();
-        int line = item->data(Qt::UserRole).toPoint().y();
-
-        NodeTab* tab = nullptr;  // getTabFromId(node);
-        Q_ASSERT(tab);
-        nodes->setCurrentWidget(tab);
-        tab->editor->setTextCursor(QTextCursor(tab->editor->document()->findBlockByLineNumber(line)));
-        tab->editor->setFocus();
-    }
 }
 
 void MainWindow::tabChanged(int index) {
@@ -734,25 +680,6 @@ void MainWindow::showMemoryUsage(bool show) {
 }
 
 
-void MainWindow::resetStatusText() {
-    /*bool flag = true;
-
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab) {
-            if(!tab->isSynchronized) {
-                flag = false;
-                break;
-            }
-        }
-    }
-
-    if(flag) {
-        statusText->clear();
-        statusText->hide();
-    }*/
-}
-
 void MainWindow::recompileAll() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
@@ -764,8 +691,8 @@ void MainWindow::recompileAll() {
 void MainWindow::writeAllBytecodes() {
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        // if(tab)
-        //    tab->wr();
+        if(tab)
+            tab->writeProgramToDeviceMemory();
     }
 }
 
@@ -814,25 +741,6 @@ void MainWindow::setupWidgets() {
     splitter->addWidget(nodes);
     setCentralWidget(splitter);
 
-    /*
-    // setColumnStretch
-
-    */
-
-    /*QHBoxLayout* constantsAddRemoveLayout = new QHBoxLayout;
-    ;
-    constantsAddRemoveLayout->addStretch();
-    addConstantButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
-    constantsAddRemoveLayout->addWidget(addConstantButton);
-    removeConstantButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
-    removeConstantButton->setEnabled(false);
-    constantsAddRemoveLayout->addWidget(removeConstantButton);
-    */
-
-    // eventsDockLayout->addLayout(constantsAddRemoveLayout);
-    // eventsDockLayout->addWidget(constantsView, 1);
-
-
 #ifdef HAVE_QWT
     plotEventButton = new QPushButton(QPixmap(QString(":/images/plot.png")), "");
     plotEventButton->setEnabled(false);
@@ -860,67 +768,6 @@ void MainWindow::setupConnections() {
     connect(resetAllAct, &QAction::triggered, this, &MainWindow::resetAll);
     connect(runAllAct, &QAction::triggered, this, &MainWindow::runAll);
     connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
-
-    // events
-    // connect(addEventNameButton, &QAbstractButton::clicked, this, &MainWindow::addEventNameClicked);
-    // connect(removeEventNameButton, &QAbstractButton::clicked, this, &MainWindow::removeEventNameClicked);
-    // connect(sendEventButton, &QAbstractButton::clicked, this, &MainWindow::sendEvent);
-#ifdef HAVE_QWT
-    connect(plotEventButton, SIGNAL(clicked()), SLOT(plotEvent()));
-#endif  // HAVE_QWT
-    /*connect(eventsDescriptionsView->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-            SLOT(eventsDescriptionsSelectionChanged()));
-    connect(eventsDescriptionsView, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(sendEventIf(const QModelIndex&)));
-    connect(eventsDescriptionsView, SIGNAL(clicked(const QModelIndex&)),
-            SLOT(toggleEventVisibleButton(const QModelIndex&)));
-    connect(eventsDescriptionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-            SLOT(eventsUpdated()));
-    connect(eventsDescriptionsModel, SIGNAL(publicRowsInserted()), SLOT(eventsUpdated()));
-    connect(eventsDescriptionsModel, SIGNAL(publicRowsRemoved()), SLOT(eventsUpdatedDirty()));
-    connect(eventsDescriptionsView, SIGNAL(customContextMenuRequested(const QPoint&)),
-            SLOT(eventContextMenuRequested(const QPoint&)));*/
-
-    // logger
-    // connect(clearLogger, &QAbstractButton::clicked, logger, &QListWidget::clear);
-    // connect(clearLogger, &QAbstractButton::clicked, this, &MainWindow::clearAllExecutionError);
-
-    // constants
-    // connect(addConstantButton, &QAbstractButton::clicked, this, &MainWindow::addConstantClicked);
-    // connect(removeConstantButton, &QAbstractButton::clicked, this, &MainWindow::removeConstantClicked);
-    // connect(constantsView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-    //        SLOT(constantsSelectionChanged()));
-    // connect(constantsDefinitionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-    //         SLOT(recompileAll()));
-    // connect(constantsDefinitionsModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-    //       SLOT(updateWindowTitle()));
-    /*
-        // target events
-        connect(target, SIGNAL(nodeConnected(unsigned)), SLOT(nodeConnected(unsigned)));
-        connect(target, SIGNAL(nodeDisconnected(unsigned)), SLOT(nodeDisconnected(unsigned)));
-
-        connect(target, SIGNAL(userEvent(unsigned, const VariablesDataVector&)),
-                SLOT(userEvent(unsigned, const VariablesDataVector&)));
-        connect(target, SIGNAL(userEventsDropped(unsigned)), SLOT(userEventsDropped(unsigned)));
-        connect(target, SIGNAL(arrayAccessOutOfBounds(unsigned, unsigned, unsigned, unsigned)),
-                SLOT(arrayAccessOutOfBounds(unsigned, unsigned, unsigned, unsigned)));
-        connect(target, SIGNAL(divisionByZero(unsigned, unsigned)), SLOT(divisionByZero(unsigned, unsigned)));
-        connect(target, SIGNAL(eventExecutionKilled(unsigned, unsigned)), SLOT(eventExecutionKilled(unsigned,
-       unsigned))); connect(target, SIGNAL(nodeSpecificError(unsigned, unsigned, QString)),
-                SLOT(nodeSpecificError(unsigned, unsigned, QString)));
-
-        connect(target, SIGNAL(executionPosChanged(unsigned, unsigned)), SLOT(executionPosChanged(unsigned,
-       unsigned))); connect(target, SIGNAL(executionModeChanged(unsigned, Target::ExecutionMode)),
-                SLOT(executionModeChanged(unsigned, Target::ExecutionMode)));
-        connect(target, SIGNAL(variablesMemoryEstimatedDirty(unsigned)),
-       SLOT(variablesMemoryEstimatedDirty(unsigned)));
-
-        connect(target, SIGNAL(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)),
-                SLOT(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)));
-
-        connect(target, SIGNAL(breakpointSetResult(unsigned, unsigned, bool)),
-                SLOT(breakpointSetResult(unsigned, unsigned, bool)));
-    */
 }
 
 void MainWindow::regenerateOpenRecentMenu() {
@@ -953,11 +800,11 @@ void MainWindow::regenerateToolsMenus() {
     unsigned activeVMCount(0);
     for(int i = 0; i < nodes->count(); i++) {
         auto* tab = qobject_cast<NodeTab*>(nodes->widget(i));
-        if(tab && tab->thymio()) {
-            QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(tab->thymio()->name()));
+        if(tab && tab->thymio() && tab->thymio()->status() == mobsya::ThymioNode::Status::Ready) {
+            QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(tab->thymio()->name()), tab,
+                                                        &NodeTab::writeProgramToDeviceMemory);
             connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
             rebootMenu->addAction(tr("...%0").arg(tab->thymio()->name()), tab, SLOT(reboot()));
-            connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
             ++activeVMCount;
         }
     }

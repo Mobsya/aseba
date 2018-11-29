@@ -224,12 +224,22 @@ void NodeTab::compileCodeOnTarget() {
 }
 
 void NodeTab::step() {
+    if(!thymio())
+        return;
     editor->debugging = true;
     m_thymio->stepToNextLine();
 }
 
 void NodeTab::reboot() {
+    if(!thymio())
+        return;
     m_thymio->reboot();
+}
+
+void NodeTab::writeProgramToDeviceMemory() {
+    if(!thymio())
+        return;
+    m_thymio->writeProgramToDeviceMemory();
 }
 
 void NodeTab::compilationCompleted() {
@@ -254,6 +264,7 @@ void NodeTab::compilationCompleted() {
 
     if(res.success()) {
         Q_EMIT compilationSucceed();
+        Q_EMIT uploadReadynessChanged(true);
         errorPos = -1;
     } else {
         Q_EMIT compilationFailed();

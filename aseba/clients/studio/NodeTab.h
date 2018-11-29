@@ -73,6 +73,7 @@ protected Q_SLOTS:
     void pause();
     void step();
     void reboot();
+    void writeProgramToDeviceMemory();
 
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
