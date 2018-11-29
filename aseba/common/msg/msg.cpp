@@ -161,7 +161,7 @@ void Message::serialize(Stream* stream) const {
              << ", maximum packet payload size (excluding type): " << ASEBA_MAX_EVENT_ARG_SIZE
              << ", message type: " << hex << showbase << type << dec << noshowbase;
         cerr << endl;
-        terminate();
+        throw std::runtime_error("serialization error");
     }
     uint16_t t;
     swapEndian(len);
@@ -203,15 +203,20 @@ Message* Message::create(uint16_t source, uint16_t type, SerializationBuffer& bu
     message->source = source;
     message->type = type;
 
-    // deserialize it
-    message->deserializeSpecific(buffer);
+    try {
+
+        // deserialize it
+        message->deserializeSpecific(buffer);
+    } catch(std::runtime_error) {
+        return nullptr;
+    }
 
     if(buffer.readPos != buffer.rawData.size()) {
         cerr << "Message::create() : fatal error: message not fully deserialized.\n";
         cerr << "type: " << type << ", readPos: " << buffer.readPos << ", rawData size: " << buffer.rawData.size()
              << endl;
         buffer.dump(wcerr);
-        terminate();
+        return nullptr;
     }
 
     return message;
@@ -263,7 +268,7 @@ void Message::SerializationBuffer::add(const string& val) {
         cerr << "string size: " << val.length();
         cerr << endl;
         dump(wcerr);
-        terminate();
+        throw std::runtime_error("serialization error");
     }
 
     add(static_cast<uint8_t>(val.length()));
@@ -278,7 +283,7 @@ T Message::SerializationBuffer::get() {
         cerr << "readPos: " << readPos << ", rawData size: " << rawData.size() << ", element size: " << sizeof(T);
         cerr << endl;
         dump(wcerr);
-        terminate();
+        throw std::runtime_error("deserialization error");
     }
 
     size_t pos = readPos;
@@ -324,7 +329,7 @@ void UserMessage::deserializeSpecific(SerializationBuffer& buffer) {
                 "size.\n";
         cerr << "message size: " << buffer.rawData.size() << ", message type: " << type;
         cerr << endl;
-        terminate();
+        throw std::runtime_error("deserialization error");
     }
     data.resize(buffer.rawData.size() / 2);
 
