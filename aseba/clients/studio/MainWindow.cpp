@@ -461,23 +461,19 @@ void MainWindow::exportMemoriesContent() {
 }
 
 void MainWindow::copyAll() {
-    /*    QString toCopy;
-        for(int i = 0; i < nodes->count(); i++) {
-            const NodeTab* nodeTab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(nodeTab) {
-                toCopy += QString("# node %0\n").arg(target->getName(nodeTab->nodeId()));
-                toCopy += nodeTab->editor->toPlainText();
-                toCopy += "\n\n";
-            }
-            const AbsentNodeTab* absentNodeTab = dynamic_cast<AbsentNodeTab*>(nodes->widget(i));
-            if(absentNodeTab) {
-                toCopy += QString("# absent node named %0\n").arg(absentNodeTab->name);
-                toCopy += absentNodeTab->editor->toPlainText();
-                toCopy += "\n\n";
-            }
-        }
-        QApplication::clipboard()->setText(toCopy);
-    */
+    QString toCopy;
+    for(int i = 0; i < nodes->count(); i++) {
+        const NodeTab* nodeTab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        if(!nodeTab)
+            continue;
+        auto thymio = nodeTab->thymio();
+        if(!thymio)
+            continue;
+        toCopy += QString("# node %0\n").arg(thymio->name());
+        toCopy += nodeTab->editor->toPlainText();
+        toCopy += "\n\n";
+    }
+    QApplication::clipboard()->setText(toCopy);
 }
 
 void MainWindow::findTriggered() {
