@@ -496,6 +496,10 @@ void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value)
     m_thymio->setVariabes(map);
 }
 
+QVariantMap NodeTab::getVariables() const {
+    return m_vm_variables_model.getVariables();
+}
+
 void NodeTab::onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events) {
     m_events_model.clear();
     for(const auto& e : events) {

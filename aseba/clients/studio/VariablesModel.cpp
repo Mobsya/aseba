@@ -277,6 +277,19 @@ void VariablesModel::clear() {
     endResetModel();
 }
 
+QVariantMap VariablesModel::getVariables() const {
+    if(!m_root) {
+        return {};
+    }
+    QVariantMap map;
+    for(auto&& item : m_root->children) {
+        if(!item)
+            continue;
+        map.insert(item->key.toString(), item->value);
+    }
+    return map;
+}
+
 auto VariablesModel::getItem(const QModelIndex& idx) const -> TreeItem* {
     if(idx.isValid()) {
         auto* item = static_cast<TreeItem*>(idx.internalPointer());

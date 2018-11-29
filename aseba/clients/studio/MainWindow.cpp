@@ -36,6 +36,7 @@
 #include <QtGui>
 #include <QtWidgets>
 #include <QtXml>
+#include <QJsonDocument>
 #include <sstream>
 #include <iostream>
 #include <cassert>
@@ -431,33 +432,32 @@ bool MainWindow::saveFile(const QString& previousFileName) {
 }
 
 void MainWindow::exportMemoriesContent() {
-    /*    QString exportFileName = QFileDialog::getSaveFileName(
-            this, tr("Export memory content"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-            "All Files (*);;CSV files (*.csv);;Text files (*.txt)");
+    QString exportFileName = QFileDialog::getSaveFileName(
+        this, tr("Export memory content"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+        "All Files (*);;CSV files (*.csv);;Text files (*.txt)");
 
-        QFile file(exportFileName);
-        if(!file.open(QFile::WriteOnly | QFile::Truncate))
-            return;
+    QFile file(exportFileName);
+    if(!file.open(QFile::WriteOnly | QFile::Truncate))
+        return;
 
-        QTextStream out(&file);
+    QTextStream out(&file);
 
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            if(tab) {
-                const QString nodeName(target->getName(tab->nodeId()));
-                const QList<TargetVariablesModel::Variable>& variables(tab->vmMemoryModel->getVariables());
+    for(int i = 0; i < nodes->count(); i++) {
+        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
+        if(tab) {
+            auto thymio = tab->thymio();
+            if(!thymio)
+                continue;
 
-                for(int j = 0; j < variables.size(); ++j) {
-                    const TargetVariablesModel::Variable& variable(variables[j]);
-                    out << nodeName << "." << variable.name << " ";
-                    for(size_t k = 0; k < variable.value.size(); ++k) {
-                        out << variable.value[k] << " ";
-                    }
-                    out << "\n";
-                }
+            const QString nodeName = thymio->name();
+            const QVariantMap variables = tab->getVariables();
+            for(auto it = variables.begin(); it != variables.end(); ++it) {
+                out << nodeName << "." << it.key() << " "
+                    << QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::JsonFormat::Compact);
+                out << "\n";
             }
         }
-    */
+    }
 }
 
 void MainWindow::copyAll() {
