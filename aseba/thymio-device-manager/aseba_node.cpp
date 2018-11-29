@@ -885,7 +885,7 @@ std::optional<std::pair<Aseba::EventDescription, std::size_t>> aseba_node::get_e
 
 void aseba_node::get_description() {
     if(m_protocol_version >= 8) {
-        write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(-1, m_id));
+        request_next_description_fragment();
     } else {
         write_message(std::make_unique<Aseba::GetNodeDescription>(m_id));
     }
@@ -942,8 +942,11 @@ void aseba_node::handle_description_messages(const Aseba::Message& msg) {
 
 void aseba_node::request_next_description_fragment() {
     auto& counter = m_description_message_counter;
-    write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(
-        counter.variables + counter.events + counter.functions, m_id));
+    int16_t fragment = -1;
+    if(m_description.protocolVersion > 0) {  // Description received
+        fragment = counter.variables + counter.functions + counter.events;
+    }
+    write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(fragment, m_id));
     m_variables_timer.expires_from_now(boost::posix_time::seconds(1));
     m_variables_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
         if(ec)
