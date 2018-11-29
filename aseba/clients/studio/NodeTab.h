@@ -106,6 +106,8 @@ protected Q_SLOTS:
     void onAsebaVMDescriptionChanged();
     void onStatusChanged();
 
+    void updateStatusLabel();
+
     void compilationCompleted();
 
     void showHidden(bool show);

@@ -121,6 +121,9 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
+        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
+        connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
+
 
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
             if(node->status() == mobsya::ThymioNode::Status::Available)
@@ -397,6 +400,31 @@ void NodeTab::onStatusChanged() {
                                                  QTreeView::EditTrigger::EditKeyPressed :
                                                  QTreeView::EditTrigger::NoEditTriggers);
     Q_EMIT executionStateChanged();
+}
+
+void NodeTab::updateStatusLabel() {
+    QString statusStr;
+    const auto status = m_thymio ? m_thymio->status() : mobsya::ThymioNode::Status::Disconnected;
+
+    if(status == mobsya::ThymioNode::Status::Disconnected || status == mobsya::ThymioNode::Status::Connected ||
+       status == mobsya::ThymioNode::Status::Available) {
+        executionModeLabel->setText(tr("<b style='color:#CA3433'>Not connected</b>"));
+        return;
+    }
+
+    const auto executionStatus = m_thymio->vmExecutionState();
+    const bool busy = status == mobsya::ThymioNode::Status::Busy;
+
+    QString statusLabel;
+    switch(executionStatus) {
+        case mobsya::ThymioNode::VMExecutionState::Stopped: statusLabel = tr("Stopped"); break;
+        case mobsya::ThymioNode::VMExecutionState::Paused: statusLabel = tr("Paused"); break;
+        case mobsya::ThymioNode::VMExecutionState::Running: statusLabel = tr("Running"); break;
+    }
+
+    executionModeLabel->setText(QStringLiteral("<b style='color:%2'>%1 %3</b>")
+                                    .arg(statusLabel, busy ? "#57A0D3" : "#2E8B57",
+                                         busy ? tr("(Controlled by another application or user)") : ""));
 }
 
 void NodeTab::updateAsebaVMDescription() {
@@ -765,6 +793,7 @@ void NodeTab::setupWidgets() {
 
     synchronizeVariablesToogle = new QCheckBox(tr("Synchronize"));
 
+    topLayout->addWidget(executionModeLabel);
     topLayout->addStretch();
     topLayout->addWidget(stopButton);
     topLayout->addWidget(runButton);
@@ -776,10 +805,6 @@ void NodeTab::setupWidgets() {
     editorLayout->addLayout(editorAreaLayout);
     editorLayout->addLayout(compilationResultLayout);
     editorLayout->addWidget(memoryUsageText);
-
-    auto* buttonsLayout = new QGridLayout;
-    buttonsLayout->addWidget(new QLabel(tr("<b>Execution</b>")), 0, 0);
-    buttonsLayout->addWidget(executionModeLabel, 0, 1);
 
 
     // memory
@@ -836,21 +861,11 @@ void NodeTab::setupWidgets() {
 
     localVariablesAndEventLayout->addWidget(toolBox);
 
-    // panel
-    auto* panelSplitter = new QSplitter(Qt::Vertical);
-
-    QWidget* buttonsWidget = new QWidget;
-    buttonsWidget->setLayout(buttonsLayout);
-    panelSplitter->addWidget(buttonsWidget);
-    panelSplitter->setCollapsible(0, false);
-
     QWidget* localVariablesAndEvent = new QWidget;
     localVariablesAndEvent->setLayout(localVariablesAndEventLayout);
-    panelSplitter->addWidget(localVariablesAndEvent);
-    panelSplitter->setStretchFactor(1, 9);
-    panelSplitter->setStretchFactor(2, 4);
+    addWidget(localVariablesAndEvent);
 
-    addWidget(panelSplitter);
+
     QWidget* editorWidget = new QWidget;
     editorWidget->setLayout(editorLayout);
     addWidget(editorWidget);
