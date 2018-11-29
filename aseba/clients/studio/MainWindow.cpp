@@ -671,7 +671,7 @@ void MainWindow::logEntryDoubleClicked(QListWidgetItem* item) {
 }
 
 void MainWindow::tabChanged(int index) {
-    findDialog->hide();
+    findDialog->close();
     auto* tab = dynamic_cast<ScriptTab*>(nodes->widget(index));
     if(currentScriptTab && tab != currentScriptTab) {
         disconnect(cutAct, &QAction::triggered, currentScriptTab->editor, &QTextEdit::cut);
@@ -844,6 +844,7 @@ void MainWindow::setupWidgets() {
     compilationMessageBox = new CompilationLogDialog(this);
     connect(this, &MainWindow::MainWindowClosed, compilationMessageBox, &QWidget::close);
     findDialog = new FindDialog(this);
+    findDialog->setWindowFlag(Qt::Popup);
     connect(this, &MainWindow::MainWindowClosed, findDialog, &QWidget::close);
 
     connect(this, &MainWindow::MainWindowClosed, &helpViewer, &QWidget::close);
