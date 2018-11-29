@@ -46,6 +46,7 @@ Q_SIGNALS:
 
 public:
     struct TreeItem;
+    QVariantMap getVariables() const;
 
 private:
     void setVariable(TreeItem& parentItem, const QVariant& key, const QVariant& v, bool constant,
