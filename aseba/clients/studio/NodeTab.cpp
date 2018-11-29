@@ -119,13 +119,14 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
+        connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
 
         connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
             if(node->status() == mobsya::ThymioNode::Status::Available)
                 node->lock();
         });
-
+        onStatusChanged();
         updateAsebaVMDescription();
     }
 }
@@ -388,6 +389,15 @@ void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, con
     m_eventsWidget->logError(error, message, line);
 }
 
+void NodeTab::onStatusChanged() {
+    bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
+    m_eventsWidget->setEditable(ready);
+    m_constantsWidget->setEditable(ready);
+    m_vm_variables_view->setEditTriggers(ready ? QTreeView::EditTrigger::DoubleClicked |
+                                                 QTreeView::EditTrigger::EditKeyPressed :
+                                                 QTreeView::EditTrigger::NoEditTriggers);
+    Q_EMIT executionStateChanged();
+}
 
 void NodeTab::updateAsebaVMDescription() {
     if(m_thymio)
@@ -869,14 +879,19 @@ void NodeTab::setupConnections() {
 
 
     connect(this, &NodeTab::executionStateChanged, [this] {
-        runButton->setEnabled(true);
+        bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
+
+        runButton->setEnabled(ready);
         runButton->setVisible(true);
-        pauseButton->setEnabled(true);
+        pauseButton->setEnabled(ready);
         pauseButton->setVisible(true);
-        nextButton->setEnabled(true);
+        nextButton->setEnabled(ready);
         nextButton->setVisible(true);
+        stopButton->setEnabled(ready);
         stopButton->setVisible(true);
-        stopButton->setEnabled(true);
+
+        if(!ready)
+            return;
 
         auto state = m_thymio->vmExecutionState();
         switch(state) {

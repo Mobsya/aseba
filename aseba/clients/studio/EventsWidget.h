@@ -17,6 +17,7 @@ public:
 public Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::VariableMap& events);
     void logError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
+    void setEditable(bool editable);
 
 Q_SIGNALS:
     void eventAdded(const QString& name, int size);
@@ -34,8 +35,10 @@ private Q_SLOTS:
 private:
     FixedWidthTableView* m_view;
     QListWidget* m_logger;
+    QPushButton* m_addEventNameButton;
     QPushButton* m_removeEventButton;
     QPushButton* m_sendEventButton;
+    bool m_editable = false;
 };
 
 }  // namespace Aseba

@@ -81,7 +81,17 @@ void ConstantsWidget::removeConstant() {
 
 void ConstantsWidget::constantsSelectionChanged() {
     bool isSelected = m_view->selectionModel()->currentIndex().isValid();
-    m_removeConstantButton->setEnabled(isSelected);
+    m_removeConstantButton->setEnabled(m_editable && isSelected);
 }
+
+void ConstantsWidget::setEditable(bool editable) {
+    m_editable = editable;
+    constantsSelectionChanged();
+    m_addConstantButton->setEnabled(editable);
+    m_view->setEditTriggers(editable ? FixedWidthTableView::EditTrigger::DoubleClicked |
+                                    FixedWidthTableView::EditTrigger::EditKeyPressed :
+                                       FixedWidthTableView::EditTrigger::NoEditTriggers);
+}
+
 
 }  // namespace Aseba
