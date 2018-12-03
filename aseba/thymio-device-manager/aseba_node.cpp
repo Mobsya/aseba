@@ -37,7 +37,8 @@ aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, uint16_t prot
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
     , m_io_ctx(ctx)
-    , m_variables_timer(ctx) {}
+    , m_variables_timer(ctx)
+    , m_resend_timer(ctx) {}
 
 std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id, uint16_t protocol_version,
                                                std::weak_ptr<mobsya::aseba_endpoint> endpoint) {
@@ -660,8 +661,25 @@ void aseba_node::on_description_received() {
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
         return;
     }
-
     set_status(status::available);
+}
+
+
+void aseba_node::request_device_info() {
+    if(m_uuid_received)
+        return;
+    write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
+    write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
+
+    m_resend_timer.expires_from_now(boost::posix_time::seconds(1));
+    m_resend_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
+        if(ec)
+            return;
+        auto that = ptr.lock();
+        if(!that)
+            return;
+        that->request_device_info();
+    });
 }
 
 // ask the node to dump its memory.
@@ -792,11 +810,17 @@ void aseba_node::schedule_variables_update(boost::posix_time::time_duration dela
 void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
     mLogTrace("Got info for {} [{} : {}]", native_id(), info.info, info.data.size());
     if(info.info == DEVICE_INFO_UUID) {
+        // see request_device_info
+        m_resend_timer.cancel();
+
         if(info.data.size() == 16) {
             std::copy(info.data.begin(), info.data.end(), m_uuid.begin());
         }
+        bool save_uuid = m_uuid.is_nil() || info.data.size() != 16;
         if(m_uuid.is_nil()) {
             m_uuid = boost::uuids::random_generator()();
+        }
+        if(save_uuid) {
             std::vector<uint8_t> data;
             std::copy(m_uuid.begin(), m_uuid.end(), std::back_inserter(data));
             write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_UUID, data));
@@ -807,12 +831,10 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         set_status(status::available);
 
     } else if(info.info == DEVICE_INFO_NAME) {
-        {
-            m_friendly_name.clear();
-            m_friendly_name.reserve(info.data.size());
-            std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
-            set_status(m_status);
-        }
+        m_friendly_name.clear();
+        m_friendly_name.reserve(info.data.size());
+        std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
+        set_status(m_status);
         mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
     }
 }
@@ -926,9 +948,8 @@ void aseba_node::handle_description_messages(const Aseba::Message& msg) {
         default: return;
     }
 
-    // recycle the variable timer to retrigger a description fragment message in case
-    // it's dropped by the wireless key
-    m_variables_timer.cancel();
+    // see request_next_description_fragment
+    m_resend_timer.cancel();
 
     const bool ready = !desc.name.empty() && counter.variables == desc.namedVariables.size() &&
         counter.events == desc.localEvents.size() && counter.functions == desc.nativeFunctions.size();
@@ -947,8 +968,10 @@ void aseba_node::request_next_description_fragment() {
         fragment = counter.variables + counter.functions + counter.events;
     }
     write_message(std::make_unique<Aseba::GetNodeDescriptionFragment>(fragment, m_id));
-    m_variables_timer.expires_from_now(boost::posix_time::seconds(1));
-    m_variables_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
+
+    // retrigger a description fragment message in case it's dropped by the wireless key
+    m_resend_timer.expires_from_now(boost::posix_time::seconds(1));
+    m_resend_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
         if(ec)
             return;
         auto that = ptr.lock();
