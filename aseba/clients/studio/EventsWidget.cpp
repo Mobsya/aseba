@@ -166,13 +166,13 @@ void EventsWidget::sendEvent(const QModelIndex& idx) {
 }
 
 
-void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
+void EventsWidget::onEvents(const mobsya::ThymioNode::EventMap& events) {
     for(auto it = events.begin(); it != events.end(); ++it) {
         const auto model = static_cast<const MaskableVariablesModel*>(m_view->model());
         bool filter_out = !model->isVisible(it.key());
         if(filter_out)
             continue;
-        QString arg = QJsonDocument::fromVariant(it.value().value()).toJson(QJsonDocument::Compact);
+        QString arg = QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::Compact);
         QString text = QStringLiteral("%1\n%2: %3").arg(QTime::currentTime().toString("hh:mm:ss.zzz"), it.key(), arg);
         if(m_logger->count() > 50)
             delete m_logger->takeItem(0);

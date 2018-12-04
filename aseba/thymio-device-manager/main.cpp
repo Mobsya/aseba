@@ -12,6 +12,7 @@
 #include "app_token_manager.h"
 #include "aseba_endpoint.h"
 #include "aseba_tcpacceptor.h"
+#include "uuid_provider.h"
 #include <boost/filesystem.hpp>
 
 #ifdef MOBSYA_TDM_ENABLE_USB
@@ -64,17 +65,19 @@ int main() {
         for(auto&& ip : local_ips) {
             mLogTrace("Local Ip : {}", ip.to_string());
         }
-        // Create a server for regular tcp connection
-        mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
-        tcp_server.accept();
 
+        mobsya::uuid_generator& _ = boost::asio::make_service<mobsya::uuid_generator>(ctx);
         mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
         mobsya::app_token_manager& token_manager = boost::asio::make_service<mobsya::app_token_manager>(ctx);
 
+        // Create a server for regular tcp connection
+        mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
         node_registery.set_tcp_endpoint(tcp_server.endpoint());
+        tcp_server.accept();
 
         mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
         mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
+
         // Create a server for websocket
         mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
         websocket_server.accept();

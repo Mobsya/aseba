@@ -181,7 +181,7 @@ bool VariablesModel::setData(const QModelIndex& index, const QVariant& value, in
     }
     item->value = value;
     Q_EMIT dataChanged(index, index);
-    Q_EMIT variableChanged(item->key.toString(), mobsya::ThymioVariable(value, item->constant));
+    Q_EMIT variableChanged(item->key.toString(), mobsya::ThymioVariable(value));
     return true;
 }
 
@@ -189,7 +189,7 @@ void VariablesModel::setVariables(const mobsya::ThymioNode::VariableMap& vars) {
     QVector<QModelIndex> updated_indexes;
     for(const auto& v : vars.toStdMap()) {
         auto root = get_or_create_root();
-        setVariable(*root, v.first, v.second.value(), v.second.isConstant(), {}, updated_indexes);
+        setVariable(*root, v.first, v.second.value(), {}, updated_indexes);
     }
     emit_data_changed(updated_indexes);
 }
@@ -198,11 +198,11 @@ void VariablesModel::setVariables(const mobsya::ThymioNode::VariableMap& vars) {
 void VariablesModel::setVariable(const QString& name, const mobsya::ThymioVariable& v) {
     auto root = get_or_create_root();
     QVector<QModelIndex> updated_indexes;
-    setVariable(*root, name, v.value(), v.isConstant(), {}, updated_indexes);
+    setVariable(*root, name, v.value(), {}, updated_indexes);
     emit_data_changed(updated_indexes);
 }
 
-void VariablesModel::setVariable(TreeItem& parentItem, const QVariant& key, const QVariant& v, bool constant,
+void VariablesModel::setVariable(TreeItem& parentItem, const QVariant& key, const QVariant& v,
                                  const QModelIndex& parent, QVector<QModelIndex>& updated_indexes) {
     auto [node, index] = getIndexedItem(parentItem, key, parent, 0);
     bool created = !node;
@@ -211,7 +211,6 @@ void VariablesModel::setVariable(TreeItem& parentItem, const QVariant& key, cons
         emit layoutAboutToBeChanged();
         node = find_or_create_child(parentItem, key);
     }
-    node->constant = constant;
 
     if(!created && node->value == v) {
         return;
@@ -226,7 +225,7 @@ void VariablesModel::setVariable(TreeItem& parentItem, const QVariant& key, cons
     if(v.type() == QVariant::List || v.type() == QVariant::StringList) {
         int idx = 0;
         for(const auto& e : v.toList()) {
-            setVariable(*node, QVariant::fromValue(idx), e, constant, index, updated_indexes);
+            setVariable(*node, QVariant::fromValue(idx), e, index, updated_indexes);
             idx++;
         }
         node->children.resize(idx);
@@ -238,7 +237,7 @@ void VariablesModel::setVariable(TreeItem& parentItem, const QVariant& key, cons
                                       [&keys](const auto& item) { return keys.contains(item->key.toString()); }),
                        std::end(children));
         for(const auto& k : keys) {
-            setVariable(*node, k, m[k], constant, index, updated_indexes);
+            setVariable(*node, k, m[k], index, updated_indexes);
         }
     }
 

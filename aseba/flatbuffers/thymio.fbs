@@ -74,7 +74,7 @@ enum ErrorType : int {
   /// The node is busy (locked by another client)
   node_busy = 3,
 
-  ///Unsuported variable type - For SetNodeVariables and Events
+  ///Unsuported variable type - For SetVariables and Events
   unsupported_variable_type
 }
 
@@ -86,6 +86,8 @@ enum WatchableInfo : int {
     Variables = 0x01,
     Events    = 0x02,
     VMExecutionState = 0x04,
+    SharedEventsDescription = 0x08,
+    SharedVariables = 0x10
 }
 
 enum ProgrammingLanguage : int {
@@ -96,19 +98,24 @@ enum ProgrammingLanguage : int {
 /// Represent a node
 table Node {
   node_id:NodeId;
+  group_id:NodeId;
   status:NodeStatus;
   type:NodeType;
   name:string;
   capabilities:ulong  = 0;
 }
 
+table NamedValue {
+    name: string (key);
+    value: [ubyte] (flexbuffer);
+}
+
 table NodeVariable {
     name: string (key);
     value: [ubyte] (flexbuffer);
-    constant: bool = false;
 }
 
-table NodeVariablesChanged {
+table VariablesChanged {
    node_id:NodeId;
    vars:[NodeVariable];
 }
@@ -116,12 +123,12 @@ table NodeVariablesChanged {
 table SendEvents {
    request_id:uint;
    node_id:NodeId;
-   events:[NodeVariable];
+   events:[NamedValue];
 }
 
 table EventsEmitted {
    node_id:NodeId;
-   events:[NodeVariable];
+   events:[NamedValue];
 }
 
 /// Message sent by the server when a node changes status.
@@ -178,9 +185,9 @@ table AsebaNativeFunctionParameter {
 }
 
 /// Modify the value of specified variables
-table SetNodeVariables {
+table SetVariables {
    request_id:uint;
-   node_id:NodeId;
+   node_or_group_id:NodeId;
    vars:[NodeVariable];
 }
 
@@ -299,7 +306,7 @@ table SetBreakpointsResponse {
 // Ask the server to receive events pertaining to a node
 table WatchNode {
     request_id:uint;
-    node_id:NodeId;
+    node_or_group_id:NodeId;
     //bitflag of WatchableInfo
     info_type:uint;
 }
@@ -316,17 +323,17 @@ table RequestCompleted {
 table EventDescription {
     name:string;
     fixed_sized:uint;
-    index:uint;
+    index:uint = 0;
 }
 
 table RegisterEvents {
     request_id:uint;
-    node_id:NodeId;
+    node_or_group_id:NodeId;
     events:[EventDescription];
 }
 
 table EventsDescriptionChanged {
-    node_id:NodeId;
+    node_or_group_id:NodeId;
     events:[EventDescription];
 }
 
@@ -345,8 +352,8 @@ union AnyMessage {
     CompilationResultFailure,
     CompilationResultSuccess,
     WatchNode,
-    NodeVariablesChanged,
-    SetNodeVariables,
+    VariablesChanged,
+    SetVariables,
     EventsDescriptionChanged,
     RegisterEvents,
     SendEvents,
