@@ -14,6 +14,7 @@ ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoi
     , m_executionState(VMExecutionState::Stopped)
     , m_type(type) {
 
+    connect(this, &ThymioNode::groupChanged, this, &ThymioNode::modified);
     connect(this, &ThymioNode::nameChanged, this, &ThymioNode::modified);
     connect(this, &ThymioNode::statusChanged, this, &ThymioNode::modified);
     connect(this, &ThymioNode::capabilitiesChanged, this, &ThymioNode::modified);
@@ -22,6 +23,10 @@ ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoi
 
 QUuid ThymioNode::uuid() const {
     return m_uuid;
+}
+
+QUuid ThymioNode::group_id() const {
+    return m_group_id;
 }
 
 QString ThymioNode::name() const {
@@ -52,6 +57,13 @@ void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {
     if(m_capabilities != capabilities) {
         m_capabilities = capabilities;
         Q_EMIT capabilitiesChanged();
+    }
+}
+
+void ThymioNode::setGroupId(const QUuid& group_id) {
+    if(m_group_id != group_id) {
+        m_group_id = group_id;
+        Q_EMIT groupChanged();
     }
 }
 
@@ -139,6 +151,15 @@ Request ThymioNode::setWatchVMExecutionStateEnabled(bool enabled) {
     return updateWatchedInfos();
 }
 
+Request ThymioNode::setWatchSharedVariablesEnabled(bool enabled) {
+    m_watched_infos.setFlag(WatchableInfo::SharedVariables, enabled);
+    return updateWatchedInfos();
+}
+Request ThymioNode::setWatchEventsDescriptionEnabled(bool enabled) {
+    m_watched_infos.setFlag(WatchableInfo::SharedEventsDescription, enabled);
+    return updateWatchedInfos();
+}
+
 Request ThymioNode::updateWatchedInfos() {
     return m_endpoint->set_watch_flags(*this, int(m_watched_infos));
 }
@@ -147,8 +168,12 @@ AsebaVMDescriptionRequest ThymioNode::fetchAsebaVMDescription() {
     return m_endpoint->fetchAsebaVMDescription(*this);
 }
 
-Request ThymioNode::setVariabes(const VariableMap& variables) {
-    return m_endpoint->setNodeVariabes(*this, variables);
+Request ThymioNode::setVariables(const VariableMap& variables) {
+    return m_endpoint->setNodeVariables(*this, variables);
+}
+
+Request ThymioNode::setGroupVariables(const VariableMap& variables) {
+    return m_endpoint->setGroupVariables(*this, variables);
 }
 
 Request ThymioNode::addEvent(const EventDescription& d) {
@@ -174,8 +199,8 @@ Request ThymioNode::removeEvent(const QString& name) {
 }
 
 Request ThymioNode::emitEvent(const QString& name, const QVariant& value) {
-    VariableMap map;
-    map.insert(name, ThymioVariable(value));
+    EventMap map;
+    map.insert(name, value);
     return m_endpoint->emitNodeEvents(*this, map);
 }
 
@@ -201,7 +226,12 @@ void ThymioNode::onVariablesChanged(VariableMap variables) {
     Q_EMIT variablesChanged(variables);
 }
 
-void ThymioNode::onEvents(VariableMap evs) {
+void ThymioNode::onGroupVariablesChanged(VariableMap variables) {
+    Q_EMIT groupVariablesChanged(variables);
+}
+
+
+void ThymioNode::onEvents(EventMap evs) {
     Q_EMIT events(evs);
 }
 

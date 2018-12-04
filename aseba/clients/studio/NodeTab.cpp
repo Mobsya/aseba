@@ -61,9 +61,8 @@ NodeTab::NodeTab(QWidget* parent)
     setupConnections();
 
 
-    connect(&m_constants_model, &ConstantsModel::constantModified, [this](const QString& name, const QVariant& value) {
-        this->setVariable(name, {value, true});
-    });
+    connect(&m_constants_model, &ConstantsModel::constantModified,
+            [this](const QString& name, const QVariant& value) { this->setVariable(name, {value}); });
     m_constantsWidget->setModel(&m_constants_model);
     m_eventsWidget->setModel(&m_events_model);
 
@@ -105,7 +104,9 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
             node->lock();
         auto ptr = node.get();
         node->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
+        node->setWatchSharedVariablesEnabled(true);
         node->setWatchEventsEnabled(true);
+        node->setWatchEventsDescriptionEnabled(true);
         node->setWatchVMExecutionStateEnabled(true);
         m_vm_variables_model.clear();
 
@@ -117,6 +118,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
+        connect(node.get(), &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
@@ -458,22 +460,19 @@ void NodeTab::onAsebaVMDescriptionChanged() {
 
 
 void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
-    bool recompile = false;
     for(auto it = vars.begin(); it != vars.end(); ++it) {
-        if(it->isConstant()) {
-            it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
-                                   m_constants_model.addVariable(it.key(), it.value().value());
-            recompile = true;
-        } else {
-            m_cached_variables.insert(it.key(), it.value());
-            if(!m_variables_cache_handling_timer.isActive())
-                m_variables_cache_handling_timer.start(150);
-        }
+        m_cached_variables.insert(it.key(), it.value());
+        if(!m_variables_cache_handling_timer.isActive())
+            m_variables_cache_handling_timer.start(150);
     }
+}
 
-    if(recompile) {
-        this->compileCodeOnTarget();
+void NodeTab::onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    for(auto it = vars.begin(); it != vars.end(); ++it) {
+        it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
+                               m_constants_model.addVariable(it.key(), it.value().value());
     }
+    this->compileCodeOnTarget();
 }
 
 void NodeTab::handleVariablesCache() {
@@ -493,7 +492,16 @@ void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value)
 
     mobsya::ThymioNode::VariableMap map;
     map.insert(k, value);
-    m_thymio->setVariabes(map);
+    m_thymio->setVariables(map);
+}
+
+void NodeTab::setGroupVariable(const QString& k, const mobsya::ThymioVariable& value) {
+    if(!m_thymio)
+        return;
+
+    mobsya::ThymioNode::VariableMap map;
+    map.insert(k, value);
+    m_thymio->setGroupVariables(map);
 }
 
 QVariantMap NodeTab::getVariables() const {
@@ -527,7 +535,7 @@ void NodeTab::emitEvent(const QString& name, const QVariant& value) {
     m_thymio->emitEvent(name, value);
 }
 
-void NodeTab::onEvents(const mobsya::ThymioNode::VariableMap& events) {
+void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
     m_eventsWidget->onEvents(events);
 }
 
@@ -950,16 +958,11 @@ void NodeTab::setupConnections() {
     });
 
 
-    connect(m_constantsWidget, &ConstantsWidget::constantModified, [this](const QString& name, const QVariant& value) {
-        this->setVariable(name, {value, true});
-    });
+    connect(m_constantsWidget, &ConstantsWidget::constantModified,
+            [this](const QString& name, const QVariant& value) { this->setGroupVariable(name, value); });
     connect(m_eventsWidget, &EventsWidget::eventAdded, this, &NodeTab::addEvent);
     connect(m_eventsWidget, &EventsWidget::eventRemoved, this, &NodeTab::removeEvent);
     connect(m_eventsWidget, &EventsWidget::eventEmitted, this, &NodeTab::emitEvent);
-
-    // memory
-    // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),
-    //        SLOT(setVariableValues(unsigned, const VariablesDataVector&)));
 
     // editor
     connect(editor, &QTextEdit::textChanged, this, &NodeTab::editorContentChanged);

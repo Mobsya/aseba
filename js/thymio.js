@@ -427,8 +427,8 @@ export class Client {
                 break
             }
 
-            case mobsya.fb.AnyMessage.NodeVariablesChanged: {
-                const msg = message.message(new mobsya.fb.NodeVariablesChanged())
+            case mobsya.fb.AnyMessage.VariablesChanged: {
+                const msg = message.message(new mobsya.fb.VariablesChanged())
                 const id = this._id(msg.nodeId())
                 const node = this._nodes.get(id.toString())
                 if(!node || ! node._on_vars_changed_cb)
@@ -515,12 +515,12 @@ export class Client {
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
         const varsOffset = this.__serialize_node_variables(builder, variables)
-        mobsya.fb.SetNodeVariables.startSetNodeVariables(builder)
-        mobsya.fb.SetNodeVariables.addNodeId(builder, nodeOffset)
-        mobsya.fb.SetNodeVariables.addRequestId(builder, req_id)
-        mobsya.fb.SetNodeVariables.addVars(builder, varsOffset)
-        const tableOffset = mobsya.fb.SetNodeVariables.endSetNodeVariables(builder)
-        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SetNodeVariables)
+        mobsya.fb.SetVariables.startSetVariables(builder)
+        mobsya.fb.SetVariables.addNodeId(builder, nodeOffset)
+        mobsya.fb.SetVariables.addRequestId(builder, req_id)
+        mobsya.fb.SetVariables.addVars(builder, varsOffset)
+        const tableOffset = mobsya.fb.SetVariables.endSetVariables(builder)
+        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SetVariables)
         return this._prepare_request(req_id)
     }
 
@@ -547,7 +547,7 @@ export class Client {
         variables.forEach( (value, name, _map) => {
             offsets.push(this.__serialize_node_variable(builder, name, value))
         })
-        return mobsya.fb.SetNodeVariables.createVarsVector(builder, offsets)
+        return mobsya.fb.SetVariables.createVarsVector(builder, offsets)
     }
 
     __serialize_node_variable(builder, name, value) {

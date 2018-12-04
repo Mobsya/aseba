@@ -15,7 +15,7 @@ public:
     void setModel(QAbstractItemModel* model);
 
 public Q_SLOTS:
-    void onEvents(const mobsya::ThymioNode::VariableMap& events);
+    void onEvents(const mobsya::ThymioNode::EventMap& events);
     void logError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
     void setEditable(bool editable);
 

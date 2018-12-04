@@ -12,17 +12,13 @@ namespace mobsya {
 struct ThymioVariable {
     Q_GADGET
     Q_PROPERTY(QVariant value READ value)
-    Q_PROPERTY(bool isConstant READ isConstant)
+    // Q_PROPERTY(bool isConstant READ isConstant)
 
 public:
-    ThymioVariable(QVariant value, bool constant = false) : m_value(value), m_constant(constant) {}
+    ThymioVariable(QVariant value) : m_value(value) {}
 
     QVariant value() const {
         return m_value;
-    }
-
-    bool isConstant() const {
-        return m_constant;
     }
 
 private:
@@ -68,6 +64,7 @@ public:
 
 
     using VariableMap = QMap<QString, ThymioVariable>;
+    using EventMap = QMap<QString, QVariant>;
 
     Q_ENUM(Status)
     Q_ENUM(VMExecutionState)
@@ -78,6 +75,7 @@ public:
     Q_DECLARE_FLAGS(NodeCapabilities, NodeCapability)
 
     Q_PROPERTY(QUuid id READ uuid CONSTANT)
+    Q_PROPERTY(QUuid group_id READ group_id NOTIFY groupChanged)
     Q_PROPERTY(QString name READ name WRITE rename NOTIFY nameChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(VMExecutionState vmExecutionState READ vmExecutionState NOTIFY vmExecutionStateChanged)
@@ -90,6 +88,7 @@ public:
 
 Q_SIGNALS:
     void modified();
+    void groupChanged();
     void nameChanged();
     void statusChanged();
     void capabilitiesChanged();
@@ -98,12 +97,14 @@ Q_SIGNALS:
     void vmExecutionStopped();
     void vmExecutionPaused(int line = 0);
     void variablesChanged(const VariableMap& variables);
-    void events(const VariableMap& variables);
+    void groupVariablesChanged(const VariableMap& variables);
+    void events(const EventMap& variables);
     void eventsTableChanged(const QVector<EventDescription>& events);
     void vmExecutionError(VMExecutionError error, const QString& message, uint32_t line);
 
 public:
     QUuid uuid() const;
+    QUuid group_id() const;
     QString name() const;
     Status status() const;
     VMExecutionState vmExecutionState() const;
@@ -111,6 +112,7 @@ public:
     NodeCapabilities capabilities();
     Q_INVOKABLE QUrl websocketEndpoint() const;
 
+    void setGroupId(const QUuid& group_id);
     void setName(const QString& name);
     void setStatus(const Status& status);
     void setCapabilities(const NodeCapabilities& capabilities);
@@ -138,11 +140,14 @@ public:
 
     Q_INVOKABLE Request setWatchVariablesEnabled(bool enabled);
     Q_INVOKABLE Request setWatchEventsEnabled(bool enabled);
+    Q_INVOKABLE Request setWatchSharedVariablesEnabled(bool enabled);
+    Q_INVOKABLE Request setWatchEventsDescriptionEnabled(bool enabled);
     Q_INVOKABLE Request setWatchVMExecutionStateEnabled(bool enabled);
 
     Q_INVOKABLE AsebaVMDescriptionRequest fetchAsebaVMDescription();
 
-    Q_INVOKABLE Request setVariabes(const VariableMap& variables);
+    Q_INVOKABLE Request setVariables(const VariableMap& variables);
+    Q_INVOKABLE Request setGroupVariables(const VariableMap& variables);
 
     Q_INVOKABLE Request addEvent(const EventDescription& d);
     Q_INVOKABLE Request removeEvent(const QString& name);
@@ -151,13 +156,15 @@ public:
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
     void onVariablesChanged(VariableMap variables);
-    void onEvents(VariableMap variables);
+    void onGroupVariablesChanged(VariableMap variables);
+    void onEvents(EventMap variables);
     void onEventsTableChanged(const QVector<EventDescription>& events);
 
 
     Request updateWatchedInfos();
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;
     QUuid m_uuid;
+    QUuid m_group_id;
     QString m_name;
     Status m_status;
     VMExecutionState m_executionState;

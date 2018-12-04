@@ -3,6 +3,7 @@ add_library(thymio-device-manager-lib STATIC
     main.cpp
     log.h
     log.cpp
+    common_types.h
     error.cpp
     error.h
     events.h
@@ -12,11 +13,14 @@ add_library(thymio-device-manager-lib STATIC
     aseba_message_writer.h
     aseba_node_registery.h
     aseba_node_registery.cpp
+    uuid_provider.h
     aseba_endpoint.h
+    aseba_endpoint.cpp
     aseba_node.h
     aseba_node.cpp
     aseba_tcpacceptor.h
     aseba_tcpacceptor.cpp
+    aseba_property.h
     app_server.h
     app_token_manager.h
     app_endpoint.h
@@ -27,6 +31,8 @@ add_library(thymio-device-manager-lib STATIC
     usb_utils.h
     utils.h
     tdm.h
+    group.h
+    group.cpp
     interfaces.h
     interfaces.cpp
     property.h

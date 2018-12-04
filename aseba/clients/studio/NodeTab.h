@@ -78,16 +78,18 @@ protected Q_SLOTS:
 
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
+    void onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
     void handleVariablesCache();
 
     void setVariable(const QString& k, const mobsya::ThymioVariable& value);
+    void setGroupVariable(const QString& k, const mobsya::ThymioVariable& value);
     void resetVariables();
 
     void addEvent(const QString& name, int size);
     void removeEvent(const QString& name);
     void onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events);
     void emitEvent(const QString& name, const QVariant& value);
-    void onEvents(const mobsya::ThymioNode::VariableMap& events);
+    void onEvents(const mobsya::ThymioNode::EventMap& events);
 
     void editorContentChanged();
     void compileCodeOnTarget();

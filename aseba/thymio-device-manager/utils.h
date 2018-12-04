@@ -3,6 +3,7 @@
 #include <tl/expected.hpp>
 #include <limits>
 #include <boost/lexical_cast.hpp>
+#include <boost/system/error_code.hpp>
 
 namespace mobsya {
 
@@ -71,5 +72,4 @@ tl::expected<T, cast_error> lexical_cast(S&& s) {
         return tl::make_unexpected(cast_error::bad_cast);
     return t;
 }
-
 }  // namespace mobsya

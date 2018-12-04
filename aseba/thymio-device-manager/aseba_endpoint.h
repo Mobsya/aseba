@@ -50,6 +50,14 @@ public:
 
     using write_callback = std::function<void(boost::system::error_code)>;
 
+    void set_group(std::shared_ptr<mobsya::group> g) {
+        m_group = g;
+    }
+
+    std::shared_ptr<mobsya::group> group() const {
+        return m_group;
+    }
+
 #ifdef MOBSYA_TDM_ENABLE_USB
     const usb_device& usb() const {
         return variant_ns::get<usb_device>(m_endpoint);
@@ -60,7 +68,9 @@ public:
     }
 
     static pointer create_for_usb(boost::asio::io_context& io) {
-        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+        ptr->m_group = group::make_group_for_endpoint(io, ptr);
+        return ptr;
     }
 #endif
 
@@ -87,7 +97,9 @@ public:
     }
 
     static pointer create_for_tcp(boost::asio::io_context& io) {
-        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+        ptr->m_group = group::make_group_for_endpoint(io, ptr);
+        return ptr;
     }
 
     std::string endpoint_name() const {
@@ -116,6 +128,13 @@ public:
         }
 #endif
         return false;
+    }
+
+    std::vector<std::shared_ptr<aseba_node>> nodes() const {
+        std::vector<std::shared_ptr<aseba_node>> nodes;
+        std::transform(m_nodes.begin(), m_nodes.end(), std::back_inserter(nodes),
+                       [](auto&& pair) { return pair.second.node; });
+        return nodes;
     }
 
     void start() {
@@ -175,7 +194,13 @@ public:
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
         auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
-        if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
+
+        if(msg->type < 0x8000) {
+            auto event = [this, &msg] { return get_event(msg->type); }();
+            if(event) {
+                on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first);
+            }
+        } else if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             if(!node) {
                 const auto protocol_version = static_cast<Aseba::NodePresent*>(msg.get())->version;
                 it = m_nodes
@@ -317,14 +342,30 @@ private:
         , m_strand(io_context.get_executor())
         , m_io_context(io_context)
         , m_endpoint_type(type) {}
+
+    const Aseba::CommonDefinitions& aseba_compiler_definitions() const {
+        return m_defs;
+    }
+
+    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
+    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
+
+    friend class group;
+    boost::system::error_code set_events_table(const group::events_table& events);
+    boost::system::error_code set_shared_variables(const variables_map& map);
+    void emit_events(const group::properties_map& map, write_callback&& cb);
+    void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def);
+
     endpoint_t m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
-    std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
     boost::asio::io_service& m_io_context;
     endpoint_type m_endpoint_type;
     std::string m_endpoint_name;
     std::mutex m_msg_queue_lock;
+    std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
+    std::shared_ptr<mobsya::group> m_group;
     std::queue<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
+    Aseba::CommonDefinitions m_defs;
 };  // namespace mobsya
 
 }  // namespace mobsya
