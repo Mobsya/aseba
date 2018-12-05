@@ -43,8 +43,8 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     QHBoxLayout* eventsAddRemoveLayout = new QHBoxLayout;
     eventsAddRemoveLayout->addWidget(new QLabel(tr("<b>Events</b>")));
     eventsAddRemoveLayout->addStretch();
-    auto addEventNameButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
-    eventsAddRemoveLayout->addWidget(addEventNameButton);
+    m_addEventNameButton = new QPushButton(QPixmap(QString(":/images/add.png")), "");
+    eventsAddRemoveLayout->addWidget(m_addEventNameButton);
     m_removeEventButton = new QPushButton(QPixmap(QString(":/images/remove.png")), "");
     m_removeEventButton->setEnabled(false);
     eventsAddRemoveLayout->addWidget(m_removeEventButton);
@@ -57,13 +57,13 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     eventsDockLayout->addWidget(m_view, 1);
 
 
-    addEventNameButton->setToolTip(tr("Add a new event"));
+    m_addEventNameButton->setToolTip(tr("Add a new event"));
     m_removeEventButton->setToolTip(tr("Remove this event"));
     m_sendEventButton->setToolTip(tr("Send this event"));
 
     auto* eventsLayout = new QGridLayout;
     eventsLayout->addWidget(new QLabel(tr("<b>Global Events</b>")), 0, 0, 1, 4);
-    eventsLayout->addWidget(addEventNameButton, 1, 0);
+    eventsLayout->addWidget(m_addEventNameButton, 1, 0);
     eventsLayout->addWidget(m_removeEventButton, 1, 1);
     eventsLayout->addWidget(m_sendEventButton, 1, 2);
     eventsLayout->addWidget(m_view, 2, 0, 1, 4);
@@ -79,7 +79,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     setLayout(eventsDockLayout);
 
 
-    connect(addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
+    connect(m_addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
     connect(m_removeEventButton, &QPushButton::clicked, this, &EventsWidget::removeEvent);
     connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendSelectedEvent);
     connect(clearLogger, &QPushButton::clicked, m_logger, &QListWidget::clear);
@@ -116,7 +116,7 @@ void EventsWidget::removeEvent() {
 
 void EventsWidget::eventsSelectionChanged() {
     bool isSelected = m_view->selectionModel()->currentIndex().isValid();
-    m_removeEventButton->setEnabled(isSelected);
+    m_removeEventButton->setEnabled(m_editable && isSelected);
     m_sendEventButton->setEnabled(isSelected);
 }
 
@@ -207,6 +207,15 @@ void EventsWidget::onDoubleClick(const QModelIndex& index) {
     } else {
         sendEvent(index);
     }
+}
+
+void EventsWidget::setEditable(bool editable) {
+    m_editable = editable;
+    m_addEventNameButton->setEnabled(editable);
+    eventsSelectionChanged();
+    m_view->setEditTriggers(editable ? FixedWidthTableView::EditTrigger::DoubleClicked |
+                                    FixedWidthTableView::EditTrigger::EditKeyPressed :
+                                       FixedWidthTableView::EditTrigger::NoEditTriggers);
 }
 
 }  // namespace Aseba

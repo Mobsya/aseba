@@ -108,6 +108,10 @@ Request ThymioNode::stepToNextLine() {
     return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::StepToNextLine);
 }
 
+Request ThymioNode::writeProgramToDeviceMemory() {
+    return m_endpoint->setNodeExecutionState(*this, fb::VMExecutionStateCommand::WriteProgramToDeviceMemory);
+}
+
 BreakpointsRequest ThymioNode::setBreakPoints(const QVector<unsigned>& breakpoints) {
     return m_endpoint->setNodeBreakPoints(*this, breakpoints);
 }

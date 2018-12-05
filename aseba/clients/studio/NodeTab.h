@@ -46,6 +46,7 @@ public:
 
     void setThymio(std::shared_ptr<mobsya::ThymioNode> node);
     const std::shared_ptr<const mobsya::ThymioNode> thymio() const;
+    QVariantMap getVariables() const;
 
 Q_SIGNALS:
     void uploadReadynessChanged(bool);
@@ -73,6 +74,7 @@ protected Q_SLOTS:
     void pause();
     void step();
     void reboot();
+    void writeProgramToDeviceMemory();
 
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
@@ -104,6 +106,9 @@ protected Q_SLOTS:
     void onExecutionStateChanged();
     void onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
     void onAsebaVMDescriptionChanged();
+    void onStatusChanged();
+
+    void updateStatusLabel();
 
     void compilationCompleted();
 

@@ -191,6 +191,7 @@ private:
     void on_message(const Aseba::Message& msg);
     void get_description();
     void on_description_received();
+    void request_device_info();
     void on_device_info(const Aseba::DeviceInfo& info);
     void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def);
 
@@ -221,6 +222,7 @@ private:
 
     node_id_t m_id;
     node_id m_uuid;
+    bool m_uuid_received = false;
     std::string m_friendly_name;
     std::atomic<status> m_status;
     const uint16_t m_protocol_version;
@@ -257,6 +259,7 @@ private:
     events_watch_signal_t m_events_signal;
     vm_state_watch_signal_t m_vm_state_watch_signal;
     std::atomic<bool> m_resend_all_variables = true;
+    boost::asio::deadline_timer m_resend_timer;
 
 
     unsigned line_from_pc(unsigned pc) const;

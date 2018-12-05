@@ -164,8 +164,10 @@ public:
     }
 
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
-        if(ec) {
-            mLogError("Error while reading aseba message {}", ec.message());
+        if(ec || !msg) {
+            mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
+            if(!ec)
+                read_aseba_message();
             return;
         }
         mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());

@@ -28,6 +28,7 @@ protected slots:
 
 Q_SIGNALS:
     void tabAdded(int index);
+    void nodeStatusChanged();
 
 protected:
     void resetHighlight(int index);

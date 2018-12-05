@@ -14,6 +14,9 @@ public:
 Q_SIGNALS:
     void constantModified(const QString& name, const QVariant& value);
 
+public Q_SLOTS:
+    void setEditable(bool editable);
+
 private Q_SLOTS:
     void addConstant();
     void removeConstant();
@@ -23,6 +26,7 @@ private:
     FixedWidthTableView* m_view;
     QPushButton* m_removeConstantButton;
     QPushButton* m_addConstantButton;
+    bool m_editable = false;
 };
 
 }  // namespace Aseba

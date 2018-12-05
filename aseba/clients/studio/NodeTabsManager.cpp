@@ -24,9 +24,11 @@ void NodeTabsManager::addTab(const QUuid& device) {
     m_tabs[device] = tab;
     if(auto thymio = m_client.node(device)) {
         tab->setThymio(thymio);
+        QTabWidget::setTabText(index, thymio->name());
     } else {
         QTabWidget::setTabEnabled(index, false);
     }
+    connect(tab, &NodeTab::executionStateChanged, this, &NodeTabsManager::nodeStatusChanged);
 }
 
 

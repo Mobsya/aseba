@@ -141,18 +141,11 @@ private Q_SLOTS:
 
     void clearAllExecutionError();
 
-    void uploadReadynessChanged();
     void tabChanged(int);
-    void toggleEventVisibleButton(const QModelIndex&);
-    void plotEvent();
     void eventContextMenuRequested(const QPoint& pos);
-    void plotEvent(const unsigned eventId);
-    void logEntryDoubleClicked(QListWidgetItem*);
     void showCompilationMessages(bool doShown);
     void compilationMessagesWasHidden();
     void showMemoryUsage(bool show);
-
-    void resetStatusText();  // Jiwon
 
     void recompileAll();
     void writeAllBytecodes();
