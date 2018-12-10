@@ -31,8 +31,7 @@ The following script does this for you:
 	cd ..
 	# fetch and compile aseba, telling it where to find dashel and enki
 	git clone --recursive https://github.com/mobsya/aseba.git
-	cd aseba && git checkout release-1.6.x && git submodule update --init --recursive --remote
-&& cd ..
+	cd aseba && git checkout release-1.6.x && git submodule update --init --recursive --remote && cd ..
 	cd build-aseba
 	cmake ../aseba -DCMAKE_BUILD_TYPE=RelWithDebInfo -Ddashel_DIR=../build-dashel -Denki_DIR=../build-enki
 	make
