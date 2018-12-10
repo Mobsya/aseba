@@ -16,20 +16,22 @@ The following script does this for you:
 	mkdir -p aseba/build-dashel aseba/build-enki aseba/build-aseba
 	cd aseba
 	# fetch and compile dashel
-	git clone https://github.com/aseba-community/dashel.git
+	git clone https://github.com/mobsya/dashel.git
+	cd dashel && git checkout release-1.6.x && cd ..
 	cd build-dashel
 	cmake ../dashel -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=OFF
 	make
 	cd ..
 	# fetch and compile enki
-	git clone https://github.com/enki-community/enki.git
+	git clone https://github.com/mobsya/enki.git
+	cd enki && git checkout aseba-1.6.x && cd ..
 	cd build-enki
 	cmake ../enki -DCMAKE_BUILD_TYPE=RelWithDebInfo
 	make
 	cd ..
 	# fetch and compile aseba, telling it where to find dashel and enki
-	git clone --recursive https://github.com/aseba-community/aseba.git
-	# cd aseba && git checkout release-1.5.x && cd ..
+	git clone --recursive https://github.com/mobsya/aseba.git
+	cd aseba && git checkout release-1.6.x && cd ..
 	cd build-aseba
 	cmake ../aseba -DCMAKE_BUILD_TYPE=RelWithDebInfo -Ddashel_DIR=../build-dashel -Denki_DIR=../build-enki
 	make
@@ -57,9 +59,9 @@ In many distributions, this is the "dialout" group and you can add yourself to t
 
 ## Compiling a different branch
 
-This will compile the master version of Aseba.
-If you want to compile a specific branch instead, for instance `release-1.5.x`, just uncomment the line `cd aseba && git checkout release-1.5.x && cd ..`.
-Change `release-1.5.x` with the branch or tag you want to compile.
+This will compile the `release-1.6.x` version of Aseba.
+If you want to compile a specific branch instead, for instance `release-1.5.x`, just change the line `cd aseba && git checkout release-1.6.x && cd ..`.
+Change `release-1.6.x` with the branch or tag you want to compile.
 
 ## Building packages
 
