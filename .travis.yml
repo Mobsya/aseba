@@ -5,6 +5,15 @@ cache:
   - "js/node_modules"
   - "thymio-blockly-standalone/node_modules"
 
+addons:
+  apt:
+    sources:
+      - sourceline: "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main"
+        key_url: "https://apt.llvm.org/llvm-snapshot.gpg.key"
+  homebrew:
+    update: true
+    brewfile: true
+
 matrix:
   include:
   - os: linux
@@ -66,18 +75,10 @@ before_script:
 before_install:
 - |
   set -e
-  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    brew update
-    brew bundle
-  else
+  if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
     # install cmake through pip - should give us cmake 3.11 - which we need for boost
     pip install --user --upgrade pip
     pip install --user --upgrade cmake
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main"
-        sudo apt-get update -qq
-    fi
   fi
   if [[ "$ANDROID" ]]; then
     cd $HOME
