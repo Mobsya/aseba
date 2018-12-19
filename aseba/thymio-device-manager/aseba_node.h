@@ -205,7 +205,8 @@ private:
     void send_events_table();
     void on_execution_state_message(const Aseba::ExecutionStateChanged&);
     void on_vm_runtime_error(const Aseba::Message&);
-    void force_execution_state_update();
+    void schedule_execution_state_update();
+    void request_execution_state();
 
     void on_breakpoint_set_result(const Aseba::BreakpointSetResult&);
     void cancel_pending_breakpoint_request();
@@ -255,6 +256,7 @@ private:
     };
     std::vector<aseba_vm_variable> m_variables;
     boost::asio::deadline_timer m_variables_timer;
+    boost::asio::deadline_timer m_status_timer;
     variables_watch_signal_t m_variables_changed_signal;
     events_watch_signal_t m_events_signal;
     vm_state_watch_signal_t m_vm_state_watch_signal;
