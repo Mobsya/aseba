@@ -38,6 +38,7 @@ aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, uint16_t prot
     , m_endpoint(std::move(endpoint))
     , m_io_ctx(ctx)
     , m_variables_timer(ctx)
+    , m_status_timer(ctx)
     , m_resend_timer(ctx) {}
 
 std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, node_id_t id, uint16_t protocol_version,
@@ -294,9 +295,24 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
 }
 
 
-void aseba_node::force_execution_state_update() {
+void aseba_node::schedule_execution_state_update() {
+    request_execution_state();
+	m_status_timer.expires_from_now(boost::posix_time::seconds(1));
+    std::weak_ptr<aseba_node> ptr = shared_from_this();
+    m_status_timer.async_wait([ptr](boost::system::error_code ec) {
+        if(ec)
+            return;
+        auto that = ptr.lock();
+        if(!that || that->get_status() == status::disconnected)
+            return;
+        that->schedule_execution_state_update();
+    });
+}
+
+void aseba_node::request_execution_state() {
     write_message(std::make_shared<Aseba::GetExecutionState>(native_id()));
 }
+
 
 void aseba_node::on_execution_state_message(const Aseba::ExecutionStateChanged& es) {
     vm_execution_state state;
@@ -653,7 +669,7 @@ void aseba_node::on_description_received() {
     unsigned count;
     reset_known_variables(m_description.getVariablesMap(count));
     schedule_variables_update();
-    force_execution_state_update();
+    schedule_execution_state_update();
 
     if(m_description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
