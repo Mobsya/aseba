@@ -63,5 +63,6 @@ ListModel {
          appId:"studio"
          name: "Studio"
          animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
+         descriptionImage: "qrc:/apps/studio/description.jpg"
      }
 }
