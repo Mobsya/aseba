@@ -30,7 +30,7 @@ Unicode true
   !include "MUI2.nsh"		; Modern UI 2
   !include LogicLib.nsh		; ${If} statement
   !include "WinVer.nsh"		; To test the Windows version
-  !define REGISTRY_KEY "Software\aseba"
+  !define REGISTRY_KEY "Software\Mobsya\Thymio"
   !include "x64.nsh"		; x64 support
   !include "..\..\..\resources\NSIS.definitions.nsh"
   !AddIncludeDir "${INSTALLER_SOURCE_DIRECTORY}"
@@ -93,17 +93,6 @@ Var AlreadyInstalled
   WriteINIStr "${FILENAME}.url" "InternetShortcut" "IconIndex" "${ICONINDEX}"
 !macroend
 
-; Convenience macro for the devel package
-!macro ASEBA_INSTALL_HEADER DIRECTORY
-	SetOutPath "$INSTDIR\include\aseba\${DIRECTORY}"
-	File "${ASEBA_SOURCE_DIRECTORY}\${DIRECTORY}\*.h"
-!macroend
-
-!macro ASEBA_INSTALL_HEADER_FILE DIRECTORY FILE
-	SetOutPath "$INSTDIR\include\aseba\${DIRECTORY}"
-	File "${ASEBA_SOURCE_DIRECTORY}\${DIRECTORY}\${FILE}"
-!macroend
-
 !macro CleanShortcuts un
 Function ${un}CleanShortcuts
 	DetailPrint $(STR_Clean)
@@ -126,7 +115,7 @@ FunctionEnd
 !insertmacro CleanShortcuts "un."
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\AsebaStudio"
+  InstallDir "$PROGRAMFILES\Thymio"
 
 ;--------------------------------
 ;Pages
@@ -142,7 +131,7 @@ FunctionEnd
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Aseba"
+  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
   !insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
@@ -171,7 +160,7 @@ OutFile "@CPACK_TOPLEVEL_DIRECTORY@/@CPACK_OUTPUT_FILE_NAME@"
 
 
 
-SectionGroup /e "-Aseba" GroupAseba
+SectionGroup /e "-Thymio" GroupThymio
 	Section "-CPack" CPack
 	SetOutPath "$INSTDIR"
 
@@ -182,6 +171,7 @@ SectionGroup /e "-Aseba" GroupAseba
 	Section "-Menus" Menu
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebastudio.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebastudiothymio.ico"
+		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebaplayground.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiovpl.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymioupgrader.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebahelp.ico"
@@ -237,14 +227,13 @@ SectionGroup /e "-Aseba" GroupAseba
 ;  			${EndIf}
 			; Thymio stuff?
 			; Launcher
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Package_Name_Thymio).lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Launcher.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 			; Thymio flasher
 			; CreateDirectory "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader.lnk" "$INSTDIR\bin\thymioupgrader.exe" "" "$INSTDIR\thymioupgrader.ico"
 			; Thymio wireless configurator
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Wireless Thymio Network Configurator.lnk" "$INSTDIR\bin\thymiownetconfig.exe" "" "$INSTDIR\thymiownetconfig.ico"
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Challenge.lnk" "$INSTDIR\bin\asebachallenge.exe" "" "$INSTDIR\asebachallenge.ico"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
 		!insertmacro MUI_STARTMENU_WRITE_END
 
@@ -319,17 +308,6 @@ Section "-Install Bonjour" InstBonjour	; Hidden section -> always executed
 		DetailPrint $(Bonjour_32bits)
 		ExecWait '"msiexec" /i "$INSTDIR\Bonjour.msi"  /passive'
 	${EndIf}
-SectionEnd
-
-
-Section "-PostInstall"
-	DetailPrint "Post install..."
-
-	; Black voodoo to order the menu correctly
-	DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\MenuOrder\Start Menu\Programs\Aseba Studio"
-	DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\MenuOrder\Start Menu2\Programs\Aseba Studio"
-
-	DetailPrint "Done."
 SectionEnd
 
 ; First function to be executed by the installer
