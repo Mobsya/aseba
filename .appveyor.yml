@@ -147,7 +147,7 @@ environment:
   PFX_SECURE_FILE_DECODE:
     secure: WHOG4xjSEoHk00wq+NAwiQ==
   SIGNTOOL_PASSPHRASE:
-    secure: VxqFZfqcgZAZ5N0ZmOBa+zrlf3iiY8V0a/de3bhwT+w=
+    secure: 3h/VH0p48X8zQ9cnqgpJt9yAF2/eGx+Ne8mpDXJmKaM=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
   BOOST_ROOT: 'C:/Libraries/boost_1_67_0'
