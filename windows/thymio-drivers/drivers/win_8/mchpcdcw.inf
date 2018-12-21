@@ -10,7 +10,7 @@ ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
 Provider=%MFGNAME% 
 LayoutFile=layout.inf
 CatalogFile=%MFGFILENAME%.cat
-DriverVer=03/11/2010,5.1.2600.2
+DriverVer=04/27/2012
 
 [Manufacturer] 
 %MFGNAME%=DeviceList, NTamd64
@@ -90,8 +90,10 @@ ServiceBinary=%12%\%DRIVERFILENAME%.sys
 [SourceDisksNames]
 [DeviceList]
 %DESCRIPTION%=DriverInstall, USB\VID_0617&PID_000C 
+
 [DeviceList.NTamd64] 
-%DESCRIPTION%=DriverInstall, USB\VID_0617&PID_000C
+%DESCRIPTION%=DriverInstall, USB\VID_0617&PID_000C 
+
 
 ;------------------------------------------------------------------------------
 ;  String Definitions
@@ -102,8 +104,8 @@ ServiceBinary=%12%\%DRIVERFILENAME%.sys
 MFGFILENAME="mchpcdcw"
 DRIVERFILENAME ="usbser"
 MFGNAME="Association Mobsya"
-INSTDISK="Thymio-II Wireless installation disk"
+INSTDISK="Thymio-II wireless installation disk"
 DESCRIPTION="Thymio-II Wireless"
-SERVICE="Thymio-II Wireless Driver "
+SERVICE="Thymio-II Wireless Driver"
 
 
