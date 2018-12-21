@@ -10,7 +10,7 @@ ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
 Provider=%MFGNAME% 
 LayoutFile=layout.inf
 CatalogFile=%MFGFILENAME%.cat
-DriverVer=04/27/2012
+DriverVer=03/11/2010,5.1.2600.2
 
 [Manufacturer] 
 %MFGNAME%=DeviceList, NTamd64
