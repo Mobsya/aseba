@@ -17,25 +17,24 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NAMED_VALUES_VECTOR_MODEL_H
-#define NAMED_VALUES_VECTOR_MODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
+#include <aseba/qt-thymio-dm-client-lib/request.h>
 #include <QVector>
 #include <QString>
-#include "compiler/compiler.h"
 
 
 namespace Aseba {
 /** \addtogroup studio */
 /*@{*/
 
-class NamedValuesVectorModel : public QAbstractTableModel {
+class FlatVariablesModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-    NamedValuesVectorModel(NamedValuesVector* namedValues, QString tooltipText, QObject* parent = nullptr);
-    NamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
+    FlatVariablesModel(QString tooltipText, QObject* parent = nullptr);
+    FlatVariablesModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -50,78 +49,49 @@ public:
     }
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
-                      const QModelIndex& parent) override;
-    Qt::DropActions supportedDropActions() const override;
-
-    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-    bool checkIfModified() {
-        return wasModified;
+                      const QModelIndex& parent) override {
+        return false;
     }
-    void clearWasModified() {
-        wasModified = false;
-    }
-    void setEditable(bool editable);
 
-    virtual bool moveRow(int oldRow, int& newRow);
-
-    virtual bool validateName(const QString& name) const;
-
-public slots:
-    void addNamedValue(const NamedValue& namedValue, int index = -1);
-    void delNamedValue(int index);
+public Q_SLOTS:
+    void addVariable(const QString& name, const QVariant& value);
+    void removeVariable(const QString& name);
     void clear();
 
-signals:
-    void publicRowsInserted();
-    void publicRowsRemoved();
-
 protected:
-    NamedValuesVector* namedValues;
-    bool wasModified;
+    QVector<QPair<QString, QVariant>> m_values;
     QString privateMimeType;
 
 private:
-    QString tooltipText;
-    bool editable;
 };
 
-class ConstantsModel : public NamedValuesVectorModel {
+class ConstantsModel : public FlatVariablesModel {
     Q_OBJECT
 
 public:
-    ConstantsModel(NamedValuesVector* namedValues, const QString& tooltipText, QObject* parent = nullptr);
-    ConstantsModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
-
-    bool validateName(const QString& name) const override;
-};
-
-class MaskableNamedValuesVectorModel : public NamedValuesVectorModel {
-    Q_OBJECT
-
-public:
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, const QString& tooltipText,
-                                   QObject* parent = nullptr);
-    MaskableNamedValuesVectorModel(NamedValuesVector* namedValues, QObject* parent = nullptr);
-
-    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
-
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    using FlatVariablesModel::FlatVariablesModel;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-    bool isVisible(const unsigned id);
+Q_SIGNALS:
+    void constantModified(const QString& name, const QVariant& value);
+};
 
-    bool moveRow(int oldRow, int& newRow) override;
+class MaskableVariablesModel : public FlatVariablesModel {
+    Q_OBJECT
 
-public slots:
-    void addNamedValue(const NamedValue& namedValue);
-    void delNamedValue(int index);
+public:
+    using FlatVariablesModel::FlatVariablesModel;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    bool isVisible(const unsigned id) const;
+    bool isVisible(const QString& key) const;
+
+public Q_SLOTS:
     void toggle(const QModelIndex& index);
 
 private:
-    std::vector<bool> viewEvent;
+    std::vector<bool> m_events_visibility;
 };
 
-/*@}*/
 }  // namespace Aseba
-
-#endif

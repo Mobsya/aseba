@@ -58,6 +58,7 @@ public:
         registerMessageType<NativeFunctionDescription>(ASEBA_MESSAGE_NATIVE_FUNCTION_DESCRIPTION);
         registerMessageType<Disconnected>(ASEBA_MESSAGE_DISCONNECTED);
         registerMessageType<Variables>(ASEBA_MESSAGE_VARIABLES);
+        registerMessageType<ChangedVariables>(ASEBA_MESSAGE_CHANGED_VARIABLES);
         registerMessageType<ArrayAccessOutOfBounds>(ASEBA_MESSAGE_ARRAY_ACCESS_OUT_OF_BOUNDS);
         registerMessageType<DivisionByZero>(ASEBA_MESSAGE_DIVISION_BY_ZERO);
         registerMessageType<EventExecutionKilled>(ASEBA_MESSAGE_EVENT_EXECUTION_KILLED);
@@ -81,6 +82,8 @@ public:
         registerMessageType<BreakpointClear>(ASEBA_MESSAGE_BREAKPOINT_CLEAR);
         registerMessageType<BreakpointClearAll>(ASEBA_MESSAGE_BREAKPOINT_CLEAR_ALL);
         registerMessageType<GetVariables>(ASEBA_MESSAGE_GET_VARIABLES);
+        registerMessageType<SetVariables>(ASEBA_MESSAGE_SET_VARIABLES);
+        registerMessageType<GetChangedVariables>(ASEBA_MESSAGE_GET_CHANGED_VARIABLES);
         registerMessageType<SetVariables>(ASEBA_MESSAGE_SET_VARIABLES);
         registerMessageType<WriteBytecode>(ASEBA_MESSAGE_WRITE_BYTECODE);
         registerMessageType<Reboot>(ASEBA_MESSAGE_REBOOT);
@@ -158,7 +161,7 @@ void Message::serialize(Stream* stream) const {
              << ", maximum packet payload size (excluding type): " << ASEBA_MAX_EVENT_ARG_SIZE
              << ", message type: " << hex << showbase << type << dec << noshowbase;
         cerr << endl;
-        terminate();
+        throw std::runtime_error("serialization error");
     }
     uint16_t t;
     swapEndian(len);
@@ -200,15 +203,20 @@ Message* Message::create(uint16_t source, uint16_t type, SerializationBuffer& bu
     message->source = source;
     message->type = type;
 
-    // deserialize it
-    message->deserializeSpecific(buffer);
+    try {
+
+        // deserialize it
+        message->deserializeSpecific(buffer);
+    } catch(std::runtime_error) {
+        return nullptr;
+    }
 
     if(buffer.readPos != buffer.rawData.size()) {
         cerr << "Message::create() : fatal error: message not fully deserialized.\n";
         cerr << "type: " << type << ", readPos: " << buffer.readPos << ", rawData size: " << buffer.rawData.size()
              << endl;
         buffer.dump(wcerr);
-        terminate();
+        return nullptr;
     }
 
     return message;
@@ -260,7 +268,7 @@ void Message::SerializationBuffer::add(const string& val) {
         cerr << "string size: " << val.length();
         cerr << endl;
         dump(wcerr);
-        terminate();
+        throw std::runtime_error("serialization error");
     }
 
     add(static_cast<uint8_t>(val.length()));
@@ -275,7 +283,7 @@ T Message::SerializationBuffer::get() {
         cerr << "readPos: " << readPos << ", rawData size: " << rawData.size() << ", element size: " << sizeof(T);
         cerr << endl;
         dump(wcerr);
-        terminate();
+        throw std::runtime_error("deserialization error");
     }
 
     size_t pos = readPos;
@@ -321,7 +329,7 @@ void UserMessage::deserializeSpecific(SerializationBuffer& buffer) {
                 "size.\n";
         cerr << "message size: " << buffer.rawData.size() << ", message type: " << type;
         cerr << endl;
-        terminate();
+        throw std::runtime_error("deserialization error");
     }
     data.resize(buffer.rawData.size() / 2);
 
@@ -514,6 +522,26 @@ bool operator==(const GetNodeDescription& lhs, const GetNodeDescription& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.version == rhs.version;
 }
 
+void GetNodeDescriptionFragment::serializeSpecific(SerializationBuffer& buffer) const {
+    CmdMessage::serializeSpecific(buffer);
+
+    buffer.add(version);
+    buffer.add(m_fragment);
+}
+
+void GetNodeDescriptionFragment::deserializeSpecific(SerializationBuffer& buffer) {
+    CmdMessage::deserializeSpecific(buffer);
+
+    version = buffer.get<uint16_t>();
+    m_fragment = buffer.get<int16_t>();
+}
+
+void GetNodeDescriptionFragment::dumpSpecific(wostream& stream) const {
+    CmdMessage::dumpSpecific(stream);
+
+    stream << "protocol version " << version;
+}
+
 //
 
 void Description::serializeSpecific(SerializationBuffer& buffer) const {
@@ -687,6 +715,40 @@ void Variables::dumpSpecific(wostream& stream) const {
 bool operator==(const Variables& lhs, const Variables& rhs) {
     return static_cast<const Message&>(lhs) == static_cast<const Message&>(rhs) && lhs.start == rhs.start &&
         lhs.variables == rhs.variables;
+}
+
+//
+
+void ChangedVariables::serializeSpecific(SerializationBuffer& buffer) const {
+    assert(false && "Unimplemented");
+}
+
+void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
+    while(2 * sizeof(int16_t) + buffer.readPos <= buffer.rawData.size()) {
+        auto start = buffer.get<uint16_t>();
+        auto size = buffer.get<uint16_t>();
+        if(size == 0)
+            continue;
+
+        if((buffer.rawData.size() - buffer.readPos) < size * sizeof (int16_t))
+             return;
+
+        VariablesDataVector v;
+        v.reserve(size);
+        for(int i = 0; i < size; i++) {
+            v.push_back(buffer.get<int16_t>());
+        }
+        variables.emplace_back(start, v);
+    }
+}
+
+void ChangedVariables::dumpSpecific(wostream& stream) const {
+    for(auto& v : variables) {
+        stream << v.start << " : [ ";
+        for(size_t i = 0; i < v.variables.size(); i++)
+            stream << v.variables[i] << ", ";
+        stream << " ]";
+    }
 }
 
 //
@@ -1122,6 +1184,8 @@ bool operator==(const GetVariables& lhs, const GetVariables& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.start == rhs.start &&
         lhs.length == rhs.length;
 }
+
+GetChangedVariables::GetChangedVariables(uint16_t dest) : CmdMessage(ASEBA_MESSAGE_GET_CHANGED_VARIABLES, dest) {}
 
 //
 

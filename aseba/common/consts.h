@@ -31,10 +31,13 @@ extern const char*  ASEBA_VERSION;
 extern const char*  ASEBA_REVISION;
 
 /*! version of aseba protocol, including bytecodes types and constants */
-#define ASEBA_PROTOCOL_VERSION 6
+#define ASEBA_PROTOCOL_VERSION 8
 
 /*! minimal accepted protocol version in targets */
 #define ASEBA_MIN_TARGET_PROTOCOL_VERSION 4
+
+/*! maximal accepted protocol version - this is an escape hatch if a breaking change happens !*/
+#define ASEBA_MAX_TARGET_PROTOCOL_VERSION 100
 
 /*! default listen target for aseba */
 #define ASEBA_DEFAULT_LISTEN_TARGET "tcpin:33333"
@@ -172,6 +175,7 @@ typedef enum
 	ASEBA_MESSAGE_BREAKPOINT_SET_RESULT,
 	ASEBA_MESSAGE_NODE_PRESENT,
 	ASEBA_MESSAGE_DEVICE_INFO,
+	ASEBA_MESSAGE_CHANGED_VARIABLES,
 
 	/* from IDE to all nodes */
 	ASEBA_MESSAGE_GET_DESCRIPTION = 0xA000,
@@ -199,8 +203,10 @@ typedef enum
 
 	/* APP TO THYMIO */
 
-	ASEBA_MESSAGE_GET_DEVICE_INFO,
-	ASEBA_MESSAGE_SET_DEVICE_INFO,
+	ASEBA_MESSAGE_GET_DEVICE_INFO,  // v6
+	ASEBA_MESSAGE_SET_DEVICE_INFO,  // v6
+	ASEBA_MESSAGE_GET_CHANGED_VARIABLES, // v7
+	ASEBA_MESSAGE_GET_NODE_DESCRIPTION_FRAGMENT, //v8
 
 	ASEBA_MESSAGE_INVALID = 0xFFFF
 } AsebaSystemMessagesTypes;

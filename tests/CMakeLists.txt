@@ -1,5 +1,6 @@
 add_subdirectory(common)
 add_subdirectory(msg)
+add_subdirectory(thymio-device-manager)
 
 include(CheckIncludeFiles)
 check_include_files(getopt.h HAVE_GETOPT_H)

@@ -16,7 +16,7 @@ matrix:
         - ubuntu-toolchain-r-test
         - sourceline: ppa:beineri/opt-qt-5.10.1-trusty
         packages:
-        - g++-6
+        - g++-7
         - libudev-dev
         - qt510base
         - qt510declarative
@@ -34,30 +34,32 @@ matrix:
         - libavahi-compat-libdnssd-dev
         - valgrind
         - lcov
-    env: COMPILER=clang-6.0  CXX_COMPILER=clang++-6.0
+    env: COMPILER=clang-7  CXX_COMPILER=clang++-7
   - os: osx
     node_js: '8'
     language: cpp
-    osx_image: xcode8
+    osx_image: xcode10
     env: COMPILER=clang  CXX_COMPILER=clang++
-  - os: linux
-    addons:
-      apt:
-        packages:
-        - build-essential
-        - ninja-build
-        - p7zip-full
-        - make
-        - cmake-data
-        - cmake
-    env: ANDROID=1
-    language: cpp
-    node_js: '8'
-    jdk: oraclejdk8
+  #- os: linux
+    #addons:
+      #apt:
+        #packages:
+        #- build-essential
+        #- ninja-build
+        #- p7zip-full
+        #- make
+        #- cmake-data
+        #- cmake
+    #env: ANDROID=1
+    #language: cpp
+    #node_js: '8'
+    #jdk: oraclejdk8
 
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
 - git submodule update --remote
+- cd third_party/spdlog/spdlog/ && git checkout v1.2.1
+- cd ${TRAVIS_BUILD_DIR}
 - rm -rf thymio-blockly-standalone
 - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
@@ -73,7 +75,7 @@ before_install:
     pip install --user --upgrade cmake
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb https://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main"
+        sudo add-apt-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main"
         sudo apt-get update -qq
     fi
   fi
@@ -102,7 +104,7 @@ before_install:
 install:
 - |
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
-        sudo apt-get install --allow-unauthenticated clang-6.0
+        sudo apt-get install --allow-unauthenticated clang-7
   fi
   nvm install 8
   npm --version
@@ -125,6 +127,7 @@ script:
     #export PATH="(brew --prefix llvm)/bin:${PATH}"
     cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
     ninja -v
+    ctest .
   fi
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
       ls /opt/qt510/
@@ -132,6 +135,7 @@ script:
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
       cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
       ninja -v
+      ctest .
   fi
   if [[ "$ANDROID" ]]; then
       export ANDROID_NDK=$HOME/android-ndk-r10e
@@ -140,6 +144,7 @@ script:
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$HOME/qt5-android/5.11.1/android_armv7/"
       cmake .. -GNinja -DBoost_DEBUG=ON -DANDROID_NATIVE_API_LEVEL=14 -DANDROID_STL=gnustl_shared -DCMAKE_MAKE_PROGRAM=$(which ninja) -DCMAKE_TOOLCHAIN_FILE=`pwd`/../android/qt-android-cmake/toolchain/android.toolchain.cmake "-DCMAKE_PROGRAM_PATH=$(dirname $(which npm))"
       ninja -v
+      ctest .
   fi
   set +e
 

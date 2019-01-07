@@ -7,6 +7,7 @@
 #include <QTemporaryFile>
 #include <QDesktopServices>
 #include <QTimer>
+#include <QProcess>
 
 namespace mobsya {
 
@@ -34,6 +35,10 @@ QStringList Launcher::applicationsSearchPaths() const {
 
 QStringList Launcher::webappsFolderSearchPaths() const {
     return {QFileInfo(QCoreApplication::applicationDirPath()).absolutePath()};
+}
+
+bool Launcher::launch_process(const QString& program, const QStringList& args) const {
+    return QProcess::startDetached(program, args);
 }
 
 bool Launcher::openUrl(const QUrl& url) const {

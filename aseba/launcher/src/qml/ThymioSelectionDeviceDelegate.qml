@@ -21,7 +21,12 @@ Item {
     Action {
         text: "Stop"
         id: stopAction
-        onTriggered: device.stop()
+        onTriggered: {
+            var result = device.stop()
+            Request.onFinished(result, function(status, res) {
+                console.log(res)
+            })
+        }
     }
 
     id:item

@@ -3,6 +3,7 @@
 #include "thymionode.h"
 #include "thymiodevicesmodel.h"
 #ifdef QT_QML_LIB
+#    include "request.h"
 #    include <QtQml/QtQml>
 #endif
 namespace mobsya {

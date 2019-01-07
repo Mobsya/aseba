@@ -143,11 +143,11 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
 
         auto& req = m_requests.front();
         const auto str = device_instance_identifier(deviceInfoData.DevInst);
-        mLogTrace("{}", str);
+        //mLogTrace("{}", str);
         const auto id = device_id_from_interface_id(str);
         const auto& devices = req.acceptor.compatible_devices();
         if(std::find(std::begin(devices), std::end(devices), id) == std::end(devices)) {
-            mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
+            //mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
             continue;
         }
         known_devices.push_back(str);

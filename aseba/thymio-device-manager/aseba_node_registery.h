@@ -74,7 +74,7 @@ protected:
     }
 
 private:
-    boost::signals2::connection m_connection;
+    boost::signals2::scoped_connection m_connection;
 };
 
 

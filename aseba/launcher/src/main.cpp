@@ -62,6 +62,9 @@ int main(int argc, char** argv) {
     mobsya::ThymioDeviceManagerClient client;
     mobsya::ThymioDevicesModel model(client);
 
+    QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     QQuickWidget w;
     w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);

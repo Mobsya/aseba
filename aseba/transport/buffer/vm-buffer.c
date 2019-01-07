@@ -120,7 +120,73 @@ void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length) {
 #endif
 }
 
-void AsebaSendDescription(AsebaVMState* vm) {
+void AsebaSendChangedVariables(AsebaVMState* vm) {
+
+   /*
+    * The wirelesss dongle has a max outgoing packet size that isnt really documented
+    * anywhere
+    */
+#ifdef ASEBA_LIMITED_MESSAGE_SIZE
+    const uint16_t MAX_PACKET_SIZE = 90;
+#else
+    const uint16_t MAX_PACKET_SIZE = ASEBA_MAX_OUTER_PACKET_SIZE - 4;
+#endif
+
+    buffer_pos = 0;
+    int has_modified = 0;
+    unsigned size_pos = 0;
+    uint16_t first_idx = 0;
+    uint16_t idx = 0;
+    uint16_t size = 0;
+    unsigned old_pos = buffer_pos;
+
+    int has_header = 0;
+    for(idx = 0; vm->variablesOld && idx <= vm->variablesSize; idx++) {
+
+        int at_end = idx == vm->variablesSize;
+
+        if(!has_header) {
+            if(buffer_pos == 0)
+                buffer_add_uint16(ASEBA_MESSAGE_CHANGED_VARIABLES);
+            size_pos = buffer_pos;
+            buffer_add_uint16(0);  //reserve  2 for start
+            buffer_add_uint16(0);  //reserve 2 for size
+            has_header = 1;
+        }
+
+        int modified = !at_end && vm->variablesOld[idx] != vm->variables[idx];
+        if(modified) {
+            if(!has_modified) {
+                has_modified = 1;
+                first_idx = idx;
+            }
+            buffer_add_int16(vm->variables[idx]);
+            size ++;
+            vm->variablesOld[idx] = vm->variables[idx];
+        }
+
+        int need_to_send_packet = buffer_pos >= MAX_PACKET_SIZE || at_end;
+
+        if((!modified && has_modified) || need_to_send_packet) {
+            old_pos = buffer_pos; //save the buffer pos
+            buffer_pos = size_pos; //then place the cursor where to read the size
+            buffer_add_uint16(first_idx); //write start
+            buffer_add_uint16(size); //write size
+            buffer_pos = old_pos;
+            has_modified = 0;
+            size = 0;
+            first_idx = 0;
+            has_header = 0;
+        }
+
+        if(need_to_send_packet) {
+            AsebaSendBuffer(vm, buffer, buffer_pos);
+            buffer_pos = 0;
+        }
+    }
+}
+
+static void AsebaSendDescriptionHead(AsebaVMState* vm) {
     const AsebaVMDescription* vmDescription = AsebaGetVMDescription(vm);
     const AsebaVariableDescription* namedVariables = vmDescription->variables;
     const AsebaNativeFunctionDescription* const* nativeFunctionsDescription = AsebaGetNativeFunctionsDescriptions(vm);
@@ -156,9 +222,27 @@ void AsebaSendDescription(AsebaVMState* vm) {
 
     // send buffer
     AsebaSendBuffer(vm, buffer, buffer_pos);
+}
+
+void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
+    const AsebaVMDescription* vmDescription = AsebaGetVMDescription(vm);
+    const AsebaVariableDescription* namedVariables = vmDescription->variables;
+    const AsebaNativeFunctionDescription* const* nativeFunctionsDescription = AsebaGetNativeFunctionsDescriptions(vm);
+    const AsebaLocalEventDescription* localEvents = AsebaGetLocalEventsDescriptions(vm);
+
+    if(fragment < 0)
+        AsebaSendDescriptionHead(vm);
+
+    int send_all = fragment == -2;
+    uint16_t total = 0;
+    uint16_t i = 0;
 
     // send named variables description
-    for(i = 0; namedVariables[i].name; i++) {
+    for(i = 0; namedVariables[i].name; i++, total++) {
+
+        if(!send_all  && fragment != total )
+            continue;
+
         buffer_pos = 0;
 
         buffer_add_uint16(ASEBA_MESSAGE_NAMED_VARIABLE_DESCRIPTION);
@@ -171,7 +255,11 @@ void AsebaSendDescription(AsebaVMState* vm) {
     }
 
     // send local events description
-    for(i = 0; localEvents[i].name; i++) {
+    for(i = 0; localEvents[i].name; i++, total++) {
+
+        if(!send_all  && fragment != total )
+            continue;
+
         buffer_pos = 0;
 
         buffer_add_uint16(ASEBA_MESSAGE_LOCAL_EVENT_DESCRIPTION);
@@ -184,7 +272,11 @@ void AsebaSendDescription(AsebaVMState* vm) {
     }
 
     // send native functions description
-    for(i = 0; nativeFunctionsDescription[i]; i++) {
+    for(i = 0; nativeFunctionsDescription[i]; i++, total++) {
+
+        if(!send_all  && fragment != total )
+            continue;
+
         uint16_t j;
 
         buffer_pos = 0;
@@ -205,6 +297,10 @@ void AsebaSendDescription(AsebaVMState* vm) {
         // send buffer
         AsebaSendBuffer(vm, buffer, buffer_pos);
     }
+}
+
+void AsebaSendDescription(AsebaVMState* vm) {
+    AsebaSendDescriptionFragment(vm, -2);
 }
 
 void AsebaProcessIncomingEvents(AsebaVMState* vm) {

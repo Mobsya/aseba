@@ -54,12 +54,20 @@ extern "C" void AsebaSendMessageWords(AsebaVMState* vm, uint16_t type, const uin
 }
 #endif
 
+extern "C" void AsebaSendChangedVariables(AsebaVMState* vm) {
+    std::cerr << "AsebaSendChangedVariables";
+}
+
 extern "C" void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length) {
     std::cerr << "AsebaSendVariables at pos " << start << ", length " << length << std::endl;
 }
 
 extern "C" void AsebaSendDescription(AsebaVMState* vm) {
     std::cerr << "AsebaSendDescription" << std::endl;
+}
+
+extern "C" void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
+    std::cerr << "AsebaSendDescriptionFragment" << std::endl;
 }
 
 extern "C" void AsebaPutVmToSleep(AsebaVMState* vm) {

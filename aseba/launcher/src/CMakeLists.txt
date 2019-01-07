@@ -3,6 +3,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 cmake_policy(SET CMP0071 NEW)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(Qt5QuickCompiler)
 if(Qt5QuickCompiler_FOUND)
@@ -11,6 +12,11 @@ else()
     qt5_add_resources(QT_RESOURCES qml.qrc)
 endif()
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/launcher.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc)
+
+
 add_executable(thymio-launcher WIN32
     ${QT_RESOURCES}
     main.cpp
@@ -18,6 +24,7 @@ add_executable(thymio-launcher WIN32
     launcher.cpp
     tdmsupervisor.h
     tdmsupervisor.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc
 )
 target_link_libraries(thymio-launcher
     Qt5::Widgets
@@ -25,6 +32,7 @@ target_link_libraries(thymio-launcher
     Qt5::Quick
     Qt5::QuickWidgets
     qt-thymio-dm-client-lib
+    qt-thymio-dm-client-lib-qml
     qtsingleapplication
 )
 codesign(thymio-launcher)

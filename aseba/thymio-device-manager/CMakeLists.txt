@@ -1,12 +1,14 @@
 set(CMAKE_CXX_STANDARD 17)
-add_executable(thymio-device-manager
+add_library(thymio-device-manager-lib STATIC
     main.cpp
     log.h
     log.cpp
     error.cpp
     error.h
+    events.h
+    aesl_parser.h
+    aesl_parser.cpp
     aseba_message_parser.h
-    aseba_description_receiver.h
     aseba_message_writer.h
     aseba_node_registery.h
     aseba_node_registery.cpp
@@ -27,20 +29,24 @@ add_executable(thymio-device-manager
     tdm.h
     interfaces.h
     interfaces.cpp
+    property.h
+    property_flexbuffer.h
+    property_flexbuffer.cpp
+    variant_compat.h
 )
 
 if(WIN32)
-    target_sources(thymio-device-manager PRIVATE
+    target_sources(thymio-device-manager-lib PRIVATE
         serialacceptor.h
         serialacceptor.cpp
         serialserver.h
         serialserver.cpp
         serial_usb_device.h
     )
-    target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
-	target_link_libraries(thymio-device-manager iphlpapi)
+    target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
+    target_link_libraries(thymio-device-manager-lib PUBLIC iphlpapi)
 else()
-    target_sources(thymio-device-manager PRIVATE
+    target_sources(thymio-device-manager-lib PRIVATE
         usbserver.cpp
         usbserver.h
         usbacceptor.h
@@ -49,21 +55,37 @@ else()
         usbdevice.h
         usbcontext.h
     )
-    target_compile_definitions(thymio-device-manager PUBLIC MOBSYA_TDM_ENABLE_USB)
+    target_compile_definitions(thymio-device-manager-lib PUBLIC MOBSYA_TDM_ENABLE_USB)
 endif()
 
 
-target_compile_definitions(thymio-device-manager PUBLIC -DSPDLOG_FMT_EXTERNAL)
-target_link_libraries(thymio-device-manager Boost::program_options Boost::filesystem Boost::asio Boost::date_time spdlog tl_expected asebacommon asebacompiler aware thymio-flatbuffers fmt-header-only)
+target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL)
+target_link_libraries(thymio-device-manager-lib PUBLIC
+    asebacommon
+    asebacompiler
+    thymio-flatbuffers
+    Boost::program_options
+    Boost::filesystem Boost::asio
+    Boost::date_time
+    spdlog
+    tl_expected
+    aware
+    fmt-header-only
+    mpark_variant
+    pugixml
+       )
 if(WIN32)
-    target_link_libraries(thymio-device-manager bcrypt)
+    target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt)
 else()
-    target_link_libraries(thymio-device-manager libusb)
+    target_link_libraries(thymio-device-manager-lib PUBLIC libusb)
 endif()
 
 if (MSVC)
-    target_compile_options(thymio-device-manager PRIVATE /bigobj)
+    target_compile_options(thymio-device-manager-lib PUBLIC /bigobj)
 endif()
+
+add_executable(thymio-device-manager main.cpp)
+target_link_libraries(thymio-device-manager PUBLIC thymio-device-manager-lib)
 
 install(TARGETS thymio-device-manager RUNTIME DESTINATION bin)
 codesign(thymio-device-manager)

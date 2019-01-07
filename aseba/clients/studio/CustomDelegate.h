@@ -45,7 +45,12 @@ protected:
     int maxValue;
 };
 
-/*@}*/
+class VariableDelegate : public SpinBoxDelegate {
+public:
+    using SpinBoxDelegate::SpinBoxDelegate;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+};
+
 }  // namespace Aseba
 
 #endif

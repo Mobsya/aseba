@@ -14,8 +14,24 @@ ListModel {
         return Utils.openUrl(url)
     }
 
+    function launch_studio(device) {
+        var program = Utils.search_program("asebastudio")
+        if(!program)
+            return false;
+        return Utils.launch_process(program, ["--uuid", device.id])
+    }
+
+    function launch_vplClassic(device) {
+        var program = Utils.search_program("thymiovpl")
+        if(!program)
+            return false;
+        return Utils.launch_process(program, ["--uuid", device.id])
+    }
+
     property var launch_functions : {
-        "blockly" : launch_blockly
+        "blockly" : launch_blockly,
+        "vplClassic" : launch_vplClassic,
+        "studio" : launch_studio
     }
 
 
@@ -26,13 +42,14 @@ ListModel {
     }
 
 //    ListElement {
+//        appId:"vplClassic"
 //        name: "VPL"
 //        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
 //    }
-//    ListElement {
-//        name: "Scatch"
-//        animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
-//    }
+    //ListElement {
+    //    name: "Scatch"
+    //    animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
+    //}
 
     ListElement {
         appId: "blockly"
@@ -42,8 +59,10 @@ ListModel {
         descriptionImage: "qrc:/apps/blockly/description.jpeg"
     }
 
-//    ListElement {
-//        name: "Studio"
-//        animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
-//    }
+     ListElement {
+         appId:"studio"
+         name: "Studio"
+         animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
+         descriptionImage: "qrc:/apps/studio/description.jpg"
+     }
 }

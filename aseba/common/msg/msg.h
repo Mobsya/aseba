@@ -100,6 +100,11 @@ public:
     virtual void deserializeSpecific(SerializationBuffer& buffer) = 0;
     virtual void dumpSpecific(std::wostream& stream) const = 0;
 
+public:
+    const char* message_name() const {
+        return operator const char*();
+    }
+
 protected:
     virtual operator const char*() const {
         return "message super class";
@@ -288,6 +293,26 @@ protected:
 
 bool operator==(const GetNodeDescription& lhs, const GetNodeDescription& rhs);
 
+//! Request a specific node to send its description
+class GetNodeDescriptionFragment : public CmdMessage {
+public:
+    uint16_t version = ASEBA_PROTOCOL_VERSION;
+
+public:
+    GetNodeDescriptionFragment(int16_t fragment, uint16_t dest = ASEBA_DEST_INVALID)
+        : CmdMessage(ASEBA_MESSAGE_GET_NODE_DESCRIPTION_FRAGMENT, dest), m_fragment(fragment) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream&) const override;
+    operator const char*() const override {
+        return "get node description fragment";
+    }
+private:
+    int16_t m_fragment;
+};
+
 //! Description of a node, local events and native functions are omitted and further received by
 //! other messages
 class Description : public Message, public TargetDescription {
@@ -387,6 +412,28 @@ protected:
     void dumpSpecific(std::wostream& stream) const override;
     operator const char*() const override {
         return "variables";
+    }
+};
+
+class ChangedVariables : public Message {
+public:
+    struct area {
+        uint16_t start = 0;
+        VariablesDataVector variables;
+        area(uint16_t start, VariablesDataVector v) : start(start), variables(std::move(v)) {}
+    };
+
+    std::vector<area> variables;
+
+public:
+    ChangedVariables() : Message(ASEBA_MESSAGE_CHANGED_VARIABLES) {}
+
+protected:
+    void serializeSpecific(SerializationBuffer& buffer) const override;
+    void deserializeSpecific(SerializationBuffer& buffer) override;
+    void dumpSpecific(std::wostream& stream) const override;
+    operator const char*() const override {
+        return "changed variables";
     }
 };
 
@@ -823,6 +870,18 @@ protected:
 };
 
 bool operator==(const GetVariables& lhs, const GetVariables& rhs);
+
+//! Read some variables from a node
+class GetChangedVariables : public CmdMessage {
+public:
+    GetChangedVariables() : CmdMessage(ASEBA_MESSAGE_GET_CHANGED_VARIABLES, ASEBA_DEST_INVALID) {}
+    GetChangedVariables(uint16_t dest);
+
+protected:
+    operator const char*() const override {
+        return "get changed variables";
+    }
+};
 
 //! Set some variables on a node
 class SetVariables : public CmdMessage {

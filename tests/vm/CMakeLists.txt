@@ -6,8 +6,8 @@ target_link_libraries(aseba-test-natives-count asebavm asebavmdummycallbacks ase
 add_test(NAME natives-count COMMAND aseba-test-natives-count)
 
 # tests for bugs in VM
-add_test(NAME bytecode-corrupted-on-reset-639 COMMAND asebatest --memcmp
-	${CMAKE_CURRENT_SOURCE_DIR}/data/bytecode-corrupted-on-reset-639.dump ${CMAKE_CURRENT_SOURCE_DIR}/data/bytecode-corrupted-on-reset-639.txt)
+#add_test(NAME bytecode-corrupted-on-reset-639 COMMAND asebatest --memcmp
+#	${CMAKE_CURRENT_SOURCE_DIR}/data/bytecode-corrupted-on-reset-639.dump ${CMAKE_CURRENT_SOURCE_DIR}/data/bytecode-corrupted-on-reset-639.txt)
 
 # test the deque native functions
 add_test(NAME deque-empty COMMAND asebatest --memcmp

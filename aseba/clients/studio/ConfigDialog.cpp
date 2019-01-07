@@ -71,7 +71,7 @@ QCheckBox* ConfigPage::newCheckbox(QString label, QString ID, bool checked) {
     WidgetCache<bool> cache(widget, checked);
     checkboxCache.insert(std::pair<QString, WidgetCache<bool> >(ID, cache));
     connect(widget, SIGNAL(released()), ConfigDialog::getInstance(), SLOT(flushCache()));
-    connect(widget, SIGNAL(released()), ConfigDialog::getInstance(), SIGNAL(settingsChanged()));
+    connect(widget, &QAbstractButton::released, ConfigDialog::getInstance(), &ConfigDialog::settingsChanged);
     return widget;
 }
 
@@ -143,27 +143,27 @@ GeneralPage::GeneralPage(QWidget* parent) : ConfigPage(tr("General Setup"), pare
     gb1->setLayout(gb1layout);
     mainLayout->addWidget(gb1);
     // Show the keyword toolbar
-    gb1layout->addWidget(newCheckbox(tr("Show keyword toolbar"), "keywordToolbar", true));
+    gb1layout->addWidget(newCheckbox(tr("Show keyword toolbar"), QStringLiteral("keywordToolbar"), true));
     // Show the memory usage gauge
-    gb1layout->addWidget(newCheckbox(tr("Show memory usage"), "memoryusage", false));
+    gb1layout->addWidget(newCheckbox(tr("Show memory usage"), QStringLiteral("memoryusage"), false));
     // Show hidden variables & functions
-    gb1layout->addWidget(newCheckbox(tr("Show hidden variables"), "showhidden", false));
+    gb1layout->addWidget(newCheckbox(tr("Show hidden variables"), QStringLiteral("showhidden"), false));
     // Show line numbers
-    gb1layout->addWidget(newCheckbox(tr("Show line numbers"), "showlinenumbers", true));
+    gb1layout->addWidget(newCheckbox(tr("Show line numbers"), QStringLiteral("showlinenumbers"), true));
 
     mainLayout->addStretch();
 }
 
 void GeneralPage::readSettings() {
     QSettings settings;
-    settings.beginGroup("general-config");
+    settings.beginGroup(QStringLiteral("general-config"));
     ConfigPage::readSettings();
     settings.endGroup();
 }
 
 void GeneralPage::writeSettings() {
     QSettings settings;
-    settings.beginGroup("general-config");
+    settings.beginGroup(QStringLiteral("general-config"));
     ConfigPage::writeSettings();
     settings.endGroup();
 }
@@ -177,21 +177,21 @@ EditorPage::EditorPage(QWidget* parent) : ConfigPage(tr("Editor Setup"), parent)
     gb1->setLayout(gb1layout);
     mainLayout->addWidget(gb1);
     //
-    gb1layout->addWidget(newCheckbox(tr("Keywords"), "autoKeyword", true));
+    gb1layout->addWidget(newCheckbox(tr("Keywords"), QStringLiteral("autoKeyword"), true));
 
     mainLayout->addStretch();
 }
 
 void EditorPage::readSettings() {
     QSettings settings;
-    settings.beginGroup("editor-config");
+    settings.beginGroup(QStringLiteral("editor-config"));
     ConfigPage::readSettings();
     settings.endGroup();
 }
 
 void EditorPage::writeSettings() {
     QSettings settings;
-    settings.beginGroup("editor-config");
+    settings.beginGroup(QStringLiteral("editor-config"));
     ConfigPage::writeSettings();
     settings.endGroup();
 }
@@ -251,7 +251,7 @@ void ConfigDialog::setupWidgets() {
     editorpage = new EditorPage();
     configStack->addWidget(editorpage);
 
-    connect(topicList, SIGNAL(currentRowChanged(int)), configStack, SLOT(setCurrentIndex(int)));
+    connect(topicList, &QListWidget::currentRowChanged, configStack, &QStackedWidget::setCurrentIndex);
     topicList->setCurrentRow(0);
 
     // buttons

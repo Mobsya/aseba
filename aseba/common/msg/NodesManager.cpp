@@ -115,7 +115,7 @@ void NodesManager::processMessage(const Message* message) {
 
             // Call a user function when a node protocol version mismatches
             if((description->protocolVersion < ASEBA_MIN_TARGET_PROTOCOL_VERSION) ||
-               (description->protocolVersion > ASEBA_PROTOCOL_VERSION)) {
+               (description->protocolVersion > ASEBA_MAX_TARGET_PROTOCOL_VERSION)) {
                 nodeProtocolVersionMismatch(description->source, description->name, description->protocolVersion);
                 mismatchingNodes.insert(description->source);
                 return;

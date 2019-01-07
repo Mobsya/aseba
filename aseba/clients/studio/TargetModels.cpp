@@ -107,7 +107,7 @@ QVariant TargetVariablesModel::data(const QModelIndex& index, int role) const {
     } else {
         QString name = variables.at(index.row()).name;
         // hidden variable
-        if((name.left(1) == "_") || name.contains(QString("._"))) {
+        if((name.left(1) == QLatin1String("_")) || name.contains(QStringLiteral("._"))) {
             if(role == Qt::ForegroundRole)
                 return QApplication::palette().color(QPalette::Disabled, QPalette::Text);
             else if(role == Qt::FontRole) {
@@ -125,7 +125,7 @@ QVariant TargetVariablesModel::data(const QModelIndex& index, int role) const {
                 if(variables.at(index.row()).value.size() == 1)
                     return variables.at(index.row()).value[0];
                 else
-                    return QString("(%0)").arg(variables.at(index.row()).value.size());
+                    return QStringLiteral("(%0)").arg(variables.at(index.row()).value.size());
             } else if(role == Qt::ForegroundRole) {
                 if(variables.at(index.row()).value.size() == 1)
                     return QVariant();
@@ -199,7 +199,7 @@ bool TargetVariablesModel::setData(const QModelIndex& index, const QVariant& val
 
 QStringList TargetVariablesModel::mimeTypes() const {
     QStringList types;
-    types << "text/plain";
+    types << QStringLiteral("text/plain");
     return types;
 }
 
@@ -393,215 +393,6 @@ void TargetVariablesModel::unsubscribeToVariableOfInterest(VariableListener* lis
 void TargetVariablesModel::unsubscribeToVariablesOfInterest(VariableListener* plugin) {
     if(variableListenersMap.contains(plugin))
         variableListenersMap.remove(plugin);
-}
-
-struct TargetFunctionsModel::TreeItem {
-    TreeItem* parent;
-    QList<TreeItem*> children;
-    QString name;
-    QString toolTip;
-    bool enabled;
-    bool draggable;
-
-    TreeItem() : parent(nullptr), name("root"), enabled(true), draggable(false) {}
-
-    TreeItem(TreeItem* parent, QString name, bool enabled, bool draggable)
-        : parent(parent), name(std::move(name)), enabled(enabled), draggable(draggable) {}
-
-    TreeItem(TreeItem* parent, QString name, QString toolTip, bool enabled, bool draggable)
-        : parent(parent), name(std::move(name)), toolTip(std::move(toolTip)), enabled(enabled), draggable(draggable) {}
-
-    ~TreeItem() {
-        for(int i = 0; i < children.size(); i++)
-            delete children[i];
-    }
-
-    TreeItem* getEntry(const QString& name, bool enabled = true) {
-        for(int i = 0; i < children.size(); i++)
-            if(children[i]->name == name)
-                return children[i];
-
-        children.push_back(new TreeItem(this, name, enabled, draggable));
-        return children.last();
-    }
-};
-
-
-TargetFunctionsModel::TargetFunctionsModel(const TargetDescription* descriptionRead, bool showHidden, QObject* parent)
-    : QAbstractItemModel(parent), root(nullptr), descriptionRead(descriptionRead), regExp("\\b") {
-    Q_ASSERT(descriptionRead);
-    recreateTreeFromDescription(showHidden);
-}
-
-TargetFunctionsModel::~TargetFunctionsModel() {
-    delete root;
-}
-
-Qt::DropActions TargetFunctionsModel::supportedDropActions() const {
-    return Qt::CopyAction;
-}
-
-TargetFunctionsModel::TreeItem* TargetFunctionsModel::getItem(const QModelIndex& index) const {
-    if(index.isValid()) {
-        auto* item = static_cast<TreeItem*>(index.internalPointer());
-        if(item)
-            return item;
-    }
-    return root;
-}
-
-QString TargetFunctionsModel::getToolTip(const TargetDescription::NativeFunction& function) const {
-    // tooltip, display detailed information with pretty print of template parameters
-    QString text;
-    QSet<QString> variablesNames;
-
-    text += QString("<b>%1</b>(").arg(QString::fromStdWString(function.name));
-    for(size_t i = 0; i < function.parameters.size(); i++) {
-        QString variableName(QString::fromStdWString(function.parameters[i].name));
-        variablesNames.insert(variableName);
-        text += variableName;
-        if(function.parameters[i].size > 1)
-            text += QString("[%1]").arg(function.parameters[i].size);
-        else if(function.parameters[i].size < 0) {
-            text += QString("[&lt;T%1&gt;]").arg(-function.parameters[i].size);
-        }
-
-        if(i + 1 < function.parameters.size())
-            text += QString(", ");
-    }
-
-    QString description = QString::fromStdWString(function.description);
-    QStringList descriptionWords = description.split(regExp);
-    for(int i = 0; i < descriptionWords.size(); ++i)
-        if(variablesNames.contains(descriptionWords.at(i)))
-            descriptionWords[i] = QString("<tt>%1</tt>").arg(descriptionWords[i]);
-
-    text += QString(")<br/>") + descriptionWords.join(" ");
-
-    return text;
-}
-
-int TargetFunctionsModel::rowCount(const QModelIndex& parent) const {
-    return getItem(parent)->children.count();
-}
-
-int TargetFunctionsModel::columnCount(const QModelIndex& /* parent */) const {
-    return 1;
-}
-
-void TargetFunctionsModel::recreateTreeFromDescription(bool showHidden) {
-    beginResetModel();
-
-    if(root)
-        delete root;
-    root = new TreeItem;
-
-    if(showHidden)
-        root->getEntry(tr("hidden"), false);
-
-    for(size_t i = 0; i < descriptionRead->nativeFunctions.size(); i++) {
-        // get the name, split it, and managed hidden
-        QString name = QString::fromStdWString(descriptionRead->nativeFunctions[i].name);
-        QStringList splittedName = name.split(".", QString::SkipEmptyParts);
-
-        // ignore functions with no name at all
-        if(splittedName.isEmpty())
-            continue;
-
-        // get first, check whether hidden, and then iterate
-        TreeItem* entry = root;
-        Q_ASSERT(!splittedName[0].isEmpty());
-        if(name.at(0) == '_' || name.contains(QString("._"))) {
-            if(!showHidden)
-                continue;
-            entry = entry->getEntry(tr("hidden"), false);
-        }
-
-        for(int j = 0; j < splittedName.size() - 1; ++j)
-            entry = entry->getEntry(splittedName[j], entry->enabled);
-
-        // for last entry
-        entry->children.push_back(
-            new TreeItem(entry, name, getToolTip(descriptionRead->nativeFunctions[i]), entry->enabled, true));
-    }
-
-    endResetModel();
-}
-
-QModelIndex TargetFunctionsModel::parent(const QModelIndex& index) const {
-    if(!index.isValid())
-        return QModelIndex();
-
-    TreeItem* childItem = getItem(index);
-    TreeItem* parentItem = childItem->parent;
-
-    if(parentItem == root)
-        return QModelIndex();
-
-    if(parentItem->parent)
-        return createIndex(parentItem->parent->children.indexOf(const_cast<TreeItem*>(parentItem)), 0, parentItem);
-    else
-        return createIndex(0, 0, parentItem);
-}
-
-QModelIndex TargetFunctionsModel::index(int row, int column, const QModelIndex& parent) const {
-    TreeItem* parentItem = getItem(parent);
-    TreeItem* childItem = parentItem->children.value(row);
-    Q_ASSERT(childItem);
-
-    if(childItem)
-        return createIndex(row, column, childItem);
-    else
-        return QModelIndex();
-}
-
-QVariant TargetFunctionsModel::data(const QModelIndex& index, int role) const {
-    if(!index.isValid() || (role != Qt::DisplayRole && role != Qt::ToolTipRole && role != Qt::WhatsThisRole))
-        return QVariant();
-
-    if(role == Qt::DisplayRole) {
-        return getItem(index)->name;
-    } else {
-        return getItem(index)->toolTip;
-    }
-}
-
-QVariant TargetFunctionsModel::headerData(int section, Qt::Orientation orientation, int role) const {
-    Q_UNUSED(section)
-    Q_UNUSED(orientation)
-    Q_UNUSED(role)
-    return QVariant();
-}
-
-Qt::ItemFlags TargetFunctionsModel::flags(const QModelIndex& index) const {
-    auto* item = static_cast<TreeItem*>(index.internalPointer());
-    if(item) {
-        QFlags<Qt::ItemFlag> flags;
-        flags |= item->enabled ? Qt::ItemIsEnabled : QFlags<Qt::ItemFlag>();
-        flags |= item->draggable ? Qt::ItemIsDragEnabled | Qt::ItemIsSelectable : QFlags<Qt::ItemFlag>();
-        return flags;
-    } else
-        return Qt::ItemIsEnabled;
-}
-
-QStringList TargetFunctionsModel::mimeTypes() const {
-    QStringList types;
-    types << "text/plain";
-    return types;
-}
-
-QMimeData* TargetFunctionsModel::mimeData(const QModelIndexList& indexes) const {
-    QString texts;
-    foreach(QModelIndex index, indexes) {
-        if(index.isValid()) {
-            QString text = data(index, Qt::DisplayRole).toString();
-            texts += text;
-        }
-    }
-
-    auto* mimeData = new QMimeData();
-    mimeData->setText(texts);
-    return mimeData;
 }
 
 

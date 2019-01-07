@@ -93,6 +93,8 @@ before_build:
     )
   - git submodule init
   - git submodule update --recursive --remote
+  - cd third_party/spdlog/spdlog/ && git checkout v1.2.1
+  - cd "%APPVEYOR_BUILD_FOLDER%"
   - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
   - if exist thymio-blockly-standalone\node_modules\ rd /s /q thymio-blockly-standalone\node_modules\
   - if exist thymio-blockly-standalone\package-lock.json del /s /q thymio-blockly-standalone\package-lock.json
@@ -113,7 +115,6 @@ build_script:
   - if [%COMPILER%]==[ClangCL] (
       cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" "-DCMAKE_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%;C:\Program Files\Bonjour SDK" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF &&
       ninja -v &&
-      ctest &&
       cpack -D CPACK_GENERATOR="NSIS"
     )
 
@@ -141,12 +142,12 @@ platform: x64
 environment:
   NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip
   SDL_URL: https://libsdl.org/release/SDL2-devel-2.0.7-VC.zip
-  CMAKE_URL: https://cmake.org/files/v3.11/cmake-3.11.0-win64-x64.zip
+  CMAKE_URL: https://cmake.org/files/v3.12/cmake-3.12.3-win64-x64.zip
   SIGNTOOL_PFX: '%APPVEYOR_BUILD_FOLDER%\windows\appveyor\mobsya.pfx'
   PFX_SECURE_FILE_DECODE:
     secure: WHOG4xjSEoHk00wq+NAwiQ==
   SIGNTOOL_PASSPHRASE:
-    secure: VxqFZfqcgZAZ5N0ZmOBa+zrlf3iiY8V0a/de3bhwT+w=
+    secure: 3h/VH0p48X8zQ9cnqgpJt9yAF2/eGx+Ne8mpDXJmKaM=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
   BOOST_ROOT: 'C:/Libraries/boost_1_67_0'
@@ -158,7 +159,7 @@ environment:
       LLVM_URL: http://prereleases.llvm.org/7.0.0/rc1/LLVM-7.0.0-rc1-win64.exe
       LLVM_VERSION: 7.0
       USE_VS_TOOLCHAIN: true
-      QT5: C:\Qt\5.11.1\msvc2017_64
+      QT5: C:\Qt\5.11\msvc2017_64
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
     #- ARCH: x86
@@ -169,7 +170,7 @@ environment:
 
     - ARCH: x64
       COMPILER: MSVC
-      QT5: C:\Qt\5.11.1\msvc2017_64
+      QT5: C:\Qt\5.11\msvc2017_64
       USE_VS_TOOLCHAIN: true
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
 
