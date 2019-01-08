@@ -649,6 +649,7 @@ export class Client {
         mobsya.fb.CompileAndLoadCodeOnVM.addNodeId(builder, nodeOffset)
         mobsya.fb.CompileAndLoadCodeOnVM.addProgram(builder, codeOffset)
         mobsya.fb.CompileAndLoadCodeOnVM.addLanguage(builder, language)
+        mobsya.fb.CompileAndLoadCodeOnVM.addOptions(builder, mobsya.fb.CompilationOptions.LoadOnTarget)
         const offset = mobsya.fb.CompileAndLoadCodeOnVM.endCompileAndLoadCodeOnVM(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.CompileAndLoadCodeOnVM)
         return this._prepare_request(req_id)
