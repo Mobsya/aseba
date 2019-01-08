@@ -52,21 +52,6 @@ public:
 
     using node_id_t = uint16_t;
 
-    struct variable {
-        static const bool constant_tag = true;
-        variable(property p) : value(std::move(p)) {}
-        variable(property p, bool c) : value(std::move(p)), is_constant(c) {}
-        mobsya::property value;
-        bool is_constant = false;
-
-        operator mobsya::property&() {
-            return value;
-        }
-        operator const mobsya::property&() const {
-            return value;
-        }
-    };
-
     struct vm_execution_state {
         fb::VMExecutionState state;
         uint32_t line;

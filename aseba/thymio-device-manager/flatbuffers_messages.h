@@ -187,7 +187,7 @@ namespace detail {
             auto p = flexbuffer_to_property(v);
             if(!p)
                 continue;
-            vars.insert_or_assign(std::string(k), aseba_node::variable(std::move(*p)));
+            vars.insert_or_assign(std::string(k), std::move(*p));
         }
         return vars;
     }
@@ -203,7 +203,7 @@ namespace detail {
             auto p = flexbuffer_to_property(v);
             if(!p)
                 continue;
-            vars.insert_or_assign(std::string(k), aseba_node::variable(std::move(*p)));
+            vars.insert_or_assign(std::string(k), std::move(*p));
         }
         return vars;
     }
