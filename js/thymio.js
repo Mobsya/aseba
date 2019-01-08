@@ -6,6 +6,7 @@ import flatbuffers from './flatbuffers.js';
 import {mobsya} from './thymio_generated';
 import FlexBuffers from "./flexbuffers.js"
 import WebSocket from 'isomorphic-ws';
+import { isEqual } from 'lodash';
 
 const MIN_PROTOCOL_VERSION = 1
 const PROTOCOL_VERSION = 1
@@ -65,23 +66,112 @@ class AsebaVMDescription {
 }
 
 
-/** Node */
-export class Node {
-    constructor(client, id, status, type) {
+class EventDescription {
+    constructor() {
+        this.name = ""
+        this.fixed_size = 0
+        this.index  = -1
+    }
+}
+
+class _Watchable {
+    constructor(client, id) {
+        this._monitoring_flags = 0
+        this._client = client
         this._id = id;
+    }
+
+    async watchSharedVariablesAndEvents(watch) {
+        return await this._set_monitoring_flags(mobsya.fb.WatchableInfo.SharedEventsDescription | mobsya.fb.WatchableInfo.SharedVariables, watch)
+    }
+
+    async _set_monitoring_flags(flag, set) {
+        const old = this._monitoring_flags;
+        if(set)
+            this._monitoring_flags |= flag
+        else
+            this._monitoring_flags &= ~flag
+
+        if(old != this._monitoring_flags) {
+            return await this._client._watch(this._id, this._monitoring_flags)
+        }
+    }
+}
+
+export class Group extends _Watchable{
+
+    constructor(client, id) {
+        super(client, id)
+        this._variables = null;
+        this._events = null;
+        this._on_variables_changed = undefined;
+        this._on_events_descriptions_changed = undefined;
+    }
+
+    get id() {
+        return this._id
+    }
+
+    get variables() {
+        return this._variables;
+    }
+
+    set variables(variables) {
+        this._client._set_variables(this._id, variables);
+    }
+
+    get events() {
+        return this._events;
+    }
+
+    async setEventsDescriptions(events) {
+        this._client._set_events_descriptions(this._id, events)
+    }
+
+    get nodes() {
+        return this._client._nodes_from_id(this.id)
+    }
+
+    get onEventsDescriptionsChanged() {
+        return this._on_events_descriptions_changed
+    }
+
+    set onEventsDescriptionsChanged(cb) {
+        this._on_events_descriptions_changed = cb
+    }
+
+
+    get onVariablesChanged() {
+        return this._on_variables_changed
+    }
+
+    set onVariablesChanged(cb) {
+        this._on_variables_changed = cb
+    }
+}
+
+
+/** Node */
+export class Node extends _Watchable{
+    constructor(client, id, status, type) {
+        super(client, id)
         this._status = status;
         this._type = type
         this._desc   = null;
-        this._client = client
         this._name   = null
         this._on_vars_changed_cb = undefined;
         this._on_events_cb = undefined;
-        this._monitoring_flags = 0
+        this._group = null
+        this.on_group_changed = undefined;
     }
 
     /** return the node id*/
     get id() {
         return this._id
+    }
+
+    get group() {
+        return this._group
     }
 
     /** return the node type*/
@@ -107,21 +197,21 @@ export class Node {
      * Send a request to rename a node
      */
     async rename(new_name) {
-        await this._client.rename_node(this._id, new_name)
+        await this._client._rename_node(this._id, new_name)
         this._set_name(new_name)
     }
 
     /** Whether the node is ready (connected, and locked)
      *  @type {boolean}
      */
-    get ready() {
+    get isReady() {
         return this._status == mobsya.fb.NodeStatus.ready
     }
 
     /** The node status converted to string.
      *  @type {string}
      */
-    get status_str() {
+    get statusAsString() {
         switch(this.status) {
             case mobsya.fb.NodeStatus.connected: return "connected"
             case mobsya.fb.NodeStatus.ready: return "ready"
@@ -135,7 +225,7 @@ export class Node {
     /** The node type converted to string.
      *  @type {string}
      */
-    get type_str() {
+    get typeAsString() {
         switch(this.type) {
             case mobsya.fb.NodeType.Thymio2: return "Thymio 2"
             case mobsya.fb.NodeType.Thymio2Wireless: return "Thymio Wireless"
@@ -156,7 +246,7 @@ export class Node {
      *  @throws {mobsya.fb.Error}
      */
     async lock() {
-        await this._client.lock_node(this._id)
+        await this._client._lock_node(this._id)
         this._status = Node.Status.ready
     }
 
@@ -167,7 +257,7 @@ export class Node {
      *  @see lock
      */
     async unlock() {
-        return await this._client.unlock_node(this._id)
+        return await this._client._unlock_node(this._id)
         this._status = Node.Status.available
     }
 
@@ -177,10 +267,18 @@ export class Node {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
-    async get_description() {
+    async asebaVMDescription() {
         if(!this._desc)
-            this._desc = await this._client.request_aseba_vm_description(this._id);
+            this._desc = await this._client._request_aseba_vm_description(this._id);
         return this._desc
+    }
+
+    get sharedVariables() {
+        return this.group.variables
+    }
+
+    get eventsDescriptions() {
+        return this.group.events
     }
 
     /** Load an aseba program on the VM
@@ -189,8 +287,8 @@ export class Node {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
-    async send_aseba_program(code) {
-        return await this._client.send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
+    async sendAsebaProgram(code) {
+        return await this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
     }
 
     /** Load an aesl program on the VM
@@ -200,7 +298,7 @@ export class Node {
      *  @see lock
      */
     async send_aesl_program(code) {
-        return await this._client.send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
+        return await this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
     }
 
     /** Run the code currently loaded on the vm
@@ -208,45 +306,62 @@ export class Node {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
-    async run_program() {
-        return await this._client.set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
+    async runProgram() {
+        return await this._client._set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
     }
 
-    async run_aseba_program() {
-        return  await this.run_program();
+    async setVariables(map) {
+        return await this._client._set_variables(this._id, map);
     }
 
-    async set_variables(map) {
-        return await this._client.set_node_variables(this._id, map);
+    async setEventsDescriptions(events) {
+        this._client.set_events_descriptions(this._id, events)
     }
 
-    async emit(map_or_key, value) {
+    async emitEvents(map_or_key, value) {
         if(typeof value !== "undefined") {
             const tmp = new Map();
             tmp.set(map_or_key, value);
             map_or_key = tmp
         }
-        return await this._client.send_events(this._id, map_or_key);
+        return await this._client._emit_events(this._id, map_or_key);
     }
 
-    get on_vars_changed() {
+    get onVariablesChanged() {
         return this._on_vars_changed_cb;
     }
 
-    set on_vars_changed(cb) {
+    set onVariablesChanged(cb) {
         this._set_monitoring_flags(mobsya.fb.WatchableInfo.Variables, !!cb)
         this._on_vars_changed_cb = cb;
     }
 
-    get on_events() {
+    get onEvents() {
         return this._on_events_cb;
     }
 
-    set on_events(cb) {
+    set onEvents(cb) {
         this._set_monitoring_flags(mobsya.fb.WatchableInfo.Events, !!cb)
         this._on_events_cb = cb;
     }
 
+
+    get onEventsDescriptionsChanged() {
+        return this._group.onEventsDescriptionsChanged
+    }
+
+    set onEventsDescriptionsChanged(cb) {
+        this._group.onEventsDescriptionsChanged = cb
+    }
+
+
+    get onSharedVariablesChanged() {
+        return this._group.onVariablesChanged
+    }
+
+    set onSharedVariablesChanged(cb) {
+        this._group.onVariablesChanged = cb
+    }
 
     _set_status(status) {
         if(status != this._status) {
@@ -260,21 +375,18 @@ export class Node {
     _set_name(name) {
         if(name != this._name) {
             this._name = name
-            if(this._name) {
+            if(this._name && this.on_name_changed) {
                 this.on_name_changed(name)
             }
         }
     }
 
-    _set_monitoring_flags(flag, set) {
-        const old = this._monitoring_flags;
-        if(set)
-            this._monitoring_flags |= flag
-        else
-            this._monitoring_flags &= ~flag
-
-        if(old != this._monitoring_flags) {
-            this._client.watch(this._id, this._monitoring_flags)
+    _set_group(group) {
+        if(group != this._group) {
+            this._group = group
+            if(this._group && this.on_group_changed) {
+                this.on_group_changed(group)
+            }
         }
     }
 }
@@ -356,20 +468,25 @@ export class Client {
         this._flex.onRuntimeInitialized = () => {
             this._socket = new WebSocket(url)
             this._socket.binaryType = 'arraybuffer';
-            this._socket.onopen = this.onopen.bind(this)
-            this._socket.onmessage = this.onmessage.bind(this)
+            this._socket.onopen = this._onopen.bind(this)
+            this._socket.onmessage = this._onmessage.bind(this)
         }
+    }
+
+
+    nodes() {
+        return Array.from(this._nodes.values());
     }
 
     /**
      *  @param {Node[]} nodes : Nodes whose status has changed.
      *
      */
-    on_nodes_changed(nodes) {
+    onNodesChanged(nodes) {
 
     }
 
-    onopen() {
+    _onopen() {
         console.log("connected, sending protocol version")
         const builder = new flatbuffers.Builder();
         mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
@@ -378,7 +495,7 @@ export class Client {
         this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
-    onmessage (event) {
+    _onmessage (event) {
         let data = new Uint8Array(event.data)
         let buf  = new flatbuffers.ByteBuffer(data);
 
@@ -390,7 +507,7 @@ export class Client {
                 break;
             }
             case mobsya.fb.AnyMessage.NodesChanged: {
-                this.on_nodes_changed(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
+                this.onNodesChanged(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
                 break;
             }
             case mobsya.fb.AnyMessage.NodeAsebaVMDescription: {
@@ -418,20 +535,28 @@ export class Client {
                 }
                 break
             }
-            case mobsya.fb.AnyMessage.CompilationError: {
-                let msg = message.message(new mobsya.fb.CompilationError())
+            case mobsya.fb.AnyMessage.CompilationResultSuccess: {
+                let msg = message.message(new mobsya.fb.CompilationResultSuccess())
                 let req = this._get_request(msg.requestId())
                 if(req) {
+                    req._trigger_then()
+                }
+                break
+            }
+            case mobsya.fb.AnyMessage.CompilationResultFailure: {
+                let msg = message.message(new mobsya.fb.CompilationResultFailure())
+                let req = this._get_request(msg.requestId())
+                if(req) {
+                    //TODO
                     req._trigger_error(null)
                 }
                 break
             }
-
             case mobsya.fb.AnyMessage.VariablesChanged: {
                 const msg = message.message(new mobsya.fb.VariablesChanged())
                 const id = this._id(msg.nodeId())
-                const node = this._nodes.get(id.toString())
-                if(!node || ! node._on_vars_changed_cb)
+                const nodes = this._nodes_from_id(id)
+                if(nodes.length == 0)
                     break;
                 const vars = {}
                 for(let i = 0; i < msg.varsLength(); i++) {
@@ -441,11 +566,19 @@ export class Client {
                     if(!isNaN(val)) {
                         val = new Number(val)
                     }
-                    if(val)
-                        val.isConstant = v.constant()
                     vars[v.name()] = val
                 }
-                node._on_vars_changed_cb(vars)
+                nodes.forEach(node => {
+                    if(isEqual(node.id, id) && node.onVariablesChanged) {
+                        node.onVariablesChanged(vars)
+                    }
+                    else {
+                        node.group._variables = vars
+                        if(node.group.onVariablesChanged) {
+                            node.group.onVariablesChanged(vars);
+                        }
+                    }
+                })
                 break
             }
 
@@ -453,7 +586,7 @@ export class Client {
                 const msg = message.message(new mobsya.fb.EventsEmitted())
                 const id = this._id(msg.nodeId())
                 const node = this._nodes.get(id.toString())
-                if(!node || ! node._on_events_cb)
+                if(!node || !node.onEvents)
                     break;
                 const vars = {}
                 for(let i = 0; i < msg.eventsLength(); i++) {
@@ -462,13 +595,37 @@ export class Client {
                     const val = this._flex.toJSObject(myarray)
                     vars[v.name()] = val
                 }
-                node._on_events_cb(vars)
+                node.onEvents(vars)
+                break
+            }
+
+            case mobsya.fb.AnyMessage.EventsDescriptionChanged: {
+                const msg = message.message(new mobsya.fb.EventsDescriptionChanged())
+                const id = this._id(msg.nodeOrGroupId())
+                const group = this._group_from_id(id)
+                if(!group)
+                    break;
+                const events = [];
+                for(let i = 0; i < msg.eventsLength(); i++) {
+                    const v = msg.events(i);
+                    let  e = new EventDescription
+                    e.name = v.name()
+                    e.fixed_size = v.fixedSized();
+                    events.push(e);
+                }
+                group._events = events
+                if(group.onEventsDescriptionsChanged)
+                    group.onEventsDescriptionsChanged(events)
+            }
+
+            case mobsya.fb.AnyMessage.VMExecutionStateChanged: {
+                //TODO
                 break
             }
         }
     }
 
-    request_aseba_vm_description(id) {
+    _request_aseba_vm_description(id) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -481,22 +638,22 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    send_program(id, code, language) {
+    _send_program(id, code, language) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const codeOffset = builder.createString(code)
         const nodeOffset = this._create_node_id(builder, id)
-        mobsya.fb.CompileAndLoadCodeOnVModeOnVCompileAndLoadCodeOnVMndLoadCodeOnVM(builder)
-        mobsya.fb.CompileAndLoadCodeOnVModeOnVM.addRequestId(builder, req_id)
-        mobsya.fb.CompileAndLoadCodeOnVModeOnVM.addNodeId(builder, nodeOffset)
-        mobsya.fb.CompileAndLoadCodeOnVModeOnVM.addProgram(builder, codeOffset)
-        mobsya.fb.CompileAndLoadCodeOnVModeOnVM.addLanguage(builder, language)
-        const offset = mobsya.fb.CompileAndLoadCodeOnVModeOCompileAndLoadCodeOnVMndLoadCodeOnVM(builder)
-        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.CompileAndLoadCodeOnVModeOnVM)
+        mobsya.fb.CompileAndLoadCodeOnVM.startCompileAndLoadCodeOnVM(builder)
+        mobsya.fb.CompileAndLoadCodeOnVM.addRequestId(builder, req_id)
+        mobsya.fb.CompileAndLoadCodeOnVM.addNodeId(builder, nodeOffset)
+        mobsya.fb.CompileAndLoadCodeOnVM.addProgram(builder, codeOffset)
+        mobsya.fb.CompileAndLoadCodeOnVM.addLanguage(builder, language)
+        const offset = mobsya.fb.CompileAndLoadCodeOnVM.endCompileAndLoadCodeOnVM(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.CompileAndLoadCodeOnVM)
         return this._prepare_request(req_id)
     }
 
-    set_vm_execution_state(id, command) {
+    _set_vm_execution_state(id, command) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -510,13 +667,13 @@ export class Client {
     }
 
     //TODO : check variable types, etc
-    set_node_variables(id, variables) {
+    _set_variables(id, variables) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
-        const varsOffset = this.__serialize_node_variables(builder, variables)
+        const varsOffset = this._serialize_variables(builder, variables)
         mobsya.fb.SetVariables.startSetVariables(builder)
-        mobsya.fb.SetVariables.addNodeId(builder, nodeOffset)
+        mobsya.fb.SetVariables.addNodeOrGroupId(builder, nodeOffset)
         mobsya.fb.SetVariables.addRequestId(builder, req_id)
         mobsya.fb.SetVariables.addVars(builder, varsOffset)
         const tableOffset = mobsya.fb.SetVariables.endSetVariables(builder)
@@ -524,33 +681,19 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    send_events(id, variables) {
-        let builder = new flatbuffers.Builder();
-        let req_id  = this._gen_request_id()
-        const nodeOffset = this._create_node_id(builder, id)
-        const varsOffset = this.__serialize_node_variables(builder, variables)
-        mobsya.fb.SendEvents.startSendEvents(builder)
-        mobsya.fb.SendEvents.addNodeId(builder, nodeOffset)
-        mobsya.fb.SendEvents.addRequestId(builder, req_id)
-        mobsya.fb.SendEvents.addEvents(builder, varsOffset)
-        const tableOffset = mobsya.fb.SendEvents.endSendEvents(builder)
-        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SendEvents)
-        return this._prepare_request(req_id)
-    }
-
-    __serialize_node_variables(builder, variables) {
+    _serialize_variables(builder, variables) {
         const offsets = []
         if (!(variables instanceof Map)) {
             variables = new Map(Object.entries(variables))
         }
 
         variables.forEach( (value, name, _map) => {
-            offsets.push(this.__serialize_node_variable(builder, name, value))
+            offsets.push(this._serialize_variable(builder, name, value))
         })
         return mobsya.fb.SetVariables.createVarsVector(builder, offsets)
     }
 
-    __serialize_node_variable(builder, name, value) {
+    _serialize_variable(builder, name, value) {
         const nameOffset = builder.createString(name)
         const buffer = this._flex.fromJSObject(value)
         const bufferOffset = mobsya.fb.NodeVariable.createValueVector(builder, buffer)
@@ -560,8 +703,54 @@ export class Client {
         return mobsya.fb.NodeVariable.endNodeVariable(builder)
     }
 
+    _emit_events(id, variables) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const varsOffset = this._serialize_variables(builder, variables)
+        mobsya.fb.SendEvents.startSendEvents(builder)
+        mobsya.fb.SendEvents.addNodeId(builder, nodeOffset)
+        mobsya.fb.SendEvents.addRequestId(builder, req_id)
+        mobsya.fb.SendEvents.addEvents(builder, varsOffset)
+        const tableOffset = mobsya.fb.SendEvents.endSendEvents(builder)
+        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.SendEvents)
+        return this._prepare_request(req_id)
+    }
+
+    _set_events_descriptions(id, events) {
+        let builder = new flatbuffers.Builder();
+        let req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const eventsOffset = this._serialize_events_descriptions(builder, events)
+        mobsya.fb.RegisterEvents.startRegisterEvents(builder)
+        mobsya.fb.RegisterEvents.addNodeOrGroupId(builder, nodeOffset)
+        mobsya.fb.RegisterEvents.addRequestId(builder, req_id)
+        mobsya.fb.RegisterEvents.addEvents(builder, eventsOffset)
+        const tableOffset = mobsya.fb.RegisterEvents.endRegisterEvents(builder)
+        this._wrap_message_and_send(builder, tableOffset, mobsya.fb.AnyMessage.RegisterEvents)
+        return this._prepare_request(req_id)
+    }
+
+
+    _serialize_events_descriptions(builder, events) {
+        const offsets = []
+        events.forEach( (event) => {
+            offsets.push(this._serialize_event_description(builder, event.name, event.fixed_size))
+        })
+        return mobsya.fb.RegisterEvents.createEventsVector(builder, offsets)
+    }
+
+
+    _serialize_event_description(builder, name, fixed_size) {
+        const nameOffset = builder.createString(name)
+        mobsya.fb.EventDescription.startEventDescription(builder)
+        mobsya.fb.EventDescription.addName(builder, nameOffset)
+        mobsya.fb.EventDescription.addFixedSized(builder, fixed_size)
+        return mobsya.fb.EventDescription.endEventDescription(builder)
+    }
+
     /* request the description of the aseba vm for the node with the given id */
-    lock_node(id) {
+    _lock_node(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -574,7 +763,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    unlock_node(id) {
+    _unlock_node(id) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -588,7 +777,7 @@ export class Client {
     }
 
 
-    rename_node(id, name) {
+    _rename_node(id, name) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -603,13 +792,13 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    watch(id, monitoring_flags) {
+    _watch(id, monitoring_flags) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
         mobsya.fb.WatchNode.startWatchNode(builder)
         mobsya.fb.WatchNode.addRequestId(builder, req_id)
-        mobsya.fb.WatchNode.addNodeId(builder, nodeOffset)
+        mobsya.fb.WatchNode.addNodeOrGroupId(builder, nodeOffset)
         mobsya.fb.WatchNode.addInfoType(builder, monitoring_flags)
         let offset = mobsya.fb.WatchNode.endWatchNode(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.WatchNode)
@@ -621,6 +810,7 @@ export class Client {
         for(let i = 0; i < msg.nodesLength(); i++) {
             const n = msg.nodes(i);
             const id = this._id(n.nodeId())
+            const group_id = this._id(n.groupId())
             let node = this._nodes.get(id.toString())
             if(!node) {
                 node = new Node(this, id, n.status(), n.type())
@@ -633,16 +823,24 @@ export class Client {
             nodes.push(node)
             node._set_status(n.status())
             node._set_name(n.name())
+            node._set_group(this._group_from_id(group_id))
         }
         return nodes
     }
 
-    nodes() {
-        return Array.from(this._nodes.values());
+    _nodes_from_id(id) {
+        return Array.from(this._nodes.values()).filter(node => isEqual(node.id, id) || (node.group && isEqual(node.group.id, id)));
+    }
+
+    _group_from_id(id) {
+        let node =  Array.from(this._nodes.values()).find(node => node.group && isEqual(node.group.id, id));
+        if(node && node.group)
+            return node.group
+        return new Group(this, id)
     }
 
     _id(fb_id) {
-        return new NodeId(fb_id.idArray())
+        return fb_id ? new NodeId(fb_id.idArray()) : null
     }
 
     _unserialize_aseba_vm_description(msg) {

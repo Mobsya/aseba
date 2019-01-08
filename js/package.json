@@ -4,6 +4,7 @@
   "description": "A JS api to communicate with Thymio from node and browsers",
   "dependencies": {
     "isomorphic-ws": "^4.0.1",
+    "lodash": "^4.17.11",
     "ws": "^5.2.1"
   },
   "devDependencies": {},
