@@ -47,6 +47,7 @@ target_link_libraries(asebastudio
     Qt5::Network
     Qt5::Xml
     Qt5::Widgets
+    range-v3
 )
 
 install_qt_app(asebastudio)
