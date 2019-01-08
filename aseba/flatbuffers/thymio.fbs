@@ -332,7 +332,7 @@ table RegisterEvents {
     events:[EventDescription];
 }
 
-table EventsDescriptionChanged {
+table EventsDescriptionsChanged {
     node_or_group_id:NodeId;
     events:[EventDescription];
 }
@@ -354,7 +354,7 @@ union AnyMessage {
     WatchNode,
     VariablesChanged,
     SetVariables,
-    EventsDescriptionChanged,
+    EventsDescriptionsChanged,
     RegisterEvents,
     SendEvents,
     EventsEmitted,
