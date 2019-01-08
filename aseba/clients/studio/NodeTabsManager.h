@@ -2,6 +2,9 @@
 #include <QtWidgets>
 #include "Target.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/filter.hpp>
 
 namespace Aseba {
 
@@ -16,6 +19,12 @@ public:
 
     void highlightTab(int index, QColor color = Qt::red);
     void setExecutionMode(int index, Target::ExecutionMode state);
+
+    auto devicesTabs() const {
+        return ranges::view::ints(0, count()) |
+            ranges::view::transform([this](int i) { return qobject_cast<NodeTab*>(this->widget(i)); }) |
+            ranges::view::filter([](NodeTab* n) { return n; });
+    }
 
 public Q_SLOTS:
     void onNodeAdded(std::shared_ptr<mobsya::ThymioNode>);

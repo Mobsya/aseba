@@ -138,12 +138,9 @@ bool MainWindow::newFile() {
         // clear content
         clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            Q_ASSERT(tab);
+        for(auto&& tab : nodes->devicesTabs()) {
             tab->editor->clear();
         }
-
         // reset opened file name
         clearOpenedFileName(false);
         return true;
@@ -197,9 +194,7 @@ void MainWindow::openFile(const QString& path) {
         // delete all absent node tabs
         clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            Q_ASSERT(tab);
+        for(auto&& tab : nodes->devicesTabs()) {
             tab->editor->clear();
         }
 
@@ -442,35 +437,29 @@ void MainWindow::exportMemoriesContent() {
 
     QTextStream out(&file);
 
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab) {
-            auto thymio = tab->thymio();
-            if(!thymio)
-                continue;
+    for(auto&& tab : nodes->devicesTabs()) {
+        auto thymio = tab->thymio();
+        if(!thymio)
+            continue;
 
-            const QString nodeName = thymio->name();
-            const QVariantMap variables = tab->getVariables();
-            for(auto it = variables.begin(); it != variables.end(); ++it) {
-                out << nodeName << "." << it.key() << " "
-                    << QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::JsonFormat::Compact);
-                out << "\n";
-            }
+        const QString nodeName = thymio->name();
+        const QVariantMap variables = tab->getVariables();
+        for(auto it = variables.begin(); it != variables.end(); ++it) {
+            out << nodeName << "." << it.key() << " "
+                << QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::JsonFormat::Compact);
+            out << "\n";
         }
     }
 }
 
 void MainWindow::copyAll() {
     QString toCopy;
-    for(int i = 0; i < nodes->count(); i++) {
-        const NodeTab* nodeTab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(!nodeTab)
-            continue;
-        auto thymio = nodeTab->thymio();
+    for(auto&& tab : nodes->devicesTabs()) {
+        auto thymio = tab->thymio();
         if(!thymio)
             continue;
         toCopy += QString("# node %0\n").arg(thymio->name());
-        toCopy += nodeTab->editor->toPlainText();
+        toCopy += tab->editor->toPlainText();
         toCopy += "\n\n";
     }
     QApplication::clipboard()->setText(toCopy);
@@ -502,9 +491,7 @@ void MainWindow::uncommentTriggered() {
 }
 
 void MainWindow::showLineNumbersChanged(bool state) {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        Q_ASSERT(tab);
+    for(auto&& tab : nodes->devicesTabs()) {
         tab->linenumbers->showLineNumbers(state);
     }
     ConfigDialog::setShowLineNumbers(state);
@@ -556,42 +543,32 @@ void MainWindow::clearAllBreakpoints() {
 }
 
 void MainWindow::resetAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->reset();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->reset();
     }
 }
 
 void MainWindow::runAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->run();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->run();
     }
 }
 
 void MainWindow::pauseAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->run();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->run();
     }
 }
 
 void MainWindow::stopAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->reset();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->reset();
     }
 }
 
 void MainWindow::clearAllExecutionError() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->clearExecutionErrors();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->clearExecutionErrors();
     }
     logger->setStyleSheet(QLatin1String(""));
 }
@@ -667,36 +644,28 @@ void MainWindow::compilationMessagesWasHidden() {
 }
 
 void MainWindow::showMemoryUsage(bool show) {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->showMemoryUsage(show);
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->showMemoryUsage(show);
     }
     ConfigDialog::setShowMemoryUsage(show);
 }
 
 
 void MainWindow::recompileAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->compileCodeOnTarget();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->compileCodeOnTarget();
     }
 }
 
 void MainWindow::writeAllBytecodes() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->writeProgramToDeviceMemory();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->writeProgramToDeviceMemory();
     }
 }
 
 void MainWindow::rebootAllNodes() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->reboot();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->reboot();
     }
 }
 
@@ -795,9 +764,8 @@ void MainWindow::regenerateToolsMenus() {
     writeBytecodeMenu->clear();
     rebootMenu->clear();
     unsigned activeVMCount(0);
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = qobject_cast<NodeTab*>(nodes->widget(i));
-        if(tab && tab->thymio() && tab->thymio()->status() == mobsya::ThymioNode::Status::Ready) {
+    for(auto&& tab : nodes->devicesTabs()) {
+        if(tab->thymio() && tab->thymio()->status() == mobsya::ThymioNode::Status::Ready) {
             QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(tab->thymio()->name()), tab,
                                                         &NodeTab::writeProgramToDeviceMemory);
             connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
@@ -843,10 +811,8 @@ void MainWindow::regenerateHelpMenu() {
     // add back target-specific actions
     using ProductIds = std::set<int>;
     ProductIds productIds;
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            productIds.insert(tab->productId());
+    for(auto&& tab : nodes->devicesTabs()) {
+        productIds.insert(tab->productId());
     }
     for(auto it(productIds.begin()); it != productIds.end(); ++it) {
         QAction* action;
