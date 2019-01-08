@@ -173,6 +173,7 @@ export class Node extends _BasicNode {
         this._on_events_cb = undefined;
         this._group = null
         this.on_group_changed = undefined;
+        this.onVmExecutionStateChanged = undefined
     }
 
     get group() {
@@ -422,6 +423,7 @@ class NodeId {
  * The status of a node
  */
 Node.Status = mobsya.fb.NodeStatus;
+Node.VMExecutionState = mobsya.fb.VMExecutionState;
 
 /*
  * The type of a node
@@ -620,7 +622,12 @@ export class Client {
             }
 
             case mobsya.fb.AnyMessage.VMExecutionStateChanged: {
-                //TODO
+                const msg = message.message(new mobsya.fb.VMExecutionStateChanged())
+                const id = this._id(msg.nodeId())
+                const node = this._nodes.get(id.toString())
+                if(!node || !node.onVmExecutionStateChanged)
+                    break;
+                node.onVmExecutionStateChanged(msg.state(), msg.line(), msg.error(), msg.errorMsg())
                 break
             }
         }
