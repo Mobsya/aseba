@@ -131,6 +131,9 @@ FunctionEnd
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
+ !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY} 
+  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
