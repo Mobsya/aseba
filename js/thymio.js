@@ -74,11 +74,16 @@ class EventDescription {
     }
 }
 
-class _Watchable {
+class _BasicNode {
     constructor(client, id) {
         this._monitoring_flags = 0
         this._client = client
         this._id = id;
+    }
+
+    /** return the node id*/
+    get id() {
+        return this._id
     }
 
     async watchSharedVariablesAndEvents(watch) {
@@ -96,9 +101,18 @@ class _Watchable {
             return await this._client._watch(this._id, this._monitoring_flags)
         }
     }
+
+    async emitEvents(map_or_key, value) {
+        if(typeof value !== "undefined") {
+            const tmp = new Map();
+            tmp.set(map_or_key, value);
+            map_or_key = tmp
+        }
+        return await this._client._emit_events(this._id, map_or_key);
+    }
 }
 
-export class Group extends _Watchable{
+export class Group extends _BasicNode {
 
     constructor(client, id) {
         super(client, id)
@@ -106,10 +120,6 @@ export class Group extends _Watchable{
         this._events = null;
         this._on_variables_changed = undefined;
         this._on_events_descriptions_changed = undefined;
-    }
-
-    get id() {
-        return this._id
     }
 
     get variables() {
@@ -120,7 +130,7 @@ export class Group extends _Watchable{
         this._client._set_variables(this._id, variables);
     }
 
-    get events() {
+    get eventsDescriptions() {
         return this._events;
     }
 
@@ -152,7 +162,7 @@ export class Group extends _Watchable{
 
 
 /** Node */
-export class Node extends _Watchable{
+export class Node extends _BasicNode {
     constructor(client, id, status, type) {
         super(client, id)
         this._status = status;
@@ -163,11 +173,6 @@ export class Node extends _Watchable{
         this._on_events_cb = undefined;
         this._group = null
         this.on_group_changed = undefined;
-    }
-
-    /** return the node id*/
-    get id() {
-        return this._id
     }
 
     get group() {
@@ -314,18 +319,14 @@ export class Node extends _Watchable{
         return await this._client._set_variables(this._id, map);
     }
 
-    async setEventsDescriptions(events) {
-        this._client.set_events_descriptions(this._id, events)
+    async setSharedVariabkes(variables) {
+        return await this._group.setVariables(variables)
     }
 
-    async emitEvents(map_or_key, value) {
-        if(typeof value !== "undefined") {
-            const tmp = new Map();
-            tmp.set(map_or_key, value);
-            map_or_key = tmp
-        }
-        return await this._client._emit_events(this._id, map_or_key);
+    async setEventsDescriptions(events) {
+        return await this._client.set_events_descriptions(this._id, events)
     }
+
 
     get onVariablesChanged() {
         return this._on_vars_changed_cb;
