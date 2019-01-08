@@ -161,7 +161,7 @@ tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::group& n,
         auto descTable = fb::CreateEventDescription(fb, str_offset, desc.size, i++);
         descOffsets.push_back(descTable);
     }
-    auto offset = fb::CreateEventsDescriptionChanged(fb, idOffset, fb.CreateVector(descOffsets));
+    auto offset = fb::CreateEventsDescriptionsChanged(fb, idOffset, fb.CreateVector(descOffsets));
     return wrap_fb(fb, offset);
 }
 

@@ -599,8 +599,8 @@ export class Client {
                 break
             }
 
-            case mobsya.fb.AnyMessage.EventsDescriptionChanged: {
-                const msg = message.message(new mobsya.fb.EventsDescriptionChanged())
+            case mobsya.fb.AnyMessage.EventsDescriptionsChanged: {
+                const msg = message.message(new mobsya.fb.EventsDescriptionsChanged())
                 const id = this._id(msg.nodeOrGroupId())
                 const group = this._group_from_id(id)
                 if(!group)

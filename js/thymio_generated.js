@@ -186,7 +186,7 @@ mobsya.fb.AnyMessage = {
   WatchNode: 14, 14: 'WatchNode',
   VariablesChanged: 15, 15: 'VariablesChanged',
   SetVariables: 16, 16: 'SetVariables',
-  EventsDescriptionChanged: 17, 17: 'EventsDescriptionChanged',
+  EventsDescriptionsChanged: 17, 17: 'EventsDescriptionsChanged',
   RegisterEvents: 18, 18: 'RegisterEvents',
   SendEvents: 19, 19: 'SendEvents',
   EventsEmitted: 20, 20: 'EventsEmitted',
@@ -4771,7 +4771,7 @@ mobsya.fb.RegisterEvents.endRegisterEvents = function(builder) {
 /**
  * @constructor
  */
-mobsya.fb.EventsDescriptionChanged = function() {
+mobsya.fb.EventsDescriptionsChanged = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -4786,9 +4786,9 @@ mobsya.fb.EventsDescriptionChanged = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {mobsya.fb.EventsDescriptionChanged}
+ * @returns {mobsya.fb.EventsDescriptionsChanged}
  */
-mobsya.fb.EventsDescriptionChanged.prototype.__init = function(i, bb) {
+mobsya.fb.EventsDescriptionsChanged.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -4796,18 +4796,18 @@ mobsya.fb.EventsDescriptionChanged.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {mobsya.fb.EventsDescriptionChanged=} obj
- * @returns {mobsya.fb.EventsDescriptionChanged}
+ * @param {mobsya.fb.EventsDescriptionsChanged=} obj
+ * @returns {mobsya.fb.EventsDescriptionsChanged}
  */
-mobsya.fb.EventsDescriptionChanged.getRootAsEventsDescriptionChanged = function(bb, obj) {
-  return (obj || new mobsya.fb.EventsDescriptionChanged).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+mobsya.fb.EventsDescriptionsChanged.getRootAsEventsDescriptionsChanged = function(bb, obj) {
+  return (obj || new mobsya.fb.EventsDescriptionsChanged).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @param {mobsya.fb.NodeId=} obj
  * @returns {mobsya.fb.NodeId|null}
  */
-mobsya.fb.EventsDescriptionChanged.prototype.nodeOrGroupId = function(obj) {
+mobsya.fb.EventsDescriptionsChanged.prototype.nodeOrGroupId = function(obj) {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? (obj || new mobsya.fb.NodeId).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
 };
@@ -4817,7 +4817,7 @@ mobsya.fb.EventsDescriptionChanged.prototype.nodeOrGroupId = function(obj) {
  * @param {mobsya.fb.EventDescription=} obj
  * @returns {mobsya.fb.EventDescription}
  */
-mobsya.fb.EventsDescriptionChanged.prototype.events = function(index, obj) {
+mobsya.fb.EventsDescriptionsChanged.prototype.events = function(index, obj) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? (obj || new mobsya.fb.EventDescription).__init(this.bb.__indirect(this.bb.__vector(this.bb_pos + offset) + index * 4), this.bb) : null;
 };
@@ -4825,7 +4825,7 @@ mobsya.fb.EventsDescriptionChanged.prototype.events = function(index, obj) {
 /**
  * @returns {number}
  */
-mobsya.fb.EventsDescriptionChanged.prototype.eventsLength = function() {
+mobsya.fb.EventsDescriptionsChanged.prototype.eventsLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
@@ -4833,7 +4833,7 @@ mobsya.fb.EventsDescriptionChanged.prototype.eventsLength = function() {
 /**
  * @param {flatbuffers.Builder} builder
  */
-mobsya.fb.EventsDescriptionChanged.startEventsDescriptionChanged = function(builder) {
+mobsya.fb.EventsDescriptionsChanged.startEventsDescriptionsChanged = function(builder) {
   builder.startObject(2);
 };
 
@@ -4841,7 +4841,7 @@ mobsya.fb.EventsDescriptionChanged.startEventsDescriptionChanged = function(buil
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} nodeOrGroupIdOffset
  */
-mobsya.fb.EventsDescriptionChanged.addNodeOrGroupId = function(builder, nodeOrGroupIdOffset) {
+mobsya.fb.EventsDescriptionsChanged.addNodeOrGroupId = function(builder, nodeOrGroupIdOffset) {
   builder.addFieldOffset(0, nodeOrGroupIdOffset, 0);
 };
 
@@ -4849,7 +4849,7 @@ mobsya.fb.EventsDescriptionChanged.addNodeOrGroupId = function(builder, nodeOrGr
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} eventsOffset
  */
-mobsya.fb.EventsDescriptionChanged.addEvents = function(builder, eventsOffset) {
+mobsya.fb.EventsDescriptionsChanged.addEvents = function(builder, eventsOffset) {
   builder.addFieldOffset(1, eventsOffset, 0);
 };
 
@@ -4858,7 +4858,7 @@ mobsya.fb.EventsDescriptionChanged.addEvents = function(builder, eventsOffset) {
  * @param {Array.<flatbuffers.Offset>} data
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.EventsDescriptionChanged.createEventsVector = function(builder, data) {
+mobsya.fb.EventsDescriptionsChanged.createEventsVector = function(builder, data) {
   builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
     builder.addOffset(data[i]);
@@ -4870,7 +4870,7 @@ mobsya.fb.EventsDescriptionChanged.createEventsVector = function(builder, data) 
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-mobsya.fb.EventsDescriptionChanged.startEventsVector = function(builder, numElems) {
+mobsya.fb.EventsDescriptionsChanged.startEventsVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
 };
 
@@ -4878,7 +4878,7 @@ mobsya.fb.EventsDescriptionChanged.startEventsVector = function(builder, numElem
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-mobsya.fb.EventsDescriptionChanged.endEventsDescriptionChanged = function(builder) {
+mobsya.fb.EventsDescriptionsChanged.endEventsDescriptionsChanged = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

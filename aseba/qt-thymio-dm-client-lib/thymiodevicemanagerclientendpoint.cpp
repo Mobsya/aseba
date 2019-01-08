@@ -211,8 +211,8 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             break;
         }
 
-        case mobsya::fb::AnyMessage::EventsDescriptionChanged: {
-            auto message = msg.as<mobsya::fb::EventsDescriptionChanged>();
+        case mobsya::fb::AnyMessage::EventsDescriptionsChanged: {
+            auto message = msg.as<mobsya::fb::EventsDescriptionsChanged>();
             if(!message || !message->events())
                 break;
             auto id = qfb::uuid(message->node_or_group_id()->UnPack());
