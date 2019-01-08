@@ -46,6 +46,7 @@ add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/pugixml EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/range-v3 EXCLUDE_FROM_ALL)
 
 add_library(mpark_variant INTERFACE)
 target_include_directories(mpark_variant INTERFACE
