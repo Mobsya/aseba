@@ -132,7 +132,7 @@ FunctionEnd
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
-  !insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
+  !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
 
