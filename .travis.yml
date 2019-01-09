@@ -8,25 +8,27 @@ cache:
 matrix:
   include:
   - os: linux
+    dist: xenial
     language: cpp
     node_js: '8'
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        - sourceline: ppa:beineri/opt-qt-5.10.1-trusty
+        - sourceline: ppa:beineri/opt-qt-5.12.0-xenial
         packages:
         - g++-7
         - libudev-dev
-        - qt510base
-        - qt510declarative
-        - qt510xmlpatterns
-        - qt510serialport
-        - qt510tools
-        - qt510translations
-        - qt510quickcontrols2
-        - qt510svg
-        - qt510x11extras
+        - qt512base
+        - qt512declarative
+        - qt512xmlpatterns
+        - qt512serialport
+        - qt512tools
+        - qt512translations
+        - qt512quickcontrols2
+        - qt512svg
+        - qt512x11extras
+        - qt512charts-no-lgpl
         - libboost-python-dev
         - ninja-build
         - libxml2-dev
@@ -130,9 +132,9 @@ script:
     ctest .
   fi
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
-      ls /opt/qt510/
-      /opt/qt510/bin/qt510-env.sh
-      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
+      ls /opt/qt512/
+      /opt/qt512/bin/qt512-env.sh
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt512/"
       cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
       ninja -v
       ctest .
