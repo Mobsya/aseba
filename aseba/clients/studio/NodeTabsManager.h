@@ -52,10 +52,12 @@ Q_SIGNALS:
 
 
 protected:
-    void createPlotTab(std::shared_ptr<const mobsya::ThymioNode>, const QString& eventName);
+    enum class plot_type { event, variable };
+
+    void createPlotTab(NodeTab* tab, const QString& name, plot_type type);
+    void createPlotTab(std::shared_ptr<const mobsya::ThymioNode>, const QString& name, plot_type type);
     void resetHighlight(int index);
     void tabInserted(int index) override;
-    void tabRemoved(int index) override;
 
 private:
     void addThymiosFromGroups();

@@ -25,6 +25,10 @@ PlotTab::PlotTab(QWidget* parent) : QSplitter(parent) {
     m_yAxis->setLabelFormat("%i");
     m_yAxis->setTitleText(tr("Values"));
     m_chart->addAxis(m_yAxis, Qt::AlignLeft);
+
+    QTimer* t = new QTimer(this);
+    connect(t, &QTimer::timeout, this, [this]() { m_chart->scroll(5, 0); });
+    t->start(100);
 }
 
 
@@ -33,7 +37,7 @@ void PlotTab::setThymio(std::shared_ptr<const mobsya::ThymioNode> node) {
     if(node) {
         // node->setWatchEventsEnabled(true);
         connect(node.get(), &mobsya::ThymioNode::events, this, &PlotTab::onEvents);
-
+        connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &PlotTab::onVariablesChanged);
         // connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
         // connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
     }
@@ -53,47 +57,71 @@ QStringList PlotTab::plottedEvents() const {
     return m_events.keys();
 }
 
+void PlotTab::addVariable(const QString& name) {
+    if(!m_variables.contains(name))
+        m_variables.insert(name, {});
+}
+
+QStringList PlotTab::plottedVariables() const {
+    return m_variables.keys();
+}
+
 void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
     for(auto it = events.begin(); it != events.end(); ++it) {
         auto event = m_events.find(it.key());
         if(event == m_events.end())
             continue;
         const QVariant& v = it.value();
-        if(v.type() == QVariant::List) {
-            auto list = v.toList();
-            auto i = -1;
-            for(auto&& e : list) {
-                i++;
-                bool ok = false;
-                double d = e.toDouble(&ok);
-                if(!ok) {
-                    continue;
-                }
-                event.value().resize(std::max(i + 1, event.value().size()));
-                auto& serie = event.value()[i];
-                if(!serie) {
-                    serie = new QtCharts::QSplineSeries(this);
-                    serie->setName(QStringLiteral("%1[%2]").arg(event.key()).arg(i));
-                    m_chart->addSeries(serie);
-                    serie->attachAxis(m_xAxis);
-                    serie->attachAxis(m_yAxis);
-                    serie->setPointsVisible();
-                }
-                serie->append(QDateTime::currentMSecsSinceEpoch(), d);
-                if(d < m_yAxis->min()) {
-                    m_yAxis->setMin(d - 0.2 * std::abs(d));
-                }
-                if(d > m_yAxis->max() * 0.9) {
-                    m_yAxis->setMax(d + 0.2 * std::abs(d));
+        plot(event.key(), v, event.value());
+    }
+    m_xAxis->setMax(QDateTime::currentDateTime());
+}
+
+void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    for(auto it = vars.begin(); it != vars.end(); ++it) {
+        auto event = m_variables.find(it.key());
+        if(event == m_variables.end())
+            continue;
+        const QVariant& v = it.value().value();
+        plot(event.key(), v, event.value());
+    }
+    m_xAxis->setMax(QDateTime::currentDateTime());
+}
+
+
+void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXYSeries*>& series) {
+    if(v.type() == QVariant::List) {
+        auto list = v.toList();
+        auto i = -1;
+        for(auto&& e : list) {
+            i++;
+            bool ok = false;
+            double d = e.toDouble(&ok);
+            if(!ok) {
+                continue;
+            }
+            series.resize(std::max(i + 1, series.size()));
+            auto& serie = series[i];
+            if(!serie) {
+                serie = new QtCharts::QLineSeries(this);
+                serie->setName(QStringLiteral("%1[%2]").arg(name).arg(i));
+                m_chart->addSeries(serie);
+                serie->attachAxis(m_xAxis);
+                serie->attachAxis(m_yAxis);
+                serie->setPointsVisible();
+                if(!m_range_init) {
+                    m_yAxis->setRange(d, d);
                 }
             }
+            if(d < m_yAxis->min()) {
+                m_yAxis->setMin(d - 1);
+            }
+            if(d > m_yAxis->max()) {
+                m_yAxis->setMax(d + 1);
+            }
+            serie->append(QDateTime::currentMSecsSinceEpoch(), d);
         }
     }
-
-    m_xAxis->setMax(QDateTime::currentDateTime());
-
-    qreal x = m_chart->plotArea().width() / (m_xAxis->tickCount() * 100);
-    m_chart->scroll(1, 0);
 }
 
 }  // namespace Aseba

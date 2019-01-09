@@ -57,6 +57,7 @@ Q_SIGNALS:
     void executionStopped();
     void executionStateChanged();
     void plotEventRequested(const QString& name);
+    void plotVariableRequested(const QString& name);
 
 protected:
     void setupWidgets();

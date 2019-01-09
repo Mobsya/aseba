@@ -23,17 +23,26 @@ public:
     void addEvent(const QString& name);
     QStringList plottedEvents() const;
 
+
+    void addVariable(const QString& name);
+    QStringList plottedVariables() const;
+
 private Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::EventMap& events);
+    void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
 
 private:
+    void plot(const QString& name, const QVariant& value, QVector<QtCharts::QXYSeries*>& series);
+
     QMap<QString, QVector<QtCharts::QXYSeries*>> m_events;
+    QMap<QString, QVector<QtCharts::QXYSeries*>> m_variables;
+
     std::shared_ptr<const mobsya::ThymioNode> m_thymio;
     QtCharts::QChart* m_chart;
     QtCharts::QDateTimeAxis* m_xAxis;
     QtCharts::QValueAxis* m_yAxis;
 
-    double m_min = 0, m_max = 0;
+    bool m_range_init = false;
 };
 
 }  // namespace Aseba

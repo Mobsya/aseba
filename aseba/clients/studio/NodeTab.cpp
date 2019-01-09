@@ -842,6 +842,20 @@ void NodeTab::setupWidgets() {
     m_vm_variables_view->setHeaderHidden(true);
     m_vm_variables_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    m_vm_variables_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+    connect(m_vm_variables_view, &QWidget::customContextMenuRequested, this, [this](const QPoint& p) {
+        QModelIndex index = m_vm_variables_view->indexAt(p);
+        if(!index.isValid() || index.parent().isValid() || index.column() != 0)
+            return;
+        auto menu = new QMenu(m_vm_variables_view);
+        auto plot_act = menu->addAction(tr("Plot this variable"));
+        auto act = menu->exec(m_vm_variables_view->viewport()->mapToGlobal(p));
+        if(act == plot_act) {
+            Q_EMIT this->plotVariableRequested(index.data().toString());
+        }
+    });
+
+
     auto* localVariablesAndEventLayout = new QVBoxLayout;
     auto* memorySubLayout = new QHBoxLayout;
     memorySubLayout->addWidget(new QLabel(tr("<b>Variables</b>")));

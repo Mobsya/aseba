@@ -10,6 +10,8 @@ NodeTabsManager::NodeTabsManager(const mobsya::ThymioDeviceManagerClient& client
     connect(&m_client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &NodeTabsManager::onNodeAdded);
     connect(&m_client, &mobsya::ThymioDeviceManagerClient::nodeModified, this, &NodeTabsManager::onNodeModified);
     connect(&m_client, &mobsya::ThymioDeviceManagerClient::nodeRemoved, this, &NodeTabsManager::onNodeRemoved);
+
+    setTabsClosable(true);
 }
 
 NodeTabsManager::~NodeTabsManager() {}
@@ -27,32 +29,46 @@ void NodeTabsManager::addTab(const QUuid& device) {
     } else {
         QTabWidget::setTabEnabled(index, false);
     }
+
+    tabBar()->setTabButton(index, QTabBar::RightSide, 0);
+    tabBar()->setTabButton(index, QTabBar::LeftSide, 0);
+
     connect(tab, &NodeTab::executionStateChanged, this, &NodeTabsManager::nodeStatusChanged);
-    connect(tab, &NodeTab::plotEventRequested, this, [this](QString event) {
-        auto tab = qobject_cast<NodeTab*>(sender());
-        if(!tab)
-            return;
-        auto thymio = tab->thymio();
-        if(!thymio)
-            return;
-        createPlotTab(thymio, event);
+
+    connect(tab, &NodeTab::plotEventRequested, this,
+            [this](QString event) { createPlotTab(qobject_cast<NodeTab*>(sender()), event, plot_type::event); });
+
+    connect(tab, &NodeTab::plotVariableRequested, this, [this](QString variable) {
+        createPlotTab(qobject_cast<NodeTab*>(sender()), variable, plot_type::variable);
     });
 }
 
-void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> thymio, const QString& eventName) {
+void NodeTabsManager::createPlotTab(NodeTab* tab, const QString& name, plot_type type) {
+    if(!tab)
+        return;
+    auto thymio = tab->thymio();
+    if(!thymio)
+        return;
+    createPlotTab(thymio, name, type);
+}
+
+void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> thymio, const QString& name,
+                                    plot_type type) {
     PlotTab* t = nullptr;
-    auto v = eventsTabs() | ranges::view::filter([&](PlotTab* t) {
-                 return t->thymio() == thymio && t->plottedEvents().contains(eventName);
-             });
+    auto v =
+        eventsTabs() | ranges::view::filter([&](PlotTab* t) {
+            return t->thymio() == thymio &&
+                (type == plot_type::event ? t->plottedEvents().contains(name) : t->plottedVariables().contains(name));
+        });
     if(v.begin() == v.end()) {
         t = new PlotTab;
         t->setThymio(thymio);
         auto deviceTab = tabForNode(thymio);
-        insertTab(indexOf(deviceTab) + 1, t, tr("%1 on %2").arg(eventName, thymio->name()));
+        insertTab(indexOf(deviceTab) + 1, t, tr("%1 on %2").arg(name, thymio->name()));
     } else {
         t = *v.begin();
     }
-    t->addEvent(eventName);
+    type == plot_type::event ? t->addEvent(name) : t->addVariable(name);
     setCurrentWidget(t);
 }
 
@@ -124,24 +140,15 @@ void NodeTabsManager::tabChanged(int index) {
 }
 
 void NodeTabsManager::tabInserted(int index) {
-    QTabWidget::setTabsClosable(count() > 1);
     Q_EMIT tabAdded(index);
-}
-void NodeTabsManager::tabRemoved(int) {
-    QTabWidget::setTabsClosable(count() > 1);
 }
 
 void NodeTabsManager::onTabClosed(int index) {
-    auto t = qobject_cast<NodeTab*>(QTabWidget::widget(index));
+    auto t = qobject_cast<PlotTab*>(QTabWidget::widget(index));
     if(!t)
         return;
-    for(auto it = m_tabs.begin(); it != m_tabs.end(); ++it) {
-        if(it.value() == t) {
-            QTabWidget::removeTab(index);
-            m_tabs.erase(it);
-            return;
-        }
-    }
+    QTabWidget::removeTab(index);
+    QTabWidget::setCurrentIndex(index - 1);
 }
 
 NodeTab* NodeTabsManager::tabForNode(std::shared_ptr<const mobsya::ThymioNode> n) const {
