@@ -1,14 +1,18 @@
 #pragma once
 #include <QtWidgets>
 #include "Target.h"
+#include "NodeTab.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/filter.hpp>
+#include <range/v3/view/join.hpp>
+#include <range/v3/action/sort.hpp>
+#include <range/v3/action/unique.hpp>
+
 
 namespace Aseba {
 
-class NodeTab;
 class NodeTabsManager : public QTabWidget {
     Q_OBJECT
 
@@ -39,14 +43,30 @@ Q_SIGNALS:
     void tabAdded(int index);
     void nodeStatusChanged();
 
+
 protected:
     void resetHighlight(int index);
     void tabInserted(int index) override;
     void tabRemoved(int index) override;
 
 private:
+    void addThymiosFromGroups();
+
+
+    auto groups() const {
+        auto grps = ranges::view::all(m_tabs) | ranges::view::filter([](NodeTab* n) { return n && n->thymio(); }) |
+            ranges::view::transform([](NodeTab* n) { return n->thymio()->group_id(); }) | ranges::to_vector;
+        return grps | ranges::move | ranges::action::sort | ranges::action::unique;
+    }
+
+    auto nodes_for_groups() const {
+        auto grps = groups();
+        return grps | ranges::view::transform([this](auto&& g) { return m_client.nodes(g); }) | ranges::view::join |
+            ranges::to_vector;
+    }
+
     const mobsya::ThymioDeviceManagerClient& m_client;
-    QMap<QUuid, NodeTab*> m_tabs;
+    mobsya::detail::UnsignedQMap<QUuid, NodeTab*> m_tabs;
 };
 
 
