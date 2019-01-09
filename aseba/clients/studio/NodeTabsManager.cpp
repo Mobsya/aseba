@@ -1,6 +1,4 @@
 #include "NodeTabsManager.h"
-#include "NodeTab.h"
-
 namespace Aseba {
 
 //////
@@ -25,6 +23,7 @@ void NodeTabsManager::addTab(const QUuid& device) {
     if(auto thymio = m_client.node(device)) {
         tab->setThymio(thymio);
         QTabWidget::setTabText(index, thymio->name());
+        addThymiosFromGroups();
     } else {
         QTabWidget::setTabEnabled(index, false);
     }
@@ -42,9 +41,8 @@ void NodeTabsManager::onNodeAdded(std::shared_ptr<mobsya::ThymioNode> thymio) {
         auto idx = QTabWidget::indexOf(*it);
         QTabWidget::setTabEnabled(idx, true);
         tabBar()->setTabText(idx, thymio->name());
-    } else {
-        addTab(thymio->uuid());
     }
+    addThymiosFromGroups();
 }
 
 void NodeTabsManager::onNodeRemoved(std::shared_ptr<mobsya::ThymioNode> thymio) {
@@ -62,6 +60,14 @@ void NodeTabsManager::onNodeModified(std::shared_ptr<mobsya::ThymioNode> thymio)
         auto idx = QTabWidget::indexOf(*it);
         if(thymio->status() != mobsya::ThymioNode::Status::Disconnected)
             tabBar()->setTabText(idx, thymio->name());
+    }
+    addThymiosFromGroups();
+}
+
+
+void NodeTabsManager::addThymiosFromGroups() {
+    for(auto&& node : nodes_for_groups()) {
+        addTab(node->uuid());
     }
 }
 
