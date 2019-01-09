@@ -963,6 +963,7 @@ void NodeTab::setupConnections() {
     connect(m_eventsWidget, &EventsWidget::eventAdded, this, &NodeTab::addEvent);
     connect(m_eventsWidget, &EventsWidget::eventRemoved, this, &NodeTab::removeEvent);
     connect(m_eventsWidget, &EventsWidget::eventEmitted, this, &NodeTab::emitEvent);
+    connect(m_eventsWidget, &EventsWidget::plotRequested, this, &NodeTab::plotEventRequested);
 
     // editor
     connect(editor, &QTextEdit::textChanged, this, &NodeTab::editorContentChanged);

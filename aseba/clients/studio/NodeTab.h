@@ -56,6 +56,7 @@ Q_SIGNALS:
     void executionPaused();
     void executionStopped();
     void executionStateChanged();
+    void plotEventRequested(const QString& name);
 
 protected:
     void setupWidgets();
@@ -187,6 +188,7 @@ private:
     TreeChainsawFilter* functionsFlatModel;
 
     QToolBox* toolBox;
+    QTabWidget* m_tabs;
 
     QString lastCompiledSource;  //!< content of last source considered for compilation following
     QString lastLoadedSource;
