@@ -2,6 +2,7 @@
 #include <QtWidgets>
 #include "Target.h"
 #include "NodeTab.h"
+#include "PlotTab.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/transform.hpp>
@@ -30,6 +31,12 @@ public:
             ranges::view::filter([](NodeTab* n) { return n; });
     }
 
+    auto eventsTabs() const {
+        return ranges::view::ints(0, count()) |
+            ranges::view::transform([this](int i) { return qobject_cast<PlotTab*>(this->widget(i)); }) |
+            ranges::view::filter([](PlotTab* n) { return n; });
+    }
+
 public Q_SLOTS:
     void onNodeAdded(std::shared_ptr<mobsya::ThymioNode>);
     void onNodeRemoved(std::shared_ptr<mobsya::ThymioNode>);
@@ -45,12 +52,14 @@ Q_SIGNALS:
 
 
 protected:
+    void createPlotTab(std::shared_ptr<const mobsya::ThymioNode>, const QString& eventName);
     void resetHighlight(int index);
     void tabInserted(int index) override;
     void tabRemoved(int index) override;
 
 private:
     void addThymiosFromGroups();
+    NodeTab* tabForNode(std::shared_ptr<const mobsya::ThymioNode>) const;
 
 
     auto groups() const {

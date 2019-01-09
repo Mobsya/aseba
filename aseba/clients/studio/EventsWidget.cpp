@@ -52,6 +52,10 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_sendEventButton->setEnabled(false);
     eventsAddRemoveLayout->addWidget(m_sendEventButton);
 
+    m_plotButton = new QPushButton(QPixmap(QString(":/images/plot.png")), "");
+    m_plotButton->setEnabled(false);
+    eventsAddRemoveLayout->addWidget(m_plotButton);
+
     eventsDockLayout->addLayout(eventsAddRemoveLayout);
 
     eventsDockLayout->addWidget(m_view, 1);
@@ -60,13 +64,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_addEventNameButton->setToolTip(tr("Add a new event"));
     m_removeEventButton->setToolTip(tr("Remove this event"));
     m_sendEventButton->setToolTip(tr("Send this event"));
-
-    auto* eventsLayout = new QGridLayout;
-    eventsLayout->addWidget(new QLabel(tr("<b>Global Events</b>")), 0, 0, 1, 4);
-    eventsLayout->addWidget(m_addEventNameButton, 1, 0);
-    eventsLayout->addWidget(m_removeEventButton, 1, 1);
-    eventsLayout->addWidget(m_sendEventButton, 1, 2);
-    eventsLayout->addWidget(m_view, 2, 0, 1, 4);
+    m_plotButton->setToolTip(tr("Plot this Event"));
 
 
     m_logger = new QListWidget;
@@ -82,6 +80,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     connect(m_addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
     connect(m_removeEventButton, &QPushButton::clicked, this, &EventsWidget::removeEvent);
     connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendSelectedEvent);
+    connect(m_plotButton, &QPushButton::clicked, this, &EventsWidget::plotSelectedEvent);
     connect(clearLogger, &QPushButton::clicked, m_logger, &QListWidget::clear);
 
     connect(m_view, &FixedWidthTableView::doubleClicked, this, &EventsWidget::onDoubleClick);
@@ -118,6 +117,7 @@ void EventsWidget::eventsSelectionChanged() {
     bool isSelected = m_view->selectionModel()->currentIndex().isValid();
     m_removeEventButton->setEnabled(m_editable && isSelected);
     m_sendEventButton->setEnabled(isSelected);
+    m_plotButton->setEnabled(isSelected);
 }
 
 void EventsWidget::sendSelectedEvent() {
@@ -163,6 +163,21 @@ void EventsWidget::sendEvent(const QModelIndex& idx) {
         }
     }
     Q_EMIT eventEmitted(name, QVariant::fromValue(data));
+}
+
+void EventsWidget::plotSelectedEvent() {
+    auto r = m_view->selectionModel()->selectedRows(0);
+    if(r.empty())
+        return;
+    plotEvent(r.first());
+}
+
+void EventsWidget::plotEvent(const QModelIndex& idx) {
+    auto r = m_view->selectionModel()->selectedRows(0);
+    if(r.empty())
+        return;
+    QString name = m_view->model()->data(m_view->model()->index(idx.row(), 0)).toString();
+    Q_EMIT plotRequested(name);
 }
 
 

@@ -28,8 +28,33 @@ void NodeTabsManager::addTab(const QUuid& device) {
         QTabWidget::setTabEnabled(index, false);
     }
     connect(tab, &NodeTab::executionStateChanged, this, &NodeTabsManager::nodeStatusChanged);
+    connect(tab, &NodeTab::plotEventRequested, this, [this](QString event) {
+        auto tab = qobject_cast<NodeTab*>(sender());
+        if(!tab)
+            return;
+        auto thymio = tab->thymio();
+        if(!thymio)
+            return;
+        createPlotTab(thymio, event);
+    });
 }
 
+void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> thymio, const QString& eventName) {
+    PlotTab* t = nullptr;
+    auto v = eventsTabs() | ranges::view::filter([&](PlotTab* t) {
+                 return t->thymio() == thymio && t->plottedEvents().contains(eventName);
+             });
+    if(v.begin() == v.end()) {
+        t = new PlotTab;
+        t->setThymio(thymio);
+        auto deviceTab = tabForNode(thymio);
+        insertTab(indexOf(deviceTab) + 1, t, tr("%1 on %2").arg(eventName, thymio->name()));
+    } else {
+        t = *v.begin();
+    }
+    t->addEvent(eventName);
+    setCurrentWidget(t);
+}
 
 void NodeTabsManager::onNodeAdded(std::shared_ptr<mobsya::ThymioNode> thymio) {
     if(thymio->status() == mobsya::ThymioNode::Status::Connected)
@@ -117,6 +142,14 @@ void NodeTabsManager::onTabClosed(int index) {
             return;
         }
     }
+}
+
+NodeTab* NodeTabsManager::tabForNode(std::shared_ptr<const mobsya::ThymioNode> n) const {
+    auto v = devicesTabs() | ranges::view::filter([&](auto&& tab) { return n == tab->thymio(); });
+    for(auto&& e : v) {
+        return e;
+    }
+    return nullptr;
 }
 
 void NodeTabsManager::resetHighlight(int index) {

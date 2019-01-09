@@ -85,7 +85,7 @@ install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
 
 
 # Qt and Qwt
-find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools)
+find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools Charts)
 
 if (NOT ANDROID)
     find_package(Qt5Help)

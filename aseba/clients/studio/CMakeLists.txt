@@ -21,6 +21,8 @@ add_executable(asebastudio WIN32
     CustomDelegate.cpp
     NodeTab.h
     NodeTab.cpp
+    PlotTab.h
+    PlotTab.cpp
     NodeTabsManager.cpp
     NodeTabsManager.h
     TargetFunctionsModel.cpp
@@ -47,6 +49,7 @@ target_link_libraries(asebastudio
     Qt5::Network
     Qt5::Xml
     Qt5::Widgets
+    Qt5::Charts
     range-v3
 )
 
