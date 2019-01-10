@@ -134,7 +134,7 @@ FunctionEnd
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY} 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio Software Suite"
+  ;!define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio Software Suite"
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
@@ -234,7 +234,7 @@ SectionGroup /e "-Thymio" GroupThymio
 			; Thymio wireless configurator
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Wireless Thymio Network Configurator.lnk" "$INSTDIR\bin\thymiownetconfig.exe" "" "$INSTDIR\thymiownetconfig.ico"
 			;CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
 		!insertmacro MUI_STARTMENU_WRITE_END
 		
 		;Store installation folder
