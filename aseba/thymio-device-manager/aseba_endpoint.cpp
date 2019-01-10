@@ -77,7 +77,8 @@ void aseba_endpoint::emit_events(const group::properties_map& map, write_callbac
     write_messages(std::move(messages), std::move(cb));
 }
 
-void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def) {
+void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def,
+                              const std::chrono::system_clock::time_point& timestamp) {
     group::properties_map events;
     auto it = m_nodes.find(event.source);
     if(it == std::end(m_nodes))
@@ -90,10 +91,10 @@ void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::Even
     events.insert(std::pair{Aseba::WStringToUTF8(def.name), p});
 
     // broadcast to other endpoints
-    group()->on_event_received(shared_from_this(), it->second.node->uuid(), events);
+    group()->on_event_received(shared_from_this(), it->second.node->uuid(), events, timestamp);
 
     // let the node handle the event (send to connected apps)
-    it->second.node->on_event_received(events);
+    it->second.node->on_event_received(events, timestamp);
 }
 
 

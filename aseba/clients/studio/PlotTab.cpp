@@ -65,30 +65,31 @@ QStringList PlotTab::plottedVariables() const {
     return m_variables.keys();
 }
 
-void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
+void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp) {
     for(auto it = events.begin(); it != events.end(); ++it) {
         auto event = m_events.find(it.key());
         if(event == m_events.end())
             continue;
         const QVariant& v = it.value();
-        plot(event.key(), v, event.value());
+        plot(event.key(), v, event.value(), timestamp);
     }
-    m_xAxis->setMax(m_start.msecsTo(QDateTime::currentDateTime()) + 10);
+    m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
 }
 
-void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp) {
     for(auto it = vars.begin(); it != vars.end(); ++it) {
         auto event = m_variables.find(it.key());
         if(event == m_variables.end())
             continue;
         const QVariant& v = it.value().value();
-        plot(event.key(), v, event.value());
+        plot(event.key(), v, event.value(), timestamp);
     }
-    m_xAxis->setMax(m_start.msecsTo(QDateTime::currentDateTime()) + 10);
+    m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
 }
 
 
-void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXYSeries*>& series) {
+void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXYSeries*>& series,
+                   const QDateTime& timestamp) {
     if(v.type() == QVariant::List) {
         auto list = v.toList();
         auto i = -1;
@@ -119,7 +120,7 @@ void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXY
             if(d > m_yAxis->max()) {
                 m_yAxis->setMax(d + 1);
             }
-            serie->append(m_start.msecsTo(QDateTime::currentDateTime()), d);
+            serie->append(m_start.msecsTo(timestamp), d);
         }
     }
 }

@@ -126,11 +126,13 @@ namespace detail {
     }
 }  // namespace detail
 
-tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n, const mobsya::variables_map& vars) {
+tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
+                                                       const std::chrono::system_clock::time_point& timestamp) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto varsOffset = detail::serialize_variables(fb, vars);
-    auto offset = fb::CreateVariablesChanged(fb, idOffset, varsOffset);
+    const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(timestamp).time_since_epoch().count();
+    auto offset = fb::CreateVariablesChanged(fb, idOffset, varsOffset, ms);
     return wrap_fb(fb, offset);
 }
 
@@ -142,11 +144,13 @@ tagged_detached_flatbuffer serialize_changed_variables(const mobsya::group& n, c
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n, const mobsya::group::properties_map& vars) {
+tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
+                                            const std::chrono::system_clock::time_point& timestamp) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto eventsOffset = detail::serialize_events(fb, vars);
-    auto offset = fb::CreateEventsEmitted(fb, idOffset, eventsOffset);
+    const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(timestamp).time_since_epoch().count();
+    auto offset = fb::CreateEventsEmitted(fb, idOffset, eventsOffset, ms);
     return wrap_fb(fb, offset);
 }
 

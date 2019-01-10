@@ -1007,10 +1007,35 @@ mobsya.fb.VariablesChanged.prototype.varsLength = function() {
 };
 
 /**
+ * unix timestamp ( miliseconds) of when the variables were modified - or 0 if unspecified
+ *
+ * @returns {flatbuffers.Long}
+ */
+mobsya.fb.VariablesChanged.prototype.timestamp = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.readUint64(this.bb_pos + offset) : this.bb.createLong(0, 0);
+};
+
+/**
+ * @param {flatbuffers.Long} value
+ * @returns {boolean}
+ */
+mobsya.fb.VariablesChanged.prototype.mutate_timestamp = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint64(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.VariablesChanged.startVariablesChanged = function(builder) {
-  builder.startObject(2);
+  builder.startObject(3);
 };
 
 /**
@@ -1048,6 +1073,14 @@ mobsya.fb.VariablesChanged.createVarsVector = function(builder, data) {
  */
 mobsya.fb.VariablesChanged.startVarsVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Long} timestamp
+ */
+mobsya.fb.VariablesChanged.addTimestamp = function(builder, timestamp) {
+  builder.addFieldInt64(2, timestamp, builder.createLong(0, 0));
 };
 
 /**
@@ -1268,10 +1301,35 @@ mobsya.fb.EventsEmitted.prototype.eventsLength = function() {
 };
 
 /**
+ * unix timestamp ( miliseconds) of when the events were emitted - or 0 if unspecified
+ *
+ * @returns {flatbuffers.Long}
+ */
+mobsya.fb.EventsEmitted.prototype.timestamp = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? this.bb.readUint64(this.bb_pos + offset) : this.bb.createLong(0, 0);
+};
+
+/**
+ * @param {flatbuffers.Long} value
+ * @returns {boolean}
+ */
+mobsya.fb.EventsEmitted.prototype.mutate_timestamp = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint64(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.EventsEmitted.startEventsEmitted = function(builder) {
-  builder.startObject(2);
+  builder.startObject(3);
 };
 
 /**
@@ -1309,6 +1367,14 @@ mobsya.fb.EventsEmitted.createEventsVector = function(builder, data) {
  */
 mobsya.fb.EventsEmitted.startEventsVector = function(builder, numElems) {
   builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {flatbuffers.Long} timestamp
+ */
+mobsya.fb.EventsEmitted.addTimestamp = function(builder, timestamp) {
+  builder.addFieldInt64(2, timestamp, builder.createLong(0, 0));
 };
 
 /**

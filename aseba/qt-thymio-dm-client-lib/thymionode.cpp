@@ -222,17 +222,17 @@ void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg
     }
 }
 
-void ThymioNode::onVariablesChanged(VariableMap variables) {
-    Q_EMIT variablesChanged(variables);
+void ThymioNode::onVariablesChanged(VariableMap variables, const QDateTime& timestamp) {
+    Q_EMIT variablesChanged(variables, timestamp);
 }
 
-void ThymioNode::onGroupVariablesChanged(VariableMap variables) {
-    Q_EMIT groupVariablesChanged(variables);
+void ThymioNode::onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp) {
+    Q_EMIT groupVariablesChanged(variables, timestamp);
 }
 
 
-void ThymioNode::onEvents(EventMap evs) {
-    Q_EMIT events(evs);
+void ThymioNode::onEvents(const EventMap& evs, const QDateTime& timestamp) {
+    Q_EMIT events(evs, timestamp);
 }
 
 void ThymioNode::onEventsTableChanged(const QVector<EventDescription>& events) {

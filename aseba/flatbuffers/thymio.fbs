@@ -118,6 +118,8 @@ table NodeVariable {
 table VariablesChanged {
    node_id:NodeId;
    vars:[NodeVariable];
+   /// unix timestamp ( miliseconds) of when the variables were modified - or 0 if unspecified
+   timestamp: ulong = 0;
 }
 
 table SendEvents {
@@ -129,6 +131,8 @@ table SendEvents {
 table EventsEmitted {
    node_id:NodeId;
    events:[NamedValue];
+   /// unix timestamp ( miliseconds) of when the events were emitted - or 0 if unspecified
+   timestamp: ulong = 0;
 }
 
 /// Message sent by the server when a node changes status.

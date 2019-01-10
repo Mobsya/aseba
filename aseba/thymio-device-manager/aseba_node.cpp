@@ -196,7 +196,7 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
                            that->m_callbacks_pending_execution_state_change.push(std::bind(cb, ec, result.value()));
                    });
 
-    m_variables_changed_signal(shared_from_this(), this->variables());
+    m_variables_changed_signal(shared_from_this(), this->variables(), std::chrono::system_clock::now());
 }
 
 tl::expected<aseba_node::compilation_result, boost::system::error_code>
@@ -292,7 +292,7 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
 
 void aseba_node::schedule_execution_state_update() {
     request_execution_state();
-	m_status_timer.expires_from_now(boost::posix_time::seconds(1));
+    m_status_timer.expires_from_now(boost::posix_time::seconds(1));
     std::weak_ptr<aseba_node> ptr = shared_from_this();
     m_status_timer.async_wait([ptr](boost::system::error_code ec) {
         if(ec)
@@ -525,8 +525,9 @@ aseba_node::vm_execution_state aseba_node::execution_state() const {
     return {m_vm_state.state, m_vm_state.line};
 }
 
-void aseba_node::on_event_received(const std::unordered_map<std::string, property>& events) {
-    m_events_signal(shared_from_this(), events);
+void aseba_node::on_event_received(const std::unordered_map<std::string, property>& events,
+                                   const std::chrono::system_clock::time_point& timestamp) {
+    m_events_signal(shared_from_this(), events, timestamp);
 }
 
 
@@ -551,7 +552,7 @@ boost::system::error_code aseba_node::set_node_variables(const variables_map& ma
 
     write_messages(std::move(messages), std::move(cb));
     if(!modified.empty()) {
-        m_variables_changed_signal(shared_from_this(), modified);
+        m_variables_changed_signal(shared_from_this(), modified, std::chrono::system_clock::now());
     }
     return {};
 }
@@ -644,7 +645,7 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
 void aseba_node::on_variables_message(const Aseba::Variables& msg) {
     variables_map changed;
     set_variables(msg.start, msg.variables, changed);
-    m_variables_changed_signal(shared_from_this(), changed);
+    m_variables_changed_signal(shared_from_this(), changed, std::chrono::system_clock::now());
     schedule_variables_update();
 }
 
@@ -653,7 +654,7 @@ void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
     for(const auto& area : msg.variables) {
         set_variables(area.start, area.variables, changed);
     }
-    m_variables_changed_signal(shared_from_this(), changed);
+    m_variables_changed_signal(shared_from_this(), changed, std::chrono::system_clock::now());
     schedule_variables_update();
 }
 
