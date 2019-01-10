@@ -3,6 +3,7 @@
 #include <QtEndian>
 #include <array>
 #include <QtGlobal>
+#include <QDateTime>
 #include <QRandomGenerator>
 #include "qflatbuffers.h"
 #include "thymio-api.h"
@@ -168,6 +169,8 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             auto nodes = this->nodes(id);
             if(nodes.empty())
                 break;
+            const auto time = message->timestamp() == 0 ? QDateTime::currentDateTime() :
+                                                          QDateTime::fromMSecsSinceEpoch(message->timestamp());
 
             ThymioNode::VariableMap vars;
             for(const auto& var : *(message->vars())) {
@@ -181,9 +184,9 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             }
             for(auto&& node : nodes) {
                 if(id == node->uuid()) {
-                    node->onVariablesChanged(vars);
+                    node->onVariablesChanged(vars, time);
                 } else {
-                    node->onGroupVariablesChanged(vars);
+                    node->onGroupVariablesChanged(vars, time);
                 }
             }
             break;
@@ -207,7 +210,9 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                 auto value = qfb::to_qvariant(event->value_flexbuffer_root());
                 events.insert(name, value);
             }
-            node->onEvents(std::move(events));
+            const auto time = message->timestamp() == 0 ? QDateTime::currentDateTime() :
+                                                          QDateTime::fromMSecsSinceEpoch(message->timestamp());
+            node->onEvents(std::move(events), time);
             break;
         }
 

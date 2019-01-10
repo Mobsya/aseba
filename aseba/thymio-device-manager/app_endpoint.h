@@ -279,9 +279,10 @@ public:
         });
     }
 
-    void node_variables_changed(std::shared_ptr<aseba_node> node, const variables_map& map) {
-        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map]() {
-            that->do_node_variables_changed(node, map);
+    void node_variables_changed(std::shared_ptr<aseba_node> node, const variables_map& map,
+                                const std::chrono::system_clock::time_point& timestamp) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map, timestamp]() {
+            that->do_node_variables_changed(node, map, timestamp);
         });
     }
 
@@ -291,9 +292,10 @@ public:
         });
     }
 
-    void node_emitted_events(std::shared_ptr<aseba_node> node, const variables_map& events) {
-        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, events]() {
-            that->do_node_emitted_events(node, events);
+    void node_emitted_events(std::shared_ptr<aseba_node> node, const variables_map& events,
+                             const std::chrono::system_clock::time_point& timestamp) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, events, timestamp]() {
+            that->do_node_emitted_events(node, events, timestamp);
         });
     }
 
@@ -335,10 +337,11 @@ private:
         }
     }
 
-    void do_node_variables_changed(std::shared_ptr<aseba_node> node, const variables_map& map) {
+    void do_node_variables_changed(std::shared_ptr<aseba_node> node, const variables_map& map,
+                                   const std::chrono::system_clock::time_point& timestamp) {
         if(!node)
             return;
-        write_message(serialize_changed_variables(*node, map));
+        write_message(serialize_changed_variables(*node, map, timestamp));
     }
 
     void do_group_variables_changed(std::shared_ptr<group> grp, const variables_map& map) {
@@ -347,10 +350,11 @@ private:
         write_message(serialize_changed_variables(*grp, map));
     }
 
-    void do_node_emitted_events(std::shared_ptr<aseba_node> node, const variables_map& events) {
+    void do_node_emitted_events(std::shared_ptr<aseba_node> node, const variables_map& events,
+                                const std::chrono::system_clock::time_point& timestamp) {
         if(!node)
             return;
-        write_message(serialize_events(*node, events));
+        write_message(serialize_events(*node, events, timestamp));
     }
 
     void do_events_description_changed(std::shared_ptr<group> group, const events_table& events) {
@@ -617,17 +621,19 @@ private:
             if(flags & uint32_t(fb::WatchableInfo::Variables)) {
                 if(!m_watch_nodes[fb::WatchableInfo::Variables].count(id)) {
                     auto variables = node->variables();
-                    this->node_variables_changed(node, variables);
+                    this->node_variables_changed(node, variables, std::chrono::system_clock::now());
                 }
-                m_watch_nodes[fb::WatchableInfo::Variables][id] = node->connect_to_variables_changes(std::bind(
-                    &application_endpoint::node_variables_changed, this, std::placeholders::_1, std::placeholders::_2));
+                m_watch_nodes[fb::WatchableInfo::Variables][id] = node->connect_to_variables_changes(
+                    std::bind(&application_endpoint::node_variables_changed, this, std::placeholders::_1,
+                              std::placeholders::_2, std::placeholders::_3));
             } else {
                 m_watch_nodes[fb::WatchableInfo::Variables].erase(id);
             }
 
             if(flags & uint32_t(fb::WatchableInfo::Events)) {
-                m_watch_nodes[fb::WatchableInfo::Events][id] = node->connect_to_events(std::bind(
-                    &application_endpoint::node_emitted_events, this, std::placeholders::_1, std::placeholders::_2));
+                m_watch_nodes[fb::WatchableInfo::Events][id] = node->connect_to_events(
+                    std::bind(&application_endpoint::node_emitted_events, this, std::placeholders::_1,
+                              std::placeholders::_2, std::placeholders::_3));
             } else {
                 m_watch_nodes[fb::WatchableInfo::Events].erase(id);
             }

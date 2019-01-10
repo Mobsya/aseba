@@ -37,7 +37,7 @@ public:
     events_table get_events_table() const;
     void send_events_table();
     void on_event_received(std::shared_ptr<aseba_endpoint> source_ep, const node_id& source_node,
-                           const group::properties_map& events);
+                           const group::properties_map& events, const std::chrono::system_clock::time_point& timestamp);
 
     template <typename... ConnectionArgs>
     auto connect_to_variables_changes(ConnectionArgs... args) {

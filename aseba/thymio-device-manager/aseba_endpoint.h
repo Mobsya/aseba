@@ -196,9 +196,10 @@ public:
         auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
 
         if(msg->type < 0x8000) {
+            auto timestamp = std::chrono::system_clock::now();
             auto event = [this, &msg] { return get_event(msg->type); }();
             if(event) {
-                on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first);
+                on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first, timestamp);
             }
         } else if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             if(!node) {
@@ -354,7 +355,8 @@ private:
     boost::system::error_code set_events_table(const group::events_table& events);
     boost::system::error_code set_shared_variables(const variables_map& map);
     void emit_events(const group::properties_map& map, write_callback&& cb);
-    void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def);
+    void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def,
+                  const std::chrono::system_clock::time_point& timestamp);
 
     endpoint_t m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;

@@ -28,11 +28,12 @@ public:
     QStringList plottedVariables() const;
 
 private Q_SLOTS:
-    void onEvents(const mobsya::ThymioNode::EventMap& events);
-    void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
+    void onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp);
+    void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp);
 
 private:
-    void plot(const QString& name, const QVariant& value, QVector<QtCharts::QXYSeries*>& series);
+    void plot(const QString& name, const QVariant& value, QVector<QtCharts::QXYSeries*>& series,
+              const QDateTime& timestamp);
 
     QMap<QString, QVector<QtCharts::QXYSeries*>> m_events;
     QMap<QString, QVector<QtCharts::QXYSeries*>> m_variables;

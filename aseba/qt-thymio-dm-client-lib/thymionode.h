@@ -96,9 +96,9 @@ Q_SIGNALS:
     void vmExecutionStarted();
     void vmExecutionStopped();
     void vmExecutionPaused(int line = 0);
-    void variablesChanged(const VariableMap& variables);
-    void groupVariablesChanged(const VariableMap& variables);
-    void events(const EventMap& variables);
+    void variablesChanged(const VariableMap& variables, const QDateTime& timestamp);
+    void groupVariablesChanged(const VariableMap& variables, const QDateTime& timestamp);
+    void events(const EventMap& variables, const QDateTime& timestamp);
     void eventsTableChanged(const QVector<EventDescription>& events);
     void vmExecutionError(VMExecutionError error, const QString& message, uint32_t line);
 
@@ -155,9 +155,9 @@ public:
 
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
-    void onVariablesChanged(VariableMap variables);
-    void onGroupVariablesChanged(VariableMap variables);
-    void onEvents(EventMap variables);
+    void onVariablesChanged(VariableMap variables, const QDateTime& timestamp);
+    void onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp);
+    void onEvents(const EventMap& variables, const QDateTime& timestamp);
     void onEventsTableChanged(const QVector<EventDescription>& events);
 
 

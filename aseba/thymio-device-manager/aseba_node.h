@@ -77,9 +77,11 @@ public:
     };
 
     using breakpoints = std::unordered_set<breakpoint>;
-    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
+    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map,
+                                                                  std::chrono::system_clock::time_point)>;
 
-    using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
+    using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map,
+                                                               std::chrono::system_clock::time_point)>;
 
     using vm_state_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, vm_execution_state)>;
     using vm_execution_state_command = fb::VMExecutionStateCommand;
@@ -201,7 +203,8 @@ private:
     void handle_description_messages(const Aseba::Message& m);
     void request_next_description_fragment();
 
-    void on_event_received(const std::unordered_map<std::string, property>& events);
+    void on_event_received(const std::unordered_map<std::string, property>& events,
+                           const std::chrono::system_clock::time_point& timestamp);
 
     node_id_t m_id;
     node_id m_uuid;
