@@ -4,7 +4,7 @@
 
 namespace Aseba {
 
-PlotTab::PlotTab(QWidget* parent) : QSplitter(parent) {
+PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 
     auto layout = new QVBoxLayout;
     m_chart = new QtCharts::QChart();
@@ -15,20 +15,19 @@ PlotTab::PlotTab(QWidget* parent) : QSplitter(parent) {
     this->setLayout(layout);
 
 
-    m_xAxis = new QDateTimeAxis;
-    // m_xAxis->setTickCount(1000);
-    m_xAxis->setFormat("hh::mm:ss.z");
+    m_xAxis = new QValueAxis;
+    // m_xAxis->setFormat("hh::mm:ss.z");
     m_chart->addAxis(m_xAxis, Qt::AlignBottom);
-    m_xAxis->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(1));
 
     m_yAxis = new QValueAxis;
     m_yAxis->setLabelFormat("%i");
     m_yAxis->setTitleText(tr("Values"));
     m_chart->addAxis(m_yAxis, Qt::AlignLeft);
 
-    QTimer* t = new QTimer(this);
-    connect(t, &QTimer::timeout, this, [this]() { m_chart->scroll(5, 0); });
+    /*QTimer* t = new QTimer(this);
+    connect(t, &QTimer::timeout, this, [this]() { m_chart->scroll(-5, 0); });
     t->start(100);
+    */
 }
 
 
@@ -74,7 +73,7 @@ void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
         const QVariant& v = it.value();
         plot(event.key(), v, event.value());
     }
-    m_xAxis->setMax(QDateTime::currentDateTime());
+    m_xAxis->setMax(m_start.msecsTo(QDateTime::currentDateTime()) + 10);
 }
 
 void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
@@ -85,7 +84,7 @@ void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
         const QVariant& v = it.value().value();
         plot(event.key(), v, event.value());
     }
-    m_xAxis->setMax(QDateTime::currentDateTime());
+    m_xAxis->setMax(m_start.msecsTo(QDateTime::currentDateTime()) + 10);
 }
 
 
@@ -105,6 +104,7 @@ void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXY
             if(!serie) {
                 serie = new QtCharts::QLineSeries(this);
                 serie->setName(QStringLiteral("%1[%2]").arg(name).arg(i));
+                serie->setUseOpenGL(true);
                 m_chart->addSeries(serie);
                 serie->attachAxis(m_xAxis);
                 serie->attachAxis(m_yAxis);
@@ -119,7 +119,7 @@ void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXY
             if(d > m_yAxis->max()) {
                 m_yAxis->setMax(d + 1);
             }
-            serie->append(QDateTime::currentMSecsSinceEpoch(), d);
+            serie->append(m_start.msecsTo(QDateTime::currentDateTime()), d);
         }
     }
 }
