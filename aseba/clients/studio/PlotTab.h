@@ -12,7 +12,7 @@ class QValueAxis;
 
 namespace Aseba {
 
-class PlotTab : public QSplitter {
+class PlotTab : public QWidget {
     Q_OBJECT
 
 public:
@@ -39,10 +39,11 @@ private:
 
     std::shared_ptr<const mobsya::ThymioNode> m_thymio;
     QtCharts::QChart* m_chart;
-    QtCharts::QDateTimeAxis* m_xAxis;
+    QtCharts::QValueAxis* m_xAxis;
     QtCharts::QValueAxis* m_yAxis;
 
     bool m_range_init = false;
+    QDateTime m_start = QDateTime::currentDateTime();
 };
 
 }  // namespace Aseba
