@@ -131,10 +131,10 @@ FunctionEnd
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
- !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY} 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
+  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio Software Suite"
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
@@ -196,9 +196,6 @@ SectionGroup /e "-Thymio" GroupThymio
 ;  			File "README.en.txt"
 ;  		${EndIf}
 
-		;Store installation folder
-		WriteRegStr HKCU ${REGISTRY_KEY} "" $INSTDIR
-
 		;Create uninstaller
 		WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -215,7 +212,7 @@ SectionGroup /e "-Thymio" GroupThymio
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Uninstall).lnk" "$INSTDIR\Uninstall.exe"
 			; Doc
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)"
+			;CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)"
 ;  			${If} $Language == '1036'
 ;  				; French
 ;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/fr:start" "$INSTDIR\asebahelp.ico" "0"
@@ -236,9 +233,12 @@ SectionGroup /e "-Thymio" GroupThymio
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader.lnk" "$INSTDIR\bin\thymioupgrader.exe" "" "$INSTDIR\thymioupgrader.ico"
 			; Thymio wireless configurator
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Wireless Thymio Network Configurator.lnk" "$INSTDIR\bin\thymiownetconfig.exe" "" "$INSTDIR\thymiownetconfig.ico"
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
+			;CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
 		!insertmacro MUI_STARTMENU_WRITE_END
+		
+		;Store installation folder
+		WriteRegStr HKCU ${REGISTRY_KEY} "" $INSTDIR
 
 		@CPACK_NSIS_EXTRA_INSTALL_COMMANDS@
 	SectionEnd
