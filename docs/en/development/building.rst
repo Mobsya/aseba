@@ -42,7 +42,7 @@ Download and install the following components:
 .. csv-table::
    :header: "Dep", "Dowload", "Notes"
 
-   "Visual Studio 2017", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload
+   "Visual Studio 2017 (15.9.4+)", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload
    "Cmake 3.12+", `Website <https://cmake.org/download/>`__, Make sure the version of boost you choose is compatible with the cmake version
    "Boost 1.67+", `Website <https://www.boost.org/>`_ `x64 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe/download>`_ `x86 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-32.exe/download>`_
    "Qt 5.11.2+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt Charts`` component. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
