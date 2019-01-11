@@ -72,8 +72,12 @@ private:
 
     auto nodes_for_groups() const {
         auto grps = groups();
-        return grps | ranges::view::transform([this](auto&& g) { return m_client.nodes(g); }) | ranges::view::join |
-            ranges::to_vector;
+        std::vector<std::shared_ptr<mobsya::ThymioNode>> nodes;
+        auto view = grps | ranges::view::transform([this](auto&& g) { return m_client.nodes(g); });
+        for(auto&& g : view) {
+            ranges::copy(g, ranges::back_inserter(nodes));
+        }
+        return nodes;
     }
 
     const mobsya::ThymioDeviceManagerClient& m_client;
