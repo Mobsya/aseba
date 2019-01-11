@@ -376,7 +376,8 @@ private:
             const auto ptr = node.second.lock();
             if(!ptr)
                 continue;
-            nodes.emplace_back(fb::CreateNodeDirect(builder, ptr->uuid().fb(builder), ptr->group()->uuid().fb(builder),
+            nodes.emplace_back(fb::CreateNodeDirect(builder, ptr->uuid().fb(builder),
+                                                    ptr->group() ? ptr->group()->uuid().fb(builder) : 0,
                                                     mobsya::fb::NodeStatus(ptr->get_status()), ptr->type(),
                                                     ptr->friendly_name().c_str(), node_capabilities(ptr)));
         }
