@@ -1,7 +1,7 @@
 #include "NodeTabsManager.h"
-namespace Aseba {
+#include "LockButton.h"
 
-//////
+namespace Aseba {
 
 NodeTabsManager::NodeTabsManager(const mobsya::ThymioDeviceManagerClient& client) : m_client(client) {
     connect(this, &QTabWidget::currentChanged, this, &NodeTabsManager::tabChanged);
@@ -30,8 +30,26 @@ void NodeTabsManager::addTab(const QUuid& device) {
         QTabWidget::setTabEnabled(index, false);
     }
 
+    // Remove the close button on node tabs
     tabBar()->setTabButton(index, QTabBar::RightSide, 0);
     tabBar()->setTabButton(index, QTabBar::LeftSide, 0);
+
+    auto lock = new LockButton(this);
+    tabBar()->setTabButton(index, QTabBar::RightSide, lock);
+
+    connect(tab, &NodeTab::statusChanged, this, [this, tab, lock]() {
+        const auto thymio = tab->thymio();
+        if(!thymio) {
+            lock->setUnAvailable();
+            return;
+        }
+        switch(thymio->status()) {
+            case mobsya::ThymioNode::Status::Ready: lock->setLocked(); break;
+            case mobsya::ThymioNode::Status::Available: lock->setUnlocked(); break;
+            default: lock->setUnAvailable(); break;
+        }
+    });
+    connect(lock, &QAbstractButton::clicked, tab, &NodeTab::toggleLock);
 
     connect(tab, &NodeTab::executionStateChanged, this, &NodeTabsManager::nodeStatusChanged);
 

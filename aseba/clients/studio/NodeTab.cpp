@@ -126,11 +126,6 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
         connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
 
-
-        connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
-            if(node->status() == mobsya::ThymioNode::Status::Available)
-                node->lock();
-        });
         onStatusChanged();
         updateAsebaVMDescription();
     }
@@ -138,6 +133,15 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
 
 const std::shared_ptr<const mobsya::ThymioNode> NodeTab::thymio() const {
     return m_thymio;
+}
+
+void NodeTab::toggleLock() {
+    if(!m_thymio)
+        return;
+    if(m_thymio->status() == mobsya::ThymioNode::Status::Ready)
+        m_thymio->unlock();
+    else if(m_thymio->status() == mobsya::ThymioNode::Status::Available)
+        m_thymio->lock();
 }
 
 void NodeTab::reset() {
@@ -413,14 +417,14 @@ void NodeTab::onStatusChanged() {
                                                  QTreeView::EditTrigger::EditKeyPressed :
                                                  QTreeView::EditTrigger::NoEditTriggers);
     Q_EMIT executionStateChanged();
+    Q_EMIT statusChanged();
 }
 
 void NodeTab::updateStatusLabel() {
     QString statusStr;
     const auto status = m_thymio ? m_thymio->status() : mobsya::ThymioNode::Status::Disconnected;
 
-    if(status == mobsya::ThymioNode::Status::Disconnected || status == mobsya::ThymioNode::Status::Connected ||
-       status == mobsya::ThymioNode::Status::Available) {
+    if(status == mobsya::ThymioNode::Status::Disconnected || status == mobsya::ThymioNode::Status::Connected) {
         executionModeLabel->setText(tr("<b style='color:#CA3433'>Not connected</b>"));
         return;
     }
@@ -435,9 +439,21 @@ void NodeTab::updateStatusLabel() {
         case mobsya::ThymioNode::VMExecutionState::Running: statusLabel = tr("Running"); break;
     }
 
-    executionModeLabel->setText(QStringLiteral("<b style='color:%2'>%1 %3</b>")
-                                    .arg(statusLabel, busy ? "#57A0D3" : "#2E8B57",
-                                         busy ? tr("(Controlled by another application or user)") : ""));
+    QString text;
+    QString color;
+    switch(status) {
+        case mobsya::ThymioNode::Status::Ready: color = "#2E8B57"; break;
+        case mobsya::ThymioNode::Status::Available:
+            text = tr("(Not Locked)");
+            color = "#57A0D3";
+            break;
+        default:
+            text = tr("(Controlled by another application or user)");
+            color = "#57A0D3";
+            break;
+    }
+
+    executionModeLabel->setText(QStringLiteral("<b style='color:%2'>%1 %3</b>").arg(statusLabel, color, text));
 }
 
 void NodeTab::updateAsebaVMDescription() {

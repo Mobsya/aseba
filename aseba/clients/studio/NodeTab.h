@@ -58,6 +58,7 @@ Q_SIGNALS:
     void executionStateChanged();
     void plotEventRequested(const QString& name);
     void plotVariableRequested(const QString& name);
+    void statusChanged();
 
 protected:
     void setupWidgets();
@@ -71,6 +72,9 @@ public Q_SLOTS:
     // void sortCompleterModel();
 
 protected Q_SLOTS:
+
+    void toggleLock();
+
     void reset();
     void run();
     void pause();

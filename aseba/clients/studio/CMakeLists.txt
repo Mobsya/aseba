@@ -25,6 +25,8 @@ add_executable(asebastudio WIN32
     PlotTab.cpp
     NodeTabsManager.cpp
     NodeTabsManager.h
+    LockButton.h
+    LockButton.cpp
     TargetFunctionsModel.cpp
     TargetFunctionsModel.h
     main.cpp
