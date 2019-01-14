@@ -108,6 +108,11 @@ class _BasicNode {
             tmp.set(map_or_key, value);
             map_or_key = tmp
         }
+        else if(typeof map_or_key === "string" || map_or_key instanceof String) {
+            const tmp = new Map();
+            tmp.set(map_or_key, null);
+            map_or_key = tmp
+        }
         return await this._client._emit_events(this._id, map_or_key);
     }
 }
@@ -126,8 +131,8 @@ export class Group extends _BasicNode {
         return this._variables;
     }
 
-    set variables(variables) {
-        this._client._set_variables(this._id, variables);
+    async setVariables(variables) {
+        return this._client._set_variables(this._id, variables);
     }
 
     get eventsDescriptions() {
@@ -135,7 +140,7 @@ export class Group extends _BasicNode {
     }
 
     async setEventsDescriptions(events) {
-        this._client._set_events_descriptions(this._id, events)
+        return await this._client._set_events_descriptions(this._id, events)
     }
 
     get nodes() {
@@ -320,7 +325,7 @@ export class Node extends _BasicNode {
         return await this._client._set_variables(this._id, map);
     }
 
-    async setSharedVariabkes(variables) {
+    async setSharedVariables(variables) {
         return await this._group.setVariables(variables)
     }
 
@@ -551,7 +556,7 @@ export class Client {
                 let req = this._get_request(msg.requestId())
                 if(req) {
                     //TODO
-                    req._trigger_error(null)
+                    req._trigger_error("Compilarion error")
                 }
                 break
             }
@@ -619,6 +624,7 @@ export class Client {
                 group._events = events
                 if(group.onEventsDescriptionsChanged)
                     group.onEventsDescriptionsChanged(events)
+                break;
             }
 
             case mobsya.fb.AnyMessage.VMExecutionStateChanged: {
