@@ -109,7 +109,6 @@ void NodeTabsManager::onNodeRemoved(std::shared_ptr<mobsya::ThymioNode> thymio) 
     if(it != m_tabs.end()) {
         (*it)->setThymio({});
         auto idx = QTabWidget::indexOf(*it);
-        QTabWidget::setTabEnabled(idx, false);
     }
 }
 
