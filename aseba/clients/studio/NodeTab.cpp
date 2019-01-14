@@ -410,7 +410,9 @@ void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, con
 }
 
 void NodeTab::onStatusChanged() {
-    bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
+    const bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
+    const bool connected = m_thymio && m_thymio->status() != mobsya::ThymioNode::Status::Disconnected;
+    this->setEnabled(connected);
     m_eventsWidget->setEditable(ready);
     m_constantsWidget->setEditable(ready);
     m_vm_variables_view->setEditTriggers(ready ? QTreeView::EditTrigger::DoubleClicked |
