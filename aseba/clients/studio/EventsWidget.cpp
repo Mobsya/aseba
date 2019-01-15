@@ -37,8 +37,8 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_view->setItemDelegateForColumn(1, new SpinBoxDelegate(0, ASEBA_MAX_EVENT_ARG_COUNT, this));
     m_view->setMinimumHeight(100);
     m_view->setSecondColumnLongestContent("255###");
-    m_view->resizeRowsToContents();
     m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_view->resizeRowsToContents();
 
     QHBoxLayout* eventsAddRemoveLayout = new QHBoxLayout;
     eventsAddRemoveLayout->addWidget(new QLabel(tr("<b>Events</b>")));
@@ -90,6 +90,7 @@ void EventsWidget::setModel(QAbstractItemModel* model) {
     m_view->setModel(model);
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &EventsWidget::eventsSelectionChanged);
+    m_view->resizeRowsToContents();
 }
 
 
