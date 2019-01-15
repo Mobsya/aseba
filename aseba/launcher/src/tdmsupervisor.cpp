@@ -13,12 +13,7 @@ TDMSupervisor::TDMSupervisor(const Launcher& launcher, QObject* parent)
     : QObject(parent), m_launcher(launcher), m_tdm_process(nullptr), m_launches(0) {}
 
 
-TDMSupervisor::~TDMSupervisor() {
-    stopTDM();
-    if(m_tdm_process) {
-        m_tdm_process->waitForFinished(500);
-    }
-}
+TDMSupervisor::~TDMSupervisor() {}
 
 void TDMSupervisor::startLocalTDM() {
     if(m_tdm_process != nullptr)
@@ -71,13 +66,5 @@ void TDMSupervisor::startLocalTDM() {
     // to split the path if it contains space
     m_tdm_process->start(path, QStringList{});
 }
-
-void TDMSupervisor::stopTDM() {
-    if(m_tdm_process) {
-        m_tdm_process->disconnect();
-        m_tdm_process->kill();
-    }
-}
-
 
 }  // namespace mobsya

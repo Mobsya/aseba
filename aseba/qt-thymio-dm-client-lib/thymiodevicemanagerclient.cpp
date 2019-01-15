@@ -93,5 +93,12 @@ void ThymioDeviceManagerClient::onEndpointDisconnected() {
     m_endpoints.erase(it);
 }
 
+void ThymioDeviceManagerClient::requestDeviceManagersShutdown() {
+    for(auto&& ep : m_endpoints.values()) {
+        if(ep && ep->isLocalhostPeer())
+            ep->requestDeviceManagerShutdown();
+    }
+}
+
 
 }  // namespace mobsya

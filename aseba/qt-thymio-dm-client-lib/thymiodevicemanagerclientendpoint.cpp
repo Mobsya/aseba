@@ -84,6 +84,12 @@ std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid&
 
 void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
     switch(msg.message_type()) {
+        case mobsya::fb::AnyMessage::ConnectionHandshake: {
+            auto message = msg.as<mobsya::fb::ConnectionHandshake>();
+            m_islocalhostPeer = message->localhostPeer();
+            // TODO handle versionning, etc
+            break;
+        }
         case mobsya::fb::AnyMessage::NodesChanged: {
             auto message = msg.as<mobsya::fb::NodesChanged>();
             onNodesChanged(*(message->UnPack()));
@@ -312,6 +318,19 @@ void ThymioDeviceManagerClientEndpoint::cancelAllRequests() {
         r->cancel();
     }
     m_pending_requests.clear();
+}
+
+bool ThymioDeviceManagerClientEndpoint::isLocalhostPeer() const {
+    return m_islocalhostPeer;
+}
+
+Request ThymioDeviceManagerClientEndpoint::requestDeviceManagerShutdown() {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    fb::DeviceManagerShutdownRequestBuilder msg(builder);
+    msg.add_request_id(r.id());
+    write(wrap_fb(builder, msg.Finish()));
+    return r;
 }
 
 void ThymioDeviceManagerClientEndpoint::onConnected() {

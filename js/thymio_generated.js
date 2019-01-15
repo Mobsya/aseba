@@ -171,29 +171,30 @@ mobsya.fb.VMExecutionError = {
 mobsya.fb.AnyMessage = {
   NONE: 0, 0: 'NONE',
   ConnectionHandshake: 1, 1: 'ConnectionHandshake',
-  RequestListOfNodes: 2, 2: 'RequestListOfNodes',
-  RequestNodeAsebaVMDescription: 3, 3: 'RequestNodeAsebaVMDescription',
-  LockNode: 4, 4: 'LockNode',
-  UnlockNode: 5, 5: 'UnlockNode',
-  RenameNode: 6, 6: 'RenameNode',
-  CompileAndLoadCodeOnVM: 7, 7: 'CompileAndLoadCodeOnVM',
-  NodesChanged: 8, 8: 'NodesChanged',
-  NodeAsebaVMDescription: 9, 9: 'NodeAsebaVMDescription',
-  RequestCompleted: 10, 10: 'RequestCompleted',
-  Error: 11, 11: 'Error',
-  CompilationResultFailure: 12, 12: 'CompilationResultFailure',
-  CompilationResultSuccess: 13, 13: 'CompilationResultSuccess',
-  WatchNode: 14, 14: 'WatchNode',
-  VariablesChanged: 15, 15: 'VariablesChanged',
-  SetVariables: 16, 16: 'SetVariables',
-  EventsDescriptionsChanged: 17, 17: 'EventsDescriptionsChanged',
-  RegisterEvents: 18, 18: 'RegisterEvents',
-  SendEvents: 19, 19: 'SendEvents',
-  EventsEmitted: 20, 20: 'EventsEmitted',
-  SetBreakpoints: 21, 21: 'SetBreakpoints',
-  SetBreakpointsResponse: 22, 22: 'SetBreakpointsResponse',
-  SetVMExecutionState: 23, 23: 'SetVMExecutionState',
-  VMExecutionStateChanged: 24, 24: 'VMExecutionStateChanged'
+  DeviceManagerShutdownRequest: 2, 2: 'DeviceManagerShutdownRequest',
+  RequestListOfNodes: 3, 3: 'RequestListOfNodes',
+  RequestNodeAsebaVMDescription: 4, 4: 'RequestNodeAsebaVMDescription',
+  LockNode: 5, 5: 'LockNode',
+  UnlockNode: 6, 6: 'UnlockNode',
+  RenameNode: 7, 7: 'RenameNode',
+  CompileAndLoadCodeOnVM: 8, 8: 'CompileAndLoadCodeOnVM',
+  NodesChanged: 9, 9: 'NodesChanged',
+  NodeAsebaVMDescription: 10, 10: 'NodeAsebaVMDescription',
+  RequestCompleted: 11, 11: 'RequestCompleted',
+  Error: 12, 12: 'Error',
+  CompilationResultFailure: 13, 13: 'CompilationResultFailure',
+  CompilationResultSuccess: 14, 14: 'CompilationResultSuccess',
+  WatchNode: 15, 15: 'WatchNode',
+  VariablesChanged: 16, 16: 'VariablesChanged',
+  SetVariables: 17, 17: 'SetVariables',
+  EventsDescriptionsChanged: 18, 18: 'EventsDescriptionsChanged',
+  RegisterEvents: 19, 19: 'RegisterEvents',
+  SendEvents: 20, 20: 'SendEvents',
+  EventsEmitted: 21, 21: 'EventsEmitted',
+  SetBreakpoints: 22, 22: 'SetBreakpoints',
+  SetBreakpointsResponse: 23, 23: 'SetBreakpointsResponse',
+  SetVMExecutionState: 24, 24: 'SetVMExecutionState',
+  VMExecutionStateChanged: 25, 25: 'VMExecutionStateChanged'
 };
 
 /**
@@ -326,10 +327,33 @@ mobsya.fb.ConnectionHandshake.prototype.tokenArray = function() {
 };
 
 /**
+ * @returns {boolean}
+ */
+mobsya.fb.ConnectionHandshake.prototype.localhostPeer = function() {
+  var offset = this.bb.__offset(this.bb_pos, 12);
+  return offset ? !!this.bb.readInt8(this.bb_pos + offset) : false;
+};
+
+/**
+ * @param {boolean} value
+ * @returns {boolean}
+ */
+mobsya.fb.ConnectionHandshake.prototype.mutate_localhostPeer = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 12);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeInt8(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
  * @param {flatbuffers.Builder} builder
  */
 mobsya.fb.ConnectionHandshake.startConnectionHandshake = function(builder) {
-  builder.startObject(4);
+  builder.startObject(5);
 };
 
 /**
@@ -387,9 +411,99 @@ mobsya.fb.ConnectionHandshake.startTokenVector = function(builder, numElems) {
 
 /**
  * @param {flatbuffers.Builder} builder
+ * @param {boolean} localhostPeer
+ */
+mobsya.fb.ConnectionHandshake.addLocalhostPeer = function(builder, localhostPeer) {
+  builder.addFieldInt8(4, +localhostPeer, +false);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
 mobsya.fb.ConnectionHandshake.endConnectionHandshake = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+mobsya.fb.DeviceManagerShutdownRequest = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {mobsya.fb.DeviceManagerShutdownRequest}
+ */
+mobsya.fb.DeviceManagerShutdownRequest.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {mobsya.fb.DeviceManagerShutdownRequest=} obj
+ * @returns {mobsya.fb.DeviceManagerShutdownRequest}
+ */
+mobsya.fb.DeviceManagerShutdownRequest.getRootAsDeviceManagerShutdownRequest = function(bb, obj) {
+  return (obj || new mobsya.fb.DeviceManagerShutdownRequest).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+mobsya.fb.DeviceManagerShutdownRequest.prototype.requestId = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param {number} value
+ * @returns {boolean}
+ */
+mobsya.fb.DeviceManagerShutdownRequest.prototype.mutate_request_id = function(value) {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+
+  if (offset === 0) {
+    return false;
+  }
+
+  this.bb.writeUint32(this.bb_pos + offset, value);
+  return true;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+mobsya.fb.DeviceManagerShutdownRequest.startDeviceManagerShutdownRequest = function(builder) {
+  builder.startObject(1);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} requestId
+ */
+mobsya.fb.DeviceManagerShutdownRequest.addRequestId = function(builder, requestId) {
+  builder.addFieldInt32(0, requestId, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+mobsya.fb.DeviceManagerShutdownRequest.endDeviceManagerShutdownRequest = function(builder) {
   var offset = builder.endObject();
   return offset;
 };

@@ -13,6 +13,7 @@
 #include <QtSingleApplication>
 #include "launcher.h"
 #include "tdmsupervisor.h"
+#include "launcherwindow.h"
 
 int main(int argc, char** argv) {
 
@@ -43,6 +44,7 @@ int main(int argc, char** argv) {
         qWarning("Already launched, exiting");
         return 0;
     }
+    app.setQuitOnLastWindowClosed(false);
 
     mobsya::register_qml_types();
 
@@ -65,7 +67,7 @@ int main(int argc, char** argv) {
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QQuickWidget w;
+    mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
@@ -74,7 +76,13 @@ int main(int argc, char** argv) {
     w.setMinimumSize(1024, 640);
     w.showNormal();
 
+    QObject::connect(&w, &mobsya::LauncherWindow::closingRequested, [&client]() {
+        client.requestDeviceManagersShutdown();
+        QTimer::singleShot(1000, qApp, &QCoreApplication::quit);
+    });
+
     app.setActivationWindow(&w, true);
+    app.setQuitOnLastWindowClosed(false);
 
     return app.exec();
 }
