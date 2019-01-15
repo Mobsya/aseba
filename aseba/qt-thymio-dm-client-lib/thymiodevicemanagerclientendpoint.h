@@ -22,6 +22,10 @@ public:
     QUrl websocketConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
 
+    bool isLocalhostPeer() const;
+    Request requestDeviceManagerShutdown();
+
+
     Request renameNode(const ThymioNode& node, const QString& newName);
     Request setNodeExecutionState(const ThymioNode& node, fb::VMExecutionStateCommand cmd);
     BreakpointsRequest setNodeBreakPoints(const ThymioNode& node, const QVector<unsigned>& breakpoints);
@@ -70,6 +74,7 @@ private:
     QTcpSocket* m_socket;
     quint32 m_message_size;
     quint16 m_ws_port = 0;
+    bool m_islocalhostPeer = false;
     QMap<detail::RequestDataBase::request_id, detail::RequestDataBase::shared_ptr> m_pending_requests;
 };
 

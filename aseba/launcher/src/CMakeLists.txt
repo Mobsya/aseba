@@ -22,6 +22,8 @@ add_executable(thymio-launcher WIN32
     main.cpp
     launcher.h
     launcher.cpp
+    launcherwindow.h
+    launcherwindow.cpp
     tdmsupervisor.h
     tdmsupervisor.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc

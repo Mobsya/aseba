@@ -182,6 +182,11 @@ public:
 
         mLogTrace("-> {}", EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
+            case mobsya::fb::AnyMessage::DeviceManagerShutdownRequest: {
+                if(m_local_endpoint)
+                    m_ctx.stop();
+                break;
+            }
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
             case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription: {
                 auto req = msg.as<fb::RequestNodeAsebaVMDescription>();
@@ -727,7 +732,7 @@ private:
         flatbuffers::FlatBufferBuilder builder;
         write_message(wrap_fb(builder,
                               fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version,
-                                                            tdm::maxAppEndPointMessageSize)));
+                                                            tdm::maxAppEndPointMessageSize, 0, m_local_endpoint)));
 
         // the client do not have a compatible protocol version, bailing out
         if(m_protocol_version == 0) {

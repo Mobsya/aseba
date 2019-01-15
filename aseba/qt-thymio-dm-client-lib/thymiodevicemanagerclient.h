@@ -39,6 +39,8 @@ public:
         return ranges::view::all(m_nodes);
     }
 
+    void requestDeviceManagersShutdown();
+
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);
     void onServiceRemoved(QZeroConfService);

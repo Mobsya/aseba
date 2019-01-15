@@ -14,7 +14,6 @@ public:
 public Q_SLOTS:
 
     void startLocalTDM();
-    void stopTDM();
 
 Q_SIGNALS:
 

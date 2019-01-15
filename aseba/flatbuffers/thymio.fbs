@@ -24,6 +24,14 @@ table ConnectionHandshake {
     //A token represented as a byte sequence.
     //Tokens are notably used to identify local clients and to give special permissions to applications
     token:[ubyte];
+
+    //In the server -> client direction, this is set to true if the client is on the same machine as the server
+    localhostPeer:bool = false;
+}
+
+//Stop the device manager
+table DeviceManagerShutdownRequest {
+    request_id:uint;
 }
 
 ///A node id
@@ -343,6 +351,7 @@ table EventsDescriptionsChanged {
 
 union AnyMessage {
     ConnectionHandshake,
+    DeviceManagerShutdownRequest,
     RequestListOfNodes,
     RequestNodeAsebaVMDescription,
     LockNode,
