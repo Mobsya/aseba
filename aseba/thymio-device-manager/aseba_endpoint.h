@@ -84,7 +84,9 @@ public:
     }
 
     static pointer create_for_serial(boost::asio::io_context& io) {
-        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+        ptr->m_group = group::make_group_for_endpoint(io, ptr);
+        return ptr;
     }
 #endif
 
