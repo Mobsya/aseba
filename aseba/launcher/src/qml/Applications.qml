@@ -14,6 +14,11 @@ ListModel {
         return Utils.openUrl(url)
     }
 
+    function launch_scratch(device) {
+        const url = "http://0.0.0.0:8601/#device=%2&ws=%3".arg(device.id).arg(device.websocketEndpoint())
+        return Utils.openUrl(url)
+    }
+
     function launch_studio(device) {
         var program = Utils.search_program("asebastudio")
         if(!program)
@@ -30,6 +35,7 @@ ListModel {
 
     property var launch_functions : {
         "blockly" : launch_blockly,
+        "scratch" : launch_scratch,
         "vplClassic" : launch_vplClassic,
         "studio" : launch_studio
     }
@@ -46,10 +52,11 @@ ListModel {
 //        name: "VPL"
 //        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
 //    }
-    //ListElement {
-    //    name: "Scatch"
-    //    animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
-    //}
+    ListElement {
+        appId: "scratch"
+        name: "Scatch"
+        animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
+    }
 
     ListElement {
         appId: "blockly"
