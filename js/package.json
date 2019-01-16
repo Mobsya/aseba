@@ -1,20 +1,28 @@
 {
   "name": "@mobsya/thymio-api",
-  "version": "0.3.1",
+  "version": "0.9.0",
   "description": "A JS api to communicate with Thymio from node and browsers",
   "dependencies": {
+    "@cor3ntin/flexbuffers-wasm": "0.0.14",
+    "@types/flatbuffers": "^1.9.0",
+    "@types/lodash": "^4.14.119",
+    "@types/ws": "^6.0.1",
+    "flatbuffers": "^1.10.2",
     "isomorphic-ws": "^4.0.1",
     "lodash": "^4.17.11",
-    "ws": "^5.2.1"
+    "ws": "^6.1.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "Mobsya",
   "license": "ISC",
-  "main": "thymio.js",
+  "main": "dist/thymio.js",
+  "types": "dist/thymio.d.ts",
   "optionalDependencies": {
     "bufferutil": "^3.0.5",
     "utf-8-validate": "^4.0.2"

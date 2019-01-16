@@ -2,11 +2,15 @@
 
 /** @module Mobsya/thymio */
 
-import flatbuffers from './flatbuffers.js';
+import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
-import FlexBuffers from "./flexbuffers.js"
-import WebSocket from 'isomorphic-ws';
+import FlexBuffers from '@cor3ntin/flexbuffers-wasm';
+
+const WebSocket = require('isomorphic-ws');
+
+//import WebSocket from '';
 import { isEqual } from 'lodash';
+
 
 const MIN_PROTOCOL_VERSION = 1
 const PROTOCOL_VERSION = 1
@@ -23,12 +27,24 @@ const PROTOCOL_VERSION = 1
  * @external String
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String|String}
  */
-/**
+/**<
  * The built in Promise object.
  * @external Promise
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise|Promise}
  */
+
+ type Variables = Map<string, any>;
+ type Events = Map<string, any>;
+
 export class Request {
+
+    /** Error type of a failed request */
+    public ErrorType = mobsya.fb.ErrorType;
+
+    _promise : Promise<any>
+    private _then: (args: any) => void;
+    private _onerror: (args: any) => void;
+    private _request_id: number;
 
     constructor(request_id) {
         var then    = undefined;
@@ -51,22 +67,29 @@ export class Request {
     }
 }
 
-/** Error type of a failed request */
-Request.ErrorType = mobsya.fb.ErrorType;
-
 
 /** Description of an aseba virtual machine. */
 class AsebaVMDescription {
+
+    bytecode_size:number = 0;
+    data_size:number = 0;
+    stack_size:number = 0;
+
+    variables:Array<any>;
+    events:Array<any>;
+    functions:Array<any>;
+
     constructor() {
-        this.bytecode_size = this.data_size = this.stack_size = 0;
-        this.variables = []
-        this.functions = []
-        this.events    = []
     }
 }
 
 
 class EventDescription {
+
+    name:string;
+    fixed_size:number;
+    index:number;
+
     constructor() {
         this.name = ""
         this.fixed_size = 0
@@ -75,7 +98,11 @@ class EventDescription {
 }
 
 class _BasicNode {
-    constructor(client, id) {
+    protected  _monitoring_flags:number;
+    protected  _client:Client;
+    protected  _id:NodeId;
+
+    constructor(client :Client, id : NodeId) {
         this._monitoring_flags = 0
         this._client = client
         this._id = id;
@@ -119,6 +146,11 @@ class _BasicNode {
 
 export class Group extends _BasicNode {
 
+    _variables:any; //Todo fixme
+    _events:any; //Todo fixme
+    private _on_variables_changed: (variables: Variables) => void;
+    private _on_events_descriptions_changed: (events: EventDescription[]) => void;
+
     constructor(client, id) {
         super(client, id)
         this._variables = null;
@@ -129,6 +161,10 @@ export class Group extends _BasicNode {
 
     get variables() {
         return this._variables;
+    }
+
+    get events() {
+        return this._events;
     }
 
     async setVariables(variables) {
@@ -165,17 +201,36 @@ export class Group extends _BasicNode {
     }
 }
 
+export import NodeStatus = mobsya.fb.NodeStatus;
+import NodeType = mobsya.fb.NodeType;
+import VMExecutionState = mobsya.fb.VMExecutionState;
+
+
 
 /** Node */
 export class Node extends _BasicNode {
+
+
+    Status = mobsya.fb.NodeStatus;
+    VMExecutionState = mobsya.fb.VMExecutionState;
+    Type = mobsya.fb.NodeType;
+
+    private _status: NodeStatus;
+    private _type: NodeType;
+    private _desc: AsebaVMDescription = null;
+    _name: string;
+    private _on_vars_changed_cb: (variables: Variables) => void;
+    private _on_events_cb: (events: Events) => void;
+    private _group: Group;
+    private on_group_changed: (group: Group) => void;
+    onVmExecutionStateChanged : (...args: any) => void;
+    on_status_changed: (newStatus : NodeStatus) => void;
+    on_name_changed: (newStatus : string) => void;
+
     constructor(client, id, status, type) {
         super(client, id)
         this._status = status;
         this._type = type
-        this._desc   = null;
-        this._name   = null
-        this._on_vars_changed_cb = undefined;
-        this._on_events_cb = undefined;
         this._group = null
         this.on_group_changed = undefined;
         this.onVmExecutionStateChanged = undefined
@@ -258,7 +313,7 @@ export class Node extends _BasicNode {
      */
     async lock() {
         await this._client._lock_node(this._id)
-        this._status = Node.Status.ready
+        this._status = NodeStatus.ready
     }
 
     /** Unlock the device
@@ -269,7 +324,7 @@ export class Node extends _BasicNode {
      */
     async unlock() {
         return await this._client._unlock_node(this._id)
-        this._status = Node.Status.available
+        this._status = NodeStatus.available
     }
 
     /** Get the description from the device
@@ -330,7 +385,7 @@ export class Node extends _BasicNode {
     }
 
     async setEventsDescriptions(events) {
-        return await this._client.set_events_descriptions(this._id, events)
+        return await this._client._set_events_descriptions(this._id, events)
     }
 
 
@@ -399,22 +454,34 @@ export class Node extends _BasicNode {
 }
 
 class InvalidNodeIDException {
+
+    message: string;
+    name: string;
+
     constructor() {
-        this.message = message;
+        this.message = "Invalid Node Id";
         this.name = 'InvalidNodeIDException';
     }
 }
 
 class NodeId {
+
+    private _data: Uint8Array;
+
     constructor(array) {
         if(array.length != 16) {
             throw new InvalidNodeIDException()
         }
-        this.data = array
+        this._data = array
     }
+
+    get data() {
+        return this._data;
+    }
+
     toString() {
         let res = []
-        this.data.forEach(byte => {
+        this._data.forEach(byte => {
                 res.push(byte.toString(16).padStart(2, '0'))
                 if([4, 7, 10, 13].includes(res.length))
                     res.push('-');
@@ -424,18 +491,13 @@ class NodeId {
     }
 }
 
-/*
- * The status of a node
- */
-Node.Status = mobsya.fb.NodeStatus;
-Node.VMExecutionState = mobsya.fb.VMExecutionState;
-
-/*
- * The type of a node
- */
-Node.Type = mobsya.fb.NodeType;
 
 class WaitCB {
+
+    private _promise: Promise<any>;
+    private _then: (...args:any) => void;
+    private _onerror: (...args:any) => void;
+
     constructor() {
         var then    = undefined;
         var onerror = undefined;
@@ -462,17 +524,22 @@ class WaitCB {
  */
 export class Client {
 
+
+    private _requests: Map<number, Request>;
+    private _nodes:  Map<string, Node>;
+    private _flex:   FlexBuffers;
+    private _socket: WebSocket;
+
     /**
      *  @param {external:String} url : Web socket address
      *  @see lock
      */
     constructor(url) {
-
         //In progress requests (id : node)
         this._requests = new Map();
         //Known nodes (id : node)
         this._nodes    = new Map();
-        this._flex     = new FlexBuffers()
+        this._flex = new FlexBuffers();
         this._flex.onRuntimeInitialized = () => {
             this._socket = new WebSocket(url)
             this._socket.binaryType = 'arraybuffer';
@@ -494,7 +561,7 @@ export class Client {
 
     }
 
-    _onopen() {
+    private _onopen() {
         console.log("connected, sending protocol version")
         const builder = new flatbuffers.Builder();
         mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
@@ -503,7 +570,7 @@ export class Client {
         this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
-    _onmessage (event) {
+    private _onmessage (event) {
         let data = new Uint8Array(event.data)
         let buf  = new flatbuffers.ByteBuffer(data);
 
@@ -566,7 +633,7 @@ export class Client {
                 const nodes = this._nodes_from_id(id)
                 if(nodes.length == 0)
                     break;
-                const vars = {}
+                const vars = new Map<string, any>();
                 for(let i = 0; i < msg.varsLength(); i++) {
                     const v = msg.vars(i);
                     const myarray = Uint8Array.from(v.valueArray())
@@ -596,7 +663,7 @@ export class Client {
                 const node = this._nodes.get(id.toString())
                 if(!node || !node.onEvents)
                     break;
-                const vars = {}
+                const vars = new Map<string, any>();
                 for(let i = 0; i < msg.eventsLength(); i++) {
                     const v = msg.events(i);
                     const myarray = Uint8Array.from(v.valueArray())
@@ -696,7 +763,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _serialize_variables(builder, variables) {
+    private _serialize_variables(builder, variables) {
         const offsets = []
         if (!(variables instanceof Map)) {
             variables = new Map(Object.entries(variables))
@@ -708,7 +775,7 @@ export class Client {
         return mobsya.fb.SetVariables.createVarsVector(builder, offsets)
     }
 
-    _serialize_variable(builder, name, value) {
+    private _serialize_variable(builder, name, value) {
         const nameOffset = builder.createString(name)
         const buffer = this._flex.fromJSObject(value)
         const bufferOffset = mobsya.fb.NodeVariable.createValueVector(builder, buffer)
@@ -747,7 +814,7 @@ export class Client {
     }
 
 
-    _serialize_events_descriptions(builder, events) {
+    private _serialize_events_descriptions(builder, events) {
         const offsets = []
         events.forEach( (event) => {
             offsets.push(this._serialize_event_description(builder, event.name, event.fixed_size))
@@ -756,7 +823,7 @@ export class Client {
     }
 
 
-    _serialize_event_description(builder, name, fixed_size) {
+    private _serialize_event_description(builder, name, fixed_size) {
         const nameOffset = builder.createString(name)
         mobsya.fb.EventDescription.startEventDescription(builder)
         mobsya.fb.EventDescription.addName(builder, nameOffset)
@@ -820,7 +887,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _nodes_changed_as_node_list(msg) {
+    private _nodes_changed_as_node_list(msg) {
         let nodes = []
         for(let i = 0; i < msg.nodesLength(); i++) {
             const n = msg.nodes(i);
@@ -832,7 +899,7 @@ export class Client {
                 node._name = n.name()
                 this._nodes.set(id.toString(), node)
             }
-            if(n.status() == Node.Status.disconnected) {
+            if(n.status() == NodeStatus.disconnected) {
                 this._nodes.delete(id.toString())
             }
             nodes.push(node)
@@ -854,11 +921,11 @@ export class Client {
         return new Group(this, id)
     }
 
-    _id(fb_id) {
+    private _id(fb_id) {
         return fb_id ? new NodeId(fb_id.idArray()) : null
     }
 
-    _unserialize_aseba_vm_description(msg) {
+    private _unserialize_aseba_vm_description(msg) {
         let desc = new AsebaVMDescription()
         desc.bytecode_size = msg.bytecodeSize()
         desc.data_size  = msg.dataSize()
@@ -886,14 +953,14 @@ export class Client {
         return desc
     }
 
-    _create_node_id(builder, id) {
+    private _create_node_id(builder, id) {
         const offset = mobsya.fb.NodeId.createIdVector(builder, id.data);
         mobsya.fb.NodeId.startNodeId(builder)
         mobsya.fb.NodeId.addId(builder, offset)
         return mobsya.fb.NodeId.endNodeId(builder)
     }
 
-    _wrap_message_and_send(builder, offset, type) {
+    private _wrap_message_and_send(builder, offset, type) {
         mobsya.fb.Message.startMessage(builder)
         mobsya.fb.Message.addMessageType(builder, type)
         mobsya.fb.Message.addMessage(builder, offset)
@@ -902,7 +969,7 @@ export class Client {
         this._socket.send(builder.asUint8Array())
     }
 
-    _gen_request_id(min, max) {
+    private _gen_request_id() {
         let n = 0
         do {
             n = Math.floor(Math.random() * (0xffffffff - 2)) + 1
@@ -910,7 +977,7 @@ export class Client {
         return n
     }
 
-    _get_request(id) {
+    private _get_request(id) {
         const req = this._requests.get(id)
         if(req != undefined)
             this._requests.delete(id)
@@ -919,7 +986,7 @@ export class Client {
             }
             return req
     }
-    _prepare_request(req_id) {
+    private _prepare_request(req_id) {
         let req = new Request(req_id)
         this._requests.set(req_id, req)
         return req._promise
