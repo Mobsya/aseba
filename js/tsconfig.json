@@ -7,13 +7,6 @@
     "moduleResolution": "node",
     "declaration" : true,
     "esModuleInterop": true,
-    "lib": ["es2017", "dom"],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "*",
-        "dist/*"
-      ]
-    }
+    "lib": ["es2017", "dom"]
   }
 }
