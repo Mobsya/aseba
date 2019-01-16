@@ -10,8 +10,8 @@ set(timestamp_file ${CMAKE_CURRENT_BINARY_DIR}/timestamp.cmake)
 set(timestamp_file2 ${CMAKE_CURRENT_BINARY_DIR}/timestamp2.cmake)
 
 add_custom_target(thymio-js-api ALL
-    DEPENDS package.json thymio.ts ${timestamp_file} ${timestamp_file2}
-    SOURCES package.json thymio.ts thymio_generated.ts)
+    DEPENDS package.json src/thymio.ts ${timestamp_file} ${timestamp_file2}
+    SOURCES package.json src/thymio.ts dist/thymio_generated.ts)
 
 get_filename_component(ABSOLUTE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
 
@@ -24,13 +24,13 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E touch ${timestamp_file}
     COMMENT "thymio-js-api dependencies"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS package.json thymio.ts
+    DEPENDS package.json src/thymio.ts
 )
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.ts ${timestamp_file2}
-  COMMAND flatc --ts --no-fb-import --gen-mutable --gen-object-api -o "${CMAKE_CURRENT_SOURCE_DIR}/src/" ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/dist/thymio_generated.ts ${timestamp_file2}
+  COMMAND flatc --ts --no-fb-import --gen-mutable --gen-object-api -o "${CMAKE_CURRENT_SOURCE_DIR}/dist/" ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
   COMMAND ${CMAKE_COMMAND} -E touch ${timestamp_file2}
   DEPENDS flatc thymio-flatbuffers ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs ${timestamp_file}
-  COMMENT "Generating ${CMAKE_CURRENT_SOURCE_DIR}/thymio_generated.ts"
+  COMMENT "Generating ${CMAKE_CURRENT_SOURCE_DIR}/dist/thymio_generated.ts"
 )

@@ -3,7 +3,7 @@
 /** @module Mobsya/thymio */
 
 import {flatbuffers} from 'flatbuffers';
-import {mobsya} from './thymio_generated';
+import {mobsya} from 'thymio_generated';
 import FlexBuffers from '@cor3ntin/flexbuffers-wasm';
 
 const WebSocket = require('isomorphic-ws');
