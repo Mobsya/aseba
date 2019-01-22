@@ -183,7 +183,29 @@ export interface IBasicNode {
      * Unique Id of the node
      */
     readonly id : NodeId;
+
+    /**
+     * Request the TDM to dispatch modifications of the
+     * shared variables and event description for a group
+     * or a Thymio to this client.
+     *
+     * This *must* be called for the following event to be triggered
+     *  * [[IGroup.onEventsDescriptionsChanged]]
+     *  * [[IGroup.onVariablesChanged]]
+     *  * [[INode.onEventsDescriptionsChanged]]
+     *  * [[INode.onSharedVariablesChanged]]
+     *
+     * @param flags bitfield of [[fb.mobsya.WatchableInfo]]
+     */
     watchSharedVariablesAndEvents(flags : number) : Promise<any>
+
+    /**
+     * Send events to a group
+     * Each event must be registed on the group (see [[setEventsDescriptions]])
+     *
+     * When sending events to Thymio 2, the value of each event must be an array of int16 matching [[EventDescription.fixed_size]]
+     * @param events events to broadcast
+     */
     emitEvents(events : Events) : Promise<any>
     emitEvents(key : string, value : any) : Promise<any>
     emitEvents(key : string) : Promise<any>
@@ -203,7 +225,6 @@ class BasicNode implements IBasicNode {
         this._id = id;
     }
 
-    /** return the node id*/
     get id() {
         return this._id
     }
@@ -239,23 +260,75 @@ class BasicNode implements IBasicNode {
     }
 }
 
+/**
+ * A group represents a list of robots
+ * sharing the same persistent state.
+ *
+ * Group hold the events and shared variables for all robots in the group.
+ *
+ * Events sent to a group or a robots will be broadcasted to all robots
+ * in that group.
+ *
+ */
 export interface IGroup extends IBasicNode {
-    readonly variables : any;
-    readonly eventsDescriptions : any;
+
+    /**
+     * Shared variables registered on this group
+     * @see [[setVariables]]
+     */
+    readonly variables : Variables;
+
+    /**
+     * List of events registered on this group
+     */
+    readonly eventsDescriptions : EventDescription[];
+
+     /**
+     * All nodes registed on this group
+     */
     readonly nodes : Node[];
 
     /**
      * @event
+     * Emitted each time the list of registered events changes
+     * @see [[watchSharedVariablesAndEvents]]
      */
     onEventsDescriptionsChanged : (events: EventDescription[]) => void;
     /**
      * @event
+     * Emitted each time the list of registered variables changes.
+     * @see [[watchSharedVariablesAndEvents]]
      */
     onVariablesChanged : (variables: Variables) => void;
 
 
+    /**
+     * Set the shared variables registered on the group.
+     *
+     * @param variables variables to set. Will erase any previous
+     * registered variables.
+     *
+     * This client must holds a lock on at least one node of this group
+     * for the operation to be sucessful
+     *
+     * @see [[INode.lock]]
+     *
+     */
     setVariables(variables : Variables) : Promise<any>;
-    setEventsDescriptions(events : Array<EventDescription>)  : Promise<any>;
+
+    /**
+     * Set the events registered on the group.
+     *
+     * @param events variables to set. Will erase any previously
+     * registered events.
+     *
+     * This client must holds a lock on at least one node of this group
+     * for the operation to be sucessful
+     *
+     * @see [[INode.lock]]
+     *
+     */
+    setEventsDescriptions(events : EventDescription[])  : Promise<any>;
 
 }
 
@@ -653,12 +726,12 @@ export class Node extends BasicNode implements INode {
  *
  */
 export interface IClient {
-    readonly nodes: Node[];
+    readonly nodes: INode[];
     /**
      * @param nodes Nodes whose status has changed
      * @event
      */
-    onNodesChanged: (nodes: Node[]) => void;
+    onNodesChanged: (nodes: INode[]) => void;
 }
 
 /**

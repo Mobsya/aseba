@@ -20,9 +20,6 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import subprocess, os
-subprocess.call('cd ../doxygen; doxygen', shell=True)
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -37,12 +34,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
-    'breathe',
-    'sphinx_js'
     ]
-
-breathe_projects = { "aseba": "../doxygen/doc/xml" }
-breathe_default_project = "aseba"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -178,7 +170,3 @@ texinfo_documents = [
      author, 'Aseba', 'A set of tools which allow beginners to program robots easily and efficiently.',
      'Miscellaneous'),
 ]
-
-# js configuration
-js_source_path   = '../../js'
-jsdoc_config_path = '../../js/jsdoc.conf.json'

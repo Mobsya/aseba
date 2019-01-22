@@ -27,8 +27,7 @@ Welcome to Aseba's documentation!
    :caption: Developer Documentation:
 
    development/building
-   doxygen
-   js
+   Javascript API <https://mobsya.github.io/aseba/js/index.html>
 
 
 Indices and tables
