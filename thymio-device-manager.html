@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Thymio Device Manager &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mobsya.github.io/aseba/js/index.html">Javascript API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Thymio Device Manager</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/thymio-device-manager.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="thymio-device-manager">
+<h1>Thymio Device Manager<a class="headerlink" href="#thymio-device-manager" title="Permalink to this headline">¶</a></h1>
+<p>The Thymio Device Manager is a bridge between the Thymio robots and the various applications (Aseba Studio, VPL, Blockly, Scratch, etc).</p>
+<p>Starting with version 1.7, it is not possible to use the applications while a Thymio Device Manager is not running.</p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="launching-the-device-manager">
+<h3>Launching the Device Manager<a class="headerlink" href="#launching-the-device-manager" title="Permalink to this headline">¶</a></h3>
+<p>The Device Manager will be automatically started when you start the Thymio Launcher and it is therefore not necessary to launch it manually.
+However, it can be launched manually by executing the <code class="docutils literal notranslate"><span class="pre">thymio-device-manager</span></code> command.</p>
+<p>Note that only one single <code class="docutils literal notranslate"><span class="pre">Thymio</span> <span class="pre">Device</span> <span class="pre">Manager</span></code> instance can be launched on a computer.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">It is not recommended to launch <code class="docutils literal notranslate"><span class="pre">thymio-device-manager</span></code> as <code class="docutils literal notranslate"><span class="pre">root</span></code> or administrator</p>
+</div>
+</div>
+<div class="section" id="connecting-a-thymio-through-usb">
+<h3>Connecting a Thymio through USB<a class="headerlink" href="#connecting-a-thymio-through-usb" title="Permalink to this headline">¶</a></h3>
+<p>When plugging a Thymio in your computer, it will automatically be detected and made available by the Thymio Device Manager so that it can be used
+by the various applications of the Thymio Software Suite.
+Please note that you will need to launch the various applications through the launcher.</p>
+<p>If the Thymio Device Manager does not detect a device, make sure it is properly plugged in.</p>
+<p>On Linux, you might need to create the following <a class="reference external" href="https://en.wikipedia.org/wiki/Udev">udev rule</a> to give non-root users access to the USB devices.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span><span class="p">,</span> <span class="n">ATTRS</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;0617&quot;</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">&quot;0666&quot;</span>
+</pre></div>
+</div>
+<p>Please refer to the documentation of your distribution for more information about <code class="docutils literal notranslate"><span class="pre">udev</span></code> (<a class="reference external" href="https://wiki.archlinux.org/index.php/udev#About_udev_rules">Arch</a>, <a class="reference external" href="https://wiki.debian.org/udev">Debian</a>, <a class="reference external" href="http://manpages.ubuntu.com/manpages/xenial/man7/udev.7.html">Ubuntu</a>)</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The Thymio Device Manager does not support Thymios with a firmware 9 or older. Make sure to update your Thymio to the latest firmware available. Some features are only available with a firmware 13 or newer.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Thymio Device Manager does not support non-Thymios robots.</p>
+</div>
+</div>
+<div class="section" id="connecting-a-wireless-thymio">
+<h3>Connecting a Wireless Thymio<a class="headerlink" href="#connecting-a-wireless-thymio" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="#connecting-a-thymio-through-usb">Connecting a Thymio through USB</a>. You can pair multiple Thymios to the same dongle, and they will all be detected by the Thymio Device Manager.
+However, because of physical limitations, we advise against connecting more than 6 Thymios to the same dongle.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When connecting through a wireless dongle, it is important that the Thymios have an up to date firmware (at least version 13 or later).</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Thymios connected to the same dongle always form an implicit group ( they share the same events and shared variables).</p>
+</div>
+</div>
+<div class="section" id="connecting-a-simulated-thymio">
+<h3>Connecting a Simulated Thymio<a class="headerlink" href="#connecting-a-simulated-thymio" title="Permalink to this headline">¶</a></h3>
+<p>When launching a Playground scenario, the associated simulated Thymios will automatically connect to the device manager and become visible in the launcher.
+On windows, the <code class="docutils literal notranslate"><span class="pre">Bonjour</span></code> Service bust be running. On Linux, the  <code class="docutils literal notranslate"><span class="pre">avahi-deamon</span></code> service must be installed and running.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Thymio Device Manager does not support non-Thymios simulated robots</p>
+</div>
+</div>
+<div class="section" id="connecting-to-a-thymio-device-manager">
+<h3>Connecting to a Thymio Device Manager<a class="headerlink" href="#connecting-to-a-thymio-device-manager" title="Permalink to this headline">¶</a></h3>
+<p>The Thymio Device Manager is accessed by applications (launcher, studio) through a randomly assigned port which is discovered by zeroconf.
+In order to be able to use the Thymio Device Manager and any other Thymio Software, make sure your computer or system administrator does not block zeroconf (avahi, or bonjour).</p>
+<p>Applications are able to see and interact with Thymios connected on other computers from the same network because Thymio Device Manager makes itself visible
+on the network through zeroconf.</p>
+<p>Web-based applications such as <code class="docutils literal notranslate"><span class="pre">Scratch</span></code> and <code class="docutils literal notranslate"><span class="pre">Blockly</span></code> access the Device Manager through the port <code class="docutils literal notranslate"><span class="pre">8597</span></code>. Make sure this port is not blocked by your system administrator.</p>
+</div>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<p>The Thymio Device Manager introduces a few notions and concepts used by other applications.</p>
+<div class="section" id="thymio-status">
+<h3>Thymio Status<a class="headerlink" href="#thymio-status" title="Permalink to this headline">¶</a></h3>
+<p>Since the Thymio Device Manager allow the use of Thymios connected to other computers as well as launching multiple applications at the same time, a notion of status is
+introduced to prevent concurrent access to the Thymios.
+Thymios may be in any of these statuses:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Connected</span></code> : The Thymio was detected by the Thymio Device Manager but can not be used yet as its state needs to be synchronized. A Thymio should never be in this state more than a few seconds</li>
+<li><code class="docutils literal notranslate"><span class="pre">Available</span></code> : The Thymio can be used</li>
+<li><code class="docutils literal notranslate"><span class="pre">Ready</span></code>     : You are using this Thymio, no one can send code or other data to it until you are done using it.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Busy</span></code>      : Someone else is using the Thymio; You can see the state of its variables, events, etc but not send code or set variables to it.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Disconnected</span></code> : The Thymio was physically disconnected or is too far from the dongle. A disconnected Thymio is not usable.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p>A Group is a set of Thymios that share the same definitions of events as well as the same shared variables.
+Thymios in the same group can also send each other events.</p>
+<p>Events send by applications are sent to all Thymios in the same group.</p>
+<p>Thymios connected to the same dongle implicitly share the same group.
+In the future, it will be possible to create groups from multiple dongle or usb-connected Thymios as well as simulated Thymios, however, Thymios connected to the same dongle
+can never be in different groups.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some applications such as <code class="docutils literal notranslate"><span class="pre">VPL</span></code> do not support groups.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Datas associated with groups ( events and shared variables ) are lost when the Device Manager is closed.</p>
+</div>
+</div>
+<div class="section" id="reconnection">
+<h3>Reconnection<a class="headerlink" href="#reconnection" title="Permalink to this headline">¶</a></h3>
+<p>Thymios are uniquely identified and so will seamlessly reconnect after being unplugged or rebooted.</p>
+<p>The Device Manager will try to put the Thymios in the same group it was in before the disconnection
+and restore the events and shared variables.
+In some cases, this is not possible and so some events and shared variables may be lost.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This feature requires a firmware version 13 or greater</p>
+</div>
+</div>
+<div class="section" id="permissions">
+<h3>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h3>
+<p>While the Device Manager does not have user accounts, it offers a rudimentary permission system.
+Notably:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Renaming a Thymio is only possible from the same machine the Thymio is connected to</li>
+<li>Force Stopping(stopping an otherwise busy Thymio) is only possible from the same machine the Thymio is connected to.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="writing-applications-compatible-with-the-thymio-device-manager">
+<h2>Writing Applications compatible with the Thymio Device Manager<a class="headerlink" href="#writing-applications-compatible-with-the-thymio-device-manager" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Applications interact with the Device Manager through a stateful endpoint which can either be:</dt>
+<dd><ul class="first last simple">
+<li>A tcp socket</li>
+<li>A WebSocket</li>
+</ul>
+</dd>
+</dl>
+<p>Both endpoints expect a <a class="reference external" href="https://github.com/Mobsya/aseba/blob/master/aseba/flatbuffers/thymio.fbs">flexbuffer-based protocol</a>.
+For convenience, Mobsya provides 2 APIs: One JS based compatible with NPM and Web-based applications, as well as a Qt-based API  which we usee for the luncher, Studio and VPL classic</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

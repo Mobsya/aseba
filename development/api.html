@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Developing applications for Thymio &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mobsya.github.io/aseba/js/index.html">Javascript API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Developing applications for Thymio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/development/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="developing-applications-for-thymio">
+<h1>Developing applications for Thymio<a class="headerlink" href="#developing-applications-for-thymio" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="connection-to-the-device-manager">
+<h2>Connection to the device manager<a class="headerlink" href="#connection-to-the-device-manager" title="Permalink to this headline">¶</a></h2>
+<p>Instead of communicating directly with a Thymio, applications communicate with the Thymio Device Manager.</p>
+<p>While developing an application, make sure the Thymio Device Manager is running.</p>
+<p>It is possible to control more than one Thymio through the same connection, therefore, an application should only open a single connection
+to the device manager.</p>
+<dl class="docutils">
+<dt>The device manager exposes 2 endpoints</dt>
+<dd><ul class="first last simple">
+<li>A TCP endpoint on an ephemeral port</li>
+<li>A WebSocket endpoint on a fixed port: <code class="docutils literal notranslate"><span class="pre">8597</span></code></li>
+</ul>
+</dd>
+</dl>
+<p>Both endpoints use the same flatbuffer-based protocol.</p>
+<div class="section" id="device-manager-discovery">
+<h3>Device Manager Discovery<a class="headerlink" href="#device-manager-discovery" title="Permalink to this headline">¶</a></h3>
+<p>To discover the available Device Manager, client application must scan the <code class="docutils literal notranslate"><span class="pre">_mobsya._tcp</span></code> service using Bonjour or avahi.
+Each Device Manager is uniquely identifiable through the <code class="docutils literal notranslate"><span class="pre">uuid</span></code> service txt record, which is helpful as a given Device Manager might be
+visible on multiple interfaces.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Qt API handles discovery automatically.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The JS API does not provide a discovery facility as Web browsers can’t access the zero-conf records. Instead, Web applications need to obtain the connection url out-of-band, for example by passing it as an URL query parameter.</p>
+</div>
+</div>
+</div>
+<div class="section" id="protocol-overview">
+<h2>Protocol Overview<a class="headerlink" href="#protocol-overview" title="Permalink to this headline">¶</a></h2>
+<p>The protocol is based on Flatbuffer which is a binary serialization format based on a schema.
+<a class="reference external" href="https://github.com/Mobsya/aseba/blob/master/aseba/flatbuffers/thymio.fbs">The schema is available on the GitHub repository</a>, and is always authoritative.
+(if the schema and the documentation disagree, trust the schema!).</p>
+<p>When using the WebSocket endpoint, each WebSocket message corresponds to a Flatbuffer <code class="docutils literal notranslate"><span class="pre">Message</span></code>,
+while using the TCP endpoint, each message is prefixed by the size of the message (excluding its size)
+as a 32 bits (little endian) unsigned integer.</p>
+<p>Some messages also embed a Flexbuffer payload, Flexbuffer being a schema-less version of Flatbuffer.
+However, Flexbuffer is only available for C++ and Swift. We provide a WebAssembly port for JavaScript.
+People looking to port The Device Manager to another programming language would have to provide a Flexbuffer binding.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Use the provided Qt or JS API to avoid dealing with the low-level details of the protocol.</p>
+</div>
+<p>The protocol is fully duplex, which means both endpoint can send more messages before getting a reply.
+Not all messages will get a reply.</p>
+<div class="section" id="rate-limiting-and-error-management">
+<h3>Rate Limiting And Error Management<a class="headerlink" href="#rate-limiting-and-error-management" title="Permalink to this headline">¶</a></h3>
+<p>Sending over-sized messages, invalid or corrupted messages will lead to the connection being dropped.
+While not yet implemented, the protocol will be rate limited. at some point.</p>
+</div>
+<div class="section" id="handshake">
+<h3>Handshake<a class="headerlink" href="#handshake" title="Permalink to this headline">¶</a></h3>
+<p>When connecting, the client must send a <code class="docutils literal notranslate"><span class="pre">ConnectionHandshake</span></code> message, with the current version of the protocol, as well as the minimum supported version of the protocol.
+The client might also specify a <code class="docutils literal notranslate"><span class="pre">maxMessageSize</span></code> representing the maximum size of message it will accept from the server.</p>
+<p>The server will reply with the same message, except <code class="docutils literal notranslate"><span class="pre">protocolVersion</span></code> will design the actual version of the protocol that needs to be used by both parties.
+If <code class="docutils literal notranslate"><span class="pre">protocolVersion</span></code> is 0, the client and server have no common supported protocol version and the communication will be dropped.</p>
+</div>
+<div class="section" id="requests">
+<h3>Requests<a class="headerlink" href="#requests" title="Permalink to this headline">¶</a></h3>
+<p>Messages which take a <code class="docutils literal notranslate"><span class="pre">request_id</span></code> field are requests: They expect a response. The type of Response is message specific, but the response will have the same
+<code class="docutils literal notranslate"><span class="pre">request_id</span></code>. Response might not be received in the order the Request where sent.
+When sending a request, you must fill <code class="docutils literal notranslate"><span class="pre">request_id</span></code> with a unique number, by maintaining a pool of number or using a random number generator.
+All request can fail and result in an <code class="docutils literal notranslate"><span class="pre">Error</span></code> message.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Qt and JS APIs use promise or promise-like objects to handle requests.</p>
+</div>
+</div>
+<div class="section" id="node-status">
+<h3>Node Status<a class="headerlink" href="#node-status" title="Permalink to this headline">¶</a></h3>
+<p>Once the Handshake is complete, the Device Manager will send <code class="docutils literal notranslate"><span class="pre">NodesChanged</span></code> messages, containing a list of <code class="docutils literal notranslate"><span class="pre">Nodes</span></code>.
+Each <cite>Node</cite> describes a thymio, its status, type, name and <code class="docutils literal notranslate"><span class="pre">node_id</span></code>.
+When nodes are added, modified or disconnected, the Device Manager will send more <code class="docutils literal notranslate"><span class="pre">NodesChanged</span></code> automatically.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Qt and JS APIs maintain a list of connected Thymios.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A <code class="docutils literal notranslate"><span class="pre">RequestListOfNodes</span></code> message can be send to request a list of all nodes, but most applications should not have to do that.</p>
+</div>
+</div>
+<div class="section" id="node-id">
+<h3>Node Id<a class="headerlink" href="#node-id" title="Permalink to this headline">¶</a></h3>
+<p>The API identifies each Thymio using a 128 bits Unique Identifier.
+This id is used through the protocol to send request to a thymio.</p>
+</div>
+<div class="section" id="node-locking-and-unlocking">
+<h3>Node Locking and Unlocking<a class="headerlink" href="#node-locking-and-unlocking" title="Permalink to this headline">¶</a></h3>
+<p>To send code to a Thymio, set variable, events or shared variable, it needs to be locked.
+This is done through the <code class="docutils literal notranslate"><span class="pre">LockNode</span></code> request.
+If the node is already in use by somebody else ( its <code class="docutils literal notranslate"><span class="pre">status</span></code> is <code class="docutils literal notranslate"><span class="pre">busy</span></code>) the node can not be locked.
+Nodes can be unlocked with the <code class="docutils literal notranslate"><span class="pre">UnlockNode</span></code> request, or by dropping the connection.</p>
+</div>
+<div class="section" id="watching-node">
+<h3>Watching Node<a class="headerlink" href="#watching-node" title="Permalink to this headline">¶</a></h3>
+<p>Some infos can be send at high frequency and therefore require to explicitely subscribe to them in order not to
+saturate the bandwith between the Device Manager and the Thymios.</p>
+<p>To start monitoring some infos of a Thymios send a <code class="docutils literal notranslate"><span class="pre">WatchNode</span></code> message, containing a bitflag of the infos you want to watch.
+Watchable infos include variable change, vm status changes and events.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
