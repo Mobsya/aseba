@@ -39,7 +39,7 @@ On Linux, you might need to create the following `udev rule <https://en.wikipedi
 
 Please refer to the documentation of your distribution for more information about ``udev`` (`Arch <https://wiki.archlinux.org/index.php/udev#About_udev_rules>`_, `Debian <https://wiki.debian.org/udev>`_, `Ubuntu <http://manpages.ubuntu.com/manpages/xenial/man7/udev.7.html>`_)
 
-.. important::  The Thymio Device Manager does not support Thymios with a firmware 9 or older. Make sure to update your Thymio to the latest firmware avcailable. Some features are only available with a firmware 13 or newer.
+.. important::  The Thymio Device Manager does not support Thymios with a firmware 9 or older. Make sure to update your Thymio to the latest firmware available. Some features are only available with a firmware 13 or newer.
 
 .. note::  The Thymio Device Manager does not support non-Thymios robots.
 
