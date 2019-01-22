@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Javascript API &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="prev" title="C++ Reference" href="doxygen.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Javascript API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Javascript API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/js.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="javascript-api">
+<h1>Javascript API<a class="headerlink" href="#javascript-api" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="tymio.Node">
+<em class="property">class </em><code class="descclassname">tymio.</code><code class="descname">Node</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Node</p>
+<dl class="function">
+<dt id="tymio.Node.get_description">
+<code class="descclassname">tymio.Node.</code><code class="descname">get_description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Node.get_description" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Get the description from the device</dt>
+<dd>The device must be in the available state before requesting the VM.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><strong>mobsya.fb.Error</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>external:Promise.&lt;AsebaVMDescription&gt;</strong> –</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tymio.Node.id">
+<code class="descclassname">tymio.Node.</code><code class="descname">id</code><a class="headerlink" href="#tymio.Node.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the node id</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tymio.Node.lock">
+<code class="descclassname">tymio.Node.</code><code class="descname">lock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Node.lock" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Lock the device</dt>
+<dd><p class="first">Locking a device is akin to take sole ownership of it until the connection
+is closed or the unlock method is explicitely called</p>
+<p>The device must be in the available state before it can be locked.
+Once a device is locked, all client will see the device becoming busy.</p>
+<p class="last">If the device can not be locked, an <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> mobsya.fb.Error} is raised.</p>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><strong>mobsya.fb.Error</strong> – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tymio.Node.ready">
+<code class="descclassname">tymio.Node.</code><code class="descname">ready</code><a class="headerlink" href="#tymio.Node.ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the node is ready (connected, and locked)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tymio.Node.run_aseba_program">
+<code class="descclassname">tymio.Node.</code><code class="descname">run_aseba_program</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Node.run_aseba_program" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Run the code currently loaded on the vm</dt>
+<dd>The device must be locked &amp; ready before calling this function</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><strong>mobsya.fb.Error</strong> – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tymio.Node.send_aseba_program">
+<code class="descclassname">tymio.Node.</code><code class="descname">send_aseba_program</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Node.send_aseba_program" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Load an aseba program on the VM</dt>
+<dd>The device must be locked &amp; ready before calling this function</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>code</strong> (<em>external:String</em>) – the aseba code to load</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Throws:</th><td class="field-body"><p class="first last"><strong>mobsya.fb.Error</strong> – </p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tymio.Node.status">
+<code class="descclassname">tymio.Node.</code><code class="descname">status</code><a class="headerlink" href="#tymio.Node.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>The node status</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tymio.Node.status_str">
+<code class="descclassname">tymio.Node.</code><code class="descname">status_str</code><a class="headerlink" href="#tymio.Node.status_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>The node status converted to string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tymio.Node.type">
+<code class="descclassname">tymio.Node.</code><code class="descname">type</code><a class="headerlink" href="#tymio.Node.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the node type</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tymio.Node.unlock">
+<code class="descclassname">tymio.Node.</code><code class="descname">unlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Node.unlock" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Unlock the device</dt>
+<dd>Once a device is unlocked, all client will see the device becoming available.
+Once unlock, a device can’t be written to until loc</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><strong>mobsya.fb.Error</strong> – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="tymio.Client">
+<em class="property">class </em><code class="descclassname">tymio.</code><code class="descname">Client</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Client" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> (<em>external:String</em>) – : Web socket address</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="tymio.Client.on_nodes_changed">
+<code class="descclassname">tymio.Client.</code><code class="descname">on_nodes_changed</code><span class="sig-paren">(</span><em>nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#tymio.Client.on_nodes_changed" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (<em>Array.&lt;Node&gt;</em>) – : Nodes whose status has changed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="doxygen.html" class="btn btn-neutral" title="C++ Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Aseba Studio &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="next" title="The Aseba language" href="aseba-language.html"/>
+        <link rel="prev" title="About Aseba" href="about.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Aseba Studio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-environment">The environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#concurrent-editing">Concurrent editing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#powerful-editor">Powerful editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instant-compilation">Instant compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-inspection">Data inspection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#debugger">Debugger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants-definition">Constants definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#network-wide-events">Network-wide events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#local-events-native-functions-and-plugins">Local events, native functions and plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#event-plotting-in-aseba-studio">Event plotting in Aseba Studio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flashing-user-code-in-thymio">Flashing user code in Thymio</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#to-save-the-code-in-thymio-ii">To save the code in Thymio II</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#save-time">Save time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-help">Get help</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Aseba Studio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/studio.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="aseba-studio">
+<h1>Aseba Studio<a class="headerlink" href="#aseba-studio" title="Permalink to this headline">¶</a></h1>
+<p>Aseba Studio is an integrated development environment within which we
+edit and debug the programs of all nodes of an Aseba network.</p>
+<div class="section" id="the-environment">
+<h2>The environment<a class="headerlink" href="#the-environment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="concurrent-editing">
+<h3>Concurrent editing<a class="headerlink" href="#concurrent-editing" title="Permalink to this headline">¶</a></h3>
+<p>Within Studio, each node of an Aseba network has its own tab with its
+program, memory content, execution status, and debugging commands. In
+addition, a toolbar provides general commands which affect all the
+nodes. This allows both an overall control of the network and a specific
+control of each node.</p>
+</div>
+<div class="section" id="powerful-editor">
+<h3>Powerful editor<a class="headerlink" href="#powerful-editor" title="Permalink to this headline">¶</a></h3>
+<p>The program editor provides syntax highlighting, indentation of blocks,
+and dragging of variables’ names from memory. It also shows the current
+position of execution in step by step mode and colours errors in red.</p>
+</div>
+<div class="section" id="instant-compilation">
+<h3>Instant compilation<a class="headerlink" href="#instant-compilation" title="Permalink to this headline">¶</a></h3>
+<p>Studio recompiles the program while the developer is typing it. The
+result of compilation (success or a description of the error) is
+displayed below the editor. This permits the correction of errors as
+soon as they appear, which increases the quality of the code.</p>
+</div>
+<div class="section" id="data-inspection">
+<h3>Data inspection<a class="headerlink" href="#data-inspection" title="Permalink to this headline">¶</a></h3>
+<p>Studio lists the variables available on each node with their values. We
+can update this list in a single click. This list provides a quick
+overview of the state of the node.</p>
+</div>
+<div class="section" id="debugger">
+<h3>Debugger<a class="headerlink" href="#debugger" title="Permalink to this headline">¶</a></h3>
+<p>Studio has an integrated debugger; for each node, it gives the current
+execution status. It supports continuous execution, step by step, and
+breakpoints. A right click inside the program editor allows to set or
+clear a breakpoint on a specific line. After a breakpoint or a step, the
+values of the variables are updated.</p>
+</div>
+<div class="section" id="constants-definition">
+<h3>Constants definition<a class="headerlink" href="#constants-definition" title="Permalink to this headline">¶</a></h3>
+<p>We can define constants which are available on all the nodes. Constants
+can be re-ordered by drag and drop.</p>
+</div>
+<div class="section" id="network-wide-events">
+<h3>Network-wide events<a class="headerlink" href="#network-wide-events" title="Permalink to this headline">¶</a></h3>
+<p>We can specify the names of the events, and by double-clicking on a
+name, we can send the corresponding event. A right-click on an event
+allows to plot this event over time. Events can be re-ordered by
+drag and drop.</p>
+<p>Below the list of event names, a log shows the recent events along with
+their time stamps and parameters. This allows the monitoring of the
+distributed behaviour in the network.</p>
+</div>
+<div class="section" id="local-events-native-functions-and-plugins">
+<h3>Local events, native functions and plugins<a class="headerlink" href="#local-events-native-functions-and-plugins" title="Permalink to this headline">¶</a></h3>
+<p>Studio shows the local events available on each node. It also lists its
+native functions. The tool-tip of each function gives a short
+documentation. A list of node-specific plugins is also provided, if any.</p>
+</div>
+</div>
+<div class="section" id="event-plotting-in-aseba-studio">
+<h2>Event plotting in Aseba Studio<a class="headerlink" href="#event-plotting-in-aseba-studio" title="Permalink to this headline">¶</a></h2>
+<p>Aseba Studio allows the data of global events to be plotted over time.
+To do so, in a node tab, right click on a global event and select “Plot
+event data”. This creates a new tab with a 2D plot of the event data
+over time:</p>
+<img alt="Plot in Aseba Studio" class="align-center" src="_images/asebastudioplot.png" />
+<p>The y-axis scales automatically. The x-axis spans the whole duration of
+event data recording, with a maximum of <em>time window</em> if the latter is
+set. The recording can be started and stopped, and the data can be
+cleared. At the bottom-right part of the tab, a <em>Save As</em> button allows
+the event data to be saved in a text file. Each line will contain a
+timestamp and the values of the event data, separated by a space.</p>
+</div>
+<div class="section" id="flashing-user-code-in-thymio">
+<h2>Flashing user code in Thymio<a class="headerlink" href="#flashing-user-code-in-thymio" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to save a user code in Thymio II so that, even when
+turned off, Thymio keeps the code. The saved behaviour will be
+accessible through the menu, the colour of your code is “colourless”.
+Once this code is launched, the user cannot go back in the selection
+menu unless the robot is restarted.</p>
+<div class="section" id="to-save-the-code-in-thymio-ii">
+<h3>To save the code in Thymio II<a class="headerlink" href="#to-save-the-code-in-thymio-ii" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Load the code, <strong>without running it</strong>.</li>
+<li>Click on “Tools” -&gt; “Write the program(s) …” -&gt; “… inside Thymio-II”.</li>
+<li>Check in the window of the event if “Flashing OK” appears.</li>
+</ul>
+<img alt="Flashing code" class="align-center" src="_images/thymio-flash.jpg" />
+<img alt="Flashing Ok" class="align-center" src="_images/thymio-flashok.jpg" />
+</div>
+</div>
+<div class="section" id="tips">
+<h2>Tips<a class="headerlink" href="#tips" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="save-time">
+<h3>Save time<a class="headerlink" href="#save-time" title="Permalink to this headline">¶</a></h3>
+<p>You can drag the names of variables, native functions, events, and
+constants and thus save typing.</p>
+</div>
+<div class="section" id="get-help">
+<h3>Get help<a class="headerlink" href="#get-help" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Help</span></code> menu of Studio gives instant access to this documentation
+and to the documentation of the Aseba programming language.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="aseba-language.html" class="btn btn-neutral float-right" title="The Aseba language" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="about.html" class="btn btn-neutral" title="About Aseba" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

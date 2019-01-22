@@ -1,0 +1,1003 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Aseba language &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="next" title="Native functions standard library" href="aseba-std-natives.html"/>
+        <link rel="prev" title="Aseba Studio" href="studio.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Aseba language</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#comments">Comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scalars">Scalars</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notation">Notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reserved-keywords">Reserved keywords</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arrays">Arrays</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#array-constructors">Array constructors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#expressions-and-assignments">Expressions and assignments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#flow-control">Flow control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#conditionals">Conditionals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#blocks">Blocks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subroutines">Subroutines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#events">Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#return-statement">Return Statement</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">Initialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sending-external-events">Sending external events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#native-functions">Native functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-to-read-next">What to read next?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>The Aseba language</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/aseba-language.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-aseba-language">
+<h1>The Aseba language<a class="headerlink" href="#the-aseba-language" title="Permalink to this headline">¶</a></h1>
+<p>The Aseba language syntax resembles that of a popular class of
+programming languages, including
+<a class="reference external" href="http://en.wikipedia.org/wiki/Pascal_%28programming_language%29">Pascal</a>
+and <a class="reference external" href="http://en.wikipedia.org/wiki/Matlab">Matlab</a> (a common
+scientific programming language) for instance; we expect this similarity
+to allow developers with previous knowledge of any of these languages to
+feel quickly at ease with Aseba and thus lower the learning curve.
+Semantically, it is a simple <a class="reference external" href="http://en.wikipedia.org/wiki/Imperative_programming">imperative programming
+language</a> with a
+single basic <a class="reference external" href="http://en.wikipedia.org/wiki/Data_type">data type</a> (16
+bit
+<a class="reference external" href="http://en.wikipedia.org/wiki/Signed_number_representations">signed</a>
+<a class="reference external" href="http://en.wikipedia.org/wiki/Integer_%28computer_science%29">integers</a>)
+and <a class="reference external" href="http://en.wikipedia.org/wiki/Array_data_type">arrays</a>. This
+simplicity allows developers to program behaviours with no prior
+knowledge of a <a class="reference external" href="http://en.wikipedia.org/wiki/Type_system">type
+system</a>, integers being the
+most natural type of variables and well suited to programming
+<a class="reference external" href="http://en.wikipedia.org/wiki/Microcontroller">microcontroller</a>-based
+mobile robots.</p>
+<div class="section" id="comments">
+<h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
+<p>Comments allow the adding of information which is ignored by the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Compiler">compiler</a>. Comments are very
+useful to annotate the code with human-readable notes or to temporarily
+disable some code. Comments begin with a <em>#</em> and terminate at the end of
+the line.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this is a comment</span>
+<span class="n">var</span> <span class="n">b</span> <span class="c1"># another comment</span>
+</pre></div>
+</div>
+<p>Comments spanning several lines are also possible. They begin with <em>#*</em>
+and end with <em>*#</em>. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#*</span>
+<span class="n">this</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">comment</span> <span class="n">spanning</span>
+<span class="n">several</span> <span class="n">lines</span>
+<span class="o">*</span><span class="c1">#</span>
+<span class="n">var</span> <span class="n">b</span> <span class="c1"># a simple comment</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="scalars">
+<h2>Scalars<a class="headerlink" href="#scalars" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Scalar_%28computing%29">Scalar values</a>
+are used in Aseba to represent numbers. They can be used in any
+expressions, like the initialisation of a variable, a mathematical
+expression or in a logical condition. The values are comprised between
+-32768 and 32767, which is the range of 16 bit signed integers.</p>
+<div class="section" id="notation">
+<h3>Notation<a class="headerlink" href="#notation" title="Permalink to this headline">¶</a></h3>
+<p>Scalars can be given using several
+<a class="reference external" href="http://en.wikipedia.org/wiki/Radix">radices</a>. The most natural way
+is the <a class="reference external" href="http://en.wikipedia.org/wiki/Decimal">decimal system</a>, using
+digits from 0 to 9. Negative numbers are declared using a <code class="docutils literal notranslate"><span class="pre">-</span></code> (minus)
+sign preceding the number.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">31415</span>
+<span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">7</span>
+</pre></div>
+</div>
+<p>Both <a class="reference external" href="http://en.wikipedia.org/wiki/Binary_numeral_system">binary</a> and
+<a class="reference external" href="http://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a> numbers can
+also be used. Binary numbers are prefixed by <code class="docutils literal notranslate"><span class="pre">0b</span></code>, whereas hexadecimal
+numbers are prefixed by <code class="docutils literal notranslate"><span class="pre">0x</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># binary notation</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mb">0b110</span>         <span class="c1"># i = 6</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mb">0b11111111</span>    <span class="c1"># i = 255</span>
+
+<span class="c1"># hexadecimal notation</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mh">0x10</span>    <span class="c1"># i = 16</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mh">0xff</span>    <span class="c1"># i = 255</span>
+</pre></div>
+</div>
+<p>In binary notation, values are comprised between <code class="docutils literal notranslate"><span class="pre">0b0000000000000000</span></code>
+and <code class="docutils literal notranslate"><span class="pre">0b1111111111111111</span></code>, while in hexadecimal they are comprised
+between <code class="docutils literal notranslate"><span class="pre">0x0</span></code> and <code class="docutils literal notranslate"><span class="pre">0xffff</span></code>. Values that would be over 32767 in
+decimal are interpreted as negative numbers.</p>
+</div>
+<div class="section" id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h3>
+<p>Variables refer either to single
+<a class="reference external" href="http://en.wikipedia.org/wiki/Scalar_%28computing%29">scalar</a> values
+or to arrays of scalar values. You must declare all user-defined
+variables using the keyword <code class="docutils literal notranslate"><span class="pre">var</span></code> at the beginning of the Aseba
+programme before doing any processing.</p>
+<p>The name of a variable is defined by these rules:</p>
+<ul class="simple">
+<li>The name can only contain upper or lower case alphanumeric
+characters, ‘_’ or ‘.’</li>
+<li>The name must start with a valid alphabetic character or ‘_’</li>
+<li>The name is case sensitive: a variable named “foo” is different from
+one named “Foo”</li>
+<li>The name cannot be identical with one of Aseba’s keywords (see
+<a class="reference internal" href="#reserved-keywords">reserved keywords</a>)</li>
+</ul>
+<p>Variables may be initialised in the declaration, using the assignment
+symbol and combined with any valid mathematical expression. A variable
+without any prior initialisation may have a random value, it should
+never be assumed to be zero.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">a</span>
+<span class="n">var</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">var</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span>        <span class="c1"># warning: &#39;a&#39; is not initialised</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reserved-keywords">
+<h3>Reserved keywords<a class="headerlink" href="#reserved-keywords" title="Permalink to this headline">¶</a></h3>
+<p>The following keywords cannot be used as valid names for variables, as
+they are already used by the Aseba language.</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>abs</cite></li>
+<li><cite>call</cite></li>
+<li><cite>callsub</cite></li>
+<li><cite>do</cite></li>
+<li><cite>else</cite></li>
+<li><cite>elseif</cite></li>
+<li><cite>emit</cite></li>
+<li><cite>end</cite></li>
+<li><cite>for</cite></li>
+<li><cite>if</cite></li>
+<li><cite>in</cite></li>
+<li><cite>onevent</cite></li>
+<li><cite>return</cite></li>
+<li><cite>step</cite></li>
+<li><cite>sub</cite></li>
+<li><cite>then</cite></li>
+<li><cite>var</cite></li>
+<li><cite>when</cite></li>
+<li><cite>while</cite></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="constants">
+<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Constant_%28programming%29">Constants</a>
+can be defined in Aseba Studio using the “Constants” panel, but they
+cannot be defined directly in the code. A constant represents a numeric
+value which can be used wherever a number can be used. But unlike a
+variable, a constant cannot be modified during execution. Constants are
+useful when you want to easily change the behaviour between different
+executions, such as to adapt a threshold value, with a scope spanning
+several Aseba nodes. A constant cannot have the same name as a variable,
+otherwise an error is raised. By convention, a constant is often written
+in upper case.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># assuming a constant named THRESHOLD</span>
+<span class="n">var</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">600</span>
+
+<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">THRESHOLD</span> <span class="n">then</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">THRESHOLD</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">end</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="arrays">
+<h3>Arrays<a class="headerlink" href="#arrays" title="Permalink to this headline">¶</a></h3>
+<p>Arrays represent a contiguous area in memory, addressed as a single
+logical entity. The size of an array is fixed and must be specified in
+the declaration. Arrays can be declared using the usual <a class="reference external" href="http://en.wikipedia.org/wiki/Bracket#Uses_of_.22.5B.22_and_.22.5D.22">square bracket
+operator</a>
+<code class="docutils literal notranslate"><span class="pre">[]</span></code>. The number between the square brackets specifies the number of
+elements to be assigned to the array, thereafter referred to as its
+size. It can be any constant expression, including mathematical
+operations using scalars and constants. An optional assignment can be
+made using the array constructor (see below). If this is done, the size
+of the array need not be specified.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">a</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>              <span class="c1"># array of 10 elements</span>
+<span class="n">var</span> <span class="n">b</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>     <span class="c1"># initialisation</span>
+<span class="n">var</span> <span class="n">c</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># implicit size of 5 elements</span>
+<span class="n">var</span> <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">FOO</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>         <span class="c1"># size declared using a constant expression (FOO is a constant)</span>
+</pre></div>
+</div>
+<p>Arrays can be accessed in several ways:</p>
+<ul class="simple">
+<li>A single element is accessed by using the square bracket operator
+with a single value. Array indexes begin at zero. Any expression can
+be used as index, including mathematical expressions involving other
+variables.</li>
+<li>A range of elements can be accessed by using the square bracket
+operator with two constant expressions separated by a colon ‘:’. The
+validity of the range is checked at compile-time.</li>
+<li>If the square brackets are omitted, the entire array is accessed.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">foo</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">var</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">var</span> <span class="n">a</span>
+<span class="n">var</span> <span class="n">b</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">var</span> <span class="n">c</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">var</span> <span class="n">d</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">foo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>        <span class="c1"># copy first element from &#39;foo&#39; to &#39;a&#39;</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">foo</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>    <span class="c1"># same</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">foo</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>      <span class="c1"># take 2nd, 3rd and 4th elements of &#39;foo&#39;, copy to &#39;b&#39;</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">foo</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># same</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">foo</span>           <span class="c1"># copy 5 elements from array &#39;foo&#39; to array &#39;c&#39;</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">foo</span>       <span class="c1"># multiply arrays &#39;foo&#39; and &#39;c&#39; element by element, copy result to &#39;d&#39;</span>
+</pre></div>
+</div>
+<p>A scalar variable is considered to be an array of size one so the
+following code is legal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+<span class="n">var</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="array-constructors">
+<h2>Array constructors<a class="headerlink" href="#array-constructors" title="Permalink to this headline">¶</a></h2>
+<p>Array constructors are a way to build arrays from variables, other
+arrays, scalars, or even complex expressions. They are useful in several
+cases, for example when initialising another array, or as operands in
+expressions, functions and events. An array constructor is made by using
+square brackets enclosing several expressions separated by a <code class="docutils literal notranslate"><span class="pre">,</span></code>
+(comma). The size of an array constructor is the sum of the sizes of the
+individual elements, and it must match the size of the array in which
+the result is stored.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># array constructor to initialise an array</span>
+<span class="n">var</span> <span class="n">b</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="mi">0</span><span class="p">]</span>   <span class="c1"># results in array b initialised to [2,3,0]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>     <span class="c1"># add 1 to each element of array a</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]]</span>     <span class="c1"># results in [5,2,3,4,5]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="expressions-and-assignments">
+<h2>Expressions and assignments<a class="headerlink" href="#expressions-and-assignments" title="Permalink to this headline">¶</a></h2>
+<p>Expressions allow mathematical computations and are written using the
+normal mathematical
+<a class="reference external" href="http://http://en.wikipedia.org/wiki/Infix_notation">infix</a> syntax.
+Assignments use the keyword <code class="docutils literal notranslate"><span class="pre">=</span></code> and set the result of the computation
+of an expression into a scalar variable, an array element or a whole
+array, depending on the size of the operands. Aseba provides several
+operators. Please refer to the table below for a brief description, as
+well as for the precedence of each operator. To evaluate an expression
+in a different order, pairs of parentheses can be used to group
+sub-expressions.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="20%" />
+<col width="28%" />
+<col width="19%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><a class="reference external" href="http://en.wikipedia.org/wiki/Order_of_operations">Precedence</a></th>
+<th class="head"><a class="reference external" href="http://en.wikipedia.org/wiki/Operator_%28programming%29">Operator</a></th>
+<th class="head">Description</th>
+<th class="head"><a class="reference external" href="http://en.wikipedia.org/wiki/Associativity">Associativity</a></th>
+<th class="head"><a class="reference external" href="http://en.wikipedia.org/wiki/Arity">Arity</a></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>()</td>
+<td>Group a sub-expression</td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>[]</td>
+<td>Index an array</td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><ul class="first last simple">
+<li></li>
+</ul>
+</td>
+<td>Unary minus</td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>~</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Bitwise_operation#NOT">Binary not</a></td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>abs</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Absolute_value">Absolute value</a></td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>* /</td>
+<td>Multiplication, division</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>%</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Modulo_operation">Modulo</a></td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td><ul class="first last simple">
+<li><ul class="first">
+<li></li>
+</ul>
+</li>
+</ul>
+</td>
+<td>Addition, subtraction</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>&lt;&lt; &gt;&gt;</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Bitwise_operation#Arithmetic_shift">Left shift, right shift</a></td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td>&amp;</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Bitwise_operation#AND">Binary and</a></td>
+<td>Left associative</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>6</td>
+<td>^</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Bitwise_operation#XOR">Binary exclusive or (xor)</a></td>
+<td>Left associative</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>7</td>
+<td>&#160;</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Bitwise_operation#OR">Binary or</a></td>
+<td>Left associative</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>8</td>
+<td>== != &lt; &lt;= &gt; &gt;=</td>
+<td>Condition</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>9</td>
+<td>not</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Logical_negation">Logical not</a> †</td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+<tr class="row-even"><td>10</td>
+<td>and</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Logical_conjunction">Logical and</a> †</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>11</td>
+<td>or</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Logical_disjunction">Logical or</a> †</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>12</td>
+<td>=</td>
+<td>Assignment</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>^= &amp;=</td>
+<td>Assignment by binary or, xor, and</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>*= /=</td>
+<td>Assignment by product and quotient</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>%=</td>
+<td>Assignment by modulo</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>+= -=</td>
+<td>Assignment by sum and difference</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>&lt;&lt;= &gt;&gt;=</td>
+<td>Assignment by left / right shift</td>
+<td>&#160;</td>
+<td>binary</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td>++ –</td>
+<td><a class="reference external" href="http://en.wikipedia.org/wiki/Increment_and_decrement_operators">Unary increment and decrement</a></td>
+<td>&#160;</td>
+<td>unary</td>
+</tr>
+</tbody>
+</table>
+<p><em>Footnotes</em> † Only available from within <code class="docutils literal notranslate"><span class="pre">if</span></code>, <code class="docutils literal notranslate"><span class="pre">when</span></code>, and <code class="docutils literal notranslate"><span class="pre">while</span></code>
+structures ‡ Only available as statements, such as <code class="docutils literal notranslate"><span class="pre">a--</span></code> or
+<code class="docutils literal notranslate"><span class="pre">a[i]++</span></code>, not within an expression</p>
+<p>The <em>assignment by</em> versions of the binary operators work by applying
+the operator to a variable and storing the result in this same variable.
+For instance, <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">*=</span> <span class="pre">2</span></code> is equal to <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">*</span> <span class="pre">2</span></code>. These short-cuts aim
+at making the code more readable.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="c1"># Result: a = 2</span>
+<span class="n">a</span> <span class="o">*=</span> <span class="mi">3</span>
+<span class="c1"># Result: a = 6</span>
+<span class="n">a</span><span class="o">++</span>
+<span class="c1"># Result: a = 7</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span>
+<span class="n">c</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>Mathematical expressions are a general tool. As such, they can be used
+in a great variety of situations. Just to mention a few:</p>
+<ul class="simple">
+<li>On the right side of an assignment</li>
+<li>As an index when accessing elements of arrays</li>
+<li>Inside function calls</li>
+<li>As argument when emitting an event</li>
+</ul>
+</div>
+</div>
+<div class="section" id="flow-control">
+<h2>Flow control<a class="headerlink" href="#flow-control" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="conditionals">
+<h3>Conditionals<a class="headerlink" href="#conditionals" title="Permalink to this headline">¶</a></h3>
+<p>Aseba provides two types of <a class="reference external" href="http://en.wikipedia.org/wiki/Conditional_%28programming%29">conditionals
+statements</a>:
+<code class="docutils literal notranslate"><span class="pre">if</span></code>-statements and <code class="docutils literal notranslate"><span class="pre">when</span></code>-statements. A conditional statement
+consists of a conditional expression and blocks of code. Conditional
+expressions are formed from a comparison
+<a class="reference external" href="http://en.wikipedia.org/wiki/Relational_operator">operator</a> and two
+<a class="reference external" href="http://en.wikipedia.org/wiki/Operand">operands</a> which are arithmetic
+expressions; for example, <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b+3</span></code> is a conditional expression. The
+following table lists the comparison operators:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><a class="reference external" href="http://en.wikipedia.org/wiki/Relational_operator">Operator</a></th>
+<th class="head">Truth value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">==</span></code></td>
+<td>true if operands are equal</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">!=</span></code></td>
+<td>true if operands are different</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&gt;</span></code></td>
+<td>true if first operand is strictly larger than the second one</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></td>
+<td>true if the operand is larger or equal to the second one</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&lt;</span></code></td>
+<td>true if first operand is strictly smaller than the second one</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></td>
+<td>true if the operand is smaller or equal to the second one</td>
+</tr>
+</tbody>
+</table>
+<p>A conditional expression may also be formed by combining comparison
+expressions with the logical operators <code class="docutils literal notranslate"><span class="pre">and</span></code> (<a class="reference external" href="http://en.wikipedia.org/wiki/Logical_conjunction">logical
+conjunction</a>),
+<code class="docutils literal notranslate"><span class="pre">or</span></code> (<a class="reference external" href="http://en.wikipedia.org/wiki/Logical_disjunction">logical
+disjunction</a>) and
+<code class="docutils literal notranslate"><span class="pre">not</span></code> (<a class="reference external" href="http://en.wikipedia.org/wiki/Logical_negation">logical
+negation</a>); for
+example, <code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">&lt;</span> <span class="pre">b+3)</span> <span class="pre">or</span> <span class="pre">(a</span> <span class="pre">&lt;</span> <span class="pre">0)</span></code>. Precedence can be controlled by
+parentheses; for example
+<code class="docutils literal notranslate"><span class="pre">((a</span> <span class="pre">&lt;</span> <span class="pre">b)</span> <span class="pre">or</span> <span class="pre">(b</span> <span class="pre">&lt;</span> <span class="pre">c))</span> <span class="pre">and</span> <span class="pre">((d</span> <span class="pre">&lt;</span> <span class="pre">e)</span> <span class="pre">or</span> <span class="pre">(e</span> <span class="pre">&lt;</span> <span class="pre">f))</span></code>. While the Aseba
+language does not have boolean variables or literals — so you cannot
+write <code class="docutils literal notranslate"><span class="pre">flag</span> <span class="pre">=</span> <span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">flag</span> <span class="pre">then</span></code> — the result of a comparison
+is considered to be a boolean value (true or false) that can be used
+with the logical operators. Conditional expressions are also used in
+<code class="docutils literal notranslate"><span class="pre">while</span></code>-statements (see section <a class="reference external" href="#toc12">loops</a>).</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">if</span></code> and <code class="docutils literal notranslate"><span class="pre">when</span></code> execute a different block of code according to
+whether a condition is true or false; but <code class="docutils literal notranslate"><span class="pre">when</span></code> executes the block
+corresponding to true only if the previous evaluation of the condition
+was false and the current one is true. This allows the execution of code
+only when something changes. The <code class="docutils literal notranslate"><span class="pre">if</span></code> conditional executes a first
+block of code if the condition is true, a second block of code to
+execute if the condition is false can be added using the <code class="docutils literal notranslate"><span class="pre">else</span></code>
+keyword. Furthermore, additional conditions can be chained using the
+<code class="docutils literal notranslate"><span class="pre">elseif</span></code> keyword.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">then</span>
+    <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+<span class="n">elseif</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="n">then</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">a</span>
+<span class="k">else</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">end</span>
+
+<span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="n">then</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">else</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">end</span>
+
+<span class="n">when</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="n">do</span>
+    <span class="n">leds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">end</span>
+</pre></div>
+</div>
+<p>Here the <code class="docutils literal notranslate"><span class="pre">when</span></code> block executes only when <code class="docutils literal notranslate"><span class="pre">a</span></code> <em>becomes</em> larger than
+<code class="docutils literal notranslate"><span class="pre">b</span></code>. ### Loops</p>
+<p>Two constructs allow the creation of loops: <code class="docutils literal notranslate"><span class="pre">while</span></code> and <code class="docutils literal notranslate"><span class="pre">for</span></code>.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">while</span></code> loop repeatedly executes a block of code as long as the
+condition is true. The condition is of the same form as the one <code class="docutils literal notranslate"><span class="pre">if</span></code>
+uses.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="n">do</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">end</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">for</span></code> loop allows a variable to
+<a class="reference external" href="http://en.wikipedia.org/wiki/Iterate">iterate</a> over a range of
+integers, with an optional step size.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">10</span> <span class="n">do</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span>
+<span class="n">end</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="mi">30</span><span class="p">:</span><span class="mi">1</span> <span class="n">step</span> <span class="o">-</span><span class="mi">3</span> <span class="n">do</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">-</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span>
+<span class="n">end</span>
+</pre></div>
+</div>
+<p>The value of the loop variable is undefined after the execution of the
+loop. It will usually be the last value + step, but can take another
+value due to optimisations, for instance in single-element loops.</p>
+</div>
+</div>
+<div class="section" id="blocks">
+<h2>Blocks<a class="headerlink" href="#blocks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="subroutines">
+<h3>Subroutines<a class="headerlink" href="#subroutines" title="Permalink to this headline">¶</a></h3>
+<p>When you want to perform the same sequence of operations at two or more
+different places in the code, you can write common code just once in a
+subroutine and then call this subroutine from different places. You
+define a subroutine using the <code class="docutils literal notranslate"><span class="pre">sub</span></code> keyword followed by the name of
+the subroutine. You call the subroutine using the <code class="docutils literal notranslate"><span class="pre">callsub</span></code> keyword,
+followed by the name of the subroutine. Subroutines cannot have
+arguments, nor be
+<a class="reference external" href="http://en.wikipedia.org/wiki/Recursion_%28computer_science%29">recursive</a>,
+either directly or indirectly. Subroutines can access any variable.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">sub</span> <span class="n">toto</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">onevent</span> <span class="n">test</span>
+<span class="n">callsub</span> <span class="n">toto</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>Aseba is an <a class="reference external" href="http://en.wikipedia.org/wiki/Event-driven_programming">event-based
+architecture</a>,
+which means that events trigger code execution asynchronously. Events
+can be external, for instance a user-defined event coming from another
+Aseba node, or internal, for instance emitted by a sensor that provides
+updated data. The reception of an event executes, if defined, the block
+of code that begins with the <code class="docutils literal notranslate"><span class="pre">onevent</span></code> keyword followed by the name of
+the event; the code at the top of the programme is executed when the
+programme is started or reset.</p>
+<p>To allow the execution of related code upon new events, programmes must
+not block and thus must not contain any infinite loop. For instance in
+the context of robotics, where a traditional robot control programme
+would do some processing inside an infinite loop, an Aseba programme
+would just do the processing inside a sensor-related event.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">run</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">onevent</span> <span class="n">start</span>
+<span class="n">run</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">onevent</span> <span class="n">stop</span>
+<span class="n">run</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="return-statement">
+<h2>Return Statement<a class="headerlink" href="#return-statement" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to early return from subroutines and stop the execution
+of events with the <code class="docutils literal notranslate"><span class="pre">return</span></code> statement.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">sub</span> <span class="n">toto</span>
+<span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span> <span class="n">then</span>
+    <span class="k">return</span>
+<span class="n">end</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">onevent</span> <span class="n">test</span>
+<span class="n">callsub</span> <span class="n">toto</span>
+<span class="k">return</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<div class="section" id="initialization">
+<h3>Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h3>
+<p>Statements placed between the variable declarations and the subroutines
+and event handlers are run when the program is initialized:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">state</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">call</span> <span class="n">leds</span><span class="o">.</span><span class="n">bottom</span><span class="o">.</span><span class="n">left</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">call</span> <span class="n">leds</span><span class="o">.</span><span class="n">bottom</span><span class="o">.</span><span class="n">right</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">call</span> <span class="n">leds</span><span class="o">.</span><span class="n">top</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>While the initialization of <code class="docutils literal notranslate"><span class="pre">state</span></code> could have been done in its
+declaration, the initialization of the leds must be done by statements.
+When programming a robot, you will usually want to define some event
+that will re-initialize the state of the robot. This is possible by
+writing the statements within a subroutine and calling it from the event
+handler. It is also possible to call the subroutine as part of the
+program initialization even though it has not yet been declared:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">state</span>
+
+<span class="n">callsub</span> <span class="n">init</span>  <span class="c1"># Initialize the program</span>
+
+<span class="c1"># Subroutine for initialization</span>
+<span class="n">sub</span> <span class="n">init</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">call</span> <span class="n">leds</span><span class="o">.</span><span class="n">bottom</span><span class="o">.</span><span class="n">left</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">call</span> <span class="n">leds</span><span class="o">.</span><span class="n">bottom</span><span class="o">.</span><span class="n">right</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">call</span> <span class="n">leds</span><span class="o">.</span><span class="n">top</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Re-initialize when center button is touched</span>
+<span class="n">onevent</span> <span class="n">button</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">callsub</span> <span class="n">init</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sending-external-events">
+<h2>Sending external events<a class="headerlink" href="#sending-external-events" title="Permalink to this headline">¶</a></h2>
+<p>The programme can send external events by using the <code class="docutils literal notranslate"><span class="pre">emit</span></code> keyword,
+followed by the name of the event and the name of the variable to send,
+if any. If a variable is provided, the size of the event must match the
+size of the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Argument_%28computer_science%29">argument</a>
+to be emitted. Instead of a variable, array constructors and
+mathematical expressions can also be used in more complex situations.
+Events allow the programme to trigger the execution of code on another
+node or to communicate with an external programme.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">onevent</span> <span class="n">ir_sensors</span>
+<span class="n">emit</span> <span class="n">sensors_values</span> <span class="n">proximity_sensors_values</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="native-functions">
+<h2>Native functions<a class="headerlink" href="#native-functions" title="Permalink to this headline">¶</a></h2>
+<p>We designed the Aseba language to be simple in order to allow a quick
+understanding even by novice developers and to implement the virtual
+machine efficiently on a micro-controller. To perform complex or
+resource-intensive processing, we provide native functions that are
+implemented in native code for efficiency. For instance, a native
+function is the natural way to implement a scalar product.</p>
+<p>Native functions are safe, as they specify and check the size of their
+arguments, which can be constants, variables, array accesses, array
+constructors and expressions. In the case of an array, you can access
+the whole array, a single element, or a sub-range of the array. Native
+functions take their arguments by
+<a class="reference external" href="http://en.wikipedia.org/wiki/Call_by_reference#Call_by_reference">reference</a>
+and can modify their contents but do not return any value. You can use
+native functions through the <code class="docutils literal notranslate"><span class="pre">call</span></code> keyword.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">var</span> <span class="n">b</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">var</span> <span class="n">c</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span>
+<span class="n">var</span> <span class="n">d</span>
+<span class="n">call</span> <span class="n">math</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">call</span> <span class="n">math</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">call</span> <span class="n">math</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-to-read-next">
+<h2>What to read next?<a class="headerlink" href="#what-to-read-next" title="Permalink to this headline">¶</a></h2>
+<p>You might be interested to read:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="aseba-std-natives.html#aseba-natives"><span class="std std-ref">Description of the native functions standard library</span></a>.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="aseba-std-natives.html" class="btn btn-neutral float-right" title="Native functions standard library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="studio.html" class="btn btn-neutral" title="Aseba Studio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

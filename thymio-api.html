@@ -1,0 +1,834 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Thymio Programming Interface &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="next" title="Simulated Thymio API" href="thymio-simulator-api.html"/>
+        <link rel="prev" title="Native functions standard library" href="aseba-std-natives.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Thymio Programming Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#buttons">Buttons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#distance-sensors">Distance sensors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#horizontal">Horizontal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ground">Ground</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#local-communication">Local communication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accelerometer">Accelerometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#temperature-sensor">Temperature sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timers">Timers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#leds">LEDs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-led-circle-on-top-of-the-robot">The LED circle on top of the robot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-rgb-leds">The RGB LEDs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-leds-of-proximity-sensors">The LEDs of proximity sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-button-leds">The Button LEDs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-led-of-the-rc-receiver">The LED of the RC receiver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-leds-of-the-temperature-sensor">The LEDs of the temperature sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-microphone-led">The microphone LED</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#motors">Motors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sound">Sound</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sound-intensity-detection">Sound-intensity detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#playing-and-recording-sounds">Playing and recording sounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#synthetic-sound">Synthetic sound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-the-primary-wave">Changing the primary wave</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#recording">Recording</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#replaying">Replaying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#duration-from-firmware-version-11">Duration (from firmware version 11)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-sound-on-your-computer">Creating sound on your computer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#play">Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-sound">System sound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-sound-library">System sound library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#remote-control">Remote control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#read-and-write-data-from-the-sd-card">Read and write data from the SD card</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-a-program-from-the-sd-card">Loading a program from the SD card</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-local-events">Table of local events</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Thymio Programming Interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/thymio-api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="thymio-programming-interface">
+<h1>Thymio Programming Interface<a class="headerlink" href="#thymio-programming-interface" title="Permalink to this headline">¶</a></h1>
+<p>This page describes the programming capabilities of Thymio. It lists
+the different variables and functions and indicates to which elements
+of the robot they refer.</p>
+<div class="section" id="buttons">
+<h2>Buttons<a class="headerlink" href="#buttons" title="Permalink to this headline">¶</a></h2>
+<p>Thymio holds 5 capacitive buttons corresponding to the arrows and to the
+central button. Five variables hold the state of these buttons (1 =
+pressed, 0 = released):</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">button.backward</span></code> : backward arrow</li>
+<li><code class="docutils literal notranslate"><span class="pre">button.left</span></code> : left arrow</li>
+<li><code class="docutils literal notranslate"><span class="pre">button.center</span></code> : central button</li>
+<li><code class="docutils literal notranslate"><span class="pre">button.forward</span></code> : forward arrow</li>
+<li><code class="docutils literal notranslate"><span class="pre">button.right</span></code> : right arrow</li>
+</ul>
+<p>Thymio updates this array at a frequency of 20&nbsp;Hz and generates the
+<code class="docutils literal notranslate"><span class="pre">buttons</span></code> event after every update. Moreover, for each of these
+buttons, when it is pressed or released, a corresponding event with the
+same name is fired.</p>
+</div>
+<div class="section" id="distance-sensors">
+<h2>Distance sensors<a class="headerlink" href="#distance-sensors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="horizontal">
+<h3>Horizontal<a class="headerlink" href="#horizontal" title="Permalink to this headline">¶</a></h3>
+<p>Thymio has 7 distance sensors around its periphery. An array of 7
+variables, <code class="docutils literal notranslate"><span class="pre">prox.horizontal</span></code>, holds the values of these sensors:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[0]</span></code> : front left</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[1]</span></code> : front middle-left</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[2]</span></code> : front middle</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[3]</span></code> : front middle-right</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[4]</span></code> : front right</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[5]</span></code> : back left</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.horizontal[6]</span></code> : back right</li>
+</ul>
+<p>The values in this array vary from 0 (the robot does not see anything)
+to several thousand (the robot is very close to an obstacle). Thymio
+updates this array at a frequency of 10&nbsp;Hz, and generates the <code class="docutils literal notranslate"><span class="pre">prox</span></code>
+event after every update.</p>
+</div>
+<div class="section" id="ground">
+<h3>Ground<a class="headerlink" href="#ground" title="Permalink to this headline">¶</a></h3>
+<p>Thymio holds 2 ground distance sensors. These sensors are located at the
+front of the robot. As black grounds appear like no ground at all (black
+absorbs the infrared light), these sensors can be used to follow a line
+on the ground. Three arrays hold the values of these sensors:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">prox.ground.ambiant</span></code> : ambient light intensity at the ground,
+varies between 0 (no light) and 1023 (maximum light)</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.ground.reflected</span></code> : amount of light received when the sensor
+emits infrared, varies between 0 (no reflected light) and 1023
+(maximum reflected light)</li>
+<li><code class="docutils literal notranslate"><span class="pre">prox.ground.delta</span></code> : difference between reflected light and
+ambient light, linked to the distance and to the ground colour.</li>
+</ul>
+<p>For each array, the index 0 corresponds to the left sensor and the index
+1 to the right sensor. As with the distance sensors, Thymio updates this
+array at a frequency of 10&nbsp;Hz and generates the (same) <code class="docutils literal notranslate"><span class="pre">prox</span></code> event
+after every update.</p>
+</div>
+</div>
+<div class="section" id="local-communication">
+<h2>Local communication<a class="headerlink" href="#local-communication" title="Permalink to this headline">¶</a></h2>
+<p>Thymio can use its horizontal infrared distance sensors to communicate a
+value to peer robots within a range of about 15&nbsp;cm. This value is sent
+at 10&nbsp;Hz while processing the distance sensors. Thymio sends an 11-bit
+value (but future firmware could use one of the bits for internal use,
+thus it is better to stay within 10 bits). To use the communication,
+call the <code class="docutils literal notranslate"><span class="pre">prox.comm.enable(state)</span></code> function, with 1 in <code class="docutils literal notranslate"><span class="pre">state</span></code> to
+enable communication or 0 to turn it off. If the communication is
+enabled, the value in the <code class="docutils literal notranslate"><span class="pre">prox.comm.tx</span></code> variable is transmitted every
+100&nbsp;ms. When Thymio receives a value, the event <code class="docutils literal notranslate"><span class="pre">prox.comm</span></code> is fired
+and the value is in the <code class="docutils literal notranslate"><span class="pre">prox.comm.rx</span></code> variable.</p>
+</div>
+<div class="section" id="accelerometer">
+<h2>Accelerometer<a class="headerlink" href="#accelerometer" title="Permalink to this headline">¶</a></h2>
+<p>Thymio contains a 3-axes accelerometer. An array of 3 variables,
+<code class="docutils literal notranslate"><span class="pre">acc</span></code>, holds the values of the acceleration along these 3 axes:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">acc[0]</span></code> : x-axis (from right to left, positive towards left)</li>
+<li><code class="docutils literal notranslate"><span class="pre">acc[1]</span></code> : y-axis (from front to back, positive towards the rear)</li>
+<li><code class="docutils literal notranslate"><span class="pre">acc[2]</span></code> : z-axis (from top to bottom, positive towards ground)</li>
+</ul>
+<p>The values in this array vary from -32 to 32, with 1&nbsp;g (<a class="reference external" href="http://en.wikipedia.org/wiki/Earth%27s_gravity">the
+acceleration of the earth’s
+gravity</a>)
+corresponding to the value 23. Thymio updates this array at a frequency
+of 16&nbsp;Hz, and generates the <code class="docutils literal notranslate"><span class="pre">acc</span></code> event after every update. Moreover,
+when a shock is detected, a <code class="docutils literal notranslate"><span class="pre">tap</span></code> event is emitted.</p>
+</div>
+<div class="section" id="temperature-sensor">
+<h2>Temperature sensor<a class="headerlink" href="#temperature-sensor" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">temperature</span></code> variable holds the current temperature in tenths of
+a degree Celsius. Thymio updates this value at 1&nbsp;Hz and generates the
+<code class="docutils literal notranslate"><span class="pre">temperature</span></code> event after every update.</p>
+</div>
+<div class="section" id="timers">
+<h2>Timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h2>
+<p>Thymio provides two user-defined timers. An array of 2 values,
+<code class="docutils literal notranslate"><span class="pre">timer.period</span></code>, allows to specify the period of the timers in ms:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">timer.period[0]</span></code> : period of timer 0 in milliseconds</li>
+<li><code class="docutils literal notranslate"><span class="pre">timer.period[1]</span></code> : period of timer 1 in milliseconds</li>
+</ul>
+<p>The timer starts the countdown when it is initialized.</p>
+<p>When the period expires, the timer generates a <code class="docutils literal notranslate"><span class="pre">timer0</span></code> respectively
+<code class="docutils literal notranslate"><span class="pre">timer1</span></code> event. These events are managed in the same way as all the
+others and cannot interrupt an already executing event handler.</p>
+<p>If you restart a program with a timer, the timer could still be counting
+down and an event can occur before you expect it. This is not usually a
+problem if you use a timer that expires repeatedly at short intervals,
+because you can set a state variable to ignore timer events until you
+are ready. It is recommended that you <em>not</em> use the timer for a <em>single
+(long) interval</em> because the results can be inconsistent.</p>
+</div>
+<div class="section" id="leds">
+<h2>LEDs<a class="headerlink" href="#leds" title="Permalink to this headline">¶</a></h2>
+<p>Thymio holds many LEDs spread around its body. Most of them are
+associated with sensors and can highlight their activations: by default,
+the intensity of the LED is linked to the sensor value. However, once
+LEDs are used in the code, the programmer takes over control and they no
+longer reflect the sensor values.</p>
+<p>Native functions allow the various LEDs to be controlled. For all LEDs,
+their intensity values range from 0 (off) to 32 (fully lit).</p>
+<div class="section" id="the-led-circle-on-top-of-the-robot">
+<h3>The LED circle on top of the robot<a class="headerlink" href="#the-led-circle-on-top-of-the-robot" title="Permalink to this headline">¶</a></h3>
+<p>8 yellow LEDs make up a circle on top of the robot, around the buttons.</p>
+<p><em>Default activation</em>: reflects the values of the accelerometer. All LEDs
+are off when the robot is horizontal. When the robot tilts, a single LED
+shows the lowest point, with an intensity proportional to the tilt
+angle.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.circle(led</span> <span class="pre">0,</span> <span class="pre">led</span> <span class="pre">1,</span> <span class="pre">led</span> <span class="pre">2,</span> <span class="pre">led</span> <span class="pre">3,</span> <span class="pre">led</span> <span class="pre">4,</span> <span class="pre">led</span> <span class="pre">5,</span> <span class="pre">led</span> <span class="pre">6,</span> <span class="pre">led</span> <span class="pre">7)</span></code>
+where <code class="docutils literal notranslate"><span class="pre">led</span> <span class="pre">0</span></code> sets the intensity of the LED at the front of the
+robot, the others are numbered clockwise.</li>
+</ul>
+</div>
+<div class="section" id="the-rgb-leds">
+<h3>The RGB LEDs<a class="headerlink" href="#the-rgb-leds" title="Permalink to this headline">¶</a></h3>
+<p>There are two RGB LEDs on the top of robot, driven together. These are
+the LEDs that show the behaviour of the robot. There are two other RGB
+LEDs on the bottom of the robot, which can be driven separately.</p>
+<p><em>Default activation</em>: off when in Aseba mode.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.top(red,</span> <span class="pre">green,</span> <span class="pre">blue)</span></code> sets the intensities of the top LEDs.</li>
+<li><code class="docutils literal notranslate"><span class="pre">leds.bottom.left(red,</span> <span class="pre">green,</span> <span class="pre">blue)</span></code> sets the intensities of the
+bottom-left LED.</li>
+<li><code class="docutils literal notranslate"><span class="pre">leds.bottom.right(red,</span> <span class="pre">green,</span> <span class="pre">blue)</span></code> sets the intensities of the
+bottom-right LED.</li>
+</ul>
+</div>
+<div class="section" id="the-leds-of-proximity-sensors">
+<h3>The LEDs of proximity sensors<a class="headerlink" href="#the-leds-of-proximity-sensors" title="Permalink to this headline">¶</a></h3>
+<p>Every proximity sensor has a companion red LED on its side (the front
+sensor has two LEDs, one on each side).</p>
+<p><em>Default activation</em>: on when an object is close to the associated
+sensor, with an intensity inversely proportional to the distance.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.prox.h(led</span> <span class="pre">1,</span> <span class="pre">led</span> <span class="pre">2,</span> <span class="pre">led</span> <span class="pre">3,</span> <span class="pre">led</span> <span class="pre">4,</span> <span class="pre">led</span> <span class="pre">5,</span> <span class="pre">led</span> <span class="pre">6,</span> <span class="pre">led</span> <span class="pre">7,</span> <span class="pre">led</span> <span class="pre">8)</span></code>
+sets the LEDs of the front and back horizontal sensors. <code class="docutils literal notranslate"><span class="pre">led</span> <span class="pre">1</span></code> to
+<code class="docutils literal notranslate"><span class="pre">led</span> <span class="pre">6</span></code> correspond to the front LEDs, from left to right, while
+<code class="docutils literal notranslate"><span class="pre">led</span> <span class="pre">7</span></code> and <code class="docutils literal notranslate"><span class="pre">led</span> <span class="pre">8</span></code> correspond to the left and right back LEDs.</li>
+<li><code class="docutils literal notranslate"><span class="pre">leds.prox.v(led</span> <span class="pre">1,</span> <span class="pre">led</span> <span class="pre">2)</span></code> sets the LEDs associated with the
+bottom sensors, left and right.</li>
+</ul>
+</div>
+<div class="section" id="the-button-leds">
+<h3>The Button LEDs<a class="headerlink" href="#the-button-leds" title="Permalink to this headline">¶</a></h3>
+<p>Four red LEDs are placed between the buttons.</p>
+<p><em>Default activation</em>: For each arrow button, one LED lights up when it
+is pressed. When the centre button is pressed, all four LEDs light up.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.buttons(led</span> <span class="pre">1,</span> <span class="pre">led</span> <span class="pre">2,</span> <span class="pre">led</span> <span class="pre">3,</span> <span class="pre">led</span> <span class="pre">4)</span></code> control these LEDs, with
+<code class="docutils literal notranslate"><span class="pre">led</span> <span class="pre">1</span></code> corresponding to the front LED, then clockwise numbering.</li>
+</ul>
+</div>
+<div class="section" id="the-led-of-the-rc-receiver">
+<h3>The LED of the RC receiver<a class="headerlink" href="#the-led-of-the-rc-receiver" title="Permalink to this headline">¶</a></h3>
+<p>This red LED is located close to the remote-control (infrared) receiver.</p>
+<p><em>Default activation</em>: blinks when the robot receives an
+<a class="reference external" href="http://en.wikipedia.org/wiki/RC-5">RC5</a> code.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.rc(led)</span></code> controls this LED.</li>
+</ul>
+</div>
+<div class="section" id="the-leds-of-the-temperature-sensor">
+<h3>The LEDs of the temperature sensor<a class="headerlink" href="#the-leds-of-the-temperature-sensor" title="Permalink to this headline">¶</a></h3>
+<p>These two LEDs (one red and one blue) are located close to the
+temperature sensor.</p>
+<p><em>Default activation</em>: red if the temperature is over 28°C, red and blue
+between 28° and 15°, blue if the temperature is below 15°.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.temperature(red,</span> <span class="pre">blue)</span></code> controls this LED.</li>
+</ul>
+</div>
+<div class="section" id="the-microphone-led">
+<h3>The microphone LED<a class="headerlink" href="#the-microphone-led" title="Permalink to this headline">¶</a></h3>
+<p>This blue LED is located close to the microphone.</p>
+<p><em>Default activation</em>: off.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">leds.sound(led)</span></code> controls this LED.</li>
+</ul>
+<p>There are also other LEDs that the user cannot control:</p>
+<ul class="simple">
+<li>3 green LEDs on the top of the robot show the battery voltage</li>
+<li>a blue and a red LED on the back of the robot show the charge status</li>
+<li>a red LED on the back of the robot shows the SD-card status</li>
+</ul>
+</div>
+</div>
+<div class="section" id="motors">
+<h2>Motors<a class="headerlink" href="#motors" title="Permalink to this headline">¶</a></h2>
+<p>You can change the wheel speeds by writing in these variables:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">motor.left.target</span></code>: requested speed for left wheel</li>
+<li><code class="docutils literal notranslate"><span class="pre">motor.right.target</span></code>: requested speed for right wheel</li>
+</ul>
+<p>You can read the real wheel speeds from these variables:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">motor.left.speed</span></code> : real speed of left wheel</li>
+<li><code class="docutils literal notranslate"><span class="pre">motor.right.speed</span></code> : real speed of right wheel</li>
+</ul>
+<p>The values range from -500 to 500. A value of 500 approximately
+corresponds to a linear speed of 20&nbsp;cm/s. You can read the value of the
+motor commands from the variables <code class="docutils literal notranslate"><span class="pre">motor.left.pwm</span></code> and
+<code class="docutils literal notranslate"><span class="pre">motor.right.pwm</span></code>.</p>
+</div>
+<div class="section" id="sound">
+<h2>Sound<a class="headerlink" href="#sound" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sound-intensity-detection">
+<h3>Sound-intensity detection<a class="headerlink" href="#sound-intensity-detection" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">The Thymio can detect when the ambient sound is above a given
+intensity and emit an event.</div>
+<div class="line">The variable <code class="docutils literal notranslate"><span class="pre">mic.intensity</span></code> shows the current microphone intensity
+(in the range 0 to 255), while variable <code class="docutils literal notranslate"><span class="pre">mic.threshold</span></code> contains the
+limit intensity for the event. If <code class="docutils literal notranslate"><span class="pre">mic.intensity</span></code> is above
+<code class="docutils literal notranslate"><span class="pre">mic.threshold</span></code>, then the event <code class="docutils literal notranslate"><span class="pre">mic</span></code> is generated.</div>
+</div>
+</div>
+<div class="section" id="playing-and-recording-sounds">
+<h3>Playing and recording sounds<a class="headerlink" href="#playing-and-recording-sounds" title="Permalink to this headline">¶</a></h3>
+<p>You can play synthetic or system sounds. Moreover, if you have installed
+a <a class="reference external" href="http://en.wikipedia.org/wiki/MicroSD#microSD">micro-SD</a> card
+formatted as <a class="reference external" href="http://en.wikipedia.org/wiki/Fat16">FAT</a>, you can
+record and play your own sounds. The files are stored in the micro-SD
+card, in <a class="reference external" href="http://en.wikipedia.org/wiki/Wav">wave</a> format, 8-bit
+unsigned, 8&nbsp;kHz. When Thymio finishes playing a sound requested through
+Aseba, it fires the event <code class="docutils literal notranslate"><span class="pre">sound.finished</span></code>. It does not fire an event
+if playing is interrupted or if a new sound is played.</p>
+</div>
+<div class="section" id="synthetic-sound">
+<h3>Synthetic sound<a class="headerlink" href="#synthetic-sound" title="Permalink to this headline">¶</a></h3>
+<p>The native function <code class="docutils literal notranslate"><span class="pre">sound.freq</span></code> plays a frequency, specified in Hz,
+for a certain duration, specified in 1/60&nbsp;s. Specifying a 0 duration
+plays the sound continuously and specifying a -1 duration stops the
+sound.</p>
+</div>
+<div class="section" id="changing-the-primary-wave">
+<h3>Changing the primary wave<a class="headerlink" href="#changing-the-primary-wave" title="Permalink to this headline">¶</a></h3>
+<p>Synthetic sound generation works by re-sampling a primary wave. By
+default, it is a triangular wave, but you can define your own wave using
+the <code class="docutils literal notranslate"><span class="pre">sound.wave</span></code> native function. This function takes as input an
+array of 142 samples, with values from -128 to 127. This buffer should
+represent one wave of the tonic frequency specified in <code class="docutils literal notranslate"><span class="pre">sound.freq</span></code>.
+As Thymio plays sounds at 7812.5&nbsp;Hz, this array is played completely at
+the frequency of 7812.5/142 = ~55&nbsp;Hz. Playing a sound of a higher
+frequency skips samples in the array.</p>
+</div>
+<div class="section" id="recording">
+<h3>Recording<a class="headerlink" href="#recording" title="Permalink to this headline">¶</a></h3>
+<p>You can record sounds using the <code class="docutils literal notranslate"><span class="pre">sound.record</span></code> native function. This
+function takes as parameter a record number from 0 to 32767. Files are
+stored on the micro-SD card under the name <code class="docutils literal notranslate"><span class="pre">Rx.wav</span></code> where <code class="docutils literal notranslate"><span class="pre">x</span></code> is the
+parameter passed to the <code class="docutils literal notranslate"><span class="pre">sound.record</span></code> function. To stop a recording,
+call the <code class="docutils literal notranslate"><span class="pre">sound.record</span></code> function with the value of -1.</p>
+</div>
+<div class="section" id="replaying">
+<h3>Replaying<a class="headerlink" href="#replaying" title="Permalink to this headline">¶</a></h3>
+<p>You can replay a recorded sound using the <code class="docutils literal notranslate"><span class="pre">sound.replay</span></code> native
+function. This function takes as parameter a record number from 0 to
+32767 and will replay file <code class="docutils literal notranslate"><span class="pre">Rx.wav</span></code> from the SD card where <code class="docutils literal notranslate"><span class="pre">x</span></code> is
+the parameter passed to the <code class="docutils literal notranslate"><span class="pre">sound.replay</span></code> function. To stop a replay,
+call the <code class="docutils literal notranslate"><span class="pre">sound.replay</span></code> function with the value of -1.</p>
+</div>
+<div class="section" id="duration-from-firmware-version-11">
+<h3>Duration (from firmware version 11)<a class="headerlink" href="#duration-from-firmware-version-11" title="Permalink to this headline">¶</a></h3>
+<p>You can retrieve the duration of a recorded sound using the
+<code class="docutils literal notranslate"><span class="pre">sound.duration(x,duration)</span></code> native function. Its first parameter,
+<code class="docutils literal notranslate"><span class="pre">x</span></code>, is a number from 0 to 32767 which is the index of file <code class="docutils literal notranslate"><span class="pre">Rx.wav</span></code>
+from the SD card. The result in 1/10 of seconds is put in the variable
+<code class="docutils literal notranslate"><span class="pre">duration</span></code> as second parameter.</p>
+</div>
+<div class="section" id="creating-sound-on-your-computer">
+<h3>Creating sound on your computer<a class="headerlink" href="#creating-sound-on-your-computer" title="Permalink to this headline">¶</a></h3>
+<p>You can create sounds for Thymio using your computer. An efficient way
+to do so is to use the <a class="reference external" href="http://audacity.sourceforge.net/">Audacity</a>
+software, version 1.3, which exists for various operating systems. Here
+are the steps to create a sound compatible with the Thymio:</p>
+<ul class="simple">
+<li>Once Audacity has started, change the <em>project rate</em> from 44100&nbsp;Hz
+(default) to 8000&nbsp;Hz. This setting is located at the bottom-left of
+Audacity’s window.</li>
+<li>Record your sound with the red record key in the top-left part of the
+window. You should see the cursor advancing and the wave changing.
+Stop with the stop button.</li>
+<li>Your sound should be in mono (Tracks-&gt;Stereo to Mono)</li>
+<li>Go to the <em>File</em> menu under <em>Export…</em></li>
+<li>Give a file name, for instance <code class="docutils literal notranslate"><span class="pre">P0.wav</span></code> for the first file to play
+using the <code class="docutils literal notranslate"><span class="pre">sound.play</span></code> native function.</li>
+<li>Choose <em>other uncompressed files</em> as format <em>format</em>.</li>
+<li>Under <em>options</em>, choose a <em>WAV (Microsoft)</em> header and as <em>Encoding</em>,
+choose <em>Unsigned 8 bit PCM</em>.</li>
+<li>Make sure that no metadata values ares set.</li>
+<li>Save or copy the file to the micro-SD card.</li>
+</ul>
+<p>Here’s an <a class="reference external" href="http://www.youtube.com/watch?v=aWtPvnLYMps">instructional
+video</a> on how to do the
+above.</p>
+</div>
+<div class="section" id="play">
+<h3>Play<a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h3>
+<p>You can play a user-defined sound using the <code class="docutils literal notranslate"><span class="pre">sound.play</span></code> native
+function, which takes a record number from 0 to 32767 as parameter. The
+file must be available on the micro-SD card under the name <code class="docutils literal notranslate"><span class="pre">Px.wav</span></code>
+where <code class="docutils literal notranslate"><span class="pre">x</span></code> is the parameter passed to the <code class="docutils literal notranslate"><span class="pre">sound.play</span></code> function. To
+stop playing a sound, call the <code class="docutils literal notranslate"><span class="pre">sound.play</span></code> function with the value
+-1.</p>
+</div>
+<div class="section" id="system-sound">
+<h3>System sound<a class="headerlink" href="#system-sound" title="Permalink to this headline">¶</a></h3>
+<p>You can play a system sound using the <code class="docutils literal notranslate"><span class="pre">sound.system</span></code> native function,
+which takes a record number from 0 to 32767 as parameter. Some sounds
+are available in the firmware (see below), but you can overwrite these
+sounds and add new ones using the SD-card. In this case, the file must
+be named <code class="docutils literal notranslate"><span class="pre">Sx.wav</span></code> where <code class="docutils literal notranslate"><span class="pre">x</span></code> is the parameter passed to the
+<code class="docutils literal notranslate"><span class="pre">sound.system</span></code> function. To stop playing a sound, call the
+<code class="docutils literal notranslate"><span class="pre">sound.system</span></code> function with the value -1.</p>
+</div>
+<div class="section" id="system-sound-library">
+<h3>System sound library<a class="headerlink" href="#system-sound-library" title="Permalink to this headline">¶</a></h3>
+<p>The following sounds are available:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">parameter</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">-1</span></code></td>
+<td>stop playing sound</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td>startup sound</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td>shutdown sound (this sound is not reconfigurable)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<td>arrow button sound</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">3</span></code></td>
+<td>central button sound</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">4</span></code></td>
+<td>free-fall (scary) sound</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">5</span></code></td>
+<td>collision sound</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">6</span></code></td>
+<td>target ok for friendly behaviour</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">7</span></code></td>
+<td>target detect for friendly behaviour</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="remote-control">
+<h2>Remote control<a class="headerlink" href="#remote-control" title="Permalink to this headline">¶</a></h2>
+<p>Thymio contains a receiver for infrared remote controls compatible with
+the <a class="reference external" href="http://en.wikipedia.org/wiki/RC-5">RC5</a> protocol. When Thymio
+receives an RC5 code, it generates the <code class="docutils literal notranslate"><span class="pre">rc5</span></code> event. In this case, the
+variables <code class="docutils literal notranslate"><span class="pre">rc5.address</span></code> and <code class="docutils literal notranslate"><span class="pre">rc5.command</span></code> are updated.</p>
+</div>
+<div class="section" id="read-and-write-data-from-the-sd-card">
+<h2>Read and write data from the SD card<a class="headerlink" href="#read-and-write-data-from-the-sd-card" title="Permalink to this headline">¶</a></h2>
+<p>If an SD card is present, the variable <code class="docutils literal notranslate"><span class="pre">sd.present</span></code> is set to 1
+(otherwise 0), and Thymio can read and write data to files. Only a
+single file can be open at any given time. The unit of reading/writing
+is a signed 16-bit binary value. The functions provided are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">sd.open(x,status)</span></code>: opens the file <code class="docutils literal notranslate"><span class="pre">Ux.DAT</span></code>. The value <code class="docutils literal notranslate"><span class="pre">x</span></code>
+should be a number between [0:32767], using -1 closes the currently
+open file. A value of 0 is written in the <code class="docutils literal notranslate"><span class="pre">status</span></code> variable if the
+operation was successful, -1 if the operation has failed.</li>
+<li><code class="docutils literal notranslate"><span class="pre">sd.write(data,written)</span></code>: attempts to write the complete <code class="docutils literal notranslate"><span class="pre">data</span></code>
+array in the currently opened file. The number of values written is
+returned in the <code class="docutils literal notranslate"><span class="pre">written</span></code> parameter. It should be equal to the size
+of <code class="docutils literal notranslate"><span class="pre">data</span></code>, except if the card was full, or if the file was larger
+than 4&nbsp;Gb, or no file was open.</li>
+<li><code class="docutils literal notranslate"><span class="pre">sd.read(data,read)</span></code>: reads and fills the <code class="docutils literal notranslate"><span class="pre">data</span></code> array from the
+currently opened file. The number of values read is returned in the
+<code class="docutils literal notranslate"><span class="pre">read</span></code> parameter. It should be equal to the size of <code class="docutils literal notranslate"><span class="pre">data</span></code>,
+except when the end of the file is encountered or no file was open.</li>
+<li><code class="docutils literal notranslate"><span class="pre">sd.seek(position,status)</span></code>: moves the current read and write
+pointers in the currently opened file. The cursor is moved to the
+absolute <code class="docutils literal notranslate"><span class="pre">position</span></code> in the opened file. The valid range is
+[0:65535]. It is currently not possible to seek to a position after
+65535. A value of 0 is written in the <code class="docutils literal notranslate"><span class="pre">status</span></code> variable if the
+operation was successful, -1 if the operation has failed.</li>
+</ul>
+<p>The format consist of a simple concatenation of the signed 16-bit binary
+values.</p>
+<p><strong>Note: do not remove the SD card while the robot is turned on. Always
+power-off the robot before removing the SD card.</strong></p>
+</div>
+<div class="section" id="loading-a-program-from-the-sd-card">
+<h2>Loading a program from the SD card<a class="headerlink" href="#loading-a-program-from-the-sd-card" title="Permalink to this headline">¶</a></h2>
+<p>Thymio can load a program from the SD card. When it boots, Thymio loads
+the file <code class="docutils literal notranslate"><span class="pre">vmcode.abo</span></code> from the SD card if present.</p>
+<p>To obtain the <code class="docutils literal notranslate"><span class="pre">vmcode.abo</span></code> file from your .aesl file, open Aseba
+Studio and open your program (let’s call it <code class="docutils literal notranslate"><span class="pre">myprogram.aesl</span></code>). Then
+click on (<strong>1</strong>) “Tool”, then (<strong>2</strong>) “Save binary code…”, then (<strong>3</strong>)
+“…of thymio”. You will see a dialog box opening (<strong>4</strong>). Choose a place
+where to save your file and that’s it, you saved <code class="docutils literal notranslate"><span class="pre">myprogram.aesl</span></code> with
+the .abo format. Don’t forget to call it <code class="docutils literal notranslate"><span class="pre">vmcode.abo</span></code> if you want your
+Thymio to read it when it starts.</p>
+</div>
+<div class="section" id="table-of-local-events">
+<h2>Table of local events<a class="headerlink" href="#table-of-local-events" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="26%" />
+<col width="11%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">event</th>
+<th class="head">description</th>
+<th class="head">frequency (Hz)</th>
+<th class="head">result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">button.backward</span></code></td>
+<td>back arrow was pressed or released</td>
+<td>upon action</td>
+<td><code class="docutils literal notranslate"><span class="pre">button.backward</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">button.left</span></code></td>
+<td>left arrow was pressed or released</td>
+<td>upon action</td>
+<td><code class="docutils literal notranslate"><span class="pre">button.left</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">button.center</span></code></td>
+<td>central button was pressed or released</td>
+<td>upon action</td>
+<td><code class="docutils literal notranslate"><span class="pre">button.center</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">button.forward</span></code></td>
+<td>front arrow was pressed or released</td>
+<td>upon action</td>
+<td><code class="docutils literal notranslate"><span class="pre">button.forward</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">button.right</span></code></td>
+<td>right arrow was pressed or released</td>
+<td>upon action</td>
+<td><code class="docutils literal notranslate"><span class="pre">button.right</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">buttons</span></code></td>
+<td>button values have been probed</td>
+<td>50</td>
+<td><code class="docutils literal notranslate"><span class="pre">buttons.backward</span></code>, <code class="docutils literal notranslate"><span class="pre">buttons.left</span></code>, <code class="docutils literal notranslate"><span class="pre">buttons.center</span></code>, <code class="docutils literal notranslate"><span class="pre">buttons.forward</span></code>, <code class="docutils literal notranslate"><span class="pre">buttons.right</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">prox</span></code></td>
+<td>proximity sensors were read</td>
+<td>10</td>
+<td><code class="docutils literal notranslate"><span class="pre">prox.horizontal[0-7]</span></code>, <code class="docutils literal notranslate"><span class="pre">prox.ground.ambiant[0-1]</span></code>, <code class="docutils literal notranslate"><span class="pre">prox.ground.reflected[0-1]</span></code> and <code class="docutils literal notranslate"><span class="pre">prox.ground.delta[0-1]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">prox.comm</span></code></td>
+<td>value received from IR sensors</td>
+<td>upon value reception</td>
+<td><code class="docutils literal notranslate"><span class="pre">prox.comm.rx</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">tap</span></code></td>
+<td>a shock was detected</td>
+<td>upon shock</td>
+<td><code class="docutils literal notranslate"><span class="pre">acc[0-2]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">acc</span></code></td>
+<td>the accelerometer was read</td>
+<td>16</td>
+<td><code class="docutils literal notranslate"><span class="pre">acc[0-2]</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mic</span></code></td>
+<td>ambient sound intensity was above threshold</td>
+<td>when condition is true</td>
+<td><code class="docutils literal notranslate"><span class="pre">mic.intensity</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">sound.finished</span></code></td>
+<td>a sound started by aseba has finished playing by itself</td>
+<td>when sound finishes</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">temperature</span></code></td>
+<td>temperature was read</td>
+<td>1</td>
+<td><code class="docutils literal notranslate"><span class="pre">temperature</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">rc5</span></code></td>
+<td>the infrared remote-control receiver got a signal</td>
+<td>upon signal reception</td>
+<td><code class="docutils literal notranslate"><span class="pre">rc5.address</span></code> and <code class="docutils literal notranslate"><span class="pre">rc5.command</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">motor</span></code></td>
+<td>PID is executed</td>
+<td>100</td>
+<td><code class="docutils literal notranslate"><span class="pre">motor.left/right.speed</span></code>, <code class="docutils literal notranslate"><span class="pre">motor.left/right.pwm</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timer0</span></code></td>
+<td>when timer 0 period expires</td>
+<td>user-defined</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">timer1</span></code></td>
+<td>when timer 1 period expires</td>
+<td>user-defined</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="thymio-simulator-api.html" class="btn btn-neutral float-right" title="Simulated Thymio API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aseba-std-natives.html" class="btn btn-neutral" title="Native functions standard library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

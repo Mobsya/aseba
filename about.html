@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>About Aseba &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="#"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="next" title="Aseba Studio" href="studio.html"/>
+        <link rel="prev" title="Welcome to Aseba’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">About Aseba</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#node">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#event">Event</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>About Aseba</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/about.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="about-aseba">
+<h1>About Aseba<a class="headerlink" href="#about-aseba" title="Permalink to this headline">¶</a></h1>
+<p>Aseba is a set of tools which allow novices to program robots easily and efficiently.
+For these reasons, Aseba is well-suited for robotic education and research.
+Aseba is an open-source software created by
+Dr. Stéphane Magnenat with contributions from the community.</p>
+<p>More Specifically, Aseba is an event-based architecture for real-time
+distributed control of mobile robots.It targets integrated
+multi-processor robots or groups of single-processor units, real or
+simulated.</p>
+<p>The core of Aseba is a lightweight virtual machine tiny
+enough to run even on microcontrollers. With Aseba, we program robots in
+a user-friendly programming language using a cozy integrated development
+environment.</p>
+<div class="section" id="node">
+<h2>Node<a class="headerlink" href="#node" title="Permalink to this headline">¶</a></h2>
+<p>In Aseba, there can be several robots or a robot with multiple
+<a class="reference external" href="http://en.wikipedia.org/wiki/Central_processing_unit">processors</a>
+running in the same network. This network can be software
+(<a class="reference external" href="http://en.wikipedia.org/wiki/Transmission_Control_Protocol">TCP</a>),
+hardware
+(<a class="reference external" href="http://en.wikipedia.org/wiki/Controller_area_network">CAN</a>), or a
+mix of both. Each processor within a network runs a small <a class="reference external" href="http://en.wikipedia.org/wiki/Virtual_machine">virtual
+machine</a> and is called
+a <em>node</em>.</p>
+<p>Each node has its own tab in Aseba Studio, allowing you to program them independently,
+but with possible interactions through events.</p>
+</div>
+<div class="section" id="event">
+<h2>Event<a class="headerlink" href="#event" title="Permalink to this headline">¶</a></h2>
+<p>Aseba is an <a class="reference external" href="http://en.wikipedia.org/wiki/Event-driven_programming">event-based
+architecture</a>,
+which means that events trigger code execution asynchronously. Events
+have an identifier and optional payload data.</p>
+<p>Aseba nodes can exchange events, and these can be of two types.</p>
+<ul class="simple">
+<li>The events that Aseba nodes exchange within an Aseba network are
+called <strong>global events</strong>.</li>
+<li>The events that are internal to a node are called <strong>local events</strong>.
+An example of a local event is the one emitted by a sensor that
+provides updated data.</li>
+</ul>
+<p>If the code for receiving an event is defined, then the corresponding
+block of code is executed when the event is received. Code can also
+<a class="reference external" href="https://aseba.wikidot.com/en:asebalanguage#toc2">emit events</a>, which
+can trigger the execution of code on another node or enable
+communication with an external program.</p>
+<p>To start the execution of related code upon receiving new events,
+programs must not block and thus must not contain any infinite loops.</p>
+<p>For instance, in the context of robotics, where a traditional robot
+control program would do some processing inside an infinite loop,
+an Aseba program would just do the processing inside a sensor-related event.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="studio.html" class="btn btn-neutral float-right" title="Aseba Studio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Aseba’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

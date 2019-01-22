@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Native functions standard library &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="next" title="Thymio Programming Interface" href="thymio-api.html"/>
+        <link rel="prev" title="The Aseba language" href="aseba-language.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Native functions standard library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#math">Math</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#math-copy-a-b"><code class="docutils literal notranslate"><span class="pre">math.copy(A,B)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-fill-a-c"><code class="docutils literal notranslate"><span class="pre">math.fill(A,c)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-addscalar-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.addscalar(A,</span> <span class="pre">B,</span> <span class="pre">c)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-add-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.add(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-sub-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.sub(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-mul-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.mul(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-div-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.div(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-min-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.min(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-max-a-b-c"><code class="docutils literal notranslate"><span class="pre">math.max(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-clamp-a-b-c-d"><code class="docutils literal notranslate"><span class="pre">math.clamp(A,B,C,D)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-dot-r-a-b-n"><code class="docutils literal notranslate"><span class="pre">math.dot(r,</span> <span class="pre">A,</span> <span class="pre">B,</span> <span class="pre">n)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-stat-v-min-max-mean"><code class="docutils literal notranslate"><span class="pre">math.stat(V,</span> <span class="pre">min,</span> <span class="pre">max,</span> <span class="pre">mean)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-argbounds-a-argmin-argmax"><code class="docutils literal notranslate"><span class="pre">math.argbounds(A,</span> <span class="pre">argmin,</span> <span class="pre">argmax)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-sort-a"><code class="docutils literal notranslate"><span class="pre">math.sort(A)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-muldiv-a-b-c-d"><code class="docutils literal notranslate"><span class="pre">math.muldiv(A,</span> <span class="pre">B,</span> <span class="pre">C,</span> <span class="pre">D)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-atan2-a-y-x-1"><code class="docutils literal notranslate"><span class="pre">math.atan2(A,</span> <span class="pre">Y,</span> <span class="pre">X)</span></code> </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-sin-a-b-1"><code class="docutils literal notranslate"><span class="pre">math.sin(A,</span> <span class="pre">B)</span></code>  </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-cos-a-b-1"><code class="docutils literal notranslate"><span class="pre">math.cos(A,</span> <span class="pre">B)</span></code> </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-rot2-a-b-angle-1"><code class="docutils literal notranslate"><span class="pre">math.rot2(A,</span> <span class="pre">B,</span> <span class="pre">angle)</span></code> </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-sqrt-a-b"><code class="docutils literal notranslate"><span class="pre">math.sqrt(A,</span> <span class="pre">B)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#math-rand-v"><code class="docutils literal notranslate"><span class="pre">math.rand(v)</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#double-ended-queues">Double-ended queues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deque-size-q-n"><code class="code docutils literal notranslate"><span class="pre">deque.size(Q,n)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-push-front-q-a"><code class="code docutils literal notranslate"><span class="pre">deque.push_front(Q,A)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-push-back-q-a"><code class="code docutils literal notranslate"><span class="pre">deque.push_back(Q,A)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-pop-front-q-a"><code class="code docutils literal notranslate"><span class="pre">deque.pop_front(Q,A)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-pop-back-q-a"><code class="code docutils literal notranslate"><span class="pre">deque.pop_back(Q,A)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="code docutils literal notranslate"><span class="pre">deque.pop_back(Q,A)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-set-q-a-i"><code class="code docutils literal notranslate"><span class="pre">deque.set(Q,A,i)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-insert-q-a-i"><code class="code docutils literal notranslate"><span class="pre">deque.insert(Q,A,i)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deque-erase-q-i-k"><code class="code docutils literal notranslate"><span class="pre">deque.erase(Q,i,k)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thymio-simulator-api.html">Simulated Thymio API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Native functions standard library</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/aseba-std-natives.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="native-functions-standard-library">
+<span id="aseba-natives"></span><h1>Native functions standard library<a class="headerlink" href="#native-functions-standard-library" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="math">
+<h2>Math<a class="headerlink" href="#math" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="math-copy-a-b">
+<h3><code class="docutils literal notranslate"><span class="pre">math.copy(A,B)</span></code><a class="headerlink" href="#math-copy-a-b" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Copy the array <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> in the array <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, element by element: <img class="math" src="_images/math/ef43b3712431fc80948ae463438c63b4ffc6438c.png" alt="A_{i} = B_{i}"/>.</div></blockquote>
+</div>
+<div class="section" id="math-fill-a-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.fill(A,c)</span></code><a class="headerlink" href="#math-fill-a-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Fill each element of the array <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> with the constant <img class="math" src="_images/math/ae12a24f88803b5895632e4848d87d46483c492c.png" alt="c"/>: <img class="math" src="_images/math/b0a5cb9e8ddb3f11ffa91db32c96adac51133e93.png" alt="A_{i} = c"/>.</div></blockquote>
+</div>
+<div class="section" id="math-addscalar-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.addscalar(A,</span> <span class="pre">B,</span> <span class="pre">c)</span></code><a class="headerlink" href="#math-addscalar-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute <img class="math" src="_images/math/50ec9d3411b85c5b551465a0a555411e80843dc3.png" alt="A_{i} = B_{i} + c"/> where <img class="math" src="_images/math/ae12a24f88803b5895632e4848d87d46483c492c.png" alt="c"/> is a scalar.</div></blockquote>
+</div>
+<div class="section" id="math-add-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.add(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code><a class="headerlink" href="#math-add-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute <img class="math" src="_images/math/6aa2b599776d6b029fa56eb396580c68435e7eaa.png" alt="A_{i} = B_{i} + C_{i}"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> are three arrays of the same size.</div></blockquote>
+</div>
+<div class="section" id="math-sub-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.sub(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code><a class="headerlink" href="#math-sub-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute <img class="math" src="_images/math/cdbbdc0787b09060f831ac3cd1eedf4a4cc053f3.png" alt="A_{i} = B_{i} - C_{i}"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> are three arrays of the same size.</div></blockquote>
+</div>
+<div class="section" id="math-mul-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.mul(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code><a class="headerlink" href="#math-mul-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Compute <img class="math" src="_images/math/5788a773dac6b141309a5b7339ca8129d75299a6.png" alt="A_{i} = B_{i} \cdot C_{i}"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> are three arrays of the same size.</p>
+<p><em>Note that this is not a dot product.</em></p>
+</div></blockquote>
+</div>
+<div class="section" id="math-div-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.div(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code><a class="headerlink" href="#math-div-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Compute <img class="math" src="_images/math/c98a4bacab6417e4fb03e5c4002d83067052dd36.png" alt="A_{i} = B_{i} / C_{i}"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> are three arrays of the same size.</p>
+<p><em>An exception will be triggered if a division by zero occurs.</em></p>
+</div></blockquote>
+</div>
+<div class="section" id="math-min-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.min(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code><a class="headerlink" href="#math-min-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Write the minimum of each element of <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> in
+<img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> are three arrays of
+the same size: <img class="math" src="_images/math/ce98db4e86cb3d588b7cf9ffda3594ea7cff90a3.png" alt="A_{i} = \mathrm{min}(B_{i}, C_{i})"/>.</div></blockquote>
+</div>
+<div class="section" id="math-max-a-b-c">
+<h3><code class="docutils literal notranslate"><span class="pre">math.max(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code><a class="headerlink" href="#math-max-a-b-c" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Write the maximum of each element of <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> in
+<img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> and <img class="math" src="_images/math/afce44aa7c55836ca9345404c22fc7b599d2ed84.png" alt="C"/> are three arrays of
+the same size: <img class="math" src="_images/math/7c6fa236cbfd75e7d45b1c73919a9cc082a45e06.png" alt="A_{i} = \mathrm{max}(B_{i}, C_{i})"/>.</div></blockquote>
+</div>
+<div class="section" id="math-clamp-a-b-c-d">
+<h3><code class="docutils literal notranslate"><span class="pre">math.clamp(A,B,C,D)</span></code><a class="headerlink" href="#math-clamp-a-b-c-d" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Clamp each element <img class="math" src="_images/math/aa34843018d4497f87bc54446f1d65b979960451.png" alt="B_{i}"/> and store it in <img class="math" src="_images/math/505cfc1f7fa7d16cceaf30876719bda7f198c34c.png" alt="A_{i}"/> so that <img class="math" src="_images/math/eee98ca0ea4805299b4f361ff5ae93090deba566.png" alt="C_{i} &lt; A_{i} &lt; D_{i}"/>.</div></blockquote>
+</div>
+<div class="section" id="math-dot-r-a-b-n">
+<h3><code class="docutils literal notranslate"><span class="pre">math.dot(r,</span> <span class="pre">A,</span> <span class="pre">B,</span> <span class="pre">n)</span></code><a class="headerlink" href="#math-dot-r-a-b-n" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute the <a class="reference external" href="http://en.wikipedia.org/wiki/Dot_product">dot product</a>
+between two arrays of the same size <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> and
+<img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/>:
+<img class="math" src="_images/math/97cfcfd600dccf4f843b35501422c82af46fa3ff.png" alt="r = \frac{\sum_{i}(A_{i}\cdot B_{i})}{2^{n}}"/></div></blockquote>
+</div>
+<div class="section" id="math-stat-v-min-max-mean">
+<h3><code class="docutils literal notranslate"><span class="pre">math.stat(V,</span> <span class="pre">min,</span> <span class="pre">max,</span> <span class="pre">mean)</span></code><a class="headerlink" href="#math-stat-v-min-max-mean" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute the minimum, the maximum and the mean values of array
+<img class="math" src="_images/math/fae0e7a73748991e5540d874416000583f64f58e.png" alt="V"/>.</div></blockquote>
+</div>
+<div class="section" id="math-argbounds-a-argmin-argmax">
+<h3><code class="docutils literal notranslate"><span class="pre">math.argbounds(A,</span> <span class="pre">argmin,</span> <span class="pre">argmax)</span></code><a class="headerlink" href="#math-argbounds-a-argmin-argmax" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Get the indices <em>argmin</em> and <em>argmax</em> corresponding to the minimum
+respectively maximum values of array <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>.</div></blockquote>
+</div>
+<div class="section" id="math-sort-a">
+<h3><code class="docutils literal notranslate"><span class="pre">math.sort(A)</span></code><a class="headerlink" href="#math-sort-a" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Sort the array <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> in place.</div></blockquote>
+</div>
+<div class="section" id="math-muldiv-a-b-c-d">
+<h3><code class="docutils literal notranslate"><span class="pre">math.muldiv(A,</span> <span class="pre">B,</span> <span class="pre">C,</span> <span class="pre">D)</span></code><a class="headerlink" href="#math-muldiv-a-b-c-d" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Compute multiplication-division using internal 32-bit precision:
+<img class="math" src="_images/math/14fd56c06afd9371c9c8a4b626acf029fece3731.png" alt="A_{i} = \frac{B_{i}\cdot C_{i}}{D_{i}}"/>.</p>
+<p><em>An exception will be triggered if a division by zero occurs.</em></p>
+</div></blockquote>
+</div>
+<div class="section" id="math-atan2-a-y-x-1">
+<h3><code class="docutils literal notranslate"><span class="pre">math.atan2(A,</span> <span class="pre">Y,</span> <span class="pre">X)</span></code> <a class="footnote-reference" href="#id7" id="id1">[1]</a><a class="headerlink" href="#math-atan2-a-y-x-1" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Compute <img class="math" src="_images/math/0d4c68b9e01c58bde7a083e2bee3241904b7678c.png" alt="A_{i}=\arctan\left(\frac{Y_{i}}{X_{i}}\right)"/> using
+the signs of <img class="math" src="_images/math/5eae28ad5dc318cc7d1a495b17f012321c627931.png" alt="Y_{i}"/> and <img class="math" src="_images/math/9188fb4e78815d4ec032c74a5dac698961167237.png" alt="X_{i}"/> to determine the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Quadrant_%28plane_geometry%29">quadrant</a>
+of the output, where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>, <img class="math" src="_images/math/0062c26909b3e07ee8f5a6285b2563d69bc979ff.png" alt="Y"/> and <img class="math" src="_images/math/7a7bb470119808e2db2879fc2b2526f467b7a40b.png" alt="X"/> are three
+arrays of the same size.</p>
+<p><em>Note that</em> <img class="math" src="_images/math/5c2fecfe85b843903582ee801a397c7718c0c44e.png" alt="X_{i} = 0"/> <em>and</em> <img class="math" src="_images/math/095880072b88c23f1902f8ce724ec631d1a3ee65.png" alt="Y_{i} = 0"/> <em>will produce</em> <img class="math" src="_images/math/5899c4b13d1c09882e4ff20fdf42055d9d128003.png" alt="A_{i} = 0"/>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="math-sin-a-b-1">
+<h3><code class="docutils literal notranslate"><span class="pre">math.sin(A,</span> <span class="pre">B)</span></code>  <a class="footnote-reference" href="#id7" id="id2">[1]</a><a class="headerlink" href="#math-sin-a-b-1" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute <img class="math" src="_images/math/10d644a226aa458b4cd1cd5579dc7ea4eb19d55e.png" alt="A_{i} = \sin(B_{i})"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> and <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> are
+two arrays of the same size.</div></blockquote>
+</div>
+<div class="section" id="math-cos-a-b-1">
+<h3><code class="docutils literal notranslate"><span class="pre">math.cos(A,</span> <span class="pre">B)</span></code> <a class="footnote-reference" href="#id7" id="id3">[1]</a><a class="headerlink" href="#math-cos-a-b-1" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute <img class="math" src="_images/math/06f2bcd3c0a4c4fe6cc4524a5800e88d0a720ec9.png" alt="A_{i} = \cos(B_{i})"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> and <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> are
+two arrays of the same size.</div></blockquote>
+</div>
+<div class="section" id="math-rot2-a-b-angle-1">
+<h3><code class="docutils literal notranslate"><span class="pre">math.rot2(A,</span> <span class="pre">B,</span> <span class="pre">angle)</span></code> <a class="footnote-reference" href="#id7" id="id4">[1]</a><a class="headerlink" href="#math-rot2-a-b-angle-1" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Rotate the array <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> by <em>angle</em>, write the result to <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/>.</p>
+<p><em>Note that</em> <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> <em>and</em> <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> <em>must both be arrays of size 2.</em></p>
+</div></blockquote>
+</div>
+<div class="section" id="math-sqrt-a-b">
+<h3><code class="docutils literal notranslate"><span class="pre">math.sqrt(A,</span> <span class="pre">B)</span></code><a class="headerlink" href="#math-sqrt-a-b" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Compute <img class="math" src="_images/math/804fde56e581ac782c218edba357bfeb8b1039a0.png" alt="A_{i} = \sqrt{B_{i}}"/> where <img class="math" src="_images/math/0043fe6507e9b1d112e07a2801e24927e267dd50.png" alt="A"/> and <img class="math" src="_images/math/9805f44feec6f81d376d09e88b8236635edbb3c8.png" alt="B"/> are
+two arrays of the same size.</div></blockquote>
+</div>
+<div class="section" id="math-rand-v">
+<h3><code class="docutils literal notranslate"><span class="pre">math.rand(v)</span></code><a class="headerlink" href="#math-rand-v" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Return a random value <img class="math" src="_images/math/8d230554a01423c4c6560104b2918b65607c9406.png" alt="v"/> in the range <img class="math" src="_images/math/111511144a390cc957115df3f5c87c52dfdacdac.png" alt="-32768:32767"/>.</div></blockquote>
+<p>Since a scalar is considered to be an array of size one, you can use
+these functions on scalars:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">theta</span> <span class="o">=</span> <span class="mi">16384</span>
+<span class="n">var</span> <span class="n">cos_theta</span>
+<span class="n">call</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="double-ended-queues">
+<h2>Double-ended queues<a class="headerlink" href="#double-ended-queues" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>Deque</cite> native library provides functions for <a class="reference external" href="https://en.wikipedia.org/wiki/Double-ended_queue">double-ended queue</a> operations in an object-oriented style on specially-formatted arrays.
+The array for a <cite>deque</cite> object must be of size <img class="math" src="_images/math/dc853a3639b14fc8eb270ddeb757851bcd87bbb0.png" alt="$2 + m \cdot k\,\,$"/> where <img class="math" src="_images/math/070059b77685bcf4f2c67703e44a958457f529da.png" alt="$k$"/> is the size of the tuples <a class="footnote-reference" href="#id8" id="id5">[2]</a> in the deque, and <img class="math" src="_images/math/71d30a0ddd93176c97553fdf52b751cf66cbd465.png" alt="$m$"/> is the maximum number of tuples to be stored.</p>
+<p>An <cite>index</cite> <img class="math" src="_images/math/c433e8f44aa7c1c9e457e54873ec7ab536f44144.png" alt="$i$"/> into a deque is between two elements: the integer <img class="math" src="_images/math/c433e8f44aa7c1c9e457e54873ec7ab536f44144.png" alt="$i$"/> counts the number of elements to the left of the index.</p>
+<div class="section" id="deque-size-q-n">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.size(Q,n)</span></code><a class="headerlink" href="#deque-size-q-n" title="Permalink to this headline">¶</a></h3>
+<p>Set <img class="math" src="_images/math/2577976ba0547424d8a6001ea52b5916da5a14a0.png" alt="$n$"/> to the number of elements in deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/>. If <img class="math" src="_images/math/1aa2bbc5a1f9e055ef945a33f4bebd2e809333ec.png" alt="$n=0$"/> then <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> is empty. Note that <img class="math" src="_images/math/2577976ba0547424d8a6001ea52b5916da5a14a0.png" alt="$n$"/> must be divided by the tuple size to obtain the number of tuples in <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/>.</p>
+</div>
+<div class="section" id="deque-push-front-q-a">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.push_front(Q,A)</span></code><a class="headerlink" href="#deque-push-front-q-a" title="Permalink to this headline">¶</a></h3>
+<p>Insert tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/> before the first tuple of deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/>.</p>
+</div>
+<div class="section" id="deque-push-back-q-a">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.push_back(Q,A)</span></code><a class="headerlink" href="#deque-push-back-q-a" title="Permalink to this headline">¶</a></h3>
+<p>Insert tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/> after the last tuple in deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/>.</p>
+</div>
+<div class="section" id="deque-pop-front-q-a">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.pop_front(Q,A)</span></code><a class="headerlink" href="#deque-pop-front-q-a" title="Permalink to this headline">¶</a></h3>
+<p>Remove the first <img class="math" src="_images/math/cb0a0fa472883e4eae83ee5aaddab6f07b288346.png" alt="length($A$)"/> elements of deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> and place them in tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/>.
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
+</div>
+<div class="section" id="deque-pop-back-q-a">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.pop_back(Q,A)</span></code><a class="headerlink" href="#deque-pop-back-q-a" title="Permalink to this headline">¶</a></h3>
+<p>Remove the last <img class="math" src="_images/math/cb0a0fa472883e4eae83ee5aaddab6f07b288346.png" alt="length($A$)"/> elements of deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> and place them in tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/>.</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="id6">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.pop_back(Q,A)</span></code><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>Remove the last <img class="math" src="_images/math/cb0a0fa472883e4eae83ee5aaddab6f07b288346.png" alt="length($A$)"/> elements of deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> and place them in tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/>.</p>
+<p>&gt;&gt;&gt;&gt;&gt;&gt;&gt; nsis
+<code class="code docutils literal notranslate"><span class="pre">deque.get(Q,A,i)</span></code>
+^^^^^^^^^^^^^^^^^^^^^^^^
+Copy into tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/> , <img class="math" src="_images/math/cb0a0fa472883e4eae83ee5aaddab6f07b288346.png" alt="length($A$)"/> elements from deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> starting from index <img class="math" src="_images/math/c433e8f44aa7c1c9e457e54873ec7ab536f44144.png" alt="$i$"/>.</p>
+</div>
+<div class="section" id="deque-set-q-a-i">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.set(Q,A,i)</span></code><a class="headerlink" href="#deque-set-q-a-i" title="Permalink to this headline">¶</a></h3>
+<p>Copy into deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> starting at index <img class="math" src="_images/math/c433e8f44aa7c1c9e457e54873ec7ab536f44144.png" alt="$i$"/>,  <img class="math" src="_images/math/cb0a0fa472883e4eae83ee5aaddab6f07b288346.png" alt="length($A$)"/> elements from tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/>.</p>
+</div>
+<div class="section" id="deque-insert-q-a-i">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.insert(Q,A,i)</span></code><a class="headerlink" href="#deque-insert-q-a-i" title="Permalink to this headline">¶</a></h3>
+<p>Shift right the suffix of deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> starting at index <img class="math" src="_images/math/c433e8f44aa7c1c9e457e54873ec7ab536f44144.png" alt="$i$"/> by <img class="math" src="_images/math/cb0a0fa472883e4eae83ee5aaddab6f07b288346.png" alt="length($A$)"/> elements, then copy tuple <img class="math" src="_images/math/11588ea762ed71673087093ce50ad45df184ec35.png" alt="$A$"/> into the deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> at that index.</p>
+</div>
+<div class="section" id="deque-erase-q-i-k">
+<h3><code class="code docutils literal notranslate"><span class="pre">deque.erase(Q,i,k)</span></code><a class="headerlink" href="#deque-erase-q-i-k" title="Permalink to this headline">¶</a></h3>
+<p>Erase <img class="math" src="_images/math/070059b77685bcf4f2c67703e44a958457f529da.png" alt="$k$"/> elements from deque <img class="math" src="_images/math/300c7134a3c1fcea25ef138edfaa57707f09b3d0.png" alt="$Q$"/> at index <img class="math" src="_images/math/c433e8f44aa7c1c9e457e54873ec7ab536f44144.png" alt="$i$"/> by shifting the suffix starting from <img class="math" src="_images/math/508bf6823dc11f55005fec5378a14756686c759e.png" alt="$i+k$"/> left. Length <img class="math" src="_images/math/070059b77685bcf4f2c67703e44a958457f529da.png" alt="$k$"/> should be the tuple size or a multiple.</p>
+</div>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Here is a simple motion queue, that accepts <cite>operations</cite> defined by a time and motor speeds, and executes them first-in, first-out.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">operation</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># Tuple of size 3</span>
+<span class="n">var</span> <span class="n">Queue</span><span class="p">[</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="mi">40</span><span class="p">)]</span> <span class="c1"># Store up to 40 operation tuples</span>
+<span class="n">var</span> <span class="n">n</span>
+
+<span class="n">sub</span> <span class="n">motion_add</span>
+    <span class="n">call</span> <span class="n">deque</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">Queue</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="n">onevent</span> <span class="n">timer0</span>
+    <span class="n">call</span> <span class="n">deque</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">Queue</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="n">then</span>
+        <span class="n">call</span> <span class="n">deque</span><span class="o">.</span><span class="n">pop_front</span><span class="p">(</span><span class="n">Queue</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+        <span class="n">timer</span><span class="o">.</span><span class="n">period</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">motor</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">operation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">motor</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">operation</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">end</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id3">3</a>, <a class="fn-backref" href="#id4">4</a>)</em> The trigonometric functions map the angles <img class="math" src="_images/math/ae9fe11240069b858afd0ad68e3cd321d24d743f.png" alt="[-pi,pi["/> radians to <img class="math" src="_images/math/246e61e4ca8ffa27498593797c4309928b3928ec.png" alt="-32768,32767"/>.
+The resultant sin and cos values are similarly mapped, namely <img class="math" src="_images/math/2a4a387c7ee1a764b31f2d56fdc39d669c43d6eb.png" alt="[-1.0,1.0["/> to <img class="math" src="_images/math/246e61e4ca8ffa27498593797c4309928b3928ec.png" alt="-32768,32767"/>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td>A <cite>tuple</cite> is simply a small array of values that are inserted in the <cite>deque</cite> together</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="thymio-api.html" class="btn btn-neutral float-right" title="Thymio Programming Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aseba-language.html" class="btn btn-neutral" title="The Aseba language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

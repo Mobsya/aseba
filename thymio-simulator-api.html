@@ -1,0 +1,540 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Simulated Thymio API &mdash; Aseba 1.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/>
+        <link rel="next" title="Building Aseba" href="development/building.html"/>
+        <link rel="prev" title="Thymio Programming Interface" href="thymio-api.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Aseba
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Aseba:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Thymio:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="thymio-api.html">Thymio Programming Interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulated Thymio API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#aseba">Aseba</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vpl-blocks">VPL Blocks</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doxygen.html">C++ Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Aseba</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Simulated Thymio API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/thymio-simulator-api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="simulated-thymio-api">
+<h1>Simulated Thymio API<a class="headerlink" href="#simulated-thymio-api" title="Permalink to this headline">¶</a></h1>
+<p>This page describe the APIs, methods and VPL blocks available when programming a simulated Thymio.
+Because the simulated Thymio is in a limited, virtual environment, not all features are implemented.
+However, in order to be compatible with the real Thymio, all variables, functions and events are available.</p>
+<p>If you use them, you will not get a compilation error, however some events might never happen,
+some functions might do nothing and some variables might never change.</p>
+<div class="section" id="aseba">
+<h2>Aseba<a class="headerlink" href="#aseba" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Variable</th>
+<th class="head">Status</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">button.backward</span></code>, <code class="docutils literal notranslate"><span class="pre">button.left</span></code>, <code class="docutils literal notranslate"><span class="pre">button.center</span></code>, <code class="docutils literal notranslate"><span class="pre">button.forward</span></code>, <code class="docutils literal notranslate"><span class="pre">button.right</span></code></td>
+<td>simulated, 0 by default, 1 when the respective buttons are clicked on with the mouse</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">prox.horizontal[0-6]</span></code></td>
+<td>simulated, return values depending on what is around the robot in the simulator with the addition of noise</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">prox.ground.ambiant[0-1]</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">prox.ground.reflected[0-1]</span></code></td>
+<td><div class="first last line-block">
+<div class="line">Simulated, return values depending on the colour of the ground with the addition of noise.</div>
+<div class="line">The simulated environment is 2-dimensional, there can be no holes under Thymio and Thymio cannot be tilted or laid on one side)</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">prox.ground.delta[0-1]</span></code></td>
+<td>simulated, returns the same as <code class="docutils literal notranslate"><span class="pre">prox.ground.reflected[0-1]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">prox.comm.rx</span></code>, <code class="docutils literal notranslate"><span class="pre">prox.comm.tx</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">acc[0-2]</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">temperature</span></code></td>
+<td><strong>always 220</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">motor.left.target</span></code>, <code class="docutils literal notranslate"><span class="pre">motor.right.target</span></code></td>
+<td>default 0, can be defined by the user to set the motors’ speeds. The simulated Thymio can move on a plane.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">motor.left.speed</span></code>, <code class="docutils literal notranslate"><span class="pre">motor.right.speed</span></code></td>
+<td>returns <code class="docutils literal notranslate"><span class="pre">motor.left.target</span></code>, <code class="docutils literal notranslate"><span class="pre">motor.right.target</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">motor.left.pwm</span></code>, <code class="docutils literal notranslate"><span class="pre">motor.right.pwm</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">rc5.address</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">rc5.command</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mic.intensity</span></code></td>
+<td><strong>always 0</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mic.threshold</span></code></td>
+<td><strong>can be defined by the user but will have no effect</strong></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timer.period[0]</span></code>, <code class="docutils literal notranslate"><span class="pre">timer.period[1]</span></code></td>
+<td>can be defined by the user to setup the <code class="docutils literal notranslate"><span class="pre">timer0</span></code> and <code class="docutils literal notranslate"><span class="pre">timer1</span></code> events</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Function</th>
+<th class="head">Status</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">prox.comm.enable(state)</span></code></div>
+</div>
+</td>
+<td><strong>does nothing</strong></td>
+</tr>
+<tr class="row-odd"><td><div class="first last line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.circle(l0,</span> <span class="pre">l1,</span> <span class="pre">l2,</span> <span class="pre">l3,</span> <span class="pre">l4,</span> <span class="pre">l5,</span> <span class="pre">l6,</span> <span class="pre">l7)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.top(r,</span> <span class="pre">g,</span> <span class="pre">b)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.bottom.left(r,</span> <span class="pre">g,</span> <span class="pre">b)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.bottom.right(r,</span> <span class="pre">g,</span> <span class="pre">b)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.buttons(l0,</span> <span class="pre">l1,</span> <span class="pre">l2,</span> <span class="pre">l3)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.prox.h(l0,</span> <span class="pre">l1,</span> <span class="pre">l2,</span> <span class="pre">l3,</span> <span class="pre">l4,</span> <span class="pre">l5,</span> <span class="pre">l6,</span> <span class="pre">l7)</span></code></div>
+</div>
+</td>
+<td>These LEDs are displayed as textures on the simulated robot</td>
+</tr>
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.rc(l)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.temperature(r,</span> <span class="pre">b)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.sound(l)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">leds.prox.v(l0,</span> <span class="pre">l1)</span></code></div>
+</div>
+</td>
+<td><strong>do nothing</strong></td>
+</tr>
+<tr class="row-odd"><td><div class="first last line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sound.freq</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sound.wave</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sound.record</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sound.replay</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sound.play</span></code></div>
+</div>
+</td>
+<td><strong>do nothing</strong></td>
+</tr>
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sd.open(x,status)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sd.write(data,written)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sd.read(data,read)</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sd.seek(position,status)</span></code></div>
+</div>
+</td>
+<td>Simulated</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="events">
+<h3>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Event</th>
+<th class="head">Status</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">button.backward</span></code>, <code class="docutils literal notranslate"><span class="pre">button.left</span></code>, <code class="docutils literal notranslate"><span class="pre">button.forward</span></code>, <code class="docutils literal notranslate"><span class="pre">button.right</span></code>, <code class="docutils literal notranslate"><span class="pre">button.center</span></code></td>
+<td>triggered when the user clicks with the mouse on one of the simulated Thymio’s buttons</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">buttons</span></code></td>
+<td>regular, 50&nbsp;Hz</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">prox</span></code></td>
+<td>regular, 10&nbsp;Hz</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">prox.comm</span></code></td>
+<td><strong>never triggered</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">tap</span></code></td>
+<td>triggered upon shock in the simulator or when the user clicks with the mouse on the simulated Thymio (but not on the buttons)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">acc</span></code></td>
+<td>regular, 16&nbsp;Hz</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mic</span></code></td>
+<td><strong>never triggered</strong></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">sound.finished</span></code></td>
+<td><strong>never triggered</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">temperature</span></code></td>
+<td>regular, 1Hz</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">rc5</span></code></td>
+<td><strong>never triggered</strong></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">motor</span></code></td>
+<td>regular, 100&nbsp;Hz</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timer0</span></code></td>
+<td>triggered when timer 0 period expires, user-defined</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">timer1</span></code></td>
+<td>triggered when timer 1 period expires, user-defined</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="vpl-blocks">
+<h2>VPL Blocks<a class="headerlink" href="#vpl-blocks" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>VPL Block</td>
+<td>Status</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/event-buttons.svg"><div align="middle" class="align-middle"><img alt="event-buttons.svg" class="image" src="_images/event-buttons.svg" width="64px" /></div>
+</a></td>
+<td>implemented, triggered when the user clicks with the mouse on one of the simulated Thymio’s buttons</td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/event-prox.svg"><div align="middle" class="align-middle"><img alt="event-prox.svg" class="image" src="_images/event-prox.svg" width="64px" /></div>
+</a></td>
+<td>implemented, detects objects in the simulator</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/event-ground.svg"><div align="middle" class="align-middle"><img alt="event-ground.svg" class="image" src="_images/event-ground.svg" width="64px" /></div>
+</a></td>
+<td>implemented, detects ground colour in the simulator</td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/event-tap.svg"><div align="middle" class="align-middle"><img alt="event-tap.svg" class="image" src="_images/event-tap.svg" width="64px" /></div>
+</a></td>
+<td>implemented, triggered upon shock in the simulator or when the user clicks with the mouse on the simulated Thymio (but not on the buttons)</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/event-clap.svg"><div align="middle" class="align-middle"><img alt="event-clap.svg" class="image" src="_images/event-clap.svg" width="64px" /></div>
+</a></td>
+<td><strong>not implemented, never triggered</strong></td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/action-motors.svg"><div align="middle" class="align-middle"><img alt="action-motors.svg" class="image" src="_images/action-motors.svg" width="64px" /></div>
+</a></td>
+<td>implemented, the simulated Thymio can move on a plane</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/action-colors-up.svg"><div align="middle" class="align-middle"><img alt="action-colors-up.svg" class="image" src="_images/action-colors-up.svg" width="64px" /></div>
+</a></td>
+<td>implemented, displayed as textures on the simulated robot</td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/action-colors-down.svg"><div align="middle" class="align-middle"><img alt="action-colors-down.svg" class="image" src="_images/action-colors-down.svg" width="64px" /></div>
+</a></td>
+<td>implemented, displayed as textures on the simulated robot</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/action-music.svg"><div align="middle" class="align-middle"><img alt="action-music.svg" class="image" src="_images/action-music.svg" width="64px" /></div>
+</a></td>
+<td><strong>not implemented, does nothing</strong></td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/event-timer.svg"><div align="middle" class="align-middle"><img alt="event-timer.svg" class="image" src="_images/event-timer.svg" width="64px" /></div>
+</a></td>
+<td>implemented, triggered when timer expires</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/action-timer.svg"><div align="middle" class="align-middle"><img alt="action-timer.svg" class="image" src="_images/action-timer.svg" width="64px" /></div>
+</a></td>
+<td>implemented</td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/action-states.svg"><div align="middle" class="align-middle"><img alt="action-states.svg" class="image" src="_images/action-states.svg" width="64px" /></div>
+</a></td>
+<td>implemented</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/event-rc-arrow.svg"><div align="middle" class="align-middle"><img alt="event-rc-arrow.svg" class="image" src="_images/event-rc-arrow.svg" width="64px" /></div>
+</a></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/event-rc-keypad.svg"><div align="middle" class="align-middle"><img alt="event-rc-keypad.svg" class="image" src="_images/event-rc-keypad.svg" width="64px" /></div>
+</a></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/event-prox-advanced.svg"><div align="middle" class="align-middle"><img alt="event-prox-advanced.svg" class="image" src="_images/event-prox-advanced.svg" width="64px" /></div>
+</a></td>
+<td>implemented, detects objects in the simulator</td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/event-ground-advanced.svg"><div align="middle" class="align-middle"><img alt="event-ground-advanced.svg" class="image" src="_images/event-ground-advanced.svg" width="64px" /></div>
+</a></td>
+<td>implemented, detects ground colour in the simulator</td>
+</tr>
+<tr class="row-even"><td><a class="image reference internal" href="_images/event-tilt.svg"><div align="middle" class="align-middle"><img alt="event-tilt.svg" class="image" src="_images/event-tilt.svg" width="64px" /></div>
+</a></td>
+<td><strong>Thymio cannot be tilted in the simulator</strong></td>
+</tr>
+<tr class="row-odd"><td><a class="image reference internal" href="_images/event-pitch.svg"><div align="middle" class="align-middle"><img alt="event-pitch.svg" class="image" src="_images/event-pitch.svg" width="64px" /></div>
+</a></td>
+<td><strong>Thymio cannot be tilted in the simulator</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="development/building.html" class="btn btn-neutral float-right" title="Building Aseba" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="thymio-api.html" class="btn btn-neutral" title="Thymio Programming Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.6',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
