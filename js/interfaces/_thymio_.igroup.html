@@ -69,6 +69,17 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A group represents a list of robots
+						sharing the same persistent state.</p>
+					</div>
+					<p>Group hold the events and shared variables for all robots in the group.</p>
+					<p>Events sent to a group or a robots will be broadcasted to all robots
+					in that group.</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -128,10 +139,15 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Events<wbr>Descriptions<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L249">thymio.ts:249</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L296">thymio.ts:296</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
+						<dl class="tsd-comment-tags">
+							<dt>see</dt>
+							<dd><p><a href="_thymio_.igroup.html#watchsharedvariablesandevents">watchSharedVariablesAndEvents</a></p>
+							</dd>
+						</dl>
 					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
@@ -161,10 +177,15 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Variables<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L253">thymio.ts:253</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L302">thymio.ts:302</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
+						<dl class="tsd-comment-tags">
+							<dt>see</dt>
+							<dd><p><a href="_thymio_.igroup.html#watchsharedvariablesandevents">watchSharedVariablesAndEvents</a></p>
+							</dd>
+						</dl>
 					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
@@ -194,12 +215,17 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="eventsdescriptions" class="tsd-anchor"></a>
 					<h3>events<wbr>Descriptions</h3>
-					<div class="tsd-signature tsd-kind-icon">events<wbr>Descriptions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">events<wbr>Descriptions<span class="tsd-signature-symbol">:</span> <a href="../classes/_thymio_.eventdescription.html" class="tsd-signature-type">EventDescription</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L243">thymio.ts:243</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L284">thymio.ts:284</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>List of events registered on this group</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
@@ -223,19 +249,34 @@
 					<div class="tsd-signature tsd-kind-icon">nodes<span class="tsd-signature-symbol">:</span> <a href="../classes/_thymio_.node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L244">thymio.ts:244</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L289">thymio.ts:289</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>All nodes registed on this group</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="variables" class="tsd-anchor"></a>
 					<h3>variables</h3>
-					<div class="tsd-signature tsd-kind-icon">variables<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">variables<span class="tsd-signature-symbol">:</span> <a href="../modules/_thymio_.html#variables" class="tsd-signature-type">Variables</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L242">thymio.ts:242</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L279">thymio.ts:279</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Shared variables registered on this group</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>see</dt>
+							<dd><p><a href="_thymio_.igroup.html#setvariables">setVariables</a></p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -253,13 +294,23 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_thymio_.ibasicnode.html">IBasicNode</a>.<a href="_thymio_.ibasicnode.html#emitevents">emitEvents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L187">thymio.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L209">thymio.ts:209</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Send events to a group
+									Each event must be registed on the group (see <a href="_thymio_.igroup.html#seteventsdescriptions">setEventsDescriptions</a>)</p>
+								</div>
+								<p>When sending events to Thymio 2, the value of each event must be an array of int16 matching <a href="../classes/_thymio_.eventdescription.html#fixed_size">EventDescription.fixed_size</a></p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>events: <a href="../modules/_thymio_.html#events" class="tsd-signature-type">Events</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>events to broadcast</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -268,7 +319,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_thymio_.ibasicnode.html">IBasicNode</a>.<a href="_thymio_.ibasicnode.html#emitevents">emitEvents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L188">thymio.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L210">thymio.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -286,7 +337,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_thymio_.ibasicnode.html">IBasicNode</a>.<a href="_thymio_.ibasicnode.html#emitevents">emitEvents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L189">thymio.ts:189</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L211">thymio.ts:211</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -303,19 +354,35 @@
 					<a name="seteventsdescriptions" class="tsd-anchor"></a>
 					<h3>set<wbr>Events<wbr>Descriptions</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Events<wbr>Descriptions<span class="tsd-signature-symbol">(</span>events<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_thymio_.eventdescription.html" class="tsd-signature-type">EventDescription</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Events<wbr>Descriptions<span class="tsd-signature-symbol">(</span>events<span class="tsd-signature-symbol">: </span><a href="../classes/_thymio_.eventdescription.html" class="tsd-signature-type">EventDescription</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L257">thymio.ts:257</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L331">thymio.ts:331</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the events registered on the group.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="_thymio_.inode.html#lock">INode.lock</a></p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>events: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_thymio_.eventdescription.html" class="tsd-signature-type">EventDescription</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>events: <a href="../classes/_thymio_.eventdescription.html" class="tsd-signature-type">EventDescription</a><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>variables to set. Will erase any previously
+										registered events.</p>
+										<p>This client must holds a lock on at least one node of this group
+										for the operation to be sucessful</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -332,13 +399,29 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L256">thymio.ts:256</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L317">thymio.ts:317</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the shared variables registered on the group.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="_thymio_.inode.html#lock">INode.lock</a></p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>variables: <a href="../modules/_thymio_.html#variables" class="tsd-signature-type">Variables</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>variables to set. Will erase any previous
+										registered variables.</p>
+										<p>This client must holds a lock on at least one node of this group
+										for the operation to be sucessful</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -356,13 +439,30 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_thymio_.ibasicnode.html">IBasicNode</a>.<a href="_thymio_.ibasicnode.html#watchsharedvariablesandevents">watchSharedVariablesAndEvents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L186">thymio.ts:186</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L200">thymio.ts:200</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Request the TDM to dispatch modifications of the
+										shared variables and event description for a group
+									or a Thymio to this client.</p>
+								</div>
+								<p>This <em>must</em> be called for the following event to be triggered</p>
+								<ul>
+									<li><a href="_thymio_.igroup.html#oneventsdescriptionschanged">IGroup.onEventsDescriptionsChanged</a></li>
+									<li><a href="_thymio_.igroup.html#onvariableschanged">IGroup.onVariablesChanged</a></li>
+									<li><a href="_thymio_.inode.html#oneventsdescriptionschanged">INode.onEventsDescriptionsChanged</a></li>
+									<li><a href="_thymio_.inode.html#onsharedvariableschanged">INode.onSharedVariablesChanged</a></li>
+								</ul>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>flags: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>bitfield of [[fb.mobsya.WatchableInfo]]</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>

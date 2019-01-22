@@ -145,13 +145,23 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L187">thymio.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L209">thymio.ts:209</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Send events to a group
+									Each event must be registed on the group (see <a href="_thymio_.igroup.html#seteventsdescriptions">setEventsDescriptions</a>)</p>
+								</div>
+								<p>When sending events to Thymio 2, the value of each event must be an array of int16 matching <a href="../classes/_thymio_.eventdescription.html#fixed_size">EventDescription.fixed_size</a></p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>events: <a href="../modules/_thymio_.html#events" class="tsd-signature-type">Events</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>events to broadcast</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -159,7 +169,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L188">thymio.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L210">thymio.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -176,7 +186,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L189">thymio.ts:189</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L211">thymio.ts:211</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -199,13 +209,30 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L186">thymio.ts:186</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L200">thymio.ts:200</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Request the TDM to dispatch modifications of the
+										shared variables and event description for a group
+									or a Thymio to this client.</p>
+								</div>
+								<p>This <em>must</em> be called for the following event to be triggered</p>
+								<ul>
+									<li><a href="_thymio_.igroup.html#oneventsdescriptionschanged">IGroup.onEventsDescriptionsChanged</a></li>
+									<li><a href="_thymio_.igroup.html#onvariableschanged">IGroup.onVariablesChanged</a></li>
+									<li><a href="_thymio_.inode.html#oneventsdescriptionschanged">INode.onEventsDescriptionsChanged</a></li>
+									<li><a href="_thymio_.inode.html#onsharedvariableschanged">INode.onSharedVariablesChanged</a></li>
+								</ul>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>flags: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>bitfield of [[fb.mobsya.WatchableInfo]]</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
