@@ -18,7 +18,22 @@ const MIN_PROTOCOL_VERSION = 1
 const PROTOCOL_VERSION = 1
 
 
+
+/**
+ * Each variable has a name an a value
+ * When communication with a Thymio 2, variables are always an array of int16.
+ * Sending an unique value to a Thymio 2 is equivalent to sending an array of size 1.
+ * Sending a value of an expected type will raise an exception.
+ */
 export type Variables = Map<string, any>;
+
+
+/**
+ * Each event has a name an a value
+ * When communication with a Thymio 2, event are always an array 0 or more int16.
+ * The arity of the event must match [[EventDescription.fixed_size]]
+ * Sending a event of an unexpected type or size will raise an exception.
+ */
 export type Events = Map<string, any>;
 
 /**
@@ -178,6 +193,9 @@ export class EventDescription {
     index:number = -1;
 }
 
+/**
+ * Group and Node share a common base interface.
+ */
 export interface IBasicNode {
     /**
      * Unique Id of the node
@@ -195,7 +213,7 @@ export interface IBasicNode {
      *  * [[INode.onEventsDescriptionsChanged]]
      *  * [[INode.onSharedVariablesChanged]]
      *
-     * @param flags bitfield of [[fb.mobsya.WatchableInfo]]
+     * @param flags bitflag of [[fb.mobsya.WatchableInfo]]
      */
     watchSharedVariablesAndEvents(flags : number) : Promise<any>
 
@@ -393,46 +411,125 @@ export import NodeType = mobsya.fb.NodeType;
 export import VMExecutionState = mobsya.fb.VMExecutionState;
 
 
+/**
+ * A node represents a physical or virtual Thymio
+ */
 export interface INode extends IBasicNode {
+
+    /**
+     * Group to which this robot belongs
+     *
+     */
     readonly group  : Group;
+
     readonly type   : NodeType;
+
+    /**
+     * Status of the robot
+     */
     readonly status : NodeStatus;
+
+    /**
+     * Name of the robot
+     */
     readonly name   : string;
+
+    /**
+     * A string representaion of the type of the robot
+     * see [[type]]
+     */
     readonly statusAsString : string;
+
+    /**
+     * A string representaion of the status of the robot
+     * see [[type]]
+     */
     readonly typeAsString : string
+
+    /**
+     * Shorthand for status == NodeStatus.Ready,
+     * see [[type]]
+     */
     readonly isReady  : boolean;
 
+    /**
+     * Known events
+     *
+     * @see [[IGroup.variable]]
+     */
     readonly sharedVariables : Variables;
+
+    /**
+     * Known events
+     *
+     * @see [[IGroup.eventsDescriptions]]
+     */
     readonly eventsDescriptions : EventDescription[]
 
     /**
      * @event
      */
     onVmExecutionStateChanged : (...args: any) => void;
+
     /**
+     * Emitted when the status of the robot changes
      * @event
      */
     onStatusChanged: (newStatus : NodeStatus) => void;
+
     /**
+     * Emitted when the name of the robot changes
+     * @see [[rename]], [[name]]
      * @event
      */
-    onNameChanged: (newStatus : string) => void;
+    onNameChanged: (newName : string) => void;
+
     /**
+     * Notify when one or several events are emmited
+     * by the robot.
+     *
      * @event
      */
     onEvents: (events : Events) => void;
+
     /**
+     * Notify changes in the event table of the group associated to this
+     * robot
+     *
      * @event
+     * @see [[IGroup.onEventsDescriptionsChanged]]
      */
     onEventsDescriptionsChanged: (events : EventDescription[]) => void;
+
     /**
+     * Notify of shared variables changes in the group associated to that
+     * robot
+     *
+     * @event
+     * @see [[IGroup.onVariablesChanged]]
+     */
+    onSharedVariablesChanged: (sharedVariables : Variables) => void;
+    /**
+     * Notifiy of robot variables changes.
+     * These are both the variables of the robot and the variables defined
+     * in the currently executing programm.
      * @event
      */
-    onSharedVariablesChanged: (variables : Variables) => void;
+    onVariablesChanged: (variables : Variables) => void;
+
+
     /**
+     * Emitted when the robot is associated to another group
+     * When a group change happens, it is the responsability of
+     * the application to rewire the group-monitoring callbacks
+     * such as [[onSharedVariablesChanged]] and [[onEventsDescriptionsChanged]].
+     *
+     * [[watchSharedVariablesAndEvents]] may also need to be reconfigured after a group
+     * change.
+     *
      * @event
      */
-    onVariablesChanged: (sharedVariables : Variables) => void;
+    onGroupChanged: (group: Group) => void;
 
 
      /** Lock the device
@@ -495,7 +592,24 @@ export interface INode extends IBasicNode {
      */
     runProgram() : Promise<any> ;
 
+    /**
+     * Set the values of the specified variables.
+     * Unlike [[setSharedVariables]], existing variables
+     * not modifieed by this function are left unmodified
+     *
+     * @param variables the variables to modify
+     */
     setVariables(variables : Variables) : Promise<any> ;
+
+    /**
+     * Set the shared variables on the group associated with this robot
+     *
+     * Overwrite all existing shared variables
+     * the node must be locked.
+     *
+     * @see [[lock]]
+     *
+     */
     setSharedVariables(variables : Variables) : Promise<any>
 }
 
@@ -517,7 +631,7 @@ export class Node extends BasicNode implements INode {
     private _on_vars_changed_cb: (variables: Variables) => void;
     private _on_events_cb: (events: Events) => void;
     private _group: Group;
-    private on_group_changed: (group: Group) => void;
+    onGroupChanged: (group: Group) => void;
     onVmExecutionStateChanged : (...args: any) => void;
     onStatusChanged: (newStatus : NodeStatus) => void;
     onNameChanged: (newStatus : string) => void;
@@ -527,7 +641,7 @@ export class Node extends BasicNode implements INode {
         this._status = status;
         this._type = type
         this._group = null
-        this.on_group_changed = undefined;
+        this.onGroupChanged = undefined;
         this.onVmExecutionStateChanged = undefined
     }
 
@@ -701,8 +815,8 @@ export class Node extends BasicNode implements INode {
     _set_group(group : Group) {
         if(group != this._group) {
             this._group = group
-            if(this._group && this.on_group_changed) {
-                this.on_group_changed(group)
+            if(this._group && this.onGroupChanged) {
+                this.onGroupChanged(group)
             }
         }
     }
@@ -726,6 +840,9 @@ export class Node extends BasicNode implements INode {
  *
  */
 export interface IClient {
+    /**
+     * List of connected nodes
+     */
     readonly nodes: INode[];
     /**
      * @param nodes Nodes whose status has changed
