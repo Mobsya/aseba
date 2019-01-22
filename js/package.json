@@ -16,6 +16,9 @@
   },
   "devDependencies": {
     "glob": "^7.1.3",
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-external-module-name": "^2.0.0",
+    "typedoc-plugin-internal-external": "^2.0.1",
     "typescript": "^3.2.2"
   },
   "scripts": {
