@@ -28,7 +28,7 @@ Welcome to Aseba's documentation!
 
    development/building
    doxygen
-   Javascript API <'../js/index.html'>
+   Javascript API <js/index.html>
 
 
 Indices and tables
