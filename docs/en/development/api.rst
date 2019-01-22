@@ -6,11 +6,11 @@ Developing applications for Thymio
 Connection to the device manager
 ================================
 
-Instead of communicating directly with a thymio, applications communicate with the Thymio Device Manager.
+Instead of communicating directly with a Thymio, applications communicate with the Thymio Device Manager.
 
 While developing an application, make sure the Thymio Device Manager is running.
 
-It is possible to control more than one thymio through the same connection, therefore, an application should only open a single connection
+It is possible to control more than one Thymio through the same connection, therefore, an application should only open a single connection
 to the device manager.
 
 The device manager exposes 2 endpoints
