@@ -29,7 +29,9 @@ Welcome to Aseba's documentation!
    :caption: Developer Documentation:
 
    development/building
-   development/api
+
+   development/api.rst
+
    Javascript API <https://mobsya.github.io/aseba/js/index.html>
 
 

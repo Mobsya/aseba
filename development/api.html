@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developing applications for Thymio &mdash; Aseba 1.6 documentation</title>
+  <title>Developing applications for Thymio &mdash; Aseba 1.7-alpha documentation</title>
   
 
   
@@ -39,7 +39,8 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Aseba 1.6 documentation" href="../index.html"/> 
+    <link rel="top" title="Aseba 1.7-alpha documentation" href="../index.html"/>
+        <link rel="prev" title="Building Aseba" href="building.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -68,7 +69,7 @@
             
             
               <div class="version">
-                1.6
+                1.7
               </div>
             
           
@@ -98,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../studio.html">Aseba Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aseba-language.html">The Aseba language</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aseba-std-natives.html">Native functions standard library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thymio-device-manager.html">Thymio Device Manager</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Thymio:</span></p>
 <ul>
@@ -105,8 +107,25 @@
 <li class="toctree-l1"><a class="reference internal" href="../thymio-simulator-api.html">Simulated Thymio API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="building.html">Building Aseba</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developing applications for Thymio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#connection-to-the-device-manager">Connection to the device manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#device-manager-discovery">Device Manager Discovery</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#protocol-overview">Protocol Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rate-limiting-and-error-management">Rate Limiting And Error Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#handshake">Handshake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#requests">Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-status">Node Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-id">Node Id</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-locking-and-unlocking">Node Locking and Unlocking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#watching-node">Watching Node</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://mobsya.github.io/aseba/js/index.html">Javascript API</a></li>
 </ul>
 
@@ -287,12 +306,19 @@ Watchable infos include variable change, vm status changes and events.</p>
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="building.html" class="btn btn-neutral" title="Building Aseba" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+        &copy; Copyright 2007–2019, Mobsya and other contributors.
 
     </p>
   </div>
@@ -314,7 +340,7 @@ Watchable infos include variable change, vm status changes and events.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.6',
+            VERSION:'1.7-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Thymio Device Manager &mdash; Aseba 1.6 documentation</title>
+  <title>Thymio Device Manager &mdash; Aseba 1.7-alpha documentation</title>
   
 
   
@@ -39,7 +39,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Aseba 1.6 documentation" href="index.html"/> 
+    <link rel="top" title="Aseba 1.7-alpha documentation" href="index.html"/>
+        <link rel="next" title="Thymio Programming Interface" href="thymio-api.html"/>
+        <link rel="prev" title="Native functions standard library" href="aseba-std-natives.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -68,7 +70,7 @@
             
             
               <div class="version">
-                1.6
+                1.7
               </div>
             
           
@@ -93,11 +95,30 @@
             
             
               <p class="caption"><span class="caption-text">Aseba:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About Aseba</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio.html">Aseba Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aseba-language.html">The Aseba language</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aseba-std-natives.html">Native functions standard library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Thymio Device Manager</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#launching-the-device-manager">Launching the Device Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-a-thymio-through-usb">Connecting a Thymio through USB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-a-wireless-thymio">Connecting a Wireless Thymio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-a-simulated-thymio">Connecting a Simulated Thymio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-to-a-thymio-device-manager">Connecting to a Thymio Device Manager</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#features">Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#thymio-status">Thymio Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#groups">Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reconnection">Reconnection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#permissions">Permissions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-applications-compatible-with-the-thymio-device-manager">Writing Applications compatible with the Thymio Device Manager</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Thymio:</span></p>
 <ul>
@@ -107,6 +128,7 @@
 <p class="caption"><span class="caption-text">Developer Documentation:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="development/building.html">Building Aseba</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/api.html">Developing applications for Thymio</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mobsya.github.io/aseba/js/index.html">Javascript API</a></li>
 </ul>
 
@@ -319,12 +341,21 @@ For convenience, Mobsya provides 2 APIs: One JS based compatible with NPM and We
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="thymio-api.html" class="btn btn-neutral float-right" title="Thymio Programming Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aseba-std-natives.html" class="btn btn-neutral" title="Native functions standard library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+        &copy; Copyright 2007–2019, Mobsya and other contributors.
 
     </p>
   </div>
@@ -346,7 +377,7 @@ For convenience, Mobsya provides 2 APIs: One JS based compatible with NPM and We
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.6',
+            VERSION:'1.7-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

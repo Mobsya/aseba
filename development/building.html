@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Building Aseba &mdash; Aseba 1.6 documentation</title>
+  <title>Building Aseba &mdash; Aseba 1.7-alpha documentation</title>
   
 
   
@@ -39,7 +39,9 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Aseba 1.6 documentation" href="../index.html"/> 
+    <link rel="top" title="Aseba 1.7-alpha documentation" href="../index.html"/>
+        <link rel="next" title="Developing applications for Thymio" href="api.html"/>
+        <link rel="prev" title="Simulated Thymio API" href="../thymio-simulator-api.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -68,7 +70,7 @@
             
             
               <div class="version">
-                1.6
+                1.7
               </div>
             
           
@@ -98,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../studio.html">Aseba Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aseba-language.html">The Aseba language</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aseba-std-natives.html">Native functions standard library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thymio-device-manager.html">Thymio Device Manager</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Thymio:</span></p>
 <ul>
@@ -105,7 +108,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../thymio-simulator-api.html">Simulated Thymio API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation:</span></p>
-<ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Building Aseba</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requierements-dependencies">Requierements &amp; Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-the-source-code">Getting the source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-on-windows-with-msvc">Getting Started on Windows with MSVC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-on-osx">Getting Started on OSX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-on-linux">Getting Started on Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies-on-ubuntu-debian">Dependencies On Ubuntu &amp; Debian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Building Aseba</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-note-about-permissions">A note about permissions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-on-android">Getting Started on Android</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-vpl-2">Building VPL 2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-setup">Advanced Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-tests">Running tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ninja">Ninja</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Developing applications for Thymio</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mobsya.github.io/aseba/js/index.html">Javascript API</a></li>
 </ul>
 
@@ -393,12 +419,21 @@ instead of make. Refer to the documentation of <code class="docutils literal not
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="Developing applications for Thymio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../thymio-simulator-api.html" class="btn btn-neutral" title="Simulated Thymio API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2007–2018, Stéphane Magnenat and other contributors.
+        &copy; Copyright 2007–2019, Mobsya and other contributors.
 
     </p>
   </div>
@@ -420,7 +455,7 @@ instead of make. Refer to the documentation of <code class="docutils literal not
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.6',
+            VERSION:'1.7-alpha',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

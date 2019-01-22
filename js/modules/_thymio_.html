@@ -124,9 +124,17 @@
 					<div class="tsd-signature tsd-kind-icon">Events<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L22">thymio.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/f3bbd6fd/js/src/thymio.ts#L37">thymio.ts:37</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Each event has a name an a value
+								When communication with a Thymio 2, event are always an array 0 or more int16.
+								The arity of the event must match <a href="../classes/_thymio_.eventdescription.html#fixed_size">EventDescription.fixed_size</a>
+							Sending a event of an unexpected type or size will raise an exception.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
 					<a name="variables" class="tsd-anchor"></a>
@@ -134,9 +142,17 @@
 					<div class="tsd-signature tsd-kind-icon">Variables<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L21">thymio.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/f3bbd6fd/js/src/thymio.ts#L28">thymio.ts:28</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Each variable has a name an a value
+								When communication with a Thymio 2, variables are always an array of int16.
+								Sending an unique value to a Thymio 2 is equivalent to sending an array of size 1.
+							Sending a value of an expected type will raise an exception.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
@@ -147,7 +163,7 @@
 					<div class="tsd-signature tsd-kind-icon">MIN_<wbr>PROTOCOL_<wbr>VERSION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">1</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L14">thymio.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/f3bbd6fd/js/src/thymio.ts#L14">thymio.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -159,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">PROTOCOL_<wbr>VERSION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">1</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L18">thymio.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/f3bbd6fd/js/src/thymio.ts#L18">thymio.ts:18</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -178,7 +194,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/822ec49b/js/src/thymio.ts#L1218">thymio.ts:1218</a></li>
+									<li>Defined in <a href="https://github.com/Mobsya/aseba/blob/f3bbd6fd/js/src/thymio.ts#L1335">thymio.ts:1335</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
