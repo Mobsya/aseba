@@ -1,36 +1,64 @@
-/* Wrap a promise to allow external resolve */
 
-/** @module Mobsya/thymio */
-
-import flatbuffers from './flatbuffers.js';
+import {flatbuffers} from 'flatbuffers';
 import {mobsya} from './thymio_generated';
-import FlexBuffers from "./flexbuffers.js"
-import WebSocket from 'isomorphic-ws';
+import FlexBuffers from '@cor3ntin/flexbuffers-wasm';
+
+import WebSocket from 'isomorphic-ws'
+
+//import WebSocket from '';
 import { isEqual } from 'lodash';
 
+/**
+ * @private
+ */
 const MIN_PROTOCOL_VERSION = 1
+/**
+ * @private
+ */
 const PROTOCOL_VERSION = 1
 
 
-/** Class representing Request.
- *  A Request wraps a promise that will be triggered when the corresponding Error/RequestCompleted message get received
- *  @private
+
+/**
+ * Each variable has a name an a value
+ * When communication with a Thymio 2, variables are always an array of int16.
+ * Sending an unique value to a Thymio 2 is equivalent to sending an array of size 1.
+ * Sending a value of an expected type will raise an exception.
  */
+export type Variables = Map<string, any>;
 
 
 /**
- * The built in string object.
- * @external String
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String|String}
+ * Each event has a name an a value
+ * When communication with a Thymio 2, event are always an array 0 or more int16.
+ * The arity of the event must match [[EventDescription.fixed_size]]
+ * Sending a event of an unexpected type or size will raise an exception.
  */
-/**
- * The built in Promise object.
- * @external Promise
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise|Promise}
- */
-export class Request {
+export type Events = Map<string, any>;
 
-    constructor(request_id) {
+/**
+    @private
+    Represent a network request to the server
+    (Thymio 3 or Thymio Device manager)
+    This class exposes the same interface and behavior
+    as ES7 Promise type, and trigger the promise or raise
+    an exception once the request is completed and the server
+    replies
+
+    Request is an implementation detail,
+    client code should only deal with Promises
+*/
+class Request {
+
+    /** Error type of a failed request */
+    public ErrorType = mobsya.fb.ErrorType;
+
+    _promise : Promise<any>
+    private _then: (args: Promise<any>) => void;
+    private _onerror: (args: Promise<any>) => void;
+    private _request_id: number;
+
+    constructor(request_id : number) {
         var then    = undefined;
         var onerror = undefined;
         this._promise = new Promise((resolve, reject) => {
@@ -42,55 +70,188 @@ export class Request {
         this._request_id = request_id
     }
 
-    _trigger_error(err) {
+    _trigger_error(err : any) {
         this._onerror(err)
     }
 
-    _trigger_then(...args) {
+    _trigger_then(...args : any) {
         return this._then.apply(this, args);
     }
 }
 
-/** Error type of a failed request */
-Request.ErrorType = mobsya.fb.ErrorType;
+/**
+ * Error raised when a request is made
+ * against a node that does not exist
+ */
+
+class InvalidNodeIDException {
+
+    message: string;
+    name: string;
+
+    constructor() {
+        this.message = "Invalid Node Id";
+        this.name = 'InvalidNodeIDException';
+    }
+}
+
+/**
+ * NodeId stores the 128bit UUID of the node
+ */
+
+export class NodeId {
+
+    private _data: Uint8Array;
+
+    constructor(array : Uint8Array) {
+        if(array.length != 16) {
+            throw new InvalidNodeIDException()
+        }
+        this._data = array
+    }
+
+    /**
+     * RFC 4122 compatible GUID - little-endian
+     */
+    get data() {
+        return this._data;
+    }
+
+
+    /**
+     * Return a string representation of the GUID
+     * compatible with microsof representation scheme
+     *
+     * {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+     */
+    toString() {
+        let res = []
+        this._data.forEach(byte => {
+                res.push(byte.toString(16).padStart(2, '0'))
+                if([4, 7, 10, 13].includes(res.length))
+                    res.push('-');
+            }
+        );
+        return '{' + res.join('') + '}';
+    }
+}
 
 
 /** Description of an aseba virtual machine. */
-class AsebaVMDescription {
-    constructor() {
-        this.bytecode_size = this.data_size = this.stack_size = 0;
-        this.variables = []
-        this.functions = []
-        this.events    = []
-    }
+export class AsebaVMDescription {
+
+    /**
+     * Amount of memory reserved for bytecode on this VM, in bytes
+     */
+    bytecode_size:number = 0;
+     /**
+     * Amount of memory reserved for data on this VM, in bytes
+     */
+    data_size:number = 0;
+     /**
+     * Size of the stack of the vm, in bytes
+     */
+    stack_size:number = 0;
+
+    /**
+     * List of the persistent, non-shared variables available on this VM
+     */
+    variables:Array<any>;
+    /**
+     * List of the persistent, non-shared internal events that this vm can
+     * react to. VM events can not be be emitted.
+     */
+    events:Array<any>;
+     /**
+     * List of the natives functions available on this VM
+     */
+    functions:Array<any>;
 }
 
+/**
+ * Description of a shared event.
+ *
+ */
+export class EventDescription {
 
-class EventDescription {
-    constructor() {
-        this.name = ""
-        this.fixed_size = 0
-        this.index  = -1
-    }
+    /**
+     * Name of the event
+     *
+     * Needs to be a valid Aseba Identifier (start by a letter, no space)
+     */
+    name:string;
+    /**
+     * Thymio 2 only supprts events that are fixed-size int16[]
+     *
+     * fixed_size describes the size, in word, of the event
+     */
+    fixed_size:number = 0;
+    /**
+     * Index of the event
+     * @internal
+     */
+    index:number = -1;
 }
 
-class _BasicNode {
-    constructor(client, id) {
+/**
+ * Group and Node share a common base interface.
+ */
+export interface IBasicNode {
+    /**
+     * Unique Id of the node
+     */
+    readonly id : NodeId;
+
+    /**
+     * Request the TDM to dispatch modifications of the
+     * shared variables and event description for a group
+     * or a Thymio to this client.
+     *
+     * This *must* be called for the following event to be triggered
+     *  * [[IGroup.onEventsDescriptionsChanged]]
+     *  * [[IGroup.onVariablesChanged]]
+     *  * [[INode.onEventsDescriptionsChanged]]
+     *  * [[INode.onSharedVariablesChanged]]
+     *
+     * @param flags bitflag of [[fb.mobsya.WatchableInfo]]
+     */
+    watchSharedVariablesAndEvents(flags : number) : Promise<any>
+
+    /**
+     * Send events to a group
+     * Each event must be registed on the group (see [[setEventsDescriptions]])
+     *
+     * When sending events to Thymio 2, the value of each event must be an array of int16 matching [[EventDescription.fixed_size]]
+     * @param events events to broadcast
+     */
+    emitEvents(events : Events) : Promise<any>
+    emitEvents(key : string, value : any) : Promise<any>
+    emitEvents(key : string) : Promise<any>
+}
+
+/**
+ * @private
+ */
+class BasicNode implements IBasicNode {
+    protected  _monitoring_flags:number;
+    protected  _client:Client;
+    protected  _id:NodeId;
+
+    constructor(client :Client, id : NodeId) {
         this._monitoring_flags = 0
         this._client = client
         this._id = id;
     }
 
-    /** return the node id*/
     get id() {
         return this._id
     }
 
-    async watchSharedVariablesAndEvents(watch) {
-        return await this._set_monitoring_flags(mobsya.fb.WatchableInfo.SharedEventsDescription | mobsya.fb.WatchableInfo.SharedVariables, watch)
+    watchSharedVariablesAndEvents(flags : number) {
+        return this._set_monitoring_flags(mobsya.fb.WatchableInfo.SharedEventsDescription | mobsya.fb.WatchableInfo.SharedVariables, flags)
     }
 
-    async _set_monitoring_flags(flag, set) {
+    _set_monitoring_flags(flag, set) {
         const old = this._monitoring_flags;
         if(set)
             this._monitoring_flags |= flag
@@ -98,11 +259,11 @@ class _BasicNode {
             this._monitoring_flags &= ~flag
 
         if(old != this._monitoring_flags) {
-            return await this._client._watch(this._id, this._monitoring_flags)
+            return this._client._watch(this._id, this._monitoring_flags)
         }
     }
 
-    async emitEvents(map_or_key, value) {
+    emitEvents(map_or_key : string | Events, value? : any) {
         if(typeof value !== "undefined") {
             const tmp = new Map();
             tmp.set(map_or_key, value);
@@ -113,13 +274,93 @@ class _BasicNode {
             tmp.set(map_or_key, null);
             map_or_key = tmp
         }
-        return await this._client._emit_events(this._id, map_or_key);
+        return this._client._emit_events(this._id, map_or_key);
     }
 }
 
-export class Group extends _BasicNode {
+/**
+ * A group represents a list of robots
+ * sharing the same persistent state.
+ *
+ * Group hold the events and shared variables for all robots in the group.
+ *
+ * Events sent to a group or a robots will be broadcasted to all robots
+ * in that group.
+ *
+ */
+export interface IGroup extends IBasicNode {
 
-    constructor(client, id) {
+    /**
+     * Shared variables registered on this group
+     * @see [[setVariables]]
+     */
+    readonly variables : Variables;
+
+    /**
+     * List of events registered on this group
+     */
+    readonly eventsDescriptions : EventDescription[];
+
+     /**
+     * All nodes registed on this group
+     */
+    readonly nodes : Node[];
+
+    /**
+     * @event
+     * Emitted each time the list of registered events changes
+     * @see [[watchSharedVariablesAndEvents]]
+     */
+    onEventsDescriptionsChanged : (events: EventDescription[]) => void;
+    /**
+     * @event
+     * Emitted each time the list of registered variables changes.
+     * @see [[watchSharedVariablesAndEvents]]
+     */
+    onVariablesChanged : (variables: Variables) => void;
+
+
+    /**
+     * Set the shared variables registered on the group.
+     *
+     * @param variables variables to set. Will erase any previous
+     * registered variables.
+     *
+     * This client must holds a lock on at least one node of this group
+     * for the operation to be sucessful
+     *
+     * @see [[INode.lock]]
+     *
+     */
+    setVariables(variables : Variables) : Promise<any>;
+
+    /**
+     * Set the events registered on the group.
+     *
+     * @param events variables to set. Will erase any previously
+     * registered events.
+     *
+     * This client must holds a lock on at least one node of this group
+     * for the operation to be sucessful
+     *
+     * @see [[INode.lock]]
+     *
+     */
+    setEventsDescriptions(events : EventDescription[])  : Promise<any>;
+
+}
+
+/**
+ * @private
+ */
+class Group extends BasicNode implements IGroup{
+
+    _variables:any;
+    _events:any;
+    private _on_variables_changed: (variables: Variables) => void;
+    private _on_events_descriptions_changed: (events: EventDescription[]) => void;
+
+    constructor(client : Client, id: NodeId) {
         super(client, id)
         this._variables = null;
         this._events = null;
@@ -131,7 +372,7 @@ export class Group extends _BasicNode {
         return this._variables;
     }
 
-    async setVariables(variables) {
+    setVariables(variables: Variables) {
         return this._client._set_variables(this._id, variables);
     }
 
@@ -139,8 +380,8 @@ export class Group extends _BasicNode {
         return this._events;
     }
 
-    async setEventsDescriptions(events) {
-        return await this._client._set_events_descriptions(this._id, events)
+    setEventsDescriptions(events: any) {
+        return this._client._set_events_descriptions(this._id, events)
     }
 
     get nodes() {
@@ -165,19 +406,242 @@ export class Group extends _BasicNode {
     }
 }
 
+export import NodeStatus = mobsya.fb.NodeStatus;
+export import NodeType = mobsya.fb.NodeType;
+export import VMExecutionState = mobsya.fb.VMExecutionState;
 
-/** Node */
-export class Node extends _BasicNode {
-    constructor(client, id, status, type) {
+
+/**
+ * A node represents a physical or virtual Thymio
+ */
+export interface INode extends IBasicNode {
+
+    /**
+     * Group to which this robot belongs
+     *
+     */
+    readonly group  : Group;
+
+    readonly type   : NodeType;
+
+    /**
+     * Status of the robot
+     */
+    readonly status : NodeStatus;
+
+    /**
+     * Name of the robot
+     */
+    readonly name   : string;
+
+    /**
+     * A string representaion of the type of the robot
+     * see [[type]]
+     */
+    readonly statusAsString : string;
+
+    /**
+     * A string representaion of the status of the robot
+     * see [[type]]
+     */
+    readonly typeAsString : string
+
+    /**
+     * Shorthand for status == NodeStatus.Ready,
+     * see [[type]]
+     */
+    readonly isReady  : boolean;
+
+    /**
+     * Known events
+     *
+     * @see [[IGroup.variable]]
+     */
+    readonly sharedVariables : Variables;
+
+    /**
+     * Known events
+     *
+     * @see [[IGroup.eventsDescriptions]]
+     */
+    readonly eventsDescriptions : EventDescription[]
+
+    /**
+     * @event
+     */
+    onVmExecutionStateChanged : (...args: any) => void;
+
+    /**
+     * Emitted when the status of the robot changes
+     * @event
+     */
+    onStatusChanged: (newStatus : NodeStatus) => void;
+
+    /**
+     * Emitted when the name of the robot changes
+     * @see [[rename]], [[name]]
+     * @event
+     */
+    onNameChanged: (newName : string) => void;
+
+    /**
+     * Notify when one or several events are emmited
+     * by the robot.
+     *
+     * @event
+     */
+    onEvents: (events : Events) => void;
+
+    /**
+     * Notify changes in the event table of the group associated to this
+     * robot
+     *
+     * @event
+     * @see [[IGroup.onEventsDescriptionsChanged]]
+     */
+    onEventsDescriptionsChanged: (events : EventDescription[]) => void;
+
+    /**
+     * Notify of shared variables changes in the group associated to that
+     * robot
+     *
+     * @event
+     * @see [[IGroup.onVariablesChanged]]
+     */
+    onSharedVariablesChanged: (sharedVariables : Variables) => void;
+    /**
+     * Notifiy of robot variables changes.
+     * These are both the variables of the robot and the variables defined
+     * in the currently executing programm.
+     * @event
+     */
+    onVariablesChanged: (variables : Variables) => void;
+
+
+    /**
+     * Emitted when the robot is associated to another group
+     * When a group change happens, it is the responsability of
+     * the application to rewire the group-monitoring callbacks
+     * such as [[onSharedVariablesChanged]] and [[onEventsDescriptionsChanged]].
+     *
+     * [[watchSharedVariablesAndEvents]] may also need to be reconfigured after a group
+     * change.
+     *
+     * @event
+     */
+    onGroupChanged: (group: Group) => void;
+
+
+     /** Lock the device
+     *  Locking a device is akin to take sole ownership of it until the connection
+     *  is closed or the unlock method is explicitely called
+     *
+     *  The device must be in the available state before it can be locked.
+     *  Once a device is locked, all client will see the device becoming busy.
+     *
+     *  If the device can not be locked, an [[mobsya.fb.Error]] is raised.
+     *
+     * @throws [[mobsya.fb.Error]]
+     */
+    lock() : Promise<any> ;
+
+    /** Unlock the device
+     * Once a device is unlocked, all client will see the device becoming available.
+     * Once unlock, a device can't be written to until loc
+     * @throws [[mobsya.fb.Error]]
+     *
+     * @see [[lock]]
+     */
+    unlock() : Promise<any> ;
+
+    /**
+     * Send a request to rename a node
+     * @throws [[mobsya.fb.Error]]
+     *
+     */
+    rename(newName : string) : Promise<any>;
+
+
+    /** Get the description from the device
+     *  The device must be in the available state before requesting the VM.
+     *
+     * @throws [[mobsya.fb.Error]]
+     *
+     * @see [[lock]]
+     */
+    asebaVMDescription() : Promise<any>
+
+
+
+    /** Load an aseba program on the VM
+     * The device must be locked & ready before calling this function
+     * The code is not directly executed. instead, {runProgram} must be call to start the execution
+     * @param code - the aseba code to load
+     *
+     * @throws [[mobsya.fb.Error]]
+     *
+     * @see [[lock]]
+     */
+    sendAsebaProgram(code : string) : Promise<any>;
+
+    /** Run the code currently loaded on the vm
+     * The device must be locked & ready before calling this function
+     *
+     * @throws [[mobsya.fb.Error]]
+     * @see [[lock]]
+     */
+    runProgram() : Promise<any> ;
+
+    /**
+     * Set the values of the specified variables.
+     * Unlike [[setSharedVariables]], existing variables
+     * not modifieed by this function are left unmodified
+     *
+     * @param variables the variables to modify
+     */
+    setVariables(variables : Variables) : Promise<any> ;
+
+    /**
+     * Set the shared variables on the group associated with this robot
+     *
+     * Overwrite all existing shared variables
+     * the node must be locked.
+     *
+     * @see [[lock]]
+     *
+     */
+    setSharedVariables(variables : Variables) : Promise<any>
+}
+
+
+/**
+ * @private
+ */
+export class Node extends BasicNode implements INode {
+
+
+    Status = mobsya.fb.NodeStatus;
+    VMExecutionState = mobsya.fb.VMExecutionState;
+    Type = mobsya.fb.NodeType;
+
+    private _status: NodeStatus;
+    private _type: NodeType;
+    private _desc: AsebaVMDescription = null;
+    _name: string;
+    private _on_vars_changed_cb: (variables: Variables) => void;
+    private _on_events_cb: (events: Events) => void;
+    private _group: Group;
+    onGroupChanged: (group: Group) => void;
+    onVmExecutionStateChanged : (...args: any) => void;
+    onStatusChanged: (newStatus : NodeStatus) => void;
+    onNameChanged: (newStatus : string) => void;
+
+    constructor(client : Client, id : NodeId, status : NodeStatus, type : NodeType) {
         super(client, id)
         this._status = status;
         this._type = type
-        this._desc   = null;
-        this._name   = null
-        this._on_vars_changed_cb = undefined;
-        this._on_events_cb = undefined;
         this._group = null
-        this.on_group_changed = undefined;
+        this.onGroupChanged = undefined;
         this.onVmExecutionStateChanged = undefined
     }
 
@@ -204,12 +668,10 @@ export class Node extends _BasicNode {
         return this._name
     }
 
-    /*
-     * Send a request to rename a node
-     */
-    async rename(new_name) {
-        await this._client._rename_node(this._id, new_name)
-        this._set_name(new_name)
+
+    rename(new_name : string) {
+        return this._client._rename_node(this._id, new_name)
+
     }
 
     /** Whether the node is ready (connected, and locked)
@@ -245,43 +707,16 @@ export class Node extends _BasicNode {
         }
         return "unknown"
     }
-
-    /** Lock the device
-     *  Locking a device is akin to take sole ownership of it until the connection
-     *  is closed or the unlock method is explicitely called
-     *
-     *  The device must be in the available state before it can be locked.
-     *  Once a device is locked, all client will see the device becoming busy.
-     *
-     *  If the device can not be locked, an {@link mobsya.fb.Error} is raised.
-     *  @throws {mobsya.fb.Error}
-     */
-    async lock() {
-        await this._client._lock_node(this._id)
-        this._status = Node.Status.ready
+    lock() {
+        return this._client._lock_node(this._id)
     }
 
-    /** Unlock the device
-     *  Once a device is unlocked, all client will see the device becoming available.
-     *  Once unlock, a device can't be written to until loc
-     *  @throws {mobsya.fb.Error}
-     *  @see lock
-     */
-    async unlock() {
-        return await this._client._unlock_node(this._id)
-        this._status = Node.Status.available
+    unlock() {
+        return this._client._unlock_node(this._id)
     }
 
-    /** Get the description from the device
-     *  The device must be in the available state before requesting the VM.
-     *  @returns {external:Promise<AsebaVMDescription>}
-     *  @throws {mobsya.fb.Error}
-     *  @see lock
-     */
-    async asebaVMDescription() {
-        if(!this._desc)
-            this._desc = await this._client._request_aseba_vm_description(this._id);
-        return this._desc
+    asebaVMDescription() {
+        return this._client._request_aseba_vm_description(this._id);
     }
 
     get sharedVariables() {
@@ -289,17 +724,11 @@ export class Node extends _BasicNode {
     }
 
     get eventsDescriptions() {
-        return this.group.events
+        return this.group.eventsDescriptions
     }
 
-    /** Load an aseba program on the VM
-     *  The device must be locked & ready before calling this function
-     *  @param {external:String} code - the aseba code to load
-     *  @throws {mobsya.fb.Error}
-     *  @see lock
-     */
-    async sendAsebaProgram(code) {
-        return await this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
+    sendAsebaProgram(code : string) {
+        return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
     }
 
     /** Load an aesl program on the VM
@@ -312,11 +741,6 @@ export class Node extends _BasicNode {
         return await this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
     }
 
-    /** Run the code currently loaded on the vm
-     *  The device must be locked & ready before calling this function
-     *  @throws {mobsya.fb.Error}
-     *  @see lock
-     */
     async runProgram() {
         return await this._client._set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
     }
@@ -330,7 +754,7 @@ export class Node extends _BasicNode {
     }
 
     async setEventsDescriptions(events) {
-        return await this._client.set_events_descriptions(this._id, events)
+        return await this._client._set_events_descriptions(this._id, events)
     }
 
 
@@ -370,109 +794,86 @@ export class Node extends _BasicNode {
         this._group.onVariablesChanged = cb
     }
 
-    _set_status(status) {
+    _set_status(status: NodeStatus) {
         if(status != this._status) {
             this._status = status
-            if(this.on_status_changed) {
-                this.on_status_changed(status)
+            if(this.onStatusChanged) {
+                this.onStatusChanged(status)
             }
         }
     }
 
-    _set_name(name) {
+    _set_name(name : string) {
         if(name != this._name) {
             this._name = name
-            if(this._name && this.on_name_changed) {
-                this.on_name_changed(name)
+            if(this._name && this.onNameChanged) {
+                this.onNameChanged(name)
             }
         }
     }
 
-    _set_group(group) {
+    _set_group(group : Group) {
         if(group != this._group) {
             this._group = group
-            if(this._group && this.on_group_changed) {
-                this.on_group_changed(group)
+            if(this._group && this.onGroupChanged) {
+                this.onGroupChanged(group)
             }
         }
     }
 }
 
-class InvalidNodeIDException {
-    constructor() {
-        this.message = message;
-        this.name = 'InvalidNodeIDException';
-    }
+
+/**
+ *  This interface represents the connection with a remote
+ *  Thymio Device Manager or Thymio 3
+ *
+ *  Once the connection established nodes connections and
+ *  modification events will be broadcast through
+ *  onNodesChanged.
+ *
+ *  When the connection is first establised,
+ *  onNodesChanged will be called with the list of all known
+ *  nodes.
+ *
+ * @see  [[createClient]]
+ *
+ *
+ */
+export interface IClient {
+    /**
+     * List of connected nodes
+     */
+    readonly nodes: INode[];
+    /**
+     * @param nodes Nodes whose status has changed
+     * @event
+     */
+    onNodesChanged: (nodes: INode[]) => void;
 }
 
-class NodeId {
-    constructor(array) {
-        if(array.length != 16) {
-            throw new InvalidNodeIDException()
-        }
-        this.data = array
-    }
-    toString() {
-        let res = []
-        this.data.forEach(byte => {
-                res.push(byte.toString(16).padStart(2, '0'))
-                if([4, 7, 10, 13].includes(res.length))
-                    res.push('-');
-            }
-        );
-        return '{' + res.join('') + '}';
-    }
-}
-
-/*
- * The status of a node
+/**
+ * @private
  */
-Node.Status = mobsya.fb.NodeStatus;
-Node.VMExecutionState = mobsya.fb.VMExecutionState;
+class Client implements IClient {
 
-/*
- * The type of a node
- */
-Node.Type = mobsya.fb.NodeType;
 
-class WaitCB {
-    constructor() {
-        var then    = undefined;
-        var onerror = undefined;
-        this._promise = new Promise((resolve, reject) => {
-            then    = resolve;
-            onerror = reject;
-        });
-        this._then = then
-        this._onerror = onerror
-    }
+    private _requests: Map<number, Request>;
+    private _nodes:  Map<string, Node>;
+    private _flex:   FlexBuffers;
+    private _socket: WebSocket;
 
-    _trigger_error(err) {
-        this._onerror(err)
-    }
-
-    _trigger_then(...args) {
-        console.log("ready")
-        return this._then.apply(this, args);
-    }
-}
-
-/*
- * A client. Main entry point of the api
- */
-export class Client {
+    onNodesChanged: (nodes: Node[]) => void = undefined;
 
     /**
      *  @param {external:String} url : Web socket address
      *  @see lock
      */
-    constructor(url) {
-
+    constructor(url: string) {
         //In progress requests (id : node)
         this._requests = new Map();
         //Known nodes (id : node)
         this._nodes    = new Map();
-        this._flex     = new FlexBuffers()
+        this._flex = new FlexBuffers();
         this._flex.onRuntimeInitialized = () => {
             this._socket = new WebSocket(url)
             this._socket.binaryType = 'arraybuffer';
@@ -482,19 +883,11 @@ export class Client {
     }
 
 
-    nodes() {
+    get nodes() {
         return Array.from(this._nodes.values());
     }
 
-    /**
-     *  @param {Node[]} nodes : Nodes whose status has changed.
-     *
-     */
-    onNodesChanged(nodes) {
-
-    }
-
-    _onopen() {
+    private _onopen() {
         console.log("connected, sending protocol version")
         const builder = new flatbuffers.Builder();
         mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
@@ -503,7 +896,7 @@ export class Client {
         this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
-    _onmessage (event) {
+    private _onmessage (event: MessageEvent) {
         let data = new Uint8Array(event.data)
         let buf  = new flatbuffers.ByteBuffer(data);
 
@@ -515,7 +908,8 @@ export class Client {
                 break;
             }
             case mobsya.fb.AnyMessage.NodesChanged: {
-                this.onNodesChanged(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
+                if(this.onNodesChanged)
+                    this.onNodesChanged(this._nodes_changed_as_node_list(message.message(new mobsya.fb.NodesChanged())))
                 break;
             }
             case mobsya.fb.AnyMessage.NodeAsebaVMDescription: {
@@ -566,7 +960,7 @@ export class Client {
                 const nodes = this._nodes_from_id(id)
                 if(nodes.length == 0)
                     break;
-                const vars = {}
+                const vars = new Map<string, any>();
                 for(let i = 0; i < msg.varsLength(); i++) {
                     const v = msg.vars(i);
                     const myarray = Uint8Array.from(v.valueArray())
@@ -596,7 +990,7 @@ export class Client {
                 const node = this._nodes.get(id.toString())
                 if(!node || !node.onEvents)
                     break;
-                const vars = {}
+                const vars = new Map<string, any>();
                 for(let i = 0; i < msg.eventsLength(); i++) {
                     const v = msg.events(i);
                     const myarray = Uint8Array.from(v.valueArray())
@@ -639,7 +1033,7 @@ export class Client {
         }
     }
 
-    _request_aseba_vm_description(id) {
+    _request_aseba_vm_description(id : NodeId) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -652,7 +1046,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _send_program(id, code, language) {
+    _send_program(id : NodeId, code : string, language : mobsya.fb.ProgrammingLanguage) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const codeOffset = builder.createString(code)
@@ -668,7 +1062,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _set_vm_execution_state(id, command) {
+    _set_vm_execution_state(id : NodeId, command : mobsya.fb.VMExecutionStateCommand) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -682,7 +1076,7 @@ export class Client {
     }
 
     //TODO : check variable types, etc
-    _set_variables(id, variables) {
+    _set_variables(id : NodeId, variables : Variables) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -696,7 +1090,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _serialize_variables(builder, variables) {
+    private _serialize_variables(builder : flatbuffers.Builder, variables : Variables) {
         const offsets = []
         if (!(variables instanceof Map)) {
             variables = new Map(Object.entries(variables))
@@ -708,7 +1102,7 @@ export class Client {
         return mobsya.fb.SetVariables.createVarsVector(builder, offsets)
     }
 
-    _serialize_variable(builder, name, value) {
+    private _serialize_variable(builder : flatbuffers.Builder, name : string, value : any) {
         const nameOffset = builder.createString(name)
         const buffer = this._flex.fromJSObject(value)
         const bufferOffset = mobsya.fb.NodeVariable.createValueVector(builder, buffer)
@@ -718,7 +1112,7 @@ export class Client {
         return mobsya.fb.NodeVariable.endNodeVariable(builder)
     }
 
-    _emit_events(id, variables) {
+    _emit_events(id : NodeId, variables : Variables) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -732,7 +1126,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _set_events_descriptions(id, events) {
+    _set_events_descriptions(id : NodeId,  events : EventDescription[]) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -747,7 +1141,7 @@ export class Client {
     }
 
 
-    _serialize_events_descriptions(builder, events) {
+    private _serialize_events_descriptions(builder : flatbuffers.Builder, events : EventDescription[]) {
         const offsets = []
         events.forEach( (event) => {
             offsets.push(this._serialize_event_description(builder, event.name, event.fixed_size))
@@ -756,7 +1150,7 @@ export class Client {
     }
 
 
-    _serialize_event_description(builder, name, fixed_size) {
+    private _serialize_event_description(builder : flatbuffers.Builder, name : string, fixed_size : number) {
         const nameOffset = builder.createString(name)
         mobsya.fb.EventDescription.startEventDescription(builder)
         mobsya.fb.EventDescription.addName(builder, nameOffset)
@@ -765,7 +1159,7 @@ export class Client {
     }
 
     /* request the description of the aseba vm for the node with the given id */
-    _lock_node(id) {
+    _lock_node(id : NodeId) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -778,7 +1172,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _unlock_node(id) {
+    _unlock_node(id : NodeId) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -792,7 +1186,7 @@ export class Client {
     }
 
 
-    _rename_node(id, name) {
+    _rename_node(id : NodeId, name : string) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -807,7 +1201,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _watch(id, monitoring_flags) {
+    _watch(id : NodeId, monitoring_flags : number) {
         let builder = new flatbuffers.Builder();
         let req_id  = this._gen_request_id()
         const nodeOffset = this._create_node_id(builder, id)
@@ -820,7 +1214,7 @@ export class Client {
         return this._prepare_request(req_id)
     }
 
-    _nodes_changed_as_node_list(msg) {
+    private _nodes_changed_as_node_list(msg: mobsya.fb.NodesChanged) {
         let nodes = []
         for(let i = 0; i < msg.nodesLength(); i++) {
             const n = msg.nodes(i);
@@ -832,7 +1226,7 @@ export class Client {
                 node._name = n.name()
                 this._nodes.set(id.toString(), node)
             }
-            if(n.status() == Node.Status.disconnected) {
+            if(n.status() == NodeStatus.disconnected) {
                 this._nodes.delete(id.toString())
             }
             nodes.push(node)
@@ -843,22 +1237,22 @@ export class Client {
         return nodes
     }
 
-    _nodes_from_id(id) {
+    _nodes_from_id(id : NodeId) {
         return Array.from(this._nodes.values()).filter(node => isEqual(node.id, id) || (node.group && isEqual(node.group.id, id)));
     }
 
-    _group_from_id(id) {
+    _group_from_id(id : NodeId) {
         let node =  Array.from(this._nodes.values()).find(node => node.group && isEqual(node.group.id, id));
         if(node && node.group)
             return node.group
         return new Group(this, id)
     }
 
-    _id(fb_id) {
+    private _id(fb_id : mobsya.fb.NodeId) {
         return fb_id ? new NodeId(fb_id.idArray()) : null
     }
 
-    _unserialize_aseba_vm_description(msg) {
+    private _unserialize_aseba_vm_description(msg : mobsya.fb.NodeAsebaVMDescription) {
         let desc = new AsebaVMDescription()
         desc.bytecode_size = msg.bytecodeSize()
         desc.data_size  = msg.dataSize()
@@ -886,14 +1280,14 @@ export class Client {
         return desc
     }
 
-    _create_node_id(builder, id) {
+    private _create_node_id(builder : flatbuffers.Builder, id : NodeId) {
         const offset = mobsya.fb.NodeId.createIdVector(builder, id.data);
         mobsya.fb.NodeId.startNodeId(builder)
         mobsya.fb.NodeId.addId(builder, offset)
         return mobsya.fb.NodeId.endNodeId(builder)
     }
 
-    _wrap_message_and_send(builder, offset, type) {
+    private _wrap_message_and_send(builder : flatbuffers.Builder, offset : flatbuffers.Offset, type : number) {
         mobsya.fb.Message.startMessage(builder)
         mobsya.fb.Message.addMessageType(builder, type)
         mobsya.fb.Message.addMessage(builder, offset)
@@ -902,7 +1296,7 @@ export class Client {
         this._socket.send(builder.asUint8Array())
     }
 
-    _gen_request_id(min, max) {
+    private _gen_request_id() {
         let n = 0
         do {
             n = Math.floor(Math.random() * (0xffffffff - 2)) + 1
@@ -910,7 +1304,7 @@ export class Client {
         return n
     }
 
-    _get_request(id) {
+    private _get_request(id : number) {
         const req = this._requests.get(id)
         if(req != undefined)
             this._requests.delete(id)
@@ -919,9 +1313,25 @@ export class Client {
             }
             return req
     }
-    _prepare_request(req_id) {
+    private _prepare_request(req_id : number) {
         let req = new Request(req_id)
         this._requests.set(req_id, req)
         return req._promise
     }
+}
+
+/**
+ * Connects to a Thymio Device Manager or a Thymio 3
+ *
+ * This Function is the main entry point of the API
+ *
+ * @param url WebSocket server to connect to.
+ * The of the url is `ws://<server>:<port>`
+ * This url need to be obtained by an implementation-defined manner.
+ *
+ * The server must be a Thymio Device Manger or a Thymio 3
+ * Or otherwise implement the Thymio Device Manager protocol
+ */
+export function createClient(url : string) : IClient {
+    return new Client(url)
 }

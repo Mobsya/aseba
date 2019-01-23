@@ -14,6 +14,8 @@ Welcome to Aseba's documentation!
    studio
    aseba-language
    aseba-std-natives
+   thymio-device-manager.rst
+
 
 .. toctree::
    :maxdepth: 1
@@ -27,8 +29,10 @@ Welcome to Aseba's documentation!
    :caption: Developer Documentation:
 
    development/building
-   doxygen
-   js
+
+   development/api.rst
+
+   Javascript API <https://mobsya.github.io/aseba/js/index.html>
 
 
 Indices and tables

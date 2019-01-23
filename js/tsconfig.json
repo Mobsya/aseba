@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es6",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "declaration" : true,
+    "esModuleInterop": true,
+    "lib": ["es2017", "dom"]
+  },
+  "files" : [
+    "src/thymio.ts"
+  ]
+}
