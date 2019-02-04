@@ -52,7 +52,7 @@
 
 #include "common/utils/utils.h"
 #include "common/about/AboutDialog.h"
-#include "ThymioVPLStandalone.h"
+#include "ThymioVPLApplication.h"
 
 
 // for backtrace
@@ -63,11 +63,11 @@ using namespace std;
 namespace Aseba {
 namespace ThymioVPL {
     // Visual Programming
-    ThymioVisualProgramming::ThymioVisualProgramming(ThymioVPLStandalone* app)
+    ThymioVisualProgramming::ThymioVisualProgramming(ThymioVPLApplication* app)
         : m_app(app), scene(new Scene(this)), loading(false), undoPos(-1), runAnimFrame(0), runAnimTimer(0) {
         runAnimFrames.resize(17);
 
-        connect(m_app, &ThymioVPLStandalone::eventsReceived, this, &ThymioVisualProgramming::onEventsReceived);
+        connect(m_app, &ThymioVPLApplication::eventsReceived, this, &ThymioVisualProgramming::onEventsReceived);
 
         // Create the gui ...
         setWindowTitle(tr("Thymio Visual Programming Language"));

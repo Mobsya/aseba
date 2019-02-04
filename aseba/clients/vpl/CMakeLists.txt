@@ -26,8 +26,8 @@ add_executable(thymiovplclassic WIN32
     Scene.h
     UsageLogger.h
     LogSignalMapper.h
-    ThymioVPLStandalone.h
-    ThymioVPLStandalone.cpp
+    ThymioVPLApplication.h
+    ThymioVPLApplication.cpp
 )
 
 target_link_libraries(thymiovplclassic

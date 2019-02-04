@@ -30,7 +30,7 @@
 #include <QCommandLineParser>
 #include <QUuid>
 #include <aseba/common/consts.h>
-#include "ThymioVPLStandalone.h"
+#include "ThymioVPLApplication.h"
 #include "UsageLogger.h"
 
 int main(int argc, char* argv[]) {
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     translator.load(QString(":/compiler_") + language);
     translator.load(QString(":/qtabout_") + language);
 
-    Aseba::ThymioVPLStandalone vpl(id);
+    Aseba::ThymioVPLApplication vpl(id);
     vpl.show();
     app.setOverrideCursor(Qt::ArrowCursor);
     return app.exec();

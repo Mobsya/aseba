@@ -42,8 +42,7 @@
 #include <qt-thymio-dm-client-lib/thymionode.h>
 
 namespace Aseba {
-struct ThymioVPLStandaloneInterface;
-class ThymioVPLStandalone;
+class ThymioVPLApplication;
 }  // namespace Aseba
 
 namespace Aseba {
@@ -56,7 +55,7 @@ namespace ThymioVPL {
         Q_OBJECT
 
     public:
-        ThymioVisualProgramming(ThymioVPLStandalone* app);
+        ThymioVisualProgramming(ThymioVPLApplication* app);
         ~ThymioVisualProgramming() override;
 
         QWidget* createMenuEntry();
@@ -115,7 +114,7 @@ namespace ThymioVPL {
         friend class Aseba::ThymioVPL::BlockButton;
         friend class Aseba::ThymioVPL::Scene;
 
-        ThymioVPLStandalone* m_app;
+        ThymioVPLApplication* m_app;
 
         ResizingView* view;
         Scene* scene;
@@ -170,8 +169,7 @@ namespace ThymioVPL {
         QVBoxLayout* actionsLayout;
 
     protected:
-        friend class Aseba::ThymioVPLStandalone;
-        friend struct Aseba::ThymioVPLStandaloneInterface;
+        friend class Aseba::ThymioVPLApplication;
 
         QPixmap drawColorScheme(const QColor& eventColor, const QColor& stateColor, const QColor& actionColor);
         void saveGeometryIfVisible();

@@ -17,7 +17,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ThymioVPLStandalone.h"
+#include "ThymioVPLApplication.h"
 #include "AeslEditor.h"
 #include "ThymioVisualProgramming.h"
 #include "common/consts.h"
@@ -35,7 +35,7 @@
 
 namespace Aseba {
 
-ThymioVPLStandalone::ThymioVPLStandalone(const QUuid& thymioId)
+ThymioVPLApplication::ThymioVPLApplication(const QUuid& thymioId)
     :  // options
        // useAnyTarget(useAnyTarget)
        //, debugLog(debugLog)
@@ -47,9 +47,9 @@ ThymioVPLStandalone::ThymioVPLStandalone(const QUuid& thymioId)
     , m_thymioId(thymioId) {
 
     const auto client = new mobsya::ThymioDeviceManagerClient(this);
-    connect(client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLStandalone::onNodeChanged);
-    connect(client, &mobsya::ThymioDeviceManagerClient::nodeRemoved, this, &ThymioVPLStandalone::onNodeChanged);
-    connect(client, &mobsya::ThymioDeviceManagerClient::nodeModified, this, &ThymioVPLStandalone::onNodeChanged);
+    connect(client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLApplication::onNodeChanged);
+    connect(client, &mobsya::ThymioDeviceManagerClient::nodeRemoved, this, &ThymioVPLApplication::onNodeChanged);
+    connect(client, &mobsya::ThymioDeviceManagerClient::nodeModified, this, &ThymioVPLApplication::onNodeChanged);
 
     // create gui
     setupWidgets();
@@ -62,14 +62,14 @@ ThymioVPLStandalone::ThymioVPLStandalone(const QUuid& thymioId)
 #endif  // ANDROID
 }
 
-ThymioVPLStandalone::~ThymioVPLStandalone() {}
+ThymioVPLApplication::~ThymioVPLApplication() {}
 
 
-void ThymioVPLStandalone::displayCode(const QList<QString>& code, int elementToHighlight) {
+void ThymioVPLApplication::displayCode(const QList<QString>& code, int elementToHighlight) {
     editor->replaceAndHighlightCode(code, elementToHighlight);
 }
 
-void ThymioVPLStandalone::loadAndRun() {
+void ThymioVPLApplication::loadAndRun() {
     if(!m_thymio)
         return;
     auto code = editor->toPlainText();
@@ -78,12 +78,12 @@ void ThymioVPLStandalone::loadAndRun() {
             Qt::UniqueConnection);
 }
 
-void ThymioVPLStandalone::stop() {
+void ThymioVPLApplication::stop() {
     m_thymio->load_aseba_code({});
     m_thymio->stop();
 }
 
-bool ThymioVPLStandalone::newFile() {
+bool ThymioVPLApplication::newFile() {
     Q_ASSERT(vpl);
     if(vpl->preDiscardWarningDialog(false)) {
         fileName = "";
@@ -92,7 +92,7 @@ bool ThymioVPLStandalone::newFile() {
     return false;
 }
 
-void ThymioVPLStandalone::setupWidgets() {
+void ThymioVPLApplication::setupWidgets() {
     // VPL part
     updateWindowTitle(false);
     vplLayout = new QVBoxLayout;
@@ -136,7 +136,7 @@ void ThymioVPLStandalone::setupWidgets() {
     connect(shwHide, SIGNAL(activated()), SLOT(toggleFullScreen()));
 }
 
-void ThymioVPLStandalone::setupConnections() {
+void ThymioVPLApplication::setupConnections() {
 
 
     // target events
@@ -150,7 +150,7 @@ void ThymioVPLStandalone::setupConnections() {
     //        SLOT(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)));
 }
 
-void ThymioVPLStandalone::resizeEvent(QResizeEvent* event) {
+void ThymioVPLApplication::resizeEvent(QResizeEvent* event) {
     if(event->size().height() > event->size().width())
         setOrientation(Qt::Vertical);
     else
@@ -159,7 +159,7 @@ void ThymioVPLStandalone::resizeEvent(QResizeEvent* event) {
     // resetSizes();
 }
 
-void ThymioVPLStandalone::resetSizes() {
+void ThymioVPLApplication::resetSizes() {
     // make sure that VPL is larger than the editor
     QList<int> sizes;
     if(orientation() == Qt::Vertical) {
@@ -173,13 +173,13 @@ void ThymioVPLStandalone::resetSizes() {
 }
 
 //! Received a close event, forward to VPL
-void ThymioVPLStandalone::closeEvent(QCloseEvent* event) {
+void ThymioVPLApplication::closeEvent(QCloseEvent* event) {
     if(vpl && !vpl->closeFile())
         event->ignore();
 }
 
 //! Save a minimal but valid aesl file
-bool ThymioVPLStandalone::saveFile(bool as) {
+bool ThymioVPLApplication::saveFile(bool as) {
     QSettings settings;
 
     // we need a valid VPL to save something
@@ -192,10 +192,10 @@ bool ThymioVPLStandalone::saveFile(bool as) {
             // get last file name
 
 #ifdef ANDROID
-            fileName = settings.value("ThymioVPLStandalone/fileName", "/sdcard/").toString();
+            fileName = settings.value("ThymioVPLClassic/fileName", "/sdcard/").toString();
 #else   // ANDROID
             fileName = settings
-                           .value("ThymioVPLStandalone/fileName",
+                           .value("ThymioVPLClassic/fileName",
                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
                            .toString();
 #endif  // ANDROID
@@ -216,7 +216,7 @@ bool ThymioVPLStandalone::saveFile(bool as) {
         return false;
 
     // save file name to settings
-    settings.setValue("ThymioVPLStandalone/fileName", fileName);
+    settings.setValue("ThymioVPLClassic/fileName", fileName);
 
     // initiate DOM tree
     QDomDocument document("aesl-source");
@@ -247,7 +247,7 @@ bool ThymioVPLStandalone::saveFile(bool as) {
 }
 
 //! Load a aesl file
-void ThymioVPLStandalone::openFile() {
+void ThymioVPLApplication::openFile() {
     // we need a valid VPL to save something
     if(!vpl)
         return;
@@ -260,10 +260,10 @@ void ThymioVPLStandalone::openFile() {
     if(fileName.isEmpty()) {
         QSettings settings;
 #ifdef ANDROID
-        dir = settings.value("ThymioVPLStandalone/fileName", "/sdcard/").toString();
+        dir = settings.value("ThymioVPLClassic/fileName", "/sdcard/").toString();
 #else   // ANDROID
         const QStringList stdLocations(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
-        dir = settings.value("ThymioVPLStandalone/fileName", !stdLocations.empty() ? stdLocations[0] : "").toString();
+        dir = settings.value("ThymioVPLClassic/fileName", !stdLocations.empty() ? stdLocations[0] : "").toString();
 #endif  // ANDROID
     } else
         dir = fileName;
@@ -310,7 +310,7 @@ void ThymioVPLStandalone::openFile() {
         // check whether we did load data
         if(dataLoaded) {
             fileName = newFileName;
-            QSettings().setValue("ThymioVPLStandalone/fileName", fileName);
+            QSettings().setValue("ThymioVPLClassic/fileName", fileName);
             updateWindowTitle(vpl->isModified());
         } else {
             QMessageBox::warning(this, tr("Loading"),
@@ -325,11 +325,11 @@ void ThymioVPLStandalone::openFile() {
     file.close();
 }
 
-QString ThymioVPLStandalone::openedFileName() const {
+QString ThymioVPLApplication::openedFileName() const {
     return fileName;
 }
 
-void ThymioVPLStandalone::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> node) {
+void ThymioVPLApplication::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> node) {
     if(!m_thymio) {
         if(node->uuid() == m_thymioId) {
             m_thymio = node;
@@ -351,12 +351,12 @@ void ThymioVPLStandalone::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> node
     }
 }
 
-void ThymioVPLStandalone::setupConnection() {
+void ThymioVPLApplication::setupConnection() {
 
     m_thymio->setWatchEventsEnabled(true);
     m_thymio->addEvent(mobsya::EventDescription{"pair_run", 1});
     m_thymio->addEvent(mobsya::EventDescription{"debug_log", 14});
-    connect(m_thymio.get(), &mobsya::ThymioNode::events, this, &ThymioVPLStandalone::eventsReceived);
+    connect(m_thymio.get(), &mobsya::ThymioNode::events, this, &ThymioVPLApplication::eventsReceived);
 
     if(vpl)
         return;
@@ -378,7 +378,7 @@ void ThymioVPLStandalone::setupConnection() {
 }
 
 //! A node has disconnected from the network.
-void ThymioVPLStandalone::teardownConnection() {
+void ThymioVPLApplication::teardownConnection() {
     if(!vpl)
         return;
     savedContent = vpl->saveToDom();
@@ -391,22 +391,13 @@ void ThymioVPLStandalone::teardownConnection() {
 }
 
 //! The execution state logic thinks variables might need a refresh
-void ThymioVPLStandalone::variablesMemoryEstimatedDirty(unsigned node) {
+void ThymioVPLApplication::variablesMemoryEstimatedDirty(unsigned node) {
     // if(node == id)
     //    target->getVariables(id, 0, allocatedVariablesCount);
 }
 
-/*
- * //! Content of target memory has changed
-void ThymioVPLStandalone::variablesMemoryChanged(unsigned node, unsigned start, const
-VariablesDataVector& variables) {
-    // update variables model
-    if(node == id)
-        variablesModel->setVariablesData(start, variables);
-}*/
-
 //! Update the window title with filename and modification status
-void ThymioVPLStandalone::updateWindowTitle(bool modified) {
+void ThymioVPLApplication::updateWindowTitle(bool modified) {
     QString modifiedText;
     if(modified)
         modifiedText = tr("[modified] ");
@@ -420,7 +411,7 @@ void ThymioVPLStandalone::updateWindowTitle(bool modified) {
 }
 
 //! Toggle on/off full screen
-void ThymioVPLStandalone::toggleFullScreen() {
+void ThymioVPLApplication::toggleFullScreen() {
     if(isFullScreen())
         showNormal();
     else

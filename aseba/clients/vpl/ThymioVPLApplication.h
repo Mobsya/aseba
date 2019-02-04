@@ -35,12 +35,12 @@ namespace ThymioVPL {
 class AeslEditor;
 
 //! Container for VPL standalone and its code viewer
-class ThymioVPLStandalone : public QSplitter {
+class ThymioVPLApplication : public QSplitter {
     Q_OBJECT
 
 public:
-    ThymioVPLStandalone(const QUuid& node);
-    ~ThymioVPLStandalone() override;
+    ThymioVPLApplication(const QUuid& node);
+    ~ThymioVPLApplication() override;
     void displayCode(const QList<QString>& code, int line);
     void loadAndRun();
     void stop();
@@ -70,7 +70,6 @@ protected Q_SLOTS:
     void toggleFullScreen();
 
 protected:
-    friend struct ThymioVPLStandaloneInterface;
     QUuid m_thymioId;
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
     mobsya::CompilationRequestWatcher m_compilation_watcher;
