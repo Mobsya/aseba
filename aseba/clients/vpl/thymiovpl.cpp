@@ -27,9 +27,10 @@
 #include <QLibraryInfo>
 #include <QDebug>
 #include <iostream>
-#include <stdexcept>
+#include <QCommandLineParser>
+#include <QUuid>
 #include <aseba/common/consts.h>
-#include "ThymioVPLStandalone.h"
+#include "ThymioVPLApplication.h"
 #include "UsageLogger.h"
 
 int main(int argc, char* argv[]) {
@@ -43,6 +44,17 @@ int main(int argc, char* argv[]) {
 
     const QString language(QLocale::system().name());
 
+    QCommandLineParser parser;
+    QCommandLineOption uuid(QStringLiteral("uuid"),
+                            QStringLiteral("Uuid of the target to connect to - can be specified multiple times"),
+                            QStringLiteral("uuid"));
+    parser.addOption(uuid);
+    parser.addHelpOption();
+    parser.process(qApp->arguments());
+
+    const auto idStr = parser.value("uuid");
+    const auto id = QUuid::fromString(idStr);
+
     QTranslator qtTranslator;
     app.installTranslator(&qtTranslator);
 
@@ -54,7 +66,7 @@ int main(int argc, char* argv[]) {
     translator.load(QString(":/compiler_") + language);
     translator.load(QString(":/qtabout_") + language);
 
-    Aseba::ThymioVPLStandalone vpl;
+    Aseba::ThymioVPLApplication vpl(id);
     vpl.show();
     app.setOverrideCursor(Qt::ArrowCursor);
     return app.exec();
