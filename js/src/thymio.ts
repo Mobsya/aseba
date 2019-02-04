@@ -611,6 +611,17 @@ export interface INode extends IBasicNode {
      *
      */
     setSharedVariables(variables : Variables) : Promise<any>
+
+     /**
+     * Set the event descriptions on the group associated with this robot
+     *
+     * Overwrite all existing events descriptions
+     * the node must be locked.
+     *
+     * @see [[lock]]
+     *
+     */
+    setEventsDescriptions(events : EventDescription[]) : Promise<any>
 }
 
 
@@ -737,24 +748,24 @@ export class Node extends BasicNode implements INode {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
-    async send_aesl_program(code) {
-        return await this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
+    send_aesl_program(code) {
+        return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
     }
 
-    async runProgram() {
-        return await this._client._set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
+    runProgram() {
+        return this._client._set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
     }
 
-    async setVariables(map) {
-        return await this._client._set_variables(this._id, map);
+    setVariables(map) {
+        return this._client._set_variables(this._id, map);
     }
 
-    async setSharedVariables(variables) {
-        return await this._group.setVariables(variables)
+    setSharedVariables(variables) {
+        return this._group.setVariables(variables)
     }
 
-    async setEventsDescriptions(events) {
-        return await this._client._set_events_descriptions(this._id, events)
+    setEventsDescriptions(events) {
+        return this._client._set_events_descriptions(this._id, events)
     }
 
 
