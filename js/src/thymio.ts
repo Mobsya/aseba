@@ -961,7 +961,7 @@ class Client implements IClient {
                 let req = this._get_request(msg.requestId())
                 if(req) {
                     //TODO
-                    req._trigger_error("Compilarion error")
+                    req._trigger_error("Compilation error")
                 }
                 break
             }
