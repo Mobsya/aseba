@@ -31,12 +31,9 @@
 #include <QShortcut>
 #include <QDesktopServices>
 #include <QLabel>
+#include <qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 
 namespace Aseba {
-/** \addtogroup studio */
-/*@{*/
-
-using namespace std;
 
 ThymioVPLStandaloneInterface::ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone)
     : vplStandalone(vplStandalone) {}
@@ -81,20 +78,22 @@ QString ThymioVPLStandaloneInterface::openedFileName() const {
     return vplStandalone->fileName;
 }
 
-ThymioVPLStandalone::ThymioVPLStandalone(/*const QString& commandLineTarget, bool useAnyTarget, bool debugLog,
-                                         bool execFeedback*/)
-    :     // options
-    //useAnyTarget(useAnyTarget)
-    //, debugLog(debugLog)
-    //, execFeedback(execFeedback)
-    //,
-    // setup initial values
-    id(0)
-    , vpl(nullptr)
-    , allocatedVariablesCount(0) {
+ThymioVPLStandalone::ThymioVPLStandalone(const QUuid& thymioId)
+    :  // options
+       // useAnyTarget(useAnyTarget)
+       //, debugLog(debugLog)
+       //, execFeedback(execFeedback)
+       //,
+       // setup initial values
+    vpl(nullptr)
+    , allocatedVariablesCount(0)
+    , m_thymioId(thymioId) {
 
-    // create gui
-    setupWidgets();
+    const auto client = new mobsya::ThymioDeviceManagerClient(this);
+    connect(client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this)
+
+        // create gui
+        setupWidgets();
     setupConnections();
     setWindowIcon(QIcon(":/images/icons/thymiovpl.svgz"));
 
@@ -173,7 +172,8 @@ void ThymioVPLStandalone::setupConnections() {
 
     // connect(target.get(), SIGNAL(variablesMemoryEstimatedDirty(unsigned)),
     //        SLOT(variablesMemoryEstimatedDirty(unsigned)));
-    // connect(target.get(), SIGNAL(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)),
+    // connect(target.get(), SIGNAL(variablesMemoryChanged(unsigned, unsigned, const
+    // VariablesDataVector&)),
     //        SLOT(variablesMemoryChanged(unsigned, unsigned, const VariablesDataVector&)));
 }
 
@@ -200,7 +200,8 @@ void ThymioVPLStandalone::resetSizes() {
 }
 
 //! The content of a variable has changed
-/*void ThymioVPLStandalone::variableValueUpdated(const QString& name, const VariablesDataVector& values) {
+/*void ThymioVPLStandalone::variableValueUpdated(const QString& name, const VariablesDataVector&
+values) {
     // we do not perform this check if we are forced to use any target
     if(useAnyTarget)
         return;
@@ -269,7 +270,7 @@ bool ThymioVPLStandalone::saveFile(bool as) {
     // add a node for VPL
     QDomElement element = document.createElement("node");
     //    element.setAttribute("name", target->getName(id));
-    element.setAttribute("nodeId", id);
+    // element.setAttribute("nodeId", id);
     element.appendChild(document.createTextNode(editor->toPlainText()));
     QDomDocument vplDocument(vpl->saveToDom());
     if(!vplDocument.isNull()) {
@@ -331,19 +332,17 @@ void ThymioVPLStandalone::openFile() {
                 if(element.tagName() == "node") {
                     // if node corresponds to the connected robot
                     /*if((element.attribute("name") == target->getName(id)) &&
-                       ((element.attribute("nodeId").toUInt() == id) || (target->getNodesList().size() == 1))) {
-                        restore VPL QDomElement toolsPlugins(element.firstChildElement("toolsPlugins"));
-                        QDomElement toolPlugin(toolsPlugins.firstChildElement());
-                        while(!toolPlugin.isNull()) {
+                       ((element.attribute("nodeId").toUInt() == id) ||
+                    (target->getNodesList().size() == 1))) { restore VPL QDomElement
+                    toolsPlugins(element.firstChildElement("toolsPlugins")); QDomElement
+                    toolPlugin(toolsPlugins.firstChildElement()); while(!toolPlugin.isNull()) {
                             // if VPL found
                             if(toolPlugin.nodeName() == "ThymioVisualProgramming") {
                                 // restore VPL data
                                 QDomDocument pluginDataDocument("tool-plugin-data");
                                 pluginDataDocument.appendChild(
-                                    pluginDataDocument.importNode(toolPlugin.firstChildElement(), true));
-                                vpl->loadFromDom(pluginDataDocument, true);
-                                dataLoaded = true;
-                                break;
+                                    pluginDataDocument.importNode(toolPlugin.firstChildElement(),
+                    true)); vpl->loadFromDom(pluginDataDocument, true); dataLoaded = true; break;
                             }
                             toolPlugin = toolPlugin.nextSiblingElement();
                         }
@@ -359,7 +358,8 @@ void ThymioVPLStandalone::openFile() {
         //   updateWindowTitle(vpl->isModified());
         //} else {
         //    QMessageBox::warning(this, tr("Loading"),
-        //                         tr("No Thymio VPL data were found in the script file, file ignored."));
+        //                         tr("No Thymio VPL data were found in the script file, file
+        //                         ignored."));
         //}
     } else {
         QMessageBox::warning(
@@ -394,6 +394,28 @@ void ThymioVPLStandalone::editorContentChanged() {
     }*/
 }
 
+void ThymioVPLStandalone::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> node) {
+    if(!m_thymio) {
+        if(node->uuid() == m_thymioId) {
+            m_thymio = node;
+        }
+    }
+    disconnectedMessage->setText(tr("Connection to Thymio lost... make sure Thymio is on and "
+                                    "connect the USB cable/dongle"));
+    disconnectedMessage->setVisible(!m_thymio || m_thymio->status() != mobsya::ThymioNode::Status::Ready);
+
+    if(node != m_thymio)
+        return;
+
+    if(node->status() == mobsya::ThymioNode::Status::Ready) {
+
+    } else if(node->status() == mobsya::ThymioNode::Status::Available) {
+        node->lock();
+    } else {
+        m_thymio.reset();
+    }
+}
+
 //! A new node has connected to the network.
 void ThymioVPLStandalone::nodeConnected(unsigned node) {
     // only allow a single node connected at a given time
@@ -406,11 +428,10 @@ void ThymioVPLStandalone::nodeConnected(unsigned node) {
 
     // hide the disconnected message
     disconnectedMessage->hide();
-    disconnectedMessage->setText(
-        tr("Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle"));
+
 
     // save node information
-    id = node;
+    // id = node;
 
     // create the VPL widget and add it
     // vpl = new ThymioVPL::ThymioVisualProgramming(new ThymioVPLStandaloneInterface(this));
@@ -457,7 +478,8 @@ void ThymioVPLStandalone::variablesMemoryEstimatedDirty(unsigned node) {
 
 /*
  * //! Content of target memory has changed
-void ThymioVPLStandalone::variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables) {
+void ThymioVPLStandalone::variablesMemoryChanged(unsigned node, unsigned start, const
+VariablesDataVector& variables) {
     // update variables model
     if(node == id)
         variablesModel->setVariablesData(start, variables);

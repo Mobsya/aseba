@@ -1,6 +1,6 @@
 set(CMAKE_AUTOMOC on)
 
-add_executable(thymiovpl WIN32
+add_executable(thymiovplclassic WIN32
     thymiovpl.cpp
     ThymioVisualProgramming.cpp
     ResizingView.cpp
@@ -30,7 +30,7 @@ add_executable(thymiovpl WIN32
     ThymioVPLStandalone.cpp
 )
 
-target_link_libraries(thymiovpl
+target_link_libraries(thymiovplclassic
     asebaqtcommon
     qt-thymio-dm-client-lib
     asebaqtabout

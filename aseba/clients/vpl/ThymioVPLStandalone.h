@@ -22,6 +22,7 @@
 
 #include <QSplitter>
 #include <QDomDocument>
+#include <qt-thymio-dm-client-lib/thymionode.h>
 
 class QTranslator;
 class QVBoxLayout;
@@ -58,7 +59,7 @@ class ThymioVPLStandalone : public QSplitter {
     Q_OBJECT
 
 public:
-    ThymioVPLStandalone();
+    ThymioVPLStandalone(const QUuid &node);
     ~ThymioVPLStandalone() override;
 
 protected:
@@ -82,14 +83,16 @@ protected slots:
 
 protected:
     friend struct ThymioVPLStandaloneInterface;
+    QUuid m_thymioId;
+    std::shared_ptr<mobsya::ThymioNode> m_thymio;
+
+
 
     // std::unique_ptr<Target> target;  //!< pointer to target
 
     bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets
     bool debugLog;      //!< if true, generate debug log events
     bool execFeedback;  //!< if true, blink executed events, imples debugLog = true
-
-    unsigned id;  //!< node identifier
 
     QLayout* vplLayout;                       //!< layout to add/remove VPL to/from
     ThymioVPL::ThymioVisualProgramming* vpl;  //!< VPL widget
