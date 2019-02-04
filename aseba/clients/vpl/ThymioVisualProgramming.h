@@ -39,6 +39,7 @@
 #include <vector>
 #include <iterator>
 #include <memory>
+#include <qt-thymio-dm-client-lib/thymionode.h>
 
 namespace Aseba {
 struct ThymioVPLStandaloneInterface;
@@ -51,14 +52,11 @@ namespace ThymioVPL {
     class BlockButton;
     class ResizingView;
 
-    /** \addtogroup studio */
-    /*@{*/
-
     class ThymioVisualProgramming : public QWidget {
         Q_OBJECT
 
     public:
-        ThymioVisualProgramming();
+        ThymioVisualProgramming(ThymioVPLStandalone* app);
         ~ThymioVisualProgramming() override;
 
         QWidget* createMenuEntry();
@@ -72,16 +70,15 @@ namespace ThymioVPL {
 
         bool isModified() const;
         qreal getViewScale() const;
-
-    signals:
+    Q_SIGNALS:
         void modifiedStatusChanged(bool modified);
         void compilationOutcome(bool success);
 
-    protected slots:
+    protected Q_SLOTS:
         void showErrorLine();
         bool closeFile();
 
-    private slots:
+    private Q_SLOTS:
         void openHelp();
         void saveSnapshot() const;
         void showVPLModal();
@@ -102,14 +99,13 @@ namespace ThymioVPL {
         void redo();
         void processCompilationResult();
         void processHighlightChange();
-        // void userEvent(unsigned id, const VariablesDataVector& data);
+        void onEventsReceived(const mobsya::ThymioNode::EventMap& variables);
 
     private:
         void clearUndo();
         void toggleAdvancedMode(bool advanced, bool force = false, bool ignoreSceneCheck = false);
         void clearSceneWithoutRecompilation();
         void showAtSavedPosition();
-        void setupGlobalEvents();
 
     public:
         bool debugLog;
@@ -119,7 +115,8 @@ namespace ThymioVPL {
         friend class Aseba::ThymioVPL::BlockButton;
         friend class Aseba::ThymioVPL::Scene;
 
-        // std::unique_ptr<DevelopmentEnvironmentInterface> de;
+        ThymioVPLStandalone* m_app;
+
         ResizingView* view;
         Scene* scene;
         bool loading;  //!< true during load, to prevent recursion of changes triggered by VPL
@@ -137,9 +134,6 @@ namespace ThymioVPL {
         QLabel* compilationResult;
         QLabel* compilationResultImage;
         QPushButton* showCompilationError;
-
-        // QSlider *zoomSlider;
-
         QToolBar* toolBar;
         QGridLayout* toolLayout;
         QPushButton* newButton;
@@ -196,7 +190,6 @@ namespace ThymioVPL {
         void resizeEvent(QResizeEvent* event) override;
         void timerEvent(QTimerEvent* event) override;
     };
-    /*@}*/
 }  // namespace ThymioVPL
 }  // namespace Aseba
 

@@ -27,7 +27,7 @@ ListModel {
     }
 
     function launch_vplClassic(device) {
-        var program = Utils.search_program("thymiovpl")
+        var program = Utils.search_program("thymiovplclassic")
         if(!program)
             return false;
         return Utils.launch_process(program, ["--uuid", device.id])
@@ -47,11 +47,11 @@ ListModel {
         return launch_functions[appId]
     }
 
-//    ListElement {
-//        appId:"vplClassic"
-//        name: "VPL"
-//        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
-//    }
+    ListElement {
+        appId:"vplClassic"
+        name: "VPL"
+        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
+    }
     ListElement {
         appId: "scratch"
         name: "Scatch"

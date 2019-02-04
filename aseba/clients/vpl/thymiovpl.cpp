@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     translator.load(QString(":/compiler_") + language);
     translator.load(QString(":/qtabout_") + language);
 
-    Aseba::ThymioVPLStandalone vpl;
+    Aseba::ThymioVPLStandalone vpl(id);
     vpl.show();
     app.setOverrideCursor(Qt::ArrowCursor);
     return app.exec();

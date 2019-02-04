@@ -29,26 +29,6 @@ class QVBoxLayout;
 class QLabel;
 
 namespace Aseba {
-/** \addtogroup studio */
-/*@{*/
-
-class ThymioVPLStandalone;
-
-struct ThymioVPLStandaloneInterface {
-    ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone);
-    void displayCode(const QList<QString>& code, int line);
-    void loadAndRun();
-    void stop();
-    bool saveFile(bool as = false);
-    void openFile();
-    bool newFile();
-    void clearOpenedFileName(bool isModified);
-    QString openedFileName() const;
-
-private:
-    ThymioVPLStandalone* vplStandalone;
-};
-
 namespace ThymioVPL {
     class ThymioVisualProgramming;
 }
@@ -59,8 +39,15 @@ class ThymioVPLStandalone : public QSplitter {
     Q_OBJECT
 
 public:
-    ThymioVPLStandalone(const QUuid &node);
+    ThymioVPLStandalone(const QUuid& node);
     ~ThymioVPLStandalone() override;
+    void displayCode(const QList<QString>& code, int line);
+    void loadAndRun();
+    void stop();
+    bool saveFile(bool as = false);
+    void openFile();
+    bool newFile();
+    QString openedFileName() const;
 
 protected:
     void setupWidgets();
@@ -69,13 +56,14 @@ protected:
     void resetSizes();
     // void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
     void closeEvent(QCloseEvent* event) override;
-    bool saveFile(bool as);
-    void openFile();
 
-protected slots:
-    void editorContentChanged();
-    void nodeConnected(unsigned node);
-    void nodeDisconnected(unsigned node);
+Q_SIGNALS:
+    void eventsReceived(const mobsya::ThymioNode::EventMap& variables);
+
+protected Q_SLOTS:
+    void onNodeChanged(std::shared_ptr<mobsya::ThymioNode> node);
+    void setupConnection();
+    void teardownConnection();
     void variablesMemoryEstimatedDirty(unsigned node);
     // void variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables);
     void updateWindowTitle(bool modified);
@@ -85,10 +73,7 @@ protected:
     friend struct ThymioVPLStandaloneInterface;
     QUuid m_thymioId;
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
-
-
-
-    // std::unique_ptr<Target> target;  //!< pointer to target
+    mobsya::CompilationRequestWatcher m_compilation_watcher;
 
     bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets
     bool debugLog;      //!< if true, generate debug log events

@@ -181,7 +181,7 @@ Request ThymioNode::setGroupVariables(const VariableMap& variables) {
 }
 
 Request ThymioNode::addEvent(const EventDescription& d) {
-    auto table = m_events_table;
+    auto& table = m_events_table;
     auto it =
         std::find_if(table.begin(), table.end(), [&d](const EventDescription& ed) { return d.name() == ed.name(); });
     if(it != table.end()) {
