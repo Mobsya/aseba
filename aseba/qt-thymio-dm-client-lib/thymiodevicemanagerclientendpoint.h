@@ -36,8 +36,8 @@ public:
     Request set_watch_flags(const ThymioNode& node, int flags);
     AsebaVMDescriptionRequest fetchAsebaVMDescription(const ThymioNode& node);
     Request setNodeVariables(const ThymioNode& node, const ThymioNode::VariableMap& vars);
-    Request setGroupVariables(const ThymioNode& node, const ThymioNode::VariableMap& vars);
-    Request setNodeEventsTable(const ThymioNode& node, const QVector<EventDescription>& events);
+    Request setGroupVariables(const ThymioGroup& group, const ThymioNode::VariableMap& vars);
+    Request setNodeEventsTable(const QUuid& id, const QVector<EventDescription>& events);
     Request emitNodeEvents(const ThymioNode& node, const ThymioNode::EventMap& vars);
 
 private Q_SLOTS:
@@ -67,6 +67,10 @@ private:
     void handleIncommingMessage(const fb_message_ptr& msg);
     detail::RequestDataBase::shared_ptr get_request(detail::RequestDataBase::request_id);
     std::vector<std::shared_ptr<ThymioNode>> nodes(const QUuid& node_or_group_id) const;
+    std::shared_ptr<ThymioGroup> group_from_group_id(const QUuid& id);
+    std::shared_ptr<ThymioGroup> group_from_id(const QUuid& id);
+
+    Request setVariables(const QUuid& id, const ThymioNode::VariableMap& vars);
 
 
     static flatbuffers::Offset<fb::NodeId> serialize_uuid(flatbuffers::FlatBufferBuilder& fb, const QUuid& uuid);

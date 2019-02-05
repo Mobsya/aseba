@@ -37,6 +37,12 @@ public:
             ranges::view::filter([](PlotTab* n) { return n; });
     }
 
+    auto groups() const {
+        auto grps = ranges::view::all(m_tabs) | ranges::view::filter([](NodeTab* n) { return n && n->thymio(); }) |
+            ranges::view::transform([](NodeTab* n) { return n->thymio()->group(); }) | ranges::to_vector;
+        return grps | ranges::move | ranges::action::sort | ranges::action::unique;
+    }
+
 public Q_SLOTS:
     void onNodeAdded(std::shared_ptr<mobsya::ThymioNode>);
     void onNodeRemoved(std::shared_ptr<mobsya::ThymioNode>);
@@ -64,16 +70,10 @@ private:
     NodeTab* tabForNode(std::shared_ptr<const mobsya::ThymioNode>) const;
 
 
-    auto groups() const {
-        auto grps = ranges::view::all(m_tabs) | ranges::view::filter([](NodeTab* n) { return n && n->thymio(); }) |
-            ranges::view::transform([](NodeTab* n) { return n->thymio()->group_id(); }) | ranges::to_vector;
-        return grps | ranges::move | ranges::action::sort | ranges::action::unique;
-    }
-
     auto nodes_for_groups() const {
         auto grps = groups();
         std::vector<std::shared_ptr<mobsya::ThymioNode>> nodes;
-        auto view = grps | ranges::view::transform([this](auto&& g) { return m_client.nodes(g); });
+        auto view = grps | ranges::view::transform([this](auto&& g) { return m_client.nodes(g->uuid()); });
         for(auto&& g : view) {
             ranges::copy(g, ranges::back_inserter(nodes));
         }
