@@ -51,6 +51,7 @@ private:
 
 
 class ThymioDeviceManagerClientEndpoint;
+class ThymioGroup;
 class ThymioNode : public QObject {
     Q_OBJECT
 public:
@@ -85,7 +86,6 @@ public:
 
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
                mobsya::ThymioNode::NodeType type, QObject* parent = nullptr);
-
 Q_SIGNALS:
     void modified();
     void groupChanged();
@@ -105,6 +105,7 @@ Q_SIGNALS:
 public:
     QUuid uuid() const;
     QUuid group_id() const;
+    std::shared_ptr<ThymioGroup> group() const;
     QString name() const;
     Status status() const;
     VMExecutionState vmExecutionState() const;
@@ -112,7 +113,7 @@ public:
     NodeCapabilities capabilities();
     Q_INVOKABLE QUrl websocketEndpoint() const;
 
-    void setGroupId(const QUuid& group_id);
+    void setGroup(std::shared_ptr<ThymioGroup> group);
     void setName(const QString& name);
     void setStatus(const Status& status);
     void setCapabilities(const NodeCapabilities& capabilities);
@@ -156,25 +157,63 @@ public:
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
     void onVariablesChanged(VariableMap variables, const QDateTime& timestamp);
-    void onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp);
+
     void onEvents(const EventMap& variables, const QDateTime& timestamp);
+
+    void onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp);
     void onEventsTableChanged(const QVector<EventDescription>& events);
 
 
     Request updateWatchedInfos();
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;
+    std::shared_ptr<ThymioGroup> m_group;
     QUuid m_uuid;
-    QUuid m_group_id;
     QString m_name;
     Status m_status;
     VMExecutionState m_executionState;
     NodeCapabilities m_capabilities;
     NodeType m_type;
     WatchFlags m_watched_infos;
-    QVector<EventDescription> m_events_table;
 
-    friend ThymioDeviceManagerClientEndpoint;
+    friend class ThymioDeviceManagerClientEndpoint;
+    friend class ThymioGroup;
 };
+
+
+class ThymioGroup : public QObject {
+    Q_OBJECT
+
+public:
+    using VariableMap = ThymioNode::VariableMap;
+    ThymioGroup(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& id);
+
+    QUuid uuid() const;
+
+    Q_INVOKABLE Request setGroupVariables(const VariableMap& variables);
+    Q_INVOKABLE Request addEvent(const EventDescription& d);
+    Q_INVOKABLE Request removeEvent(const QString& name);
+
+    QVector<EventDescription> eventsDescriptions() const;
+    VariableMap sharedVariables() const;
+
+private:
+    void addNode(std::shared_ptr<ThymioNode>);
+    void removeNode(std::shared_ptr<ThymioNode>);
+
+    void onSharedVariablesChanged(VariableMap variables, const QDateTime& timestamp);
+    void onEventsDescriptionsChanged(const QVector<EventDescription>& events);
+
+    QUuid m_group_id;
+    std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;
+
+    VariableMap m_shared_variables;
+    QVector<EventDescription> m_events_table;
+    std::vector<std::weak_ptr<ThymioNode>> m_nodes;
+
+    friend class ThymioNode;
+    friend class ThymioDeviceManagerClientEndpoint;
+};
+
 
 }  // namespace mobsya
 

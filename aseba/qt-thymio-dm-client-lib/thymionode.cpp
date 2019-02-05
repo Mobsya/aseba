@@ -30,7 +30,13 @@ QUuid ThymioNode::uuid() const {
 }
 
 QUuid ThymioNode::group_id() const {
-    return m_group_id;
+    if(!m_group)
+        return {};
+    return m_group->uuid();
+}
+
+std::shared_ptr<ThymioGroup> ThymioNode::group() const {
+    return m_group;
 }
 
 QString ThymioNode::name() const {
@@ -64,11 +70,8 @@ void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {
     }
 }
 
-void ThymioNode::setGroupId(const QUuid& group_id) {
-    if(m_group_id != group_id) {
-        m_group_id = group_id;
-        Q_EMIT groupChanged();
-    }
+void ThymioNode::setGroup(std::shared_ptr<ThymioGroup> group) {
+    m_group = group;
 }
 
 void ThymioNode::setName(const QString& name) {
@@ -177,29 +180,15 @@ Request ThymioNode::setVariables(const VariableMap& variables) {
 }
 
 Request ThymioNode::setGroupVariables(const VariableMap& variables) {
-    return m_endpoint->setGroupVariables(*this, variables);
+    return m_group->setGroupVariables(variables);
 }
 
 Request ThymioNode::addEvent(const EventDescription& d) {
-    auto& table = m_events_table;
-    auto it =
-        std::find_if(table.begin(), table.end(), [&d](const EventDescription& ed) { return d.name() == ed.name(); });
-    if(it != table.end()) {
-        *it = d;
-    } else {
-        table.append(d);
-    }
-    return m_endpoint->setNodeEventsTable(*this, table);
+    return m_group->addEvent(d);
 }
 
 Request ThymioNode::removeEvent(const QString& name) {
-    auto table = m_events_table;
-    auto it =
-        std::find_if(table.begin(), table.end(), [&name](const EventDescription& ed) { return name == ed.name(); });
-    if(it != table.end()) {
-        table.erase(it);
-    }
-    return m_endpoint->setNodeEventsTable(*this, table);
+    return m_group->removeEvent(name);
 }
 
 Request ThymioNode::emitEvent(const QString& name, const QVariant& value) {
@@ -240,8 +229,81 @@ void ThymioNode::onEvents(const EventMap& evs, const QDateTime& timestamp) {
 }
 
 void ThymioNode::onEventsTableChanged(const QVector<EventDescription>& events) {
+    Q_EMIT eventsTableChanged(events);
+}
+
+ThymioGroup::ThymioGroup(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint, const QUuid& id)
+    : m_group_id(id), m_endpoint(endpoint) {}
+
+QUuid ThymioGroup::uuid() const {
+    return m_group_id;
+}
+
+Request ThymioGroup::setGroupVariables(const VariableMap& variables) {
+    return m_endpoint->setGroupVariables(*this, variables);
+}
+
+Request ThymioGroup::addEvent(const EventDescription& d) {
+    auto& table = m_events_table;
+    auto it =
+        std::find_if(table.begin(), table.end(), [&d](const EventDescription& ed) { return d.name() == ed.name(); });
+    if(it != table.end()) {
+        *it = d;
+    } else {
+        table.append(d);
+    }
+    return m_endpoint->setNodeEventsTable(m_group_id, table);
+}
+
+Request ThymioGroup::removeEvent(const QString& name) {
+    auto table = m_events_table;
+    auto it =
+        std::find_if(table.begin(), table.end(), [&name](const EventDescription& ed) { return name == ed.name(); });
+    if(it != table.end()) {
+        table.erase(it);
+    }
+    return m_endpoint->setNodeEventsTable(m_group_id, table);
+}
+
+QVector<EventDescription> ThymioGroup::eventsDescriptions() const {
+    return m_events_table;
+}
+
+ThymioGroup::VariableMap ThymioGroup::sharedVariables() const {
+    return m_shared_variables;
+}
+
+void ThymioGroup::addNode(std::shared_ptr<ThymioNode> n) {
+    for(auto&& o : m_nodes) {
+        if(auto thymio = o.lock(); n == thymio)
+            return;
+    }
+    m_nodes.push_back(n);
+}
+
+void ThymioGroup::removeNode(std::shared_ptr<ThymioNode> n) {
+    for(auto it = m_nodes.begin(); it != m_nodes.end(); ++it) {
+        if(it->lock() == n) {
+            m_nodes.erase(it);
+            return;
+        }
+    }
+}
+
+void ThymioGroup::onSharedVariablesChanged(VariableMap variables, const QDateTime& timestamp) {
+    m_shared_variables = variables;
+    for(auto&& n : m_nodes) {
+        if(auto t = n.lock())
+            t->onGroupVariablesChanged(variables, timestamp);
+    }
+}
+
+void ThymioGroup::onEventsDescriptionsChanged(const QVector<EventDescription>& events) {
     m_events_table = events;
-    Q_EMIT eventsTableChanged(m_events_table);
+    for(auto&& n : m_nodes) {
+        if(auto t = n.lock())
+            t->onEventsTableChanged(events);
+    }
 }
 
 
