@@ -305,8 +305,8 @@ void ThymioVPLApplication::openFile() {
                     }
                 }
             }
+            domNode = domNode.nextSibling();
         }
-        domNode = domNode.nextSibling();
         // check whether we did load data
         if(dataLoaded) {
             fileName = newFileName;
