@@ -222,8 +222,9 @@ typedef enum
 typedef enum {
 	DEVICE_INFO_UUID = 1,
 	DEVICE_INFO_NAME = 2,
+	DEVICE_INFO_THYMIO2_RF_SETTINGS = 3,
 
-	DEVICE_INFO_ENUM_COUNT = 2
+	DEVICE_INFO_ENUM_COUNT = 3
 } DeviceInfoType;
 
 
