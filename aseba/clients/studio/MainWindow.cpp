@@ -308,122 +308,86 @@ bool MainWindow::save() {
 }
 
 bool MainWindow::saveFile(const QString& previousFileName) {
-    return false;
+
+    const auto groups = nodes->groups();
+    if(groups.size() != 1)
+        return false;
+    const auto group = groups.front();
+
+    QString fileName = previousFileName;
+
+    if(fileName.isEmpty())
+        fileName = QFileDialog::getSaveFileName(
+            this, tr("Save Script"),
+            actualFileName.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) :
+                                       actualFileName,
+            "Aseba scripts (*.aesl)");
+
+    if(fileName.isEmpty())
+        return false;
+
+    if(fileName.lastIndexOf(".") < 0)
+        fileName += ".aesl";
+
+    QFile file(fileName);
+    if(!file.open(QFile::WriteOnly | QFile::Truncate))
+        return false;
+
+    actualFileName = fileName;
+    updateRecentFiles(fileName);
+
+    // initiate DOM tree
+    QDomDocument document("aesl-source");
+    QDomElement root = document.createElement("network");
+    document.appendChild(root);
+
+    root.appendChild(document.createTextNode("\n\n\n"));
+    root.appendChild(document.createComment("list of global events"));
 
 
-    /*    QString fileName = previousFileName;
+    for(auto&& e : group->eventsDescriptions()) {
+        QDomElement element = document.createElement("event");
+        element.setAttribute("name", e.name());
+        element.setAttribute("size", e.size());
+        root.appendChild(element);
+    }
 
-        if(fileName.isEmpty())
-            fileName = QFileDialog::getSaveFileName(
-                this, tr("Save Script"),
-                actualFileName.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) :
-                                           actualFileName,
-                "Aseba scripts (*.aesl)");
-
-        if(fileName.isEmpty())
-            return false;
-
-        if(fileName.lastIndexOf(".") < 0)
-            fileName += ".aesl";
-
-        QFile file(fileName);
-        if(!file.open(QFile::WriteOnly | QFile::Truncate))
-            return false;
-
-        actualFileName = fileName;
-        updateRecentFiles(fileName);
-
-        // initiate DOM tree
-        QDomDocument document("aesl-source");
-        QDomElement root = document.createElement("network");
-        document.appendChild(root);
-
-        root.appendChild(document.createTextNode("\n\n\n"));
-        root.appendChild(document.createComment("list of global events"));
-
-        // events
-        for(size_t i = 0; i < commonDefinitions.events.size(); i++) {
-            QDomElement element = document.createElement("event");
-            element.setAttribute("name", QString::fromStdWString(commonDefinitions.events[i].name));
-            element.setAttribute("size", QString::number(commonDefinitions.events[i].value));
-            root.appendChild(element);
+    for(auto&& v : group->sharedVariables().toStdMap()) {
+        QDomElement element = document.createElement("constant");
+        element.setAttribute("name", v.first);
+        element.setAttribute("value", v.second.value().toInt());
+        root.appendChild(element);
+    }
+    // source code
+    for(auto&& tab : nodes->devicesTabs()) {
+        QString nodeName;
+        const auto thymio = tab->thymio();
+        if(thymio) {
+            nodeName = thymio->name();
         }
 
         root.appendChild(document.createTextNode("\n\n\n"));
-        root.appendChild(document.createComment("list of constants"));
+        root.appendChild(document.createComment(QString("node %0").arg(nodeName)));
 
-        // constants
-        for(size_t i = 0; i < commonDefinitions.constants.size(); i++) {
-            QDomElement element = document.createElement("constant");
-            element.setAttribute("name", QString::fromStdWString(commonDefinitions.constants[i].name));
-            element.setAttribute("value", QString::number(commonDefinitions.constants[i].value));
-            root.appendChild(element);
-        }
+        QDomElement element = document.createElement("node");
+        element.setAttribute("name", nodeName);
+        if(thymio)
+            element.setAttribute("nodeId", thymio->uuid().toString());
+        QDomText text = document.createCDATASection(tab->editor->toPlainText());
+        element.appendChild(text);
+        root.appendChild(element);
+    }
+    root.appendChild(document.createTextNode("\n\n\n"));
 
-        // keywords
-        root.appendChild(document.createTextNode("\n\n\n"));
-        root.appendChild(document.createComment("show keywords state"));
+    QTextStream out(&file);
+    document.save(out, 0);
 
-        QDomElement keywords = document.createElement("keywords");
-        if(showKeywordsAct->isChecked())
-            keywords.setAttribute("flag", "true");
-        else
-            keywords.setAttribute("flag", "false");
-        root.appendChild(keywords);
+    // sourceModified = false;
+    // constantsDefinitionsModel->clearWasModified();
+    // eventsDescriptionsModel->clearWasModified();
+    updateWindowTitle();
 
-        // source code
-        for(int i = 0; i < nodes->count(); i++) {
-            const auto* tab = dynamic_cast<const ScriptTab*>(nodes->widget(i));
-            if(tab) {
-                QString nodeName;
-
-                const auto* nodeTab = dynamic_cast<const NodeTab*>(tab);
-                if(nodeTab)
-                    nodeName = target->getName(nodeTab->nodeId());
-
-                const auto* absentNodeTab = dynamic_cast<const AbsentNodeTab*>(tab);
-                if(absentNodeTab)
-                    nodeName = absentNodeTab->name;
-
-                const QString& nodeContent = tab->editor->toPlainText();
-                ScriptTab::SavedPlugins savedPlugins(tab->savePlugins());
-                // is there something to save?
-                if(!nodeContent.isEmpty() || !savedPlugins.isEmpty()) {
-                    root.appendChild(document.createTextNode("\n\n\n"));
-                    root.appendChild(document.createComment(QString("node %0").arg(nodeName)));
-
-                    QDomElement element = document.createElement("node");
-                    element.setAttribute("name", nodeName);
-                    element.setAttribute("nodeId", tab->nodeId());
-                    QDomText text = document.createTextNode(nodeContent);
-                    element.appendChild(text);
-                    if(!savedPlugins.isEmpty()) {
-                        QDomElement plugins = document.createElement("toolsPlugins");
-                        for(ScriptTab::SavedPlugins::const_iterator it(savedPlugins.begin()); it != savedPlugins.end();
-                            ++it) {
-                            const NodeToolInterface::SavedContent content(*it);
-                            QDomElement plugin(document.createElement(content.first));
-                            plugin.appendChild(document.importNode(content.second.documentElement(), true));
-                            plugins.appendChild(plugin);
-                        }
-                        element.appendChild(plugins);
-                    }
-                    root.appendChild(element);
-                }
-            }
-        }
-        root.appendChild(document.createTextNode("\n\n\n"));
-
-        QTextStream out(&file);
-        document.save(out, 0);
-
-        sourceModified = false;
-        constantsDefinitionsModel->clearWasModified();
-        eventsDescriptionsModel->clearWasModified();
-        updateWindowTitle();
-
-        return true;
-    */
+    return true;
 }
 
 void MainWindow::exportMemoriesContent() {
@@ -1149,5 +1113,4 @@ void MainWindow::clearOpenedFileName(bool isModified) {
     updateWindowTitle();
 }
 
-/*@}*/
 }  // namespace Aseba
