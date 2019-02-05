@@ -41,3 +41,6 @@ target_link_libraries(thymiovplclassic
     Qt5::Xml
     Qt5::Widgets
 )
+
+install_qt_app(thymiovplclassic)
+codesign(thymiovplclassic)
