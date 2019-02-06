@@ -115,6 +115,13 @@ void aseba_node::set_status(status s) {
         case status::disconnected: registery.remove_node(shared_from_this()); break;
         default: registery.set_node_status(shared_from_this(), s); break;
     }
+    // When the status of a node change, reassign the scratchpad of the associated group
+    // because set_status can be called while the endpoint is being destroyed,
+    // we need to postpone the call
+    boost::asio::post(m_io_ctx, [g = group()]() {
+        if(g)
+            g->assign_scratchpads();
+    });
 }
 
 bool aseba_node::lock(void* app) {

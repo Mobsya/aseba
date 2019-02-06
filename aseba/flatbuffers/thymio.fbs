@@ -95,7 +95,8 @@ enum WatchableInfo : int {
     Events    = 0x02,
     VMExecutionState = 0x04,
     SharedEventsDescription = 0x08,
-    SharedVariables = 0x10
+    SharedVariables = 0x10,
+    Scratchpads     = 0x20
 }
 
 enum ProgrammingLanguage : int {
@@ -349,6 +350,16 @@ table EventsDescriptionsChanged {
     events:[EventDescription];
 }
 
+table ScratchpadUpdate {
+    request_id:uint = 0;
+    scratchpad_id:NodeId (required);
+    group_id:NodeId;
+    node_id:NodeId;
+    language:ProgrammingLanguage = Aseba;
+    text:string (required);
+    name:string;
+}
+
 union AnyMessage {
     ConnectionHandshake,
     DeviceManagerShutdownRequest,
@@ -375,6 +386,7 @@ union AnyMessage {
     SetBreakpointsResponse,
     SetVMExecutionState,
     VMExecutionStateChanged,
+    ScratchpadUpdate,
 }
 
 table Message {
