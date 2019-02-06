@@ -85,6 +85,7 @@ public:
         libusb_device_handle* handle = nullptr;
         std::array<unsigned char, 7> control_line;
         bool dtr = true;
+        bool rts = false;
         uint8_t out_address = 0;
         uint8_t in_address = 0;
         std::size_t read_size = 0;
@@ -100,17 +101,6 @@ public:
     bool is_open(implementation_type& impl);
     native_handle_type native_handle(const implementation_type& impl) const;
     tl::expected<void, boost::system::error_code> open(implementation_type& impl);
-
-
-    /*template <typename ConstBufferSequence, typename WriteHandler>
-    void async_write_some(implementation_type& impl, const ConstBufferSequence& buffers, WriteHandler&& handler) {
-        async_transfer_some<WriteDirection>(impl, buffers, std::forward<WriteHandler>(handler));
-    }
-
-    template <typename MutableBufferSequence, typename ReadHandler>
-    void async_read_some(implementation_type& impl, const MutableBufferSequence& buffers, ReadHandler&& handler) {
-        async_transfer_some<ReadDirection>(impl, buffers, std::forward<ReadHandler>(handler));
-    }*/
 
     template <typename ConstBufferSequence>
     tl::expected<std::size_t, boost::system::error_code> write_some(implementation_type& impl,
@@ -129,6 +119,7 @@ public:
     void set_stop_bits(implementation_type& impl, stop_bits);
     void set_parity(implementation_type& impl, parity);
     void set_data_terminal_ready(implementation_type& impl, bool dtr);
+    void set_rts(implementation_type& impl, bool rts);
 
 private:
     friend class usb_device;
@@ -248,6 +239,7 @@ public:
     void set_stop_bits(stop_bits);
     void set_parity(parity);
     void set_data_terminal_ready(bool dtr);
+    void set_rts(bool rts);
 
 
     lowest_layer_type& lowest_layer() noexcept {
@@ -288,8 +280,8 @@ tl::expected<std::size_t, boost::system::error_code>
 usb_device_service::read_some(implementation_type& impl, const MutableBufferSequence& buffers) {
 
     std::size_t total_read = 0;
-    auto it = read_from_buffer(impl, boost::asio::buffer_sequence_begin(buffers),
-                               boost::asio::buffer_sequence_end(buffers), total_read);
+    auto it = read_from_buffer<std::remove_reference_t<decltype(buffers)>>(
+        impl, boost::asio::buffer_sequence_begin(buffers), boost::asio::buffer_sequence_end(buffers), total_read);
     for(; it != boost::asio::buffer_sequence_end(buffers); ++it) {
         impl.read_buffer.reserve(it->size(), impl.read_size);
         int read = 0;
