@@ -306,5 +306,9 @@ void ThymioGroup::onEventsDescriptionsChanged(const QVector<EventDescription>& e
     }
 }
 
+Q_INVOKABLE Request ThymioGroup::loadAesl(const QByteArray& code) {
+    return m_endpoint->send_aesl(*this, code);
+}
+
 
 }  // namespace mobsya
