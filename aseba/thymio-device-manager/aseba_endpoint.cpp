@@ -97,5 +97,97 @@ void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::Even
     it->second.node->on_event_received(events, timestamp);
 }
 
+bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
+    if(!is_wireless())
+        return false;
+    if(!m_wireless_dongle_settings) {
+        if(!enable)
+            return true;
+        m_wireless_dongle_settings = std::make_unique<WirelessDongleSettings>();
+    }
+    if(m_wireless_dongle_settings->cfg_mode != enable) {
+        if(!enable && m_wireless_dongle_settings->pairing) {
+            wireless_enable_pairing(false);
+        }
+#ifdef MOBSYA_TDM_ENABLE_USB
+        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
+            usb().close();
+            usb().open();
+            usb().set_rts(enable);
+            usb().set_data_terminal_ready(!enable);
+        }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
+            serial().close();
+            serial().open();
+            serial().set_rts(enable);
+            serial().set_data_terminal_ready(!enable);
+        }
+#endif
+    }
+    if(enable) {
+        if(!sync_wireless_dongle_settings())
+            return false;
+    }
+    m_wireless_dongle_settings->cfg_mode = enable;
+
+    return true;
+}
+
+bool aseba_endpoint::sync_wireless_dongle_settings() {
+    if(!wireless_cfg_mode_enabled())
+        return false;
+    const auto s = sizeof(&m_wireless_dongle_settings->data);
+    return variant_ns::visit(
+        [this, s](auto& device) {
+            boost::system::error_code ec;
+            if(device.write_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec) != s)
+                return false;
+            auto read = device.read_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec);
+            if(read < s - 1)
+                return false;
+            return true;
+        },
+        m_endpoint);
+}
+
+bool aseba_endpoint::wireless_enable_pairing(bool enable) {
+    if(enable)
+        wireless_enable_configuration_mode(true);
+
+    if(m_wireless_dongle_settings->pairing == enable)
+        return true;
+    m_wireless_dongle_settings->data.ctrl = 0x04;  // toogle pairing
+    if(!sync_wireless_dongle_settings())
+        return false;
+    m_wireless_dongle_settings->pairing = enable;
+    return true;
+}
+
+bool aseba_endpoint::wireless_set_settings(uint8_t channel, uint16_t networkId, uint16_t dongleId) {
+    m_wireless_dongle_settings->data.ctrl = 0;
+    m_wireless_dongle_settings->data.channel = 15 + 5 * channel;
+    m_wireless_dongle_settings->data.nodeId = dongleId;
+    m_wireless_dongle_settings->data.panId = networkId;
+    return sync_wireless_dongle_settings();
+}
+
+aseba_endpoint::wireless_settings aseba_endpoint::wireless_get_settings() const {
+    if(!m_wireless_dongle_settings)
+        return {};
+    return {m_wireless_dongle_settings->data.panId, m_wireless_dongle_settings->data.nodeId,
+            uint8_t(m_wireless_dongle_settings->data.channel - uint8_t(15) / uint8_t(5))};
+}
+
+bool aseba_endpoint::wireless_flash() {
+    m_wireless_dongle_settings->data.ctrl = 0x04;  // toogle flash
+    return sync_wireless_dongle_settings();
+}
+
+bool aseba_endpoint::wireless_cfg_mode_enabled() const {
+    return m_wireless_dongle_settings && m_wireless_dongle_settings->cfg_mode;
+}
+
 
 }  // namespace mobsya

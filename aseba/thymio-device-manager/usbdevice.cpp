@@ -153,12 +153,19 @@ void usb_device_service::set_data_terminal_ready(implementation_type& impl, bool
     send_control_transfer(impl);
 }
 
+void usb_device_service::set_rts(implementation_type& impl, bool rts) {
+    impl.rts = rts;
+    send_control_transfer(impl);
+}
+
 bool usb_device_service::send_control_transfer(implementation_type& impl) {
     if(!is_open(impl))
         return false;
     uint16_t v = 0;
     if(impl.dtr)
         v |= 0x01;
+    if(impl.rts)
+        v |= 0x02;
     return libusb_control_transfer(impl.handle, 0x21, 0x22, v, 0, nullptr, 0, 0) == LIBUSB_SUCCESS;
 }
 
@@ -250,6 +257,10 @@ void usb_device::set_parity(parity v) {
 
 void usb_device::set_data_terminal_ready(bool v) {
     this->get_service().set_data_terminal_ready(this->get_implementation(), v);
+}
+
+void usb_device::set_rts(bool rts) {
+    this->get_service().set_rts(this->get_implementation(), rts);
 }
 
 

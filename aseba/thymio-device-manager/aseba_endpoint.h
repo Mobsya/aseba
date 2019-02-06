@@ -132,6 +132,19 @@ public:
         return false;
     }
 
+    bool wireless_enable_configuration_mode(bool enable);
+    bool wireless_enable_pairing(bool enable);
+    bool wireless_cfg_mode_enabled() const;
+    bool wireless_flash();
+    struct wireless_settings {
+        uint16_t network_id = 0;
+        uint16_t dongle_id = 0;
+        uint8_t channel = 0;
+    };
+
+    bool wireless_set_settings(uint8_t channel, uint16_t network_id, uint16_t dongle_id);
+    wireless_settings wireless_get_settings() const;
+
     std::vector<std::shared_ptr<aseba_node>> nodes() const {
         std::vector<std::shared_ptr<aseba_node>> nodes;
         std::transform(m_nodes.begin(), m_nodes.end(), std::back_inserter(nodes),
@@ -163,7 +176,7 @@ public:
         if(cb) {
             m_msg_queue.back().second = std::move(cb);
         }
-        if(m_msg_queue.size() > messages.size())
+        if(m_msg_queue.size() > messages.size() || wireless_cfg_mode_enabled())
             return;
         do_write_message(*(m_msg_queue.front().first));
     }
@@ -189,7 +202,8 @@ public:
             mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
             if(!ec)
                 read_aseba_message();
-            return;
+            if(!wireless_cfg_mode_enabled())
+                return;
         }
         mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
 
@@ -253,7 +267,8 @@ private:
             if(!that || ec)
                 return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
-            that->write_message(std::make_unique<Aseba::ListNodes>());
+            if(!that->wireless_cfg_mode_enabled())
+                that->write_message(std::make_unique<Aseba::ListNodes>());
             if(that->needs_ping())
                 that->schedule_send_ping();
         });
@@ -273,7 +288,7 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(d.count() >= 5) {
+                if(!wireless_cfg_mode_enabled() && d.count() >= 5) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
@@ -335,7 +350,7 @@ private:
             boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
         }
         m_msg_queue.pop();
-        if(!m_msg_queue.empty()) {
+        if(!m_msg_queue.empty() && !wireless_cfg_mode_enabled()) {
             do_write_message(*(m_msg_queue.front().first));
         }
     }
@@ -370,6 +385,22 @@ private:
     std::shared_ptr<mobsya::group> m_group;
     std::queue<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
     Aseba::CommonDefinitions m_defs;
+
+    struct WirelessDongleSettings {
+        PACK(struct Data {
+            unsigned short nodeId = 0xffff;
+            unsigned short panId = 0xffff;
+            unsigned char channel = 0xff;
+            unsigned char txPower = 0;
+            unsigned char version = 0;
+            unsigned char ctrl = 0;
+        })
+        data;
+        bool cfg_mode = false;
+        bool pairing = false;
+    };
+    std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
+    bool sync_wireless_dongle_settings();
 };  // namespace mobsya
 
 }  // namespace mobsya
