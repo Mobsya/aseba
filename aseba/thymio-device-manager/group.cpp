@@ -5,6 +5,7 @@
 #include "aseba_endpoint.h"
 #include "uuid_provider.h"
 #include "aseba_property.h"
+#include "aesl_parser.h"
 
 namespace mobsya {
 
@@ -129,6 +130,44 @@ group::events_table group::get_events_table() const {
 
 void group::send_events_table() {
     m_events_changed_signal(shared_from_this(), m_events_table);
+}
+
+boost::system::error_code group::load_code(std::string_view data, fb::ProgrammingLanguage language) {
+    if(language != fb::ProgrammingLanguage::Aesl) {
+        return make_error_code(mobsya::error_code::unsupported_language);
+    }
+    auto aesl = mobsya::load_aesl(data);
+    if(!aesl) {
+        mLogError("Invalid Aesl");
+        return make_error_code(mobsya::error_code::invalid_aesl);
+    }
+    auto [constants, events, nodes] = aesl->parse_all();
+    if(!constants || !events || !nodes) {
+        mLogError("Invalid Aesl");
+        return make_error_code(mobsya::error_code::invalid_aesl);
+    }
+
+    properties_map shared_vars;
+    for(const auto& constant : *constants) {
+        if(!constant.second.is_integral())
+            continue;
+        auto v = numeric_cast<int16_t>(property::integral_t(constant.second));
+        if(v) {
+            shared_vars.emplace(constant.first, v.value());
+        }
+    }
+
+    events_table table;
+    for(const auto& event : *events) {
+        if(event.type != event_type::aseba)
+            continue;
+        table.emplace_back(event.name, event.size);
+    }
+
+    set_shared_variables(shared_vars);
+    set_events_table(table);
+
+    return {};
 }
 
 
