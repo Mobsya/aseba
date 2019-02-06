@@ -192,6 +192,7 @@ public:
     Q_INVOKABLE Request setSharedVariables(const VariableMap& variables);
     Q_INVOKABLE Request addEvent(const EventDescription& d);
     Q_INVOKABLE Request removeEvent(const QString& name);
+    Q_INVOKABLE Request loadAesl(const QByteArray& code);
 
     QVector<EventDescription> eventsDescriptions() const;
     VariableMap sharedVariables() const;
