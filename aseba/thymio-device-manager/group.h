@@ -49,6 +49,8 @@ public:
         return m_events_changed_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
+    boost::system::error_code load_code(std::string_view aesl, fb::ProgrammingLanguage language);
+
 public:
     static std::shared_ptr<group> make_group_for_endpoint(boost::asio::io_context& context,
                                                           std::shared_ptr<aseba_endpoint> initial_ep);

@@ -525,6 +525,18 @@ private:
                                   std::string program, fb::CompilationOptions opts) {
         auto n = get_locked_node(id);
         if(!n) {
+            auto g = get_group(id);
+            if(g) {
+                auto ec = g->load_code(program, language);
+                if(ec) {
+                    write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
+                    return;
+                }
+                write_message(create_ack_response(request_id));
+                return;
+            }
+        }
+        if(!n) {
             mLogWarn("send_aseba_code: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;

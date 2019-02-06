@@ -203,40 +203,12 @@ tl::expected<aseba_node::compilation_result, boost::system::error_code>
 aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs,
                                fb::ProgrammingLanguage language, const std::string& program,
                                Aseba::BytecodeVector& bytecode) {
-    std::wstring code;
 
-    /*if(language == fb::ProgrammingLanguage::Aesl) {
-        auto aesl = load_aesl(program);
-        if(!aesl) {
-            mLogError("Invalid Aesl");
-            return tl::make_unexpected(mobsya::make_error_code(mobsya::error_code::invalid_aesl));
-        }
-        auto [constants, events, nodes] = aesl->parse_all();
-        if(!constants || !events || !nodes || nodes->size() != 1) {
-            mLogError("Invalid Aesl");
-            return tl::make_unexpected(mobsya::make_error_code(mobsya::error_code::invalid_aesl));
-        }
+    if(language == fb::ProgrammingLanguage::Aesl) {
+        return tl::make_unexpected(make_error_code(mobsya::error_code::unsupported_language));
+    }
 
-        for(const auto& constant : *constants) {
-            // Let poorly defined constants fail the compilation later
-            if(!constant.second.is_integral())
-                continue;
-            auto v = numeric_cast<int16_t>(property::integral_t(constant.second));
-            if(v)
-                defs.constants.emplace_back(Aseba::UTF8ToWString(constant.first), *v);
-        }
-        for(const auto& event : *events) {
-            // Let poorly defined events fail the compilation later
-            if(event.type != event_type::aseba)
-                continue;
-            defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
-        }
-        code = Aseba::UTF8ToWString((*nodes)[0].code);
-    } else {
-    }*/
-
-    code = Aseba::UTF8ToWString(program);
-
+    std::wstring code = Aseba::UTF8ToWString(program);
     compilation_result result;
     std::wistringstream is(code);
     Aseba::Error error;
