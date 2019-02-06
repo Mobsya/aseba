@@ -6,6 +6,10 @@
 #include "uuid_provider.h"
 #include "aseba_property.h"
 #include "aesl_parser.h"
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/indirect.hpp>
+#include <range/v3/algorithm.hpp>
 
 namespace mobsya {
 
@@ -60,6 +64,9 @@ void group::attach_to_endpoint(std::shared_ptr<aseba_endpoint> ep) {
     for(auto&& node : ep->nodes()) {
         node->set_status(node->get_status());
     }
+    m_variables_changed_signal(shared_from_this(), m_shared_variables);
+    m_events_changed_signal(shared_from_this(), m_events_table);
+    assign_scratchpads();
 }
 
 std::vector<std::shared_ptr<aseba_node>> group::nodes() const {
@@ -164,10 +171,131 @@ boost::system::error_code group::load_code(std::string_view data, fb::Programmin
         table.emplace_back(event.name, event.size);
     }
 
+    m_scratchpads.clear();
+    for(const auto& node : *nodes) {
+        auto& s = variant_ns::visit(
+            overloaded{
+                [this, &node](variant_ns::monostate) -> scratchpad& {
+                    return find_or_create_scratch_pad({}, node.name, {});
+                },
+                [this, &node](node_id id) -> scratchpad& { return find_or_create_scratch_pad(id, node.name, {}); },
+                [this, &node](uint16_t id) -> scratchpad& { return find_or_create_scratch_pad({}, node.name, id); }},
+            node.id);
+        s.text = node.code;
+        s.language = fb::ProgrammingLanguage::Aesl;
+    }
+
     set_shared_variables(shared_vars);
     set_events_table(table);
+    assign_scratchpads();
 
     return {};
+}  // namespace mobsya
+
+
+const std::vector<group::scratchpad>& group::scratchpads() const {
+    return m_scratchpads;
+}
+
+group::scratchpad& group::create_scratchpad() {
+    auto uuid = boost::asio::use_service<uuid_generator>(m_context).generate();
+    scratchpad s;
+    s.scratchpad_id = uuid;
+    s.aseba_id = -1;
+    m_scratchpads.push_back(s);
+    return m_scratchpads.back();
+}
+
+group::scratchpad& group::find_or_create_scratch_pad(std::optional<node_id> preferred_node_id,
+                                                     std::optional<std::string_view> name, std::optional<uint16_t> id) {
+    auto it =
+        std::find_if(m_scratchpads.begin(), m_scratchpads.end(), [preferred_node_id, name, id](auto&& scratchpad) {
+            if((preferred_node_id && scratchpad.nodeid == *preferred_node_id) ||
+               (preferred_node_id && scratchpad.preferred_node_id == *preferred_node_id) ||
+               (id && scratchpad.aseba_id == *id) || (name && scratchpad.name == *name))
+                return true;
+            return false;
+        });
+    if(it != m_scratchpads.end()) {
+        return *it;
+    }
+    auto& g = create_scratchpad();
+    if(preferred_node_id)
+        g.preferred_node_id = *preferred_node_id;
+    if(name)
+        g.name = *name;
+    if(id)
+        g.aseba_id = *id;
+    return g;
+}
+
+group::scratchpad& group::find_or_create_scratch_pad_for_node(node_id id) {
+    auto it = std::find_if(m_scratchpads.begin(), m_scratchpads.end(),
+                           [id](auto&& scratchpad) { return scratchpad.nodeid == id; });
+    if(it != m_scratchpads.end()) {
+        return *it;
+    }
+    auto& g = create_scratchpad();
+    g.nodeid = id;
+    return g;
+}
+
+void group::assign_scratchpads() {
+    // Try to match the scratchpads to a node using first the node id, the aseba id and the name.
+    // Remaining unmatched scratchpads are assigned to any node available
+    std::set<scratchpad*> modified;
+
+    const auto all_nodes = nodes();
+    auto connected_nodes = all_nodes | ranges::view::indirect |
+        ranges::view::remove_if([](const auto& node) { return node.get_status() == aseba_node::status::disconnected; });
+
+    auto connected_nodes_ids = connected_nodes | ranges::view::transform([](const auto& node) { return node.uuid(); });
+
+    for(scratchpad& s : m_scratchpads) {
+        if(ranges::find(connected_nodes_ids, s.nodeid) == ranges::end(connected_nodes_ids)) {
+            s.nodeid = {};
+            modified.insert(&s);
+        }
+    }
+
+    auto free_nodes = [&] {
+        auto used = m_scratchpads | ranges::view::transform([](const scratchpad& s) { return s.nodeid; }) |
+            ranges::view::remove_if([](const node_id& id) { return id.is_nil(); }) | ranges::to_<std::vector>();
+        return connected_nodes | ranges::view::remove_if([used](const aseba_node& node) {
+                   return ranges::find(used, node.uuid()) != ranges::end(used);
+               });
+    };
+
+    auto to_assign = [&] {
+        return m_scratchpads | ranges::view::remove_if([](const scratchpad& s) { return !s.nodeid.is_nil(); });
+    };
+
+    auto assign = [&](auto&& predicate) {
+        for(auto&& n : free_nodes()) {
+            auto v = to_assign();
+            const auto it = ranges::find_if(v, [&n, &predicate](const scratchpad& s) { return predicate(n, s); });
+            if(it != ranges::end(v)) {
+                it->nodeid = n.uuid();
+                modified.insert(&(*it));
+            }
+        }
+    };
+
+    assign([](const aseba_node& n, const scratchpad& s) { return s.nodeid == n.uuid(); });
+    assign([](const aseba_node& n, const scratchpad& s) { return s.aseba_id == n.native_id(); });
+    assign([](const aseba_node& n, const scratchpad& s) { return s.name == n.friendly_name(); });
+
+    for(auto&& s : to_assign()) {
+        auto v = free_nodes();
+        if(ranges::empty(v))
+            return;
+        s.nodeid = ranges::begin(v)->uuid();
+        modified.insert(&s);
+    }
+
+    for(auto& s : modified) {
+        m_scratchpad_changed_signal(shared_from_this(), *s);
+    }
 }
 
 

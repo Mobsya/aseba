@@ -304,9 +304,15 @@ public:
         });
     }
 
-    void events_description_changed(std::shared_ptr<group> node, const events_table& events) {
-        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, events]() {
-            that->do_events_description_changed(node, events);
+    void events_description_changed(std::shared_ptr<group> group, const events_table& events) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), group, events]() {
+            that->do_events_description_changed(group, events);
+        });
+    }
+
+    void scratchpad_changed(std::shared_ptr<group> group, const group::scratchpad& scratchpad) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), group, scratchpad]() {
+            that->do_scratchpad_changed(group, scratchpad);
         });
     }
 
@@ -364,6 +370,12 @@ private:
 
     void do_events_description_changed(std::shared_ptr<group> group, const events_table& events) {
         write_message(serialize_events_descriptions(*group, events));
+    }
+
+    void do_scratchpad_changed(std::shared_ptr<group> group, const group::scratchpad& scratchpad) {
+        if(!group)
+            return;
+        write_message(serialize_scratchpad(*group, scratchpad));
     }
 
     void do_node_execution_state_changed(std::shared_ptr<aseba_node> node,
@@ -532,6 +544,10 @@ private:
                     write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
                     return;
                 }
+                for(auto&& s : g->scratchpads()) {
+                    do_scratchpad_changed(g, s);
+                }
+
                 write_message(create_ack_response(request_id));
                 return;
             }
@@ -607,7 +623,8 @@ private:
         }
         if(group &&
            ((flags & uint32_t(fb::WatchableInfo::SharedVariables)) ||
-            (flags & uint32_t(fb::WatchableInfo::SharedEventsDescription)))) {
+            (flags & uint32_t(fb::WatchableInfo::SharedEventsDescription)) ||
+            (flags & uint32_t(fb::WatchableInfo::Scratchpads)))) {
 
             if(flags & uint32_t(fb::WatchableInfo::SharedVariables)) {
                 if(!m_watch_nodes[fb::WatchableInfo::SharedVariables].count(id)) {
@@ -632,6 +649,18 @@ private:
                                       std::placeholders::_2));
                 } else if(group->uuid() == id) {
                     m_watch_nodes[fb::WatchableInfo::SharedEventsDescription].erase(id);
+                }
+            }
+
+            if(flags & uint32_t(fb::WatchableInfo::Scratchpads)) {
+                if(!m_watch_nodes[fb::WatchableInfo::Scratchpads].count(id)) {
+                    // auto events = group->get_events_table();
+                    // this->events_description_changed(group, events);
+
+                    m_watch_nodes[fb::WatchableInfo::Scratchpads][id] = group->connect_to_scratchpad_updates(std::bind(
+                        &application_endpoint::scratchpad_changed, this, std::placeholders::_1, std::placeholders::_2));
+                } else if(group->uuid() == id) {
+                    m_watch_nodes[fb::WatchableInfo::Scratchpads].erase(id);
                 }
             }
         }

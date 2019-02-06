@@ -179,6 +179,20 @@ tagged_detached_flatbuffer serialize_execution_state(const mobsya::aseba_node& n
     return wrap_fb(fb, offset);
 }
 
+tagged_detached_flatbuffer serialize_scratchpad(const mobsya::group& g, const mobsya::group::scratchpad& scratchpad) {
+
+    flatbuffers::FlatBufferBuilder fb;
+    auto scratchpadIdOffset = scratchpad.scratchpad_id.fb(fb);
+    auto groupIdOffset = g.uuid().fb(fb);
+    auto nodeIdOffset = scratchpad.nodeid.fb(fb);
+    auto nameOffset = fb.CreateString(scratchpad.name);
+    auto textOffset = fb.CreateString(scratchpad.text);
+
+    auto offset = fb::CreateScratchpadUpdate(fb, 0, scratchpadIdOffset, groupIdOffset, nodeIdOffset,
+                                             scratchpad.language, textOffset, nameOffset);
+    return wrap_fb(fb, offset);
+}
+
 namespace detail {
     mobsya::variables_map variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {
         mobsya::variables_map vars;

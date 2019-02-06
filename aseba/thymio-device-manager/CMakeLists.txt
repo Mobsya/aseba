@@ -79,6 +79,7 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
     fmt-header-only
     mpark_variant
     pugixml
+    range-v3
        )
 if(WIN32)
     target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt)
