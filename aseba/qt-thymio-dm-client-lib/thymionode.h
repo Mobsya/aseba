@@ -189,7 +189,7 @@ public:
 
     QUuid uuid() const;
 
-    Q_INVOKABLE Request setGroupVariables(const VariableMap& variables);
+    Q_INVOKABLE Request setSharedVariables(const VariableMap& variables);
     Q_INVOKABLE Request addEvent(const EventDescription& d);
     Q_INVOKABLE Request removeEvent(const QString& name);
 
