@@ -486,6 +486,7 @@ void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
 }
 
 void NodeTab::onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    m_constants_model.clear();
     for(auto it = vars.begin(); it != vars.end(); ++it) {
         it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
                                m_constants_model.addVariable(it.key(), it.value().value());
@@ -517,8 +518,11 @@ void NodeTab::setGroupVariable(const QString& k, const mobsya::ThymioVariable& v
     if(!m_thymio)
         return;
 
-    mobsya::ThymioNode::VariableMap map;
-    map.insert(k, value);
+    mobsya::ThymioNode::VariableMap map = m_thymio->group()->sharedVariables();
+    if(value.value().isNull())
+        map.remove(k);
+    else
+        map.insert(k, value);
     m_thymio->setGroupVariables(map);
 }
 

@@ -180,7 +180,7 @@ Request ThymioNode::setVariables(const VariableMap& variables) {
 }
 
 Request ThymioNode::setGroupVariables(const VariableMap& variables) {
-    return m_group->setGroupVariables(variables);
+    return m_group->setSharedVariables(variables);
 }
 
 Request ThymioNode::addEvent(const EventDescription& d) {
@@ -239,7 +239,7 @@ QUuid ThymioGroup::uuid() const {
     return m_group_id;
 }
 
-Request ThymioGroup::setGroupVariables(const VariableMap& variables) {
+Request ThymioGroup::setSharedVariables(const VariableMap& variables) {
     return m_endpoint->setGroupVariables(*this, variables);
 }
 
