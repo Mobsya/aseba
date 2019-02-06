@@ -120,6 +120,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
+        connect(node.get(), &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
@@ -612,6 +613,10 @@ void NodeTab::saveBytecode() const {
      }
      write16(file, crc);
      */
+}
+
+void NodeTab::onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage) {
+    editor->setText(text);
 }
 
 void NodeTab::editorContentChanged() {

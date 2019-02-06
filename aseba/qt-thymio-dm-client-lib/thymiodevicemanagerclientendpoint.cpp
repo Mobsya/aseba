@@ -255,6 +255,22 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             req->setResult(AsebaVMDescriptionRequestResult(r));
             break;
         }
+        case mobsya::fb::AnyMessage::ScratchpadUpdate: {
+            auto message = msg.as<mobsya::fb::ScratchpadUpdate>();
+            auto groupid = qfb::uuid(message->group_id()->UnPack());
+            auto grp = this->group_from_id(groupid);
+            if(!grp)
+                break;
+
+            Scratchpad pad;
+            pad.id = qfb::uuid(message->scratchpad_id()->UnPack());
+            pad.nodeId = qfb::uuid(message->node_id()->UnPack());
+            pad.code = qfb::as_qstring(message->text());
+            pad.language = message->language();
+            pad.name = qfb::as_qstring(message->name());
+            grp->onScratchpadChanged(pad);
+            break;
+        }
         default: Q_EMIT onMessage(msg);
     }
 }

@@ -223,6 +223,10 @@ void ThymioNode::onGroupVariablesChanged(VariableMap variables, const QDateTime&
     Q_EMIT groupVariablesChanged(variables, timestamp);
 }
 
+void ThymioNode::onScratchpadChanged(const QString& text, fb::ProgrammingLanguage language) {
+    Q_EMIT scratchpadChanged(text, language);
+}
+
 
 void ThymioNode::onEvents(const EventMap& evs, const QDateTime& timestamp) {
     Q_EMIT events(evs, timestamp);
@@ -303,6 +307,21 @@ void ThymioGroup::onEventsDescriptionsChanged(const QVector<EventDescription>& e
     for(auto&& n : m_nodes) {
         if(auto t = n.lock())
             t->onEventsTableChanged(events);
+    }
+}
+
+void ThymioGroup::onScratchpadChanged(const Scratchpad& scratchpad) {
+    auto it = std::find_if(m_scratchpads.begin(), m_scratchpads.end(),
+                           [&scratchpad](auto&& s) { return s.id == scratchpad.id; });
+    if(it != m_scratchpads.end()) {
+        *it = scratchpad;
+    } else {
+        it = m_scratchpads.insert(m_scratchpads.end(), scratchpad);
+    }
+    for(auto&& n : m_nodes) {
+        if(auto t = n.lock(); t->uuid() == it->nodeId) {
+            t->onScratchpadChanged(it->code, it->language);
+        }
     }
 }
 

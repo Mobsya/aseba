@@ -101,6 +101,7 @@ Q_SIGNALS:
     void events(const EventMap& variables, const QDateTime& timestamp);
     void eventsTableChanged(const QVector<EventDescription>& events);
     void vmExecutionError(VMExecutionError error, const QString& message, uint32_t line);
+    void scratchpadChanged(const QString& test, fb::ProgrammingLanguage language);
 
 public:
     QUuid uuid() const;
@@ -162,6 +163,7 @@ private:
 
     void onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp);
     void onEventsTableChanged(const QVector<EventDescription>& events);
+    void onScratchpadChanged(const QString& text, fb::ProgrammingLanguage language);
 
 
     Request updateWatchedInfos();
@@ -179,6 +181,13 @@ private:
     friend class ThymioGroup;
 };
 
+struct Scratchpad {
+    QUuid id;
+    QUuid nodeId;
+    QString name;
+    QString code;
+    fb::ProgrammingLanguage language;
+};
 
 class ThymioGroup : public QObject {
     Q_OBJECT
@@ -203,6 +212,8 @@ private:
 
     void onSharedVariablesChanged(VariableMap variables, const QDateTime& timestamp);
     void onEventsDescriptionsChanged(const QVector<EventDescription>& events);
+    void onScratchpadChanged(const Scratchpad& scratchpad);
+
 
     QUuid m_group_id;
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> m_endpoint;
@@ -210,6 +221,7 @@ private:
     VariableMap m_shared_variables;
     QVector<EventDescription> m_events_table;
     std::vector<std::weak_ptr<ThymioNode>> m_nodes;
+    QVector<Scratchpad> m_scratchpads;
 
     friend class ThymioNode;
     friend class ThymioDeviceManagerClientEndpoint;
