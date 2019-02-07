@@ -1,6 +1,8 @@
 #include "thymionode.h"
 #include "thymiodevicemanagerclientendpoint.h"
 #include "qflatbuffers.h"
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/remove_if.hpp>
 
 namespace mobsya {
 
@@ -287,11 +289,16 @@ void ThymioGroup::addNode(std::shared_ptr<ThymioNode> n) {
 
 void ThymioGroup::removeNode(std::shared_ptr<ThymioNode> n) {
     for(auto it = m_nodes.begin(); it != m_nodes.end(); ++it) {
-        if(it->lock() == n) {
+        if(auto ptr = it->lock(); !ptr || ptr == n) {
             m_nodes.erase(it);
             return;
         }
     }
+}
+
+std::vector<std::shared_ptr<ThymioNode>> ThymioGroup::nodes() const {
+    return m_nodes | ranges::view::transform([](auto&& node) { return node.lock(); }) |
+        ranges::view::remove_if([](auto&& node) { return !node; }) | ranges::to_vector;
 }
 
 void ThymioGroup::onSharedVariablesChanged(VariableMap variables, const QDateTime& timestamp) {

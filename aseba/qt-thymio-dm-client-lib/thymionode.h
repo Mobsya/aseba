@@ -205,6 +205,7 @@ public:
 
     QVector<EventDescription> eventsDescriptions() const;
     VariableMap sharedVariables() const;
+    std::vector<std::shared_ptr<ThymioNode>> nodes() const;
 
 private:
     void addNode(std::shared_ptr<ThymioNode>);
