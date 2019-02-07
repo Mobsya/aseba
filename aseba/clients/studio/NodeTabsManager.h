@@ -71,11 +71,10 @@ private:
 
 
     auto nodes_for_groups() const {
-        auto grps = groups();
         std::vector<std::shared_ptr<mobsya::ThymioNode>> nodes;
-        auto view = grps | ranges::view::transform([this](auto&& g) { return m_client.nodes(g->uuid()); });
-        for(auto&& g : view) {
-            ranges::copy(g, ranges::back_inserter(nodes));
+        for(auto&& g : groups()) {
+            for(auto&& n : g->nodes())
+                nodes.push_back(n);
         }
         return nodes;
     }
