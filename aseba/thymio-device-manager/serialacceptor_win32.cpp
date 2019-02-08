@@ -166,10 +166,9 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
 
         mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
         boost::system::error_code ec;
+        req.d.open(port_name, ec);
         req.d.m_device_id = id;
-        req.d.m_port_name = port_name;
         req.d.m_device_name = device_name;
-        req.d.open(ec);
         if(!ec) {
             auto handler = std::move(req.handler);
             const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
