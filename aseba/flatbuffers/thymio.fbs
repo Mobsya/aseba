@@ -358,6 +358,7 @@ table ScratchpadUpdate {
     language:ProgrammingLanguage = Aseba;
     text:string (required);
     name:string;
+    deleted:bool = false;
 }
 
 union AnyMessage {

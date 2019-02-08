@@ -22,6 +22,7 @@ public:
         std::string name;
         uint16_t aseba_id;
         std::string text;
+        bool deleted = false;
     };
 
 

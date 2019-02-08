@@ -187,6 +187,7 @@ struct Scratchpad {
     QString name;
     QString code;
     fb::ProgrammingLanguage language;
+    bool deleted;
 };
 
 class ThymioGroup : public QObject {
@@ -206,6 +207,11 @@ public:
     QVector<EventDescription> eventsDescriptions() const;
     VariableMap sharedVariables() const;
     std::vector<std::shared_ptr<ThymioNode>> nodes() const;
+    QVector<Scratchpad> scratchpads() const;
+    void watchScratchpadsChanges(bool);
+
+Q_SIGNALS:
+    void scratchPadChanged(const Scratchpad& scratchpad);
 
 private:
     void addNode(std::shared_ptr<ThymioNode>);
@@ -223,6 +229,7 @@ private:
     QVector<EventDescription> m_events_table;
     std::vector<std::weak_ptr<ThymioNode>> m_nodes;
     QVector<Scratchpad> m_scratchpads;
+    ThymioNode::WatchFlags m_watched_infos = 0;
 
     friend class ThymioNode;
     friend class ThymioDeviceManagerClientEndpoint;
