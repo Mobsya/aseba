@@ -176,9 +176,9 @@ public:
         if(cb) {
             m_msg_queue.back().second = std::move(cb);
         }
-        if(m_msg_queue.size() > messages.size() || wireless_cfg_mode_enabled())
+        if(m_msg_queue.size() > messages.size())
             return;
-        do_write_message(*(m_msg_queue.front().first));
+        write_next();
     }
 
     template <typename CB = write_callback>
@@ -324,19 +324,9 @@ private:
         return needs_health_check();
     }
 
-    void do_write_message(const Aseba::Message& message) {
-        auto that = shared_from_this();
-        auto cb =
-            boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
-
-        variant_ns::visit(
-            [&cb, &message](auto& underlying) {
-                return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
-            },
-            m_endpoint);
-    }
-
     void handle_write(boost::system::error_code ec) {
+        if(m_msg_queue.empty())
+            return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         mLogDebug("Message '{}' sent : {}", m_msg_queue.front().first->message_name(), ec.message());
         if(ec) {
@@ -350,8 +340,21 @@ private:
             boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
         }
         m_msg_queue.pop();
+        write_next();
+    }
+
+    void write_next() {
         if(!m_msg_queue.empty() && !wireless_cfg_mode_enabled()) {
-            do_write_message(*(m_msg_queue.front().first));
+            auto that = shared_from_this();
+            auto cb =
+                boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
+
+            auto& message = *(m_msg_queue.front().first);
+            variant_ns::visit(
+                [&cb, &message](auto& underlying) {
+                    return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
+                },
+                m_endpoint);
         }
     }
 
