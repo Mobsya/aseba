@@ -184,6 +184,7 @@ void AsebaSendChangedVariables(AsebaVMState* vm) {
             buffer_pos = 0;
         }
     }
+    buffer_pos = 0;
 }
 
 static void AsebaSendDescriptionHead(AsebaVMState* vm) {
@@ -222,6 +223,7 @@ static void AsebaSendDescriptionHead(AsebaVMState* vm) {
 
     // send buffer
     AsebaSendBuffer(vm, buffer, buffer_pos);
+    buffer_pos = 0;
 }
 
 void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
@@ -297,6 +299,7 @@ void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
         // send buffer
         AsebaSendBuffer(vm, buffer, buffer_pos);
     }
+    buffer_pos = 0;
 }
 
 void AsebaSendDescription(AsebaVMState* vm) {
