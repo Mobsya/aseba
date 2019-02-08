@@ -268,6 +268,7 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             pad.code = qfb::as_qstring(message->text());
             pad.language = message->language();
             pad.name = qfb::as_qstring(message->name());
+            pad.deleted = message->deleted();
             grp->onScratchpadChanged(pad);
             break;
         }
@@ -448,10 +449,10 @@ Request ThymioDeviceManagerClientEndpoint::send_aesl(const ThymioGroup& group, c
     return r;
 }
 
-Request ThymioDeviceManagerClientEndpoint::set_watch_flags(const ThymioNode& node, int flags) {
+Request ThymioDeviceManagerClientEndpoint::set_watch_flags(const QUuid& node, int flags) {
     Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
-    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto uuidOffset = serialize_uuid(builder, node);
     write(wrap_fb(builder, fb::CreateWatchNode(builder, r.id(), uuidOffset, flags)));
     return r;
 }

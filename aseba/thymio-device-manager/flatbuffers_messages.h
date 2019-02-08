@@ -184,12 +184,12 @@ tagged_detached_flatbuffer serialize_scratchpad(const mobsya::group& g, const mo
     flatbuffers::FlatBufferBuilder fb;
     auto scratchpadIdOffset = scratchpad.scratchpad_id.fb(fb);
     auto groupIdOffset = g.uuid().fb(fb);
-    auto nodeIdOffset = scratchpad.nodeid.fb(fb);
+    auto nodeIdOffset = scratchpad.nodeid.is_nil() ? scratchpad.preferred_node_id.fb(fb) : scratchpad.nodeid.fb(fb);
     auto nameOffset = fb.CreateString(scratchpad.name);
     auto textOffset = fb.CreateString(scratchpad.text);
 
     auto offset = fb::CreateScratchpadUpdate(fb, 0, scratchpadIdOffset, groupIdOffset, nodeIdOffset,
-                                             scratchpad.language, textOffset, nameOffset);
+                                             scratchpad.language, textOffset, nameOffset, scratchpad.deleted);
     return wrap_fb(fb, offset);
 }
 

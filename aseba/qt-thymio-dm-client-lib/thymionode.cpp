@@ -170,7 +170,7 @@ Request ThymioNode::setWatchEventsDescriptionEnabled(bool enabled) {
 }
 
 Request ThymioNode::updateWatchedInfos() {
-    return m_endpoint->set_watch_flags(*this, int(m_watched_infos));
+    return m_endpoint->set_watch_flags(m_uuid, int(m_watched_infos));
 }
 
 AsebaVMDescriptionRequest ThymioNode::fetchAsebaVMDescription() {
@@ -322,18 +322,30 @@ void ThymioGroup::onScratchpadChanged(const Scratchpad& scratchpad) {
                            [&scratchpad](auto&& s) { return s.id == scratchpad.id; });
     if(it != m_scratchpads.end()) {
         *it = scratchpad;
-    } else {
+    } else if(!scratchpad.deleted) {
         it = m_scratchpads.insert(m_scratchpads.end(), scratchpad);
     }
     for(auto&& n : m_nodes) {
-        if(auto t = n.lock(); t->uuid() == it->nodeId) {
-            t->onScratchpadChanged(it->code, it->language);
+        if(auto t = n.lock(); t && t->uuid() == scratchpad.nodeId) {
+            t->onScratchpadChanged(scratchpad.code, scratchpad.language);
         }
     }
+    scratchPadChanged(scratchpad);
+}
+
+QVector<Scratchpad> ThymioGroup::scratchpads() const {
+    return m_scratchpads;
 }
 
 Q_INVOKABLE Request ThymioGroup::loadAesl(const QByteArray& code) {
     return m_endpoint->send_aesl(*this, code);
+}
+
+void ThymioGroup::watchScratchpadsChanges(bool b) {
+    if(m_watched_infos.testFlag(ThymioNode::WatchableInfo::Scratchpads) != b) {
+        m_watched_infos.setFlag(ThymioNode::WatchableInfo::Scratchpads, b);
+        m_endpoint->set_watch_flags(this->uuid(), m_watched_infos);
+    }
 }
 
 

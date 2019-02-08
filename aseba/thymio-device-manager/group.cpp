@@ -171,7 +171,12 @@ boost::system::error_code group::load_code(std::string_view data, fb::Programmin
         table.emplace_back(event.name, event.size);
     }
 
+    for(auto&& s : m_scratchpads) {
+        s.deleted = true;
+        m_scratchpad_changed_signal(shared_from_this(), s);
+    }
     m_scratchpads.clear();
+
     for(const auto& node : *nodes) {
         auto& s = variant_ns::visit(
             overloaded{
@@ -246,8 +251,10 @@ void group::assign_scratchpads() {
     std::set<scratchpad*> modified;
 
     const auto all_nodes = nodes();
-    auto connected_nodes = all_nodes | ranges::view::indirect |
-        ranges::view::remove_if([](const auto& node) { return node.get_status() == aseba_node::status::disconnected; });
+    auto connected_nodes = all_nodes | ranges::view::indirect | ranges::view::remove_if([](const auto& node) {
+                               return node.get_status() == aseba_node::status::disconnected ||
+                                   node.get_status() == aseba_node::status::connected;
+                           });
 
     auto connected_nodes_ids = connected_nodes | ranges::view::transform([](const auto& node) { return node.uuid(); });
 

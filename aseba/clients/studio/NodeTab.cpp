@@ -830,7 +830,7 @@ void NodeTab::setupWidgets() {
     // panel
 
     // buttons
-    executionModeLabel = new QLabel(tr("unknown"));
+    executionModeLabel = new QLabel;
     stopButton = new QPushButton(QIcon(":/images/stop.png"), tr("Stop"));
     // resetButton->setEnabled(false);
 
@@ -946,6 +946,7 @@ void NodeTab::setupWidgets() {
     QWidget* rightPane = new QWidget();
     rightPane->setLayout(rightPaneLayout);
     addWidget(rightPane);
+    updateStatusLabel();
 }
 
 void NodeTab::setupConnections() {

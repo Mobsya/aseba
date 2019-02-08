@@ -48,9 +48,10 @@ public Q_SLOTS:
     void onNodeRemoved(std::shared_ptr<mobsya::ThymioNode>);
     void onNodeModified(std::shared_ptr<mobsya::ThymioNode>);
 
-protected slots:
+protected Q_SLOTS:
     void tabChanged(int index);
     void onTabClosed(int index);
+    void onScratchpadChanged(const mobsya::Scratchpad& s);
 
 Q_SIGNALS:
     void tabAdded(int index);
@@ -66,6 +67,9 @@ protected:
     void tabInserted(int index) override;
 
 private:
+    NodeTab* createTab();
+    void setupButtons(NodeTab* tab);
+    void deleteTab(NodeTab*);
     void addThymiosFromGroups();
     NodeTab* tabForNode(std::shared_ptr<const mobsya::ThymioNode>) const;
 
@@ -81,6 +85,7 @@ private:
 
     const mobsya::ThymioDeviceManagerClient& m_client;
     mobsya::detail::UnsignedQMap<QUuid, NodeTab*> m_tabs;
+    mobsya::detail::UnsignedQMap<QUuid, NodeTab*> m_scratchpads;
 };
 
 
