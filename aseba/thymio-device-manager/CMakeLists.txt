@@ -48,7 +48,7 @@ add_library(thymio-device-manager-lib STATIC
 if(WIN32)
     target_sources(thymio-device-manager-lib PRIVATE
         serialacceptor.h
-        serialacceptor.cpp
+        serialacceptor_win32.cpp
         serialserver.h
         serialserver.cpp
         serial_usb_device.h
@@ -56,16 +56,28 @@ if(WIN32)
     target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
     target_link_libraries(thymio-device-manager-lib PUBLIC iphlpapi CRYPT32)
 else()
-    target_sources(thymio-device-manager-lib PRIVATE
-        usbserver.cpp
-        usbserver.h
-        usbacceptor.h
-        usbacceptor.cpp
-        usbdevice.cpp
-        usbdevice.h
-        usbcontext.h
-    )
-    target_compile_definitions(thymio-device-manager-lib PUBLIC MOBSYA_TDM_ENABLE_USB)
+    find_package(udev)
+    if(UDEV_FOUND)
+        target_sources(thymio-device-manager-lib PRIVATE
+            serialacceptor.h
+            serialacceptor_udev.cpp
+            serialserver.h
+            serialserver.cpp
+            serial_usb_device.h
+        )
+        target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL MOBSYA_TDM_ENABLE_UDEV)
+    else()
+        target_sources(thymio-device-manager-lib PRIVATE
+            usbserver.cpp
+            usbserver.h
+            usbacceptor.h
+            usbacceptor.cpp
+            usbdevice.cpp
+            usbdevice.h
+            usbcontext.h
+        )
+        target_compile_definitions(thymio-device-manager-lib PUBLIC MOBSYA_TDM_ENABLE_USB)
+    endif()
 endif()
 
 target_include_directories(thymio-device-manager-lib PUBLIC ${CMAKE_SOURCE_DIR}/third_party/belle/include)
