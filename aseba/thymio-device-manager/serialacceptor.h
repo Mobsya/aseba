@@ -10,6 +10,10 @@
 #include <thread>
 #include "usb_utils.h"
 #include "serial_usb_device.h"
+#ifdef MOBSYA_TDM_ENABLE_UDEV
+#    include <libudev.h>
+#    include <boost/asio/posix/stream_descriptor.hpp>
+#endif
 
 namespace mobsya {
 
@@ -43,14 +47,22 @@ private:
         std::function<void(boost::system::error_code)> handler;
     };
     void register_request(request&);
-    void handle_request_by_active_enumeration();
-    void on_active_timer(const boost::system::error_code&);
-
     mutable std::mutex m_req_mutex;
     std::queue<request> m_requests;
-    boost::asio::deadline_timer m_active_timer;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     std::vector<std::string> m_known_devices;
+#ifdef MOBSYA_TDM_ENABLE_UDEV
+    struct udev* m_udev;
+    struct udev_monitor* m_udev_monitor;
+    boost::asio::posix::stream_descriptor m_desc;
+    void on_udev_event(const boost::system::error_code&);
+    bool handle_request(udev_device* dev, request& r);
+    void async_wait();
+#else
+    boost::asio::deadline_timer m_active_timer;
+    void handle_request_by_active_enumeration();
+    void on_active_timer(const boost::system::error_code&);
+#endif
 };
 
 class serial_acceptor : public boost::asio::basic_io_object<serial_acceptor_service> {
