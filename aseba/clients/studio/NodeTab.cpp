@@ -26,6 +26,7 @@ void ScriptTab::createEditor() {
     m_breakpointsSidebar = new AeslBreakpointSidebar(editor);
     linenumbers = new AeslLineNumberSidebar(editor);
     highlighter = new AeslHighlighter(editor, editor->document());
+    editor->setReadOnly(true);
 }
 
 NodeTab::NodeTab(QWidget* parent)
@@ -419,6 +420,7 @@ void NodeTab::onStatusChanged() {
     m_vm_variables_view->setEditTriggers(ready ? QTreeView::EditTrigger::DoubleClicked |
                                                  QTreeView::EditTrigger::EditKeyPressed :
                                                  QTreeView::EditTrigger::NoEditTriggers);
+    editor->setReadOnly(m_thymio->status() != mobsya::ThymioNode::Status::Ready);
     Q_EMIT executionStateChanged();
     Q_EMIT statusChanged();
 }
