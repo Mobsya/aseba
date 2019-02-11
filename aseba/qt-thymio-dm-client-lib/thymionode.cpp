@@ -199,6 +199,10 @@ Request ThymioNode::emitEvent(const QString& name, const QVariant& value) {
     return m_endpoint->emitNodeEvents(*this, map);
 }
 
+Q_INVOKABLE Request ThymioNode::setScratchPad(const QByteArray& data) {
+    return m_endpoint->setScratchPad(uuid(), data, fb::ProgrammingLanguage::Aseba);
+}
+
 
 void ThymioNode::onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg) {
     if(msg.error == fb::VMExecutionError::NoError) {

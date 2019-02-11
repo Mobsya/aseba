@@ -618,16 +618,22 @@ void NodeTab::saveBytecode() const {
 }
 
 void NodeTab::onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage) {
-    editor->setText(text);
+    if(editor->isReadOnly())
+        editor->setText(text);
 }
 
 void NodeTab::editorContentChanged() {
+    const auto txt = editor->toPlainText();
     // only recompile if source code has actually changed
-    if(editor->toPlainText() == lastCompiledSource)
+    if(txt == lastCompiledSource)
         return;
     lastCompiledSource = editor->toPlainText();
     // recompile
     compileCodeOnTarget();
+
+    if(m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready) {
+        m_thymio->setScratchPad(txt.toUtf8());
+    }
     // mainWindow->sourceChanged();
 }
 

@@ -197,6 +197,15 @@ boost::system::error_code group::load_code(std::string_view data, fb::Programmin
     return {};
 }  // namespace mobsya
 
+boost::system::error_code group::set_node_scratchpad(node_id id, std::string_view content,
+                                                     fb::ProgrammingLanguage language) {
+    auto& pad = find_or_create_scratch_pad_for_node(id);
+    pad.text = content;
+    pad.language = language;
+    m_scratchpad_changed_signal(shared_from_this(), pad);
+    return {};
+}
+
 
 const std::vector<group::scratchpad>& group::scratchpads() const {
     return m_scratchpads;

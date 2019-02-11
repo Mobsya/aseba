@@ -155,6 +155,8 @@ public:
     Q_INVOKABLE Request removeEvent(const QString& name);
     Q_INVOKABLE Request emitEvent(const QString& name, const QVariant& value);
 
+    Q_INVOKABLE Request setScratchPad(const QByteArray& data);
+
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
     void onVariablesChanged(VariableMap variables, const QDateTime& timestamp);

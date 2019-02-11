@@ -40,6 +40,7 @@ public:
     Request setGroupVariables(const ThymioGroup& group, const ThymioNode::VariableMap& vars);
     Request setNodeEventsTable(const QUuid& id, const QVector<EventDescription>& events);
     Request emitNodeEvents(const ThymioNode& node, const ThymioNode::EventMap& vars);
+    Request setScratchPad(const QUuid& id, const QByteArray& data, fb::ProgrammingLanguage language);
 
 private Q_SLOTS:
     void onReadyRead();
