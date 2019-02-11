@@ -47,5 +47,8 @@
         <file>apps/blockly/description.jpeg</file>
         <file>apps/studio/description.jpg</file>
         <file>assets/thymio-launcher.ico</file>
+        <file>apps/scratch/launcher-icon-scratch.svg</file>
+        <file>apps/studio/launcher-icon-studio.svg</file>
+        <file>apps/vpl/launcher-icon-vpl.svg</file>
     </qresource>
 </RCC>
