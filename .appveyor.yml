@@ -94,6 +94,7 @@ before_build:
   - git submodule init
   - git submodule update --recursive --remote
   - cd third_party/spdlog/spdlog/ && git checkout v1.2.1
+  - cd "%APPVEYOR_BUILD_FOLDER%/third_party/flatbuffers" && git checkout 600f3fbcd4ef38b15398b1273f90697587b5a1d1
   - cd "%APPVEYOR_BUILD_FOLDER%"
   - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
   - if exist thymio-blockly-standalone\node_modules\ rd /s /q thymio-blockly-standalone\node_modules\
