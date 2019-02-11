@@ -101,7 +101,7 @@ Item {
                 height: 12
 
 
-                BatteryIndicator {
+                /*BatteryIndicator {
                     anchors.verticalCenter: parent.verticalCenter
                     height: 8
                     anchors.left: parent.left
@@ -119,7 +119,7 @@ Item {
                      anchors.leftMargin: 2
                      smooth: true
                      antialiasing: true
-                }
+                }*/
             }
 
             Item {
