@@ -979,7 +979,7 @@ class Client implements IClient {
                     if(!isNaN(val)) {
                         val = new Number(val)
                     }
-                    vars[v.name()] = val
+                    vars.set(v.name(), val)
                 }
                 nodes.forEach(node => {
                     if(isEqual(node.id, id) && node.onVariablesChanged) {
@@ -1006,7 +1006,7 @@ class Client implements IClient {
                     const v = msg.events(i);
                     const myarray = Uint8Array.from(v.valueArray())
                     const val = this._flex.toJSObject(myarray)
-                    vars[v.name()] = val
+                    vars.set(v.name(), val)
                 }
                 node.onEvents(vars)
                 break
