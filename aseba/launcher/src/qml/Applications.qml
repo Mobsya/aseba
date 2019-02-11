@@ -51,11 +51,13 @@ ListModel {
         appId:"vplClassic"
         name: "VPL"
         animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
+        icon: "qrc:/apps/vpl/launcher-icon-vpl.svg"
     }
     ListElement {
         appId: "scratch"
-        name: "Scatch"
+        name: "Scratch"
         animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
+        icon: "qrc:/apps/scratch/launcher-icon-scratch.svg"
     }
 
     ListElement {
@@ -71,5 +73,6 @@ ListModel {
          name: "Studio"
          animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
          descriptionImage: "qrc:/apps/studio/description.jpg"
+         icon: "qrc:/apps/studio/launcher-icon-studio.svg"
      }
 }
