@@ -67,6 +67,9 @@ ThymioVPLApplication::~ThymioVPLApplication() {}
 
 void ThymioVPLApplication::displayCode(const QList<QString>& code, int elementToHighlight) {
     editor->replaceAndHighlightCode(code, elementToHighlight);
+    const auto text = editor->toPlainText();
+    if(m_thymio)
+        m_thymio->setScratchPad(text.toUtf8());
 }
 
 void ThymioVPLApplication::loadAndRun() {
