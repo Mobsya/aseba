@@ -66,6 +66,9 @@ public:
     }
 
     boost::system::error_code load_code(std::string_view aesl, fb::ProgrammingLanguage language);
+    boost::system::error_code set_node_scratchpad(node_id id, std::string_view content,
+                                                  fb::ProgrammingLanguage language);
+
     const std::vector<scratchpad>& scratchpads() const;
 
 public:

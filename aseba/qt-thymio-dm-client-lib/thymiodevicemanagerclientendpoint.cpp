@@ -541,6 +541,17 @@ Request ThymioDeviceManagerClientEndpoint::emitNodeEvents(const ThymioNode& node
     return r;
 }
 
+Request ThymioDeviceManagerClientEndpoint::setScratchPad(const QUuid& id, const QByteArray& data,
+                                                         fb::ProgrammingLanguage language) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, id);
+    auto data_offset = qfb::add_string(builder, data);
+    write(wrap_fb(builder,
+                  fb::CreateScratchpadUpdate(builder, r.id(), uuidOffset, 0, uuidOffset, language, data_offset)));
+    return r;
+}
+
 std::vector<std::shared_ptr<ThymioNode>> ThymioDeviceManagerClientEndpoint::nodes(const QUuid& node_or_group_id) const {
     std::vector<std::shared_ptr<ThymioNode>> nodes;
     for(auto&& node : m_nodes) {

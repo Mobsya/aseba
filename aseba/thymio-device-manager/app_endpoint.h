@@ -245,7 +245,16 @@ public:
                 this->set_breakpoints(req->request_id(), req->node_id(), breakpoints(*req));
                 break;
             }
-
+            case mobsya::fb::AnyMessage::ScratchpadUpdate: {
+                auto req = msg.as<fb::ScratchpadUpdate>();
+                if(!req->node_id()) {
+                    write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
+                    break;
+                }
+                this->update_node_scratchpad(req->request_id(), req->node_id(), req->text()->string_view(),
+                                             req->language());
+                break;
+            }
 
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
@@ -614,6 +623,22 @@ private:
         n->set_breakpoints(breakpoints, callback);
     }
 
+    void update_node_scratchpad(uint32_t request_id, node_id id, std::string_view content,
+                                fb::ProgrammingLanguage language) {
+        const auto n = get_locked_node(id);
+        std::shared_ptr<group> g;
+        if(n) {
+            g = n->group();
+        }
+        if(!g) {
+            mLogWarn("update_node_scratchpad: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        g->set_node_scratchpad(id, content, language);
+        write_message(create_ack_response(request_id));
+    }
+
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
         auto group = registery().group_from_id(id);
         auto node = registery().node_from_id(id);
@@ -654,11 +679,14 @@ private:
 
             if(flags & uint32_t(fb::WatchableInfo::Scratchpads)) {
                 if(!m_watch_nodes[fb::WatchableInfo::Scratchpads].count(id)) {
-                    // auto events = group->get_events_table();
-                    // this->events_description_changed(group, events);
-
                     m_watch_nodes[fb::WatchableInfo::Scratchpads][id] = group->connect_to_scratchpad_updates(std::bind(
                         &application_endpoint::scratchpad_changed, this, std::placeholders::_1, std::placeholders::_2));
+
+                    for(auto&& s : group->scratchpads()) {
+                        this->scratchpad_changed(group, s);
+                    }
+
+
                 } else if(group->uuid() == id) {
                     m_watch_nodes[fb::WatchableInfo::Scratchpads].erase(id);
                 }
