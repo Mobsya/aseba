@@ -183,8 +183,12 @@ public:
         mLogTrace("-> {}", EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
             case mobsya::fb::AnyMessage::DeviceManagerShutdownRequest: {
-                if(m_local_endpoint)
+                if(m_local_endpoint) {
+#ifdef _WIN32
+                    std::quick_exit(0);
+#endif
                     m_ctx.stop();
+                }
                 break;
             }
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
