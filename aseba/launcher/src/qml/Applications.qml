@@ -53,6 +53,10 @@ ListModel {
         animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
         icon: "qrc:/apps/vpl/launcher-icon-vpl.svg"
         descriptionImage: "qrc:/apps/vpl/description.jpg"
+        descriptionTextFile: "qrc:/apps/vpl/desc.en.html"
+
+
+
     }
     ListElement {
         appId: "scratch"
@@ -60,6 +64,7 @@ ListModel {
         animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
         icon: "qrc:/apps/scratch/launcher-icon-scratch.svg"
         descriptionImage: "qrc:/apps/scratch/description.jpg"
+        descriptionTextFile: "qrc:/apps/scratch/desc.en.html"
     }
 
     ListElement {
@@ -68,13 +73,15 @@ ListModel {
         animatedIcon: "qrc:/apps/blockly/blockly-animated-icon.webp"
         icon: "qrc:/apps/blockly/blockly-icon.svg"
         descriptionImage: "qrc:/apps/blockly/description.jpg"
+        descriptionTextFile: "qrc:/apps/blockly/desc.en.html"
     }
 
      ListElement {
          appId:"studio"
          name: "Studio"
          animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
-         descriptionImage: "qrc:/apps/studio/description.jpg"
          icon: "qrc:/apps/studio/launcher-icon-studio.svg"
+         descriptionImage: "qrc:/apps/studio/description.jpg"
+         descriptionTextFile: "qrc:/apps/studio/desc.en.html"
      }
 }

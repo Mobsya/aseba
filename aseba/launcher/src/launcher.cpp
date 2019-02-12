@@ -72,4 +72,11 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
     return {};
 }
 
+QByteArray Launcher::readFileContent(QString path) {
+    path.replace(QStringLiteral("qrc:/"), QStringLiteral(":/"));
+    QFile f(path);
+    f.open(QFile::ReadOnly);
+    return f.readAll();
+}
+
 }  // namespace mobsya

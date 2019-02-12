@@ -88,12 +88,32 @@ Item {
                     }
 
                     Item {
-                        //color: 'yellow'
                         anchors.left:  parent.left
                         anchors.right: parent.right
                         anchors.top: img_description.bottom
                         anchors.bottom: parent.bottom
                         anchors.margins: Style.window_margin
+                        ScrollView {
+                            width: parent.width
+                            height: parent.height
+                            id: scrollview
+                            clip: true
+                            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                            Text {
+                                 width: scrollview.width - 10
+                                 id: description_text
+                                 textFormat: Text.RichText
+                                 text:  Utils.readFileContent(launcher.selectedApp.descriptionTextFile)
+                                 wrapMode: Text.WordWrap
+                                 onLinkActivated: Qt.openUrlExternally(link)
+
+                                 MouseArea {
+                                     anchors.fill: parent
+                                     acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                                     cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                 }
+                            }
+                        }
                     }
                 }
             }

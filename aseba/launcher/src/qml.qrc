@@ -52,5 +52,9 @@
         <file>apps/blockly/description.jpg</file>
         <file>apps/scratch/description.jpg</file>
         <file>apps/vpl/description.jpg</file>
+        <file>apps/vpl/desc.en.html</file>
+        <file>apps/blockly/desc.en.html</file>
+        <file>apps/studio/desc.en.html</file>
+        <file>apps/scratch/desc.en.html</file>
     </qresource>
 </RCC>
