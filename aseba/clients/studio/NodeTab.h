@@ -89,7 +89,6 @@ protected Q_SLOTS:
 
     void setVariable(const QString& k, const mobsya::ThymioVariable& value);
     void setGroupVariable(const QString& k, const mobsya::ThymioVariable& value);
-    void resetVariables();
 
     void addEvent(const QString& name, int size);
     void removeEvent(const QString& name);

@@ -155,25 +155,12 @@ void NodeTab::reset() {
     lastLoadedSource.clear();
     editor->debugging = false;
     currentPC = -1;
-    resetVariables();
-}
-
-void NodeTab::resetVariables() {
-    m_vm_variables_model.clear();
-    if(m_thymio) {
-        m_thymio->setWatchVariablesEnabled(false);
-        if(synchronizeVariablesToogle->isChecked())
-            m_thymio->setWatchVariablesEnabled(true);
-    }
 }
 
 void NodeTab::run() {
     if(!m_thymio) {
         return;
     }
-
-    resetVariables();
-
     editor->debugging = false;
 
     auto set_breakpoints_and_run = [this] {
