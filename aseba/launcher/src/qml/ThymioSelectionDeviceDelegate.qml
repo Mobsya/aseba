@@ -32,7 +32,7 @@ Item {
     id:item
     height: 172
     width : 172
-    property bool selected: device_view.currentIndex === index
+    property bool selected: device_view.selectedDevice === device
     opacity: {
         switch(status) {
         case ThymioNode.Ready:
