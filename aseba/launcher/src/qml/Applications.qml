@@ -78,7 +78,7 @@ ListModel {
 
      ListElement {
          appId:"studio"
-         name: "Studio"
+         name: "Aseba Studio"
          animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
          icon: "qrc:/apps/studio/launcher-icon-studio.svg"
          descriptionImage: "qrc:/apps/studio/description.jpg"
