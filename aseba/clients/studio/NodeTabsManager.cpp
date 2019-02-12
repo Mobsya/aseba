@@ -183,7 +183,7 @@ void NodeTabsManager::onScratchpadChanged(const mobsya::Scratchpad& s) {
         setupButtons(t);
         m_scratchpads[s.id] = t;
     }
-    if(!s.name.isEmpty())
+    if(!m_tabs.contains(s.nodeId) && !s.name.isEmpty())
         tabBar()->setTabText(QTabWidget::indexOf(t), s.name);
     if(t->thymio())
         return;
