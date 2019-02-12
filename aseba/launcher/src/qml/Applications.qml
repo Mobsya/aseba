@@ -52,12 +52,14 @@ ListModel {
         name: "VPL"
         animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
         icon: "qrc:/apps/vpl/launcher-icon-vpl.svg"
+        descriptionImage: "qrc:/apps/vpl/description.jpg"
     }
     ListElement {
         appId: "scratch"
         name: "Scratch"
         animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
         icon: "qrc:/apps/scratch/launcher-icon-scratch.svg"
+        descriptionImage: "qrc:/apps/scratch/description.jpg"
     }
 
     ListElement {
@@ -65,7 +67,7 @@ ListModel {
         name: "Blockly"
         animatedIcon: "qrc:/apps/blockly/blockly-animated-icon.webp"
         icon: "qrc:/apps/blockly/blockly-icon.svg"
-        descriptionImage: "qrc:/apps/blockly/description.jpeg"
+        descriptionImage: "qrc:/apps/blockly/description.jpg"
     }
 
      ListElement {
