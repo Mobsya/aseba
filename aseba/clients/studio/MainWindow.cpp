@@ -153,6 +153,10 @@ void MainWindow::openFile(const QString& path) {
     if(askUserBeforeDiscarding() == false)
         return;
 
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->editor->clear();
+    }
+
     // open the file
     QString fileName = path;
 

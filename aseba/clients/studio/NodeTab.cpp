@@ -420,7 +420,7 @@ void NodeTab::onStatusChanged() {
     m_vm_variables_view->setEditTriggers(ready ? QTreeView::EditTrigger::DoubleClicked |
                                                  QTreeView::EditTrigger::EditKeyPressed :
                                                  QTreeView::EditTrigger::NoEditTriggers);
-    editor->setReadOnly(m_thymio->status() != mobsya::ThymioNode::Status::Ready);
+    editor->setReadOnly(!ready);
     Q_EMIT executionStateChanged();
     Q_EMIT statusChanged();
 }
@@ -618,7 +618,7 @@ void NodeTab::saveBytecode() const {
 }
 
 void NodeTab::onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage) {
-    if(editor->isReadOnly())
+    if(editor->isReadOnly() || editor->toPlainText().simplified().isEmpty())
         editor->setText(text);
 }
 
