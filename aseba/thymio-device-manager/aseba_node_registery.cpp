@@ -21,6 +21,12 @@ aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_co
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
+    auto old_it = m_aseba_nodes.find(node->uuid());
+    bool duplicated = false;
+    if(old_it != m_aseba_nodes.end()) {
+        m_aseba_nodes.erase(old_it);
+        duplicated = true;
+    }
 
     auto it = find(node);
     if(it == std::end(m_aseba_nodes)) {
@@ -29,7 +35,8 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
             id = boost::asio::use_service<uuid_generator>(get_io_service()).generate();
         it = m_aseba_nodes.insert({id, node}).first;
 
-        restore_group_affiliation(*node);
+        if(!duplicated)
+            restore_group_affiliation(*node);
         save_group_affiliation(*node);
 
         m_node_status_changed_signal(node, id, aseba_node::status::connected);
