@@ -323,6 +323,11 @@ namespace ThymioVPL {
         saveGeometryIfVisible();
     }
 
+    void ThymioVisualProgramming::onDeviceReadyChanged(bool ready) {
+        this->stopButton->setEnabled(ready);
+        this->runButton->setEnabled(ready);
+    }
+
     void ThymioVisualProgramming::openHelp() {
         USAGE_LOG(logOpenHelp());
         const AboutBox::Parameters aboutParameters = {

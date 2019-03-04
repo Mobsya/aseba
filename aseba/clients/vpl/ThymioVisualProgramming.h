@@ -99,6 +99,7 @@ namespace ThymioVPL {
         void processCompilationResult();
         void processHighlightChange();
         void onEventsReceived(const mobsya::ThymioNode::EventMap& variables);
+        void onDeviceReadyChanged(bool ready);
 
     private:
         void clearUndo();
