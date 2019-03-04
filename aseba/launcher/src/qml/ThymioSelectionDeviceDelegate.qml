@@ -56,6 +56,16 @@ Item {
                 device_view.currentIndex = index
                 device_view.selectedDevice = device
         }
+        onDoubleClicked: {
+            const selectedAppLauncher = launcher.selectedAppLauncher;
+            if(!selectedAppLauncher) {
+                console.error("No launch function")
+            }
+            else if(!selectedAppLauncher(device)) {
+                console.error("could not launch app with device %2".arg(device))
+            }
+        }
+
         onPressAndHold: {
             if (mouse.source === Qt.MouseEventNotSynthesized)
                 contextMenu.popup()
