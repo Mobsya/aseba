@@ -238,6 +238,28 @@ aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitio
     return result;
 }
 
+void aseba_node::compile_and_send_aseba_command(const std::string& program) {
+    Aseba::Compiler compiler;
+    Aseba::CommonDefinitions defs = endpoint()->aseba_compiler_definitions();
+
+    compiler.setTargetDescription(&m_description);
+    compiler.setCommonDefinitions(&defs);
+
+    std::wstring code = Aseba::UTF8ToWString(program);
+    compilation_result result;
+    std::wistringstream is(code);
+    Aseba::Error error;
+    m_bytecode.clear();
+    unsigned allocatedVariablesCount;
+
+    bool success = compiler.compile(is, m_bytecode, allocatedVariablesCount, error);
+
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
+
+    write_messages(std::move(messages));
+}
+
 void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_callback&& cb) {
     switch(state) {
         case vm_execution_state_command::Run:
@@ -247,6 +269,10 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
             write_message(std::make_shared<Aseba::Reset>(native_id()), std::move(cb));
             break;
         case vm_execution_state_command::Stop:
+            compile_and_send_aseba_command(R"(
+                                         motor.left.target = 0
+                                         motor.left.target = 0 )");
+            write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
             write_message(std::make_shared<Aseba::Stop>(native_id()), std::move(cb));
             break;
         case vm_execution_state_command::Pause:
