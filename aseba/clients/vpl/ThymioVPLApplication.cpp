@@ -82,6 +82,8 @@ void ThymioVPLApplication::loadAndRun() {
 }
 
 void ThymioVPLApplication::stop() {
+    if(!m_thymio)
+        return;
     m_thymio->load_aseba_code({});
     m_thymio->stop();
 }
@@ -341,6 +343,9 @@ void ThymioVPLApplication::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> nod
     disconnectedMessage->setText(tr("Connection to Thymio lost... make sure Thymio is on and "
                                     "connect the USB cable/dongle"));
     disconnectedMessage->setVisible(!m_thymio || m_thymio->status() != mobsya::ThymioNode::Status::Ready);
+
+    if(vpl)
+        vpl->onDeviceReadyChanged(m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready);
 
     if(node != m_thymio)
         return;
