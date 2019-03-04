@@ -595,7 +595,7 @@ private:
         auto n = get_locked_node(id);
         if(!n && cmd == fb::VMExecutionStateCommand::Stop) {
             n = registery().node_from_id(id);
-            if(n && (node_capabilities(n) & uint64_t(fb::NodeCapability::Rename)))
+            if(n && !(node_capabilities(n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
                 n = {};
         }
         if(!n) {

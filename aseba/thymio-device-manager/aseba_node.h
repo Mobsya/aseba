@@ -196,6 +196,7 @@ private:
 
     void on_breakpoint_set_result(const Aseba::BreakpointSetResult&);
     void cancel_pending_breakpoint_request();
+    void compile_and_send_aseba_command(const std::string& program);
 
     void step_to_next_line(write_callback&& cb);
     void handle_step_request();
