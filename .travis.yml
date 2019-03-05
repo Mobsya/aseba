@@ -29,6 +29,7 @@ matrix:
         - qt512svg
         - qt512x11extras
         - qt512charts-no-lgpl
+        - qt512webengine
         - libboost-python-dev
         - ninja-build
         - libxml2-dev
