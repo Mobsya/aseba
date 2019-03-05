@@ -77,7 +77,12 @@ int main(int argc, char** argv) {
     w.setMinimumSize(1024, 640);
     w.showNormal();
 
-    QObject::connect(&w, &mobsya::LauncherWindow::closingRequested, [&client]() {
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&client]() {
+        auto windows = qApp->allWindows();
+        for(auto w : windows) {
+            if(w->isVisible() && qobject_cast<QQuickWindow*>(w))
+                return;
+        }
         client.requestDeviceManagersShutdown();
         QTimer::singleShot(1000, qApp, &QCoreApplication::quit);
     });
