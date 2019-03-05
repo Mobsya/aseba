@@ -11,6 +11,7 @@
 #endif
 #include <aseba/qt-thymio-dm-client-lib/thymio-api.h>
 #include <QtSingleApplication>
+#include <qtwebengineglobal.h>
 #include "launcher.h"
 #include "tdmsupervisor.h"
 #include "launcherwindow.h"
@@ -83,6 +84,8 @@ int main(int argc, char** argv) {
 
     app.setActivationWindow(&w, true);
     app.setQuitOnLastWindowClosed(false);
+
+    QtWebEngine::initialize();
 
     return app.exec();
 }
