@@ -56,5 +56,6 @@
         <file>apps/blockly/desc.en.html</file>
         <file>apps/studio/desc.en.html</file>
         <file>apps/scratch/desc.en.html</file>
+        <file>qml/webview.qml</file>
     </qresource>
 </RCC>

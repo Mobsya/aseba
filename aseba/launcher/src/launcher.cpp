@@ -1,6 +1,6 @@
 #include "launcher.h"
 #include <QStandardPaths>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
@@ -8,6 +8,11 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QProcess>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QQuickWindow>
+#include <QStyle>
+#include <QScreen>
 
 namespace mobsya {
 
@@ -42,19 +47,26 @@ bool Launcher::launch_process(const QString& program, const QStringList& args) c
 }
 
 bool Launcher::openUrl(const QUrl& url) const {
-    QTemporaryFile t(QDir::tempPath() + "/XXXXXX.html");
-    t.setAutoRemove(false);
-    if(!t.open())
-        return false;
+    QQmlApplicationEngine* engine = new QQmlApplicationEngine;
+    engine->rootContext()->setContextProperty("appUrl", url);
+    engine->load(QUrl("qrc:/qml/webview.qml"));
 
-    t.write(QStringLiteral(R"(
-<html><head>
-  <meta http-equiv="refresh" content="0;URL='%1" />
-</head></html>)")
-                .arg(url.toString())
-                .toUtf8());
-    QTimer::singleShot(10000, [f = t.fileName()] { QFile::remove(f); });
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
+    QObject* topLevel = engine->rootObjects().value(0);
+    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
+
+    window->setParent(0);
+    window->setTransientParent(0);
+    engine->setParent(window);
+    window->setWidth(1024);
+    window->setHeight(700);
+    connect(window, SIGNAL(closing(QQuickCloseEvent*)), window, SLOT(deleteLater()));
+    window->show();
+    const auto screen_geom = window->screen()->availableGeometry();
+
+    window->setGeometry((screen_geom.width() - window->width()) / 2, (screen_geom.height() - window->height()) / 2,
+                        window->width(), window->height());
+
+    return true;
 }
 
 QUrl Launcher::webapp_base_url(const QString& name) const {
