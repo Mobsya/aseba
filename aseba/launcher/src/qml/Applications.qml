@@ -54,9 +54,8 @@ ListModel {
         icon: "qrc:/apps/vpl/launcher-icon-vpl.svg"
         descriptionImage: "qrc:/apps/vpl/description.jpg"
         descriptionTextFile: "qrc:/apps/vpl/desc.en.html"
-
-
-
+        supportsGroups: false
+        supportsWatchMode: false
     }
     ListElement {
         appId: "scratch"
@@ -65,6 +64,8 @@ ListModel {
         icon: "qrc:/apps/scratch/launcher-icon-scratch.svg"
         descriptionImage: "qrc:/apps/scratch/description.jpg"
         descriptionTextFile: "qrc:/apps/scratch/desc.en.html"
+        supportsGroups: false
+        supportsWatchMode: false
     }
 
     ListElement {
@@ -74,6 +75,8 @@ ListModel {
         icon: "qrc:/apps/blockly/blockly-icon.svg"
         descriptionImage: "qrc:/apps/blockly/description.jpg"
         descriptionTextFile: "qrc:/apps/blockly/desc.en.html"
+        supportsGroups: false
+        supportsWatchMode: false
     }
 
      ListElement {
@@ -83,5 +86,7 @@ ListModel {
          icon: "qrc:/apps/studio/launcher-icon-studio.svg"
          descriptionImage: "qrc:/apps/studio/description.jpg"
          descriptionTextFile: "qrc:/apps/studio/desc.en.html"
+         supportsGroups: true
+         supportsWatchMode: true
      }
 }

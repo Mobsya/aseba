@@ -82,6 +82,7 @@ public:
     Q_PROPERTY(VMExecutionState vmExecutionState READ vmExecutionState NOTIFY vmExecutionStateChanged)
     Q_PROPERTY(NodeCapabilities capabilities READ capabilities NOTIFY capabilitiesChanged)
     Q_PROPERTY(NodeType type READ type CONSTANT)
+    Q_PROPERTY(bool isInGroup READ isInGroup NOTIFY groupChanged)
 
 
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
@@ -111,7 +112,9 @@ public:
     Status status() const;
     VMExecutionState vmExecutionState() const;
     NodeType type() const;
-    NodeCapabilities capabilities();
+    NodeCapabilities capabilities() const;
+    bool isInGroup() const;
+
     Q_INVOKABLE QUrl websocketEndpoint() const;
 
     void setGroup(std::shared_ptr<ThymioGroup> group);
@@ -214,6 +217,7 @@ public:
 
 Q_SIGNALS:
     void scratchPadChanged(const Scratchpad& scratchpad);
+    void groupChanged();
 
 private:
     void addNode(std::shared_ptr<ThymioNode>);

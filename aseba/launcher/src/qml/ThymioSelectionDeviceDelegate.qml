@@ -4,6 +4,17 @@ import org.mobsya  1.0
 
 Item {
     property var device: model.object
+    property bool selectable: updateSelectable()
+
+     Component.onCompleted: {
+        device.groupChanged.connect(updateSelectable);
+        device.statusChanged.connect(updateSelectable);
+     }
+
+    function updateSelectable() {
+        selectable = (device.status === ThymioNode.Available || launcher.selectedApp.supportsWatchMode)
+        &&  (!device.isInGroup || launcher.selectedApp.supportsGroups);
+    }
 
     Action {
         text: "Rename"
@@ -34,6 +45,8 @@ Item {
     width : 172
     property bool selected: device_view.selectedDevice === device
     opacity: {
+        if(!selectable)
+            return 0.3
         switch(status) {
         case ThymioNode.Ready:
         case ThymioNode.Available:
@@ -43,20 +56,28 @@ Item {
     }
 
     property bool device_ready: status === ThymioNode.Ready || status === ThymioNode.Available
+    property string tooltipText: ""
 
     MouseArea {
+
         id: device_mouse_area
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
+            device_view.currentIndex = -1
+            device_view.selectedDevice = undefined
+
             if (mouse.button === Qt.RightButton)
                 contextMenu.popup(item)
-            else
+            else if(selectable) {
                 device_view.currentIndex = index
                 device_view.selectedDevice = device
+            }
         }
         onDoubleClicked: {
+            if(!selectable)
+                return
             const selectedAppLauncher = launcher.selectedAppLauncher;
             if(!selectedAppLauncher) {
                 console.error("No launch function")
@@ -70,6 +91,20 @@ Item {
             if (mouse.source === Qt.MouseEventNotSynthesized)
                 contextMenu.popup()
         }
+
+        onHoveredChanged: {
+            tooltipText = ""
+            if(!selectable) {
+                if(isInGroup && !launcher.selectedApp.supportsGroups) {
+                    tooltipText = qsTr("This device cannot be selected because it is in a group")
+                }
+                else {
+                    tooltipText = qsTr("This device cannot be selected because it is already being used")
+                }
+            }
+        }
+        ToolTip.text: tooltipText
+        ToolTip.visible: tooltipText != "" && device_mouse_area.containsMouse
 
         cursorShape: device_ready ? Qt.PointingHandCursor : null
 
