@@ -13,6 +13,7 @@
 #include <QQuickWindow>
 #include <QStyle>
 #include <QScreen>
+#include <QFileDialog>
 
 namespace mobsya {
 
@@ -48,6 +49,7 @@ bool Launcher::launch_process(const QString& program, const QStringList& args) c
 
 bool Launcher::openUrl(const QUrl& url) const {
     QQmlApplicationEngine* engine = new QQmlApplicationEngine;
+    engine->rootContext()->setContextProperty("Utils", (QObject*)this);
     engine->rootContext()->setContextProperty("appUrl", url);
     engine->load(QUrl("qrc:/qml/webview.qml"));
 
@@ -67,6 +69,24 @@ bool Launcher::openUrl(const QUrl& url) const {
                         window->width(), window->height());
 
     return true;
+}
+
+QString Launcher::getDownloadPath(const QUrl& url) {
+    QFileDialog d;
+    const auto name = url.fileName();
+    const auto extension = QFileInfo(name).suffix();
+    d.setWindowTitle(tr("Save %1").arg(name));
+    d.setNameFilter(QString("%1 (*.%1)").arg(extension));
+    d.setAcceptMode(QFileDialog::AcceptSave);
+    d.setFileMode(QFileDialog::AnyFile);
+    d.setDefaultSuffix(extension);
+
+    if(!d.exec())
+        return {};
+    const auto files = d.selectedFiles();
+    if(files.size() != 1)
+        return {};
+    return files.first();
 }
 
 QUrl Launcher::webapp_base_url(const QString& name) const {
