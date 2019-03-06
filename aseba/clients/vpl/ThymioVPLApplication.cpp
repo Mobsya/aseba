@@ -357,6 +357,8 @@ void ThymioVPLApplication::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> nod
     } else {
         m_thymio.reset();
     }
+
+    updateWindowTitle(vpl && vpl->isModified());
 }
 
 void ThymioVPLApplication::setupConnection() {
@@ -396,6 +398,7 @@ void ThymioVPLApplication::teardownConnection() {
     vpl->deleteLater();
     vpl = nullptr;
     disconnectedMessage->show();
+    updateWindowTitle(vpl && vpl->isModified());
 }
 
 //! The execution state logic thinks variables might need a refresh
@@ -414,8 +417,13 @@ void ThymioVPLApplication::updateWindowTitle(bool modified) {
     if(!fileName.isEmpty())
         docName = fileName.mid(fileName.lastIndexOf("/") + 1);
 
-    setWindowTitle(
-        tr("%0 %1- Thymio Visual Programming Language - ver. %2").arg(docName).arg(modifiedText).arg(ASEBA_VERSION));
+    QString name;
+    if(m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready) {
+        name = tr("on %1").arg(m_thymio->name());
+    } else {
+        name = tr("[not connected]");
+    }
+    setWindowTitle(tr("%0 %1 %2 - Thymio Visual Programming Language").arg(docName).arg(modifiedText).arg(name));
 }
 
 //! Toggle on/off full screen
