@@ -38,6 +38,14 @@ target_link_libraries(thymio-launcher
     qt-thymio-dm-client-lib-qml
     qtsingleapplication
 )
+if(WIN32)
+    query_qmake(QWEBENGINE_PATH QT_INSTALL_LIBEXECS)
+    if(NOT CMAKE_BUILD_TYPE MATCHES Release)
+            configure_file("${QWEBENGINE_PATH}/QtWebEngineProcessd.exe" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG} COPYONLY)
+    endif()
+    message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY} "${QWEBENGINE_PATH}/QtWebEngineProcess.exe")
+    configure_file("${QWEBENGINE_PATH}/QtWebEngineProcess.exe" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE} COPYONLY)
+endif()
 codesign(thymio-launcher)
 install_qt_app(thymio-launcher)
 target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
