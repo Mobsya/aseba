@@ -14,6 +14,7 @@ public:
     Q_INVOKABLE bool openUrl(const QUrl& url) const;
     Q_INVOKABLE bool launch_process(const QString& program, const QStringList& args) const;
     Q_INVOKABLE QByteArray readFileContent(QString path);
+    Q_INVOKABLE QString getDownloadPath(const QUrl& url);
 
 private:
     QStringList applicationsSearchPaths() const;

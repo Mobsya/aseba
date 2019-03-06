@@ -14,5 +14,13 @@ Window {
         onNewViewRequested: {
             Qt.openUrlExternally(request.requestedUrl)
         }
+        Component.onCompleted: {
+            profile.downloadRequested.connect(download)
+        }
+        function download(request) {
+            request.path = Utils.getDownloadPath(request.path);
+            if(request.path !== "")
+                request.accept()
+        }
     }
 }
