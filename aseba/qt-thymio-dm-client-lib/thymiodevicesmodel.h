@@ -10,7 +10,7 @@ class ThymioDeviceManagerClient;
 class ThymioDevicesModel : public QAbstractListModel {
     Q_OBJECT
 public:
-    enum Role { StatusRole = Qt::UserRole + 1, NodeIdRole, NodeTypeRole, NodeCapabilitiesRole, Object };
+    enum Role { StatusRole = Qt::UserRole + 1, NodeIdRole, NodeTypeRole, NodeCapabilitiesRole, InGroupRole, Object };
 
     ThymioDevicesModel(const ThymioDeviceManagerClient& manager, QObject* parent = nullptr);
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;

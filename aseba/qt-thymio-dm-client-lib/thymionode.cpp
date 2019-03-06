@@ -61,7 +61,7 @@ QUrl ThymioNode::websocketEndpoint() const {
     return m_endpoint->websocketConnectionUrl();
 }
 
-ThymioNode::NodeCapabilities ThymioNode::capabilities() {
+ThymioNode::NodeCapabilities ThymioNode::capabilities() const {
     return m_capabilities;
 }
 
@@ -72,8 +72,17 @@ void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {
     }
 }
 
+bool ThymioNode::isInGroup() const {
+    return !m_group || m_group->nodes().size() != 1;
+}
+
 void ThymioNode::setGroup(std::shared_ptr<ThymioGroup> group) {
+    if(m_group)
+        disconnect(m_group.get(), 0, this, 0);
     m_group = group;
+    if(m_group)
+        connect(m_group.get(), &ThymioGroup::groupChanged, this, &ThymioNode::groupChanged);
+    Q_EMIT groupChanged();
 }
 
 void ThymioNode::setName(const QString& name) {
@@ -289,12 +298,14 @@ void ThymioGroup::addNode(std::shared_ptr<ThymioNode> n) {
             return;
     }
     m_nodes.push_back(n);
+    Q_EMIT groupChanged();
 }
 
 void ThymioGroup::removeNode(std::shared_ptr<ThymioNode> n) {
     for(auto it = m_nodes.begin(); it != m_nodes.end(); ++it) {
         if(auto ptr = it->lock(); !ptr || ptr == n) {
             m_nodes.erase(it);
+            Q_EMIT groupChanged();
             return;
         }
     }
