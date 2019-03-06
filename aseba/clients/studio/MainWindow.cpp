@@ -86,10 +86,6 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
     connect(nodes, &NodeTabsManager::tabAdded, this, &MainWindow::tabAdded);
     connect(nodes, &NodeTabsManager::nodeStatusChanged, this, &MainWindow::regenerateToolsMenus);
 
-    // create help viwer
-    helpViewer.setupWidgets();
-    helpViewer.setupConnections();
-
     // create config dialog + read settings on-disk
     ConfigDialog::init(this);
 
@@ -532,10 +528,6 @@ void MainWindow::sourceChanged() {
     updateWindowTitle();
 }
 
-void MainWindow::showUserManual() {
-    helpViewer.showHelp(HelpViewer::USERMANUAL);
-}
-
 void MainWindow::clearDocumentSpecificTabs() {
     /*bool changed = false;
     do {
@@ -578,8 +570,6 @@ void MainWindow::setupWidgets() {
     findDialog = new FindDialog(this);
     findDialog->setWindowFlag(Qt::Popup);
     connect(this, &MainWindow::MainWindowClosed, findDialog, &QWidget::close);
-
-    connect(this, &MainWindow::MainWindowClosed, &helpViewer, &QWidget::close);
 }
 
 void MainWindow::setupConnections() {
@@ -640,9 +630,6 @@ void MainWindow::regenerateToolsMenus() {
 }
 
 void MainWindow::generateHelpMenu() {
-    helpMenu->addAction(tr("&User Manual..."), this, SLOT(showUserManual()), QKeySequence::HelpContents);
-    helpMenu->addSeparator();
-
     helpMenuTargetSpecificSeparator = helpMenu->addSeparator();
     helpMenu->addAction(tr("Web site Aseba..."), this, SLOT(openToUrlFromAction()))
         ->setData(QUrl(tr("http://aseba.wikidot.com/en:start")));

@@ -43,7 +43,6 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include "HelpViewer.h"
 #include "ConfigDialog.h"
 
 #include <aseba/qt-thymio-dm-client-lib/thymionode.h>
@@ -154,8 +153,6 @@ private Q_SLOTS:
     void sourceChanged();
     void updateWindowTitle();
 
-    void showUserManual();
-
     void openToUrlFromAction() const;
 
 public Q_SLOTS:
@@ -254,7 +251,6 @@ private:
     CompilationLogDialog* compilationMessageBox;  //!< box to show last compilation messages
     FindDialog* findDialog;                       //!< find dialog
     QString actualFileName;                       //!< name of opened file, "" if new
-    HelpViewer helpViewer;
 };
 
 /*@}*/

@@ -28,7 +28,6 @@
 #include <QDebug>
 #include <QCommandLineParser>
 #include "MainWindow.h"
-#include "HelpViewer.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 #include <aseba/common/consts.h>
 
