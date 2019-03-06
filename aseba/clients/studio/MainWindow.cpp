@@ -589,8 +589,7 @@ void MainWindow::setupConnections() {
     connect(ConfigDialog::getInstance(), &ConfigDialog::settingsChanged, this, &MainWindow::applySettings);
 
     // global actions
-    connect(loadAllAct, SIGNAL(triggered()), SLOT(loadAll()));
-    connect(resetAllAct, &QAction::triggered, this, &MainWindow::resetAll);
+    connect(stopAllAct, &QAction::triggered, this, &MainWindow::stopAll);
     connect(runAllAct, &QAction::triggered, this, &MainWindow::runAll);
     connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
 }
@@ -629,8 +628,8 @@ void MainWindow::regenerateToolsMenus() {
                                                         &NodeTab::writeProgramToDeviceMemory);
             connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
             rebootMenu->addAction(tr("...%0").arg(tab->thymio()->name()), tab, SLOT(reboot()));
-            ++activeVMCount;
         }
+        ++activeVMCount;
     }
     writeBytecodeMenu->addSeparator();
     writeAllBytecodesAct = writeBytecodeMenu->addAction(tr("...inside all nodes"), this, SLOT(writeAllBytecodes()));
@@ -842,12 +841,8 @@ void MainWindow::setupMenu() {
 #endif  // Q_WS_MAC
     menuBar()->addMenu(viewMenu);
 
-    // Debug actions
-    loadAllAct = new QAction(QIcon(":/images/upload.png"), tr("&Load all"), this);
-    loadAllAct->setShortcut(tr("F7", "Load|Load all"));
-
-    resetAllAct = new QAction(QIcon(":/images/reset.png"), tr("&Reset all"), this);
-    resetAllAct->setShortcut(tr("F8", "Debug|Reset all"));
+    stopAllAct = new QAction(QIcon(":/images/stop.png"), tr("&Stop all"), this);
+    stopAllAct->setShortcut(tr("F8", "Debug|Stop all"));
 
     runAllAct = new QAction(QIcon(":/images/play.png"), tr("Ru&n all"), this);
     runAllAct->setShortcut(tr("F9", "Debug|Run all"));
@@ -859,8 +854,7 @@ void MainWindow::setupMenu() {
     globalToolBar = addToolBar(tr("Debug"));
     globalToolBar->setObjectName(QStringLiteral("debug toolbar"));
     globalToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    globalToolBar->addAction(loadAllAct);
-    globalToolBar->addAction(resetAllAct);
+    globalToolBar->addAction(stopAllAct);
     globalToolBar->addAction(runAllAct);
     globalToolBar->addAction(pauseAllAct);
 
@@ -878,8 +872,7 @@ void MainWindow::setupMenu() {
     debugMenu->addAction(toggleBreakpointAct);
     debugMenu->addAction(clearAllBreakpointsAct);
     debugMenu->addSeparator();
-    debugMenu->addAction(loadAllAct);
-    debugMenu->addAction(resetAllAct);
+    debugMenu->addAction(stopAllAct);
     debugMenu->addAction(runAllAct);
     debugMenu->addAction(pauseAllAct);
 

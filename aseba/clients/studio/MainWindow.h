@@ -212,8 +212,7 @@ private:
     // FixedWidthTableView* eventsDescriptionsView;
 
     // global buttons
-    QAction* loadAllAct;
-    QAction* resetAllAct;
+    QAction* stopAllAct;
     QAction* runAllAct;
     QAction* pauseAllAct;
     QToolBar* globalToolBar;
