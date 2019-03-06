@@ -26,6 +26,7 @@ include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
 include(CMakeModules/dashel.cmake)
 include(CMakeModules/deployqt.cmake)
+include(CMakeModules/CMakeQuery.cmake)
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
@@ -79,6 +80,9 @@ endif()
 enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
+
 #create an empty qt.conf file
 file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "")
 install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
@@ -111,6 +115,24 @@ set(LIB_VERSION_PATCH 0)
 set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH})
 
 
+if(WIN32)
+    add_subdirectory(third_party/bonjour)
+    set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
+    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
+    set(CPACK_MONOLITHIC_INSTALL 1)
+    configure_file(
+        ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
+    )
+endif()
+
+SET(CPACK_PACKAGE_VERSION_MAJOR "${ASEBA_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${ASEBA_VERSION_PATCH}")
+include(CPack)
+
+
+
 add_subdirectory(aseba)
 add_subdirectory(js)
 
@@ -132,25 +154,6 @@ endif()
 
 
 feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
-
-
-if(WIN32)
-    add_subdirectory(third_party/bonjour)
-    set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
-    set(CPACK_MONOLITHIC_INSTALL 1)
-    configure_file(
-        ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
-    )
-
-endif()
-
-SET(CPACK_PACKAGE_VERSION_MAJOR "${ASEBA_VERSION_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${ASEBA_VERSION_PATCH}")
-include(CPack)
-
 
 
 
