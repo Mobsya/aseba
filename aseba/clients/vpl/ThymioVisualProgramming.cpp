@@ -548,9 +548,9 @@ namespace ThymioVPL {
             bool doClear(true);
             if(!force && scene->isAnyAdvancedFeature()) {
                 if(QMessageBox::warning(this, tr("Returning to simple mode"),
-                                        tr("You are currently using states. Returning to simple "
-                                           "mode will discard any state filter or state setting "
-                                           "card.<p>Are you sure you want to continue?"),
+                                        tr("Returning to simple "
+                                           "mode will discard all advanced blocks and state cards."
+                                           "<p>Are you sure you want to continue?"),
                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
                     doClear = false;
             }
