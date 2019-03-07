@@ -15,7 +15,12 @@ ListModel {
     }
 
     function launch_scratch(device) {
-        const url = "http://0.0.0.0:8601/#device=%2&ws=%3".arg(device.id).arg(device.websocketEndpoint())
+        const baseurl = Utils.webapp_base_url("scratch");
+        if(!baseurl) {
+            return false;
+        }
+        const url = "%1/index.html#device=%2&ws=%3"
+            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
 
