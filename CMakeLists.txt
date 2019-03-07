@@ -153,6 +153,11 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/thymio-blockly-standalone/CMakeLists.txt)
 endif()
 
 
+if(EXISTS ${PROJECT_SOURCE_DIR}/scratch-gui/build/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch-gui/build/ DESTINATION ./scratch)
+endif()
+
+
 feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
 
 
