@@ -21,13 +21,7 @@ aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_co
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
-    auto old_it = m_aseba_nodes.find(node->uuid());
-    bool duplicated = false;
-    if(old_it != m_aseba_nodes.end()) {
-        m_aseba_nodes.erase(old_it);
-        duplicated = true;
-    }
-
+    remove_duplicated_node(node);
     auto it = find(node);
     if(it == std::end(m_aseba_nodes)) {
         node_id id = node->uuid();
@@ -35,8 +29,7 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
             id = boost::asio::use_service<uuid_generator>(get_io_service()).generate();
         it = m_aseba_nodes.insert({id, node}).first;
 
-        if(!duplicated)
-            restore_group_affiliation(*node);
+        restore_group_affiliation(*node);
         save_group_affiliation(*node);
 
         m_node_status_changed_signal(node, id, aseba_node::status::connected);
@@ -50,6 +43,7 @@ void aseba_node_registery::handle_node_uuid_change(const std::shared_ptr<aseba_n
         m_node_status_changed_signal(node, it->first, aseba_node::status::disconnected);
         m_aseba_nodes.erase(it);
     }
+    remove_duplicated_node(node);
     m_aseba_nodes.insert({node->uuid(), node});
     restore_group_affiliation(*node);
     save_group_affiliation(*node);
@@ -66,6 +60,21 @@ void aseba_node_registery::remove_node(const std::shared_ptr<aseba_node>& node) 
     m_node_status_changed_signal(node, id, aseba_node::status::disconnected);
 }
 
+void aseba_node_registery::remove_duplicated_node(const std::shared_ptr<aseba_node>& node) {
+    auto it = m_aseba_nodes.find(node->uuid());
+    if(it == m_aseba_nodes.end())
+        return;
+    auto old = it->second.lock();
+    if(old == node)
+        return;
+    mLogWarn("Removing duplicated node for {}", node->uuid());
+    m_aseba_nodes.erase(it);
+    if(old) {
+        if(auto ep = old->endpoint()) {
+            ep->remove_node(node->uuid());
+        }
+    }
+}
 void aseba_node_registery::save_group_affiliation(const aseba_node& node) {
     auto group = node.group();
     if(group) {

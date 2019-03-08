@@ -35,6 +35,8 @@ public:
     std::shared_ptr<mobsya::group> group_from_id(const node_id&) const;
 
 private:
+    void remove_duplicated_node(const std::shared_ptr<aseba_node>& node);
+
     void save_group_affiliation(const aseba_node& node);
     void restore_group_affiliation(const aseba_node& node);
 
