@@ -207,6 +207,8 @@ private:
     void on_event_received(const std::unordered_map<std::string, property>& events,
                            const std::chrono::system_clock::time_point& timestamp);
 
+    bool set_rf_settings(uint16_t network, uint16_t channel = 0, uint16_t node = 0);
+
     node_id_t m_id;
     node_id m_uuid;
     bool m_uuid_received = false;
@@ -229,6 +231,12 @@ private:
         uint32_t line = 0;
         fb::VMExecutionState state = fb::VMExecutionState::Stopped;
     } m_vm_state;
+
+    struct th2_rfid {
+        uint16_t network_id;
+        uint16_t node_id;
+        uint16_t channel;
+    } m_th2_rfid_settings;
 
     struct aseba_vm_variable {
         std::string name;
