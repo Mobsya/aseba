@@ -238,6 +238,17 @@ public:
         read_aseba_message();
     }
 
+    void remove_node(node_id n) {
+        for(auto it = m_nodes.begin(); it != m_nodes.end();) {
+            const auto& info = it->second;
+            if(info.node && info.node->uuid() == n) {
+                info.node->disconnect();
+                m_nodes.erase(it);
+                return;
+            }
+        }
+    }
+
 private:
     friend class aseba_node;
 
