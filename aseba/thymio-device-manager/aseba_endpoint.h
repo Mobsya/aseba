@@ -170,11 +170,20 @@ public:
         if(messages.empty())
             return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
+
+        auto it = m_msg_queue.end();
+        for(; it != m_msg_queue.begin(); --it) {
+            if(it == m_msg_queue.end())
+                break;
+            if(it->first->type != ASEBA_MESSAGE_LIST_NODES && it->first->type != ASEBA_MESSAGE_GET_EXECUTION_STATE &&
+               it->first->type != ASEBA_MESSAGE_GET_CHANGED_VARIABLES)
+                break;
+        }
         for(auto&& m : messages) {
-            m_msg_queue.emplace(std::move(m), write_callback{});
+            it = m_msg_queue.insert(it, {std::move(m), write_callback{}});
         }
         if(cb) {
-            m_msg_queue.back().second = std::move(cb);
+            it->second = std::move(cb);
         }
         if(m_msg_queue.size() > messages.size())
             return;
@@ -350,7 +359,7 @@ private:
         if(cb) {
             boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
         }
-        m_msg_queue.pop();
+        m_msg_queue.erase(m_msg_queue.begin());
         write_next();
     }
 
@@ -397,7 +406,7 @@ private:
     std::mutex m_msg_queue_lock;
     std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
     std::shared_ptr<mobsya::group> m_group;
-    std::queue<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
+    std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
     Aseba::CommonDefinitions m_defs;
 
     struct WirelessDongleSettings {
