@@ -421,7 +421,7 @@ private:
         auto fw = std::to_string(n.firwmware_version());
         auto afw = std::to_string(n.available_firwmware_version());
         return fb::CreateNodeDirect(builder, n.uuid().fb(builder), n.group() ? n.group()->uuid().fb(builder) : 0,
-                                    mobsya::fb::NodeStatus(n.get_status()), n.type(), n.friendly_name().c_str(),
+                                    mobsya::fb::NodeStatus(status), n.type(), n.friendly_name().c_str(),
                                     node_capabilities(n), fw.c_str(), afw.c_str());
     }
 
