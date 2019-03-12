@@ -166,6 +166,10 @@ public:
         return m_vm_state_watch_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
+    int firwmware_version() const;
+    int available_firwmware_version() const;
+    void set_available_firmware_version(int version);
+
 private:
     friend class aseba_endpoint;
     friend class group;
@@ -212,6 +216,8 @@ private:
     bool m_uuid_received = false;
     std::string m_friendly_name;
     std::atomic<status> m_status;
+    int m_firmware_version;
+    int m_available_firmware_version;
     const uint16_t m_protocol_version;
     std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;

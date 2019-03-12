@@ -29,6 +29,8 @@ add_library(thymio-device-manager-lib STATIC
     flatbuffers_message_reader.h
     flatbuffers_message_writer.h
     flatbuffers_messages.h
+    fw_update_service.h
+    fw_update_service.cpp
     node_id.h
     usb_utils.h
     utils.h
@@ -66,6 +68,7 @@ else()
     target_compile_definitions(thymio-device-manager-lib PUBLIC MOBSYA_TDM_ENABLE_USB)
 endif()
 
+target_include_directories(thymio-device-manager-lib PUBLIC ${CMAKE_SOURCE_DIR}/third_party/belle/include)
 
 target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL)
 target_link_libraries(thymio-device-manager-lib PUBLIC

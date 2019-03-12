@@ -10,6 +10,7 @@
 #include "aseba_node_registery.h"
 #include "app_server.h"
 #include "app_token_manager.h"
+#include "fw_update_service.h"
 #include "aseba_endpoint.h"
 #include "aseba_tcpacceptor.h"
 #include "uuid_provider.h"
@@ -36,6 +37,9 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::uuid_generator& _ = boost::asio::make_service<mobsya::uuid_generator>(ctx);
     mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
     mobsya::app_token_manager& token_manager = boost::asio::make_service<mobsya::app_token_manager>(ctx);
+
+    // mobsya::firmware_update_service needs to be initialized after mobsya::aseba_node_registery
+    mobsya::firmware_update_service& update_service = boost::asio::make_service<mobsya::firmware_update_service>(ctx);
 
     // Create a server for regular tcp connection
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);

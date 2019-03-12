@@ -84,6 +84,10 @@ public:
     Q_PROPERTY(NodeType type READ type CONSTANT)
     Q_PROPERTY(bool isInGroup READ isInGroup NOTIFY groupChanged)
 
+    Q_PROPERTY(QString fwVersion READ fwVersion NOTIFY modified)
+    Q_PROPERTY(QString fwVersionAvailable READ fwVersionAvailable NOTIFY modified)
+    Q_PROPERTY(bool hasAvailableFirmwareUpdate READ hasAvailableFirmwareUpdate NOTIFY modified)
+
 
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
                mobsya::ThymioNode::NodeType type, QObject* parent = nullptr);
@@ -125,6 +129,10 @@ public:
     std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint() const {
         return m_endpoint;
     }
+
+    QString fwVersionAvailable() const;
+    QString fwVersion() const;
+    bool hasAvailableFirmwareUpdate() const;
 
     Q_INVOKABLE Request rename(const QString& newName);
     Q_INVOKABLE Request lock();
@@ -177,6 +185,7 @@ private:
     QUuid m_uuid;
     QString m_name;
     Status m_status;
+    QString m_fw_version, m_fw_version_available;
     VMExecutionState m_executionState;
     NodeCapabilities m_capabilities;
     NodeType m_type;

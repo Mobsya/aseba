@@ -112,6 +112,8 @@ table Node {
   type:NodeType;
   name:string;
   capabilities:ulong  = 0;
+  fw_version:string;
+  latest_fw_version:string;
 }
 
 table NamedValue {

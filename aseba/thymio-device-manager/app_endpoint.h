@@ -350,8 +350,7 @@ private:
         if(auto group = node->group()) {
             group_id = group->uuid().fb(builder);
         }
-        nodes.emplace_back(fb::CreateNodeDirect(builder, id.fb(builder), group_id, mobsya::fb::NodeStatus(status),
-                                                node->type(), node->friendly_name().c_str(), node_capabilities(node)));
+        nodes.emplace_back(serialize_node(builder, *node));
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
@@ -406,21 +405,31 @@ private:
             const auto ptr = node.second.lock();
             if(!ptr)
                 continue;
-            nodes.emplace_back(fb::CreateNodeDirect(builder, ptr->uuid().fb(builder),
-                                                    ptr->group() ? ptr->group()->uuid().fb(builder) : 0,
-                                                    mobsya::fb::NodeStatus(ptr->get_status()), ptr->type(),
-                                                    ptr->friendly_name().c_str(), node_capabilities(ptr)));
+            nodes.emplace_back(serialize_node(builder, *ptr));
         }
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
     }
 
-    uint64_t node_capabilities(std::shared_ptr<aseba_node> node) const {
+    auto serialize_node(flatbuffers::FlatBufferBuilder& builder, const aseba_node& n) {
+        auto status = n.get_status();
+        if(status == aseba_node::status::busy && get_locked_node(n.uuid())) {
+            status = aseba_node::status::ready;
+        }
+
+        auto fw = std::to_string(n.firwmware_version());
+        auto afw = std::to_string(n.available_firwmware_version());
+        return fb::CreateNodeDirect(builder, n.uuid().fb(builder), n.group() ? n.group()->uuid().fb(builder) : 0,
+                                    mobsya::fb::NodeStatus(n.get_status()), n.type(), n.friendly_name().c_str(),
+                                    node_capabilities(n), fw.c_str(), afw.c_str());
+    }
+
+    uint64_t node_capabilities(const aseba_node& node) const {
         uint64_t caps = 0;
         if(m_local_endpoint) {
             caps |= uint64_t(fb::NodeCapability::ForceResetAndStop);
-            if(node->can_be_renamed())
+            if(node.can_be_renamed())
                 caps |= uint64_t(fb::NodeCapability::Rename);
         }
         return caps;
@@ -437,7 +446,7 @@ private:
 
     void rename_node(uint32_t request_id, const aseba_node_registery::node_id& id, const std::string& new_name) {
         auto n = registery().node_from_id(id);
-        if(!n || !(node_capabilities(n) & uint64_t(fb::NodeCapability::Rename))) {
+        if(!n || !(node_capabilities(*n) & uint64_t(fb::NodeCapability::Rename))) {
             mLogWarn("rename_node: node {} does not exist or can not be renamed", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
@@ -595,7 +604,7 @@ private:
         auto n = get_locked_node(id);
         if(!n && cmd == fb::VMExecutionStateCommand::Stop) {
             n = registery().node_from_id(id);
-            if(n && !(node_capabilities(n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
+            if(n && !(node_capabilities(*n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
                 n = {};
         }
         if(!n) {

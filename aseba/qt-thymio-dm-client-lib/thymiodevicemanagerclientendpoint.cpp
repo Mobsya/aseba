@@ -313,6 +313,8 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
         }
         new_grp->addNode(*it);
         (*it)->setGroup(new_grp);
+        (*it)->m_fw_version = QString::fromStdString(node.fw_version);
+        (*it)->m_fw_version_available = QString::fromStdString(node.latest_fw_version);
 
         Q_EMIT added ? nodeAdded(it.value()) : nodeModified(it.value());
 
