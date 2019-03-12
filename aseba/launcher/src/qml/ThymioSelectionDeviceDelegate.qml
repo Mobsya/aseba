@@ -152,7 +152,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: 2
 
-                }
+                }*/
 
                 Image {
                      id: icon;
@@ -164,7 +164,18 @@ Item {
                      anchors.leftMargin: 2
                      smooth: true
                      antialiasing: true
-                }*/
+                     visible: device.hasAvailableFirmwareUpdate
+                     MouseArea {
+                         id:update_icon_ma
+                         anchors.fill: parent
+                         hoverEnabled: true
+                     }
+
+                     ToolTip {
+                         visible: update_icon_ma.containsMouse
+                         text: qsTr("A new firmware is available!")
+                     }
+                }
             }
 
             Item {

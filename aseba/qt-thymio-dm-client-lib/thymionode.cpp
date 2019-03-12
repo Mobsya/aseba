@@ -3,6 +3,7 @@
 #include "qflatbuffers.h"
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/remove_if.hpp>
+#include <QVersionNumber>
 
 namespace mobsya {
 
@@ -61,8 +62,22 @@ QUrl ThymioNode::websocketEndpoint() const {
     return m_endpoint->websocketConnectionUrl();
 }
 
+QString ThymioNode::fwVersionAvailable() const {
+    return m_fw_version_available;
+}
+
+QString ThymioNode::fwVersion() const {
+    return m_fw_version;
+}
+
 ThymioNode::NodeCapabilities ThymioNode::capabilities() const {
     return m_capabilities;
+}
+
+bool ThymioNode::hasAvailableFirmwareUpdate() const {
+    const auto n = QVersionNumber::fromString(m_fw_version);
+    // Hardcode that all thymio with a firmware 12 or older can be updated
+    return n < QVersionNumber::fromString(m_fw_version_available) || n < QVersionNumber::fromString("13");
 }
 
 void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {

@@ -26,6 +26,8 @@ aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, uint16_t prot
     : m_id(id)
     , m_uuid(boost::uuids::random_generator()())
     , m_status(status::disconnected)
+    , m_firmware_version(0)
+    , m_available_firmware_version(0)
     , m_protocol_version(protocol_version)
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
@@ -576,6 +578,12 @@ void aseba_node::on_description_received() {
     schedule_variables_update();
     schedule_execution_state_update();
 
+    auto it = std::find_if(m_variables.begin(), m_variables.end(),
+                           [](const aseba_vm_variable& var) { return var.name == "_fwversion"; });
+    if(it != m_variables.end()) {
+        write_message(std::make_shared<Aseba::GetVariables>(native_id(), it->start, it->size));
+    }
+
     if(m_description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
         write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
@@ -686,6 +694,10 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
             std::copy(data_it, data_it + count, std::begin(var.value) + var_start);
             vars.insert(std::pair{var.name, detail::aseba_variable_from_range(var.value)});
             mLogTrace("Variable changed {} : {}", var.name, detail::aseba_variable_from_range(var.value));
+            if(var.name == "_fwversion" && m_firmware_version != var.value[0]) {
+                m_firmware_version = var.value[0];
+                set_status(m_status);
+            }
         }
         data_it = data_it + count;
         start += count;
@@ -789,6 +801,20 @@ void aseba_node::set_friendly_name(const std::string& str) {
     std::copy(str.begin(), str.end(), std::back_inserter(data));
     write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_NAME, data));
     m_friendly_name = str;
+}
+
+int aseba_node::firwmware_version() const {
+    return m_firmware_version;
+}
+int aseba_node::available_firwmware_version() const {
+    return m_available_firmware_version;
+}
+
+void aseba_node::set_available_firmware_version(int version) {
+    m_available_firmware_version = version;
+    if(m_firmware_version != 0 && m_available_firmware_version > m_firmware_version) {
+        set_status(m_status);
+    }
 }
 
 bool aseba_node::can_be_renamed() const {
