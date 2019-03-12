@@ -128,7 +128,7 @@ script:
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
     #export PATH="(brew --prefix llvm)/bin:${PATH}"
-    cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+    cmake -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
     ninja -v
     ctest .
   fi

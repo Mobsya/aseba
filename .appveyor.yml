@@ -74,6 +74,10 @@ install:
       }
   - set "PATH=%PATH%;C:\Program Files (x86)\NSIS"
 
+  # OpenSSL
+  - ps: Start-FileDownload 'https://slproweb.com/download/Win64OpenSSL-1_1_1b.exe'
+  - ps: Start-Process "Win64OpenSSL-1_1_1b.exe" -ArgumentList "/silent /verysilent /sp- /suppressmsgboxes" -Wait
+
   # Blockly deps
   - if [%USE_VS_TOOLCHAIN%]==[true] python -m pip install -U pip setuptools wheel
   - if [%USE_VS_TOOLCHAIN%]==[true] python -m pip install beautifulsoup4 lxml
@@ -120,13 +124,13 @@ build_script:
   - mkdir build
   - cd build
   - if [%COMPILER%]==[ClangCL] (
-      cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" "-DCMAKE_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%;C:\Program Files\Bonjour SDK" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF &&
+      cmake .. -GNinja "-DOPENSSL_ROOT_DIR=C:\projects\deps\openssl" -DOPENSSL_USE_STATIC_LIBS=ON -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" "-DCMAKE_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%;C:\Program Files\Bonjour SDK" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF &&
       ninja -v &&
       cpack -D CPACK_GENERATOR="NSIS"
     )
 
   - if [%COMPILER%]==[MSVC] (
-      cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" "-DCMAKE_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\cl-toolchain.cmake" "-DCMAKE_PREFIX_PATH=%QT5%;C:\Program Files\Bonjour SDK" -DCMAKE_BUILD_TYPE=Release &&
+      cmake .. -GNinja "-DOPENSSL_ROOT_DIR=C:\projects\deps\openssl" -DOPENSSL_USE_STATIC_LIBS=ON -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" "-DCMAKE_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\cl-toolchain.cmake" "-DCMAKE_PREFIX_PATH=%QT5%;C:\Program Files\Bonjour SDK" -DCMAKE_BUILD_TYPE=Release &&
       ninja -v &&
       ctest &&
       cpack -D CPACK_GENERATOR="NSIS"

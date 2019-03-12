@@ -1,4 +1,6 @@
 set(CMAKE_CXX_STANDARD 17)
+find_package(OpenSSL REQUIRED)
+
 add_library(thymio-device-manager-lib STATIC
     main.cpp
     log.h
@@ -50,7 +52,7 @@ if(WIN32)
         serial_usb_device.h
     )
     target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
-    target_link_libraries(thymio-device-manager-lib PUBLIC iphlpapi)
+    target_link_libraries(thymio-device-manager-lib PUBLIC iphlpapi CRYPT32)
 else()
     target_sources(thymio-device-manager-lib PRIVATE
         usbserver.cpp
@@ -80,6 +82,8 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
     mpark_variant
     pugixml
     range-v3
+    OpenSSL::SSL
+    OpenSSL::Crypto
        )
 if(WIN32)
     target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt)
