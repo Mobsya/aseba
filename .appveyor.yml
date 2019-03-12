@@ -55,16 +55,15 @@ install:
       set "LLD_LINK=C:\projects\deps\llvm\bin\lld-link.exe"
     )
   # Install SDL ( for msvc & clang)
-  - if [%USE_VS_TOOLCHAIN%]==[true] (
-      appveyor DownloadFile %SDL_URL% -FileName sdl.zip  &&
-      7z x sdl.zip -oC:\projects\deps\sdl > nul
-    )
+  #- if [%USE_VS_TOOLCHAIN%]==[true] (
+  #    appveyor DownloadFile %SDL_URL% -FileName sdl.zip  &&
+  #    7z x sdl.zip -oC:\projects\deps\sdl > nul
+  #  )
 
   - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
   - 7z x ninja.zip -oC:\projects\deps\ninja > nul
   - set "PATH=C:\projects\deps\ninja;%PATH%"
   - ninja --version
-
 
   # NSIS
   - ps: |
