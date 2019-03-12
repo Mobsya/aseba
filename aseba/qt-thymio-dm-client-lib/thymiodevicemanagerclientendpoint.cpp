@@ -296,7 +296,9 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
         bool added = false;
         auto it = m_nodes.find(id);
         if(it == m_nodes.end()) {
-            it = m_nodes.insert(id, std::make_shared<ThymioNode>(shared_from_this(), id, name, type));
+            it = m_nodes.insert(id,
+                                std::shared_ptr<ThymioNode>(new ThymioNode(shared_from_this(), id, name, type),
+                                                            [](ThymioNode* n) { n->deleteLater(); }));
             added = true;
         }
 
@@ -309,7 +311,8 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
         }
         auto new_grp = group_from_group_id(group_id);
         if(!new_grp) {
-            new_grp = std::make_shared<ThymioGroup>(shared_from_this(), group_id);
+            new_grp = std::shared_ptr<ThymioGroup>(new ThymioGroup(shared_from_this(), group_id),
+                                                   [](ThymioGroup* g) { g->deleteLater(); });
         }
         new_grp->addNode(*it);
         (*it)->setGroup(new_grp);
