@@ -83,10 +83,12 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
         }
     }
 
-    libusb_config_descriptor* desc;
-    if(auto r = libusb_get_active_config_descriptor(impl.device, &desc)) {
+    libusb_config_descriptor* desc_ = nullptr;
+    if(auto r = libusb_get_active_config_descriptor(impl.device, &desc_)) {
         return usb::make_unexpected(r);
     }
+    auto desc = std::unique_ptr<libusb_config_descriptor, decltype(&libusb_free_config_descriptor)>(
+        desc_, &libusb_free_config_descriptor);
     for(int i = 0; i < desc->bNumInterfaces; i++) {
         const auto interface = desc->interface[i];
         for(int s = 0; s < interface.num_altsetting; s++) {

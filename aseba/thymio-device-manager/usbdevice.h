@@ -15,6 +15,7 @@
 #include "usbcontext.h"
 #include "log.h"
 #include <numeric>
+#include <queue>
 
 namespace mobsya {
 
@@ -250,6 +251,21 @@ public:
     }
 
 private:
+    std::queue<std::unique_ptr<libusb_transfer, decltype(&libusb_free_transfer)>> m_transfer_pool;
+    libusb_transfer* alloc_transfer() {
+        if(m_transfer_pool.empty()) {
+            mLogInfo("Allocating an usb tranfer");
+            return libusb_alloc_transfer(0);
+        }
+        auto t = m_transfer_pool.front().release();
+        m_transfer_pool.pop();
+        return t;
+    }
+    void free_transfer(libusb_transfer* t) {
+        m_transfer_pool.emplace(t, &libusb_free_transfer);
+    }
+
+
     template <typename BufferSequence, typename CompletionHandler, typename TransferDirection>
     void async_transfer_some(const BufferSequence& buffers, CompletionHandler&& handler);
 };
@@ -331,18 +347,12 @@ namespace detail {
 template <typename BufferSequence, typename CompletionHandler, typename TransferDirection>
 void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHandler&& handler) {
 
-
-    struct transfer_data;
-    using data_allocator_t = typename std::allocator_traits<decltype(
-        boost::asio::get_associated_allocator(handler))>::template rebind_alloc<transfer_data>;
-
     struct transfer_data {
         BufferSequence seq;
         usb_device& device;
         std::size_t idx;
         std::size_t total_transfered;
         CompletionHandler handler;
-        data_allocator_t alloc;
 
         transfer_data(BufferSequence seq, usb_device& device, CompletionHandler&& handler, std::size_t idx = 0,
                       std::size_t total_transfered = 0)
@@ -351,23 +361,6 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
             , idx(idx)
             , total_transfered(total_transfered)
             , handler(std::forward<CompletionHandler>(handler)) {}
-
-        static void destroy(transfer_data* d) {
-            auto alloc = std::move(d->alloc);
-            std::allocator_traits<data_allocator_t>::destroy(alloc, d);
-            std::allocator_traits<data_allocator_t>::deallocate(alloc, d, 1);
-        }
-        static auto unique_ptr(transfer_data* d) {
-            return std::unique_ptr<transfer_data, decltype(&transfer_data::destroy)>(d, &transfer_data::destroy);
-        }
-        static auto allocate(data_allocator_t&& allocator, const BufferSequence& buffers, usb_device& device,
-                             CompletionHandler&& handler, std::size_t idx = 0, std::size_t total_transfered = 0) {
-            transfer_data* data = allocator.allocate(1);
-            std::allocator_traits<data_allocator_t>::construct(
-                allocator, data, buffers, device, std::forward<CompletionHandler>(handler), idx, total_transfered);
-            data->alloc = std::move(allocator);
-            return std::unique_ptr<transfer_data, decltype(&transfer_data::destroy)>(data, &transfer_data::destroy);
-        }
     };
 
     auto& impl = this->get_implementation();
@@ -385,15 +378,11 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
         }
     }
 
-    using data_allocator_t = typename std::allocator_traits<decltype(
-        boost::asio::get_associated_allocator(handler))>::template rebind_alloc<transfer_data>;
-    data_allocator_t alloc(boost::asio::get_associated_allocator(handler));
-    auto data =
-        transfer_data::allocate(std::move(alloc), buffers, *this, std::forward<CompletionHandler>(handler),
-                                std::distance(boost::asio::buffer_sequence_begin(buffers), start_it), total_transfered);
+    static auto cb = [](libusb_transfer* transfer_) {
+        auto d = std::unique_ptr<transfer_data>{static_cast<transfer_data*>(transfer_->user_data)};
+        const auto deleter = [dev = &d->device](libusb_transfer* t) { dev->free_transfer(t); };
+        auto transfer = std::unique_ptr<libusb_transfer, decltype(deleter)>{transfer_, deleter};
 
-    static auto cb = [](libusb_transfer* transfer) {
-        auto d = transfer_data::unique_ptr(static_cast<transfer_data*>(transfer->user_data));
         // Successful transfer and full buffer => read some more in the next buffer
         if(transfer->status == LIBUSB_TRANSFER_COMPLETED) {
             auto it = boost::asio::buffer_sequence_begin(d->seq) + d->idx;
@@ -413,9 +402,10 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
 
             if(it != boost::asio::buffer_sequence_end(d->seq)) {
                 detail::prepare_transfer<BufferSequence, std::remove_reference_t<decltype(transfer->callback)>,
-                                         TransferDirection>(
-                    impl, transfer, d->seq, d->idx, (libusb_transfer_cb_fn)transfer->callback, transfer->user_data);
-                libusb_submit_transfer(transfer);
+                                         TransferDirection>(impl, transfer.get(), d->seq, d->idx,
+                                                            (libusb_transfer_cb_fn)transfer->callback,
+                                                            transfer->user_data);
+                libusb_submit_transfer(transfer.release());
                 d.release();
                 return;
             }
@@ -425,26 +415,28 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
             ec = usb::make_error_code_from_transfer(transfer->status);
         }
 
-        libusb_free_transfer(transfer);
-
         auto handler = std::move(d->handler);
         const auto executor = boost::asio::get_associated_executor(handler, d->device.get_executor());
         const auto total_transfered = d->total_transfered;
 
         // Reset storage before posting
-        d.reset();
+        d = {};
+        transfer = {};
 
         boost::asio::post(executor,
                           boost::beast::bind_handler(std::forward<CompletionHandler>(handler), ec, total_transfered));
     };
 
 
-    auto transfer = libusb_alloc_transfer(0);
+    auto transfer = this->alloc_transfer();
+    auto data = std::make_unique<transfer_data>(buffers, *this, std::forward<CompletionHandler>(handler),
+                                                std::distance(boost::asio::buffer_sequence_begin(buffers), start_it),
+                                                total_transfered);
     detail::prepare_transfer<BufferSequence, std::remove_reference_t<decltype(cb)>, TransferDirection>(
         impl, transfer, data->seq, data->idx, std::move(cb), data.get());
     auto r = libusb_submit_transfer(transfer);
     if(r != LIBUSB_SUCCESS) {
-        libusb_free_transfer(transfer);
+        this->free_transfer(transfer);
         auto handler = std::move(data->handler);
         boost::asio::post(
             data->device.get_executor(),
