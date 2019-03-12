@@ -78,10 +78,7 @@ install:
   - if [%USE_VS_TOOLCHAIN%]==[true] python -m pip install -U pip setuptools wheel
   - if [%USE_VS_TOOLCHAIN%]==[true] python -m pip install beautifulsoup4 lxml
 
-  - if [%COMPILER%]==[MinGW] appveyor DownloadFile %https://bootstrap.pypa.io/get-pip.py% -FileName get-pip.py
-  - if [%COMPILER%]==[MinGW] (
-      %BASH% -x -lc "python2 get-pip.py --user && python2 -m pip install -U pip setuptools wheel && python2 -m pip install beautifulsoup4 lxml"
-    )
+  - refreshenv
 
 
 before_build:
@@ -122,12 +119,6 @@ build_script:
   - cd "%APPVEYOR_BUILD_FOLDER%"
   - mkdir build
   - cd build
-  - if [%COMPILER%]==[MinGW] if [%ARCH%]==[x86] set MinGWPath="/mingw32"
-  - if [%COMPILER%]==[MinGW] if [%ARCH%]==[x64] set MinGWPath="/mingw64"
-  - if [%COMPILER%]==[MinGW] (
-      %BASH% -x -lc "cd '%APPVEYOR_BUILD_FOLDER%\\build' && export PATH=\"%MinGWPath%/bin:${PATH}\"  && cmake .. -GNinja -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH='%MinGWPath%;/c/Program Files/Bonjour SDK' && ninja -v"
-    )
-
   - if [%COMPILER%]==[ClangCL] (
       cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" "-DCMAKE_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%;C:\Program Files\Bonjour SDK" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF &&
       ninja -v &&
