@@ -586,8 +586,7 @@ void aseba_node::on_description_received() {
 
     if(m_description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
-        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
-        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
+        request_device_info();
         return;
     }
     set_status(status::available);
@@ -595,9 +594,12 @@ void aseba_node::on_description_received() {
 
 
 void aseba_node::request_device_info() {
-    if(m_uuid_received)
+    if(m_uuid_received || m_description.protocolVersion < 6)
         return;
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
+    if(m_description.protocolVersion >= 9) {
+        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS));
+    }
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
 
     m_resend_timer.expires_from_now(boost::posix_time::seconds(1));
@@ -765,8 +767,31 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
         set_status(m_status);
         mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
+    } else if(info.info == DEVICE_INFO_THYMIO2_RF_SETTINGS) {
+        if(info.data.size() != 3 * sizeof(uint16_t))
+            return;
+        const auto d = (uint16_t*)info.data.data();
+        m_th2_rfid_settings = {bswap16(d[0]), bswap16(d[1]), bswap16(d[2])};
+        mLogInfo("node {} : net node={}, network={}, channel={}", native_id(), m_th2_rfid_settings.node_id,
+                 m_th2_rfid_settings.network_id, m_th2_rfid_settings.channel);
     }
 }
+
+bool aseba_node::set_rf_settings(uint16_t network, uint16_t channel, uint16_t node) {
+    if(m_description.protocolVersion < 9)
+        return false;
+    if(node == 0)
+        node = native_id();
+    std::vector<uint8_t> data;
+    data.resize(6);
+    (uint16_t&)(*(data.data())) = bswap16(network);
+    (uint16_t&)(*(data.data() + 2)) = bswap16(node);
+    (uint16_t&)(*(data.data() + 4)) = bswap16(channel);
+    write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS, data));
+    write_message(std::make_shared<Aseba::Reboot>(native_id()));
+    return true;
+}
+
 
 aseba_node::node_type aseba_node::type() const {
     auto ep = m_endpoint.lock();

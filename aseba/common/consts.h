@@ -31,7 +31,7 @@ extern const char*  ASEBA_VERSION;
 extern const char*  ASEBA_REVISION;
 
 /*! version of aseba protocol, including bytecodes types and constants */
-#define ASEBA_PROTOCOL_VERSION 8
+#define ASEBA_PROTOCOL_VERSION 9
 
 /*! minimal accepted protocol version in targets */
 #define ASEBA_MIN_TARGET_PROTOCOL_VERSION 4
