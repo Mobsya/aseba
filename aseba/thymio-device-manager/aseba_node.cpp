@@ -837,9 +837,6 @@ int aseba_node::available_firwmware_version() const {
 
 void aseba_node::set_available_firmware_version(int version) {
     m_available_firmware_version = version;
-    if(m_firmware_version != 0 && m_available_firmware_version > m_firmware_version) {
-        set_status(m_status);
-    }
 }
 
 bool aseba_node::can_be_renamed() const {
