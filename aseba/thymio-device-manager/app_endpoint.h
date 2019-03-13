@@ -350,7 +350,7 @@ private:
         if(auto group = node->group()) {
             group_id = group->uuid().fb(builder);
         }
-        nodes.emplace_back(serialize_node(builder, *node));
+        nodes.emplace_back(serialize_node(builder, *node, id, status));
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
@@ -405,22 +405,22 @@ private:
             const auto ptr = node.second.lock();
             if(!ptr)
                 continue;
-            nodes.emplace_back(serialize_node(builder, *ptr));
+            nodes.emplace_back(serialize_node(builder, *ptr, ptr->uuid(), ptr->get_status()));
         }
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
     }
 
-    auto serialize_node(flatbuffers::FlatBufferBuilder& builder, const aseba_node& n) {
-        auto status = n.get_status();
+    auto serialize_node(flatbuffers::FlatBufferBuilder& builder, const aseba_node& n,
+                        const aseba_node_registery::node_id& id, aseba_node::status status) {
         if(status == aseba_node::status::busy && get_locked_node(n.uuid())) {
             status = aseba_node::status::ready;
         }
 
         auto fw = std::to_string(n.firwmware_version());
         auto afw = std::to_string(n.available_firwmware_version());
-        return fb::CreateNodeDirect(builder, n.uuid().fb(builder), n.group() ? n.group()->uuid().fb(builder) : 0,
+        return fb::CreateNodeDirect(builder, id.fb(builder), n.group() ? n.group()->uuid().fb(builder) : 0,
                                     mobsya::fb::NodeStatus(status), n.type(), n.friendly_name().c_str(),
                                     node_capabilities(n), fw.c_str(), afw.c_str());
     }
