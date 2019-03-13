@@ -79,7 +79,8 @@ void firmware_update_service::update_nodes_versions(mobsya::aseba_node::node_typ
                 node_type = aseba_node::node_type::Thymio2;
             if(type != node_type)
                 continue;
-            boost::asio::post([n, v = it->second] { n->set_available_firmware_version(v); });
+            if(n->firwmware_version() != it->second)
+                boost::asio::post([n, v = it->second] { n->set_available_firmware_version(v); });
         }
     }
 }
