@@ -19,7 +19,7 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        const url = "%1/index.html#device=%2&ws=%3"
+        const url = "%1/index.html?device=%2&ws=%3"
             .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
