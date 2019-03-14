@@ -17,7 +17,7 @@ ThymioNode::ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoi
     , m_executionState(VMExecutionState::Stopped)
     , m_type(type) {
 
-    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, [this] {
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this, [this] {
         m_status = Status::Disconnected;
         Q_EMIT statusChanged();
     });
