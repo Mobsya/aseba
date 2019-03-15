@@ -6,22 +6,24 @@
 #include <memory>
 #include <aseba/flatbuffers/fb_message_ptr.h>
 #include "thymionode.h"
-#include <range/v3/view/filter.hpp>
-#include <range/v3/view/transform.hpp>
+#ifndef Q_MOC_RUN
+#    include <range/v3/view/filter.hpp>
+#    include <range/v3/view/transform.hpp>
+#endif
+
+
+namespace mobsya::detail {
+template <class Key, class T>
+class UnsignedQMap : public QMap<Key, T> {
+public:
+    using QMap<Key, T>::QMap;
+    std::size_t size() const {
+        return std::size_t(QMap<Key, T>::size());
+    }
+};
+}  // namespace mobsya::detail
 
 namespace mobsya {
-
-namespace detail {
-    template <class Key, class T>
-    class UnsignedQMap : public QMap<Key, T> {
-    public:
-        using QMap<Key, T>::QMap;
-        std::size_t size() const {
-            return std::size_t(QMap<Key, T>::size());
-        }
-    };
-}  // namespace detail
-
 class ThymioDeviceManagerClientEndpoint;
 
 class ThymioDeviceManagerClient : public QObject {

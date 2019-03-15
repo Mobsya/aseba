@@ -4,12 +4,14 @@
 #include "NodeTab.h"
 #include "PlotTab.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
-#include <range/v3/view/iota.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/view/filter.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/action/sort.hpp>
-#include <range/v3/action/unique.hpp>
+#ifndef Q_MOC_RUN
+#    include <range/v3/view/iota.hpp>
+#    include <range/v3/view/transform.hpp>
+#    include <range/v3/view/filter.hpp>
+#    include <range/v3/view/join.hpp>
+#    include <range/v3/action/sort.hpp>
+#    include <range/v3/action/unique.hpp>
+#endif
 
 
 namespace Aseba {
