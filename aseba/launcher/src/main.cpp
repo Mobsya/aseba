@@ -9,6 +9,7 @@
 #ifdef QT_QML_DEBUG
 #    include <QQmlDebuggingEnabler>
 #endif
+#include <aseba/common/consts.h>
 #include <aseba/qt-thymio-dm-client-lib/thymio-api.h>
 #include <QtSingleApplication>
 #include <qtwebengineglobal.h>
@@ -67,6 +68,7 @@ int main(int argc, char** argv) {
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 
     mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);

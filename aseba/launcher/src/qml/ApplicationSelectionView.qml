@@ -75,12 +75,18 @@ Item {
 
     Text {
         id: version
-        text: qsTr("Alpha 1")
+        text: qsTr("<a href=\"https://thymio.org\">Thymio Suite</a> - %1 <b>BETA</b>").arg(Qt.application.version)
+        onLinkActivated: Qt.openUrlExternally(link)
         font.family: "Roboto Light"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.bottomMargin: Style.window_margin
         anchors.leftMargin: Style.window_margin
         color: "#333"
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+        }
     }
 }
