@@ -29,6 +29,7 @@ add_executable(thymio-launcher WIN32
     ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc
 )
 target_link_libraries(thymio-launcher
+    asebacommon
     Qt5::Widgets
     Qt5::Qml
     Qt5::Quick
