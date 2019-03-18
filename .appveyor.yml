@@ -103,7 +103,7 @@ before_build:
   - if exist js\package-lock.json del /s /q js\package-lock.json
 
 
-  - git clone --depth 1 -b tdm-new-sync https://github.com/Mobsya/scratch-vm scratch-vm --recurse-submodules
+  - git clone --depth 1 https://github.com/Mobsya/scratch-vm scratch-vm --recurse-submodules
   - git clone --depth 1 https://github.com/Mobsya/scratch-gui --recurse-submodules
   - if exist scratch-vm\node_modules\ rd /s /q scratch-vm\node_modules\
   - if exist scratch-gui\node_modules\ rd /s /q scratch-vm\node_modules\
