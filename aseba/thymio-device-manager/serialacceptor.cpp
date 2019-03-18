@@ -11,6 +11,8 @@
 #include <winioctl.h>  // for GUID_DEVINTERFACE_COMPORT
 #include <setupapi.h>
 #include <cfgmgr32.h>
+#include <boost/scope_exit.hpp>
+
 
 namespace mobsya {
 
@@ -125,6 +127,11 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
     if(deviceInfoSet == INVALID_HANDLE_VALUE)
         return;
 
+    BOOST_SCOPE_EXIT(&deviceInfoSet) {
+        ::SetupDiDestroyDeviceInfoList(deviceInfoSet);
+    }
+    BOOST_SCOPE_EXIT_END
+
     std::vector<std::string> known_devices;
 
     SP_DEVINFO_DATA deviceInfoData;
@@ -169,7 +176,6 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             m_requests.pop();
             boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
         }
-        ::SetupDiDestroyDeviceInfoList(deviceInfoSet);
     }
     m_known_devices = known_devices;
 }
