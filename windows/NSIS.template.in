@@ -64,8 +64,6 @@ Unicode true
 Var StartMenuFolder
 Var AlreadyInstalled
 
-
-
 ;--------------------------------
 ;Interface Settings
 
@@ -133,11 +131,11 @@ FunctionEnd
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
-  ;!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  ;!define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY} 
-  ;!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY} 
+  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   ;!define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio Software Suite"
-  ;!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+  !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
 
@@ -208,8 +206,7 @@ SectionGroup /e "-Thymio" GroupThymio
 		${EndIf}
 		SetShellVarContext current
 		SetOutPath "$DOCUMENTS"		; Working directory for the shortcut
-		SetShellVarContext all		; current / all. Install program for all 
-		StrCpy $StartMenuFolder "Thymio software suite"
+		SetShellVarContext all		; current / all. Install program for all users
 		!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 			; Application
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
@@ -331,6 +328,7 @@ Function .onInit
 		cancel:
 			Abort
 		ok:
+			Exec $INSTDIR\uninst.exe 
 	${Else}
 		StrCpy $AlreadyInstalled "false"
 	${EndIf}
