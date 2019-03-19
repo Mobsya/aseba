@@ -34,6 +34,7 @@
 int main(int argc, char* argv[]) {
     qputenv("QT_LOGGING_TO_CONSOLE", QByteArray("0"));
     Q_INIT_RESOURCE(asebaqtabout);
+    Q_INIT_RESOURCE(asebastudio);
 
     mobsya::MobsyaApplication app(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -43,6 +44,18 @@ int main(int argc, char* argv[]) {
     QCoreApplication::setOrganizationName(ASEBA_ORGANIZATION_NAME);
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
     QCoreApplication::setApplicationName(QStringLiteral("Aseba Studio"));
+
+    QTranslator qtTranslator;
+    app.installTranslator(&qtTranslator);
+
+    QTranslator translator;
+    app.installTranslator(&translator);
+
+    qtTranslator.load(QString("qt_") + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    translator.load(QString(":/translations/asebastudio_") + QLocale::system().name());
+    translator.load(QString(":/translations/compiler_") + QLocale::system().name());
+    translator.load(QString(":/qtabout_") + QLocale::system().name());
 
 
     QCommandLineParser parser;

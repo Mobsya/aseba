@@ -34,9 +34,10 @@
 
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);
+    Q_INIT_RESOURCE(asebastudio);
+
     mobsya::MobsyaApplication app(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
 
     // Information used by QSettings with default constructor
     QCoreApplication::setOrganizationName(ASEBA_ORGANIZATION_NAME);
@@ -63,8 +64,8 @@ int main(int argc, char* argv[]) {
     app.installTranslator(&translator);
 
     qtTranslator.load(QString("qt_") + language, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    translator.load(QString(":/asebastudio_") + language);
-    translator.load(QString(":/compiler_") + language);
+    translator.load(QString(":/translations/asebastudio_") + language);
+    translator.load(QString(":/translations/compiler_") + language);
     translator.load(QString(":/qtabout_") + language);
 
     Aseba::ThymioVPLApplication vpl(id);
