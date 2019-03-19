@@ -328,7 +328,7 @@ Function .onInit
 		cancel:
 			Abort
 		ok:
-			Exec $INSTDIR\uninst.exe 
+			Exec $INSTDIR\Uninstall.exe 
 	${Else}
 		StrCpy $AlreadyInstalled "false"
 	${EndIf}
