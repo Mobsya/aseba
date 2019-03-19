@@ -9,8 +9,9 @@
         <translation>Fehlerhafte Zielbeschreibung: zu wenig Speicher für interne Variablen</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
-        <translation type="vanished">Bevorstehender Überlauf des Ausführungsstapels: Überprüfen Sie rekursive Prozeduraufrufe und verkürzen Sie lange mathematische Ausdrücke</translation>
+        <translation>Bevorstehender Überlauf des Ausführungsstapels: Überprüfen Sie rekursive Prozeduraufrufe und verkürzen Sie lange mathematische Ausdrücke</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -95,9 +96,10 @@
         <translation>Syntaxfehler</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
         <oldsource>identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</oldsource>
-        <translation type="vanished">Bezeichner müssen mit _ oder einem Buchstaben beginnen, habe jedoch das Unicode-Zeichen 0x%0 gefunden</translation>
+        <translation>Bezeichner müssen mit _ oder einem Buchstaben beginnen, habe jedoch das Unicode-Zeichen 0x%0 gefunden</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -124,8 +126,9 @@
         <translation>Fehler in Zahlenausdruck</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
-        <translation type="vanished">Interner Compiler-Fehler, bitte melde einen Bug mit Angabe des fehlererzeugenden Quelltextes</translation>
+        <translation>Interner Compiler-Fehler, bitte melde einen Bug mit Angabe des fehlererzeugenden Quelltextes</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -173,8 +176,9 @@
         <translation>Nicht genügend Speicherplatz, um diese temporäre Variable zu erzeugen</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Variable definition is allowed only at the beginning of the program before any statement</source>
-        <translation type="vanished">Variablendefinition nur am Anfang des Programms vor der ersten Anweisung erlaubt</translation>
+        <translation>Variablendefinition nur am Anfang des Programms vor der ersten Anweisung erlaubt</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -293,12 +297,14 @@
         <translation>Funktion %0 benötigt %1 Argumente, jedoch wurden %2 verwendet</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
-        <translation type="vanished">Argument %0 (%1) der Funktion %2 hat die Größe %3, jedoch erwartet die Funktionsdefinition die Größe %4</translation>
+        <translation>Argument %0 (%1) der Funktion %2 hat die Größe %3, jedoch erwartet die Funktionsdefinition die Größe %4</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
-        <translation type="vanished">Argument %0 (%1) der Funktion %2 hat die Größe %3, wohingegen eine vorhergehende Instanz der Vorlage die Größe %4 hat</translation>
+        <translation>Argument %0 (%1) der Funktion %2 hat die Größe %3, wohingegen eine vorhergehende Instanz der Vorlage die Größe %4 hat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -316,8 +322,9 @@
         <translation>Zuweisung zu einer Variablen erwartet, jedoch wurde %0 gefunden</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
-        <translation type="vanished">Zugriff auf Array %0 außerhalb der Grenzen, Zugriff auf Index %1, wohingegen das Array die Größe %2 hat</translation>
+        <translation>Zugriff auf Array %0 außerhalb der Grenzen, Zugriff auf Index %1, wohingegen das Array die Größe %2 hat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -357,12 +364,14 @@
         <translation>-32768 hat kein positives 16-Bit-Integer-Äquivalent</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
-        <translation type="vanished">Arrayzugriff außerhalb der Grenzen. Versuche Index %0 von Array %1 der Grösse %2 zu lesen</translation>
+        <translation>Arrayzugriff außerhalb der Grenzen. Versuche Index %0 von Array %1 der Grösse %2 zu lesen</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
-        <translation type="vanished">Arrayzugriff außerhalb der Grenzen. Versuche Index %0 von Array %1 der Grösse %2 zu schreiben</translation>
+        <translation>Arrayzugriff außerhalb der Grenzen. Versuche Index %0 von Array %1 der Grösse %2 zu schreiben</translation>
     </message>
     <message>
         <location line="+3"/>

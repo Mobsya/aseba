@@ -9,8 +9,9 @@
         <translation>Descripción incorrecta del objetivo: sin espacio suficiente para variables internas</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
-        <translation type="vanished">Desbordamiento de la pila, revice llamadas a subrutinas recursivas y corte expresiones matemáticas extensas</translation>
+        <translation>Desbordamiento de la pila, revice llamadas a subrutinas recursivas y corte expresiones matemáticas extensas</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -95,9 +96,10 @@
         <translation>Error de sintáxis</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
         <oldsource>identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</oldsource>
-        <translation type="vanished">Los identificadores deben comenzar con _ o algún caracter alfanumérico. En su lugar se encontró el caracter unicode 0x%0</translation>
+        <translation>Los identificadores deben comenzar con _ o algún caracter alfanumérico. En su lugar se encontró el caracter unicode 0x%0</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -124,8 +126,9 @@
         <translation>Error en número</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
-        <translation type="vanished">Error interno de compilación. Por favor reporte el error incluyendo la fuente que disparó el error</translation>
+        <translation>Error interno de compilación. Por favor reporte el error incluyendo la fuente que disparó el error</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -173,8 +176,9 @@
         <translation>No hay espacio suficiente para guardar esta variable temporal</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Variable definition is allowed only at the beginning of the program before any statement</source>
-        <translation type="vanished">Las variables solo pueden ser definidas al inicio del programa, antes que cualquier comando</translation>
+        <translation>Las variables solo pueden ser definidas al inicio del programa, antes que cualquier comando</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -293,12 +297,14 @@
         <translation>La función %0 requiere %1 argumentos, sólo se han suministrado %2</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
-        <translation type="vanished">El argumento %0 (%1) de la función %2 es de tamaño %3, por definición el tamaño debe ser %4</translation>
+        <translation>El argumento %0 (%1) de la función %2 es de tamaño %3, por definición el tamaño debe ser %4</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
-        <translation type="vanished">El argumento %0 (%1) de la función %2 es de tamaño %3, mientras que en una instancia previa el tamaño fue %4</translation>
+        <translation>El argumento %0 (%1) de la función %2 es de tamaño %3, mientras que en una instancia previa el tamaño fue %4</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -316,8 +322,9 @@
         <translation>se espera una asignación a una variable, pero se encontró %0</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
-        <translation type="vanished">Acceso fuera de l&apos;imites al arreglo %0: accediendo la posición %1 cuando el tamaño es %2</translation>
+        <translation>Acceso fuera de l&apos;imites al arreglo %0: accediendo la posición %1 cuando el tamaño es %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -357,12 +364,14 @@
         <translation>-32768 no tiene un  correspondiente en enteros de 16 bits</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
-        <translation type="vanished">Acceso estático por fuera delos límites del arreglo. Intentando leer la posición %0 del arreglo %1 de tamaño %2</translation>
+        <translation>Acceso estático por fuera delos límites del arreglo. Intentando leer la posición %0 del arreglo %1 de tamaño %2</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
-        <translation type="vanished">Acceso estático por fuera delos límites del arreglo. Intentando escribir la posición %0 del arreglo %1 de tamaño %2</translation>
+        <translation>Acceso estático por fuera delos límites del arreglo. Intentando escribir la posición %0 del arreglo %1 de tamaño %2</translation>
     </message>
     <message>
         <location line="+3"/>

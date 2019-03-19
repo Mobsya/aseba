@@ -19,6 +19,9 @@
             case ERROR_BROKEN_TARGET:
                 msg = tr("Broken target description: not enough room for internal variables");
                 break;
+            case ASEBA_ERROR_STACK_OVERFLOW:
+                msg = tr("Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions");
+                break;
             case ERROR_SCRIPT_TOO_BIG:
                 msg = tr("Script too big for target bytecode size");
                 break;
@@ -67,6 +70,9 @@
             case ERROR_SYNTAX:
                 msg = tr("Syntax error");
                 break;
+            case ERROR_INVALID_IDENTIFIER:
+                msg = tr("Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead");
+                break;
             case ERROR_INVALID_HEXA_NUMBER:
                 msg = tr("Error in hexadecimal number");
                 break;
@@ -78,6 +84,9 @@
                 break;
             case ERROR_IN_NUMBER:
                 msg = tr("Error in number");
+                break;
+            case ERROR_INTERNAL:
+                msg = tr("Internal compiler error, please report a bug containing the source which triggered this error");
                 break;
             case ERROR_EXPECTING:
                 msg = tr("Expecting %0, found %1 instead");
@@ -105,6 +114,9 @@
                 break;
             case ERROR_NOT_ENOUGH_TEMP_SPACE:
                 msg = tr("Not enough free space to allocate this tempory variable");
+                break;
+            case ERROR_MISPLACED_VARDEF:
+                msg = tr("Variable definition is allowed only at the beginning of the program before any statement");
                 break;
             case ERROR_EXPECTING_IDENTIFIER:
                 msg = tr("Expecting identifier, found %0");
@@ -175,6 +187,12 @@
             case ERROR_FUNCTION_NO_ENOUGH_ARG:
                 msg = tr("Function %0 requires %1 arguments, only %2 are provided");
                 break;
+            case ERROR_FUNCTION_WRONG_ARG_SIZE:
+                msg = tr("Argument %0 (%1) of function %2 is of size %3, function definition demands size %4");
+                break;
+            case ERROR_FUNCTION_WRONG_ARG_SIZE_TEMPLATE:
+                msg = tr("Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4");
+                break;
             case ERROR_FUNCTION_TOO_MANY_ARG:
                 msg = tr("Function %0 requires %1 arguments, more are used");
                 break;
@@ -183,6 +201,9 @@
                 break;
             case ERROR_INCORRECT_LEFT_VALUE:
                 msg = tr("Expecting an assignment to a variable, found %0 instead");
+                break;
+            case ERROR_ARRAY_OUT_OF_BOUND:
+                msg = tr("Access of array %0 out of bounds: accessing index %1 while array is of size %2");
                 break;
             case ERROR_ARRAY_SIZE_MISMATCH:
                 msg = tr("Size error! Size of array1 = %0 ; size of array2 = %1");
@@ -204,6 +225,12 @@
                 break;
             case ERROR_ABS_NOT_POSSIBLE:
                 msg = tr("-32768 has no positive correspondance in 16 bits integers");
+                break;
+            case ERROR_ARRAY_OUT_OF_BOUND_READ:
+                msg = tr("Out of bound static array access. Trying to read index %0 of array %1 of size %2");
+                break;
+            case ERROR_ARRAY_OUT_OF_BOUND_WRITE:
+                msg = tr("Out of bound static array access. Trying to write index %0 of array %1 of size %2");
                 break;
             case ERROR_EXPECTING_TYPE:
                 msg = tr("Expecting %0 type, found %1 type instead");

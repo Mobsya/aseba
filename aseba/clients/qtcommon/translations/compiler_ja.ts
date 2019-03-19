@@ -9,8 +9,9 @@
         <translation>目標記述が破損しています: 内部変数の余地がありません</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
-        <translation type="vanished">実行スタックがオーバーフローしますので、リカーシブ・サブルーチンの呼び出しを確認し長い数式をカットしてください</translation>
+        <translation>実行スタックがオーバーフローしますので、リカーシブ・サブルーチンの呼び出しを確認し長い数式をカットしてください</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -94,8 +95,9 @@
         <translation>構文エラー</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
-        <translation type="vanished">識別子は_もしくは英数字から始まる必要があり、代わりにユニコード文字0x%0が見つかりました</translation>
+        <translation>識別子は_もしくは英数字から始まる必要があり、代わりにユニコード文字0x%0が見つかりました</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -118,8 +120,9 @@
         <translation>数字のエラー</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
-        <translation type="vanished">内部コンパイラのエラー、このエラーを引き起こしたソースを含むバグの報告をしてください</translation>
+        <translation>内部コンパイラのエラー、このエラーを引き起こしたソースを含むバグの報告をしてください</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -167,8 +170,9 @@
         <translation>このテンポラリ変数を割り当てる空き容量が足りません</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Variable definition is allowed only at the beginning of the program before any statement</source>
-        <translation type="vanished">変数定義は命令文以前のプログラム始めにのみ許可されます</translation>
+        <translation>変数定義は命令文以前のプログラム始めにのみ許可されます</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -286,8 +290,14 @@
         <translation>関数%0は引数%1が必要、%2のみ与えられました</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
-        <translation type="vanished">関数%2の引数%0（%1）は%3サイズで、関数定義は%4サイズを要求します</translation>
+        <translation>関数%2の引数%0（%1）は%3サイズで、関数定義は%4サイズを要求します</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -306,8 +316,9 @@
 割り当てを期待し、代わりに%0が見つかりました</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
-        <translation type="vanished">範囲の中の配列%0にアクセスしています: 配列のサイズが%2の間インデックス%1にアクセスしています</translation>
+        <translation>範囲の中の配列%0にアクセスしています: 配列のサイズが%2の間インデックス%1にアクセスしています</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -346,12 +357,14 @@
         <translation>-32768には16ビット整数内にプラスの一致がない</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
-        <translation type="vanished">範囲外静的配列アクセス。サイズ%2の配列%1のインデックス%0を読み取ろうとしています</translation>
+        <translation>範囲外静的配列アクセス。サイズ%2の配列%1のインデックス%0を読み取ろうとしています</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
-        <translation type="vanished">範囲外静的配列アクセス。サイズ%2の配列%1のインデックス%0を書き込もうとしています</translation>
+        <translation>範囲外静的配列アクセス。サイズ%2の配列%1のインデックス%0を書き込もうとしています</translation>
     </message>
     <message>
         <location line="+3"/>

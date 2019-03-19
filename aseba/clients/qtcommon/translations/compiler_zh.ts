@@ -9,8 +9,9 @@
         <translation>目标已损坏:没有足够的空间分配给内部变量</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
-        <translation type="vanished">执行数据即将溢出(stack overflow),请缩短过长的数学表达式并且检查是否调用递归子程式</translation>
+        <translation>执行数据即将溢出(stack overflow),请缩短过长的数学表达式并且检查是否调用递归子程式</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -93,8 +94,9 @@
         <translation>语法错误</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
-        <translation type="vanished">标识符开头必须为&quot;_&quot;或者数字字母,这里出现了unicode 0x%0</translation>
+        <translation>标识符开头必须为&quot;_&quot;或者数字字母,这里出现了unicode 0x%0</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -117,8 +119,9 @@
         <translation>数字错误</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
-        <translation type="vanished">编译器内部错误,请报告该错误以及引发该错误的源代码</translation>
+        <translation>编译器内部错误,请报告该错误以及引发该错误的源代码</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -166,8 +169,9 @@
         <translation>没有更多的剩余空间分配给该临时变量</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Variable definition is allowed only at the beginning of the program before any statement</source>
-        <translation type="vanished">只允许在程序开头(在所有语句声明之前)对变量进行定义</translation>
+        <translation>只允许在程序开头(在所有语句声明之前)对变量进行定义</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -285,12 +289,14 @@
         <translation>函数%0需要%1个参数,这里只有%2个</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
-        <translation type="vanished">函数%2的参数%0 (%1)长度为%3,函数定义要求长度为%4</translation>
+        <translation>函数%2的参数%0 (%1)长度为%3,函数定义要求长度为%4</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
-        <translation type="vanished">函数%2的参数%0 (%1)长度为%3,但是在这里出现了一个参数长度为%4</translation>
+        <translation>函数%2的参数%0 (%1)长度为%3,但是在这里出现了一个参数长度为%4</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -308,8 +314,9 @@
         <translation>这里出现了%0,但是这里应该是一个赋予变量的参数</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
-        <translation type="vanished">访问数组%0时超出范围:试图访问索引%1,但是数组的长度为%2</translation>
+        <translation>访问数组%0时超出范围:试图访问索引%1,但是数组的长度为%2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -347,12 +354,14 @@
         <translation>在16位整型数中,-32768的正值不存在</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
-        <translation type="vanished">静态数组访问时超出范围. 尝试读取数组%1的索引%0,但该数组的长度为%2</translation>
+        <translation>静态数组访问时超出范围. 尝试读取数组%1的索引%0,但该数组的长度为%2</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
-        <translation type="vanished">静态数组访问时超出范围. 尝试写入数组%1的索引%0,但该数组的长度为%2</translation>
+        <translation>静态数组访问时超出范围. 尝试写入数组%1的索引%0,但该数组的长度为%2</translation>
     </message>
     <message>
         <location line="+3"/>

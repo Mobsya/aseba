@@ -41,6 +41,11 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Script too big for target bytecode size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,6 +126,11 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Error in hexadecimal number</source>
         <translation type="unfinished"></translation>
     </message>
@@ -137,6 +147,11 @@
     <message>
         <location line="+3"/>
         <source>Error in number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -182,6 +197,11 @@
     <message>
         <location line="+3"/>
         <source>Not enough free space to allocate this tempory variable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Variable definition is allowed only at the beginning of the program before any statement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -301,6 +321,16 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Function %0 requires %1 arguments, more are used</source>
         <translation type="unfinished"></translation>
     </message>
@@ -312,6 +342,11 @@
     <message>
         <location line="+3"/>
         <source>Expecting an assignment to a variable, found %0 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -347,6 +382,16 @@
     <message>
         <location line="+3"/>
         <source>-32768 has no positive correspondance in 16 bits integers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -17,8 +17,9 @@
         <translation>Description de la cible cassée : pas assez de place pour les variables internes</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
-        <translation type="vanished">La pile d&apos;exécution fera un overflow, vérifiez les appels récursifs des sous-routines and coupez les longues expressions mathématiques</translation>
+        <translation>La pile d&apos;exécution fera un overflow, vérifiez les appels récursifs des sous-routines and coupez les longues expressions mathématiques</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -103,9 +104,10 @@
         <translation>Erreur de syntaxe</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
         <oldsource>identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</oldsource>
-        <translation type="vanished">Les identifiants doivent commencer par _ ou un caractère alphanumérique, et non pas le caractère unicode 0x%0</translation>
+        <translation>Les identifiants doivent commencer par _ ou un caractère alphanumérique, et non pas le caractère unicode 0x%0</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -132,8 +134,9 @@
         <translation>Erreur dans le nombre</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
-        <translation type="vanished">Erreur interne du compilateur, merci de signaler ce bug ainsi que le code qui a produit cette erreur</translation>
+        <translation>Erreur interne du compilateur, merci de signaler ce bug ainsi que le code qui a produit cette erreur</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -181,8 +184,9 @@
         <translation>Pas assez d&apos;espace libre pour allouer cette variable temporaire</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Variable definition is allowed only at the beginning of the program before any statement</source>
-        <translation type="vanished">La définition d&apos;une variable n&apos;est autorisée qu&apos;au début du programme, avant tout autre expression</translation>
+        <translation>La définition d&apos;une variable n&apos;est autorisée qu&apos;au début du programme, avant tout autre expression</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,12 +305,14 @@
         <translation>La fonction %0 requiert %1 arguments, seulement %2 sont fournis</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
-        <translation type="vanished">L&apos;argument %0 (%1) de la fonction %2 est de taille %3, la fonction requiert une taille de %4</translation>
+        <translation>L&apos;argument %0 (%1) de la fonction %2 est de taille %3, la fonction requiert une taille de %4</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
-        <translation type="vanished">L&apos;argument %0 (%1) de la fonction %2 est de taille %3, alors que les arguments précédents sont de taille %4</translation>
+        <translation>L&apos;argument %0 (%1) de la fonction %2 est de taille %3, alors que les arguments précédents sont de taille %4</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -324,8 +330,9 @@
         <translation>Requiert une affectation vers une variable, trouvé %0 à la place</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
-        <translation type="vanished">Accès au tableau %0 en dehors des limites : accès à l&apos;index %1 sur un tableau de taille %2</translation>
+        <translation>Accès au tableau %0 en dehors des limites : accès à l&apos;index %1 sur un tableau de taille %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -365,12 +372,14 @@
         <translation>-32768 n&apos;a pas d&apos;équivalent positif dans un entier sur 16 bits</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
-        <translation type="vanished">Accès au tableau %1 en dehors des limites : lecture à l&apos;index %0 sur un tableau de taille %2</translation>
+        <translation>Accès au tableau %1 en dehors des limites : lecture à l&apos;index %0 sur un tableau de taille %2</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
-        <translation type="vanished">Accès au tableau %1 en dehors des limites : écriture à l&apos;index %0 sur un tableau de taille %2</translation>
+        <translation>Accès au tableau %1 en dehors des limites : écriture à l&apos;index %0 sur un tableau de taille %2</translation>
     </message>
     <message>
         <location line="+3"/>

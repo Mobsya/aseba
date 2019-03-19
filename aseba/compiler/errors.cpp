@@ -28,11 +28,11 @@ namespace Aseba {
 
 static const wchar_t* error_map[ERROR_END];
 
+// clang-format off
 ErrorMessages::ErrorMessages() {
     // compiler.cpp
     error_map[ERROR_BROKEN_TARGET] = L"Broken target description: not enough room for internal variables";
-    error_map[ASEBA_ERROR_STACK_OVERFLOW] = L"Execution stack will overflow, check for any recursive "
-                                      L"subroutine call and cut long mathematical expressions";
+    error_map[ASEBA_ERROR_STACK_OVERFLOW] = L"Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions";
     error_map[ERROR_SCRIPT_TOO_BIG] = L"Script too big for target bytecode size";
     // identifier-lookup.cpp
     error_map[ERROR_VARIABLE_NOT_DEFINED] = L"%0 is not a defined variable";
@@ -51,15 +51,13 @@ ErrorMessages::ErrorMessages() {
     error_map[ERROR_COL] = L" Col: ";
     error_map[ERROR_UNBALANCED_COMMENT_BLOCK] = L"Unbalanced comment block";
     error_map[ERROR_SYNTAX] = L"Syntax error";
-    error_map[ERROR_INVALID_IDENTIFIER] = L"Identifiers must begin with _ or an alphanumeric "
-                                          L"character, found unicode character 0x%0 instead";
+    error_map[ERROR_INVALID_IDENTIFIER] = L"Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead";
     error_map[ERROR_INVALID_HEXA_NUMBER] = L"Error in hexadecimal number";
     error_map[ERROR_INVALID_BINARY_NUMBER] = L"Error in binary number";
     error_map[ERROR_NUMBER_INVALID_BASE] = L"Error in number, invalid base";
     error_map[ERROR_IN_NUMBER] = L"Error in number";
     // parser.cpp
-    error_map[ERROR_INTERNAL] = L"Internal compiler error, please report a bug containing the "
-                                L"source which triggered this error";
+    error_map[ERROR_INTERNAL] = L"Internal compiler error, please report a bug containing the source which triggered this error";
     error_map[ERROR_EXPECTING] = L"Expecting %0, found %1 instead";
     error_map[ERROR_UINT12_OUT_OF_RANGE] = L"Integer value %0 out of [0;4095] range";
     error_map[ERROR_UINT16_OUT_OF_RANGE] = L"Integer value %0 out of [0;65535] range";
@@ -69,8 +67,7 @@ ErrorMessages::ErrorMessages() {
     error_map[ERROR_CONSTANT_OUT_OF_RANGE] = L"Constant %0 has value %1, which is out of [-32768;32767] range";
     error_map[ERROR_EXPECTING_ONE_OF] = L"Expecting one of %0; but found %1 instead";
     error_map[ERROR_NOT_ENOUGH_TEMP_SPACE] = L"Not enough free space to allocate this tempory variable";
-    error_map[ERROR_MISPLACED_VARDEF] =
-        L"Variable definition is allowed only at the beginning of the program before any statement";
+    error_map[ERROR_MISPLACED_VARDEF] = L"Variable definition is allowed only at the beginning of the program before any statement";
     error_map[ERROR_EXPECTING_IDENTIFIER] = L"Expecting identifier, found %0";
     error_map[ERROR_CONST_ALREADY_DEFINED] = L"Constant %0 is already defined";
     error_map[ERROR_VAR_ALREADY_DEFINED] = L"Variable %0 is already defined";
@@ -94,18 +91,14 @@ ErrorMessages::ErrorMessages() {
     error_map[ERROR_NOT_CONST_EXPR] = L"Not a valid constant expression";
     error_map[ERROR_FUNCTION_HAS_NO_ARG] = L"Function %0 requires no argument, some are used";
     error_map[ERROR_FUNCTION_NO_ENOUGH_ARG] = L"Function %0 requires %1 arguments, only %2 are provided";
-    error_map[ERROR_FUNCTION_WRONG_ARG_SIZE] =
-        L"Argument %0 (%1) of function %2 is of size %3, function definition demands size %4";
-    error_map[ERROR_FUNCTION_WRONG_ARG_SIZE_TEMPLATE] =
-        L"Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template "
-        L"parameter was of size %4";
+    error_map[ERROR_FUNCTION_WRONG_ARG_SIZE] = L"Argument %0 (%1) of function %2 is of size %3, function definition demands size %4";
+    error_map[ERROR_FUNCTION_WRONG_ARG_SIZE_TEMPLATE] = L"Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4";
     error_map[ERROR_FUNCTION_TOO_MANY_ARG] = L"Function %0 requires %1 arguments, more are used";
     // tree-build.cpp
     error_map[ERROR_UNARY_ARITH_BUILD_UNEXPECTED] = L"Unexpected token when building UnaryArithmeticAssignmentNode";
     // tree-expand.cpp
     error_map[ERROR_INCORRECT_LEFT_VALUE] = L"Expecting an assignment to a variable, found %0 instead";
-    error_map[ERROR_ARRAY_OUT_OF_BOUND] =
-        L"Access of array %0 out of bounds: accessing index %1 while array is of size %2";
+    error_map[ERROR_ARRAY_OUT_OF_BOUND] = L"Access of array %0 out of bounds: accessing index %1 while array is of size %2";
     error_map[ERROR_ARRAY_SIZE_MISMATCH] = L"Size error! Size of array1 = %0 ; size of array2 = %1";
     error_map[ERROR_IF_VECTOR_CONDITION] = L"Condition of the if cannot be a vector";
     error_map[ERROR_WHILE_VECTOR_CONDITION] = L"Condition of the while cannot be a vector";
@@ -114,10 +107,8 @@ ErrorMessages::ErrorMessages() {
     error_map[ERROR_INFINITE_LOOP] = L"Infinite loops not allowed";
     error_map[ERROR_DIVISION_BY_ZERO] = L"Division by zero";
     error_map[ERROR_ABS_NOT_POSSIBLE] = L"-32768 has no positive correspondance in 16 bits integers";
-    error_map[ERROR_ARRAY_OUT_OF_BOUND_READ] =
-        L"Out of bound static array access. Trying to read index %0 of array %1 of size %2";
-    error_map[ERROR_ARRAY_OUT_OF_BOUND_WRITE] =
-        L"Out of bound static array access. Trying to write index %0 of array %1 of size %2";
+    error_map[ERROR_ARRAY_OUT_OF_BOUND_READ] = L"Out of bound static array access. Trying to read index %0 of array %1 of size %2";
+    error_map[ERROR_ARRAY_OUT_OF_BOUND_WRITE] = L"Out of bound static array access. Trying to write index %0 of array %1 of size %2";
     // tree-typecheck.cpp
     error_map[ERROR_EXPECTING_TYPE] = L"Expecting %0 type, found %1 type instead";
     error_map[ERROR_EXPECTING_CONDITION] = L"Expecting a condition, found a %0 instead";

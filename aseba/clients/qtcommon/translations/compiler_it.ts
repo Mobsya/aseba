@@ -9,8 +9,9 @@
         <translation>Interruzione della descrizione del target: non c&apos;è abbastanza spazio per le variabili interne</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
-        <translation type="vanished">Lo stack di esecuzione andrà fuori limiti, verificare se vi sono chiamate recursive a subroutine e spezzare le espressioni matematiche troppo lunghe</translation>
+        <translation>Lo stack di esecuzione andrà fuori limiti, verificare se vi sono chiamate recursive a subroutine e spezzare le espressioni matematiche troppo lunghe</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -93,8 +94,9 @@
         <translation>Errori di sintassi</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
-        <translation type="vanished">Un identificatore deve iniziare con &quot;_&quot;  o con un carattere alfanumerico; trovato invece il carattere unicode 0x%0</translation>
+        <translation>Un identificatore deve iniziare con &quot;_&quot;  o con un carattere alfanumerico; trovato invece il carattere unicode 0x%0</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -117,8 +119,9 @@
         <translation>Errore numerico</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
-        <translation type="vanished">Errore interno del compilatore, cortesemente riportate un bug contenente il sorgente che ha generato l&apos;errore</translation>
+        <translation>Errore interno del compilatore, cortesemente riportate un bug contenente il sorgente che ha generato l&apos;errore</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -166,8 +169,9 @@
         <translation>Non c&apos;è più spazio libero per allocare questa variabile temporanea</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Variable definition is allowed only at the beginning of the program before any statement</source>
-        <translation type="vanished">La definizione di variabili è consentita solo all&apos;inizio del programma, prima di qualsiasi istruzione</translation>
+        <translation>La definizione di variabili è consentita solo all&apos;inizio del programma, prima di qualsiasi istruzione</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -286,12 +290,14 @@
         <translation>La funzione %0 richiede %1 argomenti mentre ne vengono passati solo %2</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
-        <translation type="vanished">L&apos;argomento %0 (%1) della funzione %2 è di dimensione %3, la definizione della funzione richiede una dimensione %4</translation>
+        <translation>L&apos;argomento %0 (%1) della funzione %2 è di dimensione %3, la definizione della funzione richiede una dimensione %4</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
-        <translation type="vanished">L&apos;argomento %0 (%1) della funzione %2 è di dimensione %3, mentre in una precedente istanza del template il parametro era di dimensione %4</translation>
+        <translation>L&apos;argomento %0 (%1) della funzione %2 è di dimensione %3, mentre in una precedente istanza del template il parametro era di dimensione %4</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -309,8 +315,9 @@
         <translation>Attesa una assegnazione a una variabile, trovato invece %0</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
-        <translation type="vanished">Accesso alla matrice %0 fuori dai limiti: tentativo di accedere all&apos;indice %1 mentre la matrice è di dimensione %2</translation>
+        <translation>Accesso alla matrice %0 fuori dai limiti: tentativo di accedere all&apos;indice %1 mentre la matrice è di dimensione %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -348,12 +355,14 @@
         <translation>-32768 non ha una corrispondenza positiva negli interi a 16 bit</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
-        <translation type="vanished">Accesso fuori dei limiti statici di una matrice. Tentativo di leggere indice %0 della matrice %1 di dimensione %2</translation>
+        <translation>Accesso fuori dei limiti statici di una matrice. Tentativo di leggere indice %0 della matrice %1 di dimensione %2</translation>
     </message>
     <message>
+        <location line="+3"/>
         <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
-        <translation type="vanished">Accesso fuori dei limiti statici di una matrice. Tentativo di scrivere indice %0 della matrice %1 di dimensione %2</translation>
+        <translation>Accesso fuori dei limiti statici di una matrice. Tentativo di scrivere indice %0 della matrice %1 di dimensione %2</translation>
     </message>
     <message>
         <location line="+3"/>
