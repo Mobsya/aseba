@@ -16,9 +16,15 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/launcher.rc.in
   ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc)
 
+file(GLOB TRANSLATIONS_SOURCES "translations/*.ts")
+set_source_files_properties(${TRANSLATIONS_SOURCES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/translations")
+qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
+qt5_add_resources(QT_RESOURCES_TRANSLATIONS translations.qrc)
+
 
 add_executable(thymio-launcher WIN32 MACOSX_BUNDLE
     ${QT_RESOURCES}
+    ${QT_RESOURCES_TRANSLATIONS}
     main.cpp
     launcher.h
     launcher.cpp
