@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::CompilerTranslator</name>
     <message>
-        <location filename="translations/CompilerTranslator.cpp" line="+20"/>
+        <location filename="CompilerTranslator.cpp" line="+14"/>
         <source>Broken target description: not enough room for internal variables</source>
         <translation>目标已损坏:没有足够的空间分配给内部变量</translation>
     </message>

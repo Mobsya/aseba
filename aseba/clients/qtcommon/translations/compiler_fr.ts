@@ -12,7 +12,7 @@
         <translation type="obsolete">oups_fr</translation>
     </message>
     <message>
-        <location filename="translations/CompilerTranslator.cpp" line="+20"/>
+        <location filename="CompilerTranslator.cpp" line="+14"/>
         <source>Broken target description: not enough room for internal variables</source>
         <translation>Description de la cible cassée : pas assez de place pour les variables internes</translation>
     </message>

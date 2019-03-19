@@ -131,7 +131,7 @@
 <context>
     <name>Aseba::ThymioUpgraderDialog</name>
     <message>
-        <location filename="ThymioUpgrader.cpp" line="+108"/>
+        <location filename="ThymioUpgrader.cpp" line="+90"/>
         <source>Thymio Firmware Upgrader</source>
         <translation>Thymio Firmware Upgrader</translation>
     </message>
@@ -155,7 +155,7 @@
         <translation>Verlassen</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+63"/>
         <source>Select hex file</source>
         <translation>Hex-Datei auswählen</translation>
     </message>
@@ -165,7 +165,7 @@
         <translation>Hex Dateien (*.hex)</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+57"/>
         <source>Thymio node identifier: %1</source>
         <translation>Thymio Knotenidentifizierer : %1</translation>
     </message>
@@ -178,23 +178,23 @@
         <translation type="obsolete">Aktuelle Firmware: Version %1 - Entwicklung %2 </translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+38"/>
         <source>Pre-upgrade warning</source>
         <translation>Vorupgrade Warnung</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Your are about to write a new firmware to the Thymio II. Make sure that the robot is charged and that the USB cable is properly connected.&lt;p&gt;&lt;b&gt;Do not unplug the robot during the upgrade!&lt;/b&gt;&lt;/p&gt;Are you sure you want to proceed?</source>
         <translation>Sie schreiben eine neue Firmware für Thymio II. Stellen Sie sicher, dass der Roboter geladen und das USB-Kabel korrekt angeschlossen ist.&lt;p&gt;&lt;b&gt;Trennen Sie nicht die Verbindung zum Roboter während des Upgrades!&lt;/b&gt;&lt;/p&gt;Sind Sie sicher, dass Sie fortfahren möchten?</translation>
     </message>
     <message>
-        <location line="-47"/>
-        <location line="+79"/>
+        <location line="-49"/>
+        <location line="+81"/>
         <source>Cannot connect to Thymio II</source>
         <translation>Kann nicht zu Thymio II verbinden</translation>
     </message>
     <message>
-        <location line="-239"/>
+        <location line="-223"/>
         <source>Latest official firmware</source>
         <translation>Letzte offizielle Firmware</translation>
     </message>
@@ -204,18 +204,18 @@
         <translation>Benutzerdefinierte Firmware-Datei</translation>
     </message>
     <message>
-        <location line="+150"/>
-        <location line="+79"/>
+        <location line="+133"/>
+        <location line="+81"/>
         <source>Cannot connect to Thymio II: %1.&lt;p&gt;Most probably another program is currently connected to the Thymio II. Make sure that there are no Studio or other Upgrader running and try again.&lt;/p&gt;</source>
         <translation>Die Verbindung mit Thymio II kann nicht hergestellt werden: %1.&lt;p&gt;Wahrscheinlich ist derzeit ein anderes Programm mit Thymio II verbunden. Wenn schon ein Aseba Studio oder ein anderes Firmware Upgrader Fenster geöffnet ist, bitte schliessen Sie es und versuchen Sie es erneut.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-54"/>
         <source>Current firmware: %1</source>
         <translation>Aktuelle Firmware: %1</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+12"/>
         <source>version %1 - production</source>
         <translation>Version %1 - Produktion</translation>
     </message>
@@ -225,39 +225,39 @@
         <translation>Version %1 - Entwicklung %2 </translation>
     </message>
     <message>
-        <location line="+54"/>
-        <location line="+4"/>
-        <location line="+4"/>
+        <location line="+56"/>
+        <location line="+3"/>
+        <location line="+3"/>
         <source>Upgrade Error</source>
         <translation>Upgrade-Fehler</translation>
     </message>
     <message>
-        <location line="-8"/>
+        <location line="-5"/>
         <source>Unable to read Hex file: %1</source>
         <translation>Kann nicht Hex-Datei zu lesen: %1</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>A bootloader error happened during the upgrade process: %1</source>
         <translation>Ein Kommunikationsfehler passiert während des Upgrade-Prozesses: %1</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>A communication error happened during the upgrade process: %1</source>
         <translation>Ein Kommunikationsfehler passiert während des Upgrade-Prozesses: %1</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+57"/>
         <source>Official firmware: %1</source>
         <translation>Offizielle Firmware: %1</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+5"/>
         <source>Cannot open temporary file!</source>
         <translation>Temporäre Datei kann nicht geöffnet werden!</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Error connecting to official firmware server!</source>
         <translation>Fehler beim Verbinden mit offiziellen Firmware-Server!</translation>
     </message>
@@ -265,34 +265,34 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location line="+39"/>
+        <location line="+34"/>
         <source>Wireless Thymio found</source>
         <oldsource>Wireless Thymio II found</oldsource>
         <translation>Wireless Thymio gefunden</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Wireless connection to Thymio found!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a single Thymio to your computer using the USB cable.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Verbindung zu Wireless Thymio gefunden!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stecken Sie einen einzelnen Thymio an Ihren Computer über das USB-Kabel.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a Thymio to your computer using the USB cable.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Thymio nicht gefunden!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stecken Sie einen Thymio an Ihren Computer über das USB-Kabel.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>&lt;p&gt;&lt;b&gt;More than one Thymio found!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a single Thymio to your computer using the USB cable.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Mehrere Thymio gefunden!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stecken Sie einen einzelnen Thymio an Ihren Computer über das USB-Kabel.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-1"/>
         <source>Multiple Thymios found</source>
         <oldsource>Multiple Thymio found</oldsource>
         <translation>Mehrere Thymio gefunden</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="-6"/>
         <source>Thymio not found</source>
         <oldsource>Thymio II not found</oldsource>
         <translation>Thymio nicht gefunden</translation>

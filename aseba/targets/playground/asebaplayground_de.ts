@@ -4,24 +4,24 @@
 <context>
     <name>Enki::PlaygroundViewer</name>
     <message>
-        <location filename="PlaygroundViewer.cpp" line="+82"/>
+        <location filename="PlaygroundViewer.cpp" line="+73"/>
         <source>You are using a feature not available in the simulator, click here to buy a real Thymio.</source>
         <oldsource>You are using a feature not available in the simulator, click here to buy a real Thymio</oldsource>
         <translation>Sie benutzen eine Eigenschaft, welche vom Simulator nicht unterstützt wird. Klicke hier um einen echten Thymio zu kaufen.</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:thymiobuy</source>
         <translation>https://www.thymio.org/de:thymiobuy</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <location line="+8"/>
         <source>Target %0, cannot read from socket: %1</source>
         <translation>Target %0, kann keine Daten vom Socket %1 lesen</translation>
     </message>
     <message>
-        <location line="-4"/>
+        <location line="-3"/>
         <source>New client connected from %0</source>
         <translation>Neue Client-Verbindung von %0</translation>
     </message>
@@ -31,52 +31,52 @@
         <translation>Client Verbindung von %0 ordentlich beendet</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Client disconnected abnormally from %0</source>
         <translation>Client Verbindung von %0 mit Fehler abgebrochen</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Old client disconnected from %0</source>
         <translation>Alte Client Verbindung von %0 beendet</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+11"/>
         <source>Cannot create listening port %0: %1</source>
         <translation>Kann keinen Listening Port erstellen %0:%1</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+35"/>
         <source>%0: Process failed to start</source>
         <translation>%0: Prozess konnte nicht gestartet werden</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>%0: Process crashed</source>
         <translation>%0: Prozess ist abgestürzt</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>%0: Write error</source>
         <translation>%0: Schreibfehler</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>%0: Read error</source>
         <translation>%0: Lesefehler</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>%0: Unknown error</source>
         <translation>%0: Unbekannter Fehler</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+8"/>
         <source>%0: %1</source>
         <translation>%0: %1</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+96"/>
         <source>Aseba Playground is a simulator for robots that can be programmed through Aseba.</source>
         <translation>Ziehen mit rechter Mausetaste: Wenn ein Okjekt ausgewählt ist wird es rotiert, sonst wird die Kamera rotiert.</translation>
     </message>
@@ -91,7 +91,7 @@
         <translation>Sie können die Kamera wie folgt bewegen:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Left click on an object: Select the object.</source>
         <translation>Linksklick auf ein Objekt: Das Objekt wird ausgewählt.</translation>
     </message>
@@ -119,7 +119,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="playground.cpp" line="+447"/>
+        <location filename="playground.cpp" line="+376"/>
         <source>%2 on %3</source>
         <translation>%2 auf %3</translation>
     </message>

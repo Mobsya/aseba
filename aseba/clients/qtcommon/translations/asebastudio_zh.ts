@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="AeslEditor.cpp" line="+500"/>
+        <location filename="../AeslEditor.cpp" line="+464"/>
         <source>Clear breakpoint</source>
         <translation>取消断点</translation>
     </message>
@@ -18,19 +18,723 @@
         <source>Clear all breakpoints</source>
         <translation>重置所有断点</translation>
     </message>
+    <message>
+        <location line="+2"/>
+        <source>Insert keyword...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="MainWindow.cpp" line="+162"/>
+        <location filename="../../studio/MainWindow.cpp" line="+71"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: 上一次编译输出</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::CompilerTranslator</name>
+    <message>
+        <location filename="CompilerTranslator.cpp" line="+14"/>
+        <source>Broken target description: not enough room for internal variables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Execution stack will overflow, check for any recursive subroutine call and cut long mathematical expressions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Script too big for target bytecode size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%0 is not a defined variable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%0 is not a defined variable, do you mean %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Target does not provide function %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Target does not provide function %0, do you mean %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Constant %0 not defined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Constant %0 not defined, do you mean %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%0 is not a known event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%0 is not a known event, do you mean %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%0 is a local event that you cannot emit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Subroutine %0 does not exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Subroutine %0 does not exists, do you mean %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Line: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source> Col: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Unbalanced comment block</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Syntax error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Identifiers must begin with _ or an alphanumeric character, found unicode character 0x%0 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Error in hexadecimal number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Error in binary number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Error in number, invalid base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Error in number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Internal compiler error, please report a bug containing the source which triggered this error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting %0, found %1 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Integer value %0 out of [0;4095] range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Integer value %0 out of [0;65535] range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Integer value %0 out of [0;32767] range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Integer value %0 out of [-32768;32767] range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Constant %0 has value %1, which is out of [0;32767] range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Constant %0 has value %1, which is out of [-32768;32767] range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting one of %0; but found %1 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Not enough free space to allocate this tempory variable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Variable definition is allowed only at the beginning of the program before any statement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting identifier, found %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Constant %0 is already defined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Variable %0 is already defined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Variable %0 has the same name as a constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Array %0 has undefined size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>No more free variable space</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting assignment, found %0 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Null steps are not allowed in for loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Start index must be lower than end index in increasing loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Start index must be higher than end index in decreasing loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>End index cannot be 32767 in increasing loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>End index cannot be -32768 in decreasing loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Event %0 is already implemented</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Event %0 needs an array of size %1 or smaller, but one of size %2 is passed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Event %0 needs an array of size %1, but one of size %2 is passed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Subroutine %0 is already defined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting a constant expression as a second index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>End of range index must be lower or equal to start of range index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Array size: result is negative (%0)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Array size: result is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Not a valid constant expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Function %0 requires no argument, some are used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Function %0 requires %1 arguments, only %2 are provided</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Argument %0 (%1) of function %2 is of size %3, function definition demands size %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Argument %0 (%1) of function %2 is of size %3, while a previous instance of the template parameter was of size %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Function %0 requires %1 arguments, more are used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Unexpected token when building UnaryArithmeticAssignmentNode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting an assignment to a variable, found %0 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Access of array %0 out of bounds: accessing index %1 while array is of size %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Size error! Size of array1 = %0 ; size of array2 = %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Condition of the if cannot be a vector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Condition of the while cannot be a vector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>MemoryVectorNode::getVectorSize: illegal operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Infinite loops not allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Division by zero</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>-32768 has no positive correspondance in 16 bits integers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Out of bound static array access. Trying to read index %0 of array %1 of size %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Out of bound static array access. Trying to write index %0 of array %1 of size %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting %0 type, found %1 type instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Expecting a condition, found a %0 instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>end of stream</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>when keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>emit keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>_emit keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>for keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>in keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>step keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>while keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>do keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>if keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>then keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>else keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>elseif keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>end keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>var keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>const keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>call keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>sub keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>callsub keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>onevent keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>abs keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>return keyword</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>string</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>integer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>( (open parenthesis)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>) (close parenthesis)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>[ (open bracket)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>] (close bracket)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>: (colon)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>, (comma)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>= (assignation)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>or</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>and</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>not</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary or</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary xor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary and</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary not</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary or equal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary xor equal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>binary and equal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>== (equal to)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>!= (not equal to)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&gt; (bigger than)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&gt;= (bigger or equal than)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt; (smaller than)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;= (smaller or equal than)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;&lt; (shift left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&gt;&gt; (shift right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;&lt;= (shift left equal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&gt;&gt;= (shift right equal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>+ (plus)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>- (minus)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>+= (plus equal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>-= (minus equal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>++ (plus plus)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>-- (minus minus)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>* (time)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>/ (divide)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>modulo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>*= (time equal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>/= (divide equal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>modulo equal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>unknown</source>
+        <translation type="unfinished">未知</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <location line="+4"/>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Aseba::ConfigDialog</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="+274"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="+240"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -58,24 +762,50 @@
 <context>
     <name>Aseba::ConstantsModel</name>
     <message>
-        <location filename="NamedValuesVectorModel.cpp" line="+313"/>
         <source>Constant already defined</source>
-        <translation>常量已定义</translation>
+        <translation type="vanished">常量已定义</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Constant %0 is already defined.</source>
-        <translation>常量%0已定义.</translation>
+        <translation type="vanished">常量%0已定义.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>The name is a keyword</source>
-        <translation>这个名字是关键词</translation>
+        <translation type="vanished">这个名字是关键词</translation>
+    </message>
+    <message>
+        <source>The name &lt;tt&gt;%0&lt;/tt&gt; cannot be used as a constant, because it is a language keyword.</source>
+        <translation type="vanished">不能使用&lt;tt&gt;%0&lt;tt&gt;作为常量名称,因为这个名字是关键词.</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::ConstantsWidget</name>
+    <message>
+        <location filename="../../studio/ConstantsWidget.cpp" line="+19"/>
+        <location line="+47"/>
+        <source>Add a new constant</source>
+        <translation type="unfinished">添加新常量</translation>
+    </message>
+    <message>
+        <location line="-46"/>
+        <source>Remove this constant</source>
+        <translation type="unfinished">取消该常量</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&lt;b&gt;Constants&lt;/b&gt;</source>
+        <translation type="unfinished">&lt;b&gt;常量&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Name:</source>
+        <translation type="unfinished">名称:</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>The name &lt;tt&gt;%0&lt;/tt&gt; cannot be used as a constant, because it is a language keyword.</source>
-        <translation>不能使用&lt;tt&gt;%0&lt;tt&gt;作为常量名称,因为这个名字是关键词.</translation>
+        <source>Value</source>
+        <comment>Value assigned to the constant</comment>
+        <translation type="unfinished">值</translation>
     </message>
 </context>
 <context>
@@ -101,7 +831,7 @@
         <translation type="vanished">用户</translation>
     </message>
     <message>
-        <location filename="DashelTarget.cpp" line="+86"/>
+        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
         <source>Discovered targets</source>
         <translation>已发现的目标</translation>
     </message>
@@ -131,7 +861,7 @@
         <translation>文档</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+26"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
@@ -151,12 +881,12 @@
         <translation>Aseba目标选项</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+48"/>
         <source> – type %1</source>
         <translation> – 机器人%1</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+5"/>
         <source>local on computer</source>
         <translation>本地电脑</translation>
     </message>
@@ -166,12 +896,12 @@
         <translation>远程网络</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+55"/>
         <source> – device %1</source>
         <translation> – 连接设备%1</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>serial port or USB</source>
         <translation>串行端口或USB</translation>
     </message>
@@ -179,22 +909,22 @@
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+124"/>
+        <location line="+103"/>
         <source>Thymio not found</source>
         <translation>找不到Thymio</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;找不到Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请用USB数据线或适配器将Thymio链接至你的计算机上,并且确认没有其他程序正在使用Thymio.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Connection to command line target failed</source>
         <translation>命令行目标链接失败</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Cannot connect to target %0</source>
         <translation>无法链接至目标%0</translation>
     </message>
@@ -202,12 +932,12 @@
 <context>
     <name>Aseba::EditorPage</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="-119"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="-105"/>
         <source>Editor Setup</source>
         <translation>编辑器设置</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Autocompletion</source>
         <translation>自动字符串补全</translation>
     </message>
@@ -220,7 +950,7 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="EventViewer.cpp" line="+95"/>
+        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
         <translation>时间(秒)</translation>
     </message>
@@ -230,19 +960,19 @@
         <translation>值</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+93"/>
+        <location line="+23"/>
+        <location line="+78"/>
         <source>Recording...</source>
         <translation>记录中...</translation>
     </message>
     <message>
-        <location line="-90"/>
-        <location line="+92"/>
+        <location line="-75"/>
+        <location line="+77"/>
         <source>&amp;Pause</source>
         <translation>暂停 (&amp;P)</translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="-73"/>
         <source>&amp;Clear</source>
         <translation>清零 (&amp;C)</translation>
     </message>
@@ -257,7 +987,7 @@
         <translation>另存为(&amp;A)...</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+47"/>
         <source>Paused...</source>
         <translation>已暂停...</translation>
     </message>
@@ -267,15 +997,107 @@
         <translation>记录 (&amp;R)</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+26"/>
         <source>Save plot data to file</source>
         <translation>保存图像至文档</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::EventsWidget</name>
+    <message>
+        <location filename="../../studio/EventsWidget.cpp" line="+44"/>
+        <source>&lt;b&gt;Events&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <location line="+38"/>
+        <source>Add a new event</source>
+        <translation type="unfinished">添加新事件</translation>
+    </message>
+    <message>
+        <location line="-37"/>
+        <source>Remove this event</source>
+        <translation type="unfinished">取消该事件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Send this event</source>
+        <translation type="unfinished">发送该事件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Plot this Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Clear</source>
+        <translation type="unfinished">清除</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <location line="+113"/>
+        <source>Name:</source>
+        <translation type="unfinished">名称:</translation>
+    </message>
+    <message>
+        <location line="-112"/>
+        <source>Number of arguments</source>
+        <comment>For the newly created event</comment>
+        <translation type="unfinished">参数数量</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Specify event arguments</source>
+        <translation type="unfinished">指定时间参数</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Please specify the %0 arguments of event %1</source>
+        <translation type="unfinished">请指定事件%1的%0参数</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Wrong number of arguments</source>
+        <translation type="unfinished">错误的参数数量</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You gave %0 arguments where event %1 requires %2</source>
+        <translation type="unfinished">事件%1需要%2个参数,你给了%0个参数</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Invalid value</source>
+        <translation type="unfinished">无效值</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invalid value for argument %0 of event %1</source>
+        <translation type="unfinished">事件%1的参数%0为无效值</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Line %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Modify an existing event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Number of arguments</source>
+        <comment>For the event</comment>
+        <translation type="unfinished">参数数量</translation>
+    </message>
+</context>
+<context>
     <name>Aseba::FindDialog</name>
     <message>
-        <location filename="FindDialog.cpp" line="+40"/>
+        <location filename="../../studio/FindDialog.cpp" line="+36"/>
         <source>Aseba Studio - Search and Replace</source>
         <translation>Aseba Studio - 搜索并替换</translation>
     </message>
@@ -343,7 +1165,7 @@ Occurrences</source>
         <translation>全部替换(&amp;A)</translation>
     </message>
     <message>
-        <location line="+103"/>
+        <location line="+90"/>
         <source>End of document reached!</source>
         <translation>以至文档结尾!</translation>
     </message>
@@ -351,12 +1173,12 @@ Occurrences</source>
 <context>
     <name>Aseba::GeneralPage</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="-45"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="-40"/>
         <source>General Setup</source>
         <translation>通用设置</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Layout</source>
         <translation>布局</translation>
     </message>
@@ -384,40 +1206,32 @@ Occurrences</source>
 <context>
     <name>Aseba::HelpViewer</name>
     <message>
-        <location filename="HelpViewer.cpp" line="+58"/>
         <source>The help file %0 was not loaded successfully. The error was: %1.The help file should be available in the temporary directory of your system. Please check your installation, or report a bug.</source>
-        <translation>帮助文档%0未加载成功.错误为:%1.帮助文件应该在系统的临时目录下.请检查你的安装,或者报告错误.</translation>
+        <translation type="vanished">帮助文档%0未加载成功.错误为:%1.帮助文件应该在系统的临时目录下.请检查你的安装,或者报告错误.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Help file not found</source>
-        <translation>找不到帮助文件</translation>
+        <translation type="vanished">找不到帮助文件</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Previous</source>
-        <translation>前一个</translation>
+        <translation type="vanished">前一个</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Next</source>
-        <translation>后一个</translation>
+        <translation type="vanished">后一个</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Home</source>
-        <translation>主目录</translation>
+        <translation type="vanished">主目录</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+73"/>
         <source>Aseba Studio Help</source>
-        <translation>Aseba Studio 帮助</translation>
+        <translation type="vanished">Aseba Studio 帮助</translation>
     </message>
     <message>
-        <location line="-50"/>
         <source>The help filter for the langauge &quot;%0&quot; has not been found. Falling back to the default language (%1). This is probably a bug, please report it.</source>
-        <translation>找不到与&quot;%0&quot;相关的帮助文件.回到默认语言(%1).这很有可能是个错误,请报错.</translation>
+        <translation type="vanished">找不到与&quot;%0&quot;相关的帮助文件.回到默认语言(%1).这很有可能是个错误,请报错.</translation>
     </message>
     <message>
         <source>Help filter not found</source>
@@ -427,94 +1241,87 @@ Occurrences</source>
 <context>
     <name>Aseba::LinearCameraViewPlugin</name>
     <message>
-        <location filename="plugins/VariablesViewPlugin.cpp" line="+69"/>
         <source>Linear Camera View Plugin</source>
-        <translation>摄像头视窗插件</translation>
+        <translation type="vanished">摄像头视窗插件</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>linear camera viewer</source>
-        <translation>摄像头视窗</translation>
+        <translation type="vanished">摄像头视窗</translation>
     </message>
     <message>
-        <location line="+45"/>
         <source>Cannot initialize linear camera view plugin</source>
-        <translation>无法初始化摄像头视窗插件</translation>
+        <translation type="vanished">无法初始化摄像头视窗插件</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>One or more variable not found in %1, %2, or %3.</source>
-        <translation>在%1, %2, 或 %3中,找不到一个或多个变量.</translation>
+        <translation type="vanished">在%1, %2, 或 %3中,找不到一个或多个变量.</translation>
     </message>
 </context>
 <context>
     <name>Aseba::LinearCameraViewVariablesDialog</name>
     <message>
-        <location line="-102"/>
         <source>Please choose your variables</source>
-        <translation>请选择变量</translation>
+        <translation type="vanished">请选择变量</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>red component</source>
-        <translation>红色</translation>
+        <translation type="vanished">红色</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>green component</source>
-        <translation>绿色</translation>
+        <translation type="vanished">绿色</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>blue component</source>
-        <translation>蓝色</translation>
+        <translation type="vanished">蓝色</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>range of values</source>
-        <translation>值范围</translation>
+        <translation type="vanished">值范围</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Ok</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>auto range</source>
-        <translation>自动范围</translation>
+        <translation type="vanished">自动范围</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>8 bits range (0–255)</source>
         <oldsource>8 bits range (0â255)</oldsource>
-        <translation>8位范围(0至255)</translation>
+        <translation type="vanished">8位范围(0至255)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>percent range (0–100)</source>
         <oldsource>percent range (0â100)</oldsource>
-        <translation>百分比范围(0至100)</translation>
+        <translation type="vanished">百分比范围(0至100)</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>Linear Camera View Plugin</source>
-        <translation>摄像头视窗插件</translation>
+        <translation type="vanished">摄像头视窗插件</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::LockButton</name>
+    <message>
+        <location filename="../../studio/LockButton.cpp" line="+8"/>
+        <source>Lock Thymio</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Aseba::MainWindow</name>
     <message>
-        <location filename="MainWindow.cpp" line="+1448"/>
         <source>Event number %0</source>
-        <translation>事件数量%0</translation>
+        <translation type="vanished">事件数量%0</translation>
     </message>
     <message>
         <source>&lt;h1&gt;About Aseba&lt;/h1&gt;Version information&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(supported stream types: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Read more on &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; and other contributors (click &quot;Show details&quot; for full list)&lt;/p&gt;&lt;p&gt;Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL version 3&lt;/a&gt;.&lt;/p&gt;</source>
         <translation type="vanished">&lt;h1&gt;关于Aseba&lt;/h1&gt;版本信息&lt;ul&gt;&lt;li&gt;Aseba版本: %0&lt;br/&gt;(build版本. %1/协议版本. %2)&lt;/li&gt;&lt;li&gt;Dashel版本. %3&lt;br/&gt;(支持的数据流类型: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;更多资料 &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; 以及其他参与者 (click &quot;Show details&quot; for full list)&lt;/p&gt;&lt;p&gt;Aseb为开源项目,许可证 &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL版本 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+1733"/>
+        <location filename="../../studio/MainWindow.cpp" line="+563"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -523,80 +1330,70 @@ Occurrences</source>
         <translation type="vanished">关于Aseba Studio</translation>
     </message>
     <message>
-        <location line="-1691"/>
+        <location line="-511"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:asebastudio</source>
         <translation>https://www.thymio.org/zh:asebastudio</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+53"/>
         <source>Open Script</source>
         <translation>打开脚本</translation>
     </message>
     <message>
-        <location line="+110"/>
         <source> (not available)</source>
-        <translation>(不可用)</translation>
+        <translation type="vanished">(不可用)</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+17"/>
         <source>Loading</source>
-        <translation>加载中</translation>
+        <translation type="vanished">加载中</translation>
     </message>
     <message>
-        <location line="-16"/>
         <source>%0 scripts have no corresponding nodes in the current network and have not been loaded.</source>
-        <translation>脚本%0在当前网络无对应的节点,该脚本未被加载.</translation>
+        <translation type="vanished">脚本%0在当前网络无对应的节点,该脚本未被加载.</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation>XML源代码错误:%0在第%1行,第%2列</translation>
+        <translation type="vanished">XML源代码错误:%0在第%1行,第%2列</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+34"/>
         <source>Save Script</source>
         <translation>保存脚本</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+74"/>
         <source>Export memory content</source>
         <translation>输出变量</translation>
     </message>
     <message>
-        <location line="+32"/>
         <source>Import memory content</source>
-        <translation>导入变量</translation>
+        <translation type="vanished">导入变量</translation>
     </message>
     <message>
-        <location line="+36"/>
         <source>%0 on node %1</source>
-        <translation>节点%1上的%0</translation>
+        <translation type="vanished">节点%1上的%0</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>The following nodes are not present in the current network and their associated content was not imported:
 </source>
-        <translation>以下节点在现网络不存在,其相关内容未被导入:</translation>
+        <translation type="vanished">以下节点在现网络不存在,其相关内容未被导入:</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>The following variables are not present in the current network and their associated content was not imported:
 </source>
-        <translation>以下变量在现网络不存在,其相关内容未被导入:</translation>
+        <translation type="vanished">以下变量在现网络不存在,其相关内容未被导入:</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Some content was not imported</source>
-        <translation>部分内容未导入</translation>
+        <translation type="vanished">部分内容未导入</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>Go To Line</source>
         <translation>跳至行</translation>
     </message>
@@ -606,163 +1403,132 @@ Occurrences</source>
         <translation>行:</translation>
     </message>
     <message>
-        <location line="+159"/>
         <source>Specify event arguments</source>
-        <translation>指定时间参数</translation>
+        <translation type="vanished">指定时间参数</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Please specify the %0 arguments of event %1</source>
-        <translation>请指定事件%1的%0参数</translation>
+        <translation type="vanished">请指定事件%1的%0参数</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Wrong number of arguments</source>
-        <translation>错误的参数数量</translation>
+        <translation type="vanished">错误的参数数量</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>You gave %0 arguments where event %1 requires %2</source>
-        <translation>事件%1需要%2个参数,你给了%0个参数</translation>
+        <translation type="vanished">事件%1需要%2个参数,你给了%0个参数</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Invalid value</source>
-        <translation>无效值</translation>
+        <translation type="vanished">无效值</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Invalid value for argument %0 of event %1</source>
-        <translation>事件%1的参数%0为无效值</translation>
+        <translation type="vanished">事件%1的参数%0为无效值</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+72"/>
         <source>Plot event %1</source>
         <translation>绘制事件%1</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>plot of %1</source>
-        <translation>%1的图表</translation>
+        <translation type="vanished">%1的图表</translation>
     </message>
     <message>
-        <location line="+136"/>
-        <location line="+552"/>
         <source>Add a new event</source>
-        <translation>添加新事件</translation>
+        <translation type="vanished">添加新事件</translation>
     </message>
     <message>
-        <location line="-552"/>
-        <location line="+91"/>
         <source>Name:</source>
-        <translation>名称:</translation>
+        <translation type="vanished">名称:</translation>
     </message>
     <message>
-        <location line="-91"/>
         <source>Number of arguments</source>
         <comment>For the newly created event</comment>
-        <translation>参数数量</translation>
+        <translation type="vanished">参数数量</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Event already exists</source>
-        <translation>该事件已存在</translation>
+        <translation type="vanished">该事件已存在</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Event %0 already exists.</source>
-        <translation>事件%0已存在.</translation>
+        <translation type="vanished">事件%0已存在.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Invalid event name</source>
-        <translation>无效的事件名称</translation>
+        <translation type="vanished">无效的事件名称</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Event %0 has an invalid name. Valid names start with an alphabetical character or an &quot;_&quot;, and continue with any number of alphanumeric characters, &quot;_&quot; and &quot;.&quot;</source>
-        <translation>事件%0名称无效.有效的名称首字符为字母或者&quot;_&quot;,其余部分可为任何字母,数字&quot;_&quot;以及&quot;.&quot;</translation>
+        <translation type="vanished">事件%0名称无效.有效的名称首字符为字母或者&quot;_&quot;,其余部分可为任何字母,数字&quot;_&quot;以及&quot;.&quot;</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Desynchronised! Please reload.</source>
-        <translation>同步被扰乱!请重新加载.</translation>
+        <translation type="vanished">同步被扰乱!请重新加载.</translation>
     </message>
     <message>
-        <location line="+53"/>
-        <location line="+395"/>
         <source>Add a new constant</source>
-        <translation>添加新常量</translation>
+        <translation type="vanished">添加新常量</translation>
     </message>
     <message>
-        <location line="-395"/>
         <source>Value</source>
         <comment>Value assigned to the constant</comment>
-        <translation>值</translation>
+        <translation type="vanished">值</translation>
     </message>
     <message>
-        <location line="+140"/>
         <source>
 event %0 : </source>
-        <translation>事件%0 :</translation>
+        <translation type="vanished">事件%0 :</translation>
     </message>
     <message>
-        <location line="+39"/>
         <source>array access at %0 out of bounds [0..%1]</source>
-        <translation>数组访问至%0超出界限[0..%1]</translation>
+        <translation type="vanished">数组访问至%0超出界限[0..%1]</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>division by zero</source>
-        <translation>被零除</translation>
+        <translation type="vanished">被零除</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>event execution killed</source>
-        <translation>终断事件执行</translation>
+        <translation type="vanished">终断事件执行</translation>
     </message>
     <message>
-        <location line="+22"/>
         <source>%0:%1: %2</source>
-        <translation>%0:%1: %2</translation>
+        <translation type="vanished">%0:%1: %2</translation>
     </message>
     <message>
-        <location line="+183"/>
         <source>Remove this constant</source>
-        <translation>取消该常量</translation>
+        <translation type="vanished">取消该常量</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>&lt;b&gt;Constants&lt;/b&gt;</source>
-        <translation>&lt;b&gt;常量&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;常量&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+46"/>
         <source>Remove this event</source>
-        <translation>取消该事件</translation>
+        <translation type="vanished">取消该事件</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Send this event</source>
-        <translation>发送该事件</translation>
+        <translation type="vanished">发送该事件</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+126"/>
         <source>Plot this event</source>
         <translation>绘制该事件</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
-        <translation>&lt;b&gt;全局事件&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;全局事件&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Clear</source>
-        <translation>清除</translation>
+        <translation type="vanished">清除</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+54"/>
         <source>...inside %0</source>
         <translation>...在节点%0内</translation>
     </message>
@@ -772,37 +1538,35 @@ event %0 : </source>
         <translation>...%0</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>...of %0</source>
-        <translation>保存节点%0的二进制码</translation>
+        <translation type="vanished">保存节点%0的二进制码</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>...inside all nodes</source>
         <translation>...在所有节点中</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>...all nodes</source>
         <translation>...所有节点</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>&amp;User Manual...</source>
-        <translation>用户手册(&amp;U)...</translation>
+        <translation type="vanished">用户手册(&amp;U)...</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>Web site Aseba...</source>
         <translation>Aseba网站...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Report bug...</source>
         <translation>报告系统错误...</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>http://github.com/mobsya/aseba/issues/new</source>
         <translation>http://github.com/mobsya/aseba/issues/new</translation>
     </message>
@@ -817,7 +1581,7 @@ event %0 : </source>
         <translation>关于Qt(&amp;Q)...</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+22"/>
         <source>Thymio programming tutorial...</source>
         <translation>Thymio编程教程...</translation>
     </message>
@@ -857,7 +1621,7 @@ event %0 : </source>
         <translation>http://mobots.epfl.ch/data/robots/marxbot-user-manual.pdf</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+17"/>
         <source>&amp;File</source>
         <translation>文档(&amp;F)</translation>
     </message>
@@ -867,12 +1631,12 @@ event %0 : </source>
         <translation>新建(&amp;N)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>&amp;Open...</source>
         <translation>打开(&amp;O)...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Open &amp;Recent</source>
         <translation>最近打开的文件(&amp;R)</translation>
     </message>
@@ -882,7 +1646,7 @@ event %0 : </source>
         <translation>保存(&amp;S)...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Save &amp;As...</source>
         <translation>另存为(&amp;A)...</translation>
     </message>
@@ -892,12 +1656,22 @@ event %0 : </source>
         <translation>输出变量(&amp;m)...</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>&amp;Import memories content...</source>
-        <translation>导入变量(&amp;I)...</translation>
+        <location line="+111"/>
+        <source>&amp;Stop all</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+1"/>
+        <source>F8</source>
+        <comment>Debug|Stop all</comment>
+        <translation type="unfinished">F8</translation>
+    </message>
+    <message>
+        <source>&amp;Import memories content...</source>
+        <translation type="vanished">导入变量(&amp;I)...</translation>
+    </message>
+    <message>
+        <location line="-105"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
@@ -980,12 +1754,11 @@ event %0 : </source>
         <translation>全部复制(&amp;a)</translation>
     </message>
     <message>
-        <location line="+14"/>
         <source>Show &amp;keywords</source>
-        <translation>显示关键词(&amp;k)</translation>
+        <translation type="vanished">显示关键词(&amp;k)</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+14"/>
         <source>Show &amp;memory usage</source>
         <translation>显示内存用量(&amp;m)</translation>
     </message>
@@ -995,7 +1768,7 @@ event %0 : </source>
         <translation>显示隐藏变量及函数(&amp;h)</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Show &amp;Line Numbers</source>
         <translation>显示行数(&amp;L)</translation>
     </message>
@@ -1021,34 +1794,30 @@ event %0 : </source>
         <translation>视窗&amp;V</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>&amp;Settings</source>
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>&amp;Load all</source>
-        <translation>全部加载(&amp;L)</translation>
+        <translation type="vanished">全部加载(&amp;L)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>F7</source>
         <comment>Load|Load all</comment>
-        <translation>F7</translation>
+        <translation type="vanished">F7</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Reset all</source>
-        <translation>全部重置(&amp;R)</translation>
+        <translation type="vanished">全部重置(&amp;R)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>F8</source>
         <comment>Debug|Reset all</comment>
-        <translation>F8</translation>
+        <translation type="vanished">F8</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
         <source>Ru&amp;n all</source>
         <translation>全部运行(&amp;n)</translation>
     </message>
@@ -1075,7 +1844,7 @@ event %0 : </source>
         <translation>调试</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Toggle breakpoint</source>
         <translation>切换断点</translation>
     </message>
@@ -1096,7 +1865,7 @@ event %0 : </source>
         <translation>调试(&amp;D)</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>&amp;Tools</source>
         <translation>工具(&amp;T)</translation>
     </message>
@@ -1116,9 +1885,8 @@ event %0 : </source>
         <translation>重新启动...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Save the binary code...</source>
-        <translation>保存二进制代码...</translation>
+        <translation type="vanished">保存二进制代码...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1127,12 +1895,12 @@ event %0 : </source>
     </message>
     <message>
         <location line="+21"/>
-        <location line="+74"/>
+        <location line="+68"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-63"/>
         <source>Aseba Studio - Confirmation Dialog</source>
         <translation>Aseba Studio -确认对话</translation>
     </message>
@@ -1147,7 +1915,7 @@ event %0 : </source>
         <translation>保存修改还是忽略?</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+59"/>
         <source>[modified] </source>
         <translation>[已修改]</translation>
     </message>
@@ -1160,20 +1928,31 @@ event %0 : </source>
 <context>
     <name>Aseba::MaskableNamedValuesVectorModel</name>
     <message>
-        <location filename="NamedValuesVectorModel.cpp" line="+44"/>
         <source>Hide</source>
-        <translation>隐藏</translation>
+        <translation type="vanished">隐藏</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>View</source>
-        <translation>显示</translation>
+        <translation type="vanished">显示</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::MaskableVariablesModel</name>
+    <message>
+        <location filename="../../studio/NamedValuesVectorModel.cpp" line="+173"/>
+        <source>Hide</source>
+        <translation type="unfinished">隐藏</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>View</source>
+        <translation type="unfinished">显示</translation>
     </message>
 </context>
 <context>
     <name>Aseba::NewNamedValueDialog</name>
     <message>
-        <location filename="MainWindow.cpp" line="-2176"/>
+        <location filename="../../studio/NewNamedValueDialog.cpp" line="+10"/>
         <source>Name</source>
         <comment>Name of the named value (can be a constant, event,...)</comment>
         <translation>名称</translation>
@@ -1188,65 +1967,110 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTab</name>
     <message>
-        <location line="-1094"/>
         <source>&lt;b&gt;Keywords&lt;/b&gt;</source>
-        <translation>&lt;b&gt;关键词&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;关键词&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location line="+739"/>
         <source>unknown</source>
-        <translation>未知</translation>
+        <translation type="vanished">未知</translation>
     </message>
     <message>
-        <location line="-737"/>
         <source>Load</source>
-        <translation>加载</translation>
+        <translation type="vanished">加载</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Reset</source>
-        <translation>重置</translation>
+        <translation type="vanished">重置</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+879"/>
-        <location line="+15"/>
+        <location filename="../../studio/NodeTab.cpp" line="+832"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location line="-891"/>
+        <location line="+4"/>
         <source>Next</source>
         <translation>下一个</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>refresh</source>
-        <translation>刷新</translation>
+        <translation type="vanished">刷新</translation>
+    </message>
+    <message>
+        <source>auto</source>
+        <translation type="vanished">自动</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Execution&lt;/b&gt;</source>
+        <translation type="vanished">&lt;b&gt;执行&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="-561"/>
+        <source>variables: %1/%2 (%3 %)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>bytecode: %1/%2 (%3 %)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+140"/>
+        <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Stopped</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>auto</source>
-        <translation>自动</translation>
+        <source>Paused</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>&lt;b&gt;Execution&lt;/b&gt;</source>
-        <translation>&lt;b&gt;执行&lt;/b&gt;</translation>
+        <location line="+1"/>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+8"/>
+        <source>(Not Locked)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>(Controlled by another application or user)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+386"/>
+        <source>Stop</source>
+        <translation type="unfinished">停止</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Synchronize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Plot this variable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>&lt;b&gt;Variables&lt;/b&gt;</source>
         <translation>&lt;b&gt;变量&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>F&amp;ilter:</source>
         <translation>筛选(&amp;i):</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+29"/>
         <source>Native Functions</source>
         <translation>本地函数</translation>
     </message>
@@ -1256,66 +2080,72 @@ event %0 : </source>
         <translation>本地事件</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Local Tools</source>
-        <translation>本地工具</translation>
+        <translation type="vanished">本地工具</translation>
     </message>
     <message>
-        <location line="+303"/>
         <source>Save the binary code of %0</source>
-        <translation>保存%0的二进制代码</translation>
+        <translation type="vanished">保存%0的二进制代码</translation>
     </message>
     <message>
-        <location line="+250"/>
         <source>Aseba Studio: Output of last compilation for %0</source>
-        <translation>Aseba Studio:%0的上一次编译输出</translation>
+        <translation type="vanished">Aseba Studio:%0的上一次编译输出</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location line="+39"/>
         <source>Compilation success.</source>
-        <translation>编译成功.</translation>
+        <translation type="vanished">编译成功.</translation>
     </message>
     <message>
-        <location line="-19"/>
         <source>variables: %1 on %2 (%3%)</source>
-        <translation>变量:%1 on %2 (%3%)</translation>
+        <translation type="vanished">变量:%1 on %2 (%3%)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>bytecode: %1 on %2 (%3%)</source>
-        <translation>字节码: %1 on %2 (%3%)</translation>
+        <translation type="vanished">字节码: %1 on %2 (%3%)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-635"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;内存用量&lt;/b&gt; : %1, %2</translation>
     </message>
     <message>
-        <location line="+199"/>
         <source>running</source>
-        <translation>运行中</translation>
+        <translation type="vanished">运行中</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+550"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>step by step</source>
-        <translation>一步一步执行</translation>
+        <translation type="vanished">一步一步执行</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>stopped</source>
-        <translation>已停止</translation>
+        <translation type="vanished">已停止</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::NodeTabsManager</name>
+    <message>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <source>%1 on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::PlotTab</name>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <source>Values</source>
+        <translation type="unfinished">值</translation>
     </message>
 </context>
 <context>
     <name>Aseba::ReconnectionDialog</name>
     <message>
-        <location filename="DashelTarget.cpp" line="+541"/>
+        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
         <translation>连接关闭</translation>
     </message>
@@ -1333,16 +2163,14 @@ event %0 : </source>
 <context>
     <name>Aseba::StopThymioPlugin</name>
     <message>
-        <location filename="plugins/StopThymioPlugin.cpp" line="+34"/>
         <source>Stop Thymio</source>
-        <translation>停止Thymio</translation>
+        <translation type="vanished">停止Thymio</translation>
     </message>
 </context>
 <context>
     <name>Aseba::TargetFunctionsModel</name>
     <message>
-        <location filename="TargetModels.cpp" line="+609"/>
-        <location line="+19"/>
+        <location filename="../../studio/TargetFunctionsModel.cpp" line="+97"/>
         <source>hidden</source>
         <translation>隐藏</translation>
     </message>
@@ -1350,7 +2178,7 @@ event %0 : </source>
 <context>
     <name>Aseba::TargetVariablesModel</name>
     <message>
-        <location line="-445"/>
+        <location filename="../../studio/TargetModels.cpp" line="+146"/>
         <source>names</source>
         <translation>名称</translation>
     </message>
@@ -1422,7 +2250,7 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPL::Block</name>
     <message>
-        <location filename="plugins/ThymioVPL/Block.cpp" line="+132"/>
+        <location filename="../../vpl/Block.cpp" line="+122"/>
         <source>buttons</source>
         <translation>按钮</translation>
     </message>
@@ -1490,18 +2318,18 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPL::EventActionsSet</name>
     <message>
-        <location filename="plugins/ThymioVPL/EventActionsSet.cpp" line="+615"/>
-        <location line="+20"/>
+        <location filename="../../vpl/EventActionsSet.cpp" line="+553"/>
+        <location line="+16"/>
         <source>Loading</source>
         <translation>加载中</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-15"/>
         <source>Error in XML source file at %0:%1: cannot create block %2</source>
         <translation>XML源代码错误%0:%1:无法创建%2模块</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
         <source>Error in XML source file at %0:%1: unknown block type %2</source>
         <translation>XML源代码错误%0:%1:未知的%2模块类型</translation>
     </message>
@@ -1509,7 +2337,7 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPL::ThymioVisualProgramming</name>
     <message>
-        <location filename="plugins/ThymioVPL/ThymioVisualProgramming.cpp" line="+79"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="+73"/>
         <source>Thymio Visual Programming Language</source>
         <translation>Thymio可视化程序设计语言</translation>
     </message>
@@ -1574,7 +2402,7 @@ event %0 : </source>
         <translation>事件</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+25"/>
         <source>Compilation success.</source>
         <translation>编译成功.</translation>
     </message>
@@ -1584,46 +2412,50 @@ event %0 : </source>
         <translation>显示行</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+37"/>
         <source>Actions</source>
         <translation>行动</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+43"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>使用Thymio可视化程序设计语言(VPL)可以通过关联事件和机器人行为进行编程</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:thymiovpl</source>
         <translation>https://www.thymio.org/zh:thymiovpl</translation>
+    </message>
+    <message>
+        <location line="+213"/>
+        <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>http://aseba.wikidot.com/en:thymiovpl</source>
         <translation type="vanished">http://aseba.wikidot.com/en:thymiovpl</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-189"/>
         <source>Export program as image</source>
         <translation>将程序数出为图像</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+65"/>
         <source>Launch VPL</source>
         <translation>启动VPL</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+123"/>
         <source>Returning to simple mode</source>
         <translation>返回简单模式</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>You are currently using states. Returning to simple mode will discard any state filter or state setting card.&lt;p&gt;Are you sure you want to continue?</source>
-        <translation>你现在正在使用状态功能.如果返回至简单模式,所有状态过滤器和状态设置卡都将消失.&lt;p&gt;确定继续吗?</translation>
+        <translation type="vanished">你现在正在使用状态功能.如果返回至简单模式,所有状态过滤器和状态设置卡都将消失.&lt;p&gt;确定继续吗?</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -1633,22 +2465,22 @@ event %0 : </source>
         <translation>VPL文件已被修改.&lt;p&gt;是否保存改动?</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+65"/>
         <source>Incompatible Version</source>
         <translation>版本不匹配</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>This file is incompatible with this version of ThymioVPL. It might not work correctly.</source>
         <translation>该文件版本与ThymioVPL版本不匹配.可能不能正常运行.</translation>
     </message>
     <message>
-        <location line="+256"/>
+        <location line="+211"/>
         <source>Please add an event</source>
         <translation>请添加一个事件</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+9"/>
         <source>Please add an action</source>
         <translation>请添加一个行动</translation>
     </message>
@@ -1656,90 +2488,144 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPL::UsageLogger</name>
     <message>
-        <location filename="plugins/ThymioVPL/UsageLogger.cpp" line="+74"/>
+        <location filename="../../vpl/UsageLogger.cpp" line="+73"/>
         <source>Login</source>
         <translation>登陆</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Please enter your user or group name:</source>
         <translation>请输入用户名:</translation>
     </message>
 </context>
 <context>
-    <name>Aseba::ThymioVPLStandalone</name>
+    <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="ThymioVPLStandalone.cpp" line="+170"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
         <source>Connecting to Thymio...</source>
-        <translation>与Thymio连接中...</translation>
+        <translation type="unfinished">与Thymio连接中...</translation>
     </message>
     <message>
-        <location line="+102"/>
-        <location line="+223"/>
-        <source>Thymio VPL Error</source>
-        <translation>Thymio VPL错误</translation>
+        <location line="+22"/>
+        <source>Aseba ver. %0 (build %1/protocol %2);</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-222"/>
-        <source>You need to connect a Thymio II to use this application.</source>
-        <translation>这个应用需要连接一个Thymio II机器人.</translation>
-    </message>
-    <message>
-        <location line="+39"/>
+        <location line="+81"/>
         <source>Save Script</source>
-        <translation>保存脚本</translation>
+        <translation type="unfinished">保存脚本</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+67"/>
         <source>Open Script</source>
-        <translation>打开脚本</translation>
+        <translation type="unfinished">打开脚本</translation>
     </message>
     <message>
-        <location line="+60"/>
-        <location line="+8"/>
+        <location line="+44"/>
+        <location line="+5"/>
         <source>Loading</source>
-        <translation>加载中</translation>
+        <translation type="unfinished">加载中</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-4"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
-        <translation>在此脚本文件中找不到Thymio VPL相关数据,该文件被忽略.</translation>
+        <translation type="unfinished">在此脚本文件中找不到Thymio VPL相关数据,该文件被忽略.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation>XML源代码错误:%0在第%1行,第%2列</translation>
+        <translation type="unfinished">XML源代码错误:%0在第%1行,第%2列</translation>
     </message>
     <message>
-        <location line="+45"/>
-        <source>This application only supports a single robot at a time.</source>
-        <translation>该应用一次仅支持一个机器人.</translation>
-    </message>
-    <message>
-        <location line="+8"/>
+        <location line="+16"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
-        <translation>与Thymio的连接中断...请确认Thymio为开机状态并且连接在USB端口</translation>
+        <translation type="unfinished">与Thymio的连接中断...请确认Thymio为开机状态并且连接在USB端口</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+71"/>
         <source>[modified] </source>
-        <translation>[已修改]</translation>
+        <translation type="unfinished">[已修改]</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untitled</source>
-        <translation>未命名</translation>
+        <translation type="unfinished">未命名</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
+        <source>on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>[not connected]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>%0 %1 %2 - Thymio Visual Programming Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::ThymioVPLStandalone</name>
+    <message>
+        <source>Connecting to Thymio...</source>
+        <translation type="vanished">与Thymio连接中...</translation>
+    </message>
+    <message>
+        <source>Thymio VPL Error</source>
+        <translation type="vanished">Thymio VPL错误</translation>
+    </message>
+    <message>
+        <source>You need to connect a Thymio II to use this application.</source>
+        <translation type="vanished">这个应用需要连接一个Thymio II机器人.</translation>
+    </message>
+    <message>
+        <source>Save Script</source>
+        <translation type="vanished">保存脚本</translation>
+    </message>
+    <message>
+        <source>Open Script</source>
+        <translation type="vanished">打开脚本</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="vanished">加载中</translation>
+    </message>
+    <message>
+        <source>No Thymio VPL data were found in the script file, file ignored.</source>
+        <translation type="vanished">在此脚本文件中找不到Thymio VPL相关数据,该文件被忽略.</translation>
+    </message>
+    <message>
+        <source>Error in XML source file: %0 at line %1, column %2</source>
+        <translation type="vanished">XML源代码错误:%0在第%1行,第%2列</translation>
+    </message>
+    <message>
+        <source>This application only supports a single robot at a time.</source>
+        <translation type="vanished">该应用一次仅支持一个机器人.</translation>
+    </message>
+    <message>
+        <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
+        <translation type="vanished">与Thymio的连接中断...请确认Thymio为开机状态并且连接在USB端口</translation>
+    </message>
+    <message>
+        <source>[modified] </source>
+        <translation type="vanished">[已修改]</translation>
+    </message>
+    <message>
+        <source>Untitled</source>
+        <translation type="vanished">未命名</translation>
+    </message>
+    <message>
         <source>%0 %1- Thymio Visual Programming Language - ver. %2</source>
-        <translation>%0 %1- Thymio可视化程序设计语言-版本 %2</translation>
+        <translation type="vanished">%0 %1- Thymio可视化程序设计语言-版本 %2</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="DashelTarget.cpp" line="-413"/>
+        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
         <location line="+7"/>
         <source>Protocol version mismatch</source>
         <translation>协议版本不匹配</translation>
@@ -1758,44 +2644,54 @@ event %0 : </source>
 <context>
     <name>QObject</name>
     <message>
-        <location line="-468"/>
+        <location line="-405"/>
         <source>Unexpected Dashel Error</source>
         <translation>异常的Dashel错误</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>A communication error happened:</source>
         <translation>出现一个通讯错误:</translation>
     </message>
     <message>
-        <location filename="plugins/ThymioVPL/Compiler.cpp" line="+57"/>
+        <location filename="../../vpl/Compiler.cpp" line="+46"/>
         <source>Compilation success</source>
         <translation>编译成功</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Line %0: Missing event</source>
         <translation>第%0行:缺少事件</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Line %0: Missing action</source>
         <translation>第%0行:缺少行动</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>The event in line %0 is the same as in line %1</source>
         <translation>第%0行与第%1行的事件相同</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>The event and the state condition in line %0 are the same as in line %1</source>
         <translation>第%0行与第%1行的事件以及条件状态相同</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Unknown VPL error</source>
         <translation>位置的VPL错误</translation>
+    </message>
+    <message>
+        <location filename="../../studio/CustomDelegate.cpp" line="+80"/>
+        <source>list &lt;%1 elements&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>map &lt;%1 elements&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -1,5 +1,5 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
+<RCC version="1.0">
+  <qresource>
     <file>translations/asebastudio_fr.qm</file>
     <file>translations/asebastudio_de.qm</file>
     <file>translations/asebastudio_es.qm</file>
@@ -116,5 +116,5 @@
     <file>images/vpl/blink.svg</file>
     <file>images/unlocked.png</file>
     <file>images/locked.png</file>
-</qresource>
+  </qresource>
 </RCC>
