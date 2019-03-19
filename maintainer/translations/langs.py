@@ -1,13 +1,28 @@
 #!/usr/bin/python -u
 
+import os
+import subprocess
+import lxml
+import sys
+from string import Template
+import re
+import subprocess
+
+
 LUPDATE  = "@_qt5_linguisttools_install_prefix@/bin/lupdate"
 LRELEASE = "@_qt5_linguisttools_install_prefix@/bin/lrelease"
 BASEPATH = "@PROJECT_SOURCE_DIR@"
 LANGS    = ["fr", "es", "de", "tl", "it", "tr", "ja", "zh"]
 
-import os
-import subprocess
-import lxml
+
+# files used when updating translations for the compiler
+# errors_cpp -> errors_code_h -> compiler_ts_cpp
+
+COMPILER_BASEPATH = os.path.join(BASEPATH, "aseba", "compiler")
+errors_cpp = os.path.join(COMPILER_BASEPATH, 'errors.cpp')
+errors_code_h = os.path.join(COMPILER_BASEPATH, 'errors_code.h')
+compiler_ts_cpp = os.path.join(BASEPATH, "aseba/clients/qtcommon/translations/", 'CompilerTranslator.cpp')
+
 
 PROJECTS = {
     "asebaplayground" : {
@@ -50,7 +65,7 @@ PROJECTS = {
     }
 }
 
-def update(qrcfile, prefix, files):
+def update_qrc(qrcfile, prefix, files):
     from lxml import etree
     parser = etree.XMLParser(remove_blank_text=True)
     if not os.path.isfile(qrcfile):
@@ -70,7 +85,118 @@ def update(qrcfile, prefix, files):
     with open(qrcfile, "w") as file:
         file.write(etree.tostring(r, pretty_print=True, encoding="utf-8").decode())
 
+
+def update_compiler_trads():
+    comment_regexp = re.compile(r'\A\s*// (.*)')
+    error_regexp = re.compile(r'error_map\[(.*?)\]\s*=\s*L"(.*?)";')
+
+    output_code_file = """
+    #ifndef __ERRORS_H
+    #define __ERRORS_H
+
+    /*
+    This file was automatically generated. Do not modify it,
+    or your changes will be lost!
+    You can manually run the script 'sync_translation.py'
+    to generate a new version, based on errors.cpp
+    */
+
+    // define error codes
+    namespace Aseba
+    {{
+        enum ErrorCode
+        {{
+            // {}
+            {} = 0,
+            {}
+            ERROR_END
+        }};
+    }};
+    #endif // __ERRORS_H
+    """
+    output_qt_file = """
+    #include "CompilerTranslator.h"
+    #include "compiler/errors_code.h"
+
+    namespace Aseba
+    {{
+        CompilerTranslator::CompilerTranslator()
+        {{
+
+        }}
+
+        const std::wstring CompilerTranslator::translate(ErrorCode error)
+        {{
+            QString msg;
+
+            switch (error)
+            {{
+                {}
+                default:
+                    msg = tr("Unknown error");
+            }}
+
+            return msg.toStdWString();
+        }}
+    }};
+    """
+
+    output_qt_element = """
+            case {}:
+                msg = tr("{}");
+                break;"""
+
+
+    # process input file
+    case_vector = ""
+    count = 0
+    id_0 = None
+    start_comment = ""
+    id_others = ""
+
+    print("Reading " + errors_cpp)
+    with open(errors_cpp, 'r') as fh:
+        print("Processing...")
+        for line in fh.readlines():
+            # a comment?
+            match = comment_regexp.search(line)
+            if match:
+                # add it to the error codes file
+                if not id_0:
+                    start_comment = match.group(1)
+                else:
+                    id_others += "		// " + match.group(1) + "\n"
+                continue
+
+            match = error_regexp.search(line)
+            if match:
+                count = count + 1
+                code = match.group(1)
+                msg = match.group(2)
+                # error codes file
+                if not id_0:
+                    id_0 = code
+                else:
+                    id_others += "		" + code + ",\n"
+                case_vector += output_qt_element.format(code, msg)
+    print( "Found " + str(count) + " + string(s)")
+
+    # writing errors_code.h
+    result = output_code_file.format(start_comment, id_0, id_others)
+    print("Writing to " + errors_code_h)
+    print(result)
+    with open(errors_code_h, 'w') as fh:
+        fh.write(result)
+
+    print("Writing to " + compiler_ts_cpp)
+    with open(compiler_ts_cpp, 'w') as fh:
+        result = output_qt_file.format(case_vector)
+        print(result)
+        fh.write(result)
+
 if __name__ == "__main__":
+    print("Update compiler trads")
+    update_compiler_trads()
     for project, settings in PROJECTS.items():
         print("Updating translations of {}:".format(project))
         files = []
@@ -84,4 +210,5 @@ if __name__ == "__main__":
             args = args + ['-ts', basename + ".ts"]
             subprocess.run(args)
         if 'qrcfile' in settings:
-            update(os.path.join(BASEPATH, settings['qrcfile']), settings['qrcprefix'] if 'qrcprefix' in settings else "", files)
+            update_qrc(os.path.join(BASEPATH, settings['qrcfile']), settings['qrcprefix'] if 'qrcprefix' in settings else "", files)
+
