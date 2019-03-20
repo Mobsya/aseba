@@ -55,10 +55,6 @@ int main(int argc, char** argv) {
         QFontDatabase::addApplicationFont(path);
     }
 
-    QSurfaceFormat format;
-    format.setSamples(16);
-    QSurfaceFormat::setDefaultFormat(format);
-
     mobsya::Launcher launcher;
     mobsya::TDMSupervisor supervisor(launcher);
     supervisor.startLocalTDM();
@@ -75,7 +71,6 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);
-    w.setFormat(format);
     w.setMinimumSize(1024, 640);
     w.showNormal();
 
