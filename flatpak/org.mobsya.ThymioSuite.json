@@ -1,0 +1,78 @@
+{
+    "app-id": "org.mobsya.ThymioSuite",
+    "runtime": "org.kde.Platform",
+    "sdk": "org.kde.Sdk",
+    "runtime-version": "5.12",
+    "finish-args": [
+        "--socket=x11",
+        "--socket=wayland",
+        "--filesystem=home",
+        "--share=network",
+        "--device=all",
+        "--share=ipc",
+        "--system-talk-name=org.freedesktop.Avahi"
+    ],
+    "command": "thymio-launcher",
+    "modules": [
+        {
+            "name": "avahi",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lathiat/avahi"
+                }
+            ],
+            "buildsystem" : "autotools",
+            "config-opts": [
+                "--with-distro=none",
+                "--disable-qt4",
+                "--disable-gtk3",
+                "--disable-gtk",
+                "--disable-mono",
+                "--disable-autoipd",
+                "--disable-python",
+                "--disable-doxygen-doc",
+                "--enable-compat-libdns_sd",
+                "--disable-gdbm",
+                "--disable-libdaemon",
+                "--disable-libevent",
+                "--disable-manpages",
+                "--with-systemdsystemunitdir=/app/lib/systemd"
+            ]
+        },
+        {
+            "name": "boost",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2",
+                    "sha256": "8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406"
+                }
+            ],
+            "buildsystem": "simple",
+            "build-commands": [
+                "./bootstrap.sh",
+                "./b2 install --prefix=/app/ variant=release threading=multi --with-filesystem --with-thread --with-chrono --with-system --with-date_time --with-regex --with-serialization --with-program_options -j 4"
+            ],
+            "cleanup": [
+                "lib/debug"
+            ]
+        },
+        {
+            "name": "hello",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_SHARED_LIBS=OFF", "-DBoost_DEBUG=ON", "-DCMAKE_BUILD_TYPE=Release", "-DFLAT_PACK_BUILD=ON"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../"
+                }
+            ]
+        }
+    ],
+    "build-options": {
+        "strip": true
+    }
+}
