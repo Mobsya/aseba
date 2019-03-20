@@ -49,4 +49,7 @@ if(WIN32)
 endif()
 codesign(thymio-launcher)
 install_qt_app(thymio-launcher)
-target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
+
+if(NOT CMAKE_BUILD_TYPE MATCHES Release)
+    target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
+endif()
