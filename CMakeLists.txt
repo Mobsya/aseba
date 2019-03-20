@@ -83,9 +83,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
 
-#create an empty qt.conf file
-file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "")
-install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
+if(CREATE_QT_CONF_FILE)
+    #create an empty qt.conf file
+    file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "")
+    install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
+endif()
+
 
 
 # Qt and Qwt
