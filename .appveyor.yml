@@ -132,7 +132,7 @@ environment:
     secure: 3h/VH0p48X8zQ9cnqgpJt9yAF2/eGx+Ne8mpDXJmKaM=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
-  BOOST_ROOT: 'C:/Libraries/boost_1_67_0'
+  BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=5"
   matrix:
     - platform: x64
@@ -142,7 +142,7 @@ environment:
       LLVM_VERSION: 7.0
       USE_VS_TOOLCHAIN: true
       QT5: C:\Qt\5.11\msvc2017_64
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
+      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
 
     #- ARCH: x86
       #QT5: C:\Qt\5.10\msvc2015
@@ -154,7 +154,7 @@ environment:
       COMPILER: MSVC
       QT5: C:\Qt\5.11\msvc2017_64
       USE_VS_TOOLCHAIN: true
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
+      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
 
 deploy:
   tag: nightly
