@@ -47,7 +47,7 @@
 #include <avahi-client/lookup.h>
 
 #include "warn.h"
-#include "dns_sd.h"
+#include <avahi-compat-libdns_sd/dns_sd.h>
 
 enum {
     COMMAND_POLL = 'p',
@@ -1472,7 +1472,7 @@ static void query_resolver_callback(
             break;
 
         query_list_t *entry = sdref->query_list;
-	while (entry ) {
+    while (entry ) {
 
             /* send it */
             int new_flags = entry->flags;
