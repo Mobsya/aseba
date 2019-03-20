@@ -59,7 +59,7 @@
             ]
         },
         {
-            "name": "hello",
+            "name": "ThymioSuite",
             "buildsystem": "cmake-ninja",
             "config-opts": [
                 "-DBUILD_SHARED_LIBS=OFF", "-DBoost_DEBUG=ON", "-DCMAKE_BUILD_TYPE=Release", "-DFLAT_PACK_BUILD=ON"
