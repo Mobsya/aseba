@@ -6,12 +6,12 @@ qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
 qt5_add_resources(resfiles asebastudio.qrc)
 
 add_library(asebaqtcommon OBJECT
-    CustomWidgets.cpp
-    CustomWidgets.h
     MobsyaApplication.cpp
     MobsyaApplication.h
-    AeslEditor.cpp
-    AeslEditor.h
+    common/CustomWidgets.cpp
+    common/CustomWidgets.h
+    common/AeslEditor.cpp
+    common/AeslEditor.h
     translations/CompilerTranslator.cpp
     translations/CompilerTranslator.h
     ${resfiles}

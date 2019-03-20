@@ -41,7 +41,7 @@ PROJECTS = {
         "qrcfile" : "aseba/clients/thymioupgrader/thymioupgrader.qrc"
     },
     "asebastudio" : {
-        "dirs"    : ["aseba/clients/qtcommon", "aseba/clients/studio", "aseba/clients/vpl"],
+        "dirs"    : ["aseba/clients/qtcommon/common", "aseba/clients/studio", "aseba/clients/vpl"],
         "trdir"   : "aseba/clients/qtcommon/translations",
         "qrcfile" : "aseba/clients/qtcommon/asebastudio.qrc",
         "qrcprefix": "translations/"
@@ -191,7 +191,6 @@ def update_compiler_trads():
     print("Writing to " + compiler_ts_cpp)
     with open(compiler_ts_cpp, 'w') as fh:
         result = output_qt_file.format(case_vector)
-        print(result)
         fh.write(result)
 
 if __name__ == "__main__":
