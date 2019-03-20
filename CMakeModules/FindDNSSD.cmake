@@ -67,10 +67,10 @@ if(WIN32)
     set(_dnssd_lib_paths "$ENV{ProgramW6432}/Bonjour SDK")
   endif()
 endif()
-list(APPEND _dnssd_lib_paths /usr /usr/local /opt/local /opt  $ENV{DNSSD_ROOT} ${DNSSD_ROOT})
+list(APPEND _dnssd_lib_paths include/avahi-compat-libdns_sd /usr /usr/local /opt/local /opt  $ENV{DNSSD_ROOT} ${DNSSD_ROOT})
 
 find_path(_dnssd_INCLUDE_DIR dns_sd.h
-  PATH_SUFFIXES include Include
+  PATH_SUFFIXES include Include include/avahi-compat-libdns_sd
   PATHS ${_dnssd_lib_paths}
   )
 
