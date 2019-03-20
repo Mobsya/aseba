@@ -46,13 +46,22 @@ if(UNIX)
        target_sources(libusb PRIVATE
            ${LIB_USB_DIR}/os/linux_usbfs.c
            ${LIB_USB_DIR}/os/linux_netlink.c
-           ${LIB_USB_DIR}/os/linux_udev.c
            )
        set(THREADS_PREFER_PTHREAD_FLAG ON)
        find_package(Threads REQUIRED)
-       find_library(udev REQUIRED)
-       target_link_libraries(libusb udev Threads::Threads)
-       target_compile_definitions(libusb PRIVATE -DHAVE_LIBUDEV -DHAVE_LIBUDEV_H -DUSBI_TIMERFD_AVAILABLE -DUSE_UDEV OS_LINUX HAVE_PIPE2)
+       target_link_libraries(libusb Threads::Threads)
+       target_compile_definitions(libusb PRIVATE -DUSBI_TIMERFD_AVAILABLE OS_LINUX HAVE_PIPE2)
+
+       # It important not to require udev as it can't compile
+       # on flatpack
+       find_library(udev UDEV_FOUND)
+       if(UDEV_FOUND)
+           target_sources(libusb PRIVATE
+               ${LIB_USB_DIR}/os/linux_udev.c
+               )
+           target_link_libraries(libusb udev)
+           target_compile_definitions(libusb PRIVATE -DHAVE_LIBUDEV -DHAVE_LIBUDEV_H -DUSE_UDEV)
+       endif(UDEV_FOUND)
    endif()
 
    if(APPLE)
