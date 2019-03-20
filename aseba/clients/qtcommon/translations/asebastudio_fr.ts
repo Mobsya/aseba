@@ -21,7 +21,7 @@
     <message>
         <location line="+2"/>
         <source>Insert keyword...</source>
-        <translation type="unfinished"></translation>
+        <translation>Insérer un mot-clé...</translation>
     </message>
 </context>
 <context>
@@ -97,28 +97,28 @@
         <location filename="../../studio/ConstantsWidget.cpp" line="+19"/>
         <location line="+47"/>
         <source>Add a new constant</source>
-        <translation type="unfinished">Ajouter une nouvelle constante</translation>
+        <translation>Ajouter une nouvelle constante</translation>
     </message>
     <message>
         <location line="-46"/>
         <source>Remove this constant</source>
-        <translation type="unfinished">Enlever cette constante</translation>
+        <translation>Enlever cette constante</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;b&gt;Constants&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;Constantes&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;Constantes&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Value</source>
         <comment>Value assigned to the constant</comment>
-        <translation type="unfinished">Valeur</translation>
+        <translation>Valeur</translation>
     </message>
 </context>
 <context>
@@ -339,91 +339,91 @@
     <message>
         <location filename="../../studio/EventsWidget.cpp" line="+44"/>
         <source>&lt;b&gt;Events&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;Événements&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;Événements&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+20"/>
         <location line="+38"/>
         <source>Add a new event</source>
-        <translation type="unfinished">Ajouter un nouvel événement</translation>
+        <translation>Ajouter un nouvel événement</translation>
     </message>
     <message>
         <location line="-37"/>
         <source>Remove this event</source>
-        <translation type="unfinished">Enlever cet événement</translation>
+        <translation>Enlever cet événement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Send this event</source>
-        <translation type="unfinished">Envoyer cet événement</translation>
+        <translation>Envoyer cet événement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Plot this Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracer cet événement</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Clear</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="+28"/>
         <location line="+113"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="-112"/>
         <source>Number of arguments</source>
         <comment>For the newly created event</comment>
-        <translation type="unfinished">Nombre d&apos;arguments</translation>
+        <translation>Nombre d&apos;arguments</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Specify event arguments</source>
-        <translation type="unfinished">Spécifiez les arguments de l&apos;événement</translation>
+        <translation>Spécifiez les arguments de l&apos;événement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Please specify the %0 arguments of event %1</source>
-        <translation type="unfinished">Veuillez spécifier les %0 arguments de l&apos;événement %1</translation>
+        <translation>Veuillez spécifier les %0 arguments de l&apos;événement %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Wrong number of arguments</source>
-        <translation type="unfinished">Mauvais nombre d&apos;arguments</translation>
+        <translation>Mauvais nombre d&apos;arguments</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You gave %0 arguments where event %1 requires %2</source>
-        <translation type="unfinished">Vous avez donné %0 argument mais l&apos;événement %1 en demande %2</translation>
+        <translation>Vous avez donné %0 argument mais l&apos;événement %1 en demande %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid value</source>
-        <translation type="unfinished">Valeur invalide</translation>
+        <translation>Valeur invalide</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Invalid value for argument %0 of event %1</source>
-        <translation type="unfinished">Valeur invalide pour l&apos;argument %0 de l&apos;événement %1</translation>
+        <translation>Valeur invalide pour l&apos;argument %0 de l&apos;événement %1</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Line %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligne %1: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Modify an existing event</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier un événement existant</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Number of arguments</source>
         <comment>For the event</comment>
-        <translation type="unfinished">Nombre d&apos;arguments</translation>
+        <translation>Nombre d&apos;arguments</translation>
     </message>
 </context>
 <context>
@@ -665,7 +665,7 @@ les occ&amp;urences</translation>
     <message>
         <location filename="../../studio/LockButton.cpp" line="+8"/>
         <source>Lock Thymio</source>
-        <translation type="unfinished"></translation>
+        <translation>Verrouillez Thymio</translation>
     </message>
 </context>
 <context>
@@ -1381,13 +1381,13 @@ event %0 : </source>
     <message>
         <location line="+51"/>
         <source>&amp;Stop all</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stopper tout</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>F8</source>
         <comment>Debug|Stop all</comment>
-        <translation type="unfinished">F8</translation>
+        <translation>F8</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1445,7 +1445,7 @@ event %0 : </source>
     <message>
         <location line="+59"/>
         <source>[modified] </source>
-        <translation>[modifié]</translation>
+        <translation>[modifié] </translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1473,12 +1473,12 @@ event %0 : </source>
     <message>
         <location filename="../../studio/NamedValuesVectorModel.cpp" line="+173"/>
         <source>Hide</source>
-        <translation type="unfinished">Cacher</translation>
+        <translation>Cacher</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>View</source>
-        <translation type="unfinished">Voir</translation>
+        <translation>Voir</translation>
     </message>
 </context>
 <context>
@@ -1590,57 +1590,57 @@ event %0 : </source>
     <message>
         <location line="-559"/>
         <source>variables: %1/%2 (%3 %)</source>
-        <translation type="unfinished"></translation>
+        <translation>variables: %1 %2 (%3 %)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>bytecode: %1/%2 (%3 %)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+140"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Non connecté&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrété</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paused</source>
-        <translation type="unfinished"></translation>
+        <translation>En pause</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>En cours d&apos;exécution</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>(Not Locked)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Non verrouillé)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>(Controlled by another application or user)</source>
-        <translation type="unfinished"></translation>
+        <translation>(contrôlé par une autre application ou un autre utilisateur)</translation>
     </message>
     <message>
         <location line="+386"/>
         <source>Stop</source>
-        <translation type="unfinished">Arrêter</translation>
+        <translation>Arrêter</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Synchronize</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchroniser</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Plot this variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracez cette variable</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1672,7 +1672,7 @@ event %0 : </source>
     <message>
         <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sur %2</translation>
     </message>
 </context>
 <context>
@@ -1680,7 +1680,7 @@ event %0 : </source>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="+24"/>
         <source>Values</source>
-        <translation type="unfinished">Valeurs</translation>
+        <translation>Valeurs</translation>
     </message>
 </context>
 <context>
@@ -2067,7 +2067,7 @@ event %0 : </source>
     <message>
         <location line="+394"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Le retour au mode simple supprimera tous les blocs avancés et les cartes d&apos;états.&lt;p&gt;Êtes-vous sûr de vouloir continuer ?</translation>
     </message>
     <message>
         <source>Color scheme</source>
@@ -2220,68 +2220,68 @@ event %0 : </source>
     <message>
         <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
         <source>Connecting to Thymio...</source>
-        <translation type="unfinished">Connection à Thymio...</translation>
+        <translation>Connection à Thymio...</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Aseba ver. %0 (build %1/protocol %2);</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseba ver. %0 (build %1/protocol %2);</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Save Script</source>
-        <translation type="unfinished">Sauvegarder le scripte</translation>
+        <translation>Sauvegarder le scripte</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Open Script</source>
-        <translation type="unfinished">Ouvrir le scripte</translation>
+        <translation>Ouvrir le scripte</translation>
     </message>
     <message>
         <location line="+44"/>
         <location line="+5"/>
         <source>Loading</source>
-        <translation type="unfinished">Chargement en cours</translation>
+        <translation>Chargement en cours</translation>
     </message>
     <message>
         <location line="-4"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
-        <translation type="unfinished">Aucune donnée VPL n&apos;a été trouvée dans le fichier script, fichier ignoré.</translation>
+        <translation>Aucune donnée VPL n&apos;a été trouvée dans le fichier script, fichier ignoré.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation type="unfinished">Erreur dans le fichier source XML : %0 à la ligne %1, colonne %2</translation>
+        <translation>Erreur dans le fichier source XML : %0 à la ligne %1, colonne %2</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
-        <translation type="unfinished">Connexion à Thymio perdue... assurez-vous que Thymio est allumé et connecter le cable USB ou le dongle</translation>
+        <translation>Connexion à Thymio perdue... assurez-vous que Thymio est allumé et connecter le cable USB ou le dongle</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>[modified] </source>
-        <translation type="unfinished">[modifié]</translation>
+        <translation>[modifié] </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untitled</source>
-        <translation type="unfinished">Sans nom</translation>
+        <translation>Sans nom</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>sur %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>[not connected]</source>
-        <translation type="unfinished"></translation>
+        <translation>[non connecté]</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%0 %1 %2 - Thymio Visual Programming Language</source>
-        <translation type="unfinished"></translation>
+        <translation>%0 %1 %2 - Thymio Visual Programming Language</translation>
     </message>
 </context>
 <context>
@@ -2589,12 +2589,12 @@ event %0 : </source>
     <message>
         <location filename="../../studio/CustomDelegate.cpp" line="+80"/>
         <source>list &lt;%1 elements&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>liste &lt;%1 éléments&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>map &lt;%1 elements&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>map &lt;%1 éléments&gt;</translation>
     </message>
 </context>
 </TS>
