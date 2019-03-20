@@ -1837,7 +1837,7 @@ event %0 : </source>
     <message>
         <location line="+16"/>
         <source>Error in XML source file at %0:%1: unknown block type %2</source>
-        <translation>Errore nel file sorgente XML alla linea %0:%1: tipo di blocco sconosciuto %2 </translation>
+        <translation>Errore nel file sorgente XML alla linea %0:%1: tipo di blocco sconosciuto %2</translation>
     </message>
 </context>
 <context>
@@ -2002,7 +2002,7 @@ event %0 : </source>
     <message>
         <location line="+123"/>
         <source>Returning to simple mode</source>
-        <translation>Ritornare alla modalità di base </translation>
+        <translation>Ritornare alla modalità di base</translation>
     </message>
     <message>
         <source>You are currently using states. Returning to simple mode will discard any state filter or state setting card.&lt;p&gt;Are you sure you want to continue?</source>

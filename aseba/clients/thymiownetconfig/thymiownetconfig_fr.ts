@@ -7,7 +7,7 @@
         <location filename="ThymioWNetConfig.cpp" line="+75"/>
         <source>Wireless Thymio Network Configurator</source>
         <oldsource>Thymio Wireless Network Configurator</oldsource>
-        <translation>Configurateur de réseau pour Wireless Thymio </translation>
+        <translation>Configurateur de réseau pour Wireless Thymio</translation>
     </message>
     <message>
         <location line="+19"/>

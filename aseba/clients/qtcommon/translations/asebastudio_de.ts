@@ -1326,7 +1326,7 @@ Ereignis %0: </translation>
     <message>
         <location line="-675"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
-        <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren</translation>
+        <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren.</translation>
     </message>
     <message>
         <location line="+2"/>

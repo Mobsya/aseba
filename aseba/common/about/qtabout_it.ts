@@ -51,7 +51,7 @@
     <message>
         <location line="+53"/>
         <source>&lt;b&gt;%1&lt;/b&gt; grant %2&lt;br/&gt;%3</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; contributo %2&lt;br/&gt;%3</translation>
     </message>
     <message>
         <location line="+21"/>
