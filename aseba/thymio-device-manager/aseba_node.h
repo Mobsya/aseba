@@ -2,11 +2,6 @@
 #include <memory>
 #include <mutex>
 #include <boost/asio/post.hpp>
-#include "aseba/common/msg/msg.h"
-#include "aseba/compiler/compiler.h"
-#include "node_id.h"
-#include "property.h"
-#include "events.h"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <atomic>
@@ -15,8 +10,15 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+#include "aseba/common/msg/msg.h"
+#include "aseba/compiler/compiler.h"
+#include "node_id.h"
+#include "property.h"
+#include "events.h"
+#include "common_types.h"
 
 namespace mobsya {
+class group;
 class aseba_endpoint;
 
 struct breakpoint {
@@ -50,21 +52,6 @@ public:
 
     using node_id_t = uint16_t;
 
-    struct variable {
-        static const bool constant_tag = true;
-        variable(property p) : value(std::move(p)) {}
-        variable(property p, bool c) : value(std::move(p)), is_constant(c) {}
-        mobsya::property value;
-        bool is_constant = false;
-
-        operator mobsya::property&() {
-            return value;
-        }
-        operator const mobsya::property&() const {
-            return value;
-        }
-    };
-
     struct vm_execution_state {
         fb::VMExecutionState state;
         uint32_t line;
@@ -90,13 +77,11 @@ public:
     };
 
     using breakpoints = std::unordered_set<breakpoint>;
+    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map,
+                                                                  std::chrono::system_clock::time_point)>;
 
-    using variables_map = std::unordered_map<std::string, variable>;
-    using variables_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map)>;
-
-    using events_table = std::vector<mobsya::event>;
-    using event_changed_payload = variant_ns::variant<events_table, variables_map>;
-    using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, event_changed_payload)>;
+    using events_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, variables_map,
+                                                               std::chrono::system_clock::time_point)>;
 
     using vm_state_watch_signal_t = boost::signals2::signal<void(std::shared_ptr<aseba_node>, vm_execution_state)>;
     using vm_execution_state_command = fb::VMExecutionStateCommand;
@@ -128,6 +113,8 @@ public:
 
     node_type type() const;
 
+    std::shared_ptr<mobsya::aseba_endpoint> endpoint() const;
+
     std::string friendly_name() const;
     void set_friendly_name(const std::string& str);
     bool can_be_renamed() const;
@@ -137,6 +124,8 @@ public:
     Aseba::TargetDescription vm_description() const {
         return m_description;
     }
+
+    std::shared_ptr<mobsya::group> group() const;
 
     variables_map variables() const;
     events_table events_description() const;
@@ -154,10 +143,8 @@ public:
     void set_vm_execution_state(vm_execution_state_command state, write_callback&& cb = {});
     void set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb = {});
 
-    boost::system::error_code set_node_variables(const aseba_node::variables_map& map, write_callback&& cb = {});
-    boost::system::error_code set_node_events_table(const aseba_node::events_table& events);
+    boost::system::error_code set_node_variables(const variables_map& map, write_callback&& cb = {});
 
-    boost::system::error_code emit_events(const aseba_node::variables_map& map, write_callback&& cb = {});
     void rename(const std::string& new_name);
     bool lock(void* app);
     bool unlock(void* app);
@@ -179,8 +166,14 @@ public:
         return m_vm_state_watch_signal.connect(std::forward<ConnectionArgs>(args)...);
     }
 
+    int firwmware_version() const;
+    int available_firwmware_version() const;
+    void set_available_firmware_version(int version);
+
 private:
     friend class aseba_endpoint;
+    friend class group;
+
     void set_status(status);
     tl::expected<compilation_result, boost::system::error_code>
     do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs, fb::ProgrammingLanguage language,
@@ -193,16 +186,13 @@ private:
     void on_description_received();
     void request_device_info();
     void on_device_info(const Aseba::DeviceInfo& info);
-    void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def);
 
     void reset_known_variables(const Aseba::VariablesMap& variables);
     void request_variables();
     void on_variables_message(const Aseba::Variables& msg);
     void on_variables_message(const Aseba::ChangedVariables& msg);
-    void set_variables(uint16_t start, const std::vector<int16_t>& data,
-                       std::unordered_map<std::string, variable>& vars);
+    void set_variables(uint16_t start, const std::vector<int16_t>& data, variables_map& vars);
     void schedule_variables_update(boost::posix_time::time_duration delay = boost::posix_time::milliseconds(100));
-    void send_events_table();
     void on_execution_state_message(const Aseba::ExecutionStateChanged&);
     void on_vm_runtime_error(const Aseba::Message&);
     void schedule_execution_state_update();
@@ -210,6 +200,7 @@ private:
 
     void on_breakpoint_set_result(const Aseba::BreakpointSetResult&);
     void cancel_pending_breakpoint_request();
+    void compile_and_send_aseba_command(const std::string& program);
 
     void step_to_next_line(write_callback&& cb);
     void handle_step_request();
@@ -217,15 +208,18 @@ private:
     void handle_description_messages(const Aseba::Message& m);
     void request_next_description_fragment();
 
+    void on_event_received(const std::unordered_map<std::string, property>& events,
+                           const std::chrono::system_clock::time_point& timestamp);
 
-    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
-    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
+    bool set_rf_settings(uint16_t network, uint16_t channel = 0, uint16_t node = 0);
 
     node_id_t m_id;
     node_id m_uuid;
     bool m_uuid_received = false;
     std::string m_friendly_name;
     std::atomic<status> m_status;
+    int m_firmware_version;
+    int m_available_firmware_version;
     const uint16_t m_protocol_version;
     std::atomic<void*> m_connected_app;
     std::weak_ptr<mobsya::aseba_endpoint> m_endpoint;
@@ -233,7 +227,6 @@ private:
     struct {
         uint16_t variables{0}, events{0}, functions{0};
     } m_description_message_counter;
-    Aseba::CommonDefinitions m_defs;
     Aseba::BytecodeVector m_bytecode;
     breakpoints m_breakpoints;
     boost::asio::io_context& m_io_ctx;
@@ -244,6 +237,12 @@ private:
         uint32_t line = 0;
         fb::VMExecutionState state = fb::VMExecutionState::Stopped;
     } m_vm_state;
+
+    struct th2_rfid {
+        uint16_t network_id;
+        uint16_t node_id;
+        uint16_t channel;
+    } m_th2_rfid_settings;
 
     struct aseba_vm_variable {
         std::string name;

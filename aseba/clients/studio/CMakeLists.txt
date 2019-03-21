@@ -11,7 +11,6 @@ add_executable(asebastudio WIN32
     EventsWidget.cpp
     FindDialog.h
    # EventViewer.h
-    HelpViewer.h
     ConfigDialog.h
     ModelAggregator.h
     StudioAeslEditor.cpp
@@ -21,14 +20,17 @@ add_executable(asebastudio WIN32
     CustomDelegate.cpp
     NodeTab.h
     NodeTab.cpp
+    PlotTab.h
+    PlotTab.cpp
     NodeTabsManager.cpp
     NodeTabsManager.h
+    LockButton.h
+    LockButton.cpp
     TargetFunctionsModel.cpp
     TargetFunctionsModel.h
     main.cpp
     FindDialog.cpp
     # EventViewer.cpp
-    HelpViewer.cpp
     ConfigDialog.cpp
     ModelAggregator.cpp
     VariablesModel.h
@@ -42,11 +44,12 @@ target_link_libraries(asebastudio
     qt-thymio-dm-client-lib
     asebaqtabout
     asebacommon
-    Qt5::Help
     Qt5::Svg
     Qt5::Network
     Qt5::Xml
     Qt5::Widgets
+    Qt5::Charts
+    range-v3
 )
 
 install_qt_app(asebastudio)

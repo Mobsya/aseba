@@ -26,6 +26,7 @@ include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
 include(CMakeModules/dashel.cmake)
 include(CMakeModules/deployqt.cmake)
+include(CMakeModules/CMakeQuery.cmake)
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
@@ -46,6 +47,7 @@ add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/pugixml EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/range-v3 EXCLUDE_FROM_ALL)
 
 add_library(mpark_variant INTERFACE)
 target_include_directories(mpark_variant INTERFACE
@@ -78,13 +80,16 @@ endif()
 enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
+
 #create an empty qt.conf file
 file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "")
 install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
 
 
 # Qt and Qwt
-find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools)
+find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools Charts)
 
 if (NOT ANDROID)
     find_package(Qt5Help)
@@ -110,6 +115,24 @@ set(LIB_VERSION_PATCH 0)
 set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH})
 
 
+if(WIN32)
+    add_subdirectory(third_party/bonjour)
+    set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
+    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
+    set(CPACK_MONOLITHIC_INSTALL 1)
+    configure_file(
+        ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
+    )
+endif()
+
+SET(CPACK_PACKAGE_VERSION_MAJOR "${ASEBA_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${ASEBA_VERSION_PATCH}")
+include(CPack)
+
+
+
 add_subdirectory(aseba)
 add_subdirectory(js)
 
@@ -130,26 +153,12 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/thymio-blockly-standalone/CMakeLists.txt)
 endif()
 
 
-feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
-
-
-if(WIN32)
-    add_subdirectory(third_party/bonjour)
-    set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
-    set(CPACK_MONOLITHIC_INSTALL 1)
-    configure_file(
-        ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
-    )
-
+if(EXISTS ${PROJECT_SOURCE_DIR}/scratch-gui/build/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch-gui/build/ DESTINATION ./scratch)
 endif()
 
-SET(CPACK_PACKAGE_VERSION_MAJOR "${ASEBA_VERSION_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${ASEBA_VERSION_PATCH}")
-include(CPack)
 
+feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
 
 
 

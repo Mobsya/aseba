@@ -5,19 +5,12 @@
 #include <aseba/compiler/compiler.h>
 #include <fmt/format.h>
 #include "aesl_parser.h"
+#include "group.h"
+#include "aseba_property.h"
 
 namespace mobsya {
 
 static const uint32_t MAX_FRIENDLY_NAME_SIZE = 30;
-
-namespace detail {
-    template <typename Rng>
-    static auto aseba_variable_from_range(Rng&& rng) {
-        if(rng.size() == 0)
-            return property();
-        return property(property::list::from_range(std::forward<Rng>(rng)));
-    }
-}  // namespace detail
 
 const std::string& aseba_node::status_to_string(aseba_node::status s) {
     static std::array<std::string, 5> strs = {"connected", "available", "busy", "ready", "disconnected"};
@@ -33,6 +26,8 @@ aseba_node::aseba_node(boost::asio::io_context& ctx, node_id_t id, uint16_t prot
     : m_id(id)
     , m_uuid(boost::uuids::random_generator()())
     , m_status(status::disconnected)
+    , m_firmware_version(0)
+    , m_available_firmware_version(0)
     , m_protocol_version(protocol_version)
     , m_connected_app(nullptr)
     , m_endpoint(std::move(endpoint))
@@ -48,6 +43,10 @@ std::shared_ptr<aseba_node> aseba_node::create(boost::asio::io_context& ctx, nod
     return node;
 }
 
+
+std::shared_ptr<mobsya::aseba_endpoint> aseba_node::endpoint() const {
+    return m_endpoint.lock();
+}
 
 void aseba_node::disconnect() {
     cancel_pending_step_request();
@@ -102,16 +101,12 @@ void aseba_node::on_message(const Aseba::Message& msg) {
             handle_description_messages(msg);
             break;
         }
-
-        default: {
-            if(msg.type >= 0x8000)  // first non-event message
-                break;
-            auto event = [this, &msg] { return get_event(msg.type); }();
-            if(event) {
-                on_event(static_cast<const Aseba::UserMessage&>(msg), event->first);
-            }
-        }
     }
+}
+
+std::shared_ptr<mobsya::group> aseba_node::group() const {
+    auto ep = m_endpoint.lock();
+    return ep ? ep->group() : std::shared_ptr<mobsya::group>{};
 }
 
 void aseba_node::set_status(status s) {
@@ -122,6 +117,13 @@ void aseba_node::set_status(status s) {
         case status::disconnected: registery.remove_node(shared_from_this()); break;
         default: registery.set_node_status(shared_from_this(), s); break;
     }
+    // When the status of a node change, reassign the scratchpad of the associated group
+    // because set_status can be called while the endpoint is being destroyed,
+    // we need to postpone the call
+    boost::asio::post(m_io_ctx, [g = group()]() {
+        if(g)
+            g->assign_scratchpads();
+    });
 }
 
 bool aseba_node::lock(void* app) {
@@ -160,7 +162,7 @@ void aseba_node::write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& m
 
 void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::string& program,
                                  compilation_callback&& cb) {
-    Aseba::CommonDefinitions defs = m_defs;
+    Aseba::CommonDefinitions defs = endpoint()->aseba_compiler_definitions();
     Aseba::TargetDescription desc = m_description;
 
     Aseba::Compiler compiler;
@@ -183,9 +185,11 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
     cancel_pending_step_request();
     cancel_pending_breakpoint_request();
     Aseba::Compiler compiler;
+    Aseba::CommonDefinitions defs = endpoint()->aseba_compiler_definitions();
+
     compiler.setTargetDescription(&m_description);
-    compiler.setCommonDefinitions(&m_defs);
-    auto result = do_compile_program(compiler, m_defs, language, program, m_bytecode);
+    compiler.setCommonDefinitions(&defs);
+    auto result = do_compile_program(compiler, defs, language, program, m_bytecode);
     if(!result) {
         cb(result.error(), {});
         return;
@@ -201,47 +205,19 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
                            that->m_callbacks_pending_execution_state_change.push(std::bind(cb, ec, result.value()));
                    });
 
-    send_events_table();
-    m_variables_changed_signal(shared_from_this(), this->variables());
+    m_variables_changed_signal(shared_from_this(), this->variables(), std::chrono::system_clock::now());
 }
 
 tl::expected<aseba_node::compilation_result, boost::system::error_code>
 aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs,
                                fb::ProgrammingLanguage language, const std::string& program,
                                Aseba::BytecodeVector& bytecode) {
-    std::wstring code;
 
     if(language == fb::ProgrammingLanguage::Aesl) {
-        auto aesl = load_aesl(program);
-        if(!aesl) {
-            mLogError("Invalid Aesl");
-            return tl::make_unexpected(mobsya::make_error_code(mobsya::error_code::invalid_aesl));
-        }
-        auto [constants, events, nodes] = aesl->parse_all();
-        if(!constants || !events || !nodes || nodes->size() != 1) {
-            mLogError("Invalid Aesl");
-            return tl::make_unexpected(mobsya::make_error_code(mobsya::error_code::invalid_aesl));
-        }
-
-        for(const auto& constant : *constants) {
-            // Let poorly defined constants fail the compilation later
-            if(!constant.second.is_integral())
-                continue;
-            auto v = numeric_cast<int16_t>(property::integral_t(constant.second));
-            if(v)
-                defs.constants.emplace_back(Aseba::UTF8ToWString(constant.first), *v);
-        }
-        for(const auto& event : *events) {
-            // Let poorly defined events fail the compilation later
-            if(event.type != event_type::aseba)
-                continue;
-            defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
-        }
-        code = Aseba::UTF8ToWString((*nodes)[0].code);
-    } else {
-        code = Aseba::UTF8ToWString(program);
+        return tl::make_unexpected(make_error_code(mobsya::error_code::unsupported_language));
     }
 
+    std::wstring code = Aseba::UTF8ToWString(program);
     compilation_result result;
     std::wistringstream is(code);
     Aseba::Error error;
@@ -264,6 +240,28 @@ aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitio
     return result;
 }
 
+void aseba_node::compile_and_send_aseba_command(const std::string& program) {
+    Aseba::Compiler compiler;
+    Aseba::CommonDefinitions defs = endpoint()->aseba_compiler_definitions();
+
+    compiler.setTargetDescription(&m_description);
+    compiler.setCommonDefinitions(&defs);
+
+    std::wstring code = Aseba::UTF8ToWString(program);
+    compilation_result result;
+    std::wistringstream is(code);
+    Aseba::Error error;
+    m_bytecode.clear();
+    unsigned allocatedVariablesCount;
+
+    bool success = compiler.compile(is, m_bytecode, allocatedVariablesCount, error);
+
+    std::vector<std::shared_ptr<Aseba::Message>> messages;
+    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
+
+    write_messages(std::move(messages));
+}
+
 void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_callback&& cb) {
     switch(state) {
         case vm_execution_state_command::Run:
@@ -273,6 +271,10 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
             write_message(std::make_shared<Aseba::Reset>(native_id()), std::move(cb));
             break;
         case vm_execution_state_command::Stop:
+            compile_and_send_aseba_command(R"(
+                                         motor.left.target = 0
+                                         motor.left.target = 0 )");
+            write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
             write_message(std::make_shared<Aseba::Stop>(native_id()), std::move(cb));
             break;
         case vm_execution_state_command::Pause:
@@ -297,7 +299,7 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
 
 void aseba_node::schedule_execution_state_update() {
     request_execution_state();
-	m_status_timer.expires_from_now(boost::posix_time::seconds(1));
+    m_status_timer.expires_from_now(boost::posix_time::seconds(1));
     std::weak_ptr<aseba_node> ptr = shared_from_this();
     m_status_timer.async_wait([ptr](boost::system::error_code ec) {
         if(ec)
@@ -526,134 +528,39 @@ void aseba_node::cancel_pending_breakpoint_request() {
     m_pending_breakpoint_request.reset();
 }
 
-aseba_node::events_table aseba_node::events_description() const {
-    std::vector<mobsya::event> table;
-    const auto& events = m_defs.events;
-    table.reserve(events.size());
-    for(const auto& e : events) {
-        table.emplace_back(Aseba::WStringToUTF8(e.name), e.value);
-    }
-    return table;
-}
-
 aseba_node::vm_execution_state aseba_node::execution_state() const {
     return {m_vm_state.state, m_vm_state.line};
 }
 
-void aseba_node::send_events_table() {
-    m_events_signal(shared_from_this(), events_description());
+void aseba_node::on_event_received(const std::unordered_map<std::string, property>& events,
+                                   const std::chrono::system_clock::time_point& timestamp) {
+    m_events_signal(shared_from_this(), events, timestamp);
 }
 
-static tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_variable(const property& p,
-                                                                                       uint16_t size) {
-    if(p.is_null() && size == 0) {
-        return {};
-    }
-    if(size == 1 && p.is_integral()) {
-        property::integral_t v(p);
-        auto n = numeric_cast<int16_t>(v);
-        if(!n)
-            return make_unexpected(error_code::incompatible_variable_type);
-        return std::vector({*n});
-    }
-    if(p.is_array() && size == p.size()) {
-        std::vector<int16_t> vars;
-        vars.reserve(p.size());
-        for(std::size_t i = 0; i < p.size(); i++) {
-            auto e = p[i];
-            if(!e.is_integral()) {
-                return make_unexpected(error_code::incompatible_variable_type);
-            }
-            auto v = property::integral_t(e);
-            auto n = numeric_cast<int16_t>(v);
-            if(!n)
-                return make_unexpected(error_code::incompatible_variable_type);
-            vars.push_back(*n);
-        }
-        return vars;
-    }
-    return make_unexpected(error_code::incompatible_variable_type);
-}
 
-boost::system::error_code aseba_node::set_node_variables(const aseba_node::variables_map& map, write_callback&& cb) {
+boost::system::error_code aseba_node::set_node_variables(const variables_map& map, write_callback&& cb) {
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     messages.reserve(map.size());
     variables_map modified;
-    {
-        for(auto&& var : map) {
-            if(var.second.is_constant) {
-                auto n = Aseba::UTF8ToWString(var.first);
-                const auto& p = var.second.value;
-                auto it = std::find_if(m_defs.constants.begin(), m_defs.constants.end(),
-                                       [n](const Aseba::NamedValue& v) { return n == v.name; });
-                if(it != m_defs.constants.end()) {
-                    m_defs.constants.erase(it);
-                    modified.emplace(var.first, var.second);
-                }
-                if(p.is_null())
-                    continue;
-                if(p.is_integral()) {
-                    auto v = numeric_cast<int16_t>(property::integral_t(p));
-                    if(v) {
-                        m_defs.constants.emplace_back(n, *v);
-                        modified.emplace(var.first, var.second);
-                        continue;
-                    }
-                }
-                return make_error_code(error_code::incompatible_variable_type);
-            }
-
-            auto it = std::find_if(m_variables.begin(), m_variables.end(),
-                                   [name = var.first](const aseba_vm_variable& v) { return v.name == name; });
-            if(it == std::end(m_variables)) {
-                return make_error_code(error_code::no_such_variable);
-            }
-            const auto& object = *it;
-            auto bytes = to_aseba_variable(var.second, object.size);
-            if(!bytes) {
-                return bytes.error();
-            }
-            auto msg = std::make_shared<Aseba::SetVariables>(native_id(), object.start, bytes.value());
-            messages.push_back(std::move(msg));
+    for(auto&& var : map) {
+        auto it = std::find_if(m_variables.begin(), m_variables.end(),
+                               [name = var.first](const aseba_vm_variable& v) { return v.name == name; });
+        if(it == std::end(m_variables)) {
+            return make_error_code(error_code::no_such_variable);
         }
+        const auto& object = *it;
+        auto bytes = to_aseba_variable(var.second, object.size);
+        if(!bytes) {
+            return bytes.error();
+        }
+        auto msg = std::make_shared<Aseba::SetVariables>(native_id(), object.start, bytes.value());
+        messages.push_back(std::move(msg));
     }
+
     write_messages(std::move(messages), std::move(cb));
     if(!modified.empty()) {
-        m_variables_changed_signal(shared_from_this(), modified);
+        m_variables_changed_signal(shared_from_this(), modified, std::chrono::system_clock::now());
     }
-    return {};
-}
-
-boost::system::error_code aseba_node::set_node_events_table(const aseba_node::events_table& events) {
-    m_defs.events.clear();
-    for(const auto& event : events) {
-        if(event.type != event_type::aseba)
-            continue;
-        m_defs.events.emplace_back(Aseba::UTF8ToWString(event.name), event.size);
-    }
-    send_events_table();
-    return {};
-}
-
-
-boost::system::error_code aseba_node::emit_events(const aseba_node::variables_map& map, write_callback&& cb) {
-    std::vector<std::shared_ptr<Aseba::Message>> messages;
-    messages.reserve(map.size());
-    {
-        for(auto&& event : map) {
-            auto event_def = get_event(event.first);
-            if(!event_def) {
-                return make_error_code(error_code::no_such_variable);
-            }
-            auto bytes = to_aseba_variable(event.second, event_def->first.value);
-            if(!bytes) {
-                return bytes.error();
-            }
-            auto msg = std::make_shared<Aseba::UserMessage>(event_def->second, bytes.value());
-            messages.push_back(std::move(msg));
-        }
-    }
-    write_messages(std::move(messages), std::move(cb));
     return {};
 }
 
@@ -671,10 +578,15 @@ void aseba_node::on_description_received() {
     schedule_variables_update();
     schedule_execution_state_update();
 
+    auto it = std::find_if(m_variables.begin(), m_variables.end(),
+                           [](const aseba_vm_variable& var) { return var.name == "_fwversion"; });
+    if(it != m_variables.end()) {
+        write_message(std::make_shared<Aseba::GetVariables>(native_id(), it->start, it->size));
+    }
+
     if(m_description.protocolVersion >= 6 &&
        (type() == aseba_node::node_type::Thymio2 || (type() == aseba_node::node_type::Thymio2Wireless))) {
-        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
-        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
+        request_device_info();
         return;
     }
     set_status(status::available);
@@ -682,9 +594,12 @@ void aseba_node::on_description_received() {
 
 
 void aseba_node::request_device_info() {
-    if(m_uuid_received)
+    if(m_uuid_received || m_description.protocolVersion < 6)
         return;
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_NAME));
+    if(m_description.protocolVersion >= 9) {
+        write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS));
+    }
     write_message(std::make_shared<Aseba::GetDeviceInfo>(native_id(), DEVICE_INFO_UUID));
 
     m_resend_timer.expires_from_now(boost::posix_time::seconds(1));
@@ -743,23 +658,22 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
 }
 
 void aseba_node::on_variables_message(const Aseba::Variables& msg) {
-    std::unordered_map<std::string, variable> changed;
+    variables_map changed;
     set_variables(msg.start, msg.variables, changed);
-    m_variables_changed_signal(shared_from_this(), changed);
+    m_variables_changed_signal(shared_from_this(), changed, std::chrono::system_clock::now());
     schedule_variables_update();
 }
 
 void aseba_node::on_variables_message(const Aseba::ChangedVariables& msg) {
-    std::unordered_map<std::string, variable> changed;
+    variables_map changed;
     for(const auto& area : msg.variables) {
         set_variables(area.start, area.variables, changed);
     }
-    m_variables_changed_signal(shared_from_this(), changed);
+    m_variables_changed_signal(shared_from_this(), changed, std::chrono::system_clock::now());
     schedule_variables_update();
 }
 
-void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
-                               std::unordered_map<std::string, variable>& vars) {
+void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data, variables_map& vars) {
 
     auto data_it = std::begin(data);
     auto it = m_variables.begin();
@@ -782,6 +696,10 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
             std::copy(data_it, data_it + count, std::begin(var.value) + var_start);
             vars.insert(std::pair{var.name, detail::aseba_variable_from_range(var.value)});
             mLogTrace("Variable changed {} : {}", var.name, detail::aseba_variable_from_range(var.value));
+            if(var.name == "_fwversion" && m_firmware_version != var.value[0]) {
+                m_firmware_version = var.value[0];
+                set_status(m_status);
+            }
         }
         data_it = data_it + count;
         start += count;
@@ -789,14 +707,11 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
 }
 
 
-aseba_node::variables_map aseba_node::variables() const {
+variables_map aseba_node::variables() const {
     variables_map map;
     map.reserve(m_variables.size());
     for(auto& var : m_variables) {
         map.emplace(var.name, detail::aseba_variable_from_range(var.value));
-    }
-    for(auto& var : m_defs.constants) {
-        map.emplace(Aseba::WStringToUTF8(var.name), variable(var.value, variable::constant_tag));
     }
     return map;
 }
@@ -843,7 +758,7 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         }
         mLogInfo("Persistent uuid for {} is now {} ", native_id(), boost::uuids::to_string(m_uuid));
         auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_ctx);
-        registery.set_node_uuid(shared_from_this(), m_uuid);
+        registery.handle_node_uuid_change(shared_from_this());
         set_status(status::available);
 
     } else if(info.info == DEVICE_INFO_NAME) {
@@ -852,17 +767,31 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
         set_status(m_status);
         mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
+    } else if(info.info == DEVICE_INFO_THYMIO2_RF_SETTINGS) {
+        if(info.data.size() != 3 * sizeof(uint16_t))
+            return;
+        const auto d = (uint16_t*)info.data.data();
+        m_th2_rfid_settings = {bswap16(d[0]), bswap16(d[1]), bswap16(d[2])};
+        mLogInfo("node {} : net node={}, network={}, channel={}", native_id(), m_th2_rfid_settings.node_id,
+                 m_th2_rfid_settings.network_id, m_th2_rfid_settings.channel);
     }
 }
 
-void aseba_node::on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def) {
-    variables_map events;
-    auto p = detail::aseba_variable_from_range(event.data);
-    if((p.is_integral() && def.value != 1) || p.size() != std::size_t(def.value))
-        return;
-    events.insert(std::pair{Aseba::WStringToUTF8(def.name), p});
-    m_events_signal(shared_from_this(), events);
+bool aseba_node::set_rf_settings(uint16_t network, uint16_t channel, uint16_t node) {
+    if(m_description.protocolVersion < 9)
+        return false;
+    if(node == 0)
+        node = native_id();
+    std::vector<uint8_t> data;
+    data.resize(6);
+    (uint16_t&)(*(data.data())) = bswap16(network);
+    (uint16_t&)(*(data.data() + 2)) = bswap16(node);
+    (uint16_t&)(*(data.data() + 4)) = bswap16(channel);
+    write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS, data));
+    write_message(std::make_shared<Aseba::Reboot>(native_id()));
+    return true;
 }
+
 
 aseba_node::node_type aseba_node::type() const {
     auto ep = m_endpoint.lock();
@@ -899,26 +828,20 @@ void aseba_node::set_friendly_name(const std::string& str) {
     m_friendly_name = str;
 }
 
+int aseba_node::firwmware_version() const {
+    return m_firmware_version;
+}
+int aseba_node::available_firwmware_version() const {
+    return m_available_firmware_version;
+}
+
+void aseba_node::set_available_firmware_version(int version) {
+    m_available_firmware_version = version;
+}
+
 bool aseba_node::can_be_renamed() const {
     auto ep = m_endpoint.lock();
     return ep && ep->type() == aseba_endpoint::endpoint_type::thymio && m_description.protocolVersion >= 6;
-}
-
-std::optional<std::pair<Aseba::EventDescription, std::size_t>> aseba_node::get_event(const std::string& name) const {
-    auto wname = Aseba::UTF8ToWString(name);
-    for(std::size_t i = 0; i < m_defs.events.size(); i++) {
-        const auto& event = m_defs.events[i];
-        if(event.name == wname) {
-            return std::optional<std::pair<Aseba::EventDescription, std::size_t>>(std::pair{event, i});
-        }
-    }
-    return {};
-};
-
-std::optional<std::pair<Aseba::EventDescription, std::size_t>> aseba_node::get_event(uint16_t id) const {
-    if(m_defs.events.size() <= id)
-        return {};
-    return std::optional<std::pair<Aseba::EventDescription, std::size_t>>(std::pair{m_defs.events[id], id});
 }
 
 void aseba_node::get_description() {

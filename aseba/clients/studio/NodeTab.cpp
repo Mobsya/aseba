@@ -26,6 +26,7 @@ void ScriptTab::createEditor() {
     m_breakpointsSidebar = new AeslBreakpointSidebar(editor);
     linenumbers = new AeslLineNumberSidebar(editor);
     highlighter = new AeslHighlighter(editor, editor->document());
+    editor->setReadOnly(true);
 }
 
 NodeTab::NodeTab(QWidget* parent)
@@ -61,9 +62,8 @@ NodeTab::NodeTab(QWidget* parent)
     setupConnections();
 
 
-    connect(&m_constants_model, &ConstantsModel::constantModified, [this](const QString& name, const QVariant& value) {
-        this->setVariable(name, {value, true});
-    });
+    connect(&m_constants_model, &ConstantsModel::constantModified,
+            [this](const QString& name, const QVariant& value) { this->setVariable(name, {value}); });
     m_constantsWidget->setModel(&m_constants_model);
     m_eventsWidget->setModel(&m_events_model);
 
@@ -105,7 +105,9 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
             node->lock();
         auto ptr = node.get();
         node->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
+        node->setWatchSharedVariablesEnabled(true);
         node->setWatchEventsEnabled(true);
+        node->setWatchEventsDescriptionEnabled(true);
         node->setWatchVMExecutionStateEnabled(true);
         m_vm_variables_model.clear();
 
@@ -117,18 +119,15 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(node.get(), &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
+        connect(node.get(), &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
+        connect(node.get(), &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
         connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
         connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
 
-
-        connect(ptr, &mobsya::ThymioNode::statusChanged, [node]() {
-            if(node->status() == mobsya::ThymioNode::Status::Available)
-                node->lock();
-        });
         onStatusChanged();
         updateAsebaVMDescription();
     }
@@ -136,6 +135,15 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
 
 const std::shared_ptr<const mobsya::ThymioNode> NodeTab::thymio() const {
     return m_thymio;
+}
+
+void NodeTab::toggleLock() {
+    if(!m_thymio)
+        return;
+    if(m_thymio->status() == mobsya::ThymioNode::Status::Ready)
+        m_thymio->unlock();
+    else if(m_thymio->status() == mobsya::ThymioNode::Status::Available)
+        m_thymio->lock();
 }
 
 void NodeTab::reset() {
@@ -147,25 +155,12 @@ void NodeTab::reset() {
     lastLoadedSource.clear();
     editor->debugging = false;
     currentPC = -1;
-    resetVariables();
-}
-
-void NodeTab::resetVariables() {
-    m_vm_variables_model.clear();
-    if(m_thymio) {
-        m_thymio->setWatchVariablesEnabled(false);
-        if(synchronizeVariablesToogle->isChecked())
-            m_thymio->setWatchVariablesEnabled(true);
-    }
 }
 
 void NodeTab::run() {
     if(!m_thymio) {
         return;
     }
-
-    resetVariables();
-
     editor->debugging = false;
 
     auto set_breakpoints_and_run = [this] {
@@ -404,21 +399,24 @@ void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, con
 }
 
 void NodeTab::onStatusChanged() {
-    bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
+    const bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
+    const bool connected = m_thymio && m_thymio->status() != mobsya::ThymioNode::Status::Disconnected;
+    this->setEnabled(connected);
     m_eventsWidget->setEditable(ready);
     m_constantsWidget->setEditable(ready);
     m_vm_variables_view->setEditTriggers(ready ? QTreeView::EditTrigger::DoubleClicked |
                                                  QTreeView::EditTrigger::EditKeyPressed :
                                                  QTreeView::EditTrigger::NoEditTriggers);
+    editor->setReadOnly(!ready);
     Q_EMIT executionStateChanged();
+    Q_EMIT statusChanged();
 }
 
 void NodeTab::updateStatusLabel() {
     QString statusStr;
     const auto status = m_thymio ? m_thymio->status() : mobsya::ThymioNode::Status::Disconnected;
 
-    if(status == mobsya::ThymioNode::Status::Disconnected || status == mobsya::ThymioNode::Status::Connected ||
-       status == mobsya::ThymioNode::Status::Available) {
+    if(status == mobsya::ThymioNode::Status::Disconnected || status == mobsya::ThymioNode::Status::Connected) {
         executionModeLabel->setText(tr("<b style='color:#CA3433'>Not connected</b>"));
         return;
     }
@@ -433,9 +431,21 @@ void NodeTab::updateStatusLabel() {
         case mobsya::ThymioNode::VMExecutionState::Running: statusLabel = tr("Running"); break;
     }
 
-    executionModeLabel->setText(QStringLiteral("<b style='color:%2'>%1 %3</b>")
-                                    .arg(statusLabel, busy ? "#57A0D3" : "#2E8B57",
-                                         busy ? tr("(Controlled by another application or user)") : ""));
+    QString text;
+    QString color;
+    switch(status) {
+        case mobsya::ThymioNode::Status::Ready: color = "#2E8B57"; break;
+        case mobsya::ThymioNode::Status::Available:
+            text = tr("(Not Locked)");
+            color = "#57A0D3";
+            break;
+        default:
+            text = tr("(Controlled by another application or user)");
+            color = "#57A0D3";
+            break;
+    }
+
+    executionModeLabel->setText(QStringLiteral("<b style='color:%2'>%1 %3</b>").arg(statusLabel, color, text));
 }
 
 void NodeTab::updateAsebaVMDescription() {
@@ -458,22 +468,20 @@ void NodeTab::onAsebaVMDescriptionChanged() {
 
 
 void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
-    bool recompile = false;
     for(auto it = vars.begin(); it != vars.end(); ++it) {
-        if(it->isConstant()) {
-            it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
-                                   m_constants_model.addVariable(it.key(), it.value().value());
-            recompile = true;
-        } else {
-            m_cached_variables.insert(it.key(), it.value());
-            if(!m_variables_cache_handling_timer.isActive())
-                m_variables_cache_handling_timer.start(150);
-        }
+        m_cached_variables.insert(it.key(), it.value());
+        if(!m_variables_cache_handling_timer.isActive())
+            m_variables_cache_handling_timer.start(150);
     }
+}
 
-    if(recompile) {
-        this->compileCodeOnTarget();
+void NodeTab::onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    m_constants_model.clear();
+    for(auto it = vars.begin(); it != vars.end(); ++it) {
+        it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
+                               m_constants_model.addVariable(it.key(), it.value().value());
     }
+    this->compileCodeOnTarget();
 }
 
 void NodeTab::handleVariablesCache() {
@@ -493,7 +501,19 @@ void NodeTab::setVariable(const QString& k, const mobsya::ThymioVariable& value)
 
     mobsya::ThymioNode::VariableMap map;
     map.insert(k, value);
-    m_thymio->setVariabes(map);
+    m_thymio->setVariables(map);
+}
+
+void NodeTab::setGroupVariable(const QString& k, const mobsya::ThymioVariable& value) {
+    if(!m_thymio)
+        return;
+
+    mobsya::ThymioNode::VariableMap map = m_thymio->group()->sharedVariables();
+    if(value.value().isNull())
+        map.remove(k);
+    else
+        map.insert(k, value);
+    m_thymio->setGroupVariables(map);
 }
 
 QVariantMap NodeTab::getVariables() const {
@@ -527,7 +547,7 @@ void NodeTab::emitEvent(const QString& name, const QVariant& value) {
     m_thymio->emitEvent(name, value);
 }
 
-void NodeTab::onEvents(const mobsya::ThymioNode::VariableMap& events) {
+void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
     m_eventsWidget->onEvents(events);
 }
 
@@ -584,13 +604,23 @@ void NodeTab::saveBytecode() const {
      */
 }
 
+void NodeTab::onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage) {
+    if(editor->isReadOnly() || editor->toPlainText().simplified().isEmpty())
+        editor->setText(text);
+}
+
 void NodeTab::editorContentChanged() {
+    const auto txt = editor->toPlainText();
     // only recompile if source code has actually changed
-    if(editor->toPlainText() == lastCompiledSource)
+    if(txt == lastCompiledSource)
         return;
     lastCompiledSource = editor->toPlainText();
     // recompile
     compileCodeOnTarget();
+
+    if(m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready) {
+        m_thymio->setScratchPad(txt.toUtf8());
+    }
     // mainWindow->sourceChanged();
 }
 
@@ -795,7 +825,7 @@ void NodeTab::setupWidgets() {
     // panel
 
     // buttons
-    executionModeLabel = new QLabel(tr("unknown"));
+    executionModeLabel = new QLabel;
     stopButton = new QPushButton(QIcon(":/images/stop.png"), tr("Stop"));
     // resetButton->setEnabled(false);
 
@@ -833,6 +863,20 @@ void NodeTab::setupWidgets() {
     m_vm_variables_view->setDragEnabled(true);
     m_vm_variables_view->setHeaderHidden(true);
     m_vm_variables_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    m_vm_variables_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+    connect(m_vm_variables_view, &QWidget::customContextMenuRequested, this, [this](const QPoint& p) {
+        QModelIndex index = m_vm_variables_view->indexAt(p);
+        if(!index.isValid() || index.parent().isValid() || index.column() != 0)
+            return;
+        auto menu = new QMenu(m_vm_variables_view);
+        auto plot_act = menu->addAction(tr("Plot this variable"));
+        auto act = menu->exec(m_vm_variables_view->viewport()->mapToGlobal(p));
+        if(act == plot_act) {
+            Q_EMIT this->plotVariableRequested(index.data().toString());
+        }
+    });
+
 
     auto* localVariablesAndEventLayout = new QVBoxLayout;
     auto* memorySubLayout = new QHBoxLayout;
@@ -897,6 +941,7 @@ void NodeTab::setupWidgets() {
     QWidget* rightPane = new QWidget();
     rightPane->setLayout(rightPaneLayout);
     addWidget(rightPane);
+    updateStatusLabel();
 }
 
 void NodeTab::setupConnections() {
@@ -950,16 +995,12 @@ void NodeTab::setupConnections() {
     });
 
 
-    connect(m_constantsWidget, &ConstantsWidget::constantModified, [this](const QString& name, const QVariant& value) {
-        this->setVariable(name, {value, true});
-    });
+    connect(m_constantsWidget, &ConstantsWidget::constantModified,
+            [this](const QString& name, const QVariant& value) { this->setGroupVariable(name, value); });
     connect(m_eventsWidget, &EventsWidget::eventAdded, this, &NodeTab::addEvent);
     connect(m_eventsWidget, &EventsWidget::eventRemoved, this, &NodeTab::removeEvent);
     connect(m_eventsWidget, &EventsWidget::eventEmitted, this, &NodeTab::emitEvent);
-
-    // memory
-    // connect(vmMemoryModel, SIGNAL(variableValuesChanged(unsigned, const VariablesDataVector&)),
-    //        SLOT(setVariableValues(unsigned, const VariablesDataVector&)));
+    connect(m_eventsWidget, &EventsWidget::plotRequested, this, &NodeTab::plotEventRequested);
 
     // editor
     connect(editor, &QTextEdit::textChanged, this, &NodeTab::editorContentChanged);

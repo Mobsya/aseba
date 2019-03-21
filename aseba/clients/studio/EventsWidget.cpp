@@ -37,8 +37,8 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_view->setItemDelegateForColumn(1, new SpinBoxDelegate(0, ASEBA_MAX_EVENT_ARG_COUNT, this));
     m_view->setMinimumHeight(100);
     m_view->setSecondColumnLongestContent("255###");
-    m_view->resizeRowsToContents();
     m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_view->resizeRowsToContents();
 
     QHBoxLayout* eventsAddRemoveLayout = new QHBoxLayout;
     eventsAddRemoveLayout->addWidget(new QLabel(tr("<b>Events</b>")));
@@ -52,6 +52,10 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_sendEventButton->setEnabled(false);
     eventsAddRemoveLayout->addWidget(m_sendEventButton);
 
+    m_plotButton = new QPushButton(QPixmap(QString(":/images/plot.png")), "");
+    m_plotButton->setEnabled(false);
+    eventsAddRemoveLayout->addWidget(m_plotButton);
+
     eventsDockLayout->addLayout(eventsAddRemoveLayout);
 
     eventsDockLayout->addWidget(m_view, 1);
@@ -60,13 +64,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_addEventNameButton->setToolTip(tr("Add a new event"));
     m_removeEventButton->setToolTip(tr("Remove this event"));
     m_sendEventButton->setToolTip(tr("Send this event"));
-
-    auto* eventsLayout = new QGridLayout;
-    eventsLayout->addWidget(new QLabel(tr("<b>Global Events</b>")), 0, 0, 1, 4);
-    eventsLayout->addWidget(m_addEventNameButton, 1, 0);
-    eventsLayout->addWidget(m_removeEventButton, 1, 1);
-    eventsLayout->addWidget(m_sendEventButton, 1, 2);
-    eventsLayout->addWidget(m_view, 2, 0, 1, 4);
+    m_plotButton->setToolTip(tr("Plot this Event"));
 
 
     m_logger = new QListWidget;
@@ -82,6 +80,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     connect(m_addEventNameButton, &QPushButton::clicked, this, &EventsWidget::addEvent);
     connect(m_removeEventButton, &QPushButton::clicked, this, &EventsWidget::removeEvent);
     connect(m_sendEventButton, &QPushButton::clicked, this, &EventsWidget::sendSelectedEvent);
+    connect(m_plotButton, &QPushButton::clicked, this, &EventsWidget::plotSelectedEvent);
     connect(clearLogger, &QPushButton::clicked, m_logger, &QListWidget::clear);
 
     connect(m_view, &FixedWidthTableView::doubleClicked, this, &EventsWidget::onDoubleClick);
@@ -91,6 +90,7 @@ void EventsWidget::setModel(QAbstractItemModel* model) {
     m_view->setModel(model);
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &EventsWidget::eventsSelectionChanged);
+    m_view->resizeRowsToContents();
 }
 
 
@@ -118,6 +118,7 @@ void EventsWidget::eventsSelectionChanged() {
     bool isSelected = m_view->selectionModel()->currentIndex().isValid();
     m_removeEventButton->setEnabled(m_editable && isSelected);
     m_sendEventButton->setEnabled(isSelected);
+    m_plotButton->setEnabled(isSelected);
 }
 
 void EventsWidget::sendSelectedEvent() {
@@ -165,14 +166,29 @@ void EventsWidget::sendEvent(const QModelIndex& idx) {
     Q_EMIT eventEmitted(name, QVariant::fromValue(data));
 }
 
+void EventsWidget::plotSelectedEvent() {
+    auto r = m_view->selectionModel()->selectedRows(0);
+    if(r.empty())
+        return;
+    plotEvent(r.first());
+}
 
-void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
+void EventsWidget::plotEvent(const QModelIndex& idx) {
+    auto r = m_view->selectionModel()->selectedRows(0);
+    if(r.empty())
+        return;
+    QString name = m_view->model()->data(m_view->model()->index(idx.row(), 0)).toString();
+    Q_EMIT plotRequested(name);
+}
+
+
+void EventsWidget::onEvents(const mobsya::ThymioNode::EventMap& events) {
     for(auto it = events.begin(); it != events.end(); ++it) {
         const auto model = static_cast<const MaskableVariablesModel*>(m_view->model());
         bool filter_out = !model->isVisible(it.key());
         if(filter_out)
             continue;
-        QString arg = QJsonDocument::fromVariant(it.value().value()).toJson(QJsonDocument::Compact);
+        QString arg = QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::Compact);
         QString text = QStringLiteral("%1\n%2: %3").arg(QTime::currentTime().toString("hh:mm:ss.zzz"), it.key(), arg);
         if(m_logger->count() > 50)
             delete m_logger->takeItem(0);
@@ -183,7 +199,7 @@ void EventsWidget::onEvents(const mobsya::ThymioNode::VariableMap& events) {
 
 void EventsWidget::logError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
     QString text = QTime::currentTime().toString("hh:mm:ss.zzz");
-    text += "\n" + tr("Line %1: %2").arg(line + 1).arg(message);
+    text += "\n" + tr("Line %1: %2").arg(line).arg(message);
 
     if(m_logger->count() > 50)
         delete m_logger->takeItem(0);

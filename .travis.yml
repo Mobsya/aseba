@@ -8,25 +8,28 @@ cache:
 matrix:
   include:
   - os: linux
+    dist: xenial
     language: cpp
     node_js: '8'
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        - sourceline: ppa:beineri/opt-qt-5.10.1-trusty
+        - sourceline: ppa:beineri/opt-qt-5.12.0-xenial
         packages:
         - g++-7
         - libudev-dev
-        - qt510base
-        - qt510declarative
-        - qt510xmlpatterns
-        - qt510serialport
-        - qt510tools
-        - qt510translations
-        - qt510quickcontrols2
-        - qt510svg
-        - qt510x11extras
+        - qt512base
+        - qt512declarative
+        - qt512xmlpatterns
+        - qt512serialport
+        - qt512tools
+        - qt512translations
+        - qt512quickcontrols2
+        - qt512svg
+        - qt512x11extras
+        - qt512charts-no-lgpl
+        - qt512webengine
         - libboost-python-dev
         - ninja-build
         - libxml2-dev
@@ -58,8 +61,8 @@ matrix:
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
 - git submodule update --remote
-- cd third_party/spdlog/spdlog/ && git checkout v1.2.1
-- cd ${TRAVIS_BUILD_DIR}
+- (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
+- (cd third_party/flatbuffers && git checkout 600f3fbcd4ef38b15398b1273f90697587b5a1d1)
 - rm -rf thymio-blockly-standalone
 - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
@@ -125,14 +128,14 @@ script:
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
     #export PATH="(brew --prefix llvm)/bin:${PATH}"
-    cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
+    cmake -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
     ninja -v
     ctest .
   fi
   if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$ANDROID" ]]; then
-      ls /opt/qt510/
-      /opt/qt510/bin/qt510-env.sh
-      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt510/"
+      ls /opt/qt512/
+      /opt/qt512/bin/qt512-env.sh
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:/opt/qt512/"
       cmake -GNinja -DBoost_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
       ninja -v
       ctest .

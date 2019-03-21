@@ -28,7 +28,6 @@
 #include <QDebug>
 #include <QCommandLineParser>
 #include "MainWindow.h"
-#include "HelpViewer.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 #include <aseba/common/consts.h>
 
@@ -45,8 +44,11 @@ int main(int argc, char* argv[]) {
 
 
     QCommandLineParser parser;
-    QCommandLineOption uuid(QStringLiteral("uuid"), QStringLiteral("Uuid of the targets to connect to"), QStringLiteral("uuid"));
+    QCommandLineOption uuid(QStringLiteral("uuid"),
+                            QStringLiteral("Uuid of the target to connect to - can be specified multiple times"),
+                            QStringLiteral("uuid"));
     parser.addOption(uuid);
+    parser.addHelpOption();
     parser.process(qApp->arguments());
 
     QVector<QUuid> targetUuids;

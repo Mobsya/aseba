@@ -170,6 +170,11 @@ SectionGroup /e "-Thymio" GroupThymio
 	@CPACK_NSIS_EXTRA_PREINSTALL_COMMANDS@
 	@CPACK_NSIS_FULL_INSTALL@
 
+
+	SetOutPath "$INSTDIR\examples"
+	File /r "${ASEBA_SOURCE_DIRECTORY}\aseba\targets\playground\examples\*"
+	SetOutPath "$INSTDIR"
+
 	SectionEnd
 	Section "-Menus" Menu
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebastudio.ico"

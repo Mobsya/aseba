@@ -22,44 +22,32 @@
 
 #include <QSplitter>
 #include <QDomDocument>
+#include <qt-thymio-dm-client-lib/thymionode.h>
 
 class QTranslator;
 class QVBoxLayout;
 class QLabel;
 
 namespace Aseba {
-/** \addtogroup studio */
-/*@{*/
-
-class ThymioVPLStandalone;
-
-struct ThymioVPLStandaloneInterface {
-    ThymioVPLStandaloneInterface(ThymioVPLStandalone* vplStandalone);
-    void displayCode(const QList<QString>& code, int line);
-    void loadAndRun();
-    void stop();
-    bool saveFile(bool as = false);
-    void openFile();
-    bool newFile();
-    void clearOpenedFileName(bool isModified);
-    QString openedFileName() const;
-
-private:
-    ThymioVPLStandalone* vplStandalone;
-};
-
 namespace ThymioVPL {
     class ThymioVisualProgramming;
 }
 class AeslEditor;
 
 //! Container for VPL standalone and its code viewer
-class ThymioVPLStandalone : public QSplitter {
+class ThymioVPLApplication : public QSplitter {
     Q_OBJECT
 
 public:
-    ThymioVPLStandalone();
-    ~ThymioVPLStandalone() override;
+    ThymioVPLApplication(const QUuid& node);
+    ~ThymioVPLApplication() override;
+    void displayCode(const QList<QString>& code, int line);
+    void loadAndRun();
+    void stop();
+    bool saveFile(bool as = false);
+    void openFile();
+    bool newFile();
+    QString openedFileName() const;
 
 protected:
     void setupWidgets();
@@ -68,28 +56,27 @@ protected:
     void resetSizes();
     // void variableValueUpdated(const QString& name, const VariablesDataVector& values) override;
     void closeEvent(QCloseEvent* event) override;
-    bool saveFile(bool as);
-    void openFile();
 
-protected slots:
-    void editorContentChanged();
-    void nodeConnected(unsigned node);
-    void nodeDisconnected(unsigned node);
+Q_SIGNALS:
+    void eventsReceived(const mobsya::ThymioNode::EventMap& variables);
+
+protected Q_SLOTS:
+    void onNodeChanged(std::shared_ptr<mobsya::ThymioNode> node);
+    void setupConnection();
+    void teardownConnection();
     void variablesMemoryEstimatedDirty(unsigned node);
     // void variablesMemoryChanged(unsigned node, unsigned start, const VariablesDataVector& variables);
     void updateWindowTitle(bool modified);
     void toggleFullScreen();
 
 protected:
-    friend struct ThymioVPLStandaloneInterface;
-
-    // std::unique_ptr<Target> target;  //!< pointer to target
+    QUuid m_thymioId;
+    std::shared_ptr<mobsya::ThymioNode> m_thymio;
+    mobsya::CompilationRequestWatcher m_compilation_watcher;
 
     bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets
     bool debugLog;      //!< if true, generate debug log events
     bool execFeedback;  //!< if true, blink executed events, imples debugLog = true
-
-    unsigned id;  //!< node identifier
 
     QLayout* vplLayout;                       //!< layout to add/remove VPL to/from
     ThymioVPL::ThymioVisualProgramming* vpl;  //!< VPL widget

@@ -24,6 +24,14 @@ table ConnectionHandshake {
     //A token represented as a byte sequence.
     //Tokens are notably used to identify local clients and to give special permissions to applications
     token:[ubyte];
+
+    //In the server -> client direction, this is set to true if the client is on the same machine as the server
+    localhostPeer:bool = false;
+}
+
+//Stop the device manager
+table DeviceManagerShutdownRequest {
+    request_id:uint;
 }
 
 ///A node id
@@ -74,7 +82,7 @@ enum ErrorType : int {
   /// The node is busy (locked by another client)
   node_busy = 3,
 
-  ///Unsuported variable type - For SetNodeVariables and Events
+  ///Unsuported variable type - For SetVariables and Events
   unsupported_variable_type
 }
 
@@ -86,6 +94,9 @@ enum WatchableInfo : int {
     Variables = 0x01,
     Events    = 0x02,
     VMExecutionState = 0x04,
+    SharedEventsDescription = 0x08,
+    SharedVariables = 0x10,
+    Scratchpads     = 0x20
 }
 
 enum ProgrammingLanguage : int {
@@ -96,32 +107,43 @@ enum ProgrammingLanguage : int {
 /// Represent a node
 table Node {
   node_id:NodeId;
+  group_id:NodeId;
   status:NodeStatus;
   type:NodeType;
   name:string;
   capabilities:ulong  = 0;
+  fw_version:string;
+  latest_fw_version:string;
+}
+
+table NamedValue {
+    name: string (key);
+    value: [ubyte] (flexbuffer);
 }
 
 table NodeVariable {
     name: string (key);
     value: [ubyte] (flexbuffer);
-    constant: bool = false;
 }
 
-table NodeVariablesChanged {
+table VariablesChanged {
    node_id:NodeId;
    vars:[NodeVariable];
+   /// unix timestamp ( miliseconds) of when the variables were modified - or 0 if unspecified
+   timestamp: ulong = 0;
 }
 
 table SendEvents {
    request_id:uint;
    node_id:NodeId;
-   events:[NodeVariable];
+   events:[NamedValue];
 }
 
 table EventsEmitted {
    node_id:NodeId;
-   events:[NodeVariable];
+   events:[NamedValue];
+   /// unix timestamp ( miliseconds) of when the events were emitted - or 0 if unspecified
+   timestamp: ulong = 0;
 }
 
 /// Message sent by the server when a node changes status.
@@ -178,9 +200,9 @@ table AsebaNativeFunctionParameter {
 }
 
 /// Modify the value of specified variables
-table SetNodeVariables {
+table SetVariables {
    request_id:uint;
-   node_id:NodeId;
+   node_or_group_id:NodeId;
    vars:[NodeVariable];
 }
 
@@ -299,7 +321,7 @@ table SetBreakpointsResponse {
 // Ask the server to receive events pertaining to a node
 table WatchNode {
     request_id:uint;
-    node_id:NodeId;
+    node_or_group_id:NodeId;
     //bitflag of WatchableInfo
     info_type:uint;
 }
@@ -316,22 +338,34 @@ table RequestCompleted {
 table EventDescription {
     name:string;
     fixed_sized:uint;
-    index:uint;
+    index:uint = 0;
 }
 
 table RegisterEvents {
     request_id:uint;
-    node_id:NodeId;
+    node_or_group_id:NodeId;
     events:[EventDescription];
 }
 
-table EventsDescriptionChanged {
-    node_id:NodeId;
+table EventsDescriptionsChanged {
+    node_or_group_id:NodeId;
     events:[EventDescription];
+}
+
+table ScratchpadUpdate {
+    request_id:uint = 0;
+    scratchpad_id:NodeId (required);
+    group_id:NodeId;
+    node_id:NodeId;
+    language:ProgrammingLanguage = Aseba;
+    text:string (required);
+    name:string;
+    deleted:bool = false;
 }
 
 union AnyMessage {
     ConnectionHandshake,
+    DeviceManagerShutdownRequest,
     RequestListOfNodes,
     RequestNodeAsebaVMDescription,
     LockNode,
@@ -345,9 +379,9 @@ union AnyMessage {
     CompilationResultFailure,
     CompilationResultSuccess,
     WatchNode,
-    NodeVariablesChanged,
-    SetNodeVariables,
-    EventsDescriptionChanged,
+    VariablesChanged,
+    SetVariables,
+    EventsDescriptionsChanged,
     RegisterEvents,
     SendEvents,
     EventsEmitted,
@@ -355,6 +389,7 @@ union AnyMessage {
     SetBreakpointsResponse,
     SetVMExecutionState,
     VMExecutionStateChanged,
+    ScratchpadUpdate,
 }
 
 table Message {

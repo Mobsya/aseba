@@ -6,9 +6,24 @@
 #include <memory>
 #include <aseba/flatbuffers/fb_message_ptr.h>
 #include "thymionode.h"
+#ifndef Q_MOC_RUN
+#    include <range/v3/view/filter.hpp>
+#    include <range/v3/view/transform.hpp>
+#endif
+
+
+namespace mobsya::detail {
+template <class Key, class T>
+class UnsignedQMap : public QMap<Key, T> {
+public:
+    using QMap<Key, T>::QMap;
+    std::size_t size() const {
+        return std::size_t(QMap<Key, T>::size());
+    }
+};
+}  // namespace mobsya::detail
 
 namespace mobsya {
-
 class ThymioDeviceManagerClientEndpoint;
 
 class ThymioDeviceManagerClient : public QObject {
@@ -16,6 +31,17 @@ class ThymioDeviceManagerClient : public QObject {
 public:
     ThymioDeviceManagerClient(QObject* parent = nullptr);
     std::shared_ptr<ThymioNode> node(const QUuid& id) const;
+
+    auto nodes(const QUuid& id) const {
+        return ranges::view::all(m_nodes) |
+            ranges::view::filter([&id](auto&& node) { return node->uuid() == id || node->group_id() == id; });
+    }
+
+    auto nodes() const {
+        return ranges::view::all(m_nodes);
+    }
+
+    void requestDeviceManagersShutdown();
 
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);
@@ -34,8 +60,8 @@ private:
 
     QVector<QZeroConfService> m_services;
     QZeroConf* m_register;
-    QMap<QUuid, std::shared_ptr<ThymioDeviceManagerClientEndpoint>> m_endpoints;
-    QMap<QUuid, std::shared_ptr<ThymioNode>> m_nodes;
+    detail::UnsignedQMap<QUuid, std::shared_ptr<ThymioDeviceManagerClientEndpoint>> m_endpoints;
+    detail::UnsignedQMap<QUuid, std::shared_ptr<ThymioNode>> m_nodes;
 };
 
 

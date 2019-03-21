@@ -3,6 +3,7 @@
 #include <QtEndian>
 #include <array>
 #include <QtGlobal>
+#include <QDateTime>
 #include <QRandomGenerator>
 #include "qflatbuffers.h"
 #include "thymio-api.h"
@@ -83,6 +84,12 @@ std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid&
 
 void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
     switch(msg.message_type()) {
+        case mobsya::fb::AnyMessage::ConnectionHandshake: {
+            auto message = msg.as<mobsya::fb::ConnectionHandshake>();
+            m_islocalhostPeer = message->localhostPeer();
+            // TODO handle versionning, etc
+            break;
+        }
         case mobsya::fb::AnyMessage::NodesChanged: {
             auto message = msg.as<mobsya::fb::NodesChanged>();
             onNodesChanged(*(message->UnPack()));
@@ -160,14 +167,13 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             break;
         }
 
-        case mobsya::fb::AnyMessage::NodeVariablesChanged: {
-            auto message = msg.as<mobsya::fb::NodeVariablesChanged>();
+        case mobsya::fb::AnyMessage::VariablesChanged: {
+            auto message = msg.as<mobsya::fb::VariablesChanged>();
             if(!message || !message->vars())
                 break;
             auto id = qfb::uuid(message->node_id()->UnPack());
-            auto node = m_nodes.value(id);
-            if(!node)
-                break;
+            const auto time = message->timestamp() == 0 ? QDateTime::currentDateTime() :
+                                                          QDateTime::fromMSecsSinceEpoch(message->timestamp());
 
             ThymioNode::VariableMap vars;
             for(const auto& var : *(message->vars())) {
@@ -177,9 +183,15 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                 if(name.isEmpty())
                     continue;
                 auto value = qfb::to_qvariant(var->value_flexbuffer_root());
-                vars.insert(name, ThymioVariable(value, var->constant()));
+                vars.insert(name, ThymioVariable(value));
             }
-            node->onVariablesChanged(std::move(vars));
+            if(auto grp = group_from_group_id(id)) {
+                grp->onSharedVariablesChanged(vars, time);
+            } else {
+                for(auto&& node : nodes(id)) {
+                    node->onVariablesChanged(vars, time);
+                }
+            }
             break;
         }
 
@@ -191,7 +203,7 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             auto node = m_nodes.value(id);
             if(!node)
                 break;
-            ThymioNode::VariableMap events;
+            ThymioNode::EventMap events;
             for(const auto& event : *(message->events())) {
                 if(!event)
                     continue;
@@ -199,18 +211,21 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                 if(name.isEmpty())
                     continue;
                 auto value = qfb::to_qvariant(event->value_flexbuffer_root());
-                events.insert(name, ThymioVariable(value, false));
+                events.insert(name, value);
             }
-            node->onEvents(std::move(events));
+            const auto time = message->timestamp() == 0 ? QDateTime::currentDateTime() :
+                                                          QDateTime::fromMSecsSinceEpoch(message->timestamp());
+            node->onEvents(std::move(events), time);
             break;
         }
-        case mobsya::fb::AnyMessage::EventsDescriptionChanged: {
-            auto message = msg.as<mobsya::fb::EventsDescriptionChanged>();
+
+        case mobsya::fb::AnyMessage::EventsDescriptionsChanged: {
+            auto message = msg.as<mobsya::fb::EventsDescriptionsChanged>();
             if(!message || !message->events())
                 break;
-            auto id = qfb::uuid(message->node_id()->UnPack());
-            auto node = m_nodes.value(id);
-            if(!node)
+            auto id = qfb::uuid(message->node_or_group_id()->UnPack());
+            auto grp = this->group_from_id(id);
+            if(!grp)
                 break;
             QVector<mobsya::EventDescription> events;
             for(const auto& event : *(message->events())) {
@@ -222,7 +237,7 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                 auto size = event->fixed_sized();
                 events.append(EventDescription(name, size));
             }
-            node->onEventsTableChanged(std::move(events));
+            grp->onEventsDescriptionsChanged(events);
             break;
         }
 
@@ -240,6 +255,23 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             req->setResult(AsebaVMDescriptionRequestResult(r));
             break;
         }
+        case mobsya::fb::AnyMessage::ScratchpadUpdate: {
+            auto message = msg.as<mobsya::fb::ScratchpadUpdate>();
+            auto groupid = qfb::uuid(message->group_id()->UnPack());
+            auto grp = this->group_from_id(groupid);
+            if(!grp)
+                break;
+
+            Scratchpad pad;
+            pad.id = qfb::uuid(message->scratchpad_id()->UnPack());
+            pad.nodeId = qfb::uuid(message->node_id()->UnPack());
+            pad.code = qfb::as_qstring(message->text());
+            pad.language = message->language();
+            pad.name = qfb::as_qstring(message->name());
+            pad.deleted = message->deleted();
+            grp->onScratchpadChanged(pad);
+            break;
+        }
         default: Q_EMIT onMessage(msg);
     }
 }
@@ -248,6 +280,7 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
     for(const auto& ptr : nodes.nodes) {
         const fb::NodeT& node = *ptr;
         const QUuid id = qfb::uuid(*node.node_id);
+        const QUuid group_id = node.group_id ? qfb::uuid(*node.group_id) : QUuid{};
         if(id.isNull())
             continue;
         ThymioNode::NodeCapabilities caps;
@@ -263,7 +296,9 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
         bool added = false;
         auto it = m_nodes.find(id);
         if(it == m_nodes.end()) {
-            it = m_nodes.insert(id, std::make_shared<ThymioNode>(shared_from_this(), id, name, type));
+            it = m_nodes.insert(id,
+                                std::shared_ptr<ThymioNode>(new ThymioNode(shared_from_this(), id, name, type),
+                                                            [](ThymioNode* n) { n->deleteLater(); }));
             added = true;
         }
 
@@ -271,10 +306,24 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
         (*it)->setStatus(status);
         (*it)->setCapabilities(caps);
 
+        if(auto old_group = (*it)->group()) {
+            old_group->removeNode(*it);
+        }
+        auto new_grp = group_from_group_id(group_id);
+        if(!new_grp) {
+            new_grp = std::shared_ptr<ThymioGroup>(new ThymioGroup(shared_from_this(), group_id),
+                                                   [](ThymioGroup* g) { g->deleteLater(); });
+        }
+        new_grp->addNode(*it);
+        (*it)->setGroup(new_grp);
+        (*it)->m_fw_version = QString::fromStdString(node.fw_version);
+        (*it)->m_fw_version_available = QString::fromStdString(node.latest_fw_version);
+
         Q_EMIT added ? nodeAdded(it.value()) : nodeModified(it.value());
 
         if(status == ThymioNode::Status::Disconnected) {
             auto node = it.value();
+            node->setGroup({});
             m_nodes.erase(it);
             Q_EMIT nodeRemoved(node);
         }
@@ -296,6 +345,19 @@ void ThymioDeviceManagerClientEndpoint::cancelAllRequests() {
         r->cancel();
     }
     m_pending_requests.clear();
+}
+
+bool ThymioDeviceManagerClientEndpoint::isLocalhostPeer() const {
+    return m_islocalhostPeer;
+}
+
+Request ThymioDeviceManagerClientEndpoint::requestDeviceManagerShutdown() {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    fb::DeviceManagerShutdownRequestBuilder msg(builder);
+    msg.add_request_id(r.id());
+    write(wrap_fb(builder, msg.Finish()));
+    return r;
 }
 
 void ThymioDeviceManagerClientEndpoint::onConnected() {
@@ -381,10 +443,21 @@ auto ThymioDeviceManagerClientEndpoint::send_code(const ThymioNode& node, const 
     return r;
 }
 
-Request ThymioDeviceManagerClientEndpoint::set_watch_flags(const ThymioNode& node, int flags) {
+Request ThymioDeviceManagerClientEndpoint::send_aesl(const ThymioGroup& group, const QByteArray& code) {
+    auto r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, group.uuid());
+    auto codedOffset = builder.CreateString(code.data(), code.size());
+    write(wrap_fb(
+        builder,
+        fb::CreateCompileAndLoadCodeOnVM(builder, r.id(), uuidOffset, fb::ProgrammingLanguage::Aesl, codedOffset)));
+    return r;
+}
+
+Request ThymioDeviceManagerClientEndpoint::set_watch_flags(const QUuid& node, int flags) {
     Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
-    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto uuidOffset = serialize_uuid(builder, node);
     write(wrap_fb(builder, fb::CreateWatchNode(builder, r.id(), uuidOffset, flags)));
     return r;
 }
@@ -407,28 +480,51 @@ namespace detail {
             auto& vec = flexbuilder.GetBuffer();
             auto vecOffset = fb.CreateVector(vec);
             auto keyOffset = qfb::add_string(fb, var.first);
-            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset, var.second.isConstant()));
+            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset));
+            flexbuilder.Clear();
+        }
+        return fb.CreateVectorOfSortedTables(&varsOffsets);
+    }
+    auto serialize_events(flatbuffers::FlatBufferBuilder& fb, const ThymioNode::EventMap& vars) {
+        flexbuffers::Builder flexbuilder;
+        std::vector<flatbuffers::Offset<fb::NamedValue>> varsOffsets;
+        varsOffsets.reserve(vars.size());
+        for(auto&& var : vars.toStdMap()) {
+            qfb::to_flexbuffer(var.second, flexbuilder);
+            auto& vec = flexbuilder.GetBuffer();
+            auto vecOffset = fb.CreateVector(vec);
+            auto keyOffset = qfb::add_string(fb, var.first);
+            varsOffsets.push_back(fb::CreateNamedValue(fb, keyOffset, vecOffset));
             flexbuilder.Clear();
         }
         return fb.CreateVectorOfSortedTables(&varsOffsets);
     }
 }  // namespace detail
 
-Request ThymioDeviceManagerClientEndpoint::setNodeVariabes(const ThymioNode& node,
-                                                           const ThymioNode::VariableMap& vars) {
+Request ThymioDeviceManagerClientEndpoint::setNodeVariables(const ThymioNode& node,
+                                                            const ThymioNode::VariableMap& vars) {
+    return setVariables(node.uuid(), vars);
+}
+
+Request ThymioDeviceManagerClientEndpoint::setGroupVariables(const ThymioGroup& group,
+                                                             const ThymioNode::VariableMap& vars) {
+    return setVariables(group.uuid(), vars);
+}
+
+Request ThymioDeviceManagerClientEndpoint::setVariables(const QUuid& id, const ThymioNode::VariableMap& vars) {
     Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
-    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto uuidOffset = serialize_uuid(builder, id);
     auto varsOffset = detail::serialize_variables(builder, vars);
-    write(wrap_fb(builder, fb::CreateSetNodeVariables(builder, r.id(), uuidOffset, varsOffset)));
+    write(wrap_fb(builder, fb::CreateSetVariables(builder, r.id(), uuidOffset, varsOffset)));
     return r;
 }
 
-Request ThymioDeviceManagerClientEndpoint::setNodeEventsTable(const ThymioNode& node,
+Request ThymioDeviceManagerClientEndpoint::setNodeEventsTable(const QUuid& id,
                                                               const QVector<EventDescription>& events) {
     Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
-    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto uuidOffset = serialize_uuid(builder, id);
     std::vector<flatbuffers::Offset<fb::EventDescription>> descOffsets;
     descOffsets.reserve(events.size());
     int i = 0;
@@ -441,14 +537,50 @@ Request ThymioDeviceManagerClientEndpoint::setNodeEventsTable(const ThymioNode& 
     return r;
 }
 
-Request ThymioDeviceManagerClientEndpoint::emitNodeEvents(const ThymioNode& node,
-                                                          const ThymioNode::VariableMap& events) {
+Request ThymioDeviceManagerClientEndpoint::emitNodeEvents(const ThymioNode& node, const ThymioNode::EventMap& events) {
     Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
     auto uuidOffset = serialize_uuid(builder, node.uuid());
-    auto eventsOffset = detail::serialize_variables(builder, events);
+    auto eventsOffset = detail::serialize_events(builder, events);
     write(wrap_fb(builder, fb::CreateSendEvents(builder, r.id(), uuidOffset, eventsOffset)));
     return r;
 }
+
+Request ThymioDeviceManagerClientEndpoint::setScratchPad(const QUuid& id, const QByteArray& data,
+                                                         fb::ProgrammingLanguage language) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, id);
+    auto data_offset = qfb::add_string(builder, data);
+    write(wrap_fb(builder,
+                  fb::CreateScratchpadUpdate(builder, r.id(), uuidOffset, 0, uuidOffset, language, data_offset)));
+    return r;
+}
+
+std::vector<std::shared_ptr<ThymioNode>> ThymioDeviceManagerClientEndpoint::nodes(const QUuid& node_or_group_id) const {
+    std::vector<std::shared_ptr<ThymioNode>> nodes;
+    for(auto&& node : m_nodes) {
+        if(node->uuid() == node_or_group_id || node->group_id() == node_or_group_id)
+            nodes.push_back(node);
+    }
+    return nodes;
+}
+
+std::shared_ptr<ThymioGroup> ThymioDeviceManagerClientEndpoint::group_from_group_id(const QUuid& id) {
+    for(auto&& node : m_nodes) {
+        if(node->group_id() == id)
+            return node->group();
+    }
+    return {};
+}
+
+std::shared_ptr<ThymioGroup> ThymioDeviceManagerClientEndpoint::group_from_id(const QUuid& id) {
+    for(auto&& node : m_nodes) {
+        if(node->group_id() == id || node->uuid() == id)
+            return node->group();
+    }
+    return {};
+}
+
 
 }  // namespace mobsya

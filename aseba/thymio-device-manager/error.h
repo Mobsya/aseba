@@ -1,6 +1,6 @@
 #pragma once
 #ifdef MOBSYA_TDM_ENABLE_USB
-#include <libusb/libusb.h>
+#    include <libusb/libusb.h>
 #endif
 #include <boost/asio/error.hpp>
 #include "utils.h"
@@ -12,6 +12,7 @@ enum class error_code {
     no_such_variable,
     incompatible_variable_type,
     invalid_aesl,
+    unsupported_language
 };
 
 class tdm_error_category : public boost::system::error_category {

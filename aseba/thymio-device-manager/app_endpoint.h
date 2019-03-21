@@ -182,20 +182,30 @@ public:
 
         mLogTrace("-> {}", EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
+            case mobsya::fb::AnyMessage::DeviceManagerShutdownRequest: {
+                if(m_local_endpoint) {
+#ifdef _WIN32
+                    std::quick_exit(0);
+#endif
+                    m_ctx.stop();
+                }
+                break;
+            }
             case mobsya::fb::AnyMessage::RequestListOfNodes: send_full_node_list(); break;
             case mobsya::fb::AnyMessage::RequestNodeAsebaVMDescription: {
                 auto req = msg.as<fb::RequestNodeAsebaVMDescription>();
                 send_aseba_vm_description(req->request_id(), req->node_id());
                 break;
             }
-            case mobsya::fb::AnyMessage::SetNodeVariables: {
-                auto vars_msg = msg.as<fb::SetNodeVariables>();
-                this->set_node_variables(vars_msg->request_id(), vars_msg->node_id(), variables(*vars_msg));
+            case mobsya::fb::AnyMessage::SetVariables: {
+                auto vars_msg = msg.as<fb::SetVariables>();
+                this->set_variables(vars_msg->request_id(), vars_msg->node_or_group_id(), variables(*vars_msg));
                 break;
             }
             case mobsya::fb::AnyMessage::RegisterEvents: {
                 auto vars_msg = msg.as<fb::RegisterEvents>();
-                this->set_node_events_table(vars_msg->request_id(), vars_msg->node_id(), events_description(*vars_msg));
+                this->set_events_table(vars_msg->request_id(), vars_msg->node_or_group_id(),
+                                       events_description(*vars_msg));
                 break;
             }
             case mobsya::fb::AnyMessage::SendEvents: {
@@ -231,7 +241,7 @@ public:
             }
             case mobsya::fb::AnyMessage::WatchNode: {
                 auto req = msg.as<fb::WatchNode>();
-                this->watch_node(req->request_id(), req->node_id(), req->info_type());
+                this->watch_node_or_group(req->request_id(), req->node_or_group_id(), req->info_type());
                 break;
             }
             case mobsya::fb::AnyMessage::SetBreakpoints: {
@@ -239,7 +249,16 @@ public:
                 this->set_breakpoints(req->request_id(), req->node_id(), breakpoints(*req));
                 break;
             }
-
+            case mobsya::fb::AnyMessage::ScratchpadUpdate: {
+                auto req = msg.as<fb::ScratchpadUpdate>();
+                if(!req->node_id()) {
+                    write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
+                    break;
+                }
+                this->update_node_scratchpad(req->request_id(), req->node_id(), req->text()->string_view(),
+                                             req->language());
+                break;
+            }
 
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
@@ -278,15 +297,35 @@ public:
         });
     }
 
-    void node_variables_changed(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
-        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map]() {
-            that->do_node_variables_changed(node, map);
+    void node_variables_changed(std::shared_ptr<aseba_node> node, const variables_map& map,
+                                const std::chrono::system_clock::time_point& timestamp) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, map, timestamp]() {
+            that->do_node_variables_changed(node, map, timestamp);
         });
     }
 
-    void node_emitted_events(std::shared_ptr<aseba_node> node, const aseba_node::event_changed_payload& payload) {
-        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, payload]() {
-            that->do_node_emitted_events(node, payload);
+    void group_variables_changed(std::shared_ptr<group> group, const variables_map& map) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), group, map]() {
+            that->do_group_variables_changed(group, map);
+        });
+    }
+
+    void node_emitted_events(std::shared_ptr<aseba_node> node, const variables_map& events,
+                             const std::chrono::system_clock::time_point& timestamp) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, events, timestamp]() {
+            that->do_node_emitted_events(node, events, timestamp);
+        });
+    }
+
+    void events_description_changed(std::shared_ptr<group> group, const events_table& events) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), group, events]() {
+            that->do_events_description_changed(group, events);
+        });
+    }
+
+    void scratchpad_changed(std::shared_ptr<group> group, const group::scratchpad& scratchpad) {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this(), group, scratchpad]() {
+            that->do_scratchpad_changed(group, scratchpad);
         });
     }
 
@@ -307,8 +346,11 @@ private:
 
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
-        nodes.emplace_back(fb::CreateNodeDirect(builder, id.fb(builder), mobsya::fb::NodeStatus(status), node->type(),
-                                                node->friendly_name().c_str(), node_capabilities(node)));
+        flatbuffers::Offset<fb::NodeId> group_id;
+        if(auto group = node->group()) {
+            group_id = group->uuid().fb(builder);
+        }
+        nodes.emplace_back(serialize_node(builder, *node, id, status));
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
@@ -318,22 +360,34 @@ private:
         }
     }
 
-    void do_node_variables_changed(std::shared_ptr<aseba_node> node, const aseba_node::variables_map& map) {
+    void do_node_variables_changed(std::shared_ptr<aseba_node> node, const variables_map& map,
+                                   const std::chrono::system_clock::time_point& timestamp) {
         if(!node)
             return;
-        write_message(serialize_changed_variables(*node, map));
+        write_message(serialize_changed_variables(*node, map, timestamp));
     }
 
-    void do_node_emitted_events(std::shared_ptr<aseba_node> node, const aseba_node::event_changed_payload& payload) {
+    void do_group_variables_changed(std::shared_ptr<group> grp, const variables_map& map) {
+        if(!grp)
+            return;
+        write_message(serialize_changed_variables(*grp, map));
+    }
+
+    void do_node_emitted_events(std::shared_ptr<aseba_node> node, const variables_map& events,
+                                const std::chrono::system_clock::time_point& timestamp) {
         if(!node)
             return;
-        variant_ns::visit(overloaded{[this, &node](const aseba_node::variables_map& map) {
-                                         write_message(serialize_events(*node, map));
-                                     },
-                                     [this, &node](const aseba_node::events_table& desc) {
-                                         write_message(serialize_events_descriptions(*node, desc));
-                                     }},
-                          payload);
+        write_message(serialize_events(*node, events, timestamp));
+    }
+
+    void do_events_description_changed(std::shared_ptr<group> group, const events_table& events) {
+        write_message(serialize_events_descriptions(*group, events));
+    }
+
+    void do_scratchpad_changed(std::shared_ptr<group> group, const group::scratchpad& scratchpad) {
+        if(!group)
+            return;
+        write_message(serialize_scratchpad(*group, scratchpad));
     }
 
     void do_node_execution_state_changed(std::shared_ptr<aseba_node> node,
@@ -343,7 +397,6 @@ private:
         write_message(serialize_execution_state(*node, state));
     }
 
-
     void send_full_node_list() {
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
@@ -352,20 +405,31 @@ private:
             const auto ptr = node.second.lock();
             if(!ptr)
                 continue;
-            nodes.emplace_back(fb::CreateNodeDirect(builder, node.first.fb(builder),
-                                                    mobsya::fb::NodeStatus(ptr->get_status()), ptr->type(),
-                                                    ptr->friendly_name().c_str(), node_capabilities(ptr)));
+            nodes.emplace_back(serialize_node(builder, *ptr, ptr->uuid(), ptr->get_status()));
         }
         auto vector_offset = builder.CreateVector(nodes);
         auto offset = CreateNodesChanged(builder, vector_offset);
         write_message(wrap_fb(builder, offset));
     }
 
-    uint64_t node_capabilities(std::shared_ptr<aseba_node> node) const {
+    auto serialize_node(flatbuffers::FlatBufferBuilder& builder, const aseba_node& n,
+                        const aseba_node_registery::node_id& id, aseba_node::status status) {
+        if(status == aseba_node::status::busy && get_locked_node(n.uuid())) {
+            status = aseba_node::status::ready;
+        }
+
+        auto fw = std::to_string(n.firwmware_version());
+        auto afw = std::to_string(n.available_firwmware_version());
+        return fb::CreateNodeDirect(builder, id.fb(builder), n.group() ? n.group()->uuid().fb(builder) : 0,
+                                    mobsya::fb::NodeStatus(status), n.type(), n.friendly_name().c_str(),
+                                    node_capabilities(n), fw.c_str(), afw.c_str());
+    }
+
+    uint64_t node_capabilities(const aseba_node& node) const {
         uint64_t caps = 0;
         if(m_local_endpoint) {
             caps |= uint64_t(fb::NodeCapability::ForceResetAndStop);
-            if(node->can_be_renamed())
+            if(node.can_be_renamed())
                 caps |= uint64_t(fb::NodeCapability::Rename);
         }
         return caps;
@@ -382,7 +446,7 @@ private:
 
     void rename_node(uint32_t request_id, const aseba_node_registery::node_id& id, const std::string& new_name) {
         auto n = registery().node_from_id(id);
-        if(!n || !(node_capabilities(n) & uint64_t(fb::NodeCapability::Rename))) {
+        if(!n || !(node_capabilities(*n) & uint64_t(fb::NodeCapability::Rename))) {
             mLogWarn("rename_node: node {} does not exist or can not be renamed", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
@@ -426,7 +490,32 @@ private:
         }
     }
 
-    void set_node_variables(uint32_t request_id, const aseba_node_registery::node_id& id, aseba_node::variables_map m) {
+    void set_variables(uint32_t request_id, const aseba_node_registery::node_id& id, variables_map m) {
+        auto n = get_locked_node(id);
+        if(n) {
+            set_node_variables(request_id, id, m);
+        } else {
+            set_group_variables(request_id, id, m);
+        }
+    }
+
+    void set_group_variables(uint32_t request_id, const aseba_node_registery::node_id& id, variables_map m) {
+        auto grp = get_group(id);
+        if(!grp) {
+            mLogWarn("set_group_variables: no such group", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto err = grp->set_shared_variables(m);
+        if(err) {
+            mLogWarn("set_group_variables: invalid variables", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
+            return;
+        }
+        write_message(create_ack_response(request_id));
+    }
+
+    void set_node_variables(uint32_t request_id, const aseba_node_registery::node_id& id, variables_map m) {
         auto n = get_locked_node(id);
         if(!n) {
             mLogWarn("set_node_variables: node {} not locked", id);
@@ -440,15 +529,14 @@ private:
         }
     }
 
-    void set_node_events_table(uint32_t request_id, const aseba_node_registery::node_id& id,
-                               aseba_node::events_table events) {
-        auto n = get_locked_node(id);
-        if(!n) {
-            mLogWarn("set_node_events_table: node {} not locked", id);
+    void set_events_table(uint32_t request_id, const aseba_node_registery::node_id& id, events_table events) {
+        auto g = get_group(id);
+        if(!g) {
+            mLogWarn("set_events_table: {} is not a group associated to a locked node", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        auto err = n->set_node_events_table(events);
+        auto err = g->set_events_table(events);
         if(err) {
             mLogWarn("set_node_events_table: invalid events", id);
             write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
@@ -457,23 +545,35 @@ private:
         }
     }
 
-    void emit_events(uint32_t request_id, const aseba_node_registery::node_id& id, aseba_node::variables_map m) {
-        auto n = get_locked_node(id);
-        if(!n) {
-            mLogWarn("emits_events: node {} not locked", id);
+    void emit_events(uint32_t request_id, const aseba_node_registery::node_id& id, group::properties_map m) {
+        auto g = get_group(id);
+        if(!g) {
+            mLogWarn("emits_events: {} is not a group associated to a locked node", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        auto err = n->emit_events(m, create_device_write_completion_cb(request_id));
-        if(err) {
-            mLogWarn("emits_events: invalid variables", id);
-            write_message(create_error_response(request_id, fb::ErrorType::unsupported_variable_type));
-        }
+        g->emit_events(m, create_device_write_completion_cb(request_id));
     }
 
     void compile_and_send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
                                   std::string program, fb::CompilationOptions opts) {
         auto n = get_locked_node(id);
+        if(!n) {
+            auto g = get_group(id);
+            if(g) {
+                auto ec = g->load_code(program, language);
+                if(ec) {
+                    write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
+                    return;
+                }
+                for(auto&& s : g->scratchpads()) {
+                    do_scratchpad_changed(g, s);
+                }
+
+                write_message(create_ack_response(request_id));
+                return;
+            }
+        }
         if(!n) {
             mLogWarn("send_aseba_code: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
@@ -504,7 +604,7 @@ private:
         auto n = get_locked_node(id);
         if(!n && cmd == fb::VMExecutionStateCommand::Stop) {
             n = registery().node_from_id(id);
-            if(n && (node_capabilities(n) & uint64_t(fb::NodeCapability::Rename)))
+            if(n && !(node_capabilities(*n) & uint64_t(fb::NodeCapability::ForceResetAndStop)))
                 n = {};
         }
         if(!n) {
@@ -536,41 +636,106 @@ private:
         n->set_breakpoints(breakpoints, callback);
     }
 
-    void watch_node(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
-        auto node = registery().node_from_id(id);
-        if(!node) {
+    void update_node_scratchpad(uint32_t request_id, node_id id, std::string_view content,
+                                fb::ProgrammingLanguage language) {
+        const auto n = get_locked_node(id);
+        std::shared_ptr<group> g;
+        if(n) {
+            g = n->group();
+        }
+        if(!g) {
+            mLogWarn("update_node_scratchpad: node {} not locked", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        if(flags & uint32_t(fb::WatchableInfo::Variables)) {
-            if(!m_watch_nodes[fb::WatchableInfo::Variables].count(id)) {
-                auto variables = node->variables();
-                this->node_variables_changed(node, variables);
+        g->set_node_scratchpad(id, content, language);
+        write_message(create_ack_response(request_id));
+    }
+
+    void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
+        auto group = registery().group_from_id(id);
+        auto node = registery().node_from_id(id);
+        if(!node && !group) {
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        if(group &&
+           ((flags & uint32_t(fb::WatchableInfo::SharedVariables)) ||
+            (flags & uint32_t(fb::WatchableInfo::SharedEventsDescription)) ||
+            (flags & uint32_t(fb::WatchableInfo::Scratchpads)))) {
+
+            if(flags & uint32_t(fb::WatchableInfo::SharedVariables)) {
+                if(!m_watch_nodes[fb::WatchableInfo::SharedVariables].count(id)) {
+                    auto variables = group->shared_variables();
+                    this->group_variables_changed(group, variables);
+                    m_watch_nodes[fb::WatchableInfo::SharedVariables][id] = group->connect_to_variables_changes(
+                        std::bind(&application_endpoint::group_variables_changed, this, std::placeholders::_1,
+                                  std::placeholders::_2));
+                } else if(group->uuid() == id) {
+                    m_watch_nodes[fb::WatchableInfo::SharedVariables].erase(id);
+                }
             }
-            m_watch_nodes[fb::WatchableInfo::Variables][id] = node->connect_to_variables_changes(std::bind(
-                &application_endpoint::node_variables_changed, this, std::placeholders::_1, std::placeholders::_2));
-        } else {
-            m_watch_nodes[fb::WatchableInfo::Variables].erase(id);
+
+            if(flags & uint32_t(fb::WatchableInfo::SharedEventsDescription)) {
+                if(!m_watch_nodes[fb::WatchableInfo::SharedEventsDescription].count(id)) {
+                    auto events = group->get_events_table();
+                    this->events_description_changed(group, events);
+
+                    m_watch_nodes[fb::WatchableInfo::SharedEventsDescription][id] =
+                        group->connect_to_events_description_changes(
+                            std::bind(&application_endpoint::events_description_changed, this, std::placeholders::_1,
+                                      std::placeholders::_2));
+                } else if(group->uuid() == id) {
+                    m_watch_nodes[fb::WatchableInfo::SharedEventsDescription].erase(id);
+                }
+            }
+
+            if(flags & uint32_t(fb::WatchableInfo::Scratchpads)) {
+                if(!m_watch_nodes[fb::WatchableInfo::Scratchpads].count(id)) {
+                    m_watch_nodes[fb::WatchableInfo::Scratchpads][id] = group->connect_to_scratchpad_updates(std::bind(
+                        &application_endpoint::scratchpad_changed, this, std::placeholders::_1, std::placeholders::_2));
+
+                    for(auto&& s : group->scratchpads()) {
+                        this->scratchpad_changed(group, s);
+                    }
+
+
+                } else if(group->uuid() == id) {
+                    m_watch_nodes[fb::WatchableInfo::Scratchpads].erase(id);
+                }
+            }
         }
+        if(node) {
+            if(flags & uint32_t(fb::WatchableInfo::Variables)) {
+                if(!m_watch_nodes[fb::WatchableInfo::Variables].count(id)) {
+                    auto variables = node->variables();
+                    this->node_variables_changed(node, variables, std::chrono::system_clock::now());
+                }
+                m_watch_nodes[fb::WatchableInfo::Variables][id] = node->connect_to_variables_changes(
+                    std::bind(&application_endpoint::node_variables_changed, this, std::placeholders::_1,
+                              std::placeholders::_2, std::placeholders::_3));
+            } else {
+                m_watch_nodes[fb::WatchableInfo::Variables].erase(id);
+            }
 
-        if(flags & uint32_t(fb::WatchableInfo::Events)) {
-            m_watch_nodes[fb::WatchableInfo::Events][id] = node->connect_to_events(std::bind(
-                &application_endpoint::node_emitted_events, this, std::placeholders::_1, std::placeholders::_2));
-            this->node_emitted_events(node, node->events_description());
-        } else {
-            m_watch_nodes[fb::WatchableInfo::Events].erase(id);
+            if(flags & uint32_t(fb::WatchableInfo::Events)) {
+                m_watch_nodes[fb::WatchableInfo::Events][id] = node->connect_to_events(
+                    std::bind(&application_endpoint::node_emitted_events, this, std::placeholders::_1,
+                              std::placeholders::_2, std::placeholders::_3));
+            } else {
+                m_watch_nodes[fb::WatchableInfo::Events].erase(id);
+            }
+
+            if(flags & uint32_t(fb::WatchableInfo::VMExecutionState)) {
+                m_watch_nodes[fb::WatchableInfo::VMExecutionState][id] = node->connect_to_execution_state_changes(
+                    std::bind(&application_endpoint::node_execution_state_changed, this, std::placeholders::_1,
+                              std::placeholders::_2));
+                this->node_execution_state_changed(node, node->execution_state());
+
+            } else {
+                m_watch_nodes[fb::WatchableInfo::VMExecutionState].erase(id);
+            }
         }
-
-        if(flags & uint32_t(fb::WatchableInfo::VMExecutionState)) {
-            m_watch_nodes[fb::WatchableInfo::VMExecutionState][id] =
-                node->connect_to_execution_state_changes(std::bind(&application_endpoint::node_execution_state_changed,
-                                                                   this, std::placeholders::_1, std::placeholders::_2));
-            this->node_execution_state_changed(node, node->execution_state());
-
-        } else {
-            m_watch_nodes[fb::WatchableInfo::VMExecutionState].erase(id);
-        }
-
 
         write_message(create_ack_response(request_id));
     }
@@ -584,6 +749,21 @@ private:
         if(it == std::end(m_locked_nodes))
             return {};
         return it->second.lock();
+    }
+
+    std::shared_ptr<group> get_group(const aseba_node_registery::node_id& id) const {
+        auto it = std::find_if(std::begin(m_locked_nodes), std::end(m_locked_nodes), [&id](const auto& pair) {
+            if(id == pair.first)
+                return true;
+            auto locked = pair.second.lock();
+            return locked && locked->group() && locked->group()->uuid() == id;
+        });
+        if(it == std::end(m_locked_nodes))
+            return {};
+        auto locked = it->second.lock();
+        if(!locked)
+            return {};
+        return locked->group();
     }
 
     /*
@@ -634,7 +814,7 @@ private:
         flatbuffers::FlatBufferBuilder builder;
         write_message(wrap_fb(builder,
                               fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version,
-                                                            tdm::maxAppEndPointMessageSize)));
+                                                            tdm::maxAppEndPointMessageSize, 0, m_local_endpoint)));
 
         // the client do not have a compatible protocol version, bailing out
         if(m_protocol_version == 0) {

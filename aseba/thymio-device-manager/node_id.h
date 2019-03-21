@@ -8,6 +8,7 @@
 namespace mobsya {
 class node_id : public boost::uuids::uuid {
 public:
+    node_id() = default;
     node_id(const boost::uuids::uuid& id) : uuid(id) {}
     node_id(const mobsya::fb::NodeId* const id) {
         const flatbuffers::Vector<uint8_t>* d = id->id();

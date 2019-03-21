@@ -83,10 +83,12 @@ tl::expected<void, boost::system::error_code> usb_device_service::open(implement
         }
     }
 
-    libusb_config_descriptor* desc;
-    if(auto r = libusb_get_active_config_descriptor(impl.device, &desc)) {
+    libusb_config_descriptor* desc_ = nullptr;
+    if(auto r = libusb_get_active_config_descriptor(impl.device, &desc_)) {
         return usb::make_unexpected(r);
     }
+    auto desc = std::unique_ptr<libusb_config_descriptor, decltype(&libusb_free_config_descriptor)>(
+        desc_, &libusb_free_config_descriptor);
     for(int i = 0; i < desc->bNumInterfaces; i++) {
         const auto interface = desc->interface[i];
         for(int s = 0; s < interface.num_altsetting; s++) {
@@ -153,12 +155,19 @@ void usb_device_service::set_data_terminal_ready(implementation_type& impl, bool
     send_control_transfer(impl);
 }
 
+void usb_device_service::set_rts(implementation_type& impl, bool rts) {
+    impl.rts = rts;
+    send_control_transfer(impl);
+}
+
 bool usb_device_service::send_control_transfer(implementation_type& impl) {
     if(!is_open(impl))
         return false;
     uint16_t v = 0;
     if(impl.dtr)
         v |= 0x01;
+    if(impl.rts)
+        v |= 0x02;
     return libusb_control_transfer(impl.handle, 0x21, 0x22, v, 0, nullptr, 0, 0) == LIBUSB_SUCCESS;
 }
 
@@ -250,6 +259,10 @@ void usb_device::set_parity(parity v) {
 
 void usb_device::set_data_terminal_ready(bool v) {
     this->get_service().set_data_terminal_ready(this->get_implementation(), v);
+}
+
+void usb_device::set_rts(bool rts) {
+    this->get_service().set_rts(this->get_implementation(), rts);
 }
 
 

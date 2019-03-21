@@ -86,10 +86,6 @@ MainWindow::MainWindow(const mobsya::ThymioDeviceManagerClient& client, const QV
     connect(nodes, &NodeTabsManager::tabAdded, this, &MainWindow::tabAdded);
     connect(nodes, &NodeTabsManager::nodeStatusChanged, this, &MainWindow::regenerateToolsMenus);
 
-    // create help viwer
-    helpViewer.setupWidgets();
-    helpViewer.setupConnections();
-
     // create config dialog + read settings on-disk
     ConfigDialog::init(this);
 
@@ -138,12 +134,9 @@ bool MainWindow::newFile() {
         // clear content
         clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            Q_ASSERT(tab);
+        for(auto&& tab : nodes->devicesTabs()) {
             tab->editor->clear();
         }
-
         // reset opened file name
         clearOpenedFileName(false);
         return true;
@@ -155,6 +148,10 @@ void MainWindow::openFile(const QString& path) {
     // make sure we do not loose changes
     if(askUserBeforeDiscarding() == false)
         return;
+
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->editor->clear();
+    }
 
     // open the file
     QString fileName = path;
@@ -185,122 +182,11 @@ void MainWindow::openFile(const QString& path) {
     if(!file.open(QFile::ReadOnly))
         return;
 
-    // load the document
-    QDomDocument document(QStringLiteral("aesl-source"));
-    QString errorMsg;
-    int errorLine;
-    int errorColumn;
-    if(document.setContent(&file, false, &errorMsg, &errorLine, &errorColumn)) {
-        // remove event and constant definitions
-        // eventsDescriptionsModel->clear();
-        // constantsDefinitionsModel->clear();
-        // delete all absent node tabs
-        clearDocumentSpecificTabs();
-        // we must only have NodeTab* left, clear content of editors in tabs
-        for(int i = 0; i < nodes->count(); i++) {
-            auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-            Q_ASSERT(tab);
-            tab->editor->clear();
-        }
+    auto groups = nodes->groups();
+    if(groups.size() != 1)
+        return;
 
-        // build list of tabs filled from file to be loaded
-        QSet<int> filledList;
-        QDomNode domNode = document.documentElement().firstChild();
-        while(!domNode.isNull()) {
-            if(domNode.isElement()) {
-                QDomElement element = domNode.toElement();
-                /*if(element.tagName() == "node") {
-                    bool prefered;
-                    NodeTab* tab = getTabFromName(element.attribute("name"),
-                                                  element.attribute("nodeId", nullptr).toUInt(), &prefered);
-                    if(prefered) {
-                        const int index(nodes->indexOf(tab));
-                        assert(index >= 0);
-                        filledList.insert(index);
-                    }
-                }*/
-            }
-            domNode = domNode.nextSibling();
-        }
-
-        // load file
-        int noNodeCount = 0;
-        actualFileName = fileName;
-        domNode = document.documentElement().firstChild();
-        while(!domNode.isNull()) {
-            if(domNode.isElement()) {
-                QDomElement element = domNode.toElement();
-                if(element.tagName() == QLatin1String("node")) {
-                    // load plugins xml data
-
-                    // get text
-                    QString text;
-                    for(QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling()) {
-                        QDomText t = n.toText();
-                        if(!t.isNull())
-                            text += t.data();
-                    }
-
-                    // reconstruct nodes
-                    bool prefered;
-                    const QString nodeName(element.attribute(QStringLiteral("name")));
-                    const unsigned nodeId(element.attribute(QStringLiteral("nodeId"), nullptr).toUInt());
-                    NodeTab* tab = nullptr;  // getTabFromName(nodeName, nodeId, &prefered, &filledList);
-                    if(tab) {
-                        // matching tab name
-                        if(prefered) {
-                            // the node is the prefered one, fill now
-                            tab->editor->setPlainText(text);
-                            // note that the node is already marked in filledList
-                        } else {
-                            const int index(nodes->indexOf(tab));
-                            // the node is not filled, fill now
-                            tab->editor->setPlainText(text);
-                            filledList.insert(index);
-                        }
-                    } else {
-                        // no matching name or no free slot, create an absent tab
-                        // nodes->addTab(new AbsentNodeTab(nodeId, nodeName, text, savedPlugins),
-                        //              nodeName + tr(" (not available)"));
-                        noNodeCount++;
-                    }
-                } /*else if(element.tagName() == "event") {
-                    const QString eventName(element.attribute("name"));
-                    const unsigned eventSize(element.attribute("size").toUInt());
-                    eventsDescriptionsModel->addNamedValue(
-                        NamedValue(eventName.toStdWString(), std::min(unsigned(ASEBA_MAX_EVENT_ARG_SIZE), eventSize)));
-                } else if(element.tagName() == "constant") {
-                    constantsDefinitionsModel->addNamedValue(
-                        NamedValue(element.attribute("name").toStdWString(), element.attribute("value").toInt()));
-                } else if(element.tagName() == "keywords") {
-                    if(element.attribute("flag") == "true")
-                        showKeywordsAct->setChecked(true);
-                    else
-                        showKeywordsAct->setChecked(false);
-                }*/
-            }
-            domNode = domNode.nextSibling();
-        }
-
-        // check if there was some matching problem
-        if(noNodeCount)
-            QMessageBox::warning(this, tr("Loading"),
-                                 tr("%0 scripts have no corresponding nodes in the current network "
-                                    "and have not been loaded.")
-                                     .arg(noNodeCount));
-
-        // update recent files
-        updateRecentFiles(fileName);
-        regenerateOpenRecentMenu();
-
-        updateWindowTitle();
-    } else {
-        QMessageBox::warning(
-            this, tr("Loading"),
-            tr("Error in XML source file: %0 at line %1, column %2").arg(errorMsg).arg(errorLine).arg(errorColumn));
-    }
-
-    file.close();
+    groups.front()->loadAesl(file.readAll());
 }
 
 void MainWindow::openRecentFile() {
@@ -313,122 +199,86 @@ bool MainWindow::save() {
 }
 
 bool MainWindow::saveFile(const QString& previousFileName) {
-    return false;
+
+    const auto groups = nodes->groups();
+    if(groups.size() != 1)
+        return false;
+    const auto group = groups.front();
+
+    QString fileName = previousFileName;
+
+    if(fileName.isEmpty())
+        fileName = QFileDialog::getSaveFileName(
+            this, tr("Save Script"),
+            actualFileName.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) :
+                                       actualFileName,
+            "Aseba scripts (*.aesl)");
+
+    if(fileName.isEmpty())
+        return false;
+
+    if(fileName.lastIndexOf(".") < 0)
+        fileName += ".aesl";
+
+    QFile file(fileName);
+    if(!file.open(QFile::WriteOnly | QFile::Truncate))
+        return false;
+
+    actualFileName = fileName;
+    updateRecentFiles(fileName);
+
+    // initiate DOM tree
+    QDomDocument document("aesl-source");
+    QDomElement root = document.createElement("network");
+    document.appendChild(root);
+
+    root.appendChild(document.createTextNode("\n\n\n"));
+    root.appendChild(document.createComment("list of global events"));
 
 
-    /*    QString fileName = previousFileName;
+    for(auto&& e : group->eventsDescriptions()) {
+        QDomElement element = document.createElement("event");
+        element.setAttribute("name", e.name());
+        element.setAttribute("size", e.size());
+        root.appendChild(element);
+    }
 
-        if(fileName.isEmpty())
-            fileName = QFileDialog::getSaveFileName(
-                this, tr("Save Script"),
-                actualFileName.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) :
-                                           actualFileName,
-                "Aseba scripts (*.aesl)");
-
-        if(fileName.isEmpty())
-            return false;
-
-        if(fileName.lastIndexOf(".") < 0)
-            fileName += ".aesl";
-
-        QFile file(fileName);
-        if(!file.open(QFile::WriteOnly | QFile::Truncate))
-            return false;
-
-        actualFileName = fileName;
-        updateRecentFiles(fileName);
-
-        // initiate DOM tree
-        QDomDocument document("aesl-source");
-        QDomElement root = document.createElement("network");
-        document.appendChild(root);
-
-        root.appendChild(document.createTextNode("\n\n\n"));
-        root.appendChild(document.createComment("list of global events"));
-
-        // events
-        for(size_t i = 0; i < commonDefinitions.events.size(); i++) {
-            QDomElement element = document.createElement("event");
-            element.setAttribute("name", QString::fromStdWString(commonDefinitions.events[i].name));
-            element.setAttribute("size", QString::number(commonDefinitions.events[i].value));
-            root.appendChild(element);
+    for(auto&& v : group->sharedVariables().toStdMap()) {
+        QDomElement element = document.createElement("constant");
+        element.setAttribute("name", v.first);
+        element.setAttribute("value", v.second.value().toInt());
+        root.appendChild(element);
+    }
+    // source code
+    for(auto&& tab : nodes->devicesTabs()) {
+        QString nodeName;
+        const auto thymio = tab->thymio();
+        if(thymio) {
+            nodeName = thymio->name();
         }
 
         root.appendChild(document.createTextNode("\n\n\n"));
-        root.appendChild(document.createComment("list of constants"));
+        root.appendChild(document.createComment(QString("node %0").arg(nodeName)));
 
-        // constants
-        for(size_t i = 0; i < commonDefinitions.constants.size(); i++) {
-            QDomElement element = document.createElement("constant");
-            element.setAttribute("name", QString::fromStdWString(commonDefinitions.constants[i].name));
-            element.setAttribute("value", QString::number(commonDefinitions.constants[i].value));
-            root.appendChild(element);
-        }
+        QDomElement element = document.createElement("node");
+        element.setAttribute("name", nodeName);
+        if(thymio)
+            element.setAttribute("nodeId", thymio->uuid().toString());
+        QDomText text = document.createCDATASection(tab->editor->toPlainText());
+        element.appendChild(text);
+        root.appendChild(element);
+    }
+    root.appendChild(document.createTextNode("\n\n\n"));
 
-        // keywords
-        root.appendChild(document.createTextNode("\n\n\n"));
-        root.appendChild(document.createComment("show keywords state"));
+    QTextStream out(&file);
+    document.save(out, 0);
 
-        QDomElement keywords = document.createElement("keywords");
-        if(showKeywordsAct->isChecked())
-            keywords.setAttribute("flag", "true");
-        else
-            keywords.setAttribute("flag", "false");
-        root.appendChild(keywords);
+    // sourceModified = false;
+    // constantsDefinitionsModel->clearWasModified();
+    // eventsDescriptionsModel->clearWasModified();
+    updateWindowTitle();
 
-        // source code
-        for(int i = 0; i < nodes->count(); i++) {
-            const auto* tab = dynamic_cast<const ScriptTab*>(nodes->widget(i));
-            if(tab) {
-                QString nodeName;
-
-                const auto* nodeTab = dynamic_cast<const NodeTab*>(tab);
-                if(nodeTab)
-                    nodeName = target->getName(nodeTab->nodeId());
-
-                const auto* absentNodeTab = dynamic_cast<const AbsentNodeTab*>(tab);
-                if(absentNodeTab)
-                    nodeName = absentNodeTab->name;
-
-                const QString& nodeContent = tab->editor->toPlainText();
-                ScriptTab::SavedPlugins savedPlugins(tab->savePlugins());
-                // is there something to save?
-                if(!nodeContent.isEmpty() || !savedPlugins.isEmpty()) {
-                    root.appendChild(document.createTextNode("\n\n\n"));
-                    root.appendChild(document.createComment(QString("node %0").arg(nodeName)));
-
-                    QDomElement element = document.createElement("node");
-                    element.setAttribute("name", nodeName);
-                    element.setAttribute("nodeId", tab->nodeId());
-                    QDomText text = document.createTextNode(nodeContent);
-                    element.appendChild(text);
-                    if(!savedPlugins.isEmpty()) {
-                        QDomElement plugins = document.createElement("toolsPlugins");
-                        for(ScriptTab::SavedPlugins::const_iterator it(savedPlugins.begin()); it != savedPlugins.end();
-                            ++it) {
-                            const NodeToolInterface::SavedContent content(*it);
-                            QDomElement plugin(document.createElement(content.first));
-                            plugin.appendChild(document.importNode(content.second.documentElement(), true));
-                            plugins.appendChild(plugin);
-                        }
-                        element.appendChild(plugins);
-                    }
-                    root.appendChild(element);
-                }
-            }
-        }
-        root.appendChild(document.createTextNode("\n\n\n"));
-
-        QTextStream out(&file);
-        document.save(out, 0);
-
-        sourceModified = false;
-        constantsDefinitionsModel->clearWasModified();
-        eventsDescriptionsModel->clearWasModified();
-        updateWindowTitle();
-
-        return true;
-    */
+    return true;
 }
 
 void MainWindow::exportMemoriesContent() {
@@ -442,35 +292,29 @@ void MainWindow::exportMemoriesContent() {
 
     QTextStream out(&file);
 
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab) {
-            auto thymio = tab->thymio();
-            if(!thymio)
-                continue;
+    for(auto&& tab : nodes->devicesTabs()) {
+        auto thymio = tab->thymio();
+        if(!thymio)
+            continue;
 
-            const QString nodeName = thymio->name();
-            const QVariantMap variables = tab->getVariables();
-            for(auto it = variables.begin(); it != variables.end(); ++it) {
-                out << nodeName << "." << it.key() << " "
-                    << QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::JsonFormat::Compact);
-                out << "\n";
-            }
+        const QString nodeName = thymio->name();
+        const QVariantMap variables = tab->getVariables();
+        for(auto it = variables.begin(); it != variables.end(); ++it) {
+            out << nodeName << "." << it.key() << " "
+                << QJsonDocument::fromVariant(it.value()).toJson(QJsonDocument::JsonFormat::Compact);
+            out << "\n";
         }
     }
 }
 
 void MainWindow::copyAll() {
     QString toCopy;
-    for(int i = 0; i < nodes->count(); i++) {
-        const NodeTab* nodeTab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(!nodeTab)
-            continue;
-        auto thymio = nodeTab->thymio();
+    for(auto&& tab : nodes->devicesTabs()) {
+        auto thymio = tab->thymio();
         if(!thymio)
             continue;
         toCopy += QString("# node %0\n").arg(thymio->name());
-        toCopy += nodeTab->editor->toPlainText();
+        toCopy += tab->editor->toPlainText();
         toCopy += "\n\n";
     }
     QApplication::clipboard()->setText(toCopy);
@@ -502,9 +346,7 @@ void MainWindow::uncommentTriggered() {
 }
 
 void MainWindow::showLineNumbersChanged(bool state) {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        Q_ASSERT(tab);
+    for(auto&& tab : nodes->devicesTabs()) {
         tab->linenumbers->showLineNumbers(state);
     }
     ConfigDialog::setShowLineNumbers(state);
@@ -556,42 +398,32 @@ void MainWindow::clearAllBreakpoints() {
 }
 
 void MainWindow::resetAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->reset();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->reset();
     }
 }
 
 void MainWindow::runAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->run();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->run();
     }
 }
 
 void MainWindow::pauseAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->run();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->run();
     }
 }
 
 void MainWindow::stopAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->reset();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->reset();
     }
 }
 
 void MainWindow::clearAllExecutionError() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->clearExecutionErrors();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->clearExecutionErrors();
     }
     logger->setStyleSheet(QLatin1String(""));
 }
@@ -667,45 +499,33 @@ void MainWindow::compilationMessagesWasHidden() {
 }
 
 void MainWindow::showMemoryUsage(bool show) {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->showMemoryUsage(show);
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->showMemoryUsage(show);
     }
     ConfigDialog::setShowMemoryUsage(show);
 }
 
 
 void MainWindow::recompileAll() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->compileCodeOnTarget();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->compileCodeOnTarget();
     }
 }
 
 void MainWindow::writeAllBytecodes() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->writeProgramToDeviceMemory();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->writeProgramToDeviceMemory();
     }
 }
 
 void MainWindow::rebootAllNodes() {
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            tab->reboot();
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->reboot();
     }
 }
 
 void MainWindow::sourceChanged() {
     updateWindowTitle();
-}
-
-void MainWindow::showUserManual() {
-    helpViewer.showHelp(HelpViewer::USERMANUAL);
 }
 
 void MainWindow::clearDocumentSpecificTabs() {
@@ -750,8 +570,6 @@ void MainWindow::setupWidgets() {
     findDialog = new FindDialog(this);
     findDialog->setWindowFlag(Qt::Popup);
     connect(this, &MainWindow::MainWindowClosed, findDialog, &QWidget::close);
-
-    connect(this, &MainWindow::MainWindowClosed, &helpViewer, &QWidget::close);
 }
 
 void MainWindow::setupConnections() {
@@ -761,8 +579,7 @@ void MainWindow::setupConnections() {
     connect(ConfigDialog::getInstance(), &ConfigDialog::settingsChanged, this, &MainWindow::applySettings);
 
     // global actions
-    connect(loadAllAct, SIGNAL(triggered()), SLOT(loadAll()));
-    connect(resetAllAct, &QAction::triggered, this, &MainWindow::resetAll);
+    connect(stopAllAct, &QAction::triggered, this, &MainWindow::stopAll);
     connect(runAllAct, &QAction::triggered, this, &MainWindow::runAll);
     connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
 }
@@ -795,15 +612,14 @@ void MainWindow::regenerateToolsMenus() {
     writeBytecodeMenu->clear();
     rebootMenu->clear();
     unsigned activeVMCount(0);
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = qobject_cast<NodeTab*>(nodes->widget(i));
-        if(tab && tab->thymio() && tab->thymio()->status() == mobsya::ThymioNode::Status::Ready) {
+    for(auto&& tab : nodes->devicesTabs()) {
+        if(tab->thymio() && tab->thymio()->status() == mobsya::ThymioNode::Status::Ready) {
             QAction* act = writeBytecodeMenu->addAction(tr("...inside %0").arg(tab->thymio()->name()), tab,
                                                         &NodeTab::writeProgramToDeviceMemory);
             connect(tab, SIGNAL(uploadReadynessChanged(bool)), act, SLOT(setEnabled(bool)));
             rebootMenu->addAction(tr("...%0").arg(tab->thymio()->name()), tab, SLOT(reboot()));
-            ++activeVMCount;
         }
+        ++activeVMCount;
     }
     writeBytecodeMenu->addSeparator();
     writeAllBytecodesAct = writeBytecodeMenu->addAction(tr("...inside all nodes"), this, SLOT(writeAllBytecodes()));
@@ -813,9 +629,6 @@ void MainWindow::regenerateToolsMenus() {
 }
 
 void MainWindow::generateHelpMenu() {
-    helpMenu->addAction(tr("&User Manual..."), this, SLOT(showUserManual()), QKeySequence::HelpContents);
-    helpMenu->addSeparator();
-
     helpMenuTargetSpecificSeparator = helpMenu->addSeparator();
     helpMenu->addAction(tr("Web site Aseba..."), this, SLOT(openToUrlFromAction()))
         ->setData(QUrl(tr("http://aseba.wikidot.com/en:start")));
@@ -843,10 +656,8 @@ void MainWindow::regenerateHelpMenu() {
     // add back target-specific actions
     using ProductIds = std::set<int>;
     ProductIds productIds;
-    for(int i = 0; i < nodes->count(); i++) {
-        auto* tab = dynamic_cast<NodeTab*>(nodes->widget(i));
-        if(tab)
-            productIds.insert(tab->productId());
+    for(auto&& tab : nodes->devicesTabs()) {
+        productIds.insert(tab->productId());
     }
     for(auto it(productIds.begin()); it != productIds.end(); ++it) {
         QAction* action;
@@ -1017,12 +828,8 @@ void MainWindow::setupMenu() {
 #endif  // Q_WS_MAC
     menuBar()->addMenu(viewMenu);
 
-    // Debug actions
-    loadAllAct = new QAction(QIcon(":/images/upload.png"), tr("&Load all"), this);
-    loadAllAct->setShortcut(tr("F7", "Load|Load all"));
-
-    resetAllAct = new QAction(QIcon(":/images/reset.png"), tr("&Reset all"), this);
-    resetAllAct->setShortcut(tr("F8", "Debug|Reset all"));
+    stopAllAct = new QAction(QIcon(":/images/stop.png"), tr("&Stop all"), this);
+    stopAllAct->setShortcut(tr("F8", "Debug|Stop all"));
 
     runAllAct = new QAction(QIcon(":/images/play.png"), tr("Ru&n all"), this);
     runAllAct->setShortcut(tr("F9", "Debug|Run all"));
@@ -1034,8 +841,7 @@ void MainWindow::setupMenu() {
     globalToolBar = addToolBar(tr("Debug"));
     globalToolBar->setObjectName(QStringLiteral("debug toolbar"));
     globalToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    globalToolBar->addAction(loadAllAct);
-    globalToolBar->addAction(resetAllAct);
+    globalToolBar->addAction(stopAllAct);
     globalToolBar->addAction(runAllAct);
     globalToolBar->addAction(pauseAllAct);
 
@@ -1053,8 +859,7 @@ void MainWindow::setupMenu() {
     debugMenu->addAction(toggleBreakpointAct);
     debugMenu->addAction(clearAllBreakpointsAct);
     debugMenu->addSeparator();
-    debugMenu->addAction(loadAllAct);
-    debugMenu->addAction(resetAllAct);
+    debugMenu->addAction(stopAllAct);
     debugMenu->addAction(runAllAct);
     debugMenu->addAction(pauseAllAct);
 
@@ -1183,5 +988,4 @@ void MainWindow::clearOpenedFileName(bool isModified) {
     updateWindowTitle();
 }
 
-/*@}*/
 }  // namespace Aseba

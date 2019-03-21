@@ -17,7 +17,7 @@ void serial_server::accept() {
         d.set_option(boost::asio::serial_port::baud_rate(115200));
         d.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
         d.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
-        EscapeCommFunction(d.native_handle(), SETDTR);
+        d.set_data_terminal_ready(true);
         session->set_endpoint_type(aseba_endpoint::endpoint_type::thymio);
         session->set_endpoint_name(d.device_name());
         session->start();

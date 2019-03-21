@@ -9,10 +9,13 @@
 #ifdef QT_QML_DEBUG
 #    include <QQmlDebuggingEnabler>
 #endif
+#include <aseba/common/consts.h>
 #include <aseba/qt-thymio-dm-client-lib/thymio-api.h>
 #include <QtSingleApplication>
+#include <qtwebengineglobal.h>
 #include "launcher.h"
 #include "tdmsupervisor.h"
+#include "launcherwindow.h"
 
 int main(int argc, char** argv) {
 
@@ -43,6 +46,7 @@ int main(int argc, char** argv) {
         qWarning("Already launched, exiting");
         return 0;
     }
+    app.setQuitOnLastWindowClosed(false);
 
     mobsya::register_qml_types();
 
@@ -64,8 +68,9 @@ int main(int argc, char** argv) {
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 
-    QQuickWidget w;
+    mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
@@ -74,7 +79,20 @@ int main(int argc, char** argv) {
     w.setMinimumSize(1024, 640);
     w.showNormal();
 
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&client]() {
+        auto windows = qApp->allWindows();
+        for(auto w : windows) {
+            if(w->isVisible() && qobject_cast<QQuickWindow*>(w))
+                return;
+        }
+        client.requestDeviceManagersShutdown();
+        QTimer::singleShot(1000, qApp, &QCoreApplication::quit);
+    });
+
     app.setActivationWindow(&w, true);
+    app.setQuitOnLastWindowClosed(false);
+
+    QtWebEngine::initialize();
 
     return app.exec();
 }

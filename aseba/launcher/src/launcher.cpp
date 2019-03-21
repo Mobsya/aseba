@@ -1,6 +1,6 @@
 #include "launcher.h"
 #include <QStandardPaths>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
@@ -8,6 +8,12 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QProcess>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QQuickWindow>
+#include <QStyle>
+#include <QScreen>
+#include <QFileDialog>
 
 namespace mobsya {
 
@@ -42,23 +48,50 @@ bool Launcher::launch_process(const QString& program, const QStringList& args) c
 }
 
 bool Launcher::openUrl(const QUrl& url) const {
-    QTemporaryFile t(QDir::tempPath() + "/XXXXXX.html");
-    t.setAutoRemove(false);
-    if(!t.open())
-        return false;
+    QQmlApplicationEngine* engine = new QQmlApplicationEngine;
+    engine->rootContext()->setContextProperty("Utils", (QObject*)this);
+    engine->rootContext()->setContextProperty("appUrl", url);
+    engine->load(QUrl("qrc:/qml/webview.qml"));
 
-    t.write(QStringLiteral(R"(
-<html><head>
-  <meta http-equiv="refresh" content="0;URL='%1" />
-</head></html>)")
-                .arg(url.toString())
-                .toUtf8());
-    QTimer::singleShot(10000, [f = t.fileName()] { QFile::remove(f); });
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
+    QObject* topLevel = engine->rootObjects().value(0);
+    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
+
+    window->setParent(0);
+    window->setTransientParent(0);
+    engine->setParent(window);
+    window->setWidth(1024);
+    window->setHeight(700);
+    connect(window, SIGNAL(closing(QQuickCloseEvent*)), window, SLOT(deleteLater()));
+    window->show();
+    const auto screen_geom = window->screen()->availableGeometry();
+
+    window->setGeometry((screen_geom.width() - window->width()) / 2, (screen_geom.height() - window->height()) / 2,
+                        window->width(), window->height());
+
+    return true;
+}
+
+QString Launcher::getDownloadPath(const QUrl& url) {
+    QFileDialog d;
+    const auto name = url.fileName();
+    const auto extension = QFileInfo(name).suffix();
+    d.setWindowTitle(tr("Save %1").arg(name));
+    d.setNameFilter(QString("%1 (*.%1)").arg(extension));
+    d.setAcceptMode(QFileDialog::AcceptSave);
+    d.setFileMode(QFileDialog::AnyFile);
+    d.setDefaultSuffix(extension);
+
+    if(!d.exec())
+        return {};
+    const auto files = d.selectedFiles();
+    if(files.size() != 1)
+        return {};
+    return files.first();
 }
 
 QUrl Launcher::webapp_base_url(const QString& name) const {
-    static const std::map<QString, QString> default_folder_name = {{"blockly", "thymio_blockly"}};
+    static const std::map<QString, QString> default_folder_name = {{"blockly", "thymio_blockly"},
+                                                                   {"scratch", "scratch"}};
     auto it = default_folder_name.find(name);
     if(it == default_folder_name.end())
         return {};
@@ -70,6 +103,13 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
         }
     }
     return {};
+}
+
+QByteArray Launcher::readFileContent(QString path) {
+    path.replace(QStringLiteral("qrc:/"), QStringLiteral(":/"));
+    QFile f(path);
+    f.open(QFile::ReadOnly);
+    return f.readAll();
 }
 
 }  // namespace mobsya

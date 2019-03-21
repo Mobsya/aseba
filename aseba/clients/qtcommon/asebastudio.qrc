@@ -114,5 +114,7 @@
     <file>images/vpl/missing_block.svgz</file>
     <file>images/vpl/error.svgz</file>
     <file>images/vpl/blink.svg</file>
+    <file>images/unlocked.png</file>
+    <file>images/locked.png</file>
 </qresource>
 </RCC>

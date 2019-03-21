@@ -56,6 +56,9 @@ Q_SIGNALS:
     void executionPaused();
     void executionStopped();
     void executionStateChanged();
+    void plotEventRequested(const QString& name);
+    void plotVariableRequested(const QString& name);
+    void statusChanged();
 
 protected:
     void setupWidgets();
@@ -69,6 +72,9 @@ public Q_SLOTS:
     // void sortCompleterModel();
 
 protected Q_SLOTS:
+
+    void toggleLock();
+
     void reset();
     void run();
     void pause();
@@ -78,17 +84,19 @@ protected Q_SLOTS:
 
     void synchronizeVariablesChecked(bool checked);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
+    void onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars);
     void handleVariablesCache();
 
     void setVariable(const QString& k, const mobsya::ThymioVariable& value);
-    void resetVariables();
+    void setGroupVariable(const QString& k, const mobsya::ThymioVariable& value);
 
     void addEvent(const QString& name, int size);
     void removeEvent(const QString& name);
     void onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events);
     void emitEvent(const QString& name, const QVariant& value);
-    void onEvents(const mobsya::ThymioNode::VariableMap& events);
+    void onEvents(const mobsya::ThymioNode::EventMap& events);
 
+    void onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage language);
     void editorContentChanged();
     void compileCodeOnTarget();
 
@@ -185,6 +193,7 @@ private:
     TreeChainsawFilter* functionsFlatModel;
 
     QToolBox* toolBox;
+    QTabWidget* m_tabs;
 
     QString lastCompiledSource;  //!< content of last source considered for compilation following
     QString lastLoadedSource;

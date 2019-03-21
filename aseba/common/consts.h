@@ -31,7 +31,7 @@ extern const char*  ASEBA_VERSION;
 extern const char*  ASEBA_REVISION;
 
 /*! version of aseba protocol, including bytecodes types and constants */
-#define ASEBA_PROTOCOL_VERSION 8
+#define ASEBA_PROTOCOL_VERSION 9
 
 /*! minimal accepted protocol version in targets */
 #define ASEBA_MIN_TARGET_PROTOCOL_VERSION 4
@@ -222,8 +222,9 @@ typedef enum
 typedef enum {
 	DEVICE_INFO_UUID = 1,
 	DEVICE_INFO_NAME = 2,
+	DEVICE_INFO_THYMIO2_RF_SETTINGS = 3,
 
-	DEVICE_INFO_ENUM_COUNT = 2
+	DEVICE_INFO_ENUM_COUNT = 3
 } DeviceInfoType;
 
 

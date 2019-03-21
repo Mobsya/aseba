@@ -44,8 +44,18 @@
         <file>qml/ThymioSelectionDeviceDelegate.qml</file>
         <file>qml/BottomEasingStackView.qml</file>
         <file>apps/blockly/blockly-icon.svg</file>
-        <file>apps/blockly/description.jpeg</file>
         <file>apps/studio/description.jpg</file>
         <file>assets/thymio-launcher.ico</file>
+        <file>apps/scratch/launcher-icon-scratch.svg</file>
+        <file>apps/studio/launcher-icon-studio.svg</file>
+        <file>apps/vpl/launcher-icon-vpl.svg</file>
+        <file>apps/blockly/description.jpg</file>
+        <file>apps/scratch/description.jpg</file>
+        <file>apps/vpl/description.jpg</file>
+        <file>apps/vpl/desc.en.html</file>
+        <file>apps/blockly/desc.en.html</file>
+        <file>apps/studio/desc.en.html</file>
+        <file>apps/scratch/desc.en.html</file>
+        <file>qml/webview.qml</file>
     </qresource>
 </RCC>

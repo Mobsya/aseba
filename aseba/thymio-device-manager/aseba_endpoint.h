@@ -50,6 +50,14 @@ public:
 
     using write_callback = std::function<void(boost::system::error_code)>;
 
+    void set_group(std::shared_ptr<mobsya::group> g) {
+        m_group = g;
+    }
+
+    std::shared_ptr<mobsya::group> group() const {
+        return m_group;
+    }
+
 #ifdef MOBSYA_TDM_ENABLE_USB
     const usb_device& usb() const {
         return variant_ns::get<usb_device>(m_endpoint);
@@ -60,7 +68,9 @@ public:
     }
 
     static pointer create_for_usb(boost::asio::io_context& io) {
-        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+        ptr->m_group = group::make_group_for_endpoint(io, ptr);
+        return ptr;
     }
 #endif
 
@@ -74,7 +84,9 @@ public:
     }
 
     static pointer create_for_serial(boost::asio::io_context& io) {
-        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+        ptr->m_group = group::make_group_for_endpoint(io, ptr);
+        return ptr;
     }
 #endif
 
@@ -87,7 +99,9 @@ public:
     }
 
     static pointer create_for_tcp(boost::asio::io_context& io) {
-        return std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+        ptr->m_group = group::make_group_for_endpoint(io, ptr);
+        return ptr;
     }
 
     std::string endpoint_name() const {
@@ -118,6 +132,26 @@ public:
         return false;
     }
 
+    bool wireless_enable_configuration_mode(bool enable);
+    bool wireless_enable_pairing(bool enable);
+    bool wireless_cfg_mode_enabled() const;
+    bool wireless_flash();
+    struct wireless_settings {
+        uint16_t network_id = 0;
+        uint16_t dongle_id = 0;
+        uint8_t channel = 0;
+    };
+
+    bool wireless_set_settings(uint8_t channel, uint16_t network_id, uint16_t dongle_id);
+    wireless_settings wireless_get_settings() const;
+
+    std::vector<std::shared_ptr<aseba_node>> nodes() const {
+        std::vector<std::shared_ptr<aseba_node>> nodes;
+        std::transform(m_nodes.begin(), m_nodes.end(), std::back_inserter(nodes),
+                       [](auto&& pair) { return pair.second.node; });
+        return nodes;
+    }
+
     void start() {
         read_aseba_message();
 
@@ -136,15 +170,24 @@ public:
         if(messages.empty())
             return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
+
+        auto it = m_msg_queue.end();
+        for(; it != m_msg_queue.begin(); --it) {
+            if(it == m_msg_queue.end())
+                break;
+            if(it->first->type != ASEBA_MESSAGE_LIST_NODES && it->first->type != ASEBA_MESSAGE_GET_EXECUTION_STATE &&
+               it->first->type != ASEBA_MESSAGE_GET_CHANGED_VARIABLES)
+                break;
+        }
         for(auto&& m : messages) {
-            m_msg_queue.emplace(std::move(m), write_callback{});
+            it = m_msg_queue.insert(it, {std::move(m), write_callback{}});
         }
         if(cb) {
-            m_msg_queue.back().second = std::move(cb);
+            it->second = std::move(cb);
         }
         if(m_msg_queue.size() > messages.size())
             return;
-        do_write_message(*(m_msg_queue.front().first));
+        write_next();
     }
 
     template <typename CB = write_callback>
@@ -168,14 +211,22 @@ public:
             mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
             if(!ec)
                 read_aseba_message();
-            return;
+            if(!wireless_cfg_mode_enabled())
+                return;
         }
         mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
 
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
         auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
-        if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
+
+        if(msg->type < 0x8000) {
+            auto timestamp = std::chrono::system_clock::now();
+            auto event = [this, &msg] { return get_event(msg->type); }();
+            if(event) {
+                on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first, timestamp);
+            }
+        } else if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             if(!node) {
                 const auto protocol_version = static_cast<Aseba::NodePresent*>(msg.get())->version;
                 it = m_nodes
@@ -194,6 +245,17 @@ public:
             it->second.last_seen = std::chrono::steady_clock::now();
         }
         read_aseba_message();
+    }
+
+    void remove_node(node_id n) {
+        for(auto it = m_nodes.begin(); it != m_nodes.end();) {
+            const auto& info = it->second;
+            if(info.node && info.node->uuid() == n) {
+                info.node->disconnect();
+                m_nodes.erase(it);
+                return;
+            }
+        }
     }
 
 private:
@@ -225,7 +287,8 @@ private:
             if(!that || ec)
                 return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
-            that->write_message(std::make_unique<Aseba::ListNodes>());
+            if(!that->wireless_cfg_mode_enabled())
+                that->write_message(std::make_unique<Aseba::ListNodes>());
             if(that->needs_ping())
                 that->schedule_send_ping();
         });
@@ -245,7 +308,7 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(d.count() >= 5) {
+                if(!wireless_cfg_mode_enabled() && d.count() >= 5) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
@@ -281,19 +344,9 @@ private:
         return needs_health_check();
     }
 
-    void do_write_message(const Aseba::Message& message) {
-        auto that = shared_from_this();
-        auto cb =
-            boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
-
-        variant_ns::visit(
-            [&cb, &message](auto& underlying) {
-                return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
-            },
-            m_endpoint);
-    }
-
     void handle_write(boost::system::error_code ec) {
+        if(m_msg_queue.empty())
+            return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         mLogDebug("Message '{}' sent : {}", m_msg_queue.front().first->message_name(), ec.message());
         if(ec) {
@@ -306,9 +359,22 @@ private:
         if(cb) {
             boost::asio::post(m_io_context.get_executor(), std::bind(std::move(cb), ec));
         }
-        m_msg_queue.pop();
-        if(!m_msg_queue.empty()) {
-            do_write_message(*(m_msg_queue.front().first));
+        m_msg_queue.erase(m_msg_queue.begin());
+        write_next();
+    }
+
+    void write_next() {
+        if(!m_msg_queue.empty() && !wireless_cfg_mode_enabled()) {
+            auto that = shared_from_this();
+            auto cb =
+                boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
+
+            auto& message = *(m_msg_queue.front().first);
+            variant_ns::visit(
+                [&cb, &message](auto& underlying) {
+                    return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
+                },
+                m_endpoint);
         }
     }
 
@@ -317,14 +383,47 @@ private:
         , m_strand(io_context.get_executor())
         , m_io_context(io_context)
         , m_endpoint_type(type) {}
+
+    const Aseba::CommonDefinitions& aseba_compiler_definitions() const {
+        return m_defs;
+    }
+
+    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
+    std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
+
+    friend class group;
+    boost::system::error_code set_events_table(const group::events_table& events);
+    boost::system::error_code set_shared_variables(const variables_map& map);
+    void emit_events(const group::properties_map& map, write_callback&& cb);
+    void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def,
+                  const std::chrono::system_clock::time_point& timestamp);
+
     endpoint_t m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
-    std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
     boost::asio::io_service& m_io_context;
     endpoint_type m_endpoint_type;
     std::string m_endpoint_name;
     std::mutex m_msg_queue_lock;
-    std::queue<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
+    std::unordered_map<aseba_node::node_id_t, node_info> m_nodes;
+    std::shared_ptr<mobsya::group> m_group;
+    std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
+    Aseba::CommonDefinitions m_defs;
+
+    struct WirelessDongleSettings {
+        PACK(struct Data {
+            unsigned short nodeId = 0xffff;
+            unsigned short panId = 0xffff;
+            unsigned char channel = 0xff;
+            unsigned char txPower = 0;
+            unsigned char version = 0;
+            unsigned char ctrl = 0;
+        })
+        data;
+        bool cfg_mode = false;
+        bool pairing = false;
+    };
+    std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
+    bool sync_wireless_dongle_settings();
 };  // namespace mobsya
 
 }  // namespace mobsya

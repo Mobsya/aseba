@@ -49,8 +49,8 @@ public:
     QVariantMap getVariables() const;
 
 private:
-    void setVariable(TreeItem& parentItem, const QVariant& key, const QVariant& v, bool constant,
-                     const QModelIndex& parent, QVector<QModelIndex>& updated_indexes);
+    void setVariable(TreeItem& parentItem, const QVariant& key, const QVariant& v, const QModelIndex& parent,
+                     QVector<QModelIndex>& updated_indexes);
     TreeItem* get_or_create_root();
     std::pair<VariablesModel::TreeItem*, QModelIndex>
     getIndexedItem(const VariablesModel::TreeItem& item, const QVariant& key, QModelIndex parentIndex, int col);

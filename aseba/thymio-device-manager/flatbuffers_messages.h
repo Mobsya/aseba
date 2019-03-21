@@ -96,7 +96,7 @@ tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, c
 }
 
 namespace detail {
-    auto serialize_variables(flatbuffers::FlatBufferBuilder& fb, const mobsya::aseba_node::variables_map& vars) {
+    auto serialize_variables(flatbuffers::FlatBufferBuilder& fb, const mobsya::variables_map& vars) {
         flexbuffers::Builder flexbuilder;
         std::vector<flatbuffers::Offset<fb::NodeVariable>> varsOffsets;
         varsOffsets.reserve(vars.size());
@@ -105,33 +105,56 @@ namespace detail {
             auto& vec = flexbuilder.GetBuffer();
             auto vecOffset = fb.CreateVector(vec);
             auto keyOffset = fb.CreateString(var.first);
-            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset, var.second.is_constant));
+            varsOffsets.push_back(fb::CreateNodeVariable(fb, keyOffset, vecOffset));
             flexbuilder.Clear();
         }
         return fb.CreateVectorOfSortedTables(&varsOffsets);
     }
+    auto serialize_events(flatbuffers::FlatBufferBuilder& fb, const mobsya::group::properties_map& events) {
+        flexbuffers::Builder flexbuilder;
+        std::vector<flatbuffers::Offset<fb::NamedValue>> eventsOffsets;
+        eventsOffsets.reserve(events.size());
+        for(auto&& event : events) {
+            property_to_flexbuffer(event.second, flexbuilder);
+            auto& vec = flexbuilder.GetBuffer();
+            auto vecOffset = fb.CreateVector(vec);
+            auto keyOffset = fb.CreateString(event.first);
+            eventsOffsets.push_back(fb::CreateNamedValue(fb, keyOffset, vecOffset));
+            flexbuilder.Clear();
+        }
+        return fb.CreateVectorOfSortedTables(&eventsOffsets);
+    }
 }  // namespace detail
 
-tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n,
-                                                       const mobsya::aseba_node::variables_map& vars) {
+tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
+                                                       const std::chrono::system_clock::time_point& timestamp) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto varsOffset = detail::serialize_variables(fb, vars);
-    auto offset = fb::CreateNodeVariablesChanged(fb, idOffset, varsOffset);
+    const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(timestamp).time_since_epoch().count();
+    auto offset = fb::CreateVariablesChanged(fb, idOffset, varsOffset, ms);
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n,
-                                            const mobsya::aseba_node::variables_map& vars) {
+tagged_detached_flatbuffer serialize_changed_variables(const mobsya::group& n, const mobsya::variables_map& vars) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto varsOffset = detail::serialize_variables(fb, vars);
-    auto offset = fb::CreateEventsEmitted(fb, idOffset, varsOffset);
+    auto offset = fb::CreateVariablesChanged(fb, idOffset, varsOffset);
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::aseba_node& n,
-                                                         const mobsya::aseba_node::events_table& descs) {
+tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
+                                            const std::chrono::system_clock::time_point& timestamp) {
+    flatbuffers::FlatBufferBuilder fb;
+    auto idOffset = n.uuid().fb(fb);
+    auto eventsOffset = detail::serialize_events(fb, vars);
+    const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(timestamp).time_since_epoch().count();
+    auto offset = fb::CreateEventsEmitted(fb, idOffset, eventsOffset, ms);
+    return wrap_fb(fb, offset);
+}
+
+tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::group& n, const mobsya::events_table& descs) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     std::vector<flatbuffers::Offset<fb::EventDescription>> descOffsets;
@@ -142,7 +165,7 @@ tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::aseba_nod
         auto descTable = fb::CreateEventDescription(fb, str_offset, desc.size, i++);
         descOffsets.push_back(descTable);
     }
-    auto offset = fb::CreateEventsDescriptionChanged(fb, idOffset, fb.CreateVector(descOffsets));
+    auto offset = fb::CreateEventsDescriptionsChanged(fb, idOffset, fb.CreateVector(descOffsets));
     return wrap_fb(fb, offset);
 }
 
@@ -156,10 +179,23 @@ tagged_detached_flatbuffer serialize_execution_state(const mobsya::aseba_node& n
     return wrap_fb(fb, offset);
 }
 
+tagged_detached_flatbuffer serialize_scratchpad(const mobsya::group& g, const mobsya::group::scratchpad& scratchpad) {
+
+    flatbuffers::FlatBufferBuilder fb;
+    auto scratchpadIdOffset = scratchpad.scratchpad_id.fb(fb);
+    auto groupIdOffset = g.uuid().fb(fb);
+    auto nodeIdOffset = scratchpad.nodeid.is_nil() ? scratchpad.preferred_node_id.fb(fb) : scratchpad.nodeid.fb(fb);
+    auto nameOffset = fb.CreateString(scratchpad.name);
+    auto textOffset = fb.CreateString(scratchpad.text);
+
+    auto offset = fb::CreateScratchpadUpdate(fb, 0, scratchpadIdOffset, groupIdOffset, nodeIdOffset,
+                                             scratchpad.language, textOffset, nameOffset, scratchpad.deleted);
+    return wrap_fb(fb, offset);
+}
+
 namespace detail {
-    mobsya::aseba_node::variables_map
-    variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {
-        mobsya::aseba_node::variables_map vars;
+    mobsya::variables_map variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {
+        mobsya::variables_map vars;
         vars.reserve(buff.size());
         for(const auto& offset : buff) {
             if(!offset->name() || !offset->value())
@@ -167,17 +203,32 @@ namespace detail {
             auto k = offset->name()->string_view();
             auto v = offset->value_flexbuffer_root();
             auto p = flexbuffer_to_property(v);
-            auto constant = offset->constant();
             if(!p)
                 continue;
-            vars.insert_or_assign(std::string(k), aseba_node::variable(std::move(*p), constant));
+            vars.insert_or_assign(std::string(k), std::move(*p));
         }
         return vars;
     }
 
-    mobsya::aseba_node::events_table
+    mobsya::group::properties_map events(const flatbuffers::Vector<flatbuffers::Offset<fb::NamedValue>>& buff) {
+        mobsya::group::properties_map vars;
+        vars.reserve(buff.size());
+        for(const auto& offset : buff) {
+            if(!offset->name() || !offset->value())
+                continue;
+            auto k = offset->name()->string_view();
+            auto v = offset->value_flexbuffer_root();
+            auto p = flexbuffer_to_property(v);
+            if(!p)
+                continue;
+            vars.insert_or_assign(std::string(k), std::move(*p));
+        }
+        return vars;
+    }
+
+    mobsya::events_table
     events_description(const flatbuffers::Vector<flatbuffers::Offset<fb::EventDescription>>& buff) {
-        mobsya::aseba_node::events_table events;
+        mobsya::events_table events;
         events.reserve(buff.size());
         for(const auto& offset : buff) {
             if(!offset->name())
@@ -190,19 +241,19 @@ namespace detail {
     }
 }  // namespace detail
 
-mobsya::aseba_node::variables_map variables(const fb::SetNodeVariables& msg) {
+mobsya::variables_map variables(const fb::SetVariables& msg) {
     if(!msg.vars())
         return {};
     return detail::variables(*msg.vars());
 }
 
-mobsya::aseba_node::variables_map events(const fb::SendEvents& msg) {
+mobsya::group::properties_map events(const fb::SendEvents& msg) {
     if(!msg.events())
         return {};
-    return detail::variables(*msg.events());
+    return detail::events(*msg.events());
 }
 
-mobsya::aseba_node::events_table events_description(const fb::RegisterEvents& msg) {
+mobsya::events_table events_description(const fb::RegisterEvents& msg) {
     if(!msg.events())
         return {};
     return detail::events_description(*msg.events());
