@@ -70,7 +70,7 @@ endif()
 
 target_include_directories(thymio-device-manager-lib PUBLIC ${CMAKE_SOURCE_DIR}/third_party/belle/include)
 
-target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL)
+target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL -DBOOST_ALLOW_DEPRECATED_HEADERS)
 target_link_libraries(thymio-device-manager-lib PUBLIC
     asebacommon
     asebacompiler
