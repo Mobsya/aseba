@@ -1,10 +1,10 @@
-# Run
+# Install the Thymio Suite on Linux
 
 ## Install flatpak
 
 Please refer to the installation instructions on [Flathub](https://flatpak.org/setup/).
 
-## Instal from flathub
+## Instal Thymio Suite from Flathub
 
 [TODO]
 
@@ -28,32 +28,24 @@ flatpak run org.mobsya.ThymioSuite
 ```
 
 To launch only the device manager instead of the launcher,
-execute
+you can execute
 
 ```
 flatpak run --command=thymio-device-manager org.mobsya.ThymioSuite
 ```
 
-# Build the flatpak version from source
+## Build the flatpak version from source
 
 This section is reserved for developers whishing to manually
 build the flatpak version from source.
 
-## install `flatpack-builder`
-
-## Ubuntu
-```
-sudo add-apt-repository ppa:alexlarsson/flatpak
-sudo apt update
-sudo apt install flatpak flatpak-builder
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-```
-
-## Other distributions
+### install `flatpack-builder`
 
 Please refer to the installation instructions on [Flathub](https://flatpak.org/setup/).
 
-## Build the Thymio Suite Flatpak
+### Build the Thymio Suite Flatpak
+
+* Building the application:
 
 In the `flatpack` repository, run :
 ```
@@ -63,7 +55,7 @@ flatpak-builder <build-dir> org.mobsya.ThymioSuite.json --ccache --force-clean -
 
 *  `<build-dir>` is the tempory build directory for the flatpak
 
-Building the bundle:
+* Building the bundle:
 
 ```
 flatpak build-bundle  --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo mobsya-repo \
