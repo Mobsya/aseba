@@ -8,11 +8,11 @@ Please refer to the installation instructions on [Flathub](https://flatpak.org/s
 
 [TODO]
 
-## Install the development flatpak bundle
+## Install the development version of Thymio Suite
 
 **This method is not recommended.**
 
-1. [Download the bundle](https://github.com/Mobsya/aseba/releases/download/nightly/thymio.flatpak)
+1. [Download the Thymio Suite flatpak bundle](https://github.com/Mobsya/aseba/releases/download/nightly/thymio.flatpak)
 2. In a terminal, execute
 
 ```
@@ -34,7 +34,10 @@ execute
 flatpak run --command=thymio-device-manager org.mobsya.ThymioSuite
 ```
 
-# Build
+# Build the flatpak version from source
+
+This section is reserved for developers whishing to manually
+build the flatpak version from source.
 
 ## install `flatpack-builder`
 
