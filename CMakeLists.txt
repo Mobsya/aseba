@@ -154,14 +154,11 @@ if (UNIX)
 endif()
 
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/thymio-blockly-standalone/CMakeLists.txt)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/thymio-blockly-standalone)
-    message("-- Found thymio-blockly-standalone, will bundle blockly")
+if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION ./scratch)
 endif()
-
-
-if(EXISTS ${PROJECT_SOURCE_DIR}/scratch-gui/build/index.html)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch-gui/build/ DESTINATION ./scratch)
+if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly DESTINATION ./thymio_blockly)
 endif()
 
 
