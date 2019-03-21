@@ -38,6 +38,9 @@
                 "--disable-libevent",
                 "--disable-manpages",
                 "--with-systemdsystemunitdir=/app/lib/systemd"
+            ],
+            "cleanup": [
+                "/bin", "/include", "*.a", "/lib/pkgconfig", "/lib/avahi",  "/lib/girepository-1.0"
             ]
         },
         {
@@ -52,23 +55,32 @@
             "buildsystem": "simple",
             "build-commands": [
                 "./bootstrap.sh",
-                "./b2 install --prefix=/app/ variant=release threading=multi --with-filesystem --with-thread --with-chrono --with-system --with-date_time --with-regex --with-serialization --with-program_options -j 4"
+                "./b2 install --prefix=/app/ variant=release link=shared threading=multi --with-filesystem --with-thread --with-chrono --with-system --with-date_time --with-regex --with-serialization --with-program_options -j 4"
             ],
             "cleanup": [
-                "lib/debug"
+                "/lib/debug", "/include", ""
             ]
         },
         {
             "name": "ThymioSuite",
             "buildsystem": "cmake-ninja",
             "config-opts": [
-                "-DBUILD_SHARED_LIBS=OFF", "-DBoost_DEBUG=ON", "-DCMAKE_BUILD_TYPE=Release", "-DFLAT_PACK_BUILD=ON"
+                "-DBoost_DEBUG=ON", "-DCMAKE_BUILD_TYPE=Release", "-DFLAT_PACK_BUILD=ON"
             ],
             "sources": [
                 {
                     "type": "dir",
                     "path": "../"
                 }
+            ],
+            "cleanup": [
+                "/bin/flatc",
+                "*.a",
+                "/lib/cmake",
+                "/include",
+                "/share/enki",
+                "/share/dashel",
+                "/share/enki"
             ]
         }
     ],
