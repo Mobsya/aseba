@@ -1,8 +1,8 @@
 !define LANG "ITALIAN" ; Must be the lang name define my NSIS
 
-!insertmacro LANG_STRING STR_Package_Name  "Aseba Studio"
-!insertmacro LANG_STRING STR_Package_Name_Devel  "Sviluppo ASEBA"
-!insertmacro LANG_STRING STR_Package_Name_Thymio  "Aseba Studio per Thymio"
+!insertmacro LANG_STRING STR_Package_Name  "Thymio Suite"
+!insertmacro LANG_STRING STR_Package_Name_Devel  "Sviluppo Thymio Suite"
+!insertmacro LANG_STRING STR_Package_Name_Thymio  "Thymio Suite"
 !insertmacro LANG_STRING STR_License_Top  "Questo è software libero sotto i termini della licenza LGPL v3 (in inglese sotto)."
 !insertmacro LANG_STRING STR_Done  "Fatto."
 !insertmacro LANG_STRING STR_Clean  "Pulizia di installazioni precedenti ..."

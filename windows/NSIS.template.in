@@ -134,7 +134,7 @@ FunctionEnd
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGISTRY_KEY} 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-  ;!define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio Software Suite"
+  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio Suite"
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
@@ -232,7 +232,7 @@ SectionGroup /e "-Thymio" GroupThymio
 ;  			${EndIf}
 			; Thymio stuff?
 			; Launcher
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Launcher.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 			; Thymio flasher
 			; CreateDirectory "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader.lnk" "$INSTDIR\bin\thymioupgrader.exe" "" "$INSTDIR\thymioupgrader.ico"
