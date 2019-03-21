@@ -50,7 +50,8 @@ Please refer to the installation instructions on [Flathub](https://flatpak.org/s
 
 In the `flatpack` repository, run :
 ```
-flatpak-builder <build-dir> org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs -v --install-deps-from=flathub --user --repo=mobsya-repo
+flatpak-builder <build-dir> org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs \
+-v --install-deps-from=flathub --user --repo=mobsya-repo
 ```
 
 *  `<build-dir>` is the tempory build directory for the flatpak
@@ -59,5 +60,6 @@ Building the bundle:
 
 
 ```
-flatpak build-bundle  --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo mobsya-repo thymio.flatpak org.mobsya.ThymioSuite
+flatpak build-bundle  --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo mobsya-repo \
+thymio.flatpak org.mobsya.ThymioSuite
 ```
