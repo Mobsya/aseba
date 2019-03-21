@@ -6,7 +6,6 @@
     "finish-args": [
         "--socket=x11",
         "--socket=wayland",
-        "--filesystem=home",
         "--share=network",
         "--device=all",
         "--share=ipc",
