@@ -119,7 +119,7 @@ struct RobotType {
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);
     QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName(ASEBA_ORGANIZATION_NAME);
+    QCoreApplication::setOrganizationName("mobsya");
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
     app.setApplicationName("Playground");
 
@@ -152,6 +152,12 @@ int main(int argc, char* argv[]) {
     do {
         if(ask) {
             QString lastFileName = QSettings("EPFL-LSRO-Mobots", "Aseba Playground").value("last file").toString();
+            auto loc = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+
+            if(lastFileName.isEmpty() && !loc.empty())
+                lastFileName = loc.first();
+
+
             sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
                                                          app.tr("playground scenario (*.playground)"));
         }

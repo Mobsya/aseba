@@ -176,6 +176,7 @@ void MainWindow::openFile(const QString& path) {
         }
 
         fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), dir, QStringLiteral("Aseba scripts (*.aesl)"));
+        qDebug() << fileName;
     }
 
     QFile file(fileName);
