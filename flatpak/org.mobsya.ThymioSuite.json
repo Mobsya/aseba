@@ -9,7 +9,9 @@
         "--share=network",
         "--device=all",
         "--share=ipc",
-        "--system-talk-name=org.freedesktop.Avahi"
+        "--system-talk-name=org.freedesktop.Avahi",
+        "--talk-name=org.kde.StatusNotifierWatcher",
+        "--env=TMPDIR=/var/tmp"
     ],
     "command": "thymio-launcher",
     "modules": [
@@ -71,6 +73,9 @@
                     "type": "dir",
                     "path": "../"
                 }
+            ],
+            "post-install": [
+                "install -D --target-directory /app/share/mobsya/Playground/  aseba/targets/playground/examples/*"
             ],
             "cleanup": [
                 "/bin/flatc",
