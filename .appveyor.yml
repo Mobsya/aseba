@@ -10,10 +10,6 @@ matrix:
 skip_branch_with_pr: true
 
 install:
-  # Install npm, which we need for blockly and scratch
-  - ps: Install-Product node '8'
-  - npm install --global npm@latest
-  - set PATH=%APPDATA%\npm;%PATH%
   - cd "%APPVEYOR_BUILD_FOLDER%"
   - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
   - if ["%APPVEYOR_PULL_REQUEST_NUMBER%"]==[""] appveyor-tools\secure-file -decrypt %SIGNTOOL_PFX%.enc -secret %PFX_SECURE_FILE_DECODE%
@@ -26,14 +22,6 @@ install:
   - if [%platform%]==[x64] cd C:\projects\deps && msiexec /i C:\projects\deps\BonjourSDK64.msi /qb /quiet
   - if [%platform%]==[x86] cd C:\projects\deps && msiexec /i C:\projects\deps\Bonjour.msi /qb /quiet
   - if [%platform%]==[x86] cd C:\projects\deps && msiexec /i C:\projects\deps\BonjourSDK.msi /qb /quiet
-
-  # Use msys packages for the mingw builds
-  - if [%COMPILER%]==[MinGW] (
-      %BASH% -lc "pacman -R catgets libcatgets --noconfirm"
-    )
-
-  - if [%COMPILER%]==[MinGW] if [%ARCH%]==[x86] %BASH% -lc "pacman --noconfirm -Sy -d mingw-w64-i686-{binutils,gcc,gcc-libs,cmake,qt5,qwt-qt5,libxml2,SDL2}"
-  - if [%COMPILER%]==[MinGW] if [%ARCH%]==[x64] %BASH% -lc "pacman --noconfirm -Sy -d mingw-w64-x86_64-{binutils,gcc,gcc-libs,cmake,qt5,qwt-qt5,libxml2,SDL2}"
 
 
   # Install cmake
@@ -78,9 +66,11 @@ install:
   - ps: Start-FileDownload 'https://slproweb.com/download/Win64OpenSSL-1_1_1b.exe'
   - ps: Start-Process "Win64OpenSSL-1_1_1b.exe" -ArgumentList "/silent /verysilent /sp- /suppressmsgboxes" -Wait
 
-  # Blockly deps
-  - if [%USE_VS_TOOLCHAIN%]==[true] python -m pip install -U pip setuptools wheel
-  - if [%USE_VS_TOOLCHAIN%]==[true] python -m pip install beautifulsoup4 lxml
+  - cd "%APPVEYOR_BUILD_FOLDER%"
+  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190321.11/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
+  - appveyor DownloadFile https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190321.5/thymio-blockly.tar.gz -FileName thymio-blockly.tar.gz
+  - 7z e thymio-blockly.tar.gz && 7z x thymio-blockly.tar
+  - 7z e scratch-gui.tar.gz && 7z x scratch-gui.tar
 
   - refreshenv
 
@@ -96,29 +86,9 @@ before_build:
   - cd third_party/spdlog/spdlog/ && git checkout v1.2.1
   - cd "%APPVEYOR_BUILD_FOLDER%/third_party/flatbuffers" && git checkout 600f3fbcd4ef38b15398b1273f90697587b5a1d1
   - cd "%APPVEYOR_BUILD_FOLDER%"
-  - git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
-  - if exist thymio-blockly-standalone\node_modules\ rd /s /q thymio-blockly-standalone\node_modules\
-  - if exist thymio-blockly-standalone\package-lock.json del /s /q thymio-blockly-standalone\package-lock.json
-  - if exist js\node_modules\ rd /s /q js\node_modules\
-  - if exist js\package-lock.json del /s /q js\package-lock.json
-
-
-  - git clone --depth 1 https://github.com/Mobsya/scratch-vm scratch-vm --recurse-submodules
-  - git clone --depth 1 https://github.com/Mobsya/scratch-gui --recurse-submodules
-  - if exist scratch-vm\node_modules\ rd /s /q scratch-vm\node_modules\
-  - if exist scratch-gui\node_modules\ rd /s /q scratch-vm\node_modules\
-
 
 build_script:
 #Scratch
-  - cd "%APPVEYOR_BUILD_FOLDER%\scratch-vm"
-  - npm install
-  - npm run build
-  - npm link
-  - cd "%APPVEYOR_BUILD_FOLDER%\scratch-gui"
-  - npm install
-  - npm link scratch-vm
-  - npm run build
 
   - cd "%APPVEYOR_BUILD_FOLDER%"
   - mkdir build
@@ -184,17 +154,6 @@ environment:
       QT5: C:\Qt\5.11\msvc2017_64
       USE_VS_TOOLCHAIN: true
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_67_0/lib64-msvc-14.1'
-
-    #- COMPILER: MinGW
-      #ARCH: x86
-      #BASH: C:\msys64\usr\bin\bash
-      #MSYS_CACHE: C:\msys64\var\cache\pacman\pkg
-
-    #- platform: x64
-      #COMPILER: MinGW
-      #ARCH: x64
-      #BASH: C:\msys64\usr\bin\bash
-      #MSYS_CACHE: C:\msys64\var\cache\pacman\pkg
 
 deploy:
   tag: nightly

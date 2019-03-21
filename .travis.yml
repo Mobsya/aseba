@@ -64,7 +64,7 @@ before_script:
 - (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
 - (cd third_party/flatbuffers && git checkout 600f3fbcd4ef38b15398b1273f90697587b5a1d1)
 - rm -rf thymio-blockly-standalone
-- git clone --depth 1 -b new_switch_api https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
+- git clone --depth 1 https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
 before_install:
 - |
