@@ -4,6 +4,10 @@
 
 Please refer to the installation instructions on [Flathub](https://flatpak.org/setup/).
 
+## Instal from flathub
+
+[TODO]
+
 ## Install the development flatpak bundle
 
 **This method is not recommended.**
@@ -58,8 +62,8 @@ flatpak-builder <build-dir> org.mobsya.ThymioSuite.json --ccache --force-clean -
 
 Building the bundle:
 
-
 ```
 flatpak build-bundle  --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo mobsya-repo \
 thymio.flatpak org.mobsya.ThymioSuite
 ```
+
