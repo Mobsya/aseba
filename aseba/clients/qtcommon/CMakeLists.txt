@@ -17,4 +17,4 @@ add_library(asebaqtcommon OBJECT
     ${resfiles}
 )
 target_link_libraries(asebaqtcommon PUBLIC asebacompiler Qt5::Xml Qt5::Widgets)
-target_include_directories(asebaqtcommon PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(asebaqtcommon PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/common)
