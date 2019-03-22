@@ -22,7 +22,7 @@ jobs:
   - script: |
       git submodule init
       git submodule update --recursive --remote
-      flatpak-builder build-dir flatpak/org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs -v --install-deps-from=flathub --repo=bundle
+      flatpak-builder build-dir flatpak/org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs -v --repo=bundle
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio.flatpak org.mobsya.ThymioSuite
     displayName: 'Run a multi-line script'
 
