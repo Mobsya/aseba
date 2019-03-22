@@ -50,7 +50,7 @@ tagged_detached_flatbuffer wrap_fb(flatbuffers::FlatBufferBuilder& fb, const fla
     constexpr auto type = mobsya::fb::AnyMessageTraits<MessageType>::enum_value;
     auto rootOffset = mobsya::fb::CreateMessage(fb, type, offset.Union());
     fb.Finish(rootOffset);
-    auto x = fb.ReleaseBufferPointer();
+    auto x = fb.Release();
     return tagged_detached_flatbuffer{std::move(x), type};
 }
 
