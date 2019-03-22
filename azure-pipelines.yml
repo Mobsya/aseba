@@ -10,6 +10,7 @@ trigger:
 resources:
    containers: 
    - container: fpkde
+     options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
 
 
