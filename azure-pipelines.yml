@@ -1,0 +1,30 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+trigger:
+- master
+
+resources:
+   containers: 
+   - container: fpkde
+     image: mobsya/flatpak-builders:kde-latest
+
+
+jobs:
+- job: 'BuildFlatpak'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  container: fpkde
+  steps:
+  - script: |
+      flatpak-builder build-dir flatpak/org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs -v --install-deps-from=flathub --user --repo=bundle
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio.flatpak org.mobsya.ThymioSuite
+    displayName: 'Run a multi-line script'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio.flatpak'
