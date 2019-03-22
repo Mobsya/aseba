@@ -154,11 +154,16 @@ if (UNIX)
 endif()
 
 
+if(FLAT_PACK_BUILD)
+    SET(MOBSYA_WEBAPPS_ROOT_DIR "share/")
+endif()
+
+
 if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION ./scratch)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
 endif()
 if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly DESTINATION ./thymio_blockly)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
 endif()
 
 

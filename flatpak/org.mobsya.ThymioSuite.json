@@ -72,6 +72,18 @@
                 {
                     "type": "dir",
                     "path": "../"
+                },
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190322.3/thymio-blockly.tar.gz",
+                    "sha256": "f89f8696b4322ba27ab15474b34ad7b41cd7260e6518654f62557567cb0d145d",
+                    "strip-components": 0
+                },
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190321.11/scratch-gui.tar.gz",
+                    "sha256": "64f4dd951500ded90b7b5a4aa0d80ac9ba42f1a4580ec446894156d2f0da0611",
+                    "strip-components": 0
                 }
             ],
             "post-install": [
