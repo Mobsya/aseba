@@ -40,7 +40,11 @@ QStringList Launcher::applicationsSearchPaths() const {
 }
 
 QStringList Launcher::webappsFolderSearchPaths() const {
-    return {QFileInfo(QCoreApplication::applicationDirPath()).absolutePath()};
+    QStringList files{QFileInfo(QCoreApplication::applicationDirPath()).absolutePath()};
+#ifdef Q_OS_LINUX
+    files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/../share/").absolutePath());
+#endif
+    return files;
 }
 
 bool Launcher::launch_process(const QString& program, const QStringList& args) const {
