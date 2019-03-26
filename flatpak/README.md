@@ -50,6 +50,8 @@ Until then, please install the Flatpak bundle.
 2. In a terminal, execute
 
 ```
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo  
+flatpak install flathub org.kde.Platform/x86_64/5.12 --user
 flatpak install thymio.flatpak --user -y
 ```
 
