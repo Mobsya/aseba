@@ -6,7 +6,9 @@ Getting Started
 
 The API is available for Javascript and TypeScript on NPM
 
-npm -i "@mobsya/thymio-api"
+```
+npm i "@mobsya/thymio-api"
+```
 
 This will install the api and its dependency.
 
