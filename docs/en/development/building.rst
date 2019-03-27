@@ -112,32 +112,49 @@ Getting Started on Linux
 Dependencies On Ubuntu & Debian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+You will need a C++17 able compiler. GCC 8 is known to work.
+The requireded dependency may vary accros distributions.
+The following instructions are given for Ubuntu 18.10 cosmic
+
+Install the following packages:
+
 ::
 
-    sudo apt-get install qttools5-dev-tools \
-                         qtbase5-dev \
-                         qttools5-dev \
-                         libqt5help5 \
-                         qt5-qmake \
-                         libqt5opengl5-dev \
-                         libqt5svg5-dev \
-                         libqt5x11extras5-dev \
-                         libqwt-qt5-dev \ 
-                         qtdeclarative5-dev \
-                         libboost-all-dev \
-                         libudev-dev \
-                         libxml2-dev \
-                         libsdl2-dev \
-                         libpython-dev \
-                         libavahi-compat-libdnssd-dev \
-                         cmake \
-                         g++ \
-                         git \
-                         make
+    sudo apt-get install
+        mesa-common-dev libgl1-mesa-dev \
+        clang clang-format g++-multilib gdb \
+        git \
+        cmake \
+        ninja-build \
+        libavahi-compat-libdnssd-dev \
+        libudev-dev \
+        libssl-dev \
+        libfreetype6 \
+        libfontconfig \
+        libnss3 libasound2 libxtst6 libxrender1 libxi6 libxcursor1 libxcomposite1
+
+`Download Qt 5.12 <https://www.qt.io/download-qt-installer>`__
+
+You will need to select the QtWebEngine, QtCharts components.
+
+.. image:: qt-linux.png
+
+
+You then need to define an environment variable CMAKE_PREFIX_PATH pointing
+to the Qt installation folder:
+
+::
+
+    export CMAKE_PREFIX_PATH=<Qt_Install_Directory/<version>/gcc_64>
+
+Docker Image
+~~~~~~~~~~~~
+
+We also provide a docker image `Docker Image <https://hub.docker.com/r/mobsya/linux-dev-env>`__
+with the dependencies already installed.
 
 Building Aseba
 ~~~~~~~~~~~~~~
-
 ::
 
     mkdir build && cd build
