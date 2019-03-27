@@ -41,10 +41,5 @@ jobs:
 
   - script: |
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
-    displayName: 'Setup environment'
-  
-  - task: CMake@1
-    inputs:
-      cmakeArgs: -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF ..
-
-  
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF && ninja)
+    displayName: 'Build with cmake'
