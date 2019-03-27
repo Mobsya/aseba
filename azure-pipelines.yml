@@ -23,3 +23,35 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio.flatpak'
+
+- job: BuilOnOsX
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - script: |
+      git submodule init
+      git submodule update --recursive --remote
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1) 
+    displayName: 'Clone submodules'
+
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      pipeline: Mobsya.scratch-gui
+      buildVersionToDownload: 'latest'
+      artifactName: 'scratch-gui'
+      downloadPath: $(Build.SourcesDirectory)
+  
+  - script: |
+      brew update
+      brew bundle
+    displayName: 'Install dependencies with HomeBrew'
+
+  - script: |
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
+    displayName: 'Setup environment'
+  
+  - task: CMake@1
+    inputs:
+      cmakeArgs: -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF
+
+  
