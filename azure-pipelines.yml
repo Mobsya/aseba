@@ -34,13 +34,6 @@ jobs:
       (cd third_party/spdlog/spdlog/ && git checkout v1.2.1) 
     displayName: 'Clone submodules'
 
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      pipeline: Mobsya.scratch-gui
-      buildVersionToDownload: 'latest'
-      artifactName: 'scratch-gui'
-      downloadPath: $(Build.SourcesDirectory)
-  
   - script: |
       brew update
       brew bundle
