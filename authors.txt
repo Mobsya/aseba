@@ -5,7 +5,7 @@ Copyright (C) 2007--2017 the authors, a complete list can be fetched from the gi
 
 The following people have created significant portions of Aseba:
 
-*	[Stéphane Magnenat](http://stephane.magnenat.net) <stephane at magnenat dot net> [1] 10.2006–5.2010, 8.2015–7.2016; [2] 7.2010–6.2014; [3] 6.2010, 8.2016; [4] 9.2016–12.2017; independant: 7.2014–7.2015, 1.2018-
+*	[Stéphane Magnenat](http://stephane.magnenat.net) <stephane at magnenat dot net> [1] 10.2006–5.2010, 8.2015–7.2016; [2] 7.2010–6.2014; [3] 6.2010, 8.2016; [4] 9.2016–12.2017; independant: 7.2014–7.2015, 1.2018-2.2018
 	project leader, original idea, architecture, core programmer all areas
 	contributed to: all
 
@@ -33,6 +33,9 @@ The following people have created significant portions of Aseba:
 	software engineer for Blockly integration
 	contributed to: blockly
 
+*	Corentin Jabot <corentin dot jabot at mobsya dot org> [3]
+	core programmer, architecture, packaging, bug fixing
+	contributed to: core, studio, packaging, blockly, thymio-suite, thymio-device-manager
 
 # Contributors
 
@@ -47,8 +50,8 @@ The following people have provided additional contributions:
 	contributed to: packaging, translation, vpl, studio
 
 *	Michael Bonani <michael dot bonani at mobsya dot org> [1] 10.2006-01.2011; [3] 02.2011-
-	French translation, packaging, quality insurance, bug reporting
-	contributed to: packaging, translation, vpl, studio, blockly
+	French translation, packaging, quality insurance, bug reporting, project coordinator
+	contributed to: packaging, translation, vpl, studio, blockly, thymio-suite
 
 *	Dean Brettle <dean at brettle dot com>
 	RPM packaging
@@ -62,10 +65,6 @@ The following people have provided additional contributions:
 	bug reporting and fixing
 	contributed to: core, studio
 
-*	Corentin Jabot <corentin dot jabot at gmail dot com> [3]
-	bug fixing and coding contributions
-	contributed to: core
-
 *	Valentin Longchamp <valentin dot longchamp at gmail dot com> [1]
 	inputs on framework architecture, additional coding
 	contributed to: core
@@ -75,8 +74,8 @@ The following people have provided additional contributions:
 	contributed to: vpl
 
 *	Vincent Becker <vincent dot becker at mobsya dot org> [3]
-	Textures for Thymio 3D model
-	contributed to: simulator
+	Textures for Thymio 3D model, design Thymio suite
+	contributed to: simulator, thymio-suite
 
 *	[Francesco Mondada](https://people.epfl.ch/francesco.mondada) <francesco dot mondada at epfl dot ch> [1]
 	bug reporting and dissemination
