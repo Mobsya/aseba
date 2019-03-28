@@ -254,7 +254,7 @@ void aseba_node::compile_and_send_aseba_command(const std::string& program) {
     m_bytecode.clear();
     unsigned allocatedVariablesCount;
 
-    bool success = compiler.compile(is, m_bytecode, allocatedVariablesCount, error);
+    compiler.compile(is, m_bytecode, allocatedVariablesCount, error);
 
     std::vector<std::shared_ptr<Aseba::Message>> messages;
     Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
