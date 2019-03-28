@@ -2,7 +2,8 @@
 # kate: replace-tabs off; tab-width 4; indent-width 4; tab-indents true; indent-mode normal
 # vim: ts=4:sw=4:noexpandtab
 
-# project name
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
+
 project(aseba)
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
