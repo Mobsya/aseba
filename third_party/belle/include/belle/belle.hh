@@ -3196,7 +3196,7 @@ public:
   public:
     Https(net::io_context& io_, std::shared_ptr<Attr> attr_) :
       Http_Base<Https>(io_, attr_),
-      _socket {std::move(tcp::socket(io_)), attr_->ssl_context}
+      _socket {tcp::socket(io_), attr_->ssl_context}
     {
       _close = true;
     }

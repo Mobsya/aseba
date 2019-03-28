@@ -52,6 +52,10 @@ void firmware_update_service::download_thymio_2_firmware() {
         }
         pugi::xml_document doc;
         pugi::xml_parse_result result = doc.load_string(ctx.res.body().c_str());
+        if(result.status != pugi::xml_parse_status::status_ok) {
+            mLogError("The firmware update manifest might be corrupted");
+            return;
+        }
         auto node = doc.child("firmware");
         if(node) {
             auto v = node.attribute("version").as_int(0);
