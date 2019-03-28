@@ -62,7 +62,7 @@ target_include_directories(mpark_variant INTERFACE
 if (ANDROID)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
 endif()
-add_subdirectory(third_party/flatbuffers)
+add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 
 if (NOT TARGET flatc)
     include( ExternalProject )

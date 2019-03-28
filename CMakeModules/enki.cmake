@@ -1,5 +1,5 @@
 if(EXISTS ${PROJECT_SOURCE_DIR}/enki/CMakeLists.txt)
-	add_subdirectory(${PROJECT_SOURCE_DIR}/enki)
+	add_subdirectory(${PROJECT_SOURCE_DIR}/enki EXCLUDE_FROM_ALL)
 	message("Using Enki from ${PROJECT_SOURCE_DIR}/enki")
 	set(ENKI_FOUND 1)
 else()
