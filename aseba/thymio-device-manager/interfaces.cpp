@@ -78,7 +78,6 @@ std::set<boost::asio::ip::address> network_interfaces_addresses() {
 
 std::set<boost::asio::ip::address> network_interfaces_addresses() {
     ifaddrs* lst;
-    auto fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
     std::set<boost::asio::ip::address> addresses;
     if(getifaddrs(&lst) == -1) {
         return {};

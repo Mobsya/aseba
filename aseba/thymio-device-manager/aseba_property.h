@@ -4,7 +4,7 @@
 #include "property.h"
 
 namespace mobsya {
-static tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_variable(const property& p,
+inline tl::expected<std::vector<int16_t>, boost::system::error_code> to_aseba_variable(const property& p,
                                                                                        uint16_t size) {
     if(p.is_null() && size == 0) {
         return {};

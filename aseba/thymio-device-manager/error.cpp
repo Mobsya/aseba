@@ -17,6 +17,9 @@ std::string tdm_error_category::message(int ev) const {
         case error_code::invalid_object: return "invalid object";
         case error_code::no_such_variable: return "no such variable";
         case error_code::incompatible_variable_type: return "incompatible variable type";
+        case error_code::invalid_aesl: return "invalid aesl";
+        case error_code::unsupported_language: return "unsupported language";
+
     }
     return {};
 }

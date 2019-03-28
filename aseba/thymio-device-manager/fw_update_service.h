@@ -6,7 +6,7 @@
 #include "aseba_node_registery.h"
 
 namespace OB::Belle {
-struct Client;
+class Client;
 }
 
 namespace mobsya {
@@ -23,11 +23,11 @@ protected:
     void node_changed(std::shared_ptr<aseba_node>, const aseba_node_registery::node_id&, aseba_node::status) override;
 
 private:
+    boost::asio::execution_context& m_ctx;
     std::unique_ptr<OB::Belle::Client> m_http_client;
     void start();
     void download_thymio_2_firmware();
     void update_nodes_versions(mobsya::aseba_node::node_type);
-    boost::asio::execution_context& m_ctx;
     std::map<mobsya::aseba_node::node_type, int> m_versions;
 };
 
