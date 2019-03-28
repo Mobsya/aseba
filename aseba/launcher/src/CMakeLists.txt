@@ -17,7 +17,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc)
 
 
-add_executable(thymio-launcher WIN32
+add_executable(thymio-launcher WIN32 MACOSX_BUNDLE
     ${QT_RESOURCES}
     main.cpp
     launcher.h
