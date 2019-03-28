@@ -27,7 +27,22 @@ find_package(Qt5Core REQUIRED)
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
 find_program(WINDEPLOYQT_EXECUTABLE windeployqt.exe HINTS "${_qt_bin_dir}")
+find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
 
+
+function(macdeployqt target directory)
+    get_target_property(_TARGET_SOURCE_DIR ${target} SOURCE_DIR)
+    add_custom_command(TARGET ${target} POST_BUILD
+    COMMAND "${MACDEPLOYQT_EXECUTABLE}"
+            \"$<TARGET_FILE_DIR:${target}>/../..\"
+            -always-overwrite
+            -verbose=2
+            -qmldir=\"${_TARGET_SOURCE_DIR}\"
+            -appstore-compliant
+            -fs=APFS
+    COMMENT "Deploying Qt..."
+    )
+endfunction()
 
 # Add commands that copy the Qt runtime to the target's output directory after
 # build and install the Qt runtime to the specified directory
@@ -104,8 +119,13 @@ mark_as_advanced(WINDEPLOYQT_EXECUTABLE)
 
 
 macro(install_qt_app target)
-    install(TARGETS ${target} RUNTIME DESTINATION bin)
+    install(TARGETS ${target} RUNTIME DESTINATION bin BUNDLE DESTINATION bin)
     if(WIN32)
         windeployqt(${target} bin)
+    endif()
+    get_target_property(HAS_BUNDLE ${target} MACOSX_BUNDLE)
+    message("${target} ${HAS_BUNDLE}")
+    if(APPLE AND HAS_BUNDLE )
+        macdeployqt(${target} bin)
     endif()
 endmacro()
