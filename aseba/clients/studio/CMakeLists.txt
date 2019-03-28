@@ -1,5 +1,5 @@
 set(CMAKE_AUTOMOC on)
-add_executable(asebastudio WIN32
+add_executable(asebastudio WIN32 MACOSX_BUNDLE
     StudioAeslEditor.h
     MainWindow.h
     NamedValuesVectorModel.h

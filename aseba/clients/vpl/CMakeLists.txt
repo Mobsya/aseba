@@ -1,6 +1,6 @@
 set(CMAKE_AUTOMOC on)
 
-add_executable(thymiovplclassic WIN32
+add_executable(thymiovplclassic WIN32 MACOSX_BUNDLE
     thymiovpl.cpp
     ThymioVisualProgramming.cpp
     ResizingView.cpp
