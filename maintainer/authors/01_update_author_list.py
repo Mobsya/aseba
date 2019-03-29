@@ -21,6 +21,7 @@
 
 import os.path
 import re
+import sys
 
 SCRIPT_DIRECTORY = sys.path[0]
 
