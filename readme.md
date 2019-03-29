@@ -45,6 +45,8 @@ Aseba is an open-source software created by [Dr. Stéphane Magnenat](http://step
 Copyright (C) 2007–2018 the authors, see [authors.txt](authors.txt) for details.
 Released under LGPL3, see [license.txt](license.txt) for details.
 
+You can access the original repository of Aseba by clicking [here](https://github.com/aseba-community/aseba).
+
 
 ## Use Aseba
 
