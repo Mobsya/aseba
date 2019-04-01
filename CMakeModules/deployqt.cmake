@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 find_package(Qt5Core REQUIRED)
+cmake_policy(SET CMP0087 NEW)
 
 # Retrieve the absolute path to qmake and then use that path to find
 # the windeployqt binary
@@ -119,7 +120,7 @@ mark_as_advanced(WINDEPLOYQT_EXECUTABLE)
 
 
 macro(install_qt_app target)
-    install(TARGETS ${target} RUNTIME DESTINATION bin BUNDLE DESTINATION bin)
+    install(TARGETS ${target} RUNTIME DESTINATION bin BUNDLE DESTINATION "../Applications")
     if(WIN32)
         windeployqt(${target} bin)
     endif()
