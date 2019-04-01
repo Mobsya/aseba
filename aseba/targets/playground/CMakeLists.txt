@@ -39,15 +39,33 @@ if (Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
 		playground.cpp
 	)
 
-	add_executable(asebaplayground WIN32 MACOSX_BUNDLE  ${playground_SRCS} ${playground_MOCS} ${resfiles})
+	if(APPLE)
+		SET(PLAYGROUND_EXECUTABLE_NAME AsebaPlayground)
+	else()
+		SET(PLAYGROUND_EXECUTABLE_NAME asebaplayground)
+	endif()
 
-	target_link_libraries(asebaplayground asebasim asebacommon asebavmbuffer asebavm asebaqtabout enkiviewer Qt5::Xml Qt5::Svg Qt5::Network ${EXTRA_LIBS})
 
-	install_qt_app(asebaplayground)
-	codesign(asebaplayground)
+	add_executable(${PLAYGROUND_EXECUTABLE_NAME} WIN32 MACOSX_BUNDLE  ${playground_SRCS} ${playground_MOCS} ${resfiles})
+
+	target_link_libraries(${PLAYGROUND_EXECUTABLE_NAME} asebasim asebacommon asebavmbuffer asebavm asebaqtabout enkiviewer Qt5::Xml Qt5::Svg Qt5::Network ${EXTRA_LIBS})
+
+	install_qt_app(${PLAYGROUND_EXECUTABLE_NAME})
+	codesign(${PLAYGROUND_EXECUTABLE_NAME})
 
 	if(HAS_ZEROCONF_SUPPORT)
-		target_link_libraries(asebaplayground asebazeroconfqt)
+		target_link_libraries(${PLAYGROUND_EXECUTABLE_NAME} asebazeroconfqt)
+	endif()
+
+	if(APPLE)
+		set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
+		set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${ASEBA_VERSION})
+		set(MACOSX_BUNDLE_LONG_VERSION_STRING "${ASEBA_VERSION}-${GIT_REVISION}")
+		set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.mobsya.AsebaLauncher-${ASEBA_VERSION}")
+		set(MACOSX_BUNDLE_ICON_FILE asebaplayground.icns)
+		set(playground_icon ${PROJECT_SOURCE_DIR}/menu/osx/asebaplayground.icns)
+		set_source_files_properties(${playground_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+		target_sources(${PLAYGROUND_EXECUTABLE_NAME} PRIVATE ${playground_icon})
 	endif()
 
 endif ()

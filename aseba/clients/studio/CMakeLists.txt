@@ -1,5 +1,13 @@
 set(CMAKE_AUTOMOC on)
-add_executable(asebastudio WIN32 MACOSX_BUNDLE
+
+if(APPLE)
+    SET(STUDIO_EXECUTABLE_NAME AsebaStudio)
+else()
+    SET(STUDIO_EXECUTABLE_NAME asebastudio)
+endif()
+
+
+add_executable(${STUDIO_EXECUTABLE_NAME} WIN32 MACOSX_BUNDLE
     StudioAeslEditor.h
     MainWindow.h
     NamedValuesVectorModel.h
@@ -39,7 +47,7 @@ add_executable(asebastudio WIN32 MACOSX_BUNDLE
     NewNamedValueDialog.cpp
 )
 
-target_link_libraries(asebastudio
+target_link_libraries(${STUDIO_EXECUTABLE_NAME}
     asebaqtcommon
     qt-thymio-dm-client-lib
     asebaqtabout
@@ -52,8 +60,19 @@ target_link_libraries(asebastudio
     range-v3
 )
 
-install_qt_app(asebastudio)
-codesign(asebastudio)
+install_qt_app(${STUDIO_EXECUTABLE_NAME})
+codesign(${STUDIO_EXECUTABLE_NAME})
+
+if(APPLE)
+    set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${ASEBA_VERSION})
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${ASEBA_VERSION}-${GIT_REVISION}")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.mobsya.AsebaStudio-${ASEBA_VERSION}")
+    set(MACOSX_BUNDLE_ICON_FILE asebastudio.icns)
+    set(studio_icon ${PROJECT_SOURCE_DIR}/menu/osx/asebastudio.icns)
+    set_source_files_properties(${studio_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    target_sources(${STUDIO_EXECUTABLE_NAME} PRIVATE ${studio_icon})
+endif()
 
 
 #set(DOC_NAME aseba-doc)
