@@ -37,7 +37,7 @@ add_executable(${VPL_EXECUTABLE_NAME} WIN32 MACOSX_BUNDLE
     ThymioVPLApplication.cpp
 )
 
-target_link_libraries(${VPL_EXECUTABLE_NAME} 
+target_link_libraries(${VPL_EXECUTABLE_NAME}
     asebaqtcommon
     qt-thymio-dm-client-lib
     asebaqtabout
@@ -56,7 +56,7 @@ if(APPLE)
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${ASEBA_VERSION})
     set(MACOSX_BUNDLE_LONG_VERSION_STRING "${ASEBA_VERSION}-${GIT_REVISION}")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.mobsya.ThymioVPLClassic-${ASEBA_VERSION}")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.mobsya.ThymioVPLClassic")
     set(MACOSX_BUNDLE_ICON_FILE thymiovpl.icns)
     set(vpl_icon ${PROJECT_SOURCE_DIR}/menu/osx/thymiovpl.icns)
     set_source_files_properties(${vpl_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
