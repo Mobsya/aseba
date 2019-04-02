@@ -25,17 +25,25 @@ ListModel {
     }
 
     function launch_studio(device) {
-        var program = Utils.search_program("asebastudio")
-        if(!program)
-            return false;
-        return Utils.launch_process(program, ["--uuid", device.id])
+        if(Utils.platformIsOsX()) {
+            Utils.launchOsXBundle("AsebaStudio", ["--uuid", device.id])
+        } else {
+            var program = Utils.search_program("asebastudio")
+            if(!program)
+                return false;
+            return Utils.launch_process(program, ["--uuid", device.id])
+        }
     }
 
     function launch_vplClassic(device) {
-        var program = Utils.search_program("thymiovplclassic")
-        if(!program)
-            return false;
-        return Utils.launch_process(program, ["--uuid", device.id])
+        if(Utils.platformIsOsX()) {
+            Utils.launchOsXBundle("ThymioVPLClassic", ["--uuid", device.id])
+        } else {
+            var program = Utils.search_program("thymiovplclassic")
+            if(!program)
+                return false;
+            return Utils.launch_process(program, ["--uuid", device.id])
+        }
     }
 
     property var launch_functions : {

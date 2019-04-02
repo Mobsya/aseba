@@ -20,6 +20,19 @@ namespace mobsya {
 Launcher::Launcher(QObject* parent) : QObject(parent) {}
 
 
+bool Launcher::platformIsOsX() const {
+#ifdef Q_OS_MACOS
+    return true;
+#else
+    return false;
+
+#endif
+}
+
+bool Launcher::launchOsXBundle(const QString& name, const QStringList & args) const {
+    return doLaunchOsXBundle(name, args);
+}
+
 QString Launcher::search_program(const QString& name) const {
     qDebug() << "Searching for " << name;
     auto path = QStandardPaths::findExecutable(name, applicationsSearchPaths());

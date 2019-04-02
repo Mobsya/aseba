@@ -22,6 +22,7 @@ add_executable(thymio-launcher WIN32 MACOSX_BUNDLE
     main.cpp
     launcher.h
     launcher.cpp
+    launcher.mm
     launcherwindow.h
     launcherwindow.cpp
     tdmsupervisor.h
@@ -55,12 +56,17 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Release)
 endif()
 
 if(APPLE)
+    find_library(FOUNDATION_FRAMEWORK Foundation)
+    target_link_libraries(thymio-launcher ${FOUNDATION_FRAMEWORK})
+
+
+
     set(MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/osx/Launcher.plist)
     set(MACOSX_BUNDLE_BUNDLE_NAME "Thymio Suite")
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${ASEBA_VERSION})
     set(MACOSX_BUNDLE_LONG_VERSION_STRING "${ASEBA_VERSION}-${GIT_REVISION}")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.mobsya.ThymioLauncher-${ASEBA_VERSION}")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.mobsya.ThymioLauncher")
     set(MACOSX_BUNDLE_ICON_FILE launcher.icns)
     set(launcher_icon ${PROJECT_SOURCE_DIR}/menu/osx/launcher.icns)
     set_source_files_properties(${launcher_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
