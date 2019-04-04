@@ -58,3 +58,8 @@ jobs:
   - script: |
       osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite.dmg'

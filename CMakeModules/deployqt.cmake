@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 find_package(Qt5Core REQUIRED)
-cmake_policy(SET CMP0087 NEW)
+#cmake_policy(SET CMP0087 NEW)
 
 # Retrieve the absolute path to qmake and then use that path to find
 # the windeployqt binary
