@@ -414,10 +414,7 @@ AeslEditor::AeslEditor()
     , previousContext(UnknownContext)
     , editingLeftValue(false) {
     QFont font;
-    font.setFamily(QLatin1String(""));
     font.setStyleHint(QFont::TypeWriter);
-    font.setFixedPitch(true);
-    // font.setPointSize(10);
     setFont(font);
     setAcceptDrops(true);
     setAcceptRichText(false);
