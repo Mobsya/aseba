@@ -36,6 +36,7 @@ target_link_libraries(thymio-launcher
     Qt5::Quick
     Qt5::QuickWidgets
     Qt5::WebEngine
+    Qt5::Svg
     qt-thymio-dm-client-lib
     qt-thymio-dm-client-lib-qml
     qtsingleapplication
