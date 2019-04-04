@@ -4,6 +4,8 @@ resources:
      options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
 
+variables:
+- group: passwords
 
 jobs:
 - job: 'BuildFlatpak'
@@ -37,6 +39,11 @@ jobs:
       (cd third_party/spdlog/spdlog/ && git checkout v1.2.1) 
     displayName: 'Clone submodules'
 
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+
   - script: |
       brew update
       brew bundle
@@ -47,3 +54,7 @@ jobs:
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
       (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF && ninja)
     displayName: 'Build with cmake'
+
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+    displayName: 'Signing and create dmg'
