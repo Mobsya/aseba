@@ -5,6 +5,14 @@ BUILD_DIR=$2
 IDENTITY="$3"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+if [[ $DEST =~ \.dmg$ ]]; then
+    DMG="$1"
+    DMG_DIR="$(mktemp -d)"
+    DEST="$DMG_DIR/ThymioSuite.app"
+fi
+
+
+#hdiutil create -size 50m -fs HFS+ -volname Widget /path/to/save/widget.dmg
 
 
 
@@ -80,3 +88,21 @@ done
 echo "Signing $DEST with $DIR/launcher.entitlements"
 codesign --verbose --verify -f -s "$IDENTITY"  $(realpath "$BINUTILS_DIR/thymio-launcher")
 #--entitlements "$DIR/launcher.entitlements"
+
+if [ -n "$DMG" ]; then
+    test -f "$1" && rm "$DMG"
+    "$DIR/dmg/create-dmg" \
+    --volname "Thymio Suite" \
+    --volicon "$DIR/../menu/osx/launcher.icns" \
+    --background "$DIR/background.png" \
+    --window-pos 200 120 \
+    --window-size 620 470 \
+    --icon-size 100 \
+    --icon "ThymioSuite.app" 100 300 \
+    --hide-extension "ThymioSuite.app" \
+    --app-drop-link 500 300 \
+    "$DMG" \
+    "$DMG_DIR/ThymioSuite.app"
+
+    codesign --verbose --verify -f -s "$IDENTITY" "$1"
+fi
