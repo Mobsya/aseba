@@ -119,6 +119,7 @@ struct RobotType {
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);
     QApplication app(argc, argv);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setOrganizationName("mobsya");
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
     app.setApplicationName("Playground");
