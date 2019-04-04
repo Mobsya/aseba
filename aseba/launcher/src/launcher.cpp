@@ -29,9 +29,11 @@ bool Launcher::platformIsOsX() const {
 #endif
 }
 
+#ifdef Q_OS_MACOS
 bool Launcher::launchOsXBundle(const QString& name, const QStringList & args) const {
     return doLaunchOsXBundle(name, args);
 }
+#endif
 
 QString Launcher::search_program(const QString& name) const {
     qDebug() << "Searching for " << name;
