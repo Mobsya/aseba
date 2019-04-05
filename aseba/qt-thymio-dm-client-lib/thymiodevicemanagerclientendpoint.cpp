@@ -84,6 +84,7 @@ std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid&
 }
 
 void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
+    qDebug() << "ThymioDeviceManagerClientEndpoint::handleIncommingMessage" << EnumNameAnyMessage(msg.message_type());
     switch(msg.message_type()) {
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
             auto message = msg.as<mobsya::fb::ConnectionHandshake>();
