@@ -80,7 +80,11 @@ static std::string property_as_string(io_registry_entry_t ioRegistryEntry,
     if(!cfstr || CFGetTypeID(cfstr) != CFStringGetTypeID()) {
         return {};
     }
-    return std::string(CFStringGetCStringPtr(CFStringRef(cfstr),kCFStringEncodingUTF8));
+    std::string str(CFStringGetCStringPtr(CFStringRef(cfstr),kCFStringEncodingUTF8));
+    str.erase(std::find_if(str.rbegin(), str.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), str.end());
+    return str;
 }
 
 static io_registry_entry_t get_parent(io_registry_entry_t service)
@@ -128,7 +132,7 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             if(id.product_id == 0)
                 id.product_id = property_as_short(service, kUSBProductID);
             if(name.empty())
-                name = property_as_string(service, kUSBProductName);
+                name = property_as_string(service, kUSBProductString);
             if(path.empty())
                 path = property_as_string(service, kIOCalloutDeviceKey);
         }while((id.product_id == 0 || id.vendor_id == 0 || name.empty() || path.empty()) && (service = get_parent(service)));
