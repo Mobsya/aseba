@@ -50,12 +50,14 @@ void serial_acceptor_service::on_active_timer(const boost::system::error_code& e
 
 static uint16_t property_as_short(io_registry_entry_t ioRegistryEntry,
                                       const char* propertyKey) {
-    const auto k = CFStringCreateWithCString(kCFAllocatorDefault, propertyKey, kCFStringEncodingUTF8);
-    BOOST_SCOPE_EXIT(&k) {
+    auto k = CFStringCreateWithCString(kCFAllocatorDefault, propertyKey, kCFStringEncodingUTF8);
+    auto idx = IORegistryEntrySearchCFProperty(ioRegistryEntry, kIOServicePlane, k, kCFAllocatorDefault, 0);
+    BOOST_SCOPE_EXIT(&k, &idx) {
+        if(idx)
+            CFRelease(idx);
         CFRelease(k);
     }
     BOOST_SCOPE_EXIT_END
-    auto idx = IORegistryEntrySearchCFProperty(ioRegistryEntry, kIOServicePlane, k, kCFAllocatorDefault, 0);
     if(idx == nullptr)
         return 0;
     int16_t value = 0;
@@ -68,12 +70,13 @@ static std::string property_as_string(io_registry_entry_t ioRegistryEntry,
 
     // get path for device
     auto k = CFStringCreateWithCString(kCFAllocatorDefault, propertyKey, kCFStringEncodingUTF8);
-    BOOST_SCOPE_EXIT(&k) {
+    CFTypeRef cfstr = IORegistryEntrySearchCFProperty(ioRegistryEntry, kIOServicePlane, k, kCFAllocatorDefault, 0);
+    BOOST_SCOPE_EXIT(&k, &cfstr) {
+        if(cfstr)
+            CFRelease(cfstr);
         CFRelease(k);
     }
     BOOST_SCOPE_EXIT_END
-
-    CFTypeRef cfstr = IORegistryEntrySearchCFProperty(ioRegistryEntry, kIOServicePlane, k, kCFAllocatorDefault, 0);
     if(!cfstr || CFGetTypeID(cfstr) != CFStringGetTypeID()) {
         return {};
     }
