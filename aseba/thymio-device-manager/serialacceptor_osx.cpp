@@ -162,6 +162,7 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
             m_requests.pop();
             boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
+            break;
         }
     }
     m_known_devices = known_devices;
