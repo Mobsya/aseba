@@ -22,13 +22,17 @@ add_executable(thymio-launcher WIN32 MACOSX_BUNDLE
     main.cpp
     launcher.h
     launcher.cpp
-    launcher.mm
     launcherwindow.h
     launcherwindow.cpp
     tdmsupervisor.h
     tdmsupervisor.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc
 )
+
+if(APPLE)
+    target_sources(thymio-launcher PRIVATE launcher.mm)
+endif()
+
 target_link_libraries(thymio-launcher
     asebacommon
     Qt5::Widgets
