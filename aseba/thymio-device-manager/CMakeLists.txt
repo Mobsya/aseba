@@ -55,6 +55,15 @@ if(WIN32)
     )
     target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
     target_link_libraries(thymio-device-manager-lib PUBLIC iphlpapi CRYPT32)
+elseif(APPLE)
+    target_sources(thymio-device-manager-lib PRIVATE
+        serialacceptor.h
+        serialacceptor_osx.cpp
+        serialserver.h
+        serialserver.cpp
+        serial_usb_device.h
+    )
+    target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
 else()
     find_package(udev)
     if(UDEV_FOUND)
