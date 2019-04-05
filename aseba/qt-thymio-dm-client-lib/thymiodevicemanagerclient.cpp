@@ -26,7 +26,9 @@ std::shared_ptr<ThymioNode> ThymioDeviceManagerClient::node(const QUuid& id) con
 }
 
 void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
+    qCDebug(zeroconf) << "ThymioDeviceManagerClient::onServiceAdded: " << service;
     QUuid id = service_id(service);
+    qCDebug(zeroconf) << "ThymioDeviceManagerClient::onServiceAdded: id: " << id;
     if(id.isNull())
         return;
 
