@@ -701,7 +701,7 @@ Occurrences</source>
         <translation type="vanished">Fehler in XML-Dokument: %0 in Zeile %1, Spalte %2</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Skript speichern</translation>
     </message>
@@ -1324,7 +1324,7 @@ Ereignis %0: </translation>
         <translation>&amp;Versteckte Variabeln und Funktionen anzeigen</translation>
     </message>
     <message>
-        <location line="-675"/>
+        <location line="-676"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren.</translation>
     </message>
@@ -1339,7 +1339,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Schlüssel&amp;wörter zeigen</translation>
     </message>
     <message>
-        <location line="+759"/>
+        <location line="+760"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>

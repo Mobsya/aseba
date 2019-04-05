@@ -43,7 +43,7 @@
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="78"/>
+        <location filename="../launcher.cpp" line="82"/>
         <source>Save %1</source>
         <translation>Sauvegardez %1</translation>
     </message>

@@ -12,5 +12,6 @@
     <file>asebaplayground_tl.qm</file>
     <!-- insert translation here (DO NOT REMOVE) -->
     <file>images/icons/asebaplayground.svgz</file>
+    <file>asebaplayground_pl.qm</file>
   </qresource>
 </RCC>

@@ -629,7 +629,7 @@ Occurrences</source>
         <translation type="vanished">&lt;h1&gt;关于Aseba&lt;/h1&gt;版本信息&lt;ul&gt;&lt;li&gt;Aseba版本: %0&lt;br/&gt;(build版本. %1/协议版本. %2)&lt;/li&gt;&lt;li&gt;Dashel版本. %3&lt;br/&gt;(支持的数据流类型: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;更多资料 &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; 以及其他参与者 (click &quot;Show details&quot; for full list)&lt;/p&gt;&lt;p&gt;Aseb为开源项目,许可证 &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL版本 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+563"/>
+        <location filename="../../studio/MainWindow.cpp" line="+564"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -638,7 +638,7 @@ Occurrences</source>
         <translation type="vanished">关于Aseba Studio</translation>
     </message>
     <message>
-        <location line="-511"/>
+        <location line="-512"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境</translation>
     </message>
@@ -669,7 +669,7 @@ Occurrences</source>
         <translation type="vanished">XML源代码错误:%0在第%1行,第%2列</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>保存脚本</translation>
     </message>

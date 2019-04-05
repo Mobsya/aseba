@@ -665,7 +665,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Información de la versión Aseba:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2012 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;StÃ©phane Magnenat&lt;/a&gt; and other contributors.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba is open-source licensed under the LGPL version 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+563"/>
+        <location filename="../../studio/MainWindow.cpp" line="+564"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -674,7 +674,7 @@ Occurrences</source>
         <translation type="vanished">Acerca de Aseba Studio</translation>
     </message>
     <message>
-        <location line="-511"/>
+        <location line="-512"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio es un entorno para la programación interactiva de robots con un lenguaje de texto.</translation>
     </message>
@@ -705,7 +705,7 @@ Occurrences</source>
         <translation type="vanished">Error en archivo fuente XML: %0, línea %1, columna %2</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Guardar Script</translation>
     </message>

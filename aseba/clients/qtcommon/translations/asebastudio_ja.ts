@@ -638,7 +638,7 @@ Occurrences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+509"/>
+        <location line="+510"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation></translation>
     </message>
@@ -647,7 +647,7 @@ Occurrences</source>
         <translation type="vanished">Aseba Studio について</translation>
     </message>
     <message>
-        <location line="-456"/>
+        <location line="-457"/>
         <source>Open Script</source>
         <translation>スクリプト開ける</translation>
     </message>
@@ -668,7 +668,7 @@ Occurrences</source>
         <translation type="vanished">XMLソースファイルのエラー:%1行、%2列の%0</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>スクリプト保存</translation>
     </message>

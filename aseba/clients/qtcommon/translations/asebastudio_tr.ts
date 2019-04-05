@@ -630,7 +630,7 @@ Occurrences</source>
         <translation type="vanished">XML kaynak dosyasındaki hata: %0 %1 satırda, %2 sütunda</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Kaynak Dosyasını Kaydet</translation>
     </message>

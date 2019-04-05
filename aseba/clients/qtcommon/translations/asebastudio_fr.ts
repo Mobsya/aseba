@@ -688,7 +688,7 @@ les occ&amp;urences</translation>
         <translation type="vanished">%0 scriptes n&apos;ont pas de noeuds correspondants dans le réseau actuel et n&apos;ont donc pas été chargés.</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Sauvegarder le scripte</translation>
     </message>
@@ -836,7 +836,7 @@ event %0 : </source>
         <translation>Site web d&apos;Aseba...</translation>
     </message>
     <message>
-        <location line="-510"/>
+        <location line="-511"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio est un environnement pour programmer des robots interactivement avec un langage texte.</translation>
     </message>
@@ -846,7 +846,7 @@ event %0 : </source>
         <translation>https://www.thymio.org/fr:asebastudio</translation>
     </message>
     <message>
-        <location line="+509"/>
+        <location line="+510"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/fr:start</translation>
     </message>

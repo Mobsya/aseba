@@ -13,5 +13,6 @@
     <!-- insert translation here (DO NOT REMOVE) -->
     <file>images/fileopen.svgz</file>
     <file>images/thymioupgrader.svgz</file>
+    <file>thymioupgrader_pl.qm</file>
   </qresource>
 </RCC>

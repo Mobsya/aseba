@@ -654,7 +654,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Informazioni sulla versione:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Versione %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(tipi di flusso supportati: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2013 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; e altri collaboratori.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba è open-source con licenza LGPL versione 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+563"/>
+        <location filename="../../studio/MainWindow.cpp" line="+564"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/it:start</translation>
     </message>
@@ -663,7 +663,7 @@ Occurrences</source>
         <translation type="vanished">Riguardo Aseba Studio</translation>
     </message>
     <message>
-        <location line="-456"/>
+        <location line="-457"/>
         <source>Open Script</source>
         <translation>Apri Script</translation>
     </message>
@@ -684,7 +684,7 @@ Occurrences</source>
         <translation type="vanished">Errore nel file sorgente XML %0 alla linea %1, colonna %2</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Salva script</translation>
     </message>
@@ -1161,7 +1161,7 @@ event %0 : </source>
         <translation type="obsolete">F11</translation>
     </message>
     <message>
-        <location line="-675"/>
+        <location line="-676"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio è un ambiente per la programmazione interattiva di robot utilizzando un linguaggio di testo.</translation>
     </message>
@@ -1171,7 +1171,7 @@ event %0 : </source>
         <translation>https://www.thymio.org/it:asebastudio</translation>
     </message>
     <message>
-        <location line="+636"/>
+        <location line="+637"/>
         <source>&amp;Go To Line...</source>
         <translation>Vai alla &amp;linea...</translation>
     </message>

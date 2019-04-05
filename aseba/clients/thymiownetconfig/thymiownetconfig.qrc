@@ -12,5 +12,6 @@
     <file>thymiownetconfig_ru.qm</file>
     <file>thymiownetconfig_tl.qm</file>
     <!-- insert translation here (DO NOT REMOVE) -->
+    <file>thymiownetconfig_pl.qm</file>
   </qresource>
 </RCC>

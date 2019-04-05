@@ -8,5 +8,6 @@
     <file>translations/launcher_tr.qm</file>
     <file>translations/launcher_ja.qm</file>
     <file>translations/launcher_zh.qm</file>
+    <file>translations/launcher_pl.qm</file>
   </qresource>
 </RCC>

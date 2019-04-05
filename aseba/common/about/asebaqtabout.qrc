@@ -11,5 +11,6 @@
     <file>qtabout_ru.qm</file>
     <file>qtabout_tl.qm</file>
     <!-- insert translation here (DO NOT REMOVE) -->
+    <file>qtabout_pl.qm</file>
   </qresource>
 </RCC>
