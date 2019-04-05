@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/asio/serial_port.hpp>
 #include "usb_utils.h"
-#ifdef __linux__
+#if defined(__linux__) or defined(__APPLE__)
 #    include <sys/ioctl.h>
 #endif
 namespace mobsya {
@@ -20,7 +20,7 @@ public:
     }
     void open(boost::system::error_code& ec) {
         boost::asio::serial_port::open(m_port_name, ec);
-#ifdef __linux__
+#if defined(__linux__) or defined(__APPLE__)
         ioctl(native_handle(), TIOCEXCL);
 #endif
     }
@@ -29,7 +29,7 @@ public:
 #ifdef _WIN32
         EscapeCommFunction(native_handle(), dtr ? SETDTR : CLRDTR);
 #endif
-#ifdef __linux__
+#if defined(__linux__) or defined(__APPLE__)
         int flag = TIOCM_DTR;
         ioctl(native_handle(), dtr ? TIOCMBIS : TIOCMBIC, &flag);
 #endif
@@ -38,7 +38,7 @@ public:
 #ifdef _WIN32
         EscapeCommFunction(native_handle(), rts ? SETRTS : CLRRTS);
 #endif
-#ifdef __linux__
+#if defined(__linux__) or defined(__APPLE__)
         int flag = TIOCM_RTS;
         ioctl(native_handle(), rts ? TIOCMBIS : TIOCMBIC, &flag);
 #endif
