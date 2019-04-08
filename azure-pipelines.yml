@@ -49,6 +49,27 @@ jobs:
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      downloadType: single
+      project: 'Thymio Software Suite'
+      pipeline: 'Mobsya.scratch-gui'
+      artifactName: 'scratch-gui'
+      downloadPath: $(Build.SourcesDirectory)/scratch.gui.tar.gz
+
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      downloadType: single
+      project: 'Thymio Software Suite'
+      pipeline: 'Mobsya.thymio-blockly-standalone'
+      artifactName: 'thymio-blockly'
+      downloadPath: '$(Build.SourcesDirectory)/thymio-blockly.tar.gz'
+
+  - script: |
+      tar xzf scratch.gui.tar.gz
+      tar xzf thymio-blockly.tar.gz
+    displayName: 'E'
+
   - script: |
       sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
