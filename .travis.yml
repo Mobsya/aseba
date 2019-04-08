@@ -71,7 +71,7 @@ before_install:
   set -e
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     brew update
-    brew bundle
+    brew bundle || true
   else
     # install cmake through pip - should give us cmake 3.11 - which we need for boost
     pip install --user --upgrade pip
