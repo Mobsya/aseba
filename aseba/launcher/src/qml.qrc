@@ -57,5 +57,6 @@
         <file>apps/studio/desc.en.html</file>
         <file>apps/scratch/desc.en.html</file>
         <file>qml/webview.qml</file>
+        <file>qml/webview_native.qml</file>
     </qresource>
 </RCC>

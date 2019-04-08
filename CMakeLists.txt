@@ -137,6 +137,14 @@ if(WIN32)
 endif()
 
 set(CPACK_BUNDLE_NAME ThymioSuite)
+set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/osx/Info.plist)
+set(CPACK_BUNDLE_ICON ${PROJECT_SOURCE_DIR}/menu/osx/asebastudio.icns)
+
+macro(install_symlink filepath sympath)
+    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${filepath} ${sympath})")
+    install(CODE "message(\"-- Created symlink: ${sympath} -> ${filepath}\")")
+endmacro(install_symlink)
+
 
 SET(CPACK_PACKAGE_VERSION_MAJOR "${ASEBA_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
@@ -163,19 +171,14 @@ if(FLAT_PACK_BUILD)
     SET(MOBSYA_WEBAPPS_ROOT_DIR "share/")
 endif()
 
-
 if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
 endif()
 if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
 endif()
 
 
 feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
-
-
-
-
-
-

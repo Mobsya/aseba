@@ -39,12 +39,19 @@ target_link_libraries(thymio-launcher
     Qt5::Qml
     Qt5::Quick
     Qt5::QuickWidgets
-    Qt5::WebEngine
     Qt5::Svg
     qt-thymio-dm-client-lib
     qt-thymio-dm-client-lib-qml
     qtsingleapplication
 )
+
+if(APPLE)
+    target_link_libraries(thymio-launcher Qt5::WebView)
+else()
+    target_link_libraries(thymio-launcher Qt5::WebEngine)
+    target_compile_definitions(thymio-launcher PRIVATE -DMOBSYA_USE_WEBENGINE)
+endif()
+
 if(WIN32)
     query_qmake(QWEBENGINE_PATH QT_INSTALL_LIBEXECS)
     if(NOT CMAKE_BUILD_TYPE MATCHES Release)

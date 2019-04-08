@@ -12,12 +12,20 @@
 #include <aseba/common/consts.h>
 #include <aseba/qt-thymio-dm-client-lib/thymio-api.h>
 #include <QtSingleApplication>
-#include <qtwebengineglobal.h>
+#ifndef MOBSYA_USE_WEBENGINE
+    #include <qtwebviewfunctions.h>
+#else
+    #include #include <QtWebEngine>
+#endif
 #include "launcher.h"
 #include "tdmsupervisor.h"
 #include "launcherwindow.h"
 
 int main(int argc, char** argv) {
+
+#ifndef MOBSYA_USE_WEBENGINE
+    qputenv("QT_WEBVIEW_PLUGIN", "native");
+#endif
 
 #ifdef Q_OS_WIN
     AttachConsole(ATTACH_PARENT_PROCESS);
@@ -42,10 +50,18 @@ int main(int argc, char** argv) {
 
     // Ensure a single instance
     QtSingleApplication app(argc, argv);
+
     if(app.sendMessage("ACTIVATE")) {
         qWarning("Already launched, exiting");
         return 0;
     }
+
+#ifndef MOBSYA_USE_WEBENGINE
+    QtWebView::initialize();
+#else
+    QtWebEngine::initialize();
+#endif
+
     app.setQuitOnLastWindowClosed(false);
 
     mobsya::register_qml_types();
@@ -87,7 +103,6 @@ int main(int argc, char** argv) {
     app.setActivationWindow(&w, true);
     app.setQuitOnLastWindowClosed(false);
 
-    QtWebEngine::initialize();
 
     return app.exec();
 }
