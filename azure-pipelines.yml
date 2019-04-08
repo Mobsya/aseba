@@ -45,7 +45,7 @@ jobs:
       project: 'Thymio Software Suite'
       pipeline: 'Mobsya.scratch-gui'
       artifactName: 'scratch-gui'
-      downloadPath: $(Build.SourcesDirectory)/_artifacts
+      downloadPath: '$(Build.SourcesDirectory)/_artifacts'
       buildType: specific
     displayName: 'Download scratch'
 
