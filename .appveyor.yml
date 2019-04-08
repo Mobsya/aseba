@@ -84,6 +84,7 @@ before_build:
   - git submodule init
   - git submodule update --recursive --remote
   - cd third_party/spdlog/spdlog/ && git checkout v1.2.1
+  - cd "%APPVEYOR_BUILD_FOLDER%/third_party/range-v3" && git checkout 1af081d86f74af83026e111d4463803637f75e58
   - cd "%APPVEYOR_BUILD_FOLDER%/third_party/flatbuffers" && git checkout 600f3fbcd4ef38b15398b1273f90697587b5a1d1
   - cd "%APPVEYOR_BUILD_FOLDER%"
 
