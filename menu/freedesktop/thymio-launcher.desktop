@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Thymio Launcher
+GenericName=Integrated Development Environment
+GenericName[fr]=Environnement de développement intégré
+GenericName[de]=Integrierte Entwicklungsumgebung
+GenericName[it]=Ambiente di sviluppo integrato
+GenericName[es]=Ambiente de desarrollo integrado
+GenericName[pt]=Ambiente de desenvolvimento integrado
+Exec=thymio-launcher
+TryExec=thymio-launcher
+Categories=Education;Science;
+Icon=thymio-launcher
