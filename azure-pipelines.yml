@@ -33,21 +33,48 @@ jobs:
   - task: NodeTool@0
     inputs:
       versionSpec: '9.x'
-  - script: |
-      git submodule init
-      git submodule update --recursive --remote
-      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
-    displayName: 'Clone submodules'
 
   - task: InstallAppleCertificate@2
     inputs:
       certSecureFile: 'Mobsya.p12'
       certPwd: $(mobsya-mac-p12)
 
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      downloadType: single
+      project: '$(System.TeamProject)'
+      pipeline: 'Mobsya.scratch-gui'
+      artifactName: 'scratch-gui'
+      downloadPath: $(Build.SourcesDirectory)/_artifacts
+      buildType: specific
+    displayName: 'Download scratch'
+
+
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      downloadType: single
+      project: '$(System.TeamProject)'
+      pipeline: 'Mobsya.thymio-blockly-standalone'
+      artifactName: 'thymio-blockly'
+      downloadPath: '$(Build.SourcesDirectory)/_artifacts'
+      buildType: specific
+    displayName: 'Download blockly'
+
+  - script: |
+      tar xzf _artifacts/scratch-gui/scratch.gui.tar.gz
+      tar xzf _artifacts/thymio-blockly/thymio-blockly.tar.gz
+    displayName: 'Extract scratch and blockly'
+
   - script: |
       brew update
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
+
+  - script: |
+      git submodule init
+      git submodule update --recursive --remote
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
+    displayName: 'Clone submodules'
 
   - script: |
       sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
