@@ -29,6 +29,14 @@ add_to_group() {
     defaults write "$1" "com.apple.security.application-groups" -array "P97H86YL8K.ThymioSuite"
 }
 
+sign() {
+    if [ -z "$IDENTITY" ]; then
+        echo "Identity not provided, not signing"
+    else
+        codesign --verify --verbose -f -s "$IDENTITY" "$@"
+    fi
+}
+
 #Make sure the launcher is retina ready
 defaults write $(realpath "$DEST/Contents/Info.plist") NSPrincipalClass -string NSApplication
 defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string True
@@ -61,32 +69,31 @@ done
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
     echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
-    codesign --verbose -f -s "$IDENTITY" --deep $(realpath "$APPS_DIR/$app.app/")
+    sign --deep $(realpath "$APPS_DIR/$app.app/")
     #--entitlements "$DIR/inherited.entitlements"
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
 do
     echo "Signing $DEST/Contents/Frameworks/$fw"
-    codesign --verbose -f -s "$IDENTITY" --deep $(realpath "$DEST/Contents/Frameworks/$fw")
+    sign --deep $(realpath "$DEST/Contents/Frameworks/$fw")
 done
 
 for plugin in $(find $DEST/Contents/PlugIns -name '*.dylib')
 do
     echo "Signing $plugin"
-    codesign --verbose -f -s "$IDENTITY" --deep $(realpath "$plugin")
+    sign --deep $(realpath "$plugin")
 done
 
 for binary in "thymio-device-manager" "asebacmd" "thymiownetconfig-cli"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    codesign --verbose -f -s "$IDENTITY" \
-    --deep $(realpath "$BINUTILS_DIR/$binary")
+    sign --deep $(realpath "$BINUTILS_DIR/$binary")
     #--entitlements "$DIR/inherited.entitlements"
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-codesign --verbose --verify -f -s "$IDENTITY"  $(realpath "$BINUTILS_DIR/thymio-launcher")
+sign $(realpath "$BINUTILS_DIR/thymio-launcher")
 #--entitlements "$DIR/launcher.entitlements"
 
 if [ -n "$DMG" ]; then
@@ -104,5 +111,5 @@ if [ -n "$DMG" ]; then
     "$DMG" \
     "$DMG_DIR/ThymioSuite.app"
 
-    codesign --verbose --verify -f -s "$IDENTITY" "$1"
+    sign -f "$1"
 fi
