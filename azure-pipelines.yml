@@ -39,31 +39,9 @@ jobs:
       certSecureFile: 'Mobsya.p12'
       certPwd: $(mobsya-mac-p12)
 
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      downloadType: single
-      project: '$(System.TeamProject)'
-      pipeline: 5
-      artifactName: 'thymio-blockly'
-      downloadPath: '$(Build.SourcesDirectory)/_artifacts'
-      buildType: specific
-      buildVersionToDownload: latest
-    displayName: 'Download blockly'
-
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      downloadType: single
-      project: '$(System.TeamProject)'
-      pipeline: 4
-      artifactName: 'scratch-gui'
-      downloadPath: '$(Build.SourcesDirectory)/_artifacts'
-      buildType: specific
-      buildVersionToDownload: latest
-    displayName: 'Download scratch'
-
   - script: |
-      tar xzf _artifacts/scratch-gui/scratch.gui.tar.gz
-      tar xzf _artifacts/thymio-blockly/thymio-blockly.tar.gz
+      curl -sL https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190326.1/thymio-blockly.tar.gz | tar xzf - -C .
+      curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190329.1/scratch-gui.tar.gz | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
