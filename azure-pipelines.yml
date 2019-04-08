@@ -42,7 +42,7 @@ jobs:
   - task: DownloadBuildArtifacts@0
     inputs:
       downloadType: single
-      project: '$(System.TeamProject)'
+      project: 'Thymio Software Suite'
       pipeline: 'Mobsya.scratch-gui'
       artifactName: 'scratch-gui'
       downloadPath: $(Build.SourcesDirectory)/_artifacts
@@ -53,7 +53,7 @@ jobs:
   - task: DownloadBuildArtifacts@0
     inputs:
       downloadType: single
-      project: '$(System.TeamProject)'
+      project: 'Thymio Software Suite'
       pipeline: 'Mobsya.thymio-blockly-standalone'
       artifactName: 'thymio-blockly'
       downloadPath: '$(Build.SourcesDirectory)/_artifacts'
