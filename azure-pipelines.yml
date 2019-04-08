@@ -43,22 +43,23 @@ jobs:
     inputs:
       downloadType: single
       project: 'Thymio Software Suite'
-      pipeline: 'Mobsya.scratch-gui'
-      artifactName: 'scratch-gui'
+      pipeline: 'Mobsya.thymio-blockly-standalone'
+      artifactName: 'thymio-blockly'
+      branchName: 'master'
       downloadPath: '$(Build.SourcesDirectory)/_artifacts'
       buildType: specific
-    displayName: 'Download scratch'
-
+    displayName: 'Download blockly'
 
   - task: DownloadBuildArtifacts@0
     inputs:
       downloadType: single
       project: 'Thymio Software Suite'
-      pipeline: 'Mobsya.thymio-blockly-standalone'
-      artifactName: 'thymio-blockly'
+      pipeline: 'Mobsya.scratch-gui'
+      artifactName: 'scratch-gui'
+      branchName: 'develop'
       downloadPath: '$(Build.SourcesDirectory)/_artifacts'
       buildType: specific
-    displayName: 'Download blockly'
+    displayName: 'Download scratch'
 
   - script: |
       tar xzf _artifacts/scratch-gui/scratch.gui.tar.gz
