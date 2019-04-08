@@ -30,13 +30,13 @@ jobs:
   pool:
     vmImage: 'macOS-10.13'
   steps:
-  - task: NodeTool@0 
+  - task: NodeTool@0
     inputs:
       versionSpec: '9.x'
   - script: |
       git submodule init
       git submodule update --recursive --remote
-      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1) 
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
     displayName: 'Clone submodules'
 
   - task: InstallAppleCertificate@2
@@ -58,6 +58,12 @@ jobs:
   - script: |
       osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin
+    displayName: 'Create Unsigned DMG'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
 
   - task: PublishBuildArtifacts@1
     inputs:
