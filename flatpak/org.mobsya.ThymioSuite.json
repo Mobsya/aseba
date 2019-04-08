@@ -56,17 +56,22 @@
             "buildsystem": "simple",
             "build-commands": [
                 "./bootstrap.sh",
-                "./b2 install --prefix=/app/ variant=release link=shared threading=multi --with-filesystem --with-thread --with-chrono --with-system --with-date_time --with-regex --with-serialization --with-program_options -j 4"
+                "./b2 install --prefix=/app/ variant=release link=static threading=multi --with-filesystem --with-thread --with-chrono --with-system --with-date_time --with-regex --with-serialization --with-program_options -j 4"
             ],
             "cleanup": [
-                "/lib/debug", "/include", ""
+                "/lib/", "/lib/debug", "/include", ""
             ]
         },
         {
             "name": "ThymioSuite",
             "buildsystem": "cmake-ninja",
             "config-opts": [
-                "-DCMAKE_BUILD_TYPE=Release", "-DFLAT_PACK_BUILD=ON"
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DFLAT_PACK_BUILD=ON",
+                "-DBOOST_ROOT=/app",
+                "-DBOOST_LIBRARYDIR=/app/lib",
+                "-DBOOST_INCLUDEDIR=/app/include",
+                "-DBoost_DETAILED_FAILURE_MSG=ON"
             ],
             "sources": [
                 {
