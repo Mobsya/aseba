@@ -43,7 +43,7 @@ jobs:
     inputs:
       downloadType: single
       project: '$(System.TeamProject)'
-      pipeline: 'Mobsya.thymio-blockly-standalone'
+      pipeline: 5
       artifactName: 'thymio-blockly'
       branchName: 'master'
       downloadPath: '$(Build.SourcesDirectory)/_artifacts'
@@ -54,7 +54,7 @@ jobs:
     inputs:
       downloadType: single
       project: '$(System.TeamProject)'
-      pipeline: 'Mobsya.scratch-gui'
+      pipeline: 4
       artifactName: 'scratch-gui'
       branchName: 'develop'
       downloadPath: '$(Build.SourcesDirectory)/_artifacts'
