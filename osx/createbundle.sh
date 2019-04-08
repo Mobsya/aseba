@@ -11,15 +11,20 @@ if [[ $DEST =~ \.dmg$ ]]; then
     DEST="$DMG_DIR/ThymioSuite.app"
 fi
 
-
 #hdiutil create -size 50m -fs HFS+ -volname Widget /path/to/save/widget.dmg
-
-
 
 
 # Make the top Level Bundle Out of the Launcher Bundle
 mkdir -p "$DEST"
 cp -R "$BUILD_DIR"/thymio-launcher.app/* "$DEST"
+
+if [ -d "$BUILD_DIR/scratch" ]; then
+    cp -R "$BUILD_DIR/scratch" "$DEST/Contents/Resources"
+fi
+
+if [ -d "$BUILD_DIR/thymio_blockly" ]; then
+    cp -R "$BUILD_DIR/thymio_blockly" "$DEST/Contents/Resources"
+fi
 
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"

@@ -10,15 +10,33 @@
 #include <QProcess>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QQuickWindow>
+#include <QQuickView>
 #include <QStyle>
 #include <QScreen>
 #include <QFileDialog>
-
+#include <QtWebView>
 namespace mobsya {
 
 Launcher::Launcher(QObject* parent) : QObject(parent) {}
 
+
+class QuickView: public QQuickView {
+public:
+    using QQuickView::QQuickView;
+public:
+    virtual ~QuickView() override;
+    bool event(QEvent *event) override {
+        if (event->type() == QEvent::Close) {
+            QTimer::singleShot(1000, [ptr = QPointer(this)] () {
+                if(!ptr.isNull())
+                    ptr->deleteLater();
+            });
+        }
+        return QQuickView::event(event);
+    }
+};
+
+QuickView::~QuickView() {}
 
 bool Launcher::platformIsOsX() const {
 #ifdef Q_OS_MACOS
@@ -59,6 +77,9 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 #ifdef Q_OS_LINUX
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/../share/").absolutePath());
 #endif
+#ifdef Q_OS_OSX
+    files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/../Resources/").absolutePath());
+#endif
     return files;
 }
 
@@ -67,25 +88,23 @@ bool Launcher::launch_process(const QString& program, const QStringList& args) c
 }
 
 bool Launcher::openUrl(const QUrl& url) const {
-    QQmlApplicationEngine* engine = new QQmlApplicationEngine;
-    engine->rootContext()->setContextProperty("Utils", (QObject*)this);
-    engine->rootContext()->setContextProperty("appUrl", url);
-    engine->load(QUrl("qrc:/qml/webview.qml"));
 
-    QObject* topLevel = engine->rootObjects().value(0);
-    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
-
-    window->setParent(0);
-    window->setTransientParent(0);
-    engine->setParent(window);
-    window->setWidth(1024);
-    window->setHeight(700);
-    connect(window, SIGNAL(closing(QQuickCloseEvent*)), window, SLOT(deleteLater()));
-    window->show();
-    const auto screen_geom = window->screen()->availableGeometry();
-
-    window->setGeometry((screen_geom.width() - window->width()) / 2, (screen_geom.height() - window->height()) / 2,
-                        window->width(), window->height());
+    qDebug() << url;
+    QuickView* w = new QuickView;
+    w->rootContext()->setContextProperty("Utils", (QObject*)this);
+    w->rootContext()->setContextProperty("appUrl", url);
+#ifdef MOBSYA_USE_WEBENGINE
+    w->setSource(QUrl("qrc:/qml/webview.qml"));
+#else
+     w->setSource(QUrl("qrc:/qml/webview_native.qml"));
+#endif
+    w->rootContext()->setContextProperty("window", w);
+    w->setWidth(1024);
+    w->setHeight(700);
+    const auto screen_geom = w->screen()->availableGeometry();
+    w->setGeometry((screen_geom.width() - w->width()) / 2, (screen_geom.height() - w->height()) / 2,
+                        w->width(), w->height());
+    w->show();
 
     return true;
 }
