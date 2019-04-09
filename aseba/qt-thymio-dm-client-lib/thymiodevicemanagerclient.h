@@ -53,6 +53,7 @@ Q_SIGNALS:
     void nodeAdded(std::shared_ptr<ThymioNode>);
     void nodeRemoved(std::shared_ptr<ThymioNode>);
     void nodeModified(std::shared_ptr<ThymioNode>);
+    void localPeerDisconnected();
 
 private:
     friend class ThymioDevicesModel;

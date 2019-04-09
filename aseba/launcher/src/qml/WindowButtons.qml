@@ -13,6 +13,9 @@ Item {
             source: "qrc:/assets/tools-icon.svg"
             width: btn_size
             height: parent.height
+            onClicked: {
+                settingsMenu.visible = true
+            }
         }
 
         /*SvgButton {

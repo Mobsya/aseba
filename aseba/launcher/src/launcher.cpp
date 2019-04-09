@@ -17,7 +17,7 @@
 #include <QPointer>
 namespace mobsya {
 
-Launcher::Launcher(QObject* parent) : QObject(parent) {}
+Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : m_client(client), QObject(parent) {}
 
 
 bool Launcher::platformIsOsX() const {
@@ -67,6 +67,17 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 
 bool Launcher::launch_process(const QString& program, const QStringList& args) const {
     return QProcess::startDetached(program, args);
+}
+
+bool Launcher::launchPlayground() const {
+#ifdef Q_OS_MAC
+    return doLaunchPlaygroundBundle();
+#else
+    auto exe = search_program("asebaplayground");
+    if(exe.isEmpty())
+        return false;
+    return launch_process(exe);
+#endif
 }
 
 bool Launcher::openUrl(const QUrl& url) {

@@ -78,6 +78,9 @@ void ThymioDeviceManagerClient::onServiceRemoved(QZeroConfService service) {
 
 void ThymioDeviceManagerClient::onEndpointDisconnected() {
     auto endpoint = qobject_cast<ThymioDeviceManagerClientEndpoint*>(sender());
+    if(endpoint && endpoint->isLocalhostPeer())
+        Q_EMIT localPeerDisconnected();
+
     auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
                            [endpoint](const auto& ep) { return ep.get() == endpoint; });
     if(it == std::end(m_endpoints))
@@ -99,9 +102,12 @@ void ThymioDeviceManagerClient::onEndpointDisconnected() {
 
 void ThymioDeviceManagerClient::requestDeviceManagersShutdown() {
     for(auto&& ep : m_endpoints.values()) {
-        if(ep && ep->isLocalhostPeer())
+        if(ep && ep->isLocalhostPeer()) {
             ep->requestDeviceManagerShutdown();
+            return;
+        }
     }
+    Q_EMIT localPeerDisconnected();
 }
 
 

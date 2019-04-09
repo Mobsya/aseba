@@ -18,6 +18,13 @@ Item {
         }
     }
 
+    SettingsMenu {
+        id: settingsMenu
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        visible: false
+    }
+
     Component {
         id: deviceSelectionViewFactory
         ThymioSelectionView {

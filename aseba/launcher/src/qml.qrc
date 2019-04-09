@@ -58,5 +58,7 @@
         <file>apps/scratch/desc.en.html</file>
         <file>qml/webview.qml</file>
         <file>qml/webview_native.qml</file>
+        <file>qml/SettingsMenu.qml</file>
+        <file>assets/launcher-icon-close.svg</file>
     </qresource>
 </RCC>
