@@ -157,6 +157,7 @@ private Q_SLOTS:
 
 public Q_SLOTS:
     void applySettings();
+    void connectToDevice(QUuid);
 
 private:
     // utility functions

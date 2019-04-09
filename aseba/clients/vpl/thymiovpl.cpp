@@ -18,8 +18,7 @@
 */
 
 #include <signal.h>
-#include <QApplication>
-#include <QCoreApplication>
+#include "MobsyaApplication.h"
 #include <QTextCodec>
 #include <QTranslator>
 #include <QString>
@@ -35,7 +34,7 @@
 
 int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);
-    QApplication app(argc, argv);
+    mobsya::MobsyaApplication app(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 
@@ -69,6 +68,8 @@ int main(int argc, char* argv[]) {
     translator.load(QString(":/qtabout_") + language);
 
     Aseba::ThymioVPLApplication vpl(id);
+    QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &vpl,
+                     &Aseba::ThymioVPLApplication::connectToDevice);
     vpl.show();
     app.setOverrideCursor(Qt::ArrowCursor);
     return app.exec();

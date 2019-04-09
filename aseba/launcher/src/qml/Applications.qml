@@ -26,7 +26,7 @@ ListModel {
 
     function launch_studio(device) {
         if(Utils.platformIsOsX()) {
-            Utils.launchOsXBundle("AsebaStudio", ["--uuid", device.id])
+            Utils.launchOsXBundle("AsebaStudio", {"uuid" : device.id})
         } else {
             var program = Utils.search_program("asebastudio")
             if(!program)
@@ -37,7 +37,7 @@ ListModel {
 
     function launch_vplClassic(device) {
         if(Utils.platformIsOsX()) {
-            Utils.launchOsXBundle("ThymioVPLClassic", ["--uuid", device.id])
+            Utils.launchOsXBundle("ThymioVPLClassic", {"uuid" : device.id})
         } else {
             var program = Utils.search_program("thymiovplclassic")
             if(!program)

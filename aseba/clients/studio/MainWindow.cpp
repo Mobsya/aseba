@@ -116,6 +116,11 @@ void MainWindow::tabAdded(int index) {
     tab->showHidden(showHiddenAct->isChecked());
 }
 
+void MainWindow::connectToDevice(QUuid id) {
+    nodes->addTab(id);
+}
+
+
 void MainWindow::about() {
     const AboutBox::Parameters aboutParameters = {
         "Aseba Studio",

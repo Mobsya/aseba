@@ -69,7 +69,8 @@ endif()
 
 if(APPLE)
     find_library(FOUNDATION_FRAMEWORK Foundation)
-    target_link_libraries(thymio-launcher ${FOUNDATION_FRAMEWORK})
+    find_library(AppKit_FRAMEWORK AppKit)
+    target_link_libraries(thymio-launcher ${FOUNDATION_FRAMEWORK} ${AppKit_FRAMEWORK})
 
 
 

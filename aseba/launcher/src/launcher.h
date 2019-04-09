@@ -11,8 +11,8 @@ public:
     Launcher(QObject* parent = nullptr);
     Q_INVOKABLE bool platformIsOsX() const;
 #ifdef Q_OS_MAC
-    Q_INVOKABLE bool launchOsXBundle(const QString& name, const QStringList & args) const;
-    bool doLaunchOsXBundle(const QString& name, const QStringList & args) const;
+    Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap & args) const;
+    bool doLaunchOsXBundle(const QString& name, const QVariantMap & args) const;
 #endif
 
     Q_INVOKABLE QString search_program(const QString& name) const;

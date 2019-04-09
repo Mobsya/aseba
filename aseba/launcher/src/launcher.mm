@@ -1,5 +1,6 @@
 #include "launcher.h"
 #include <Foundation/Foundation.h>
+#include <AppKit/NSWorkspace.h>
 #include <QDir>
 #include <QCoreApplication>
 #include <QDebug>
@@ -15,16 +16,38 @@ auto QStringListToNSArray(const QStringList &list)
     return result;
 }
 
-bool Launcher::doLaunchOsXBundle(const QString& name, const QStringList & args) const {
+bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) const {
     //Get the bundle path
-    const auto path = QDir(QCoreApplication::applicationDirPath()+ QStringLiteral("/../Applications/%1.app/Contents/MacOS/%1").arg(name)).absolutePath();
+    const auto path = QDir(QCoreApplication::applicationDirPath() +
+                           QStringLiteral("/../Applications/%1.app").arg(name)).absolutePath();
     qDebug() << path;
 
-    NSTask*  app = [[NSTask alloc] init];
-    [app setLaunchPath: path.toNSString()];
-    [app setArguments: QStringListToNSArray(args)];
-    [app launch];
-    [app autorelease];
+    auto* bundle = [NSBundle bundleWithPath:path.toNSString()];
+    if(!bundle) {
+        NSLog(@"Unable to find the bundle");
+        return false;
+    }
+
+    auto url = [bundle bundleURL];
+    if(!url) {
+        NSLog(@"Unable to find the bundle url");
+        return false;
+    }
+
+    NSLog(@"Bundle url %@", url);
+
+    QUrl appUrl(QStringLiteral("mobsya:connect-to-device?uuid=%1")
+                .arg(args.value("uuid").toString()));
+
+
+    auto urls = @[appUrl.toNSURL()];
+
+    auto ws = [NSWorkspace sharedWorkspace];
+    [ws openURLs:urls
+                 withApplicationAtURL:url
+                 options:NSWorkspaceLaunchNewInstance
+                 configuration:@{} error:nil];
+    return true;
 
 }
 

@@ -46,10 +46,10 @@ ThymioVPLApplication::ThymioVPLApplication(const QUuid& thymioId)
     , allocatedVariablesCount(0)
     , m_thymioId(thymioId) {
 
-    const auto client = new mobsya::ThymioDeviceManagerClient(this);
-    connect(client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLApplication::onNodeChanged);
-    connect(client, &mobsya::ThymioDeviceManagerClient::nodeRemoved, this, &ThymioVPLApplication::onNodeChanged);
-    connect(client, &mobsya::ThymioDeviceManagerClient::nodeModified, this, &ThymioVPLApplication::onNodeChanged);
+    m_client = new mobsya::ThymioDeviceManagerClient(this);
+    connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLApplication::onNodeChanged);
+    connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeRemoved, this, &ThymioVPLApplication::onNodeChanged);
+    connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeModified, this, &ThymioVPLApplication::onNodeChanged);
 
     // create gui
     setupWidgets();
@@ -359,6 +359,15 @@ void ThymioVPLApplication::onNodeChanged(std::shared_ptr<mobsya::ThymioNode> nod
     }
 
     updateWindowTitle(vpl && vpl->isModified());
+}
+
+void ThymioVPLApplication::connectToDevice(QUuid id) {
+    if(!m_thymioId.isNull())
+        return;
+    m_thymioId = id;
+    auto n = m_client->node(m_thymioId);
+    if(n)
+        onNodeChanged(n);
 }
 
 void ThymioVPLApplication::setupConnection() {
