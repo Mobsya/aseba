@@ -16,6 +16,22 @@ auto QStringListToNSArray(const QStringList &list)
     return result;
 }
 
+bool Launcher::doLaunchPlaygroundBundle() const {
+    const auto path = QDir(QCoreApplication::applicationDirPath() +
+                           QStringLiteral("/../Applications/AsebaPlayground.app")).absolutePath();
+    auto* bundle = [NSBundle bundleWithPath:path.toNSString()];
+    if(!bundle) {
+        NSLog(@"Unable to find the bundle");
+        return false;
+    }
+    auto ws = [NSWorkspace sharedWorkspace];
+    [ws launchApplicationAtURL:[bundle bundleURL]
+        options:NSWorkspaceLaunchNewInstance
+        configuration:@{} error:nil];
+    return true;
+
+}
+
 bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) const {
     //Get the bundle path
     const auto path = QDir(QCoreApplication::applicationDirPath() +
