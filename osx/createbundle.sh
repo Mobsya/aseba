@@ -17,6 +17,8 @@ fi
 # Make the top Level Bundle Out of the Launcher Bundle
 mkdir -p "$DEST"
 cp -R "$BUILD_DIR"/thymio-launcher.app/* "$DEST"
+rm -r "$DEST/Contents/Frameworks/QtWebEngine.framework"
+rm -r "$DEST/Contents/Frameworks/QtWebEngineCore.framework"
 
 if [ -d "$BUILD_DIR/scratch" ]; then
     cp -R "$BUILD_DIR/scratch" "$DEST/Contents/Resources"
@@ -69,13 +71,32 @@ do
     defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSPrincipalClass -string NSApplication
     defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSHighResolutionCapable -string True
     add_to_group $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+    plutil -replace CFBundleURLTypes -xml "
+        <array>
+            <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Viewer</string>
+                <key>CFBundleURLName</key>
+                <string>org.mobsy.CustomURLScheme</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>mobsya</string>
+                    </array>
+            </dict>
+        </array>
+    " $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+
+
+    defaults read $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
 done
 
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
     echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$APPS_DIR/$app.app/")
-    #--entitlements "$DIR/inherited.entitlements"
+    sign --deep $(realpath "$APPS_DIR/$app.app/") --entitlements "$DIR/$app.entitlements"
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
@@ -93,13 +114,11 @@ done
 for binary in "thymio-device-manager" "asebacmd" "thymiownetconfig-cli"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$BINUTILS_DIR/$binary")
-    #--entitlements "$DIR/inherited.entitlements"
+    sign --deep $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/inherited.entitlements"
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign $(realpath "$BINUTILS_DIR/thymio-launcher")
-#--entitlements "$DIR/launcher.entitlements"
+sign $(realpath "$BINUTILS_DIR/thymio-launcher") --entitlements "$DIR/launcher.entitlements"
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"

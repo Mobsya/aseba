@@ -18,8 +18,6 @@
 */
 
 #include <signal.h>
-#include <QApplication>
-#include <QCoreApplication>
 #include <QTextCodec>
 #include <QTranslator>
 #include <QString>
@@ -27,15 +25,17 @@
 #include <QLibraryInfo>
 #include <QDebug>
 #include <QCommandLineParser>
+#include "MobsyaApplication.h"
 #include "MainWindow.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 #include <aseba/common/consts.h>
 
 
 int main(int argc, char* argv[]) {
+    qputenv("QT_LOGGING_TO_CONSOLE", QByteArray("0"));
     Q_INIT_RESOURCE(asebaqtabout);
 
-    QApplication app(argc, argv);
+    mobsya::MobsyaApplication app(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 
@@ -61,8 +61,9 @@ int main(int argc, char* argv[]) {
     }
 
     mobsya::ThymioDeviceManagerClient thymioClient;
-
     Aseba::MainWindow window(thymioClient, targetUuids);
+    QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &window,
+                     &Aseba::MainWindow::connectToDevice);
     window.show();
     return app.exec();
 }

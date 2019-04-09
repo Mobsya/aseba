@@ -8,6 +8,8 @@ qt5_add_resources(resfiles asebastudio.qrc)
 add_library(asebaqtcommon OBJECT
     CustomWidgets.cpp
     CustomWidgets.h
+    MobsyaApplication.cpp
+    MobsyaApplication.h
     AeslEditor.cpp
     AeslEditor.h
     translations/CompilerTranslator.cpp

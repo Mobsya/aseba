@@ -23,6 +23,7 @@
 #include <QSplitter>
 #include <QDomDocument>
 #include <qt-thymio-dm-client-lib/thymionode.h>
+#include <qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
 
 class QTranslator;
 class QVBoxLayout;
@@ -49,6 +50,9 @@ public:
     bool newFile();
     QString openedFileName() const;
 
+public Q_SLOTS:
+    void connectToDevice(QUuid);
+
 protected:
     void setupWidgets();
     void setupConnections();
@@ -72,6 +76,7 @@ protected Q_SLOTS:
 protected:
     QUuid m_thymioId;
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
+    mobsya::ThymioDeviceManagerClient* m_client;
     mobsya::CompilationRequestWatcher m_compilation_watcher;
 
     bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets

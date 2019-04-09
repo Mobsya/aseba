@@ -30,7 +30,7 @@ bool Launcher::platformIsOsX() const {
 }
 
 #ifdef Q_OS_MACOS
-bool Launcher::launchOsXBundle(const QString& name, const QStringList& args) const {
+bool Launcher::launchOsXBundle(const QString& name, const QVariantMap &args) const {
     return doLaunchOsXBundle(name, args);
 }
 #endif
