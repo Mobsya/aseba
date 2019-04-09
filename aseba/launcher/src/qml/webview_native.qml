@@ -17,6 +17,8 @@ Window {
         window.show();
     }
     onClosing: {
+        webvView.loadHtml("<html></html>")
+        //webvView.stop()
         Qt.quit();
     }
 }
