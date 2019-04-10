@@ -14,6 +14,7 @@ QUuid service_id(const QZeroConfService& service) {
 ThymioDeviceManagerClient::ThymioDeviceManagerClient(QObject* parent)
     : QObject(parent), m_register(new QZeroConf(this)) {
 
+    connect(m_register, &QZeroConf::error, this, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged);
     connect(m_register, &QZeroConf::serviceAdded, this, &ThymioDeviceManagerClient::onServiceAdded);
     connect(m_register, &QZeroConf::serviceUpdated, this, &ThymioDeviceManagerClient::onServiceAdded);
     connect(m_register, &QZeroConf::serviceRemoved, this, &ThymioDeviceManagerClient::onServiceRemoved);
@@ -23,6 +24,10 @@ ThymioDeviceManagerClient::ThymioDeviceManagerClient(QObject* parent)
 
 std::shared_ptr<ThymioNode> ThymioDeviceManagerClient::node(const QUuid& id) const {
     return m_nodes.value(id);
+}
+
+bool ThymioDeviceManagerClient::isZeroconfBrowserConnected() const {
+    return m_register->browserExists();
 }
 
 void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {

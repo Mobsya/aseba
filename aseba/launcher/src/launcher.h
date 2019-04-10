@@ -8,12 +8,14 @@ namespace mobsya {
 
 class Launcher : public QObject {
     Q_OBJECT
+    Q_PROPERTY(bool isZeroconfRunning READ isZeroconfRunning NOTIFY zeroconfStatusChanged)
 public:
     Launcher(mobsya::ThymioDeviceManagerClient* client, QObject* parent = nullptr);
     Q_INVOKABLE bool platformIsOsX() const;
+    Q_INVOKABLE bool platformIsLinux() const;
 #ifdef Q_OS_MAC
-    Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap & args) const;
-    bool doLaunchOsXBundle(const QString& name, const QVariantMap & args) const;
+    Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
+    bool doLaunchOsXBundle(const QString& name, const QVariantMap& args) const;
 #endif
 
     Q_INVOKABLE QString search_program(const QString& name) const;
@@ -26,6 +28,11 @@ public:
 #ifdef Q_OS_MAC
     bool doLaunchPlaygroundBundle() const;
 #endif
+
+    bool isZeroconfRunning() const;
+
+Q_SIGNALS:
+    void zeroconfStatusChanged() const;
 
 private:
     mobsya::ThymioDeviceManagerClient* m_client;

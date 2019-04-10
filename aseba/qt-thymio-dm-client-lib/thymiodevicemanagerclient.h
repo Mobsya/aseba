@@ -40,8 +40,9 @@ public:
     auto nodes() const {
         return ranges::view::all(m_nodes);
     }
-
     void requestDeviceManagersShutdown();
+
+    bool isZeroconfBrowserConnected() const;
 
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);
@@ -54,6 +55,7 @@ Q_SIGNALS:
     void nodeRemoved(std::shared_ptr<ThymioNode>);
     void nodeModified(std::shared_ptr<ThymioNode>);
     void localPeerDisconnected();
+    void zeroconfBrowserStatusChanged();
 
 private:
     friend class ThymioDevicesModel;

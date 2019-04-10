@@ -17,7 +17,9 @@
 #include <QPointer>
 namespace mobsya {
 
-Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : m_client(client), QObject(parent) {}
+Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : m_client(client), QObject(parent) {
+    connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
+}
 
 
 bool Launcher::platformIsOsX() const {
@@ -25,12 +27,19 @@ bool Launcher::platformIsOsX() const {
     return true;
 #else
     return false;
+#endif
+}
 
+bool Launcher::platformIsLinux() const {
+#ifdef Q_OS_LINUX
+    return true;
+#else
+    return false;
 #endif
 }
 
 #ifdef Q_OS_MACOS
-bool Launcher::launchOsXBundle(const QString& name, const QVariantMap &args) const {
+bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
     return doLaunchOsXBundle(name, args);
 }
 #endif
@@ -138,6 +147,10 @@ QByteArray Launcher::readFileContent(QString path) {
     QFile f(path);
     f.open(QFile::ReadOnly);
     return f.readAll();
+}
+
+bool Launcher::isZeroconfRunning() const {
+    return m_client->isZeroconfBrowserConnected();
 }
 
 }  // namespace mobsya

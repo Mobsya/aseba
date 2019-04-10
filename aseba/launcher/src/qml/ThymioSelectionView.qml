@@ -136,6 +136,7 @@ Item {
             anchors.topMargin: Style.window_margin
 
             Item {
+                visible: Utils.isZeroconfRunning
                 id: selection_title
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -228,6 +229,24 @@ Item {
 
                     delegate:  ThymioSelectionDeviceDelegate { }
                 }
+            }
+            Text {
+                anchors.centerIn: parent
+                visible: !Utils.isZeroconfRunning
+                id: zeoconfErrorMessage
+                text: {
+                    if(Utils.platformIsLinux()) {
+                        return qsTr("No robot found because the Avahi Daemon is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
+                    }
+                    return qsTr("No robot found because the Bonjour service is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
+                }
+                color: "#DE7459"
+                linkColor: "#F9F871"
+                font.family: "Roboto Bold"
+                font.pointSize: 13
+                onLinkActivated: Qt.openUrlExternally(link)
+                wrapMode: Text.WordWrap
+                width: parent.width * 0.90
             }
         }
     }
