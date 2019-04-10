@@ -49,6 +49,12 @@ defaults write $(realpath "$DEST/Contents/Info.plist") NSPrincipalClass -string 
 defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string True
 add_to_group $(realpath "$DEST/Contents/Info.plist")
 
+plutil -replace NSAppTransportSecurity -xml "
+        <dict>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+        </dict> "
+
 APPS_DIR="$DEST/Contents/Applications"
 BINUTILS_DIR="$DEST/Contents/MacOs"
 
