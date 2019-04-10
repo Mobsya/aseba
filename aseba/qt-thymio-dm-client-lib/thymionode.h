@@ -57,7 +57,7 @@ class ThymioNode : public QObject {
 public:
     enum class Status { Connected = 1, Available = 2, Busy = 3, Ready = 4, Disconnected = 5 };
     enum class NodeType { Thymio2 = 0, Thymio2Wireless = 1, SimulatedThymio2 = 2, DummyNode = 3, UnknownType = 4 };
-    enum class NodeCapability { Rename = 0x01, ForceResetAndStop = 0x02 };
+    enum class NodeCapability { Rename = 0x01, ForceResetAndStop = 0x02, FirmwareUpgrade = 0x04 };
 
     using WatchableInfo = fb::WatchableInfo;
     using VMExecutionState = fb::VMExecutionState;
@@ -167,6 +167,8 @@ public:
     Q_INVOKABLE Request emitEvent(const QString& name, const QVariant& value);
 
     Q_INVOKABLE Request setScratchPad(const QByteArray& data);
+
+    Q_INVOKABLE Request upgradeFirmware();
 
 private:
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);

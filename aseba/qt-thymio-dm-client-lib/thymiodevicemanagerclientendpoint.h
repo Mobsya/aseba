@@ -41,6 +41,7 @@ public:
     Request setNodeEventsTable(const QUuid& id, const QVector<EventDescription>& events);
     Request emitNodeEvents(const ThymioNode& node, const ThymioNode::EventMap& vars);
     Request setScratchPad(const QUuid& id, const QByteArray& data, fb::ProgrammingLanguage language);
+    Request upgradeFirmware(const QUuid& id);
 
 private Q_SLOTS:
     void onReadyRead();

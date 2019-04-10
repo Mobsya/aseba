@@ -169,6 +169,7 @@ public:
     int firwmware_version() const;
     int available_firwmware_version() const;
     void set_available_firmware_version(int version);
+    bool upgrade_firmware();
 
 private:
     friend class aseba_endpoint;

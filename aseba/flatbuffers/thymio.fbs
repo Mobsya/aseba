@@ -54,6 +54,7 @@ enum NodeType : int {
 enum NodeCapability : int {
   Rename  = 0x01,
   ForceResetAndStop = 0x02,
+  FirwmareUpgrade   = 0x04,
 }
 
 /// The status of a node represents whether the node is connected and available.
@@ -363,6 +364,17 @@ table ScratchpadUpdate {
     deleted:bool = false;
 }
 
+table FirmwareUpgradeRequest {
+    request_id:uint;
+    node_id:NodeId;
+}
+
+table FirmwareUpgradeStatus {
+    request_id:uint;
+    node_id:NodeId;
+    progress:float;
+}
+
 union AnyMessage {
     ConnectionHandshake,
     DeviceManagerShutdownRequest,
@@ -390,6 +402,8 @@ union AnyMessage {
     SetVMExecutionState,
     VMExecutionStateChanged,
     ScratchpadUpdate,
+    FirmwareUpgradeRequest,
+    FirmwareUpgradeStatus
 }
 
 table Message {

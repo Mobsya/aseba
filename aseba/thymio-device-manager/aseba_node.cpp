@@ -839,6 +839,11 @@ void aseba_node::set_available_firmware_version(int version) {
     m_available_firmware_version = version;
 }
 
+bool aseba_node::upgrade_firmware() {
+    mLogInfo("Upgrading firmware");
+    return true;
+}
+
 bool aseba_node::can_be_renamed() const {
     auto ep = m_endpoint.lock();
     return ep && ep->type() == aseba_endpoint::endpoint_type::thymio && m_description.protocolVersion >= 6;

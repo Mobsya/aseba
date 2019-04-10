@@ -25,6 +25,9 @@ Item {
     Action {
         text: "Upgrade Firmware"
         id: upgradeAction
+        onTriggered: {
+            device.upgradeFirmware()
+        }
     }
     Action {
         text: "Reset"
@@ -123,7 +126,9 @@ Item {
                 if(capabilities & ThymioNode.ForceResetAndStop) {
                     menu.addAction(stopAction)
                 }
-                //menu.addAction(upgradeAction)
+                if((capabilities & ThymioNode.FirmwareUpgrade) && device.hasAvailableFirmwareUpdate) {
+                    menu.addAction(upgradeAction)
+                }
             }
         }
 

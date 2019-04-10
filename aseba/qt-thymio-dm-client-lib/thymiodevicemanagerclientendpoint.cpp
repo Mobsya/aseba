@@ -290,6 +290,8 @@ void ThymioDeviceManagerClientEndpoint::onNodesChanged(const fb::NodesChangedT& 
             caps |= ThymioNode::NodeCapability::ForceResetAndStop;
         if(node.capabilities & uint64_t(fb::NodeCapability::Rename))
             caps |= ThymioNode::NodeCapability::Rename;
+        if(node.capabilities & uint64_t(fb::NodeCapability::FirwmareUpgrade))
+            caps |= ThymioNode::NodeCapability::FirmwareUpgrade;
         QString name = QString::fromStdString(node.name);
         auto status = static_cast<ThymioNode::Status>(node.status);
         auto type = static_cast<ThymioNode::NodeType>(node.type);
@@ -556,6 +558,14 @@ Request ThymioDeviceManagerClientEndpoint::setScratchPad(const QUuid& id, const 
     auto data_offset = qfb::add_string(builder, data);
     write(wrap_fb(builder,
                   fb::CreateScratchpadUpdate(builder, r.id(), uuidOffset, 0, uuidOffset, language, data_offset)));
+    return r;
+}
+
+Request ThymioDeviceManagerClientEndpoint::upgradeFirmware(const QUuid& id) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, id);
+    write(wrap_fb(builder, fb::CreateFirmwareUpgradeRequest(builder, r.id(), uuidOffset)));
     return r;
 }
 
