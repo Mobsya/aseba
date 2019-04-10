@@ -234,6 +234,19 @@ Item {
 
                     delegate:  ThymioSelectionDeviceDelegate { }
                 }
+                Text {
+                    anchors.centerIn: parent
+                    visible: Utils.isZeroconfRunning && device_view.count == 0
+                    id: noRobotMessage
+                    text: qsTr("Connect a Thymio or <a href='#'>launch a simulator</a>")
+                    color: "white"
+                    linkColor: "#0a9eeb"
+                    font.family: "Roboto Bold"
+                    font.pointSize: 13
+                    onLinkActivated: Utils.launchPlayground()
+                    wrapMode: Text.WordWrap
+                    width: parent.width * 0.90
+                }
             }
             Text {
                 anchors.centerIn: parent
