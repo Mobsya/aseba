@@ -7,6 +7,20 @@ Item {
     id:selection_view
     property alias selectedDevice: device_view.selectedDevice
 
+    function launchSelectedAppWithSeleectedDevice() {
+        const device   = selection_view.selectedDevice
+        const selectedAppLauncher = launcher.selectedAppLauncher;
+        if(!selectedAppLauncher) {
+            console.error("No launch function")
+        }
+        else if(!selectedAppLauncher(device)) {
+            console.error("could not launch %1 with device %2".arg(app.name).arg(device))
+        }
+        if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
+                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups))
+            device_view.selectedDevice = null
+    }
+
     Rectangle  {
         id: app_titlebar
         anchors.top: parent.top
@@ -179,16 +193,7 @@ Item {
                     hoverEnabled: true
                     id: mouse_area
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        const device   = selection_view.selectedDevice
-                        const selectedAppLauncher = launcher.selectedAppLauncher;
-                        if(!selectedAppLauncher) {
-                            console.error("No launch function")
-                        }
-                        else if(!selectedAppLauncher(device)) {
-                            console.error("could not launch %1 with device %2".arg(app.name).arg(device))
-                        }
-                    }
+                    onClicked: launchSelectedAppWithSeleectedDevice()
                 }
                 anchors.bottomMargin: 30
             }

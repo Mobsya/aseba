@@ -9,6 +9,7 @@ Item {
      Component.onCompleted: {
         device.groupChanged.connect(updateSelectable);
         device.statusChanged.connect(updateSelectable);
+        launcher.selectedAppChanged.connect(updateSelectable);
      }
 
     function updateSelectable() {
@@ -85,6 +86,7 @@ Item {
             else if(!selectedAppLauncher(device)) {
                 console.error("could not launch app with device %2".arg(device))
             }
+            updateSelectable()
         }
 
         onPressAndHold: {
