@@ -259,6 +259,15 @@ public:
                                              req->language());
                 break;
             }
+            case mobsya::fb::AnyMessage::FirmwareUpgradeRequest: {
+                auto req = msg.as<fb::FirmwareUpgradeRequest>();
+                if(!req->node_id()) {
+                    write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
+                    break;
+                }
+                this->upgrade_node_firmware(req->request_id(), req->node_id());
+                break;
+            }
 
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
@@ -429,6 +438,8 @@ private:
         uint64_t caps = 0;
         if(m_local_endpoint) {
             caps |= uint64_t(fb::NodeCapability::ForceResetAndStop);
+            if(!node.is_wirelessly_connected())
+                caps |= uint64_t(fb::NodeCapability::FirwmareUpgrade);
             if(node.can_be_renamed())
                 caps |= uint64_t(fb::NodeCapability::Rename);
         }
@@ -650,6 +661,17 @@ private:
         }
         g->set_node_scratchpad(id, content, language);
         write_message(create_ack_response(request_id));
+    }
+
+    void upgrade_node_firmware(uint32_t request_id, node_id id) {
+        const std::shared_ptr<aseba_node> n = registery().node_from_id(id);
+        if(!n || n->get_status() != aseba_node::status::available ||
+           !(node_capabilities(*n) & uint64_t(fb::NodeCapability::FirwmareUpgrade))) {
+            mLogWarn("upgrade_node_firmware: node {} does not exist, is locked or can not be renamed", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        n->upgrade_firmware();
     }
 
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
