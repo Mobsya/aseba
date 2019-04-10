@@ -234,7 +234,14 @@ void NodeTab::reboot() {
 void NodeTab::writeProgramToDeviceMemory() {
     if(!thymio())
         return;
-    m_thymio->writeProgramToDeviceMemory();
+    auto code = editor->toPlainText();
+    auto req = m_thymio->load_aseba_code(code.toUtf8());
+    auto w = new mobsya::CompilationRequestWatcher(req, this);
+    connect(w, &mobsya::CompilationRequestWatcher::finished, this, [w, this]() {
+        if(w->success() && m_thymio)
+            m_thymio->writeProgramToDeviceMemory();
+        w->deleteLater();
+    });
 }
 
 void NodeTab::compilationCompleted() {
