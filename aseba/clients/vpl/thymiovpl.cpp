@@ -57,16 +57,19 @@ int main(int argc, char* argv[]) {
     const auto idStr = parser.value("uuid");
     const auto id = QUuid::fromString(idStr);
 
-    QTranslator qtTranslator;
-    app.installTranslator(&qtTranslator);
-
-    QTranslator translator;
-    app.installTranslator(&translator);
-
-    qtTranslator.load(QString("qt_") + language, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    translator.load(QString(":/translations/asebastudio_") + language);
-    translator.load(QString(":/translations/compiler_") + language);
-    translator.load(QString(":/qtabout_") + language);
+    auto load_trads = [](const QString& name, const QString& dir) {
+        QTranslator* translator = new QTranslator(qApp);
+        qDebug() << QLocale().name() << name << dir;
+        if(translator->load(QLocale(), name, {}, dir)) {
+            qApp->installTranslator(translator);
+        } else {
+            qDebug() << "Didn't load translation" << name;
+        }
+    };
+    load_trads("asebastudio_", ":/translations");
+    load_trads("compiler_", ":/translations");
+    load_trads("qtabout_", ":/");
+    load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
     Aseba::ThymioVPLApplication vpl(id);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &vpl,

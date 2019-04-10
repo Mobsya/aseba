@@ -45,18 +45,19 @@ int main(int argc, char* argv[]) {
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
     QCoreApplication::setApplicationName(QStringLiteral("Aseba Studio"));
 
-    QTranslator qtTranslator;
-    app.installTranslator(&qtTranslator);
-
-    QTranslator translator;
-    app.installTranslator(&translator);
-
-    qtTranslator.load(QString("qt_") + QLocale::system().name(),
-                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    translator.load(QString(":/translations/asebastudio_") + QLocale::system().name());
-    translator.load(QString(":/translations/compiler_") + QLocale::system().name());
-    translator.load(QString(":/qtabout_") + QLocale::system().name());
-
+    auto load_trads = [](const QString& name, const QString& dir) {
+        QTranslator* translator = new QTranslator(qApp);
+        qDebug() << QLocale().name() << name << dir;
+        if(translator->load(QLocale(), name, {}, dir)) {
+            qApp->installTranslator(translator);
+        } else {
+            qDebug() << "Didn't load translation" << name;
+        }
+    };
+    load_trads("asebastudio_", ":/translations");
+    load_trads("compiler_", ":/translations");
+    load_trads("qtabout_", ":/");
+    load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
     QCommandLineParser parser;
     QCommandLineOption uuid(QStringLiteral("uuid"),
