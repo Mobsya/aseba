@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="AeslEditor.cpp" line="+500"/>
+        <location filename="../common/AeslEditor.cpp" line="+464"/>
         <source>Clear breakpoint</source>
         <translation>Kırılım noktasını temizle</translation>
     </message>
@@ -18,19 +18,31 @@
         <source>Clear all breakpoints</source>
         <translation>Tüm kırılım noktalarını temizle</translation>
     </message>
+    <message>
+        <location line="+2"/>
+        <source>Insert keyword...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="MainWindow.cpp" line="+162"/>
+        <location filename="../../studio/MainWindow.cpp" line="+71"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: Son derlemenin çıktısı</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::CompilerTranslator</name>
+    <message>
+        <source>unknown</source>
+        <translation type="obsolete">bilinmeyen</translation>
+    </message>
+</context>
+<context>
     <name>Aseba::ConfigDialog</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="+274"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="+240"/>
         <source>General</source>
         <translation>Genel</translation>
     </message>
@@ -58,30 +70,56 @@
 <context>
     <name>Aseba::ConstantsModel</name>
     <message>
-        <location filename="NamedValuesVectorModel.cpp" line="+313"/>
         <source>Constant already defined</source>
-        <translation>Sabitler zaten tanımlandı</translation>
+        <translation type="vanished">Sabitler zaten tanımlandı</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Constant %0 is already defined.</source>
-        <translation>Sabir %0 zaten tanımlı.</translation>
+        <translation type="vanished">Sabir %0 zaten tanımlı.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>The name is a keyword</source>
-        <translation>Ad bir anahtar kelimedir</translation>
+        <translation type="vanished">Ad bir anahtar kelimedir</translation>
+    </message>
+    <message>
+        <source>The name &lt;tt&gt;%0&lt;/tt&gt; cannot be used as a constant, because it is a language keyword.</source>
+        <translation type="vanished">&lt;tt&gt;%0&lt;/tt&gt; adı sabit olarak kullanılamaz, çünkü o bir dil anahtar kelimesidir.</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::ConstantsWidget</name>
+    <message>
+        <location filename="../../studio/ConstantsWidget.cpp" line="+19"/>
+        <location line="+47"/>
+        <source>Add a new constant</source>
+        <translation type="unfinished">Lütfen yeni bir sabit ekleyin</translation>
+    </message>
+    <message>
+        <location line="-46"/>
+        <source>Remove this constant</source>
+        <translation type="unfinished">Bu sabiti kaldır</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&lt;b&gt;Constants&lt;/b&gt;</source>
+        <translation type="unfinished">&lt;b&gt;Sabitler&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Name:</source>
+        <translation type="unfinished">İsim:</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>The name &lt;tt&gt;%0&lt;/tt&gt; cannot be used as a constant, because it is a language keyword.</source>
-        <translation>&lt;tt&gt;%0&lt;/tt&gt; adı sabit olarak kullanılamaz, çünkü o bir dil anahtar kelimesidir.</translation>
+        <source>Value</source>
+        <comment>Value assigned to the constant</comment>
+        <translation type="unfinished">Değer</translation>
     </message>
 </context>
 <context>
     <name>Aseba::DashelConnectionDialog</name>
     <message>
-        <location filename="DashelTarget.cpp" line="+86"/>
+        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
         <source>Discovered targets</source>
         <translation>Keşfedilen hedefler</translation>
     </message>
@@ -111,7 +149,7 @@
         <translation>Dokümantasyon</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+26"/>
         <source>Language</source>
         <translation>Dil</translation>
     </message>
@@ -131,12 +169,12 @@
         <translation>Aseba Hedef Seçimi</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+48"/>
         <source> – type %1</source>
         <translation> – tür %1</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+5"/>
         <source>local on computer</source>
         <translation>bilgisayarda yerel</translation>
     </message>
@@ -146,12 +184,12 @@
         <translation>ağdan uzak</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+55"/>
         <source> – device %1</source>
         <translation> – cihaz %1</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>serial port or USB</source>
         <translation>Seri port noktası veya USB</translation>
     </message>
@@ -159,22 +197,22 @@
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+124"/>
+        <location line="+103"/>
         <source>Thymio not found</source>
         <translation>Thymio bulunamadı</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt; Thymio bulamadı!&lt;/b&gt;&lt;/p&gt;&lt;p&gt; USB kablo/dongle kullanarak bilgisayarınıza Thymio bağlayın ve Thymio kullanan başka bir program olmadığına emin olun.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Connection to command line target failed</source>
         <translation>Komut satırı hedefine bağlantı başarısız oldu</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Cannot connect to target %0</source>
         <translation>Hedefe bağlanamadı %0</translation>
     </message>
@@ -182,12 +220,12 @@
 <context>
     <name>Aseba::EditorPage</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="-119"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="-105"/>
         <source>Editor Setup</source>
         <translation>Editör Kurulumu</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Autocompletion</source>
         <translation>Otomatik tamamlama</translation>
     </message>
@@ -200,7 +238,7 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="EventViewer.cpp" line="+95"/>
+        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
         <translation>Zaman (saniye) </translation>
     </message>
@@ -210,19 +248,19 @@
         <translation>Değerler</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+93"/>
+        <location line="+23"/>
+        <location line="+78"/>
         <source>Recording...</source>
         <translation>Kaydediliyor...</translation>
     </message>
     <message>
-        <location line="-90"/>
-        <location line="+92"/>
+        <location line="-75"/>
+        <location line="+77"/>
         <source>&amp;Pause</source>
         <translation>&amp;Durdur</translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="-73"/>
         <source>&amp;Clear</source>
         <translation>&amp;Temizle</translation>
     </message>
@@ -237,7 +275,7 @@
         <translation>Kaydet &amp; gibi...</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+47"/>
         <source>Paused...</source>
         <translation>Durduruldu</translation>
     </message>
@@ -247,15 +285,107 @@
         <translation>&amp;Kaydı</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+26"/>
         <source>Save plot data to file</source>
         <translation>Pilot verileri dosyaya kaydet</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::EventsWidget</name>
+    <message>
+        <location filename="../../studio/EventsWidget.cpp" line="+44"/>
+        <source>&lt;b&gt;Events&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <location line="+38"/>
+        <source>Add a new event</source>
+        <translation type="unfinished">Yeni bir etkinlik ekle</translation>
+    </message>
+    <message>
+        <location line="-37"/>
+        <source>Remove this event</source>
+        <translation type="unfinished">Bu etkinliği kaldır</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Send this event</source>
+        <translation type="unfinished">Bu etkinliği gönder</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Plot this Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Clear</source>
+        <translation type="unfinished">Temizle</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <location line="+113"/>
+        <source>Name:</source>
+        <translation type="unfinished">İsim:</translation>
+    </message>
+    <message>
+        <location line="-112"/>
+        <source>Number of arguments</source>
+        <comment>For the newly created event</comment>
+        <translation type="unfinished">Argümanların sayısı</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Specify event arguments</source>
+        <translation type="unfinished">Olay argümanlarını belirtin</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Please specify the %0 arguments of event %1</source>
+        <translation type="unfinished">Lütfen %1 etkinliğinin %0 argümanını belirtin</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Wrong number of arguments</source>
+        <translation type="unfinished">Yanlış sayıda bağımsız değişken</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You gave %0 arguments where event %1 requires %2</source>
+        <translation type="unfinished">%1 etkinliğinin %2 gerektirdiği yerde %0 argüman verildi</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Invalid value</source>
+        <translation type="unfinished">Geçersiz değer</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invalid value for argument %0 of event %1</source>
+        <translation type="unfinished">%1 etkinliğinin %0 argümanı için geçersiz değer</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Line %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Modify an existing event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Number of arguments</source>
+        <comment>For the event</comment>
+        <translation type="unfinished">Argümanların sayısı</translation>
+    </message>
+</context>
+<context>
     <name>Aseba::FindDialog</name>
     <message>
-        <location filename="FindDialog.cpp" line="+40"/>
+        <location filename="../../studio/FindDialog.cpp" line="+36"/>
         <source>Aseba Studio - Search and Replace</source>
         <translation>Aseba Studio - Ara ve Değiştir</translation>
     </message>
@@ -323,7 +453,7 @@ Occurrences</source>
         <translation>Değiştir &amp;Tüm Olguları</translation>
     </message>
     <message>
-        <location line="+103"/>
+        <location line="+90"/>
         <source>End of document reached!</source>
         <translation>Belgenin sonuna ulaşıldı</translation>
     </message>
@@ -331,12 +461,12 @@ Occurrences</source>
 <context>
     <name>Aseba::GeneralPage</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="-45"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="-40"/>
         <source>General Setup</source>
         <translation>Genel Kurulum</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Layout</source>
         <translation>Düzen</translation>
     </message>
@@ -364,200 +494,175 @@ Occurrences</source>
 <context>
     <name>Aseba::HelpViewer</name>
     <message>
-        <location filename="HelpViewer.cpp" line="+58"/>
         <source>The help file %0 was not loaded successfully. The error was: %1.The help file should be available in the temporary directory of your system. Please check your installation, or report a bug.</source>
-        <translation>Yardım dosyası %0 başarılı bir şekilde yüklenemedi. Hata: %1.Yardım dosyası, sisteminizin geçici dizininde bulunmalıdır. Lütfen kurulumunuzu kontrol edin veya bir hata bildirin.</translation>
+        <translation type="vanished">Yardım dosyası %0 başarılı bir şekilde yüklenemedi. Hata: %1.Yardım dosyası, sisteminizin geçici dizininde bulunmalıdır. Lütfen kurulumunuzu kontrol edin veya bir hata bildirin.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Help file not found</source>
-        <translation>Yardım dosyası bulunamadı</translation>
+        <translation type="vanished">Yardım dosyası bulunamadı</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Previous</source>
-        <translation>Önceki</translation>
+        <translation type="vanished">Önceki</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Next</source>
-        <translation>Sonraki</translation>
+        <translation type="vanished">Sonraki</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Home</source>
-        <translation>Ana Sayfa</translation>
+        <translation type="vanished">Ana Sayfa</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+73"/>
         <source>Aseba Studio Help</source>
-        <translation>Aseba Studio Yardım</translation>
+        <translation type="vanished">Aseba Studio Yardım</translation>
     </message>
     <message>
-        <location line="-50"/>
         <source>The help filter for the langauge &quot;%0&quot; has not been found. Falling back to the default language (%1). This is probably a bug, please report it.</source>
-        <translation>Dil için yardım filtersi &quot;%0&quot; bulunamadı. Varsayılan dile geri dönülüyor (%1). Bu muhtemelen bir hata, lütfen bildirin.</translation>
+        <translation type="vanished">Dil için yardım filtersi &quot;%0&quot; bulunamadı. Varsayılan dile geri dönülüyor (%1). Bu muhtemelen bir hata, lütfen bildirin.</translation>
     </message>
 </context>
 <context>
     <name>Aseba::LinearCameraViewPlugin</name>
     <message>
-        <location filename="plugins/VariablesViewPlugin.cpp" line="+69"/>
         <source>Linear Camera View Plugin</source>
-        <translation>Doğrusal Kamera Görünümü Eklentisi</translation>
+        <translation type="vanished">Doğrusal Kamera Görünümü Eklentisi</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>linear camera viewer</source>
-        <translation>Doğrusal kamera görüntüleyici</translation>
+        <translation type="vanished">Doğrusal kamera görüntüleyici</translation>
     </message>
     <message>
-        <location line="+45"/>
         <source>Cannot initialize linear camera view plugin</source>
-        <translation>Doğrusal kamera görünümü eklentisi başlatılamıyor</translation>
+        <translation type="vanished">Doğrusal kamera görünümü eklentisi başlatılamıyor</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>One or more variable not found in %1, %2, or %3.</source>
-        <translation>Bir ya da daha fazla değişken %1, %2 ya da %3 içinde bulunamadı</translation>
+        <translation type="vanished">Bir ya da daha fazla değişken %1, %2 ya da %3 içinde bulunamadı</translation>
     </message>
 </context>
 <context>
     <name>Aseba::LinearCameraViewVariablesDialog</name>
     <message>
-        <location line="-102"/>
         <source>Please choose your variables</source>
-        <translation>Lütfen değişkenlerinizi seçin</translation>
+        <translation type="vanished">Lütfen değişkenlerinizi seçin</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>red component</source>
-        <translation>kırmızı bileşen</translation>
+        <translation type="vanished">kırmızı bileşen</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>green component</source>
-        <translation>yeşil bileşen</translation>
+        <translation type="vanished">yeşil bileşen</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>blue component</source>
-        <translation>mavi bileşen</translation>
+        <translation type="vanished">mavi bileşen</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>range of values</source>
-        <translation>değer aralığı</translation>
+        <translation type="vanished">değer aralığı</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Ok</source>
-        <translation>Tamam</translation>
+        <translation type="vanished">Tamam</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>auto range</source>
-        <translation>otomatik aralık</translation>
+        <translation type="vanished">otomatik aralık</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>8 bits range (0–255)</source>
-        <translation>8 bit aralığı (0–255)</translation>
+        <translation type="vanished">8 bit aralığı (0–255)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>percent range (0–100)</source>
-        <translation>yüzde aralığı (0-100)</translation>
+        <translation type="vanished">yüzde aralığı (0-100)</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>Linear Camera View Plugin</source>
-        <translation>Doğrusal Kamera Görünümü Eklentisi</translation>
+        <translation type="vanished">Doğrusal Kamera Görünümü Eklentisi</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::LockButton</name>
+    <message>
+        <location filename="../../studio/LockButton.cpp" line="+8"/>
+        <source>Lock Thymio</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Aseba::MainWindow</name>
     <message>
-        <location filename="MainWindow.cpp" line="+1448"/>
         <source>Event number %0</source>
-        <translation>Olay sayısı %0</translation>
+        <translation type="vanished">Olay sayısı %0</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location filename="../../studio/MainWindow.cpp" line="+52"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio robotlarla etkileşimli olarak metin dili ile programlanabilen bir ortamdır.</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:asebastudio</source>
         <translation>https://www.thymio.org/en:asebastudio</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+53"/>
         <source>Open Script</source>
         <translation>Açık Komut Dosyası</translation>
     </message>
     <message>
-        <location line="+110"/>
         <source> (not available)</source>
-        <translation>(mevcut değil)</translation>
+        <translation type="vanished">(mevcut değil)</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+17"/>
         <source>Loading</source>
-        <translation>Yükleniyor</translation>
+        <translation type="vanished">Yükleniyor</translation>
     </message>
     <message>
-        <location line="-16"/>
         <source>%0 scripts have no corresponding nodes in the current network and have not been loaded.</source>
-        <translation>% 0 komut dosyalarının mevcut ağda karşılık gelen düğümleri yok ve yüklü değil.</translation>
+        <translation type="vanished">% 0 komut dosyalarının mevcut ağda karşılık gelen düğümleri yok ve yüklü değil.</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation>XML kaynak dosyasındaki hata: %0 %1 satırda, %2 sütunda</translation>
+        <translation type="vanished">XML kaynak dosyasındaki hata: %0 %1 satırda, %2 sütunda</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Kaynak Dosyasını Kaydet</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+74"/>
         <source>Export memory content</source>
         <translation>Bellek içeriğini dışa aktar</translation>
     </message>
     <message>
-        <location line="+32"/>
         <source>Import memory content</source>
-        <translation>Bellek içeriğini içe aktar</translation>
+        <translation type="vanished">Bellek içeriğini içe aktar</translation>
     </message>
     <message>
-        <location line="+36"/>
         <source>%0 on node %1</source>
-        <translation>%1 düğümünde %0</translation>
+        <translation type="vanished">%1 düğümünde %0</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>The following nodes are not present in the current network and their associated content was not imported:
 </source>
-        <translation>Aşağıdaki düğümler mevcut ağda mevcut değildir ve ilişkili içeriği içe aktarılmamıştır:</translation>
+        <translation type="vanished">Aşağıdaki düğümler mevcut ağda mevcut değildir ve ilişkili içeriği içe aktarılmamıştır:</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>The following variables are not present in the current network and their associated content was not imported:
 </source>
-        <translation>Aşağıdaki değişkenler mevcut ağda mevcut değildir ve ilişkili içeriği içe aktarılmamıştır:</translation>
+        <translation type="vanished">Aşağıdaki değişkenler mevcut ağda mevcut değildir ve ilişkili içeriği içe aktarılmamıştır:</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Some content was not imported</source>
-        <translation>Bazı içerikler içe aktarılamadı</translation>
+        <translation type="vanished">Bazı içerikler içe aktarılamadı</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>Go To Line</source>
         <translation>Satıra Git</translation>
     </message>
@@ -567,56 +672,45 @@ Occurrences</source>
         <translation>Satır:</translation>
     </message>
     <message>
-        <location line="+159"/>
         <source>Specify event arguments</source>
-        <translation>Olay argümanlarını belirtin</translation>
+        <translation type="vanished">Olay argümanlarını belirtin</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Please specify the %0 arguments of event %1</source>
-        <translation>Lütfen %1 etkinliğinin %0 argümanını belirtin</translation>
+        <translation type="vanished">Lütfen %1 etkinliğinin %0 argümanını belirtin</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Wrong number of arguments</source>
-        <translation>Yanlış sayıda bağımsız değişken</translation>
+        <translation type="vanished">Yanlış sayıda bağımsız değişken</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>You gave %0 arguments where event %1 requires %2</source>
-        <translation>%1 etkinliğinin %2 gerektirdiği yerde %0 argüman verildi</translation>
+        <translation type="vanished">%1 etkinliğinin %2 gerektirdiği yerde %0 argüman verildi</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Invalid value</source>
-        <translation>Geçersiz değer</translation>
+        <translation type="vanished">Geçersiz değer</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Invalid value for argument %0 of event %1</source>
-        <translation>%1 etkinliğinin %0 argümanı için geçersiz değer</translation>
+        <translation type="vanished">%1 etkinliğinin %0 argümanı için geçersiz değer</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+72"/>
         <source>Plot event %1</source>
         <translation>Pilot etkinlik %1</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>plot of %1</source>
-        <translation>pilot %1</translation>
+        <translation type="vanished">pilot %1</translation>
     </message>
     <message>
-        <location line="+136"/>
-        <location line="+552"/>
         <source>Add a new event</source>
-        <translation>Yeni bir etkinlik ekle</translation>
+        <translation type="vanished">Yeni bir etkinlik ekle</translation>
     </message>
     <message>
-        <location line="-552"/>
-        <location line="+91"/>
         <source>Name:</source>
-        <translation>İsim:</translation>
+        <translation type="vanished">İsim:</translation>
     </message>
     <message>
         <source>Number of arguments</source>
@@ -624,35 +718,28 @@ Occurrences</source>
         <translation type="vanished">Argümanların sayısı</translation>
     </message>
     <message>
-        <location line="-84"/>
         <source>Event already exists</source>
-        <translation>Etkinlik zaten mevcut</translation>
+        <translation type="vanished">Etkinlik zaten mevcut</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Event %0 already exists.</source>
-        <translation>Etkinlik %0 zaten mevcut</translation>
+        <translation type="vanished">Etkinlik %0 zaten mevcut</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Invalid event name</source>
-        <translation>Geçersiz etkinlik adı</translation>
+        <translation type="vanished">Geçersiz etkinlik adı</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Event %0 has an invalid name. Valid names start with an alphabetical character or an &quot;_&quot;, and continue with any number of alphanumeric characters, &quot;_&quot; and &quot;.&quot;</source>
-        <translation>Etkinlik %0 geçersiz isme sahip. Geçerli adlar, alfabetik bir karakter veya bir &quot;_&quot; ile başlar ve herhangi bir sayıda alfasayısal karakterler ile devam eder, &quot;_&quot; ve &quot;.&quot;</translation>
+        <translation type="vanished">Etkinlik %0 geçersiz isme sahip. Geçerli adlar, alfabetik bir karakter veya bir &quot;_&quot; ile başlar ve herhangi bir sayıda alfasayısal karakterler ile devam eder, &quot;_&quot; ve &quot;.&quot;</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Desynchronised! Please reload.</source>
-        <translation>Lütfen yeniden yükleyin</translation>
+        <translation type="vanished">Lütfen yeniden yükleyin</translation>
     </message>
     <message>
-        <location line="+53"/>
-        <location line="+395"/>
         <source>Add a new constant</source>
-        <translation>Lütfen yeni bir sabit ekleyin</translation>
+        <translation type="vanished">Lütfen yeni bir sabit ekleyin</translation>
     </message>
     <message>
         <source>Value</source>
@@ -660,80 +747,67 @@ Occurrences</source>
         <translation type="vanished">Değer</translation>
     </message>
     <message>
-        <location line="-486"/>
         <source>Number of arguments</source>
         <comment>For the newly created event</comment>
-        <translation type="unfinished">Argümanların sayısı</translation>
+        <translation type="obsolete">Argümanların sayısı</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>Value</source>
         <comment>Value assigned to the constant</comment>
-        <translation type="unfinished">Değer</translation>
+        <translation type="obsolete">Değer</translation>
     </message>
     <message>
-        <location line="+140"/>
         <source>
 event %0 : </source>
-        <translation>etkinlik %0 :</translation>
+        <translation type="vanished">etkinlik %0 :</translation>
     </message>
     <message>
-        <location line="+39"/>
         <source>array access at %0 out of bounds [0..%1]</source>
-        <translation>%0 dizi erişimi [0 ..% 1] sınırlarının dışına çıktı</translation>
+        <translation type="vanished">%0 dizi erişimi [0 ..% 1] sınırlarının dışına çıktı</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>division by zero</source>
-        <translation>sıfıra bölüm</translation>
+        <translation type="vanished">sıfıra bölüm</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>event execution killed</source>
-        <translation>etkinlik yürütme kesildi</translation>
+        <translation type="vanished">etkinlik yürütme kesildi</translation>
     </message>
     <message>
-        <location line="+22"/>
         <source>%0:%1: %2</source>
-        <translation>%0:%1: %2</translation>
+        <translation type="vanished">%0:%1: %2</translation>
     </message>
     <message>
-        <location line="+183"/>
         <source>Remove this constant</source>
-        <translation>Bu sabiti kaldır</translation>
+        <translation type="vanished">Bu sabiti kaldır</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>&lt;b&gt;Constants&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Sabitler&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Sabitler&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+46"/>
         <source>Remove this event</source>
-        <translation>Bu etkinliği kaldır</translation>
+        <translation type="vanished">Bu etkinliği kaldır</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Send this event</source>
-        <translation>Bu etkinliği gönder</translation>
+        <translation type="vanished">Bu etkinliği gönder</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+126"/>
         <source>Plot this event</source>
         <translation>Bu etkinliği çiz</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Küresel Etkinlikler&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Küresel Etkinlikler&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Clear</source>
-        <translation>Temizle</translation>
+        <translation type="vanished">Temizle</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+54"/>
         <source>...inside %0</source>
         <translation>...içinde %0</translation>
     </message>
@@ -743,32 +817,30 @@ event %0 : </source>
         <translation>...%0</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>...of %0</source>
-        <translation>... nın %0</translation>
+        <translation type="vanished">... nın %0</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>...inside all nodes</source>
         <translation>...tüm düğümlerin içinde</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>...all nodes</source>
         <translation>...tüm düğümler</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>&amp;User Manual...</source>
-        <translation>&amp;Kullanıcı El Kitabı</translation>
+        <translation type="vanished">&amp;Kullanıcı El Kitabı</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>Web site Aseba...</source>
         <translation>İnternet sitesi Aseba...</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -778,7 +850,7 @@ event %0 : </source>
         <translation>Hatayı rapor et...</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>http://github.com/mobsya/aseba/issues/new</source>
         <translation>http://github.com/mobsya/aseba/issues/new</translation>
     </message>
@@ -793,7 +865,7 @@ event %0 : </source>
         <translation>Hakkında &amp;Qt...</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+22"/>
         <source>Thymio programming tutorial...</source>
         <translation>Thymio programlama öğreticisi</translation>
     </message>
@@ -833,7 +905,7 @@ event %0 : </source>
         <translation>http://mobots.epfl.ch/data/robots/marxbot-user-manual.pdf</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+17"/>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
@@ -843,12 +915,12 @@ event %0 : </source>
         <translation>&amp;Yeni</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>&amp;Open...</source>
         <translation>&amp;Aç...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Open &amp;Recent</source>
         <translation>Aç &amp;Son</translation>
     </message>
@@ -858,7 +930,7 @@ event %0 : </source>
         <translation>&amp;Kaydet...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Save &amp;As...</source>
         <translation>Kaydet &amp;...gibi</translation>
     </message>
@@ -868,12 +940,22 @@ event %0 : </source>
         <translation>&amp;Hafıza içeriğini dışa aktar... </translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>&amp;Import memories content...</source>
-        <translation>&amp; Hafıza içeriğini içe aktar...</translation>
+        <location line="+111"/>
+        <source>&amp;Stop all</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+1"/>
+        <source>F8</source>
+        <comment>Debug|Stop all</comment>
+        <translation type="unfinished">F8</translation>
+    </message>
+    <message>
+        <source>&amp;Import memories content...</source>
+        <translation type="vanished">&amp; Hafıza içeriğini içe aktar...</translation>
+    </message>
+    <message>
+        <location line="-105"/>
         <source>&amp;Quit</source>
         <translation>&amp;Çıkış</translation>
     </message>
@@ -936,25 +1018,23 @@ event %0 : </source>
         <translation type="unfinished">Shift+Ctrl+D</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+31"/>
         <source>F11</source>
         <comment>View|Show Line Numbers</comment>
         <translation type="unfinished">F11</translation>
     </message>
     <message>
-        <location line="+32"/>
         <source>F7</source>
         <comment>Load|Load all</comment>
-        <translation type="unfinished">F7</translation>
+        <translation type="obsolete">F7</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>F8</source>
         <comment>Debug|Reset all</comment>
-        <translation type="unfinished">F8</translation>
+        <translation type="obsolete">F8</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+33"/>
         <source>F9</source>
         <comment>Debug|Run all</comment>
         <translation type="unfinished">F9</translation>
@@ -966,7 +1046,7 @@ event %0 : </source>
         <translation type="unfinished">F10</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+12"/>
         <source>Ctrl+B</source>
         <comment>Debug|Toggle breakpoint</comment>
         <translation type="unfinished">Ctrl+B</translation>
@@ -977,7 +1057,7 @@ event %0 : </source>
         <translation type="vanished">Ctrl+G</translation>
     </message>
     <message>
-        <location line="-95"/>
+        <location line="-84"/>
         <source>Comment the selection</source>
         <translation>Seçimi yorumla</translation>
     </message>
@@ -1007,12 +1087,11 @@ event %0 : </source>
         <translation>Tümünü &amp; kopyala</translation>
     </message>
     <message>
-        <location line="+14"/>
         <source>Show &amp;keywords</source>
-        <translation>Anahtar kelimeleri &amp; göster</translation>
+        <translation type="vanished">Anahtar kelimeleri &amp; göster</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+14"/>
         <source>Show &amp;memory usage</source>
         <translation>Hafıza &amp; kullanımını göster</translation>
     </message>
@@ -1022,7 +1101,7 @@ event %0 : </source>
         <translation>G&amp;izli değişken ve fonksiyonları göster</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Show &amp;Line Numbers</source>
         <translation>Satır &amp;Numaralarını Göster</translation>
     </message>
@@ -1047,14 +1126,13 @@ event %0 : </source>
         <translation>&amp; Göster</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>&amp;Settings</source>
         <translation>&amp;Ayarlar</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>&amp;Load all</source>
-        <translation>&amp;Tümünü yükle</translation>
+        <translation type="vanished">&amp;Tümünü yükle</translation>
     </message>
     <message>
         <source>F7</source>
@@ -1062,9 +1140,8 @@ event %0 : </source>
         <translation type="vanished">F7</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>&amp;Reset all</source>
-        <translation>&amp;Tümünü sıfırla</translation>
+        <translation type="vanished">&amp;Tümünü sıfırla</translation>
     </message>
     <message>
         <source>F8</source>
@@ -1072,7 +1149,7 @@ event %0 : </source>
         <translation type="vanished">F8</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+7"/>
         <source>Ru&amp;n all</source>
         <translation>Tü&amp;münü çalıştır</translation>
     </message>
@@ -1097,7 +1174,7 @@ event %0 : </source>
         <translation>Hata Ayıkla</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Toggle breakpoint</source>
         <translation>Kırılım noktasına geç</translation>
     </message>
@@ -1117,7 +1194,7 @@ event %0 : </source>
         <translation>&amp;Hata ayıkla</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>&amp;Tools</source>
         <translation>&amp;Ayarlar</translation>
     </message>
@@ -1137,9 +1214,8 @@ event %0 : </source>
         <translation>Yeniden başlat...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Save the binary code...</source>
-        <translation>Binary kodunu kaydet...</translation>
+        <translation type="vanished">Binary kodunu kaydet...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1148,12 +1224,12 @@ event %0 : </source>
     </message>
     <message>
         <location line="+21"/>
-        <location line="+74"/>
+        <location line="+68"/>
         <source>Untitled</source>
         <translation>Adsız</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-63"/>
         <source>Aseba Studio - Confirmation Dialog</source>
         <translation>Aseba Studio - Onay Dialogu</translation>
     </message>
@@ -1168,7 +1244,7 @@ event %0 : </source>
         <translation>Değişikliklerinizi kaydetmek mi yok saymak mı istersiniz?</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+59"/>
         <source>[modified] </source>
         <translation>[düzenlenmiş]</translation>
     </message>
@@ -1181,14 +1257,25 @@ event %0 : </source>
 <context>
     <name>Aseba::MaskableNamedValuesVectorModel</name>
     <message>
-        <location filename="NamedValuesVectorModel.cpp" line="+44"/>
         <source>Hide</source>
-        <translation>Gizle</translation>
+        <translation type="vanished">Gizle</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>View</source>
-        <translation>Görüntüle</translation>
+        <translation type="vanished">Görüntüle</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::MaskableVariablesModel</name>
+    <message>
+        <location filename="../../studio/NamedValuesVectorModel.cpp" line="+173"/>
+        <source>Hide</source>
+        <translation type="unfinished">Gizle</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>View</source>
+        <translation type="unfinished">Görüntüle</translation>
     </message>
 </context>
 <context>
@@ -1204,7 +1291,7 @@ event %0 : </source>
         <translation type="vanished">Varsayılan açıklama</translation>
     </message>
     <message>
-        <location filename="MainWindow.cpp" line="-2176"/>
+        <location filename="../../studio/NewNamedValueDialog.cpp" line="+10"/>
         <source>Name</source>
         <comment>Name of the named value (can be a constant, event,...)</comment>
         <translation type="unfinished">İsim</translation>
@@ -1219,65 +1306,106 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTab</name>
     <message>
-        <location line="-1094"/>
-        <source>&lt;b&gt;Keywords&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <location line="+739"/>
         <source>unknown</source>
-        <translation>bilinmeyen</translation>
+        <translation type="vanished">bilinmeyen</translation>
     </message>
     <message>
-        <location line="-737"/>
         <source>Load</source>
-        <translation>Yükle</translation>
+        <translation type="vanished">Yükle</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Reset</source>
-        <translation>Sıfırla</translation>
+        <translation type="vanished">Sıfırla</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+879"/>
-        <location line="+15"/>
+        <location filename="../../studio/NodeTab.cpp" line="+832"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
     <message>
-        <location line="-891"/>
+        <location line="+4"/>
         <source>Next</source>
         <translation>Sonraki</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>refresh</source>
-        <translation>yenile</translation>
+        <translation type="vanished">yenile</translation>
+    </message>
+    <message>
+        <source>auto</source>
+        <translation type="vanished">otomatik</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Execution&lt;/b&gt;</source>
+        <translation type="vanished">&lt;b&gt;Uygulama&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="-561"/>
+        <source>variables: %1/%2 (%3 %)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>bytecode: %1/%2 (%3 %)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+140"/>
+        <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Stopped</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>auto</source>
-        <translation>otomatik</translation>
+        <source>Paused</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>&lt;b&gt;Execution&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Uygulama&lt;/b&gt;</translation>
+        <location line="+1"/>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+8"/>
+        <source>(Not Locked)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>(Controlled by another application or user)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+386"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Synchronize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Plot this variable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>&lt;b&gt;Variables&lt;/b&gt;</source>
         <translation>&lt;b&gt;Değerler&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>F&amp;ilter:</source>
         <translation>F&amp;iltre:</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+29"/>
         <source>Native Functions</source>
         <translation>Yerli Fonksiyonlar</translation>
     </message>
@@ -1287,66 +1415,72 @@ event %0 : </source>
         <translation>Yerel Etkinlikler</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Local Tools</source>
-        <translation>Yerel Araçlar</translation>
+        <translation type="vanished">Yerel Araçlar</translation>
     </message>
     <message>
-        <location line="+303"/>
         <source>Save the binary code of %0</source>
-        <translation>%0 binary kodunu kaydet</translation>
+        <translation type="vanished">%0 binary kodunu kaydet</translation>
     </message>
     <message>
-        <location line="+250"/>
         <source>Aseba Studio: Output of last compilation for %0</source>
-        <translation>Aseba Studio: %0 için son derleme çıktıları</translation>
+        <translation type="vanished">Aseba Studio: %0 için son derleme çıktıları</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location line="+39"/>
         <source>Compilation success.</source>
-        <translation>Derleme başarılı.</translation>
+        <translation type="vanished">Derleme başarılı.</translation>
     </message>
     <message>
-        <location line="-19"/>
         <source>variables: %1 on %2 (%3%)</source>
-        <translation>değerler: %1 - %2 (%3%)</translation>
+        <translation type="vanished">değerler: %1 - %2 (%3%)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>bytecode: %1 on %2 (%3%)</source>
-        <translation>bytecodeu: %1 - %2 (%3%)</translation>
+        <translation type="vanished">bytecodeu: %1 - %2 (%3%)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-635"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Hafıza kullanımı&lt;/b&gt; : %1, %2</translation>
     </message>
     <message>
-        <location line="+199"/>
         <source>running</source>
-        <translation>çalışıyor</translation>
+        <translation type="vanished">çalışıyor</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+550"/>
         <source>Pause</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>step by step</source>
-        <translation>adım adım</translation>
+        <translation type="vanished">adım adım</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>stopped</source>
-        <translation>durduruldu</translation>
+        <translation type="vanished">durduruldu</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::NodeTabsManager</name>
+    <message>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <source>%1 on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::PlotTab</name>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <source>Values</source>
+        <translation type="unfinished">Değerler</translation>
     </message>
 </context>
 <context>
     <name>Aseba::ReconnectionDialog</name>
     <message>
-        <location filename="DashelTarget.cpp" line="+541"/>
+        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
         <translation>Bağlantı kapatıldı</translation>
     </message>
@@ -1364,16 +1498,14 @@ event %0 : </source>
 <context>
     <name>Aseba::StopThymioPlugin</name>
     <message>
-        <location filename="plugins/StopThymioPlugin.cpp" line="+34"/>
         <source>Stop Thymio</source>
-        <translation>Thymiou durdur</translation>
+        <translation type="vanished">Thymiou durdur</translation>
     </message>
 </context>
 <context>
     <name>Aseba::TargetFunctionsModel</name>
     <message>
-        <location filename="TargetModels.cpp" line="+609"/>
-        <location line="+19"/>
+        <location filename="../../studio/TargetFunctionsModel.cpp" line="+97"/>
         <source>hidden</source>
         <translation>gizli</translation>
     </message>
@@ -1381,7 +1513,7 @@ event %0 : </source>
 <context>
     <name>Aseba::TargetVariablesModel</name>
     <message>
-        <location line="-445"/>
+        <location filename="../../studio/TargetModels.cpp" line="+146"/>
         <source>names</source>
         <translation>isimler</translation>
     </message>
@@ -1458,7 +1590,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>Aseba::ThymioVPL::Block</name>
     <message>
-        <location filename="plugins/ThymioVPL/Block.cpp" line="+132"/>
+        <location filename="../../vpl/Block.cpp" line="+122"/>
         <source>buttons</source>
         <translation>butonlar</translation>
     </message>
@@ -1526,18 +1658,18 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>Aseba::ThymioVPL::EventActionsSet</name>
     <message>
-        <location filename="plugins/ThymioVPL/EventActionsSet.cpp" line="+615"/>
-        <location line="+20"/>
+        <location filename="../../vpl/EventActionsSet.cpp" line="+553"/>
+        <location line="+16"/>
         <source>Loading</source>
         <translation>Yükleniyor</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-15"/>
         <source>Error in XML source file at %0:%1: cannot create block %2</source>
         <translation>XML kaynak dosyasında hata %0:%1: blok %2 oluşturulamaz</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
         <source>Error in XML source file at %0:%1: unknown block type %2</source>
         <translation>XML kaynak dosyasında hata %0:%1: bilinmeyen blok türü %2</translation>
     </message>
@@ -1545,7 +1677,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>Aseba::ThymioVPL::ThymioVisualProgramming</name>
     <message>
-        <location filename="plugins/ThymioVPL/ThymioVisualProgramming.cpp" line="+79"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="+73"/>
         <source>Thymio Visual Programming Language</source>
         <translation>Thymio Görsel Programlama Dili</translation>
     </message>
@@ -1610,7 +1742,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Etkinlikler</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+25"/>
         <source>Compilation success.</source>
         <translation>Derleme başarılı.</translation>
     </message>
@@ -1620,42 +1752,46 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>satırı göster</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+37"/>
         <source>Actions</source>
         <translation>Eylemler</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+43"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Thymio robotunun Görsel Programlama Dili (VPL), olay ve eylem bloklarını ilişkilendirerek programlamaya izin verir.</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:thymiovpl</source>
         <translation>https://www.thymio.org/en:thymiovpl</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+24"/>
         <source>Export program as image</source>
         <translation>Programı resim olarak dışa aktar</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+65"/>
         <source>Launch VPL</source>
         <translation>VPL&apos;yi başlatın</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+123"/>
         <source>Returning to simple mode</source>
         <translation>Basit moda geri dönülüyor</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>You are currently using states. Returning to simple mode will discard any state filter or state setting card.&lt;p&gt;Are you sure you want to continue?</source>
-        <translation>Şu anda durumları kullanıyorsunuz. Basit moda geri dönerseniz, herhangi bir durum filtresi veya durum ayar kartı zarar görebilir.&lt;p&gt; Devam etmek istediğinize emin misiniz ?</translation>
+        <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <source>You are currently using states. Returning to simple mode will discard any state filter or state setting card.&lt;p&gt;Are you sure you want to continue?</source>
+        <translation type="vanished">Şu anda durumları kullanıyorsunuz. Basit moda geri dönerseniz, herhangi bir durum filtresi veya durum ayar kartı zarar görebilir.&lt;p&gt; Devam etmek istediğinize emin misiniz ?</translation>
+    </message>
+    <message>
+        <location line="+37"/>
         <source>Warning</source>
         <translation>Uyarı</translation>
     </message>
@@ -1665,22 +1801,22 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>VPL dokümanı değiştirildi.&lt;p&gt; Değişiklikleri kaydetmek istiyor musunuz ?</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+65"/>
         <source>Incompatible Version</source>
         <translation>Uyumsuz Sürüm</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>This file is incompatible with this version of ThymioVPL. It might not work correctly.</source>
         <translation>Bu dosya, ThymioVPL sürümü ile uyumlu değil. Düzgün çalışmayabilir.</translation>
     </message>
     <message>
-        <location line="+256"/>
+        <location line="+211"/>
         <source>Please add an event</source>
         <translation>Lütfen bir etkinlik ekleyin</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+9"/>
         <source>Please add an action</source>
         <translation>Lütfen bir eylem ekleyin</translation>
     </message>
@@ -1688,90 +1824,144 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>Aseba::ThymioVPL::UsageLogger</name>
     <message>
-        <location filename="plugins/ThymioVPL/UsageLogger.cpp" line="+74"/>
+        <location filename="../../vpl/UsageLogger.cpp" line="+73"/>
         <source>Login</source>
         <translation>Giriş</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Please enter your user or group name:</source>
         <translation>Lütfen kullanıcı adınızı ya da grup adınızı girin:</translation>
     </message>
 </context>
 <context>
-    <name>Aseba::ThymioVPLStandalone</name>
+    <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="ThymioVPLStandalone.cpp" line="+170"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
         <source>Connecting to Thymio...</source>
-        <translation>Thymio ile bağlantı kuruluyor...</translation>
+        <translation type="unfinished">Thymio ile bağlantı kuruluyor...</translation>
     </message>
     <message>
-        <location line="+102"/>
-        <location line="+223"/>
-        <source>Thymio VPL Error</source>
-        <translation>Thymio VPL Hatası</translation>
+        <location line="+22"/>
+        <source>Aseba ver. %0 (build %1/protocol %2);</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-222"/>
-        <source>You need to connect a Thymio II to use this application.</source>
-        <translation>Bu uygulamayı kullanmak için Thymio II ile bağlı olmanız gerekir.</translation>
-    </message>
-    <message>
-        <location line="+39"/>
+        <location line="+81"/>
         <source>Save Script</source>
-        <translation>Komut Dosyasını Kaydet</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+67"/>
         <source>Open Script</source>
-        <translation>Komut Dosyasını Aç</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+60"/>
-        <location line="+8"/>
+        <location line="+44"/>
+        <location line="+5"/>
         <source>Loading</source>
-        <translation>Yükleniyor</translation>
+        <translation type="unfinished">Yükleniyor</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-4"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
-        <translation>Komut dosyasında Thymio VPL verisi bulunamadı, dosya göz ardı edildi.</translation>
+        <translation type="unfinished">Komut dosyasında Thymio VPL verisi bulunamadı, dosya göz ardı edildi.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation>XML kaynak dosyasında hata: %0 , %1 satırında %2 sütununda</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+45"/>
-        <source>This application only supports a single robot at a time.</source>
-        <translation>Bu uygulama bir seferde yanlızca tek bir robotu desteklemektedir.</translation>
-    </message>
-    <message>
-        <location line="+8"/>
+        <location line="+16"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
-        <translation>Thymio ile bağlantı kesildi... Thymio&apos;nun açık olduğundan emin olun ve USB kablosunu/bağlantı parçasını bağlayın</translation>
+        <translation type="unfinished">Thymio ile bağlantı kesildi... Thymio&apos;nun açık olduğundan emin olun ve USB kablosunu/bağlantı parçasını bağlayın</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+71"/>
         <source>[modified] </source>
-        <translation>[düzenlenmiş] </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untitled</source>
-        <translation>Adsız</translation>
+        <translation type="unfinished">Adsız</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
+        <source>on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>[not connected]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>%0 %1 %2 - Thymio Visual Programming Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::ThymioVPLStandalone</name>
+    <message>
+        <source>Connecting to Thymio...</source>
+        <translation type="vanished">Thymio ile bağlantı kuruluyor...</translation>
+    </message>
+    <message>
+        <source>Thymio VPL Error</source>
+        <translation type="vanished">Thymio VPL Hatası</translation>
+    </message>
+    <message>
+        <source>You need to connect a Thymio II to use this application.</source>
+        <translation type="vanished">Bu uygulamayı kullanmak için Thymio II ile bağlı olmanız gerekir.</translation>
+    </message>
+    <message>
+        <source>Save Script</source>
+        <translation type="vanished">Komut Dosyasını Kaydet</translation>
+    </message>
+    <message>
+        <source>Open Script</source>
+        <translation type="vanished">Komut Dosyasını Aç</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="vanished">Yükleniyor</translation>
+    </message>
+    <message>
+        <source>No Thymio VPL data were found in the script file, file ignored.</source>
+        <translation type="vanished">Komut dosyasında Thymio VPL verisi bulunamadı, dosya göz ardı edildi.</translation>
+    </message>
+    <message>
+        <source>Error in XML source file: %0 at line %1, column %2</source>
+        <translation type="vanished">XML kaynak dosyasında hata: %0 , %1 satırında %2 sütununda</translation>
+    </message>
+    <message>
+        <source>This application only supports a single robot at a time.</source>
+        <translation type="vanished">Bu uygulama bir seferde yanlızca tek bir robotu desteklemektedir.</translation>
+    </message>
+    <message>
+        <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
+        <translation type="vanished">Thymio ile bağlantı kesildi... Thymio&apos;nun açık olduğundan emin olun ve USB kablosunu/bağlantı parçasını bağlayın</translation>
+    </message>
+    <message>
+        <source>[modified] </source>
+        <translation type="vanished">[düzenlenmiş] </translation>
+    </message>
+    <message>
+        <source>Untitled</source>
+        <translation type="vanished">Adsız</translation>
+    </message>
+    <message>
         <source>%0 %1- Thymio Visual Programming Language - ver. %2</source>
-        <translation>%0 %1- Thymio Görsel Programlama Dili - ver. %2</translation>
+        <translation type="vanished">%0 %1- Thymio Görsel Programlama Dili - ver. %2</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="DashelTarget.cpp" line="-413"/>
+        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
         <location line="+7"/>
         <source>Protocol version mismatch</source>
         <translation>Protokol versiyonlarının eşleşmemesi</translation>
@@ -1790,44 +1980,54 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>QObject</name>
     <message>
-        <location line="-468"/>
+        <location line="-405"/>
         <source>Unexpected Dashel Error</source>
         <translation>Beklenmedik Dashel Hatası</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>A communication error happened:</source>
         <translation>Bir iletişim hatası gerçekleşti:</translation>
     </message>
     <message>
-        <location filename="plugins/ThymioVPL/Compiler.cpp" line="+57"/>
+        <location filename="../../vpl/Compiler.cpp" line="+46"/>
         <source>Compilation success</source>
         <translation>Derleme tamamlandı</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Line %0: Missing event</source>
         <translation>Satır %0: Eksik etkinlik</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Line %0: Missing action</source>
         <translation>Satır %0: Eksik eylem</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>The event in line %0 is the same as in line %1</source>
         <translation>Satır %0 ve satır %1 içerisindeki etkinlik aynı</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>The event and the state condition in line %0 are the same as in line %1</source>
         <translation>Satır %0 ve satır %1 içerisindeki etkinlik ve durum şartları aynı</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Unknown VPL error</source>
         <translation>Bilinmeyen VPL hatası</translation>
+    </message>
+    <message>
+        <location filename="../../studio/CustomDelegate.cpp" line="+80"/>
+        <source>list &lt;%1 elements&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>map &lt;%1 elements&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

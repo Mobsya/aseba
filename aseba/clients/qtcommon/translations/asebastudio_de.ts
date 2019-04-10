@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="AeslEditor.cpp" line="+500"/>
+        <location filename="../common/AeslEditor.cpp" line="+464"/>
         <source>Clear breakpoint</source>
         <translation>Haltepunkt löschen</translation>
     </message>
@@ -18,19 +18,31 @@
         <source>Clear all breakpoints</source>
         <translation>Alle Haltepunkte löschen</translation>
     </message>
+    <message>
+        <location line="+2"/>
+        <source>Insert keyword...</source>
+        <translation>Schlüsselwort eingeben...</translation>
+    </message>
 </context>
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="MainWindow.cpp" line="+162"/>
+        <location filename="../../studio/MainWindow.cpp" line="+71"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: Ausgabe der letzten Übersetzung</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::CompilerTranslator</name>
+    <message>
+        <source>unknown</source>
+        <translation type="obsolete">unbekannt</translation>
+    </message>
+</context>
+<context>
     <name>Aseba::ConfigDialog</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="+274"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="+240"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
@@ -58,29 +70,55 @@
 <context>
     <name>Aseba::ConstantsModel</name>
     <message>
-        <location filename="NamedValuesVectorModel.cpp" line="+313"/>
         <source>Constant already defined</source>
-        <translation>Konstante bereits definiert</translation>
+        <translation type="vanished">Konstante bereits definiert</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Constant %0 is already defined.</source>
-        <translation>Konstante %0 ist bereits definiert.</translation>
+        <translation type="vanished">Konstante %0 ist bereits definiert.</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>The name is a keyword</source>
         <oldsource>Name is a keyword</oldsource>
-        <translation>Name ist ein Schlüsselwort</translation>
+        <translation type="vanished">Name ist ein Schlüsselwort</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>The name &lt;tt&gt;%0&lt;/tt&gt; cannot be used as a constant, because it is a language keyword.</source>
-        <translation>Der Name &lt;tt&gt;%0&lt;/tt&gt; kann nicht als Konstante benutzt werden, da dies ein reserviertes Wort ist.</translation>
+        <translation type="vanished">Der Name &lt;tt&gt;%0&lt;/tt&gt; kann nicht als Konstante benutzt werden, da dies ein reserviertes Wort ist.</translation>
     </message>
     <message>
         <source>Name &lt;tt&gt;%0&lt;/tt&gt; cannot be used as a constant, because it is a language keyword.</source>
         <translation type="obsolete">Der Name &lt;tt&gt;%0&lt;/tt&gt; kann nicht als Konstante benutzt werden, weil es ein Schlüsselwort ist.</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::ConstantsWidget</name>
+    <message>
+        <location filename="../../studio/ConstantsWidget.cpp" line="+19"/>
+        <location line="+47"/>
+        <source>Add a new constant</source>
+        <translation>Neue Konstante hinzufügen</translation>
+    </message>
+    <message>
+        <location line="-46"/>
+        <source>Remove this constant</source>
+        <translation>Diese Konstante entfernen</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&lt;b&gt;Constants&lt;/b&gt;</source>
+        <translation>&lt;b&gt;Konstanten&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Value</source>
+        <comment>Value assigned to the constant</comment>
+        <translation>Wert</translation>
     </message>
 </context>
 <context>
@@ -107,7 +145,7 @@
         <translation type="vanished">Benutzerdefiniert</translation>
     </message>
     <message>
-        <location filename="DashelTarget.cpp" line="+86"/>
+        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
         <source>Discovered targets</source>
         <translation>Entdeckte Targets</translation>
     </message>
@@ -137,7 +175,7 @@
         <translation>Dokumetation</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+26"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
@@ -157,12 +195,12 @@
         <translation>Aseba-Ziel auswählen</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+48"/>
         <source> – type %1</source>
         <translation> - Typ %1</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+5"/>
         <source>local on computer</source>
         <translation>auf lokalem Computer</translation>
     </message>
@@ -172,12 +210,12 @@
         <translation>auf entferntem Netzwerk</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+55"/>
         <source> – device %1</source>
         <translation> - Gerät %1</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>serial port or USB</source>
         <translation>Serielle Schnittstelle oder USB</translation>
     </message>
@@ -185,22 +223,22 @@
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+124"/>
+        <location line="+103"/>
         <source>Thymio not found</source>
         <translation>Thymio nicht gefunden</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Kann Thymio nicht finden!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Schließen Sie einen Thymio über das USB-Kabel/Dongle an Ihren Computer an und stellen Sie sicher, dass kein anderes Programm den Thymio verwendet.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Connection to command line target failed</source>
         <translation>Verbindung zu Ziel der Kommandozeile fehlgeschlagen</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Cannot connect to target %0</source>
         <translation>Kann nicht mit Ziel %0 verbinden</translation>
     </message>
@@ -227,12 +265,12 @@
 <context>
     <name>Aseba::EditorPage</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="-119"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="-105"/>
         <source>Editor Setup</source>
         <translation>Editor-Einstellungen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Autocompletion</source>
         <translation>Auto-Vervollständigung</translation>
     </message>
@@ -246,7 +284,7 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="EventViewer.cpp" line="+95"/>
+        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
         <translation>Zeit (Sekunden)</translation>
     </message>
@@ -256,19 +294,19 @@
         <translation>Werte</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+93"/>
+        <location line="+23"/>
+        <location line="+78"/>
         <source>Recording...</source>
         <translation>Aufnahme...</translation>
     </message>
     <message>
-        <location line="-90"/>
-        <location line="+92"/>
+        <location line="-75"/>
+        <location line="+77"/>
         <source>&amp;Pause</source>
         <translation>&amp;Pause</translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="-73"/>
         <source>&amp;Clear</source>
         <translation>&amp;Löschen</translation>
     </message>
@@ -283,7 +321,7 @@
         <translation>Speichern &amp;unter...</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+47"/>
         <source>Paused...</source>
         <translation>Angehalten...</translation>
     </message>
@@ -293,15 +331,107 @@
         <translation>&amp;Aufnahme</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+26"/>
         <source>Save plot data to file</source>
         <translation>Plot-Daten in Datei speichern</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::EventsWidget</name>
+    <message>
+        <location filename="../../studio/EventsWidget.cpp" line="+44"/>
+        <source>&lt;b&gt;Events&lt;/b&gt;</source>
+        <translation>&lt;b&gt;Ereignisse&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <location line="+38"/>
+        <source>Add a new event</source>
+        <translation>Neues Ereignis hinzufügen</translation>
+    </message>
+    <message>
+        <location line="-37"/>
+        <source>Remove this event</source>
+        <translation>Dieses Ereignis entfernen</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Send this event</source>
+        <translation>Dieses Ereignis senden</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Plot this Event</source>
+        <translation>Dieses Ereignis aufzeichnen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Clear</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <location line="+113"/>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <location line="-112"/>
+        <source>Number of arguments</source>
+        <comment>For the newly created event</comment>
+        <translation>Zahl der Argumente</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Specify event arguments</source>
+        <translation>Geben Sie die Ereignisargumente an</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Please specify the %0 arguments of event %1</source>
+        <translation>Bitte geben Sie die %0 Argumente für Ereignis %1 an</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Wrong number of arguments</source>
+        <translation>Falsche Zahl an Argumenten</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You gave %0 arguments where event %1 requires %2</source>
+        <translation>Sie gaben %0 Argumente an, aber Ereignis %1 braucht %2 Argumente</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Invalid value</source>
+        <translation>Ungültiger Wert</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invalid value for argument %0 of event %1</source>
+        <translation>Ungültiger Wert für Argument %0 des Ereignisses %1</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Line %1: %2</source>
+        <translation>Zeile %1: %2</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Modify an existing event</source>
+        <translation>Ein bestehendes Ereignis ändern</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Number of arguments</source>
+        <comment>For the event</comment>
+        <translation>Zahl der Argumente</translation>
+    </message>
+</context>
+<context>
     <name>Aseba::FindDialog</name>
     <message>
-        <location filename="FindDialog.cpp" line="+40"/>
+        <location filename="../../studio/FindDialog.cpp" line="+36"/>
         <source>Aseba Studio - Search and Replace</source>
         <translation>Aseba Studio - Suchen und Ersetzen</translation>
     </message>
@@ -371,7 +501,7 @@ Occurrences</source>
         <translation>&amp;Alles ersetzen</translation>
     </message>
     <message>
-        <location line="+103"/>
+        <location line="+90"/>
         <source>End of document reached!</source>
         <translation>Ganzes Dokument wurde durchsucht!</translation>
     </message>
@@ -390,7 +520,7 @@ Occurrences</source>
 <context>
     <name>Aseba::GeneralPage</name>
     <message>
-        <location filename="ConfigDialog.cpp" line="-45"/>
+        <location filename="../../studio/ConfigDialog.cpp" line="-40"/>
         <source>General Setup</source>
         <translation>Allgemeine Einstellungen</translation>
     </message>
@@ -399,7 +529,7 @@ Occurrences</source>
         <translation type="obsolete">Beim Start</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>Show hidden variables</source>
         <translation>Versteckte Variablen anzeigen</translation>
     </message>
@@ -431,40 +561,32 @@ Occurrences</source>
         <translation type="obsolete">Die Hilfe-Datei %0 wurde nicht gefunden. Es sollte im selben Verzeichnis wie die binäre von Aseba Studio befinden. Bitte überprüfen Sie Ihre Installation, oder einen Fehler melden.</translation>
     </message>
     <message>
-        <location filename="HelpViewer.cpp" line="+58"/>
         <source>The help file %0 was not loaded successfully. The error was: %1.The help file should be available in the temporary directory of your system. Please check your installation, or report a bug.</source>
-        <translation>Die Hilfedatei %0 wurde nicht geladen. Der Fehler war: %1. Die Hilfedatei sollte sich im temporären Verzeichnis Ihres Systems befinden. Bitte überprüfen Sie Ihre Installation und senden Sie ggf. einen Fehlerbericht.</translation>
+        <translation type="vanished">Die Hilfedatei %0 wurde nicht geladen. Der Fehler war: %1. Die Hilfedatei sollte sich im temporären Verzeichnis Ihres Systems befinden. Bitte überprüfen Sie Ihre Installation und senden Sie ggf. einen Fehlerbericht.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Help file not found</source>
-        <translation>Hilfedatei nicht gefunden</translation>
+        <translation type="vanished">Hilfedatei nicht gefunden</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Previous</source>
-        <translation>Zurück</translation>
+        <translation type="vanished">Zurück</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Next</source>
-        <translation>Vorwärts</translation>
+        <translation type="vanished">Vorwärts</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Home</source>
-        <translation>Anfang</translation>
+        <translation type="vanished">Anfang</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+73"/>
         <source>Aseba Studio Help</source>
-        <translation>Aseba Studio Hilfe</translation>
+        <translation type="vanished">Aseba Studio Hilfe</translation>
     </message>
     <message>
-        <location line="-50"/>
         <source>The help filter for the langauge &quot;%0&quot; has not been found. Falling back to the default language (%1). This is probably a bug, please report it.</source>
-        <translation>Der Hilfefilter für die Sprache &quot;%0&quot; wurde nicht gefunden. Greife auf die Standardsprache (%1) zurück. Dies ist wahrscheinlich ein Programmfehler, senden Sie bitte einen Fehlerbericht.</translation>
+        <translation type="vanished">Der Hilfefilter für die Sprache &quot;%0&quot; wurde nicht gefunden. Greife auf die Standardsprache (%1) zurück. Dies ist wahrscheinlich ein Programmfehler, senden Sie bitte einen Fehlerbericht.</translation>
     </message>
     <message>
         <source>Help filter not found</source>
@@ -474,87 +596,80 @@ Occurrences</source>
 <context>
     <name>Aseba::LinearCameraViewPlugin</name>
     <message>
-        <location filename="plugins/VariablesViewPlugin.cpp" line="+69"/>
         <source>Linear Camera View Plugin</source>
-        <translation>Plugin für Zeilenkamera-Ansicht</translation>
+        <translation type="vanished">Plugin für Zeilenkamera-Ansicht</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>linear camera viewer</source>
-        <translation>Zeilenkamera-Ansicht</translation>
+        <translation type="vanished">Zeilenkamera-Ansicht</translation>
     </message>
     <message>
-        <location line="+45"/>
         <source>Cannot initialize linear camera view plugin</source>
-        <translation>Plugin für Zeilenkamera-Ansicht kann nicht initialisiert werden</translation>
+        <translation type="vanished">Plugin für Zeilenkamera-Ansicht kann nicht initialisiert werden</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>One or more variable not found in %1, %2, or %3.</source>
-        <translation>Eine oder mehrere Variablen nicht gefunden in %1,%2 oder %3.</translation>
+        <translation type="vanished">Eine oder mehrere Variablen nicht gefunden in %1,%2 oder %3.</translation>
     </message>
 </context>
 <context>
     <name>Aseba::LinearCameraViewVariablesDialog</name>
     <message>
-        <location line="-102"/>
         <source>Please choose your variables</source>
-        <translation>Wählen Sie bitte Ihre Variablen</translation>
+        <translation type="vanished">Wählen Sie bitte Ihre Variablen</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>red component</source>
-        <translation>Rot-Anteil</translation>
+        <translation type="vanished">Rot-Anteil</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>green component</source>
-        <translation>Grün-Anteil</translation>
+        <translation type="vanished">Grün-Anteil</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>blue component</source>
-        <translation>Blau-Anteil</translation>
+        <translation type="vanished">Blau-Anteil</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>range of values</source>
-        <translation>Wertebereich</translation>
+        <translation type="vanished">Wertebereich</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Ok</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>auto range</source>
-        <translation>Auto-Bereich</translation>
+        <translation type="vanished">Auto-Bereich</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>8 bits range (0–255)</source>
         <oldsource>8 bits range (0â255)</oldsource>
-        <translation>8-Bit-Bereich (0–255)</translation>
+        <translation type="vanished">8-Bit-Bereich (0–255)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>percent range (0–100)</source>
         <oldsource>percent range (0â100)</oldsource>
-        <translation>Prozent-Bereich (0–100)</translation>
+        <translation type="vanished">Prozent-Bereich (0–100)</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>Linear Camera View Plugin</source>
-        <translation>Plugin für Zeilenkamera-Ansicht</translation>
+        <translation type="vanished">Plugin für Zeilenkamera-Ansicht</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::LockButton</name>
+    <message>
+        <location filename="../../studio/LockButton.cpp" line="+8"/>
+        <source>Lock Thymio</source>
+        <translation>Thymio sperren</translation>
     </message>
 </context>
 <context>
     <name>Aseba::MainWindow</name>
     <message>
-        <location filename="MainWindow.cpp" line="+1448"/>
         <source>Event number %0</source>
-        <translation>Ereignis Nummer %0</translation>
+        <translation type="vanished">Ereignis Nummer %0</translation>
     </message>
     <message>
         <source>&lt;p&gt;Aseba pre-release:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. %0 / protocol ver. %1&lt;/li&gt;&lt;li&gt;Dashel ver. </source>
@@ -565,33 +680,28 @@ Occurrences</source>
         <translation type="vanished">Über Aseba Studio</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location filename="../../studio/MainWindow.cpp" line="+107"/>
         <source>Open Script</source>
         <translation>Skript öffnen</translation>
     </message>
     <message>
-        <location line="+110"/>
         <source> (not available)</source>
-        <translation> (nicht verfügbar)</translation>
+        <translation type="vanished"> (nicht verfügbar)</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+17"/>
         <source>Loading</source>
-        <translation>Laden</translation>
+        <translation type="vanished">Laden</translation>
     </message>
     <message>
-        <location line="-16"/>
         <source>%0 scripts have no corresponding nodes in the current network and have not been loaded.</source>
-        <translation>%0 Skripte haben kein korrespondierendes Netzwerkelement und wurden nicht geladen.</translation>
+        <translation type="vanished">%0 Skripte haben kein korrespondierendes Netzwerkelement und wurden nicht geladen.</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation>Fehler in XML-Dokument: %0 in Zeile %1, Spalte %2</translation>
+        <translation type="vanished">Fehler in XML-Dokument: %0 in Zeile %1, Spalte %2</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+35"/>
         <source>Save Script</source>
         <translation>Skript speichern</translation>
     </message>
@@ -604,29 +714,25 @@ Occurrences</source>
         <translation type="obsolete">Zu importierender Speicherinhalt</translation>
     </message>
     <message>
-        <location line="+186"/>
         <source>%0 on node %1</source>
-        <translation>%0 auf Netzwerkelement %1</translation>
+        <translation type="vanished">%0 auf Netzwerkelement %1</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>The following nodes are not present in the current network and their associated content was not imported:
 </source>
-        <translation>Die folgenden Netzwerkelemente existieren nicht im aktuellen Netzwerk und alle darauf bezogenen Inhalte konnten nicht importiert werden:</translation>
+        <translation type="vanished">Die folgenden Netzwerkelemente existieren nicht im aktuellen Netzwerk und alle darauf bezogenen Inhalte konnten nicht importiert werden:</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>The following variables are not present in the current network and their associated content was not imported:
 </source>
-        <translation>Die folgenden Variabeln existieren nicht im aktuellen Netzwerk und alle darauf bezogenen Inhalte konnten nicht importiert werden:</translation>
+        <translation type="vanished">Die folgenden Variabeln existieren nicht im aktuellen Netzwerk und alle darauf bezogenen Inhalte konnten nicht importiert werden:</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Some content was not imported</source>
-        <translation>Inhalt wurde nicht importiert</translation>
+        <translation type="vanished">Inhalt wurde nicht importiert</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+153"/>
         <source>Go To Line</source>
         <translation>Gehe zu Zeile</translation>
     </message>
@@ -636,101 +742,81 @@ Occurrences</source>
         <translation>Zeile:</translation>
     </message>
     <message>
-        <location line="+159"/>
         <source>Specify event arguments</source>
-        <translation>Geben Sie die Ereignisargumente an</translation>
+        <translation type="vanished">Geben Sie die Ereignisargumente an</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Please specify the %0 arguments of event %1</source>
-        <translation>Bitte geben Sie die %0 Argumente für Ereignis %1 an</translation>
+        <translation type="vanished">Bitte geben Sie die %0 Argumente für Ereignis %1 an</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Wrong number of arguments</source>
-        <translation>Falsche Zahl an Argumenten</translation>
+        <translation type="vanished">Falsche Zahl an Argumenten</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>You gave %0 arguments where event %1 requires %2</source>
-        <translation>Sie gaben %0 Argumente an, aber Ereignis %1 braucht %2 Argumente</translation>
+        <translation type="vanished">Sie gaben %0 Argumente an, aber Ereignis %1 braucht %2 Argumente</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Invalid value</source>
-        <translation>Ungültiger Wert</translation>
+        <translation type="vanished">Ungültiger Wert</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Invalid value for argument %0 of event %1</source>
-        <translation>Ungültiger Wert für Argument %0 des Ereignisses %1</translation>
+        <translation type="vanished">Ungültiger Wert für Argument %0 des Ereignisses %1</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+72"/>
         <source>Plot event %1</source>
         <translation>Ereignis %1 aufzeichnen</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>plot of %1</source>
-        <translation>Aufzeichnung von %1</translation>
+        <translation type="vanished">Aufzeichnung von %1</translation>
     </message>
     <message>
-        <location line="+136"/>
-        <location line="+552"/>
         <source>Add a new event</source>
-        <translation>Neues Ereignis hinzufügen</translation>
+        <translation type="vanished">Neues Ereignis hinzufügen</translation>
     </message>
     <message>
-        <location line="-552"/>
-        <location line="+91"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
     <message>
-        <location line="-91"/>
         <source>Number of arguments</source>
         <comment>For the newly created event</comment>
         <translatorcomment>für das neue Ereignis</translatorcomment>
-        <translation>Zahl der Argumente</translation>
+        <translation type="vanished">Zahl der Argumente</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Event already exists</source>
-        <translation>Ereignis existiert bereits</translation>
+        <translation type="vanished">Ereignis existiert bereits</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Event %0 already exists.</source>
-        <translation>Ereignis %0 existiert bereits.</translation>
+        <translation type="vanished">Ereignis %0 existiert bereits.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Invalid event name</source>
-        <translation>Ungültiger Ereignisname</translation>
+        <translation type="vanished">Ungültiger Ereignisname</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Event %0 has an invalid name. Valid names start with an alphabetical character or an &quot;_&quot;, and continue with any number of alphanumeric characters, &quot;_&quot; and &quot;.&quot;</source>
-        <translation>Ereignis %0 hat einen ungültigen Namen. Gültige Namen bestehen aus einer beliebigen Anzahl von alphanumerischen Zeichen, &quot;_&quot; und &quot;.&quot;, und beginnen mit einem Buchstaben oder einem &quot;_&quot;</translation>
+        <translation type="vanished">Ereignis %0 hat einen ungültigen Namen. Gültige Namen bestehen aus einer beliebigen Anzahl von alphanumerischen Zeichen, &quot;_&quot; und &quot;.&quot;, und beginnen mit einem Buchstaben oder einem &quot;_&quot;</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>Desynchronised! Please reload.</source>
-        <translation>Synchronisation verloren! Bitte erneut laden.</translation>
+        <translation type="vanished">Synchronisation verloren! Bitte erneut laden.</translation>
     </message>
     <message>
-        <location line="+53"/>
-        <location line="+395"/>
         <source>Add a new constant</source>
-        <translation>Neue Konstante hinzufügen</translation>
+        <translation type="vanished">Neue Konstante hinzufügen</translation>
     </message>
     <message>
-        <location line="-395"/>
         <source>Value</source>
         <comment>Value assigned to the constant</comment>
         <translatorcomment>der Konstanten zugewiesener Wert</translatorcomment>
-        <translation>Wert</translation>
+        <translation type="vanished">Wert</translation>
     </message>
     <message>
         <source>Constant already defined</source>
@@ -749,64 +835,54 @@ Occurrences</source>
         <translation type="obsolete">Aseba Studio Hilfe: Studio</translation>
     </message>
     <message>
-        <location line="-638"/>
+        <location line="-151"/>
         <source>Export memory content</source>
         <translation>Speicherinhalt exportieren</translation>
     </message>
     <message>
-        <location line="+32"/>
         <source>Import memory content</source>
-        <translation>Speicherinhalt importieren</translation>
+        <translation type="vanished">Speicherinhalt importieren</translation>
     </message>
     <message>
-        <location line="+746"/>
         <source>
 event %0 : </source>
-        <translation>
+        <translation type="vanished">
 Ereignis %0: </translation>
     </message>
     <message>
-        <location line="+39"/>
         <source>array access at %0 out of bounds [0..%1]</source>
-        <translation>Zugriff auf Array bei Index %0 außerhalb des definierten Bereichs [0..%1]</translation>
+        <translation type="vanished">Zugriff auf Array bei Index %0 außerhalb des definierten Bereichs [0..%1]</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>division by zero</source>
-        <translation>Division durch Null</translation>
+        <translation type="vanished">Division durch Null</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>event execution killed</source>
-        <translation>Ausführung des Ereignisses wurde beendet</translation>
+        <translation type="vanished">Ausführung des Ereignisses wurde beendet</translation>
     </message>
     <message>
-        <location line="+22"/>
         <source>%0:%1: %2</source>
-        <translation>%0:%1: %2</translation>
+        <translation type="vanished">%0:%1: %2</translation>
     </message>
     <message>
-        <location line="+183"/>
         <source>Remove this constant</source>
-        <translation>Diese Konstante entfernen</translation>
+        <translation type="vanished">Diese Konstante entfernen</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>&lt;b&gt;Constants&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Konstanten&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Konstanten&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+46"/>
         <source>Remove this event</source>
-        <translation>Dieses Ereignis entfernen</translation>
+        <translation type="vanished">Dieses Ereignis entfernen</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Send this event</source>
-        <translation>Dieses Ereignis senden</translation>
+        <translation type="vanished">Dieses Ereignis senden</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+277"/>
         <source>Plot this event</source>
         <translation>Dieses Ereignis aufzeichnen</translation>
     </message>
@@ -815,17 +891,15 @@ Ereignis %0: </translation>
         <translation type="obsolete">&lt;b&gt;Ereignisse&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Globale Ereignisse&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Globale Ereignisse&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+23"/>
         <source>Clear</source>
-        <translation>Löschen</translation>
+        <translation type="vanished">Löschen</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+54"/>
         <source>...inside %0</source>
         <translation>...in %0</translation>
     </message>
@@ -835,24 +909,22 @@ Ereignis %0: </translation>
         <translation>...%0</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>...of %0</source>
-        <translation>...von %0</translation>
+        <translation type="vanished">...von %0</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>...inside all nodes</source>
         <translation>...in allen Netzwerkelementen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>...all nodes</source>
         <translation>...alle Netzwerkelemente</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>&amp;User Manual...</source>
-        <translation>&amp;Bedienungsanleitung...</translation>
+        <translation type="vanished">&amp;Bedienungsanleitung...</translation>
     </message>
     <message>
         <source>F1</source>
@@ -860,7 +932,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">F1</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+39"/>
         <source>Thymio programming tutorial...</source>
         <translation>Tutorial zur Thymio-Programmierung...</translation>
     </message>
@@ -900,7 +972,7 @@ Ereignis %0: </translation>
         <translation>http://mobots.epfl.ch/data/robots/marxbot-user-manual.pdf</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-56"/>
         <source>Web site Aseba...</source>
         <translation>Asebawebsite...</translation>
     </message>
@@ -909,17 +981,17 @@ Ereignis %0: </translation>
         <translation type="vanished">&lt;h1&gt;Über Aseba&lt;/h1&gt;Versionsinformationen&lt;ul&gt;&lt;li&gt;Aseba Ver. %0&lt;br/&gt;(Build Ver. %1/Protokoll Ver. %2)&lt;/li&gt;&lt;li&gt;Dashel Ver. %3&lt;br/&gt;(unterstützt Stream-Typen: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Lesen Sie mehr auf &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; und anderen Mitwirkenden (klicken Sie auf &quot;Details einblenden&quot; für die vollständige Liste)&lt;/p&gt;&lt;p&gt;Aseba ist Open-Source unter der &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL Version 3&lt;/a&gt; lizenziert.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Report bug...</source>
         <translation>Fehlerbericht senden...</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>http://github.com/mobsya/aseba/issues/new</source>
         <translation>http://github.com/mobsya/aseba/issues/new</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+70"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
@@ -934,7 +1006,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Ctrl+N</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>&amp;Open...</source>
         <translation>&amp;Öffnen...</translation>
     </message>
@@ -944,7 +1016,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Ctrl+O</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Open &amp;Recent</source>
         <translation>&amp;Kürzlich geöffnet</translation>
     </message>
@@ -959,7 +1031,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Ctrl+S</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Save &amp;As...</source>
         <translation>Speichern &amp;unter...</translation>
     </message>
@@ -969,9 +1041,8 @@ Ereignis %0: </translation>
         <translation>Speicherinhalt &amp;exportieren...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Import memories content...</source>
-        <translation>Speicherinhalt &amp;importieren...</translation>
+        <translation type="vanished">Speicherinhalt &amp;importieren...</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1114,12 +1185,12 @@ Ereignis %0: </translation>
         <translation>&amp;Alles kopieren</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+14"/>
         <source>Show &amp;memory usage</source>
         <translation>&amp;Speichernutzung anzeigen</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Show &amp;Line Numbers</source>
         <translation>&amp;Zeilennummern anzeigen</translation>
     </message>
@@ -1146,35 +1217,31 @@ Ereignis %0: </translation>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>&amp;Settings</source>
         <oldsource>Settings</oldsource>
         <translation>Eins&amp;tellungen</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>&amp;Load all</source>
-        <translation>&amp;Alles laden</translation>
+        <translation type="vanished">&amp;Alles laden</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>F7</source>
         <comment>Load|Load all</comment>
-        <translation>F7</translation>
+        <translation type="vanished">F7</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Reset all</source>
-        <translation>Alles &amp;zurücksetzen</translation>
+        <translation type="vanished">Alles &amp;zurücksetzen</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>F8</source>
         <comment>Debug|Reset all</comment>
-        <translation>F8</translation>
+        <translation type="vanished">F8</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
         <source>Ru&amp;n all</source>
         <translation>Alles &amp;ausführen</translation>
     </message>
@@ -1201,7 +1268,7 @@ Ereignis %0: </translation>
         <translation>Debug</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Toggle breakpoint</source>
         <translation>Haltepunkt wechseln</translation>
     </message>
@@ -1223,7 +1290,7 @@ Ereignis %0: </translation>
         <translation>&amp;Debug</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>&amp;Tools</source>
         <translation>&amp;Werkzeuge</translation>
     </message>
@@ -1247,34 +1314,32 @@ Ereignis %0: </translation>
         <translation>Neustart...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Save the binary code...</source>
-        <translation>Binär-Code speichern...</translation>
+        <translation type="vanished">Binär-Code speichern...</translation>
     </message>
     <message>
-        <location line="-92"/>
+        <location line="-82"/>
         <source>S&amp;how hidden variables and functions</source>
         <oldsource>S&amp;how hidden variables and functions...</oldsource>
         <translation>&amp;Versteckte Variabeln und Funktionen anzeigen</translation>
     </message>
     <message>
-        <location line="-1873"/>
+        <location line="-676"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
-        <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren</translation>
+        <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren.</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:asebastudio</source>
         <translation>https://www.thymio.org/de:asebastudio</translation>
     </message>
     <message>
-        <location line="+1864"/>
         <source>Show &amp;keywords</source>
         <oldsource>Show &amp;keywords...</oldsource>
-        <translation>Schlüssel&amp;wörter zeigen</translation>
+        <translation type="vanished">Schlüssel&amp;wörter zeigen</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+760"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
@@ -1287,7 +1352,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">&lt;p&gt;Version Informationen  Aseba :&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(Build ver. %1 / Protokoll ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2011 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; und anderen Mitwirkenden.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba ist Open-Source unter der LGPL Version 3 lizenziert.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="-278"/>
+        <location line="-250"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/de:start</translation>
     </message>
@@ -1296,7 +1361,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">&amp;Studio...</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>&amp;About...</source>
         <translation>Ü&amp;ber...</translation>
     </message>
@@ -1306,7 +1371,7 @@ Ereignis %0: </translation>
         <translation>Über &amp;Qt...</translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+126"/>
         <source>Uncomment the selection</source>
         <translation>Auswahl unkommentieren</translation>
     </message>
@@ -1318,13 +1383,24 @@ Ereignis %0: </translation>
         <translation>Shift+Ctrl+D</translation>
     </message>
     <message>
-        <location line="+148"/>
-        <location line="+74"/>
+        <location line="+60"/>
+        <source>&amp;Stop all</source>
+        <translation>Alles &amp;stoppen</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>F8</source>
+        <comment>Debug|Stop all</comment>
+        <translation>F8</translation>
+    </message>
+    <message>
+        <location line="+73"/>
+        <location line="+68"/>
         <source>Untitled</source>
         <translation>Unbenannt</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-63"/>
         <source>Aseba Studio - Confirmation Dialog</source>
         <translation>Aseba Studio - Bestätigung</translation>
     </message>
@@ -1339,7 +1415,7 @@ Ereignis %0: </translation>
         <translation>Möchten Sie die Veränderungen speichern oder verwerfen?</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+59"/>
         <source>[modified] </source>
         <translation>[geändert] </translation>
     </message>
@@ -1352,12 +1428,23 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::MaskableNamedValuesVectorModel</name>
     <message>
-        <location filename="NamedValuesVectorModel.cpp" line="+44"/>
+        <source>Hide</source>
+        <translation type="vanished">Verstecken</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation type="vanished">Anzeigen</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::MaskableVariablesModel</name>
+    <message>
+        <location filename="../../studio/NamedValuesVectorModel.cpp" line="+173"/>
         <source>Hide</source>
         <translation>Verstecken</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>View</source>
         <translation>Anzeigen</translation>
     </message>
@@ -1365,7 +1452,7 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::NewNamedValueDialog</name>
     <message>
-        <location filename="MainWindow.cpp" line="-2176"/>
+        <location filename="../../studio/NewNamedValueDialog.cpp" line="+10"/>
         <source>Name</source>
         <comment>Name of the named value (can be a constant, event,...)</comment>
         <translation>Bezeichner</translation>
@@ -1384,66 +1471,110 @@ Ereignis %0: </translation>
         <translation type="obsolete">Werkzeuge</translation>
     </message>
     <message>
-        <location line="-984"/>
         <source>Local Tools</source>
-        <translation>Lokale Werkzeuge</translation>
+        <translation type="vanished">Lokale Werkzeuge</translation>
     </message>
     <message>
-        <location line="-110"/>
         <source>&lt;b&gt;Keywords&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;Keywords &lt;<byte value="x8"/>&gt;</oldsource>
-        <translation>&lt;b&gt;Schlüsselwörter&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Schlüsselwörter&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location line="+739"/>
         <source>unknown</source>
-        <translation>unbekannt</translation>
+        <translation type="vanished">unbekannt</translation>
     </message>
     <message>
-        <location line="-737"/>
         <source>Load</source>
-        <translation>Laden</translation>
+        <translation type="vanished">Laden</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="vanished">Zurücksetzen</translation>
+    </message>
+    <message>
+        <location filename="../../studio/NodeTab.cpp" line="+275"/>
+        <source>variables: %1/%2 (%3 %)</source>
+        <translation>variablen: %1 %2 (%3 %)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>bytecode: %1/%2 (%3 %)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+140"/>
+        <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
+        <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Nicht verbunden&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Stopped</source>
+        <translation>Angehalten</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <source>Paused</source>
+        <translation>Angehalten</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+879"/>
-        <location line="+15"/>
+        <location line="+1"/>
+        <source>Running</source>
+        <translation>Wird ausgeführt</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>(Not Locked)</source>
+        <translation>(Nicht gesperrt)</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>(Controlled by another application or user)</source>
+        <translation>(Wird von eineranderer Applikation oder einem anderen Benutzer gesteuert)</translation>
+    </message>
+    <message>
+        <location line="+386"/>
+        <source>Stop</source>
+        <translation>Stopp</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Run</source>
         <translation>Ausführen</translation>
     </message>
     <message>
-        <location line="-891"/>
+        <location line="+4"/>
         <source>Next</source>
         <translation>Weiter</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>refresh</source>
-        <translation>aktualisieren</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>auto</source>
-        <translation>auto</translation>
-    </message>
-    <message>
         <location line="+3"/>
-        <source>&lt;b&gt;Execution&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Ausführung&lt;/b&gt;</translation>
+        <source>Synchronize</source>
+        <translation>Synchronisieren</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+34"/>
+        <source>Plot this variable</source>
+        <translation>Diese Variable aufzeichnen</translation>
+    </message>
+    <message>
+        <source>refresh</source>
+        <translation type="vanished">aktualisieren</translation>
+    </message>
+    <message>
+        <source>auto</source>
+        <translation type="vanished">auto</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Execution&lt;/b&gt;</source>
+        <translation type="vanished">&lt;b&gt;Ausführung&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>&lt;b&gt;Variables&lt;/b&gt;</source>
         <translation>&lt;b&gt;Variablen&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>F&amp;ilter:</source>
         <translation>F&amp;ilter:</translation>
     </message>
@@ -1452,7 +1583,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">&lt;b&gt;Speicher&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+29"/>
         <source>Native Functions</source>
         <translation>Vordefinierte Funktionen</translation>
     </message>
@@ -1462,55 +1593,62 @@ Ereignis %0: </translation>
         <translation>Lokale Ereignisse</translation>
     </message>
     <message>
-        <location line="+307"/>
         <source>Save the binary code of %0</source>
-        <translation>Binär-Datei von %0 speichern</translation>
+        <translation type="vanished">Binär-Datei von %0 speichern</translation>
     </message>
     <message>
-        <location line="+250"/>
         <source>Aseba Studio: Output of last compilation for %0</source>
-        <translation>Aseba Studio: Ausgabe der letzten Übersetzung für %0</translation>
+        <translation type="vanished">Aseba Studio: Ausgabe der letzten Übersetzung für %0</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location line="+39"/>
         <source>Compilation success.</source>
-        <translation>Übersetzung erfolgreich.</translation>
+        <translation type="vanished">Übersetzung erfolgreich.</translation>
     </message>
     <message>
-        <location line="-19"/>
         <source>variables: %1 on %2 (%3%)</source>
-        <translation>Variablen: %1 von %2 (%3%)</translation>
+        <translation type="vanished">Variablen: %1 von %2 (%3%)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>bytecode: %1 on %2 (%3%)</source>
-        <translation>Byte-Code: %1 von %2 (%3%)</translation>
+        <translation type="vanished">Byte-Code: %1 von %2 (%3%)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-635"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Speichernutzung&lt;/b&gt; : %1, %2</translation>
     </message>
     <message>
-        <location line="+199"/>
         <source>running</source>
-        <translation>wird ausgeführt</translation>
+        <translation type="vanished">wird ausgeführt</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+550"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>step by step</source>
-        <translation>schrittweise</translation>
+        <translation type="vanished">schrittweise</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>stopped</source>
-        <translation>angehalten</translation>
+        <translation type="vanished">angehalten</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::NodeTabsManager</name>
+    <message>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <source>%1 on %2</source>
+        <translation>%1 auf %2</translation>
+    </message>
+</context>
+<context>
+    <name>Aseba::PlotTab</name>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <source>Values</source>
+        <translation>Werte</translation>
     </message>
 </context>
 <context>
@@ -1520,7 +1658,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Aseba Studio - Verbindung geschlossen</translation>
     </message>
     <message>
-        <location filename="DashelTarget.cpp" line="+541"/>
+        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
         <translation>Verbindung getrennt</translation>
     </message>
@@ -1538,16 +1676,14 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::StopThymioPlugin</name>
     <message>
-        <location filename="plugins/StopThymioPlugin.cpp" line="+34"/>
         <source>Stop Thymio</source>
-        <translation>Thymio stoppen</translation>
+        <translation type="vanished">Thymio stoppen</translation>
     </message>
 </context>
 <context>
     <name>Aseba::TargetFunctionsModel</name>
     <message>
-        <location filename="TargetModels.cpp" line="+609"/>
-        <location line="+19"/>
+        <location filename="../../studio/TargetFunctionsModel.cpp" line="+97"/>
         <source>hidden</source>
         <translation>versteckt</translation>
     </message>
@@ -1559,7 +1695,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Variablen</translation>
     </message>
     <message>
-        <location line="-445"/>
+        <location filename="../../studio/TargetModels.cpp" line="+146"/>
         <source>names</source>
         <translation>Namen</translation>
     </message>
@@ -1733,7 +1869,7 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::ThymioVPL::Block</name>
     <message>
-        <location filename="plugins/ThymioVPL/Block.cpp" line="+132"/>
+        <location filename="../../vpl/Block.cpp" line="+122"/>
         <source>buttons</source>
         <translation>Taster</translation>
     </message>
@@ -1801,19 +1937,19 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::ThymioVPL::EventActionsSet</name>
     <message>
-        <location filename="plugins/ThymioVPL/EventActionsSet.cpp" line="+615"/>
-        <location line="+20"/>
+        <location filename="../../vpl/EventActionsSet.cpp" line="+553"/>
+        <location line="+16"/>
         <source>Loading</source>
         <translation>Laden</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-15"/>
         <source>Error in XML source file at %0:%1: cannot create block %2</source>
         <oldsource>Error in XML source file at %0:%1 cannot create block %2</oldsource>
         <translation>Fehler im XML-Quelltext bei %0:%1: kann Block %2 nicht erzeugen</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
         <source>Error in XML source file at %0:%1: unknown block type %2</source>
         <translation>Fehler im XML-Quelltext bei %0:%1: unbekannter Block-Typ %2</translation>
     </message>
@@ -1853,7 +1989,7 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::ThymioVPL::ThymioVisualProgramming</name>
     <message>
-        <location filename="plugins/ThymioVPL/ThymioVisualProgramming.cpp" line="+79"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="+73"/>
         <source>Thymio Visual Programming Language</source>
         <translation>Visuelle Programmiersprache für Thymio</translation>
     </message>
@@ -1888,11 +2024,16 @@ Ereignis %0: </translation>
         <translation>Stopp</translation>
     </message>
     <message>
+        <location line="+394"/>
+        <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
+        <translation>Wenn Sie in den einfachen Modus zurückkehren, werden alle erweiterten Blöcke und Statuskarten verworfen.&lt;p&gt;Möchten Sie wirklich fortfahren?</translation>
+    </message>
+    <message>
         <source>Color scheme</source>
         <translation type="obsolete">Farbschema</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-384"/>
         <source>Advanced mode</source>
         <translation>Fortgeschrittener Modus</translation>
     </message>
@@ -1907,7 +2048,7 @@ Ereignis %0: </translation>
         <translation>Ereignisse</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+70"/>
         <source>Actions</source>
         <translation>Aktionen</translation>
     </message>
@@ -1920,7 +2061,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Verlassen</translation>
     </message>
     <message>
-        <location line="-179"/>
+        <location line="-167"/>
         <source>Undo</source>
         <translation>Rückgängig</translation>
     </message>
@@ -1939,7 +2080,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">&lt;b&gt;Ereignisse&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+56"/>
         <source>Compilation success.</source>
         <translation>Übersetzung erfolgreich.</translation>
     </message>
@@ -1953,37 +2094,36 @@ Ereignis %0: </translation>
         <translation type="obsolete">&lt;b&gt;Aktionen&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+80"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Die Visuelle Prundogrammiersprache (VPL) für den Thymio Roboter ermöglicht es durch die Verbindung von Ereignis- und Aktionsblöcken zu programmieren.</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>https://www.thymio.org/en:thymiovpl</source>
         <translation>http://aseba.wikidot.com/de:thymiovpl</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+24"/>
         <source>Export program as image</source>
         <translation>Programm als Bilddatei exportieren</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+65"/>
         <source>Launch VPL</source>
         <translation>VPL starten</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+123"/>
         <source>Returning to simple mode</source>
         <translation>Zurück zum einfachen Modus</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>You are currently using states. Returning to simple mode will discard any state filter or state setting card.&lt;p&gt;Are you sure you want to continue?</source>
-        <translation>Sie verwenden Zustände. Wenn Sie in den einfachen Modus wechseln, werden alle Zustandsfilter und Zustandseinstellungen gelöscht.&lt;p&gt;Möchten Sie wirklich fortfahren?</translation>
+        <translation type="vanished">Sie verwenden Zustände. Wenn Sie in den einfachen Modus wechseln, werden alle Zustandsfilter und Zustandseinstellungen gelöscht.&lt;p&gt;Möchten Sie wirklich fortfahren?</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <source>Warning</source>
         <translation>Achtung</translation>
     </message>
@@ -1993,22 +2133,22 @@ Ereignis %0: </translation>
         <translation>Das VPL-Dokument wurde geändert. Möchten Sie die Änderungen speichern?</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+65"/>
         <source>Incompatible Version</source>
         <translation>Inkompatible Version</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>This file is incompatible with this version of ThymioVPL. It might not work correctly.</source>
         <translation>Diese Datei ist inkompatibel mit dieser Version von ThymioVPL. Es können Probleme auftreten.</translation>
     </message>
     <message>
-        <location line="+256"/>
+        <location line="+211"/>
         <source>Please add an event</source>
         <translation>Bitte fügen Sie ein Ereignis hinzu</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+9"/>
         <source>Please add an action</source>
         <translation>Bitte fügen Sie eine Aktion hinzu</translation>
     </message>
@@ -2024,23 +2164,90 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::ThymioVPL::UsageLogger</name>
     <message>
-        <location filename="plugins/ThymioVPL/UsageLogger.cpp" line="+74"/>
+        <location filename="../../vpl/UsageLogger.cpp" line="+73"/>
         <source>Login</source>
         <translation>Login</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Please enter your user or group name:</source>
         <translation>Bitte geben Sie Ihren Benutzer- oder Gruppennamen ein:</translation>
     </message>
 </context>
 <context>
+    <name>Aseba::ThymioVPLApplication</name>
+    <message>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <source>Connecting to Thymio...</source>
+        <translation>Verbindung mit Thymio wird hergestellt...</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Aseba ver. %0 (build %1/protocol %2);</source>
+        <translation>Aseba ver. %0 (build %1/protocol %2);</translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Save Script</source>
+        <translation>Skript speichern</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Open Script</source>
+        <translation>Skript öffnen</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <location line="+5"/>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <source>No Thymio VPL data were found in the script file, file ignored.</source>
+        <translation>Keine Thymio-VPL-Daten in der Skript-Datei gefunden, Datei wird ignoriert.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error in XML source file: %0 at line %1, column %2</source>
+        <translation>Fehler in XML-Dokument: %0 in Zeile %1, Spalte %2</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
+        <translation>Verbindung mit Thymio unterbrochen... Stellen Sie sicher, dass der Thymio eingeschaltet ist und verbinden Sie das USB-Kabel/Dongle</translation>
+    </message>
+    <message>
+        <location line="+71"/>
+        <source>[modified] </source>
+        <translation>[geändert] </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Untitled</source>
+        <translation>Unbenannt</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>on %1</source>
+        <translation>auf %1</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>[not connected]</source>
+        <translation>[nicht verbinden]</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>%0 %1 %2 - Thymio Visual Programming Language</source>
+        <translation>%0 %1 %2 - Thymio Visual Programming Language</translation>
+    </message>
+</context>
+<context>
     <name>Aseba::ThymioVPLStandalone</name>
     <message>
-        <location filename="ThymioVPLStandalone.cpp" line="+272"/>
-        <location line="+223"/>
         <source>Thymio VPL Error</source>
-        <translation>Thymio-VPL-Fehler</translation>
+        <translation type="vanished">Thymio-VPL-Fehler</translation>
     </message>
     <message>
         <source>You need to connect a Thymio II to use this application</source>
@@ -2051,60 +2258,48 @@ Ereignis %0: </translation>
         <translation type="obsolete">Visuelle Programmiersprache für Thymio</translation>
     </message>
     <message>
-        <location line="-325"/>
         <source>Connecting to Thymio...</source>
-        <translation>Verbindung mit Thymio wird hergestellt...</translation>
+        <translation type="vanished">Verbindung mit Thymio wird hergestellt...</translation>
     </message>
     <message>
-        <location line="+103"/>
         <source>You need to connect a Thymio II to use this application.</source>
-        <translation>Sie müssen einen Thymio II anschließen, um diese Anwendung zu nutzen.</translation>
+        <translation type="vanished">Sie müssen einen Thymio II anschließen, um diese Anwendung zu nutzen.</translation>
     </message>
     <message>
-        <location line="+39"/>
         <source>Save Script</source>
-        <translation>Skript speichern</translation>
+        <translation type="vanished">Skript speichern</translation>
     </message>
     <message>
-        <location line="+70"/>
         <source>Open Script</source>
-        <translation>Skript öffnen</translation>
+        <translation type="vanished">Skript öffnen</translation>
     </message>
     <message>
-        <location line="+60"/>
-        <location line="+8"/>
         <source>Loading</source>
-        <translation>Laden</translation>
+        <translation type="vanished">Laden</translation>
     </message>
     <message>
-        <location line="-7"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
-        <translation>Keine Thymio-VPL-Daten in der Skript-Datei gefunden, Datei wird ignoriert.</translation>
+        <translation type="vanished">Keine Thymio-VPL-Daten in der Skript-Datei gefunden, Datei wird ignoriert.</translation>
     </message>
     <message>
-        <location line="+53"/>
         <source>This application only supports a single robot at a time.</source>
-        <translation>Diese Anwendung unterstützt nur einen Roboter zur Zeit.</translation>
+        <translation type="vanished">Diese Anwendung unterstützt nur einen Roboter zur Zeit.</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
-        <translation>Verbindung mit Thymio unterbrochen... Stellen Sie sicher, dass der Thymio eingeschaltet ist und verbinden Sie das USB-Kabel/Dongle</translation>
+        <translation type="vanished">Verbindung mit Thymio unterbrochen... Stellen Sie sicher, dass der Thymio eingeschaltet ist und verbinden Sie das USB-Kabel/Dongle</translation>
     </message>
     <message>
-        <location line="+64"/>
         <source>[modified] </source>
-        <translation>[verändert] </translation>
+        <translation type="vanished">[verändert] </translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Untitled</source>
-        <translation>Unbenannt</translation>
+        <translation type="vanished">Unbenannt</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>%0 %1- Thymio Visual Programming Language - ver. %2</source>
-        <translation>%0 %1- Visuelle Programmiersprache für Thymio - Ver. %2</translation>
+        <translation type="vanished">%0 %1- Visuelle Programmiersprache für Thymio - Ver. %2</translation>
     </message>
     <message>
         <source>%0 %1- Thymio Visual Programming Language %2</source>
@@ -2116,9 +2311,8 @@ Ereignis %0: </translation>
         <translation type="obsolete">Kein Thymio VPL Daten wurden in der Skript-Datei gefunden, ignoriert Datei</translation>
     </message>
     <message>
-        <location line="-123"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation>Feher in XML-Dokument: %0 in Zeile %1, %2</translation>
+        <translation type="vanished">Feher in XML-Dokument: %0 in Zeile %1, %2</translation>
     </message>
     <message>
         <source>This application only supports a single robot at a time</source>
@@ -2223,7 +2417,7 @@ Ereignis %0: </translation>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="DashelTarget.cpp" line="-413"/>
+        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
         <location line="+7"/>
         <source>Protocol version mismatch</source>
         <translation>Protokoll-Versionen stimmen nicht überein</translation>
@@ -2308,27 +2502,27 @@ Ereignis %0: </translation>
         <translation type="obsolete">Berechnung war erfolgreich.</translation>
     </message>
     <message>
-        <location filename="plugins/ThymioVPL/Compiler.cpp" line="+57"/>
+        <location filename="../../vpl/Compiler.cpp" line="+46"/>
         <source>Compilation success</source>
         <translation>Übersetzung erfolgreich</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Line %0: Missing event</source>
         <translation>Zeile %0: Fehlendes Ereignis</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Line %0: Missing action</source>
         <translation>Zeile %0: Fehlende Aktion</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>The event in line %0 is the same as in line %1</source>
         <translation>Das Ereignis in Zeile %0 ist das gleiche wie in Zeile %1</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>The event and the state condition in line %0 are the same as in line %1</source>
         <translation>Ereignis- und Zustandsbedingung in Zeile %0 sind die gleichen wie in Zeile %1</translation>
     </message>
@@ -2337,19 +2531,29 @@ Ereignis %0: </translation>
         <translation type="obsolete">Linie %0: Unbekannter Ereignis/Aktion Typ</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Unknown VPL error</source>
         <translation>Unbekannt VPL-Fehler</translation>
     </message>
     <message>
-        <location filename="DashelTarget.cpp" line="-468"/>
+        <location filename="../../studio/DashelTarget.cpp" line="-405"/>
         <source>Unexpected Dashel Error</source>
         <translation>Unerwarteter Dashel-Fehler</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>A communication error happened:</source>
         <translation>Ein Kommunikationsfehler ist aufgetreten:</translation>
+    </message>
+    <message>
+        <location filename="../../studio/CustomDelegate.cpp" line="+80"/>
+        <source>list &lt;%1 elements&gt;</source>
+        <translation>&lt;%1 Elemente&gt; auflisten</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>map &lt;%1 elements&gt;</source>
+        <translation>map &lt;%1 Elemente&gt;</translation>
     </message>
 </context>
 </TS>

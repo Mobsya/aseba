@@ -1,0 +1,13 @@
+<RCC version="1.0">
+  <qresource>
+    <file>translations/launcher_fr.qm</file>
+    <file>translations/launcher_es.qm</file>
+    <file>translations/launcher_de.qm</file>
+    <file>translations/launcher_tl.qm</file>
+    <file>translations/launcher_it.qm</file>
+    <file>translations/launcher_tr.qm</file>
+    <file>translations/launcher_ja.qm</file>
+    <file>translations/launcher_zh.qm</file>
+    <file>translations/launcher_pl.qm</file>
+  </qresource>
+</RCC>

@@ -1,16 +1,17 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-	<file>images/thymiownetconfig.svgz</file>
-	<file>thymiownetconfig_fr.qm</file>
-	<file>thymiownetconfig_de.qm</file>
-	<file>thymiownetconfig_it.qm</file>
-	<file>thymiownetconfig_es.qm</file>
-	<file>thymiownetconfig_ja.qm</file>
-	<file>thymiownetconfig_zh.qm</file>
-	<file>thymiownetconfig_el.qm</file>
-	<file>thymiownetconfig_tr.qm</file>
-	<file>thymiownetconfig_ru.qm</file>
-	<file>thymiownetconfig_tl.qm</file>
-	<!-- insert translation here (DO NOT REMOVE) -->
-</qresource>
+<RCC version="1.0">
+  <qresource>
+    <file>images/thymiownetconfig.svgz</file>
+    <file>thymiownetconfig_fr.qm</file>
+    <file>thymiownetconfig_de.qm</file>
+    <file>thymiownetconfig_it.qm</file>
+    <file>thymiownetconfig_es.qm</file>
+    <file>thymiownetconfig_ja.qm</file>
+    <file>thymiownetconfig_zh.qm</file>
+    <file>thymiownetconfig_el.qm</file>
+    <file>thymiownetconfig_tr.qm</file>
+    <file>thymiownetconfig_ru.qm</file>
+    <file>thymiownetconfig_tl.qm</file>
+    <!-- insert translation here (DO NOT REMOVE) -->
+    <file>thymiownetconfig_pl.qm</file>
+  </qresource>
 </RCC>

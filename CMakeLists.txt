@@ -166,6 +166,15 @@ if (UNIX)
     add_subdirectory(menu)
 endif()
 
+find_package(Python3)
+if(Python3_EXECUTABLE)
+    find_package(Qt5LinguistTools REQUIRED)
+    configure_file(
+        "${PROJECT_SOURCE_DIR}/maintainer/translations/langs.py"
+        "${CMAKE_CURRENT_BINARY_DIR}/langs.py")
+    add_custom_target("update-trads")
+    add_custom_command(TARGET "update-trads" COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/langs.py)
+endif()
 
 if(FLAT_PACK_BUILD)
     SET(MOBSYA_WEBAPPS_ROOT_DIR "share/")

@@ -4,10 +4,10 @@
 <context>
     <name>Aseba::ThymioWNetConfigDialog</name>
     <message>
-        <location filename="ThymioWNetConfig.cpp" line="+85"/>
+        <location filename="ThymioWNetConfig.cpp" line="+75"/>
         <source>Wireless Thymio Network Configurator</source>
         <oldsource>Thymio Wireless Network Configurator</oldsource>
-        <translation>Configurateur de réseau pour Wireless Thymio </translation>
+        <translation>Configurateur de réseau pour Wireless Thymio</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -41,12 +41,12 @@
     </message>
     <message>
         <location line="+7"/>
-        <location line="+90"/>
+        <location line="+81"/>
         <source>Enable pairing</source>
         <translation>Activer le pairage</translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="-80"/>
         <source>Flash into dongle</source>
         <translation>Enregistrer dans le dongle</translation>
     </message>
@@ -56,17 +56,17 @@
         <translation>Quitter</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+18"/>
         <source>Wireless dongle firmware version %0</source>
         <translation>Version du firmware du dongle wireless %0</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+11"/>
         <source>Connection error</source>
         <translation>Erreure de connexion</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot connect to dongle!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure a Wireless Thymio dongle is connected!&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Ne peut pas se connecter au dongle !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous qu&apos;un dongle wireless Thymio est connecté !&lt;/p&gt;</translation>
     </message>
@@ -75,7 +75,7 @@
         <translation type="obsolete">&lt;p&gt;&lt;b&gt;Ne peut pas se connecter au dongle !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous qu&apos;un dongle de Thymio Wireless est connecté !&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+47"/>
         <source>Disable pairing</source>
         <translation>Désactiver le pairage</translation>
     </message>
@@ -109,12 +109,12 @@
         <translation type="obsolete">&lt;p&gt;&lt;b&gt;Plus d&apos;un dongle pour Thymio Wireless trouvés !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connectez un seul dongle à votre ordinateur et réessayez.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+42"/>
         <source>Wireless Thymio dongle not found</source>
         <translation>Aucun dongle Wireless Thymio trouvé</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find a Wireless Thymio dongle!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a dongle into one of your USB ports and try again.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Ne peut pas trouver un dongle wireless Thymio !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connectez un dongle dans l&apos;un de vos ports USB et réessayez.&lt;/p&gt;</translation>
     </message>
@@ -124,7 +124,7 @@
         <translation>Plusieurs dongles Wireless Thymio trouvés</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;More than one Wireless Thymio dongles found!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a single dongle into your computer and try again.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Plus d&apos;un dongle pour Wireless Thymio trouvés !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connectez un seul dongle à votre ordinateur et réessayez.&lt;/p&gt;</translation>
     </message>

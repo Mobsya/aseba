@@ -83,6 +83,18 @@ int main(int argc, char** argv) {
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 
+    auto load_trads = [](const QString& name, const QString& dir) {
+        QTranslator* translator = new QTranslator(qApp);
+        qDebug() << QLocale().name() << name << dir;
+        if(translator->load(QLocale(), name, {}, dir)) {
+            qApp->installTranslator(translator);
+        } else {
+            qDebug() << "Didn't load translation" << name;
+        }
+    };
+    load_trads("launcher_", ":/translations");
+    load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+
     mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
