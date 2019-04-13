@@ -4,6 +4,7 @@
 #include <aseba/common/msg/msg.h>
 #include <boost/endian/arithmetic.hpp>
 #include <iostream>
+#include "log.h"
 
 namespace mobsya {
 
@@ -76,5 +77,26 @@ public:
         m_p.invoke(ec);
     }
 };
+
+template <class WriteStream>
+void write_aseba_message(WriteStream& stream, const Aseba::Message& msg, boost::system::error_code& ec) {
+    Aseba::Message::SerializationBuffer buffer;
+    buffer.add(uint16_t{0});
+    buffer.add(msg.source);
+    buffer.add(msg.type);
+    msg.serializeSpecific(buffer);
+    uint16_t& size = *(reinterpret_cast<uint16_t*>(buffer.rawData.data()));
+    size = boost::endian::native_to_little(static_cast<uint16_t>(buffer.rawData.size()) - 6);
+    auto s = ::write(stream.native_handle(), buffer.rawData.data(), buffer.rawData.size());
+    if(s != size + 6)
+        ec = boost::asio::error::basic_errors::in_progress;
+    mLogDebug("{} : {} {}", s, size, errno);
+    // fdatasync(stream.native_handle());
+
+
+    // auto s = boost::asio::write(stream, boost::asio::buffer(buffer.rawData.data(), buffer.rawData.size()), ec);
+    // if(s != size)
+    //    ec = boost::asio::error::basic_errors::in_progress;
+}
 
 }  // namespace mobsya

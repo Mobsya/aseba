@@ -29,6 +29,8 @@ add_library(thymio-device-manager-lib STATIC
     flatbuffers_message_reader.h
     flatbuffers_message_writer.h
     flatbuffers_messages.h
+    thymio2_fwupgrade.h
+    thymio2_fwupgrade.cpp
     fw_update_service.h
     fw_update_service.cpp
     node_id.h
@@ -121,6 +123,12 @@ endif()
 
 add_executable(thymio-device-manager main.cpp)
 target_link_libraries(thymio-device-manager PUBLIC thymio-device-manager-lib)
+
+install(TARGETS thymio-device-manager RUNTIME DESTINATION bin)
+codesign(thymio-device-manager)
+
+add_executable(thymio2-firmware-upgrader thymio2_fwupgrade_standalone_main.cpp)
+target_link_libraries(thymio2-firmware-upgrader PUBLIC thymio-device-manager-lib)
 
 install(TARGETS thymio-device-manager RUNTIME DESTINATION bin)
 codesign(thymio-device-manager)

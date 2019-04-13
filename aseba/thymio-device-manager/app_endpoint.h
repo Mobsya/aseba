@@ -352,6 +352,8 @@ private:
         if(status == aseba_node::status::busy && get_locked_node(id)) {
             status = aseba_node::status::ready;
         }
+        if(status == aseba_node::status::upgrading)
+            status = aseba_node::status::busy;
 
         flatbuffers::FlatBufferBuilder builder;
         std::vector<flatbuffers::Offset<fb::Node>> nodes;
@@ -426,6 +428,8 @@ private:
         if(status == aseba_node::status::busy && get_locked_node(n.uuid())) {
             status = aseba_node::status::ready;
         }
+        if(status == aseba_node::status::upgrading)
+            status = aseba_node::status::busy;
 
         auto fw = std::to_string(n.firwmware_version());
         auto afw = std::to_string(n.available_firwmware_version());

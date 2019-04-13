@@ -590,6 +590,7 @@ void aseba_node::on_description_received() {
         return;
     }
     set_status(status::available);
+    // this->upgrade_firmware();
 }
 
 
@@ -840,8 +841,12 @@ void aseba_node::set_available_firmware_version(int version) {
 }
 
 bool aseba_node::upgrade_firmware() {
-    mLogInfo("Upgrading firmware");
-    return true;
+    if(is_wirelessly_connected() || m_status != aseba_node::status::available)
+        return false;
+    set_status(status::upgrading);
+    if(auto ptr = m_endpoint.lock())
+        return ptr->upgrade_firmware(m_id);
+    return false;
 }
 
 bool aseba_node::can_be_renamed() const {
