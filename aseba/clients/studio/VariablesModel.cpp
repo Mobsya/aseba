@@ -72,7 +72,7 @@ namespace {
 
     VariablesModel::TreeItem* find_or_create_child(VariablesModel::TreeItem& item, const QVariant& key) {
         auto it = std::lower_bound(item.children.begin(), item.children.end(), key,
-                                   [&key](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
+                                   [](const auto& ptr, const QVariant& key) { return lessThan(ptr->key, key); });
         if(it != item.children.end() && (*it)->key == key)
             return it->get();
 
