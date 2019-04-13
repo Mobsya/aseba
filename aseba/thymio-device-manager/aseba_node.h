@@ -47,7 +47,7 @@ namespace mobsya {
 class aseba_node : public std::enable_shared_from_this<aseba_node> {
 public:
     // aseba_node::status is exposed through zero conf & protocol : needs to be stable
-    enum class status { connected = 1, available = 2, busy = 3, ready = 4, disconnected = 5 };
+    enum class status { connected = 1, available = 2, busy = 3, ready = 4, disconnected = 5, upgrading = 6 };
     using node_type = fb::NodeType;
 
     using node_id_t = uint16_t;

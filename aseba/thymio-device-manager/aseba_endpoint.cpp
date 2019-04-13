@@ -1,6 +1,7 @@
 #include "aseba_endpoint.h"
 #include <aseba/common/utils/utils.h>
 #include "aseba_property.h"
+#include "thymio2_fwupgrade.h"
 
 namespace mobsya {
 
@@ -187,6 +188,20 @@ bool aseba_endpoint::wireless_flash() {
 
 bool aseba_endpoint::wireless_cfg_mode_enabled() const {
     return m_wireless_dongle_settings && m_wireless_dongle_settings->cfg_mode;
+}
+
+bool aseba_endpoint::upgrade_firmware(uint16_t id) {
+    if(is_wireless())
+        return false;
+
+    /*variant_ns::visit(
+        [this, id](auto& underlying) {
+            return upgrade_thymio2_endpoint({}, m_io_context, id, underlying,
+                                            [ptr = shared_from_this()]() { mLogTrace("Update complete"); });
+        },
+        m_endpoint);
+    */
+    return true;
 }
 
 

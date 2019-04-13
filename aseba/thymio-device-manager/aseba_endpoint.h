@@ -145,6 +145,8 @@ public:
     bool wireless_set_settings(uint8_t channel, uint16_t network_id, uint16_t dongle_id);
     wireless_settings wireless_get_settings() const;
 
+    bool upgrade_firmware(uint16_t id);
+
     std::vector<std::shared_ptr<aseba_node>> nodes() const {
         std::vector<std::shared_ptr<aseba_node>> nodes;
         std::transform(m_nodes.begin(), m_nodes.end(), std::back_inserter(nodes),
@@ -209,7 +211,7 @@ public:
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
         if(ec || !msg) {
             mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
-            if(!ec)
+            if(!ec && !m_upgrading_firmware)
                 read_aseba_message();
             if(!wireless_cfg_mode_enabled())
                 return;
@@ -287,7 +289,7 @@ private:
             if(!that || ec)
                 return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
-            if(!that->wireless_cfg_mode_enabled())
+            if(!that->wireless_cfg_mode_enabled() && !that->m_upgrading_firmware)
                 that->write_message(std::make_unique<Aseba::ListNodes>());
             if(that->needs_ping())
                 that->schedule_send_ping();
@@ -308,7 +310,7 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(!wireless_cfg_mode_enabled() && d.count() >= 5) {
+                if(!m_upgrading_firmware && !wireless_cfg_mode_enabled() && d.count() >= 5) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
@@ -364,7 +366,7 @@ private:
     }
 
     void write_next() {
-        if(!m_msg_queue.empty() && !wireless_cfg_mode_enabled()) {
+        if(!m_msg_queue.empty() && !wireless_cfg_mode_enabled() && !m_upgrading_firmware) {
             auto that = shared_from_this();
             auto cb =
                 boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
@@ -422,6 +424,8 @@ private:
         bool cfg_mode = false;
         bool pairing = false;
     };
+    bool m_upgrading_firmware = false;
+
     std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
     bool sync_wireless_dongle_settings();
 };  // namespace mobsya

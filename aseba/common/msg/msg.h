@@ -594,6 +594,7 @@ bool operator==(const BootloaderReadPage& lhs, const BootloaderReadPage& rhs);
 class BootloaderWritePage : public CmdMessage {
 public:
     uint16_t pageNumber;
+    std::vector<uint8_t> data;
 
 public:
     BootloaderWritePage(uint16_t dest = ASEBA_DEST_INVALID) : CmdMessage(ASEBA_MESSAGE_BOOTLOADER_WRITE_PAGE, dest) {}

@@ -912,6 +912,7 @@ void BootloaderWritePage::serializeSpecific(SerializationBuffer& buffer) const {
     CmdMessage::serializeSpecific(buffer);
 
     buffer.add(pageNumber);
+    for_each(data.begin(), data.end(), [&buffer](uint8_t d) { buffer.add(d); });
 }
 
 void BootloaderWritePage::deserializeSpecific(SerializationBuffer& buffer) {
