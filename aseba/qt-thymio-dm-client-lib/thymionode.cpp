@@ -76,8 +76,12 @@ ThymioNode::NodeCapabilities ThymioNode::capabilities() const {
 
 bool ThymioNode::hasAvailableFirmwareUpdate() const {
     const auto n = QVersionNumber::fromString(m_fw_version);
-    // Hardcode that all thymio with a firmware 12 or older can be updated
-    return n < QVersionNumber::fromString(m_fw_version_available) || n < QVersionNumber::fromString("13");
+    if(n < QVersionNumber::fromString(m_fw_version_available))
+        return true;
+    if(type() == ThymioNode::NodeType::Thymio2Wireless || type() == ThymioNode::NodeType::Thymio2)
+        // Hardcode that all thymio with a firmware 12 or older can be updated
+        return n < QVersionNumber::fromString("13");
+    return false;
 }
 
 void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {
