@@ -408,6 +408,7 @@ class Group extends BasicNode implements IGroup{
 
 export import NodeStatus = mobsya.fb.NodeStatus;
 export import NodeType = mobsya.fb.NodeType;
+export import ProgrammingLanguage = mobsya.fb.ProgrammingLanguage;
 export import VMExecutionState = mobsya.fb.VMExecutionState;
 
 
@@ -519,6 +520,13 @@ export interface INode extends IBasicNode {
 
 
     /**
+     * Notifiy of scratchpad changes.
+     * @event
+     */
+    onScratchpadChanged: (text: string, language: mobsya.fb.ProgrammingLanguage) => void;
+
+
+    /**
      * Emitted when the robot is associated to another group
      * When a group change happens, it is the responsability of
      * the application to rewire the group-monitoring callbacks
@@ -622,6 +630,15 @@ export interface INode extends IBasicNode {
      *
      */
     setEventsDescriptions(events : EventDescription[]) : Promise<any>
+
+
+    /**
+     * Set the content of the scratchpad associated with this node
+     *
+     * The scratchpad is shared accross applications and persistent
+     * across reconnections.
+     */
+    setScratchPad(text : string, language: mobsya.fb.ProgrammingLanguage) : Promise<any>
 }
 
 
@@ -646,6 +663,7 @@ export class Node extends BasicNode implements INode {
     onVmExecutionStateChanged : (...args: any) => void;
     onStatusChanged: (newStatus : NodeStatus) => void;
     onNameChanged: (newStatus : string) => void;
+    onScratchpadChanged: (text: string, language: mobsya.fb.ProgrammingLanguage) => void;
 
     constructor(client : Client, id : NodeId, status : NodeStatus, type : NodeType) {
         super(client, id)
@@ -766,6 +784,10 @@ export class Node extends BasicNode implements INode {
 
     setEventsDescriptions(events) {
         return this._client._set_events_descriptions(this._id, events)
+    }
+
+    setScratchPad(text, language) {
+        return this._client._set_scratchpad(this._id, text, language)
     }
 
 
@@ -1041,6 +1063,16 @@ class Client implements IClient {
                 node.onVmExecutionStateChanged(msg.state(), msg.line(), msg.error(), msg.errorMsg())
                 break
             }
+
+            case mobsya.fb.AnyMessage.ScratchpadUpdate: {
+                const msg = message.message(new mobsya.fb.ScratchpadUpdate())
+                const id = this._id(msg.nodeId())
+                const node = this._nodes.get(id.toString())
+                if(!node || !node.onScratchpadChanged)
+                    break;
+                node.onScratchpadChanged(msg.text(), msg.language())
+                break
+            }
         }
     }
 
@@ -1167,6 +1199,22 @@ class Client implements IClient {
         mobsya.fb.EventDescription.addName(builder, nameOffset)
         mobsya.fb.EventDescription.addFixedSized(builder, fixed_size)
         return mobsya.fb.EventDescription.endEventDescription(builder)
+    }
+
+    _set_scratchpad(id : NodeId, text: string, language: mobsya.fb.ProgrammingLanguage) {
+        const builder = new flatbuffers.Builder();
+        const req_id  = this._gen_request_id()
+        const nodeOffset = this._create_node_id(builder, id)
+        const textOffset = builder.createString(text)
+        mobsya.fb.ScratchpadUpdate.startScratchpadUpdate(builder)
+        mobsya.fb.ScratchpadUpdate.addRequestId(builder, req_id)
+        mobsya.fb.ScratchpadUpdate.addNodeId(builder, nodeOffset)
+        mobsya.fb.ScratchpadUpdate.addScratchpadId(builder, nodeOffset)
+        mobsya.fb.ScratchpadUpdate.addText(builder, textOffset)
+        mobsya.fb.ScratchpadUpdate.addLanguage(builder, language)
+        let offset = mobsya.fb.ScratchpadUpdate.endScratchpadUpdate(builder)
+        this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.ScratchpadUpdate)
+        return this._prepare_request(req_id)
     }
 
     /* request the description of the aseba vm for the node with the given id */
