@@ -232,7 +232,7 @@ SectionGroup /e "-Thymio" GroupThymio
 ;  			${EndIf}
 			; Thymio stuff?
 			; Launcher
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Launcher.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 			; Thymio flasher
 			; CreateDirectory "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader.lnk" "$INSTDIR\bin\thymioupgrader.exe" "" "$INSTDIR\thymioupgrader.ico"
