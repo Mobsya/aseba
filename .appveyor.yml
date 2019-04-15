@@ -109,7 +109,7 @@ build_script:
     )
 
 artifacts:
-  - path: 'build\aseba-*.exe'
+  - path: 'build\ThymioSuite-*.exe'
     name: Aseba
 
 

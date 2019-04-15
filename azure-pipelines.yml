@@ -18,13 +18,13 @@ jobs:
       git submodule update --recursive --remote
       (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
       flatpak-builder build-dir flatpak/org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs -v --repo=bundle
-      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio.flatpak org.mobsya.ThymioSuite
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'thymio.flatpak'
+      artifactName: 'thymio-suite.flatpak'
 
 - job: BuilOnOsX
   pool:
