@@ -81,7 +81,6 @@ int main(int argc, char** argv) {
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 
     auto load_trads = [](const QString& name, const QString& dir) {
         QTranslator* translator = new QTranslator(qApp);
@@ -94,6 +93,9 @@ int main(int argc, char** argv) {
     };
     load_trads("launcher_", ":/translations");
     load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+
+    QApplication::setApplicationName(QObject::tr("Thymio Suite"));
+    QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 
     mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);
