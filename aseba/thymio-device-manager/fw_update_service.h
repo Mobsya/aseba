@@ -1,9 +1,14 @@
 #pragma once
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/use_future.hpp>
+#include <boost/thread/future.hpp>
 #include <vector>
+#include <range/v3/span.hpp>
+
 #include "log.h"
 #include "aseba_node.h"
 #include "aseba_node_registery.h"
+#include "thymio2_fwupgrade.h"
 
 namespace OB::Belle {
 class Client;
@@ -19,6 +24,8 @@ public:
     firmware_update_service(boost::asio::execution_context& ctx);
     ~firmware_update_service();
 
+    boost::future<ranges::span<std::byte>> firmware_data(mobsya::aseba_node::node_type);
+
 protected:
     void node_changed(std::shared_ptr<aseba_node>, const aseba_node_registery::node_id&, aseba_node::status) override;
 
@@ -29,6 +36,9 @@ private:
     void download_thymio_2_firmware();
     void update_nodes_versions(mobsya::aseba_node::node_type);
     std::map<mobsya::aseba_node::node_type, int> m_versions;
+    std::map<mobsya::aseba_node::node_type, std::string> m_urls;
+    std::map<mobsya::aseba_node::node_type, std::vector<std::byte>> m_firmwares_data;
+    std::map<mobsya::aseba_node::node_type, std::vector<boost::promise<ranges::span<std::byte>>>> m_waiting;
 };
 
 

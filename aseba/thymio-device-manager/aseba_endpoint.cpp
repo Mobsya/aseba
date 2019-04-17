@@ -1,7 +1,8 @@
 #include "aseba_endpoint.h"
 #include <aseba/common/utils/utils.h>
 #include "aseba_property.h"
-#include "thymio2_fwupgrade.h"
+#include "fw_update_service.h"
+#include "serialacceptor.h"
 
 namespace mobsya {
 
@@ -194,13 +195,42 @@ bool aseba_endpoint::upgrade_firmware(uint16_t id) {
     if(is_wireless())
         return false;
 
-    /*variant_ns::visit(
-        [this, id](auto& underlying) {
-            return upgrade_thymio2_endpoint({}, m_io_context, id, underlying,
-                                            [ptr = shared_from_this()]() { mLogTrace("Update complete"); });
-        },
-        m_endpoint);
-    */
+    m_upgrading_firmware = true;
+
+    auto firmware =
+        boost::asio::use_service<firmware_update_service>(m_io_context).firmware_data(aseba_node::node_type::Thymio2);
+    firmware.then([id, ptr = shared_from_this()](auto f) {
+        // if the firmware if empty let it fail as a special case of invalid data
+        auto firmware = f.get();
+
+        variant_ns::visit(
+            overloaded{
+#ifdef MOBSYA_TDM_ENABLE_USB
+                [this, id](usb_device& underlying) {},
+#endif
+                [ptr, id, firmware](usb_serial_port& serial) {
+                    boost::system::error_code ec;
+                    serial.close(ec);
+                    mobsya::upgrade_thymio2_endpoint(
+                        serial.device_path(), firmware, id,
+                        [ptr](boost::system::error_code err, double progress, bool complete) {
+                            // Make sure we are running in our executor
+                            boost::asio::post(ptr->m_strand, [ptr, err, progress, complete]() {
+                                // mark the associated device path as unconnected
+                                if(err || complete) {
+                                    boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context)
+                                        .free_device(ptr->serial().device_path());
+                                }
+                            });
+                        });
+                },
+                // can never happen
+                [](tcp_socket& underlying) {}},
+
+            ptr->m_endpoint);
+    });
+
+
     return true;
 }
 

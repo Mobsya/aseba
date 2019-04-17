@@ -40,6 +40,8 @@ public:
     }
     void shutdown() override;
 
+    void free_device(const std::string& s);
+
 private:
     struct request {
         serial_acceptor& acceptor;

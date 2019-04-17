@@ -11,6 +11,11 @@ public:
     usb_device_identifier usb_device_id() const {
         return m_device_id;
     }
+
+    std::string device_path() const {
+        return m_port_name;
+    }
+
     std::string device_name() const {
         return m_device_name;
     }
