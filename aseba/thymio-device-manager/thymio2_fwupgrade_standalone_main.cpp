@@ -5,7 +5,7 @@
 namespace mobsya {
 class thymio2_upgrade_service {
 public:
-    thymio2_upgrade_service(boost::asio::io_context& io_ctx, firmware_data firmware)
+    thymio2_upgrade_service(boost::asio::io_context& io_ctx, thymio2_firmware_data firmware)
         : m_io_ctx(io_ctx), m_acceptor(io_ctx, {mobsya::THYMIO2_DEVICE_ID}), m_firmware(firmware) {}
 
     void accept() {
@@ -15,25 +15,26 @@ public:
                 return accept();
             }
 
-            port->set_option(boost::asio::serial_port::baud_rate(115200));
-            port->set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
-            port->set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
-            port->set_data_terminal_ready(true);
+            port->close();
             if(ec) {
                 mLogError("system_error: %s", ec.message());
             }
             mLogInfo("New Aseba endpoint over USB device connected");
-            /*upgrade_thymio2_endpoint(m_firmware, m_io_ctx, 0, *port, [this, port]() {
-                mLogInfo("Upgrade complete");
-                // accept();
-            });*/
+            mobsya::details::upgrade_thymio2_endpoint("/dev/ttyACM0", m_firmware, 0,
+                                                      [](auto err, auto progress, bool completed) {
+                                                          mLogTrace("{} - {} - {}", progress, completed, err);
+                                                          if(err)
+                                                              exit(1);
+                                                          if(completed)
+                                                              exit(0);
+                                                      });
         });
     }
 
 private:
     boost::asio::io_context& m_io_ctx;
     serial_acceptor m_acceptor;
-    firmware_data m_firmware;
+    thymio2_firmware_data m_firmware;
 };
 
 
@@ -50,16 +51,9 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    mobsya::firmware_data data(pages.value().begin(), pages.value().end());
-    // The page with 0 index shall be written last - for some reason?
-    // auto it = std::find_if(data.begin(), data.end(), [](auto&& pair) { return pair.first == 0; });
-    // std::iter_swap(it, data.end() - 1);
-
-    // boost::asio::io_context ctx;
-    // mobsya::thymio2_upgrade_service service(ctx, data);
-    mobsya::upgrade_thymio2_endpoint(data, 55301);
-
-
-    // service.accept();
-    // ctx.run();
+    mobsya::thymio2_firmware_data data(pages.value().begin(), pages.value().end());
+    boost::asio::io_context ctx;
+    mobsya::thymio2_upgrade_service service(ctx, data);
+    service.accept();
+    ctx.run();
 }

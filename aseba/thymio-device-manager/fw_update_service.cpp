@@ -1,6 +1,7 @@
 #include "fw_update_service.h"
 #include <belle/belle.hh>
 #include <pugixml.hpp>
+#include <range/v3/algorithm.hpp>
 
 namespace belle = OB::Belle;
 
@@ -63,6 +64,10 @@ void firmware_update_service::download_thymio_2_firmware() {
                 m_versions[aseba_node::node_type::Thymio2] = v;
                 update_nodes_versions(aseba_node::node_type::Thymio2);
                 mLogInfo("Last firmware available for Thymio 2: {}", v);
+
+
+                auto str = node.attribute("url").as_string();
+                m_urls[aseba_node::node_type::Thymio2] = str;
             }
         }
     });
@@ -87,6 +92,51 @@ void firmware_update_service::update_nodes_versions(mobsya::aseba_node::node_typ
                 boost::asio::post([n, v = it->second] { n->set_available_firmware_version(v); });
         }
     }
+}
+
+boost::future<ranges::span<std::byte>> firmware_update_service::firmware_data(mobsya::aseba_node::node_type type) {
+    auto p = boost::promise<ranges::span<std::byte>>();
+
+    if(type == aseba_node::node_type::Thymio2Wireless)
+        type = aseba_node::node_type::Thymio2;
+
+    auto it = m_firmwares_data.find(type);
+    if(it != m_firmwares_data.end()) {
+        p.set_value(it->second);
+        return p.get_future();
+    }
+    auto url_it = m_urls.find(type);
+    if(url_it == m_urls.end()) {
+        p.set_value({});
+        return p.get_future();
+    }
+
+    auto f = p.get_future();
+
+    m_waiting[type].emplace_back(std::move(p));
+
+    if(m_waiting[type].size() > 1)
+        return f;
+
+    auto cb = [type, this, url = url_it->second](auto& ctx) {
+        mLogInfo("{} : {}", url, ctx.res.result());
+        if(ctx.res.result() == belle::Status::ok) {
+            std::vector<std::byte> v;
+            v.reserve(ctx.res.body().size());
+            ranges::transform(ctx.res.body(), ranges::back_inserter(v), [](char b) { return std::byte(b); });
+            m_firmwares_data.emplace(type, v);
+
+            // Notify client
+            for(auto&& p : m_waiting[type]) {
+                p.set_value(m_firmwares_data[type]);
+            }
+            m_waiting.clear();
+        }
+    };
+
+    m_http_client->on_http(url_it->second, std::move(cb));
+    m_http_client->connect();
+    return f;
 }
 
 }  // namespace mobsya

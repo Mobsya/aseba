@@ -246,6 +246,8 @@ public:
             // Update node status
             it->second.last_seen = std::chrono::steady_clock::now();
         }
+        if(m_upgrading_firmware || this->wireless_cfg_mode_enabled())
+            return;
         read_aseba_message();
     }
 
@@ -281,6 +283,9 @@ private:
     }
 
     void schedule_send_ping(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
+        if(wireless_cfg_mode_enabled() || m_upgrading_firmware)
+            return;
+
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
         std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();
@@ -289,8 +294,10 @@ private:
             if(!that || ec)
                 return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
-            if(!that->wireless_cfg_mode_enabled() && !that->m_upgrading_firmware)
-                that->write_message(std::make_unique<Aseba::ListNodes>());
+            if(that->wireless_cfg_mode_enabled() || that->m_upgrading_firmware)
+                return;
+
+            that->write_message(std::make_unique<Aseba::ListNodes>());
             if(that->needs_ping())
                 that->schedule_send_ping();
         });
@@ -299,6 +306,9 @@ private:
     }
 
     void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(5)) {
+        if(wireless_cfg_mode_enabled() || m_upgrading_firmware)
+            return;
+
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
         timer->expires_from_now(delay);
         std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();

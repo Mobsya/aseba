@@ -31,6 +31,8 @@ add_library(thymio-device-manager-lib STATIC
     flatbuffers_messages.h
     thymio2_fwupgrade.h
     thymio2_fwupgrade.cpp
+    #thymio2_fwupgrade_libusb.cpp
+    thymio2_fwupgrade_serial.cpp
     fw_update_service.h
     fw_update_service.cpp
     node_id.h
@@ -93,7 +95,12 @@ endif()
 
 target_include_directories(thymio-device-manager-lib PUBLIC ${CMAKE_SOURCE_DIR}/third_party/belle/include)
 
-target_compile_definitions(thymio-device-manager-lib PUBLIC -DSPDLOG_FMT_EXTERNAL -DBOOST_ALLOW_DEPRECATED_HEADERS)
+target_compile_definitions(thymio-device-manager-lib PUBLIC
+    -DSPDLOG_FMT_EXTERNAL
+    -DBOOST_ALLOW_DEPRECATED_HEADERS
+    -DBOOST_THREAD_PROVIDES_FUTURE
+    -DBOOST_THREAD_PROVIDES_FUTURE_CONTINUATION
+    )
 target_link_libraries(thymio-device-manager-lib PUBLIC
     asebacommon
     asebacompiler
@@ -101,6 +108,7 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
     Boost::program_options
     Boost::filesystem Boost::asio
     Boost::date_time
+    Boost::thread
     spdlog
     tl_expected
     aware

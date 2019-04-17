@@ -25,6 +25,12 @@ void serial_acceptor_service::shutdown() {
     mLogInfo("Serial monitoring service: Stopped");
 }
 
+void serial_acceptor_service::free_device(const std::string& s) {
+    m_known_devices.erase(std::find(m_known_devices.begin(), m_known_devices.end(), s));
+    m_active_timer.async_wait(boost::asio::bind_executor(
+        m_strand, boost::bind(&serial_acceptor_service::handle_request_by_active_enumeration, this)));
+}
+
 
 bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
     if(!dev) {
@@ -62,8 +68,6 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
             return false;
         }
         mLogError("serial acceptor: {}", ec.message());
-        m_active_timer.async_wait(boost::asio::bind_executor(
-            m_strand, boost::bind(&serial_acceptor_service::handle_request_by_active_enumeration, this)));
         return false;
     }
     auto handler = std::move(r.handler);
