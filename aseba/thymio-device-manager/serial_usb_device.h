@@ -21,7 +21,7 @@ public:
     void open(boost::system::error_code& ec) {
         boost::asio::serial_port::open(m_port_name, ec);
 #if defined(__linux__) or defined(__APPLE__)
-        // ioctl(native_handle(), TIOCEXCL);
+        ioctl(native_handle(), TIOCEXCL);
 #endif
     }
 
