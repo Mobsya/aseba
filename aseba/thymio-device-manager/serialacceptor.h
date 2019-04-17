@@ -58,11 +58,10 @@ private:
     void on_udev_event(const boost::system::error_code&);
     bool handle_request(udev_device* dev, request& r);
     void async_wait();
-#else
+#endif
     boost::asio::deadline_timer m_active_timer;
     void handle_request_by_active_enumeration();
     void on_active_timer(const boost::system::error_code&);
-#endif
 };
 
 class serial_acceptor : public boost::asio::basic_io_object<serial_acceptor_service> {
