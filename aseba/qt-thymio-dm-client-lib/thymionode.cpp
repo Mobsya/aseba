@@ -264,6 +264,10 @@ void ThymioNode::onScratchpadChanged(const QString& text, fb::ProgrammingLanguag
     Q_EMIT scratchpadChanged(text, language);
 }
 
+void ThymioNode::onFirmwareUpgradeProgress(double d) {
+    Q_EMIT firmwareUpdateProgress(d);
+}
+
 
 void ThymioNode::onEvents(const EventMap& evs, const QDateTime& timestamp) {
     Q_EMIT events(evs, timestamp);

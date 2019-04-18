@@ -840,12 +840,13 @@ void aseba_node::set_available_firmware_version(int version) {
     m_available_firmware_version = version;
 }
 
-bool aseba_node::upgrade_firmware() {
+bool aseba_node::upgrade_firmware(
+    std::function<void(boost::system::error_code ec, double progress, bool complete)> cb) {
     if(is_wirelessly_connected() || m_status != aseba_node::status::available)
         return false;
     set_status(status::upgrading);
     if(auto ptr = m_endpoint.lock())
-        return ptr->upgrade_firmware(m_id);
+        return ptr->upgrade_firmware(m_id, cb);
     return false;
 }
 

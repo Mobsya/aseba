@@ -241,18 +241,13 @@ namespace details {
                     mLogError("Fail to send page {}", data.size() - page - 1);
                     break;
                 }
-                cb({}, page / data.size(), false);
+                cb({}, page / double(data.size()), false);
             }
             if(page == data.size()) {
                 mLogInfo("Sending reset");
                 write(*h, Aseba::BootloaderReset{});
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 reset_device(*h);
-                mLogInfo("Reboot");
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                write(*h, Aseba::Reboot{id});
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-                write(*h, Aseba::Reboot{id});
                 ::close(*h);
                 cb({}, 1, true);
                 return;

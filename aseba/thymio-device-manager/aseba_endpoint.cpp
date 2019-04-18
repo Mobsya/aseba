@@ -191,7 +191,9 @@ bool aseba_endpoint::wireless_cfg_mode_enabled() const {
     return m_wireless_dongle_settings && m_wireless_dongle_settings->cfg_mode;
 }
 
-bool aseba_endpoint::upgrade_firmware(uint16_t id) {
+bool aseba_endpoint::upgrade_firmware(
+    uint16_t id, std::function<void(boost::system::error_code ec, double progress, bool complete)> cb) {
+
     if(is_wireless())
         return false;
 
@@ -199,7 +201,7 @@ bool aseba_endpoint::upgrade_firmware(uint16_t id) {
 
     auto firmware =
         boost::asio::use_service<firmware_update_service>(m_io_context).firmware_data(aseba_node::node_type::Thymio2);
-    firmware.then([id, ptr = shared_from_this()](auto f) {
+    firmware.then([id, ptr = shared_from_this(), cb](auto f) {
         // if the firmware if empty let it fail as a special case of invalid data
         auto firmware = f.get();
 
@@ -208,14 +210,15 @@ bool aseba_endpoint::upgrade_firmware(uint16_t id) {
 #ifdef MOBSYA_TDM_ENABLE_USB
                 [this, id](usb_device& underlying) {},
 #endif
-                [ptr, id, firmware](usb_serial_port& serial) {
+                [&ptr, id, &firmware, &cb](usb_serial_port& serial) {
                     boost::system::error_code ec;
                     serial.close(ec);
                     mobsya::upgrade_thymio2_endpoint(
                         serial.device_path(), firmware, id,
-                        [ptr](boost::system::error_code err, double progress, bool complete) {
+                        [ptr, cb](boost::system::error_code err, double progress, bool complete) {
                             // Make sure we are running in our executor
-                            boost::asio::post(ptr->m_strand, [ptr, err, progress, complete]() {
+                            boost::asio::post(ptr->m_strand, [cb, ptr, err, progress, complete]() {
+                                cb(err, progress, complete);
                                 // mark the associated device path as unconnected
                                 if(err || complete) {
                                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context)

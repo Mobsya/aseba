@@ -671,11 +671,29 @@ private:
         const std::shared_ptr<aseba_node> n = registery().node_from_id(id);
         if(!n || n->get_status() != aseba_node::status::available ||
            !(node_capabilities(*n) & uint64_t(fb::NodeCapability::FirwmareUpgrade))) {
-            mLogWarn("upgrade_node_firmware: node {} does not exist, is locked or can not be renamed", id);
+            mLogWarn("upgrade_node_firmware: node {} does not exist, is locked or can not be upgraded", id);
             write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
             return;
         }
-        n->upgrade_firmware();
+        auto update_started = n->upgrade_firmware(
+            [ptr = shared_from_this(), request_id, id](boost::system::error_code err, double progresss, bool complete) {
+                if(err) {
+                    ptr->write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
+                    return;
+                } else if(complete) {
+                    ptr->write_message(create_ack_response(request_id));
+                    return;
+                } else {
+                    flatbuffers::FlatBufferBuilder builder;
+                    const auto node_offset = id.fb(builder);
+                    ptr->write_message(
+                        wrap_fb(builder, fb::CreateFirmwareUpgradeStatus(builder, request_id, node_offset, progresss)));
+                }
+            });
+
+        if(!update_started) {
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
+        }
     }
 
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
