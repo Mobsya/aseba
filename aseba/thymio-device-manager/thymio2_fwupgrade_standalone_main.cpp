@@ -20,7 +20,7 @@ public:
                 mLogError("system_error: %s", ec.message());
             }
             mLogInfo("New Aseba endpoint over USB device connected");
-            mobsya::details::upgrade_thymio2_endpoint("/dev/ttyACM0", m_firmware, 0,
+            mobsya::details::upgrade_thymio2_endpoint(port->device_path(), m_firmware, 0,
                                                       [](auto err, auto progress, bool completed) {
                                                           mLogTrace("{} - {} - {}", progress, completed, err);
                                                           if(err)

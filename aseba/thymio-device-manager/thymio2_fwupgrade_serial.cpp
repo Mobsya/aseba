@@ -1,7 +1,15 @@
 #include "thymio2_fwupgrade.h"
 #include "log.h"
 #include "range/v3/span.hpp"
-#include <linux/usbdevice_fs.h>
+#ifdef __linux__
+#    include <linux/usbdevice_fs.h>
+#endif
+#ifdef __APPLE__
+#    include <CoreFoundation/CoreFoundation.h>
+#    include <IOKit/IOKitLib.h>
+#    include <IOKit/serial/IOSerialKeys.h>
+#endif
+
 #include <boost/asio.hpp>
 #include <boost/endian/conversion.hpp>
 #include <aseba/common/msg/msg.h>
@@ -28,6 +36,9 @@ namespace details {
         }
 
         boost::system::error_code reset_usb(boost::asio::serial_port::native_handle_type handle) {
+#ifdef __APPLE__
+#    define USBDEVFS_RESET _IO('U', 20)
+#endif
             auto r = ioctl(handle, USBDEVFS_RESET, 0);
             if(r == 0)
                 return {};
@@ -35,9 +46,12 @@ namespace details {
         }
 
         boost::system::error_code flush(boost::asio::serial_port::native_handle_type handle) {
-            std::this_thread::sleep_for(std::chrono::microseconds(50));
-            auto r = tcflush(handle, TCIOFLUSH);
-            return {};
+            auto r = 0;
+            r = tcdrain(handle);
+            if(r == 0)
+                r = tcflush(handle, TCIOFLUSH);
+            if(r == 0)
+                return {};
             return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
         }
 
@@ -50,11 +64,15 @@ namespace details {
             newtio.c_cflag |= CLOCAL;  // ignore modem control lines.
             newtio.c_cflag |= CREAD;   // enable receiver.
             newtio.c_cflag |= CS8;
+#ifdef __APPLE__
+            cfsetspeed(&newtio, 1152000);
+#else
             newtio.c_cflag |= B1152000;
+#endif
             newtio.c_iflag = IGNPAR;  // ignore parity on input
             newtio.c_oflag = 0;
             newtio.c_lflag = 0;
-            newtio.c_cc[VTIME] = 0;
+            newtio.c_cc[VTIME] = 1;
             newtio.c_cc[VMIN] = 1;
             if(tcflush(handle, TCIOFLUSH) < 0 || (tcsetattr(handle, TCSANOW, &newtio) < 0)) {
                 return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
@@ -115,14 +133,12 @@ namespace details {
         }
 
         boost::system::error_code read_ack(boost::asio::serial_port::native_handle_type handle) {
-            uint8_t buffer[64] = {};
+            uint8_t buffer[8] = {};
             int s = 0;
             if(auto err = read(handle, buffer, s)) {
                 return err;
             }
-            if(s >= 6) {
-                auto msg_size = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(buffer));
-                auto msg_source = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(buffer + 2));
+            if(s == 8) {
                 auto msg_type = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(buffer + 4));
                 if(msg_type == ASEBA_MESSAGE_BOOTLOADER_ACK) {
                     auto err = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(buffer + 6));
@@ -162,7 +178,7 @@ namespace details {
                 auto err = write(handle, ranges::span(((unsigned char*)data.data() + total), s), res_size);
                 total += res_size;
                 if(err) {
-                    mLogInfo("Writting chunk {}/{} failed: ", total, data.size(), err.message());
+                    mLogInfo("Writting chunk {}/{} failed: {}", total, data.size(), err.message());
                     return err;
                 }
                 flush(handle);
@@ -191,29 +207,43 @@ namespace details {
             reset_device(fd);
             return fd;
         }
+        tl::expected<boost::asio::serial_port::native_handle_type, boost::system::error_code>
+        try_make_serial_device(std::string path) {
+            auto h = make_serial_device(path);
+            int i = 0;
+            while(!h.has_value()) {
+                // mLogError("Opening device failed: {}", h.error().message());
+                if(i > 1000)
+                    break;
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                h = make_serial_device(path);
+                i++;
+            }
+            if(!h.has_value()) {
+                mLogError("Opening device failed: {}", h.error().message());
+            }
+            return h;
+        }
 
     }  // namespace
 
     void upgrade_thymio2_endpoint(std::string path, const thymio2_firmware_data& data, uint16_t id,
                                   firmware_upgrade_callback cb) {
-        int ms = 0;
-        bool do_reset = true;
         int page = 0;
 
-        auto h = make_serial_device(path);
-        int i = 0;
-        while(!h.has_value()) {
-            if(i > 10000)
-                break;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            h = make_serial_device(path);
-            i++;
-        }
+        // On OSX it is important to wait between close and open
+        // And this function might have been called right after
+        // the device was closed
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        auto h = try_make_serial_device(path);
         if(!h.has_value()) {
             cb(h.error(), 0, false);
+            return;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        // Give a chance to the device to boot up
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         if(id == 0) {
             mLogTrace("Trying to get the node id...");
@@ -222,11 +252,12 @@ namespace details {
         }
 
         mLogInfo("Reboot...");
-
         write(*h, Aseba::Reboot(id));
 
         reset_device(*h);
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+        // Give a chance to the device to enter the bootloader
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
         uint8_t buffer[64] = {};
         int s = 0;
@@ -254,8 +285,13 @@ namespace details {
             }
 
             ::close(*h);
-            h = make_serial_device(path);
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            // On OSX it is important to wait between close and open
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            h = h = try_make_serial_device(path);
+            if(!h.has_value()) {
+                cb(h.error(), 0, false);
+                return;
+            }
         } while(true);
 
         cb({}, 1, false);  // Should never happen
