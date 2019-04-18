@@ -46,8 +46,11 @@ namespace details {
         }
 
         boost::system::error_code flush(boost::asio::serial_port::native_handle_type handle) {
+            std::this_thread::sleep_for(std::chrono::microseconds(50));
             auto r = 0;
+#ifdef __APPLE__
             r = tcdrain(handle);
+#endif
             if(r == 0)
                 r = tcflush(handle, TCIOFLUSH);
             if(r == 0)

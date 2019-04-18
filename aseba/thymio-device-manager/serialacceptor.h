@@ -4,6 +4,7 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/asio/serial_port.hpp>
+#include <boost/asio/post.hpp>
 #include <queue>
 #include <functional>
 #include <mutex>
@@ -40,6 +41,12 @@ public:
     }
     void shutdown() override;
 
+    void pause(bool pause) {
+        m_paused = pause;
+        if(!m_paused) {
+            boost::asio::post(m_strand, [this]() { this->handle_request_by_active_enumeration(); });
+        }
+    }
     void free_device(const std::string& s);
 
 private:
@@ -53,6 +60,7 @@ private:
     std::queue<request> m_requests;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     std::vector<std::string> m_known_devices;
+    bool m_paused = false;
 #ifdef MOBSYA_TDM_ENABLE_UDEV
     struct udev* m_udev;
     struct udev_monitor* m_udev_monitor;

@@ -211,6 +211,8 @@ bool aseba_endpoint::upgrade_firmware(
                 [this, id](usb_device& underlying) {},
 #endif
                 [&ptr, id, &firmware, &cb](usb_serial_port& serial) {
+                    // Ignore new device during the update
+                    boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(true);
                     boost::system::error_code ec;
                     serial.close(ec);
                     mobsya::upgrade_thymio2_endpoint(
@@ -219,10 +221,11 @@ bool aseba_endpoint::upgrade_firmware(
                             // Make sure we are running in our executor
                             boost::asio::post(ptr->m_strand, [cb, ptr, err, progress, complete]() {
                                 cb(err, progress, complete);
-                                // mark the associated device path as unconnected
+                                // mark the associated device path as unconnected and start accepting devices again
                                 if(err || complete) {
                                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context)
                                         .free_device(ptr->serial().device_path());
+                                    boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
                         });
