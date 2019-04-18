@@ -35,6 +35,13 @@ void serial_acceptor_service::register_request(request& r) {
         m_strand, boost::bind(&serial_acceptor_service::on_active_timer, this, boost::placeholders::_1)));
 }
 
+void serial_acceptor_service::free_device(const std::string& s) {
+    m_known_devices.erase(std::find(m_known_devices.begin(), m_known_devices.end(), s));
+    m_active_timer.async_wait(boost::asio::bind_executor(
+        m_strand, boost::bind(&serial_acceptor_service::handle_request_by_active_enumeration, this)));
+}
+
+
 void serial_acceptor_service::on_active_timer(const boost::system::error_code& ec) {
     if(ec)
         return;
@@ -96,6 +103,10 @@ static io_registry_entry_t get_parent(io_registry_entry_t service)
 }
 
 void serial_acceptor_service::handle_request_by_active_enumeration() {
+    if(m_requests.empty())
+        return;
+
+
     CFMutableDictionaryRef classesToMatch = IOServiceMatching(kIOSerialBSDServiceValue);
     if (classesToMatch == NULL)
         return;

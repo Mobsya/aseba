@@ -13,7 +13,7 @@ namespace mobsya {
 static const uint32_t MAX_FRIENDLY_NAME_SIZE = 30;
 
 const std::string& aseba_node::status_to_string(aseba_node::status s) {
-    static std::array<std::string, 5> strs = {"connected", "available", "busy", "ready", "disconnected"};
+    static std::array<std::string, 6> strs = {"connected", "available", "busy", "ready", "disconnected", "upgrading"};
     int i = int(s) - 1;
     if(i < 0 && i >= int(status::connected))
         return strs[4];
