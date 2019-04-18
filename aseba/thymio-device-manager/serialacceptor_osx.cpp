@@ -103,7 +103,7 @@ static io_registry_entry_t get_parent(io_registry_entry_t service)
 }
 
 void serial_acceptor_service::handle_request_by_active_enumeration() {
-    if(m_requests.empty())
+    if(m_requests.empty() || m_paused)
         return;
 
 

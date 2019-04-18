@@ -33,6 +33,8 @@ void serial_acceptor_service::free_device(const std::string& s) {
 
 
 bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
+    if(m_requests.empty() || m_paused)
+        return false;
     if(!dev) {
         mLogError("Fail to list null device");
         return false;
@@ -97,7 +99,7 @@ void serial_acceptor_service::register_request(request& r) {
 }
 
 void serial_acceptor_service::handle_request_by_active_enumeration() {
-    if(m_requests.empty())
+    if(m_requests.empty() || m_paused)
         return;
 
 
