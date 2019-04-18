@@ -1,6 +1,7 @@
 #include "serialacceptor.h"
 #include "aseba_endpoint.h"
 #include "thymio2_fwupgrade.h"
+#include <fstream>
 
 namespace mobsya {
 class thymio2_upgrade_service {
