@@ -370,9 +370,9 @@ table FirmwareUpgradeRequest {
 }
 
 table FirmwareUpgradeStatus {
-    request_id:uint;
+    request_id : uint;
     node_id:NodeId;
-    progress:float;
+    progress   : double;
 }
 
 union AnyMessage {

@@ -274,6 +274,17 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             grp->onScratchpadChanged(pad);
             break;
         }
+        case mobsya::fb::AnyMessage::FirmwareUpgradeStatus: {
+            auto message = msg.as<mobsya::fb::FirmwareUpgradeStatus>();
+            if(!message)
+                break;
+            auto id = qfb::uuid(message->node_id()->UnPack());
+            auto node = m_nodes.value(id);
+            if(!node)
+                break;
+            node->onFirmwareUpgradeProgress(message->progress());
+            break;
+        }
         default: Q_EMIT onMessage(msg);
     }
 }

@@ -126,7 +126,7 @@ boost::future<ranges::span<std::byte>> firmware_update_service::firmware_data(mo
             ranges::transform(ctx.res.body(), ranges::back_inserter(v), [](char b) { return std::byte(b); });
             m_firmwares_data.emplace(type, v);
 
-            // Notify client
+            // Notify clients
             for(auto&& p : m_waiting[type]) {
                 p.set_value(m_firmwares_data[type]);
             }

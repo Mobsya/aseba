@@ -145,7 +145,7 @@ public:
     bool wireless_set_settings(uint8_t channel, uint16_t network_id, uint16_t dongle_id);
     wireless_settings wireless_get_settings() const;
 
-    bool upgrade_firmware(uint16_t id);
+    bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb);
 
     std::vector<std::shared_ptr<aseba_node>> nodes() const {
         std::vector<std::shared_ptr<aseba_node>> nodes;

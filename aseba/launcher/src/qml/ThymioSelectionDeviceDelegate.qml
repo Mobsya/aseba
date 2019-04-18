@@ -5,16 +5,40 @@ import org.mobsya  1.0
 Item {
     property var device: model.object
     property bool selectable: updateSelectable()
+    property double progress
 
      Component.onCompleted: {
         device.groupChanged.connect(updateSelectable);
         device.statusChanged.connect(updateSelectable);
+
+        device.firmwareUpdateProgress.connect(function (value) {
+            progressBar.progress = value
+        })
+
         launcher.selectedAppChanged.connect(updateSelectable);
      }
 
     function updateSelectable() {
         selectable = (device.status === ThymioNode.Available || launcher.selectedApp.supportsWatchMode)
         &&  (!device.isInGroup || launcher.selectedApp.supportsGroups);
+    }
+
+    function upgradeFirmware() {
+        var component = Qt.createComponent("qrc:/qml/FirmwareUpdateDialog.qml");
+        var dialog = component.createObject(launcher, {
+                                            "oldVersion": device.fwVersion,
+                                            "newVersion": device.fwVersionAvailable,
+                                            "deviceName" : device.name
+       });
+
+       if (dialog === null) {
+           console.log("Error creating dialog");
+           return
+       }
+       dialog.yes.connect(function() {
+           device.upgradeFirmware()
+       })
+       dialog.visible = true
     }
 
     Action {
@@ -26,7 +50,7 @@ Item {
         text: "Upgrade Firmware"
         id: upgradeAction
         onTriggered: {
-            device.upgradeFirmware()
+            upgradeFirmware()
         }
     }
     Action {
@@ -48,7 +72,7 @@ Item {
     height: 172
     width : 172
     property bool selected: device_view.selectedDevice === device
-    opacity: {
+    property double preferredOpacity: {
         if(!selectable)
             return 0.3
         switch(status) {
@@ -162,6 +186,7 @@ Item {
                 }*/
 
                 Image {
+                     opacity: preferredOpacity
                      id: icon;
                      source : "qrc:/assets/update-icon.svg"
                      fillMode: Image.PreserveAspectFit
@@ -176,11 +201,14 @@ Item {
                          id:update_icon_ma
                          anchors.fill: parent
                          hoverEnabled: true
+                         onClicked: {
+                             upgradeFirmware()
+                         }
                      }
 
                      ToolTip {
                          visible: update_icon_ma.containsMouse
-                         text: qsTr("A new firmware is available!")
+                         text: qsTr("A new firmware is available!\Click to install it")
                      }
                 }
             }
@@ -205,12 +233,14 @@ Item {
                 width :  90
                 fillMode:Image.PreserveAspectFit
                 anchors.horizontalCenter: parent.horizontalCenter
+                opacity: preferredOpacity
             }
             Item {
                 width: parent.width
                 height: 10
             }
             EditableDeviceNameInput {
+                opacity: preferredOpacity
                 id: textfield
                 editable: capabilities & ThymioNode.Rename
                 width: parent.width
@@ -219,6 +249,34 @@ Item {
                 onAccepted: {
                     device.name = text
                     text = deviceName
+                }
+            }
+
+            Item {
+                id: progressBar
+                property double progress: 0
+                visible: progress > 0
+                anchors.horizontalCenter: parent
+                width: parent.width - 6
+                anchors.left: parent.left
+                anchors.margins: 3
+                height: 3
+                Rectangle {
+                    id: progressBarBackground
+                    anchors.left: parent.left
+                    anchors.top : parent.top
+                    height: parent.height
+                    width: parent.width
+                    color: Style.dark
+                    radius: 2
+                }
+                Rectangle {
+                    anchors.left: parent.left
+                    anchors.top : parent.top
+                    height: parent.height
+                    width: parent.width * parent.progress
+                    color: "#0a9eeb"
+                    radius: 2
                 }
             }
         }
