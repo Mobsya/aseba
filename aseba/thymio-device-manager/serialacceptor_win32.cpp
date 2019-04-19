@@ -31,7 +31,10 @@ void serial_acceptor_service::shutdown() {
 }
 
 void serial_acceptor_service::free_device(const std::string& s) {
-	//Do later
+    const auto it = std::find(m_known_devices.begin(), m_known_devices.end(), s);
+    if(it != m_known_devices.end())
+        m_known_devices.erase(it);
+    on_active_timer({});
 }
 
 
@@ -127,6 +130,10 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
 }
 
 void serial_acceptor_service::handle_request_by_active_enumeration() {
+    if(m_requests.empty() || m_paused)
+        return;
+
+
     const HDEVINFO deviceInfoSet = ::SetupDiGetClassDevs(&GUID_DEVCLASS_PORTS, nullptr, nullptr, DIGCF_PRESENT);
     if(deviceInfoSet == INVALID_HANDLE_VALUE)
         return;
@@ -161,12 +168,13 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             //mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
             continue;
         }
-        known_devices.push_back(str);
-        if(std::find(m_known_devices.begin(), m_known_devices.end(), str) != m_known_devices.end())
-            continue;
-
         const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
         const auto device_name = get_device_name(deviceInfoSet, &deviceInfoData);
+
+
+        known_devices.push_back(port_name);
+        if(std::find(m_known_devices.begin(), m_known_devices.end(), port_name) != m_known_devices.end())
+            continue;
 
         mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
         boost::system::error_code ec;
