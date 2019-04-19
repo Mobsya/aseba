@@ -1,13 +1,18 @@
 #include "thymio2_fwupgrade.h"
 #include "log.h"
 #include "range/v3/span.hpp"
-#ifdef __linux__
-#    include <linux/usbdevice_fs.h>
-#endif
-#ifdef __APPLE__
-#    include <CoreFoundation/CoreFoundation.h>
-#    include <IOKit/IOKitLib.h>
-#    include <IOKit/serial/IOSerialKeys.h>
+
+#if defined(__APPLE__) or defined(__linux__)
+#    include <sys/file.h>
+
+#    ifdef __linux__
+#        include <linux/usbdevice_fs.h>
+#    endif
+#    ifdef __APPLE__
+#        include <CoreFoundation/CoreFoundation.h>
+#        include <IOKit/IOKitLib.h>
+#        include <IOKit/serial/IOSerialKeys.h>
+#    endif
 #endif
 
 #include <boost/asio.hpp>
@@ -19,6 +24,8 @@ namespace details {
     namespace {
 
 #if defined(__APPLE__) or defined(__linux__)
+
+        using native_size_type = int;
 
         boost::system::error_code set_data_terminal_ready(boost::asio::serial_port::native_handle_type handle,
                                                           bool dtr) {
@@ -108,7 +115,7 @@ namespace details {
         }
 
         boost::system::error_code write(boost::asio::serial_port::native_handle_type h,
-                                        ranges::span<unsigned char> data, int& written) {
+                                        ranges::span<unsigned char> data, native_size_type& written) {
             written = ::write(h, data.data(), data.size());
             if(written >= 1)
                 return {};
@@ -116,7 +123,7 @@ namespace details {
         }
 
         boost::system::error_code read(boost::asio::serial_port::native_handle_type h, ranges::span<unsigned char> data,
-                                       int& read, int timeout_ms = 100) {
+                                       native_size_type& read, int timeout_ms = 100) {
 
             read = 0;
             fd_set set;
@@ -143,6 +150,8 @@ namespace details {
         }
 #endif  // __APPLE__ or __linux__
 #ifdef _WIN32
+
+        using native_size_type = unsigned long;
 
         boost::system::error_code set_data_terminal_ready(boost::asio::serial_port::native_handle_type handle,
                                                           bool dtr) {
@@ -235,7 +244,7 @@ namespace details {
         }
 
         boost::system::error_code write(boost::asio::serial_port::native_handle_type h,
-                                        ranges::span<unsigned char> data, unsigned long& written) {
+                                        ranges::span<unsigned char> data, native_size_type& written) {
             auto r = WriteFile(h, data.data(), data.size(), &written, nullptr);
             if(!r) {
                 return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
@@ -244,7 +253,7 @@ namespace details {
         }
 
         boost::system::error_code read(boost::asio::serial_port::native_handle_type h, ranges::span<unsigned char> data,
-                                       unsigned long& read, int timeout_ms = 100) {
+                                       native_size_type& read, int timeout_ms = 100) {
 
             if(!ReadFile(h, data.data(), data.size(), &read, nullptr)) {
                 return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
@@ -263,7 +272,7 @@ namespace details {
             msg.serializeSpecific(buffer);
             uint16_t& size = *(reinterpret_cast<uint16_t*>(buffer.rawData.data()));
             size = boost::endian::native_to_little(static_cast<uint16_t>(buffer.rawData.size()) - 6);
-            unsigned long res_size = 0;
+            native_size_type res_size = 0;
             auto err = write(handle, buffer.rawData, res_size);
             flush(handle);
             return err;
@@ -271,7 +280,7 @@ namespace details {
 
         boost::system::error_code read_ack(boost::asio::serial_port::native_handle_type handle) {
             uint8_t buffer[8] = {};
-            unsigned long s = 0;
+            native_size_type s = 0;
             if(auto err = read(handle, buffer, s)) {
                 return err;
             }
@@ -291,7 +300,7 @@ namespace details {
             if(auto err = write(handle, Aseba::ListNodes{}))
                 return 0;
             uint8_t buffer[64] = {};
-            unsigned long s = 0;
+            native_size_type s = 0;
             if(auto err = read(handle, buffer, s, 100)) {
                 mLogError("List nodes {}", err.message());
                 return 0;
@@ -311,7 +320,7 @@ namespace details {
             auto total = 0;
             while(total < data.size()) {
                 auto s = std::min(int(data.size()), 64);
-                unsigned long res_size = 0;
+                native_size_type res_size = 0;
                 auto err = write(handle, ranges::span(((unsigned char*)data.data() + total), s), res_size);
                 total += res_size;
                 if(err) {
@@ -382,7 +391,7 @@ namespace details {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
         uint8_t buffer[64] = {};
-        unsigned long s = 0;
+        native_size_type s = 0;
         auto err = read(*h, buffer, s);
         mLogInfo("Reading: {} - {}\n", s, err.message());
 
