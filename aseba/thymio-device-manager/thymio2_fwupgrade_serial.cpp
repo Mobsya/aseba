@@ -18,6 +18,8 @@ namespace mobsya {
 namespace details {
     namespace {
 
+#if defined(__APPLE__) or defined(__linux__)
+
         boost::system::error_code set_data_terminal_ready(boost::asio::serial_port::native_handle_type handle,
                                                           bool dtr) {
             int flag = TIOCM_DTR;
@@ -48,9 +50,9 @@ namespace details {
         boost::system::error_code flush(boost::asio::serial_port::native_handle_type handle) {
             std::this_thread::sleep_for(std::chrono::microseconds(50));
             auto r = 0;
-#ifdef __APPLE__
+#    ifdef __APPLE__
             r = tcdrain(handle);
-#endif
+#    endif
             if(r == 0)
                 r = tcflush(handle, TCIOFLUSH);
             if(r == 0)
@@ -67,11 +69,11 @@ namespace details {
             newtio.c_cflag |= CLOCAL;  // ignore modem control lines.
             newtio.c_cflag |= CREAD;   // enable receiver.
             newtio.c_cflag |= CS8;
-#ifdef __APPLE__
+#    ifdef __APPLE__
             cfsetspeed(&newtio, 1152000);
-#else
+#    else
             newtio.c_cflag |= B1152000;
-#endif
+#    endif
             newtio.c_iflag = IGNPAR;  // ignore parity on input
             newtio.c_oflag = 0;
             newtio.c_lflag = 0;
@@ -82,6 +84,26 @@ namespace details {
             }
             set_data_terminal_ready(handle, true);
             flush(handle);
+            return {};
+        }
+
+        tl::expected<boost::asio::serial_port::native_handle_type, boost::system::error_code>
+        make_serial_device(std::string path) {
+            auto fd = open(path.c_str(), O_RDWR);
+            if(fd == -1)
+                return tl::make_unexpected(
+                    boost::system::error_code{static_cast<int>(errno), boost::system::system_category()});
+            if(::flock(fd, LOCK_EX | LOCK_NB) != 0) {
+                close(fd);
+                return tl::make_unexpected(
+                    boost::system::error_code{static_cast<int>(errno), boost::system::system_category()});
+            }
+            reset_device(fd);
+            return fd;
+        }
+
+        boost::system::error_code close(boost::asio::serial_port::native_handle_type h) {
+            ::close(h);
             return {};
         }
 
@@ -119,6 +141,118 @@ namespace details {
                 return {};
             return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
         }
+#endif  // __APPLE__ or __linux__
+#ifdef _WIN32
+
+        boost::system::error_code set_data_terminal_ready(boost::asio::serial_port::native_handle_type handle,
+                                                          bool dtr) {
+            if(!EscapeCommFunction(handle, dtr ? SETDTR : CLRDTR))
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            return {};
+        }
+
+        boost::system::error_code set_rts(boost::asio::serial_port::native_handle_type handle, bool rts) {
+            if(!EscapeCommFunction(handle, rts ? SETRTS : CLRRTS))
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            return {};
+        }
+
+        // No windows implementation
+        boost::system::error_code reset_usb(boost::asio::serial_port::native_handle_type handle) {
+            return {};
+        }
+
+        boost::system::error_code flush(boost::asio::serial_port::native_handle_type handle) {
+            if(!FlushFileBuffers(handle))
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            return {};
+        }
+
+        boost::system::error_code reset_device(boost::asio::serial_port::native_handle_type handle) {
+
+            DCB dcb;
+            memset(&dcb, 0, sizeof(dcb));
+            dcb.DCBlength = sizeof(dcb);
+            if(!GetCommState(handle, &dcb)) {
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            }
+            dcb.DCBlength = sizeof(dcb);
+            dcb.fOutxCtsFlow = FALSE;
+            dcb.fRtsControl = RTS_CONTROL_DISABLE;
+            dcb.fOutxDsrFlow = FALSE;
+            dcb.fDtrControl = DTR_CONTROL_ENABLE;
+            dcb.fDsrSensitivity = FALSE;
+            dcb.fBinary = TRUE;
+            dcb.fParity = TRUE;
+            dcb.BaudRate = 1152000;
+            dcb.ByteSize = 8;
+            dcb.Parity = NOPARITY;
+            dcb.StopBits = ONESTOPBIT;
+
+
+            if(!SetCommState(handle, &dcb)) {
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            }
+
+
+            COMMTIMEOUTS cto;
+
+            if(!GetCommTimeouts(handle, &cto)) {
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            }
+
+            cto.ReadIntervalTimeout = 10;
+            cto.ReadTotalTimeoutConstant = 100;
+            cto.ReadTotalTimeoutMultiplier = 1;
+            cto.WriteTotalTimeoutConstant = 100;
+            cto.WriteTotalTimeoutMultiplier = 1;
+
+
+            if(!SetCommTimeouts(handle, &cto)) {
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            }
+
+            set_data_terminal_ready(handle, true);
+            flush(handle);
+            return {};
+        }
+
+        tl::expected<boost::asio::serial_port::native_handle_type, boost::system::error_code>
+        make_serial_device(std::string path) {
+            auto handle = CreateFileA(path.c_str(), GENERIC_WRITE | GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+            if(handle == nullptr) {
+                return tl::make_unexpected(
+                    boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()});
+            }
+            reset_device(handle);
+            return handle;
+        }
+
+        boost::system::error_code close(boost::asio::serial_port::native_handle_type h) {
+            if(CloseHandle(h))
+                return {};
+            return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+        }
+
+        boost::system::error_code write(boost::asio::serial_port::native_handle_type h,
+                                        ranges::span<unsigned char> data, unsigned long& written) {
+            auto r = WriteFile(h, data.data(), data.size(), &written, nullptr);
+            if(!r) {
+                return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
+            }
+            return {};
+        }
+
+        boost::system::error_code read(boost::asio::serial_port::native_handle_type h, ranges::span<unsigned char> data,
+                                       unsigned long& read, int timeout_ms = 100) {
+
+            if(!ReadFile(h, data.data(), data.size(), &read, nullptr)) {
+                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            }
+            return {};
+        }
+#endif
+
 
         boost::system::error_code write(boost::asio::serial_port::native_handle_type handle,
                                         const Aseba::Message& msg) {
@@ -129,7 +263,7 @@ namespace details {
             msg.serializeSpecific(buffer);
             uint16_t& size = *(reinterpret_cast<uint16_t*>(buffer.rawData.data()));
             size = boost::endian::native_to_little(static_cast<uint16_t>(buffer.rawData.size()) - 6);
-            int res_size = 0;
+            unsigned long res_size = 0;
             auto err = write(handle, buffer.rawData, res_size);
             flush(handle);
             return err;
@@ -137,7 +271,7 @@ namespace details {
 
         boost::system::error_code read_ack(boost::asio::serial_port::native_handle_type handle) {
             uint8_t buffer[8] = {};
-            int s = 0;
+            unsigned long s = 0;
             if(auto err = read(handle, buffer, s)) {
                 return err;
             }
@@ -157,7 +291,7 @@ namespace details {
             if(auto err = write(handle, Aseba::ListNodes{}))
                 return 0;
             uint8_t buffer[64] = {};
-            int s = 0;
+            unsigned long s = 0;
             if(auto err = read(handle, buffer, s, 100)) {
                 mLogError("List nodes {}", err.message());
                 return 0;
@@ -177,7 +311,7 @@ namespace details {
             auto total = 0;
             while(total < data.size()) {
                 auto s = std::min(int(data.size()), 64);
-                int res_size = 0;
+                unsigned long res_size = 0;
                 auto err = write(handle, ranges::span(((unsigned char*)data.data() + total), s), res_size);
                 total += res_size;
                 if(err) {
@@ -195,21 +329,6 @@ namespace details {
             return {};
         }
 
-
-        tl::expected<boost::asio::serial_port::native_handle_type, boost::system::error_code>
-        make_serial_device(std::string path) {
-            auto fd = open(path.c_str(), O_RDWR);
-            if(fd == -1)
-                return tl::make_unexpected(
-                    boost::system::error_code{static_cast<int>(errno), boost::system::system_category()});
-            if(::flock(fd, LOCK_EX | LOCK_NB) != 0) {
-                close(fd);
-                return tl::make_unexpected(
-                    boost::system::error_code{static_cast<int>(errno), boost::system::system_category()});
-            }
-            reset_device(fd);
-            return fd;
-        }
         tl::expected<boost::asio::serial_port::native_handle_type, boost::system::error_code>
         try_make_serial_device(std::string path) {
             auto h = make_serial_device(path);
@@ -263,7 +382,7 @@ namespace details {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
         uint8_t buffer[64] = {};
-        int s = 0;
+        unsigned long s = 0;
         auto err = read(*h, buffer, s);
         mLogInfo("Reading: {} - {}\n", s, err.message());
 
@@ -282,12 +401,12 @@ namespace details {
                 write(*h, Aseba::BootloaderReset{});
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 reset_device(*h);
-                ::close(*h);
+                close(*h);
                 cb({}, 1, true);
                 return;
             }
 
-            ::close(*h);
+            close(*h);
             // On OSX it is important to wait between close and open
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             h = h = try_make_serial_device(path);

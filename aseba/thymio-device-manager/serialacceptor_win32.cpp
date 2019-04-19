@@ -30,6 +30,10 @@ void serial_acceptor_service::shutdown() {
     m_active_timer.cancel();
 }
 
+void serial_acceptor_service::free_device(const std::string& s) {
+	//Do later
+}
+
 
 void serial_acceptor_service::register_request(request& r) {
     m_active_timer.expires_from_now(boost::posix_time::millisec(1));
