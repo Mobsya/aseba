@@ -38,9 +38,9 @@ namespace details {
         }
 
         boost::system::error_code reset_usb(boost::asio::serial_port::native_handle_type handle) {
-#ifdef __APPLE__
-#    define USBDEVFS_RESET _IO('U', 20)
-#endif
+#    ifdef __APPLE__
+#        define USBDEVFS_RESET _IO('U', 20)
+#    endif
             auto r = ioctl(handle, USBDEVFS_RESET, 0);
             if(r == 0)
                 return {};
