@@ -35,11 +35,6 @@ PROJECTS = {
         "trdir"  : "aseba/clients/thymiownetconfig",
         "qrcfile" : "aseba/clients/thymiownetconfig/thymiownetconfig.qrc"
     },
-    "thymioupgrader" : {
-        "dirs"    : ["aseba/clients/thymioupgrader"],
-        "trdir"   : "aseba/clients/thymioupgrader",
-        "qrcfile" : "aseba/clients/thymioupgrader/thymioupgrader.qrc"
-    },
     "asebastudio" : {
         "dirs"    : ["aseba/clients/qtcommon/common", "aseba/clients/studio", "aseba/clients/vpl"],
         "trdir"   : "aseba/clients/qtcommon/translations",

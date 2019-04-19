@@ -178,7 +178,6 @@ SectionGroup /e "-Thymio" GroupThymio
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebastudiothymio.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebaplayground.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiovpl.ico"
-		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymioupgrader.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebahelp.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymio-launcher.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiownetconfig.ico"
@@ -233,9 +232,6 @@ SectionGroup /e "-Thymio" GroupThymio
 			; Thymio stuff?
 			; Launcher
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
-			; Thymio flasher
-			; CreateDirectory "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Firmware Upgrader.lnk" "$INSTDIR\bin\thymioupgrader.exe" "" "$INSTDIR\thymioupgrader.ico"
 			; Thymio wireless configurator
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Wireless Thymio Network Configurator.lnk" "$INSTDIR\bin\thymiownetconfig.exe" "" "$INSTDIR\thymiownetconfig.ico"
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"

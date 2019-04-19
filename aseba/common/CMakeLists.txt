@@ -4,7 +4,6 @@ configure_file("version.cpp.tpl" "version.cpp")
 add_library(asebacommon STATIC
 	utils/FormatableString.cpp
 	utils/utils.cpp
-	utils/HexFile.cpp
 	msg/msg.cpp
 	msg/TargetDescription.cpp
 	${CMAKE_CURRENT_BINARY_DIR}/version.cpp
@@ -13,7 +12,6 @@ add_library(asebacommon STATIC
 if(NOT ANDROID)
     target_sources(asebacommon PRIVATE
         msg/NodesManager.cpp
-        utils/BootloaderInterface.cpp
     )
 endif()
 
