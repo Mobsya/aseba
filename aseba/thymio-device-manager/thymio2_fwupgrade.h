@@ -4,6 +4,9 @@
 #include <range/v3/span.hpp>
 #include "utils.h"
 #include "log.h"
+#ifdef MOBSYA_TDM_ENABLE_USB
+#    include "libusb/libusb.h"
+#endif
 
 namespace mobsya {
 
@@ -27,13 +30,25 @@ namespace details {
     tl::expected<chunks, hex_file_parse_error> read_hex_file(std::string hex_data);
     tl::expected<page_map, hex_file_parse_error> extract_pages_from_hex(std::string hex_data);
 
-    void upgrade_thymio2_endpoint(std::string path, const thymio2_firmware_data& data, uint16_t id,
-                                  firmware_upgrade_callback cb);
+    void upgrade_thymio2_serial_endpoint(std::string path, const thymio2_firmware_data& data, uint16_t id,
+                                         firmware_upgrade_callback cb);
+
+#ifdef MOBSYA_TDM_ENABLE_USB
+    void upgrade_thymio2_usb_endpoint(libusb_device_handle* d, const thymio2_firmware_data& data, uint16_t id,
+                                      firmware_upgrade_callback cb);
+#endif
 
 }  // namespace details
 
 
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
 void upgrade_thymio2_endpoint(std::string path, ranges::span<std::byte> firmware, uint16_t id,
                               firmware_upgrade_callback cb);
+#endif
+
+#ifdef MOBSYA_TDM_ENABLE_USB
+void upgrade_thymio2_endpoint(libusb_device_handle* d, ranges::span<std::byte> firmware, uint16_t id,
+                              firmware_upgrade_callback cb);
+#endif
 
 }  // namespace mobsya

@@ -34,6 +34,12 @@ void usb_acceptor_service::shutdown() {
     m_context = nullptr;
 }
 
+void usb_acceptor_service::free_device(const libusb_device* dev) {
+    m_known_devices.erase(std::find(m_known_devices.begin(), m_known_devices.end(), dev));
+    m_active_timer.expires_from_now(boost::posix_time::milliseconds(500));
+    m_active_timer.async_wait(boost::asio::bind_executor(
+        m_strand, boost::bind(&usb_acceptor_service::handle_request_by_active_enumeration, this)));
+}
 
 void usb_acceptor_service::register_request(request& r) {
     bool hotplug = libusb_has_capability(LIBUSB_CAP_HAS_HOTPLUG) &&
@@ -66,7 +72,7 @@ int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libu
                                          libusb_hotplug_event event) {
 
     std::unique_lock<std::mutex> lock(m_req_mutex);
-    if(m_requests.empty()) {
+    if(m_requests.empty() || m_paused) {
         return 0;
     }
     if(event != LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED) {

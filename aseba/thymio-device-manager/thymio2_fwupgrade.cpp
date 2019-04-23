@@ -215,7 +215,9 @@ namespace details {
         }
         return pages;
     }
-    void do_upgrade_thymio2_endpoint(std::string path, ranges::span<std::byte> firmware, uint16_t id,
+
+    template <typename F>
+    void do_upgrade_thymio2_endpoint(ranges::span<std::byte> firmware, F&& f, uint16_t id,
                                      firmware_upgrade_callback cb) {
         std::string str;
         str.reserve(firmware.size());
@@ -226,14 +228,35 @@ namespace details {
             return;
         }
         mobsya::thymio2_firmware_data data(pages.value().begin(), pages.value().end());
-        details::upgrade_thymio2_endpoint(path, data, id, cb);
+        f(std::move(data), std::move(cb), id);
+
+        //
     }
 }  // namespace details
 
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
 void upgrade_thymio2_endpoint(std::string path, ranges::span<std::byte> firmware, uint16_t id,
                               firmware_upgrade_callback cb) {
-    std::thread t(details::do_upgrade_thymio2_endpoint, path, firmware, id, std::move(cb));
+
+    auto f = [path](const thymio2_firmware_data& data, firmware_upgrade_callback cb, uint16_t id) {
+        details::upgrade_thymio2_serial_endpoint(path, data, id, std::move(cb));
+    };
+
+    std::thread t(details::do_upgrade_thymio2_endpoint<decltype(f)>, firmware, f, id, std::move(cb));
     t.detach();
 }
+#endif
+
+#ifdef MOBSYA_TDM_ENABLE_USB
+void upgrade_thymio2_endpoint(libusb_device_handle* d, ranges::span<std::byte> firmware, uint16_t id,
+                              firmware_upgrade_callback cb) {
+    auto f = [d](const thymio2_firmware_data& data, firmware_upgrade_callback cb, uint16_t id) {
+        details::upgrade_thymio2_usb_endpoint(d, data, id, std::move(cb));
+    };
+
+    std::thread t(details::do_upgrade_thymio2_endpoint<decltype(f)>, firmware, f, id, std::move(cb));
+    t.detach();
+}
+#endif
 
 }  // namespace mobsya

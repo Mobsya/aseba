@@ -40,6 +40,15 @@ public:
     friend int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev,
                                             libusb_hotplug_event event, void* user_data);
 
+
+    void pause(bool pause) {
+        m_paused = pause;
+        if(!m_paused) {
+            boost::asio::post(m_strand, [this]() { this->handle_request_by_active_enumeration(); });
+        }
+    }
+    void free_device(const libusb_device* dev);
+
 private:
     struct request {
         usb_acceptor& acceptor;
@@ -58,6 +67,7 @@ private:
     boost::asio::deadline_timer m_active_timer;
     std::vector<libusb_device*> m_known_devices;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
+    bool m_paused = false;
 };
 
 class usb_acceptor : public boost::asio::basic_io_object<usb_acceptor_service> {

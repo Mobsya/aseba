@@ -2,7 +2,12 @@
 #include <aseba/common/utils/utils.h>
 #include "aseba_property.h"
 #include "fw_update_service.h"
-#include "serialacceptor.h"
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+#    include "serialacceptor.h"
+#endif
+#ifdef MOBSYA_TDM_ENABLE_USB
+#    include "usbacceptor.h"
+#endif
 
 namespace mobsya {
 
@@ -208,8 +213,25 @@ bool aseba_endpoint::upgrade_firmware(
         variant_ns::visit(
             overloaded{
 #ifdef MOBSYA_TDM_ENABLE_USB
-                [this, id](usb_device& underlying) {},
+                [&ptr, id, &firmware, &cb](usb_device& usb) {
+                    boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
+                    mobsya::upgrade_thymio2_endpoint(
+                        ptr->usb().native_handle(), firmware, id,
+                        [ptr, cb](boost::system::error_code err, double progress, bool complete) {
+                            // Make sure we are running in our executor
+                            boost::asio::post(ptr->m_strand, [cb, ptr, err, progress, complete]() {
+                                cb(err, progress, complete);
+                                // mark the associated device path as unconnected and start accepting devices again
+                                if(err || complete) {
+                                    boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context)
+                                        .free_device(libusb_get_device(ptr->usb().native_handle()));
+                                    boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
+                                }
+                            });
+                        });
+                },
 #endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
                 [&ptr, id, &firmware, &cb](usb_serial_port& serial) {
                     // Ignore new device during the update
                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(true);
@@ -230,6 +252,7 @@ bool aseba_endpoint::upgrade_firmware(
                             });
                         });
                 },
+#endif
                 // can never happen
                 [](tcp_socket& underlying) {}},
 
