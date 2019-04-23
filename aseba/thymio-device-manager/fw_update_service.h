@@ -24,7 +24,7 @@ public:
     firmware_update_service(boost::asio::execution_context& ctx);
     ~firmware_update_service();
 
-    boost::future<ranges::span<std::byte>> firmware_data(mobsya::aseba_node::node_type);
+    boost::unique_future<ranges::span<std::byte>> firmware_data(mobsya::aseba_node::node_type);
 
 protected:
     void node_changed(std::shared_ptr<aseba_node>, const aseba_node_registery::node_id&, aseba_node::status) override;
