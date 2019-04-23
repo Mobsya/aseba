@@ -24,6 +24,11 @@ Item {
     }
 
     function upgradeFirmware() {
+
+
+        if(device.type !== ThymioNode.Thymio2)
+            return
+
         var component = Qt.createComponent("qrc:/qml/FirmwareUpdateDialog.qml");
         var dialog = component.createObject(launcher, {
                                             "oldVersion": device.fwVersion,
@@ -204,11 +209,14 @@ Item {
                          onClicked: {
                              upgradeFirmware()
                          }
+                         acceptedButtons: type === ThymioNode.Thymio2 ? MouseArea.LeftButton : null
                      }
 
                      ToolTip {
                          visible: update_icon_ma.containsMouse
-                         text: qsTr("A new firmware is available!\Click to install it")
+                         text: (type === ThymioNode.Thymio2) ?
+                                   qsTr("A new firmware is available!\nClick to install it") :
+                                   qsTr("A new firmware is available!\nConnect the robot with an usb cable to install it")
                      }
                 }
             }
