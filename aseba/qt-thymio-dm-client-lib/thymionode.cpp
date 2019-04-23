@@ -75,6 +75,10 @@ ThymioNode::NodeCapabilities ThymioNode::capabilities() const {
 }
 
 bool ThymioNode::hasAvailableFirmwareUpdate() const {
+    // Don't show update for remote thymios
+    if(!m_endpoint || !m_endpoint->isLocalhostPeer())
+        return false;
+
     const auto n = QVersionNumber::fromString(m_fw_version);
     if(n < QVersionNumber::fromString(m_fw_version_available))
         return true;
