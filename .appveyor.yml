@@ -136,14 +136,14 @@ environment:
   BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=5"
   matrix:
-    - platform: x64
-      COMPILER: ClangCL
-      ARCH: x64
-      LLVM_URL: http://releases.llvm.org/7.0.1/LLVM-7.0.1-win64.exe
-      LLVM_VERSION: 7.0
-      USE_VS_TOOLCHAIN: true
-      QT5: C:\Qt\5.11\msvc2017_64
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
+    #- platform: x64
+      #COMPILER: ClangCL
+      #ARCH: x64
+      #LLVM_URL: http://releases.llvm.org/7.0.1/LLVM-7.0.1-win64.exe
+      #LLVM_VERSION: 7.0
+      #USE_VS_TOOLCHAIN: true
+      #QT5: C:\Qt\5.11\msvc2017_64
+      #BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
 
     #- ARCH: x86
       #QT5: C:\Qt\5.10\msvc2015
