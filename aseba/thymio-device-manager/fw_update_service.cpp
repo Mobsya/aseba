@@ -94,7 +94,8 @@ void firmware_update_service::update_nodes_versions(mobsya::aseba_node::node_typ
     }
 }
 
-boost::future<ranges::span<std::byte>> firmware_update_service::firmware_data(mobsya::aseba_node::node_type type) {
+boost::unique_future<ranges::span<std::byte>>
+firmware_update_service::firmware_data(mobsya::aseba_node::node_type type) {
     auto p = boost::promise<ranges::span<std::byte>>();
 
     if(type == aseba_node::node_type::Thymio2Wireless)

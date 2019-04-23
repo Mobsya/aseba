@@ -98,7 +98,6 @@ target_include_directories(thymio-device-manager-lib PUBLIC ${CMAKE_SOURCE_DIR}/
 target_compile_definitions(thymio-device-manager-lib PUBLIC
     -DSPDLOG_FMT_EXTERNAL
     -DBOOST_ALLOW_DEPRECATED_HEADERS
-    -DBOOST_THREAD_PROVIDES_FUTURE
     -DBOOST_THREAD_PROVIDES_FUTURE_CONTINUATION
     )
 target_link_libraries(thymio-device-manager-lib PUBLIC
