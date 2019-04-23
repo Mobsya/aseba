@@ -27,6 +27,7 @@ void serial_acceptor_service::shutdown() {
 
 void serial_acceptor_service::free_device(const std::string& s) {
     m_known_devices.erase(std::find(m_known_devices.begin(), m_known_devices.end(), s));
+    m_active_timer.expires_from_now(boost::posix_time::milliseconds(500));
     m_active_timer.async_wait(boost::asio::bind_executor(
         m_strand, boost::bind(&serial_acceptor_service::handle_request_by_active_enumeration, this)));
 }
@@ -84,7 +85,7 @@ void serial_acceptor_service::register_request(request& r) {
     if(!m_udev)
         return;
 
-    m_active_timer.expires_from_now(boost::posix_time::millisec(500));
+    m_active_timer.expires_from_now(boost::posix_time::milliseconds(500));
     m_active_timer.async_wait(boost::asio::bind_executor(
         m_strand, boost::bind(&serial_acceptor_service::handle_request_by_active_enumeration, this)));
 
