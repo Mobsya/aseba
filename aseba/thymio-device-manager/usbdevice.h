@@ -36,7 +36,7 @@ public:
     enum class parity { none = 0, even = 2, odd = 3, space = 4, mark = 5 };
     enum class flow_control { none = 0, hardware = 1, software = 2 };
 
-    using native_handle_type = libusb_device*;
+    using native_handle_type = libusb_device_handle*;
 
     usb_device_service(boost::asio::io_context& io_context);
     usb_device_service(usb_device_service&&) = default;
@@ -156,12 +156,12 @@ public:
     using flow_control = usb_device_service::flow_control;
     using parity = usb_device_service::parity;
 
-    using native_handle_type = libusb_device*;
+    using native_handle_type = libusb_device_handle*;
     using lowest_layer_type = usb_device;
 
     usb_device(boost::asio::io_context& io_context);
     usb_device(usb_device&&) = default;
-    void assign(native_handle_type);
+    void assign(libusb_device*);
     void cancel();
     void close();
     bool is_open();

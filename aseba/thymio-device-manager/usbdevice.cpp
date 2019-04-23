@@ -47,7 +47,7 @@ bool usb_device_service::is_open(implementation_type& impl) {
 }
 
 usb_device_service::native_handle_type usb_device_service::native_handle(const implementation_type& impl) const {
-    return impl.device;
+    return impl.handle;
 }
 
 std::size_t usb_device_service::write_channel_chunk_size(const implementation_type& impl) const {
@@ -184,7 +184,7 @@ bool usb_device_service::send_encoding(implementation_type& impl) {
 usb_device::usb_device(boost::asio::io_context& io_context)
     : boost::asio::basic_io_object<usb_device_service>(io_context) {}
 
-void usb_device::assign(native_handle_type d) {
+void usb_device::assign(libusb_device* d) {
     this->get_service().assign(this->get_implementation(), d);
 }
 
@@ -212,7 +212,7 @@ usb_device_identifier usb_device::usb_device_id() const {
     if(!this->native_handle())
         return {0, 0};
     libusb_device_descriptor desc;
-    libusb_get_device_descriptor(this->native_handle(), &desc);
+    libusb_get_device_descriptor(libusb_get_device(this->native_handle()), &desc);
     return {desc.idVendor, desc.idProduct};
 }
 
@@ -222,7 +222,7 @@ std::string usb_device::usb_device_name() const {
     if(!this->native_handle())
         return {};
     libusb_device_descriptor desc;
-    libusb_get_device_descriptor(this->native_handle(), &desc);
+    libusb_get_device_descriptor(libusb_get_device(this->native_handle()), &desc);
     auto l = libusb_get_string_descriptor_ascii(this->get_implementation().handle, desc.iProduct,
                                                 reinterpret_cast<unsigned char*>(&s[0]), int(s.size()));
     if(l <= 0) {
