@@ -14,7 +14,7 @@ Item {
             console.error("No launch function")
         }
         else if(!selectedAppLauncher(device)) {
-            console.error("could not launch %1 with device %2".arg(app.name).arg(device))
+            console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
         }
         if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
                 &&  (!device.isInGroup || selectedAppLauncher.supportsGroups))
