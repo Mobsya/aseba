@@ -18,116 +18,69 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __PLAYGROUND_DASHEL_ASEBA_GLUE_H
-#define __PLAYGROUND_DASHEL_ASEBA_GLUE_H
+#pragma once
 
 #include "AsebaGlue.h"
 #include "EnkiGlue.h"
-#include <dashel/dashel.h>
-
-#ifdef ZEROCONF_SUPPORT
-#    include "common/zeroconf/zeroconf-qt.h"
-#endif  // ZEROCONF_SUPPORT
-
+#include <qzeroconf.h>
+#include <QTcpServer>
+#include <QTcpSocket>
 // Implementation of the connection using Dashel
 
 namespace Aseba {
-class SimpleDashelConnection : public RecvBufferNodeConnection, public Dashel::Hub {
-protected:
-    Dashel::Stream* listenStream = nullptr;
-    Dashel::Stream* stream = nullptr;
-    std::vector<Dashel::Stream*> toDisconnect;  // all streams that must be disconnected at next step
-
+class SimpleConnectionBase : public QObject, public AbstractNodeConnection {
+    Q_OBJECT
 public:
-    SimpleDashelConnection(unsigned port);
+    SimpleConnectionBase(const QString & type, const QString & name, unsigned port);
 
+
+private Q_SLOTS:
+    void onNewConnection();
     void sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length) override;
+    uint16_t getBuffer(uint8_t* data, uint16_t maxLength, uint16_t* source) override;
 
-    void connectionCreated(Dashel::Stream* stream) override;
-    void incomingData(Dashel::Stream* stream) override;
-    void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+
+    //void connectionCreated(Dashel::Stream* stream) override;
+   // ;
+
+    //void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+
+
+private:
+    void startServiceRegistration();
+    QTcpServer* m_server;
+    QTcpSocket* m_client;
+    QZeroConf * m_zeroconf;
+    QString m_robotType;
+    QString m_robotName;
+    uint16_t m_messageSize = 0;
+    uint16_t m_messageSource = 0;
+    QByteArray m_lastMessage;
 
 protected:
     void clearBreakpoints();
-    void closeOldStreams();
+    bool handleSingleMessageData();
 };
 
-}  // namespace Aseba
-
-
-// Implementations of robots using Dashel
-
-namespace Enki {
-template <typename AsebaRobot>
-class DashelConnected : public AsebaRobot, public Aseba::SimpleDashelConnection {
+template <typename Robot>
+class SimpleConnection : public SimpleConnectionBase, public Robot {
 public:
-    template <typename... Params>
-#ifdef ZEROCONF_SUPPORT
-    DashelConnected(Aseba::Zeroconf& zeroconf, std::string robotTypeName, unsigned port, Params... parameters)
-        : AsebaRobot(parameters...)
-        , Aseba::SimpleDashelConnection(port)
-        , zeroconf(zeroconf)
-        , robotTypeName(std::move(robotTypeName))
-#else   // ZEROCONF_SUPPORT
-    DashelConnected(unsigned port, Params... parameters)
-        : AsebaRobot(parameters...)
-        , Aseba::SimpleDashelConnection(port)
-#endif  // ZEROCONF_SUPPORT
-    {
+    SimpleConnection(const QString & type, const QString & name, unsigned port, uint16_t nodeId):
+        SimpleConnectionBase(type, name, port), Robot(name.toStdString(), nodeId) {
+
         Aseba::vmStateToEnvironment[&this->vm] =
             std::make_pair((Aseba::AbstractNodeGlue*)this, (Aseba::AbstractNodeConnection*)this);
-#ifdef ZEROCONF_SUPPORT
-        updateZeroconfStatus();
-#endif  // ZEROCONF_SUPPORT
+
     }
 
-    ~DashelConnected() override {
-        Aseba::vmStateToEnvironment.erase(&this->vm);
+public:
+    void externalInputStep(double dt) {
+        handleSingleMessageData();
     }
-
-protected:
-    // from AbstractNodeGlue
-
-    void externalInputStep(double dt) override {
-        // do a network step, if there are some events from the network, they will be executed
-        Hub::step();
-
-        // disconnect old streams
-        closeOldStreams();
-    }
-
-#ifdef ZEROCONF_SUPPORT
-    Aseba::Zeroconf& zeroconf;
-    std::string robotTypeName;
-
-    void connectionCreated(Dashel::Stream* stream) override {
-        Aseba::SimpleDashelConnection::connectionCreated(stream);
-        updateZeroconfStatus();
-    }
-
-    void connectionClosed(Dashel::Stream* stream, bool abnormal) override {
-        Aseba::SimpleDashelConnection::connectionClosed(stream, abnormal);
-        updateZeroconfStatus();
-    }
-
-    void updateZeroconfStatus() {
-        try {
-            if(stream)
-                zeroconf.forget(this->robotName, listenStream);
-            else
-                zeroconf.advertise(this->robotName, listenStream,
-                                   {ASEBA_PROTOCOL_VERSION, this->robotTypeName, stream != nullptr, {this->vm.nodeId}, {
-                                        static_cast<unsigned int>(this->variables.productId)
-                                    }});
-        } catch(const std::runtime_error& e) {
-            SEND_NOTIFICATION(LOG_ERROR, stream ? "Cannot de-advertise stream" : "Cannot advertise stream",
-                              listenStream->getTargetName(), e.what());
-        }
-    }
-#endif  // ZEROCONF_SUPPORT
 };
 
-}  // namespace Enki
 
 
-#endif  // __PLAYGROUND_DASHEL_ASEBA_GLUE_H
+
+
+}  // namespace Aseba

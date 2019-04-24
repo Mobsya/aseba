@@ -32,8 +32,8 @@ namespace Enki {
 using DirectAsebaThymio2 = DirectlyConnected<AsebaThymio2>;
 using DirectAsebaFeedableEPuck = DirectlyConnected<AsebaFeedableEPuck>;
 
-using DashelAsebaThymio2 = DashelConnected<AsebaThymio2>;
-using DashelAsebaFeedableEPuck = DashelConnected<AsebaFeedableEPuck>;
+using DashelAsebaThymio2 = Aseba::SimpleConnection<AsebaThymio2>;
+using DashelAsebaFeedableEPuck = Aseba::SimpleConnection<AsebaFeedableEPuck>;
 }  // namespace Enki
 
 #endif  // __PLAYGROUND_ROBOTS_H
