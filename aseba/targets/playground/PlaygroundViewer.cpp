@@ -58,6 +58,7 @@ PlaygroundViewer::PlaygroundViewer(World* world, bool energyScoringSystemEnabled
     , logPos(0)
     , energyPool(INITIAL_POOL_ENERGY) {
     setMouseTracking(true);
+    setMinimumSize(800, 600);
 }
 
 PlaygroundViewer::~PlaygroundViewer() = default;
