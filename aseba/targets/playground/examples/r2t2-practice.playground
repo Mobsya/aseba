@@ -34,7 +34,7 @@
 	<externalLink lang="en" type="wiki" target="https://www.thymio.org/en:thymio-r2t2">Remote Rescue using Thymio2</externalLink>
 	<externalLink lang="fr" type="wiki" target="https://www.thymio.org/fr:thymio-r2t2">Remote Rescue using Thymio2</externalLink>
 	<externalLink lang="it" type="wiki" target="https://www.thymio.org/it:thymio-r2t2">Remote Rescue using Thymio2</externalLink>
-  
+
 	<color name="white" r="1.0" g="1.0" b="1.0" />
 	<color name="wall" r="0.9" g="0.9" b="0.9" />
 	<color name="red" r="0.77" g="0.2" b="0.15" />
@@ -67,8 +67,4 @@
 	<robot type="thymio2" x="289" y="119" port="33334" angle="3.93" name="Thymio A1" />
 	<robot type="thymio2" x="300" y="108" port="33335" angle="3.93" name="Thymio A2" />
 	<robot type="thymio2" x="311" y="97" port="33336" angle="3.93" name="Thymio A3" />
-	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33333" />
-	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33334" />
-	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33335" />
-	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33336" />
 </aseba-playground>

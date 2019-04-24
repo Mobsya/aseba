@@ -13,7 +13,7 @@
 	<color name="pretty shade of purple" r="0.8" g="0.1" b="0.7" />
 
 	<!--Definition of the world, width (w) and height (h) in cm (origin in a corner). Can also have a color (defined above) and ground texture (PNG image). The PNG image will be stretched to the world's size. Attribute energyScoringSystemEnabled defines whether the energy of the e-pucks will be counted.-->
-	<world w="100" h="100" color="white" groundTexture="logo_thymio_couleur_fond.png" energyScoringSystemEnabled="true"/> 
+	<world w="100" h="100" color="white" groundTexture="logo_thymio_couleur_fond.png" energyScoringSystemEnabled="true"/>
 
 	<!--The position of the camera can be defined by its x,y and altitude in cm, yaw, pitch in radians.-->
 	<camera x="50" y="50" altitude="130" yaw=" 1.57" pitch="-1.56" />
@@ -28,12 +28,12 @@
 	<!--Cylinders are defined by their center coordinates x, y, radius r, height h in cm. A mass m can also be given, if m is not defined it becomes -1 which means unmovable. If m>1, the object can be moved if sufficient force is applied. Please note however that the simulator is very basic so the results can look inaccurate.-->
 	<cylinder x="50.00" y="35.00" r="2.00" h="10.00" />
 	<cylinder x="50.00" y="65.00" r="2.00" h="10.00" />
-	
+
 	<!--Robots: Thymio II and E-Puck are available. The simulated E-Puck's API is different from the real E-Puck's API, and they have a feeding system. The simulated Thymio's API is the same as the real Thymio's API (no feeding system) but some functions, events, variables, while available, are not simulated. Attributes are the robot's center position in the world, x and y, in cm, its anglein radians, port number and node ID.-->
 	<robot type="thymio2" x="10" y="50" port="33334" angle="-1.57" name="Tim" nodeId="1"/>
 	<robot type="e-puck" x="55" y="50" port="33335" name="Becky" nodeId="2" />
 
-<!--Areas are polygons that are defined by a series of points (x,y). They can be used as activation zones for doors. They have a name used to refer to them from activations.--> 
+<!--Areas are polygons that are defined by a series of points (x,y). They can be used as activation zones for doors. They have a name used to refer to them from activations.-->
 	<area name="cage">
 	  <point x="-10" y="-10" />
 	  <point x="10" y="-10" />
@@ -52,8 +52,5 @@
 	<!--Feeders have a limited amount of energy which they transfer to e-pucks when they come close. When the e-puck subsequently moves away the feeder will recharge its energy. The e-puck loses its energy over time. Feeders have their x,y center position in cm and angle in radians as attributes. -->
 	<feeder x="50" y="50"/>
 
-	<!--External processes can be run, here for example to load an aesl file (the basic behaviours of Thymio) on a robot.-->
-	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33334" />
-
-<!--End of Playground definition-->
+<!--End of Playground definition-->
 </aseba-playground>
