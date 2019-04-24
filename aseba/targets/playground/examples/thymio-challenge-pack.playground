@@ -2,10 +2,10 @@
 <aseba-playground>
 	<author name="Mobsya" email="info at mobsya dot org" />
 	<thanks name="Tungsteno Design" />
-	
+
 	<description lang="en">A ground board for Thymio Challenge Pack.</description>
 	<description lang="fr">Un plateau de sol pour le kit Thymio Challenge Pack.</description>
-	
+
 	<externalLink lang="en" type="wiki" target="en:thymiochallengepack" />
 	<externalLink lang="fr" type="wiki" target="fr:thymiochallengepack" />
 
@@ -15,6 +15,4 @@
 	<world w="104.1" h="79.4" color="white" groundTexture="piste-thymio-challenge-pack.svgz" />
 	<wall x="50" y="35" l1="10" l2="5" h="5" mass="10" color="orange" angle="0.000" />
 	<robot type="thymio2" x="70" y="15" port="33333" name="Thymio" />
-
-	<process command=":asebamassloader --once thymio-default-behaviours.aesl tcp:localhost;33333" />
 </aseba-playground>
