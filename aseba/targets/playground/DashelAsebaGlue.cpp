@@ -20,88 +20,98 @@
 
 #include "DashelAsebaGlue.h"
 #include "EnkiGlue.h"
-#include "common/utils/FormatableString.h"
+#include <QDataStream>
+#include <QCoreApplication>
 #include "transport/buffer/vm-buffer.h"
 
 namespace Aseba {
-// SimpleDashelConnection
 
-SimpleDashelConnection::SimpleDashelConnection(unsigned port) {
-    try {
-        listenStream = Dashel::Hub::connect(FormatableString("tcpin:port=%0").arg(port));
-    } catch(const Dashel::DashelException& e) {
-        SEND_NOTIFICATION(FATAL_ERROR, "cannot create listening port", std::to_string(port), e.what());
-        abort();
-    }
+SimpleConnectionBase::SimpleConnectionBase(const QString & type, const QString & name, unsigned port):
+    m_server(new QTcpServer(this)), m_client(nullptr), m_zeroconf(new QZeroConf(this)),
+    m_robotType(type),
+    m_robotName(name) {
+    connect(m_server, &QTcpServer::newConnection, this, &SimpleConnectionBase::onNewConnection);
+    m_server->listen(QHostAddress::LocalHost, port);
+
+    m_server->setMaxPendingConnections(1);
+    startServiceRegistration();
+
 }
-
-void SimpleDashelConnection::sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length) {
-    if(stream) {
-        try {
-            uint16_t temp;
-
-            // this may happen if target has disconnected
-            temp = bswap16(length - 2);
-            stream->write(&temp, 2);
-            temp = bswap16(nodeId);
-            stream->write(&temp, 2);
-            stream->write(data, length);
-            stream->flush();
-        } catch(Dashel::DashelException e) {
-            SEND_NOTIFICATION(LOG_ERROR, "cannot read from socket", stream->getTargetName(), e.what());
-        }
-    }
-}
-
-void SimpleDashelConnection::connectionCreated(Dashel::Stream* stream) {
-    const std::string& targetName(stream->getTargetName());
-    if(targetName.substr(0, targetName.find_first_of(':')) == "tcp") {
-        // schedule current stream for disconnection
-        if(this->stream) {
-            toDisconnect.push_back(this->stream);
-            clearBreakpoints();
-        }
-
-        // set new stream as current stream
-        this->stream = stream;
-        SEND_NOTIFICATION(LOG_INFO, "new client connected", stream->getTargetName());
-    }
-}
-
-void SimpleDashelConnection::incomingData(Dashel::Stream* stream) {
-    // if we receive data from an old connection, disregard as we'll close the old stream soon
-    if(stream != this->stream) {
-        // read one byte to avoid deadlock
-        char c;
-        stream->read(&c, 1);
+void SimpleConnectionBase::onNewConnection() {
+    if(m_client) {
+        qWarning() << "This Virtual Robot is already connected to a peer";
+        SEND_NOTIFICATION(LOG_WARNING, "client already connected", m_robotName.toStdString());
         return;
     }
-
-    try {
-        // receive data
-        uint16_t temp;
-        uint16_t len;
-
-        stream->read(&temp, 2);
-        len = bswap16(temp);
-        stream->read(&temp, 2);
-        lastMessageSource = bswap16(temp);
-        lastMessageData.resize(len + 2);
-        stream->read(&lastMessageData[0], lastMessageData.size());
-
-        // execute event on all VM that are linked to this connection
-        for(auto vmStateToEnvironmentKV : vmStateToEnvironment) {
-            if(vmStateToEnvironmentKV.second.second == this) {
-                AsebaProcessIncomingEvents(vmStateToEnvironmentKV.first);
-                AsebaVMRun(vmStateToEnvironmentKV.first, 1000);
-            }
-        }
-    } catch(Dashel::DashelException e) {
-        SEND_NOTIFICATION(LOG_ERROR, "cannot read from socket", stream->getTargetName(), e.what());
-    }
+    SEND_NOTIFICATION(LOG_INFO, "client connected", "");
+    m_client = m_server->nextPendingConnection();
+    m_client->open(QIODevice::ReadWrite);
 }
 
-void SimpleDashelConnection::connectionClosed(Dashel::Stream* stream, bool abnormal) {
+void SimpleConnectionBase::startServiceRegistration() {
+    m_zeroconf->addServiceTxtRecord("type", m_robotType);
+    m_zeroconf->addServiceTxtRecord("protovers", QString::number(9));
+    std::string name = QStringLiteral("%1 - %2")
+                           .arg(m_robotName)
+                           .arg(QCoreApplication::applicationPid()).toStdString();
+
+    m_zeroconf->startServicePublish(
+        name.c_str(),
+        "_aseba._tcp",
+        "local",
+        m_server->serverPort());
+}
+
+void SimpleConnectionBase::sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length) {
+    if(!m_client)
+        return;
+    QDataStream stream(m_client);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream << uint16_t(length - 2);
+    stream << nodeId;
+    stream.writeRawData((char*)(data), length);
+}
+
+bool SimpleConnectionBase::handleSingleMessageData() {
+    if(m_messageSize == 0) {
+        if(!m_client || m_client->bytesAvailable() < 2)
+            return false;
+        QDataStream stream(m_client);
+        stream.setByteOrder(QDataStream::LittleEndian);
+        stream >> m_messageSize;
+    }
+    if(!m_lastMessage.isEmpty())
+        return false;
+
+    if(m_messageSize != 0 && m_client->bytesAvailable() < m_messageSize + 2)
+        return false;
+
+    QDataStream stream(m_client);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream >> m_messageSource;
+    QByteArray data(m_messageSize + 2, Qt::Uninitialized);
+    stream.readRawData(data.data(), data.size());
+    m_lastMessage =  data;
+    for(auto vmStateToEnvironmentKV : vmStateToEnvironment) {
+        if(vmStateToEnvironmentKV.second.second == this) {
+            AsebaProcessIncomingEvents(vmStateToEnvironmentKV.first);
+            AsebaVMRun(vmStateToEnvironmentKV.first, 1000);
+        }
+    }
+    return true;
+}
+
+uint16_t SimpleConnectionBase::getBuffer(uint8_t* data, uint16_t maxLength, uint16_t* source) {
+    *source = m_messageSource;
+    uint16_t s = qMin(uint16_t(m_lastMessage.size()), maxLength);
+    memcpy(data, m_lastMessage.data(), s);
+    m_lastMessage = m_lastMessage.mid(s);
+    if(m_lastMessage.isEmpty())
+        m_messageSize = 0;
+    return s;
+}
+
+/*void SimpleConnectionBase::connectionClosed(Dashel::Stream* stream, bool abnormal) {
     // if the stream being closed is the current one (not old), clear breakpoints and reset current
     if(stream == this->stream) {
         clearBreakpoints();
@@ -112,23 +122,14 @@ void SimpleDashelConnection::connectionClosed(Dashel::Stream* stream, bool abnor
     } else {
         SEND_NOTIFICATION(LOG_INFO, "client disconnected properly", stream->getTargetName());
     }
-}
+}*/
 
 //! Clear breakpoints on all VM that are linked to this connection
-void SimpleDashelConnection::clearBreakpoints() {
+void SimpleConnectionBase::clearBreakpoints() {
     for(auto vmStateToEnvironmentKV : vmStateToEnvironment) {
         if(vmStateToEnvironmentKV.second.second == this)
             vmStateToEnvironmentKV.first->breakpointsCount = 0;
     }
-}
-
-//! Disconnect old streams
-void SimpleDashelConnection::closeOldStreams() {
-    for(size_t i = 0; i < toDisconnect.size(); ++i) {
-        SEND_NOTIFICATION(LOG_WARNING, "old client disconnected", toDisconnect[i]->getTargetName());
-        closeStream(toDisconnect[i]);
-    }
-    toDisconnect.clear();
 }
 
 }  // namespace Aseba

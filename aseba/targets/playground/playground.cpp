@@ -85,32 +85,17 @@ public:
 };
 }  // namespace Enki
 
-//! A function to create a robot of a given type
-#ifdef ZEROCONF_SUPPORT
-using RobotFactory = std::function<Enki::Robot*(Aseba::Zeroconf&, unsigned, std::string, std::string, int16_t)>;
-#else   // ZEROCONF_SUPPORT
-using RobotFactory = std::function<Enki::Robot*(unsigned, std::string, std::string, int16_t)>;
-#endif  // ZEROCONF_SUPPORT
-
-//! A factory function to create a robot with a single VM
-#ifdef ZEROCONF_SUPPORT
+using RobotFactory = std::function<Enki::Robot*(QString, QString, unsigned, int16_t)>;
 template <typename RobotT>
-Enki::Robot* createRobotSingleVMNode(Aseba::Zeroconf& zeroconf, unsigned port, std::string robotName,
-                                     std::string typeName, int16_t nodeId) {
-    return new RobotT(zeroconf, std::move(typeName), port, std::move(robotName), nodeId);
+Enki::Robot* createRobotSingleVMNode(QString robotName, QString typeName, unsigned port, int16_t nodeId) {
+    return new RobotT(typeName, robotName, port, nodeId);
 }
-#else   // ZEROCONF_SUPPORT
-template <typename RobotT>
-Enki::Robot* createRobotSingleVMNode(unsigned port, std::string robotName, std::string typeName, int16_t nodeId) {
-    return new RobotT(port, std::move(robotName), nodeId);
-}
-#endif  // ZEROCONF_SUPPORT
 
 //! A type of robot
 struct RobotType {
-    RobotType(std::string prettyName, RobotFactory factory)
+    RobotType(QString prettyName, RobotFactory factory)
         : prettyName(std::move(prettyName)), factory(std::move(factory)) {}
-    const std::string prettyName;  //!< a nice-looking name of this type
+    const QString prettyName;  //!< a nice-looking name of this type
     const RobotFactory factory;    //!< the factory function to create a robot of this type
     unsigned number = 0;           //!< number of robots of this type instantiated
 };
@@ -365,34 +350,29 @@ int main(int argc, char* argv[]) {
     }
 
     // load all robots in one loop
-    std::map<std::string, RobotType> robotTypes{
-        {"thymio2", {"Thymio II", createRobotSingleVMNode<Enki::DashelAsebaThymio2>}},
-        {"e-puck", {"E-Puck", createRobotSingleVMNode<Enki::DashelAsebaFeedableEPuck>}},
+    std::map<QString, RobotType> robotTypes{
+        {"thymio2", RobotType{"Thymio II", createRobotSingleVMNode<Enki::DashelAsebaThymio2>}},
+        {"e-puck",  RobotType{"E-Puck", createRobotSingleVMNode<Enki::DashelAsebaFeedableEPuck>}},
     };
     QDomElement robotE = domDocument.documentElement().firstChildElement("robot");
     unsigned asebaServerCount(0);
     while(!robotE.isNull()) {
         const auto type(robotE.attribute("type", "thymio2"));
-        auto typeIt(robotTypes.find(type.toStdString()));
+        auto typeIt(robotTypes.find(type));
         if(typeIt != robotTypes.end()) {
             // retrieve informations
             const auto& cppTypeName(typeIt->second.prettyName);
-            const auto qTypeName(QString::fromStdString(cppTypeName));
+            const auto qTypeName(cppTypeName);
             auto& countOfThisType(typeIt->second.number);
             const auto qRobotNameRaw(robotE.attribute("name", QString("%1 %2").arg(qTypeName).arg(countOfThisType)));
             const auto qRobotNameFull(QObject::tr("%2 on %3").arg(qRobotNameRaw).arg(QHostInfo::localHostName()));
             const auto cppRobotName(qRobotNameFull.toStdString());
-            const unsigned port(
-                robotE.attribute("port", QString("%1").arg(ASEBA_DEFAULT_PORT + asebaServerCount)).toUInt());
+            const unsigned port = 0;
             const int16_t nodeId(robotE.attribute("nodeId", "1").toInt());
 
             // create
             const auto& creator(typeIt->second.factory);
-#ifdef ZEROCONF_SUPPORT
-            auto robot(creator(zeroconf, port, cppRobotName, cppTypeName, nodeId));
-#else   // ZEROCONF_SUPPORT
-            auto robot(creator(port, cppRobotName, cppTypeName, nodeId));
-#endif  // ZEROCONF_SUPPORT
+            auto robot(creator(qRobotNameFull, cppTypeName, port, nodeId));
             asebaServerCount++;
             countOfThisType++;
 

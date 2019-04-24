@@ -15,7 +15,7 @@ set_target_properties(asebasim PROPERTIES VERSION ${LIB_VERSION_STRING}
 										SOVERSION ${LIB_VERSION_MAJOR})
 
 
-target_link_libraries(asebasim PUBLIC aseba_conf enki)
+target_link_libraries(asebasim PUBLIC aseba_conf enki QtZeroConf)
 
 if (Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
 	find_package(OpenGL REQUIRED)
@@ -48,14 +48,18 @@ if (Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
 
 	add_executable(${PLAYGROUND_EXECUTABLE_NAME} WIN32 MACOSX_BUNDLE  ${playground_SRCS} ${playground_MOCS} ${resfiles})
 
-	target_link_libraries(${PLAYGROUND_EXECUTABLE_NAME} asebasim asebacommon asebavmbuffer asebavm asebaqtabout enkiviewer Qt5::Xml Qt5::Svg Qt5::Network ${EXTRA_LIBS})
+    target_link_libraries(${PLAYGROUND_EXECUTABLE_NAME}
+        asebasim
+        asebacommon
+        asebavmbuffer
+        asebavm
+        asebaqtabout
+        enkiviewer
+        QtZeroConf
+        Qt5::Xml Qt5::Svg Qt5::Network ${EXTRA_LIBS})
 
 	install_qt_app(${PLAYGROUND_EXECUTABLE_NAME})
 	codesign(${PLAYGROUND_EXECUTABLE_NAME})
-
-	if(HAS_ZEROCONF_SUPPORT)
-		target_link_libraries(${PLAYGROUND_EXECUTABLE_NAME} asebazeroconfqt)
-	endif()
 
 	if(APPLE)
 		set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
