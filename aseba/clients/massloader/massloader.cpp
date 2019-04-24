@@ -27,7 +27,6 @@
 #include "common/msg/NodesManager.h"
 #include "common/utils/utils.h"
 #include "compiler/compiler.h"
-#include "transport/dashel_plugins/dashel-plugins.h"
 #include <QCoreApplication>
 #include <QString>
 #include <QStringList>
@@ -237,7 +236,6 @@ void MassLoader::waitMs(int duration) {
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
-    Dashel::initPlugins();
 
     QString target(ASEBA_DEFAULT_TARGET);
 
