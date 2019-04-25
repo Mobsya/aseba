@@ -1,7 +1,7 @@
-import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
+import QtQuick 2.11
 
 
 TextField {
@@ -19,6 +19,24 @@ TextField {
     color : "white"
     selectionColor: "#0a9eeb"
     readOnly: true
+    maximumLength: 20
+
+    FontMetrics {
+        id: fontMetrics
+        font: parent.font
+    }
+
+    onTextChanged: {
+        font.pointSize = 12
+        fontMetrics.font = font
+        while(fontMetrics.boundingRect(text).width >= width - 10) {
+            font.pointSize = font.pointSize - 0.1
+            fontMetrics.font = font
+            if(font.pointSize < 5)
+                break
+
+        }
+    }
 
     onFocusChanged: {
         if(!focus)
