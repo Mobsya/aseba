@@ -29,6 +29,10 @@ table ConnectionHandshake {
     localhostPeer:bool = false;
 }
 
+// The server sends ping at short intervals
+// so that the client can monitor the connection's health
+table Ping {}
+
 //Stop the device manager
 table DeviceManagerShutdownRequest {
     request_id:uint;
@@ -403,7 +407,8 @@ union AnyMessage {
     VMExecutionStateChanged,
     ScratchpadUpdate,
     FirmwareUpgradeRequest,
-    FirmwareUpgradeStatus
+    FirmwareUpgradeStatus,
+    Ping
 }
 
 table Message {

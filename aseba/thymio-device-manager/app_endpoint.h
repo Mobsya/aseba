@@ -131,7 +131,7 @@ class application_endpoint : public application_endpoint_base<application_endpoi
                              public node_status_monitor {
 public:
     using base = application_endpoint_base<application_endpoint<Socket>, Socket>;
-    application_endpoint(boost::asio::io_context& ctx) : base(ctx), m_ctx(ctx) {}
+    application_endpoint(boost::asio::io_context& ctx) : base(ctx), m_ctx(ctx), m_pings_timer(ctx) {}
 
     void set_local(bool is_local) {
         this->m_local_endpoint = is_local;
@@ -869,8 +869,21 @@ private:
         // messages
         send_full_node_list();
 
+        start_sending_pings();
         read_message();
     }
+
+    void start_sending_pings() {
+        m_pings_timer.expires_from_now(boost::posix_time::milliseconds(2500));
+        m_pings_timer.async_wait([ptr = shared_from_this()](boost::system::error_code ec) {
+            if(ec)
+                return;
+            flatbuffers::FlatBufferBuilder builder;
+            ptr->write_message(wrap_fb(builder, fb::CreatePing(builder)));
+            ptr->start_sending_pings();
+        });
+    }
+    boost::asio::deadline_timer m_pings_timer;
 
     std::shared_ptr<application_endpoint<Socket>> shared_from_this() {
         return std::static_pointer_cast<application_endpoint<Socket>>(base::shared_from_this());
