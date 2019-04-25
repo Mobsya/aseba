@@ -91,7 +91,7 @@ void aseba_tcp_acceptor::do_accept() {
             aseba_endpoint::endpoint_type type = aseba_endpoint::endpoint_type::unknown;
             std::string type_str;
             if(ec) {
-                mLogWarn("[tcp] Fail to connect to aseba node {} : {}", contact.name(), ec.message());
+                mLogWarn("[tcp] Fail to connect to aseba node {} {} : {}", contact.name(), contact.endpoint().address().to_string(), ec.message());
                 boost::asio::post(m_iocontext, [this] { this->accept(); });
                 return;
             }

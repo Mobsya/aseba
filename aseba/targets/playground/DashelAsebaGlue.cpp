@@ -22,6 +22,7 @@
 #include "EnkiGlue.h"
 #include <QDataStream>
 #include <QCoreApplication>
+#include <QNetworkInterface>
 #include "transport/buffer/vm-buffer.h"
 
 namespace Aseba {
@@ -31,8 +32,9 @@ SimpleConnectionBase::SimpleConnectionBase(const QString & type, const QString &
     m_robotType(type),
     m_robotName(name) {
     connect(m_server, &QTcpServer::newConnection, this, &SimpleConnectionBase::onNewConnection);
-    connect(m_server, &QTcpServer::newConnection, this, &SimpleConnectionBase::onNewConnection);
-    m_server->listen(QHostAddress::LocalHost, port);
+    //Because of an issue with our zeroconf implementation, the TDM might try to connect
+    //Using a non-local ip
+    m_server->listen(QHostAddress::AnyIPv4, port);
     port = m_server->serverPort();
     m_server->setMaxPendingConnections(1);
     startServiceRegistration();
@@ -52,10 +54,16 @@ void SimpleConnectionBase::onNewConnection() {
         SEND_NOTIFICATION(LOG_WARNING, "client already connected", m_robotName.toStdString());
         return;
     }
-    SEND_NOTIFICATION(LOG_INFO, "client connected", "");
-    m_client = m_server->nextPendingConnection();
+    auto client = m_server->nextPendingConnection();
+    client->open(QIODevice::ReadWrite);
+    SEND_NOTIFICATION(LOG_INFO, "client connected", client->peerAddress().toString().toStdString());
+    //Reject remote connections
+    if(!QNetworkInterface::allAddresses().contains(client->peerAddress())) {
+        client->deleteLater();
+        return;
+    }
+    m_client = client;
     m_server->pauseAccepting();
-    m_client->open(QIODevice::ReadWrite);
     connect(m_client, &QTcpSocket::disconnected, this, &SimpleConnectionBase::onConnectionClosed);
     connect(m_client, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
             this, &SimpleConnectionBase::onClientError);
