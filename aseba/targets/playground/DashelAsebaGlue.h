@@ -31,11 +31,16 @@ namespace Aseba {
 class SimpleConnectionBase : public QObject, public AbstractNodeConnection {
     Q_OBJECT
 public:
-    SimpleConnectionBase(const QString & type, const QString & name, unsigned port);
+    SimpleConnectionBase(const QString & type, const QString & name, unsigned &port);
+    ~SimpleConnectionBase();
 
+    uint16_t serverPort() const;
 
 private Q_SLOTS:
     void onNewConnection();
+    void onConnectionClosed();
+    void onServerError();
+    void onClientError();
     void sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length) override;
     uint16_t getBuffer(uint8_t* data, uint16_t maxLength, uint16_t* source) override;
 
@@ -65,7 +70,7 @@ protected:
 template <typename Robot>
 class SimpleConnection : public SimpleConnectionBase, public Robot {
 public:
-    SimpleConnection(const QString & type, const QString & name, unsigned port, uint16_t nodeId):
+    SimpleConnection(const QString & type, const QString & name, unsigned & port, uint16_t nodeId):
         SimpleConnectionBase(type, name, port), Robot(name.toStdString(), nodeId) {
 
         Aseba::vmStateToEnvironment[&this->vm] =

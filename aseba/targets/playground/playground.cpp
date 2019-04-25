@@ -85,9 +85,9 @@ public:
 };
 }  // namespace Enki
 
-using RobotFactory = std::function<Enki::Robot*(QString, QString, unsigned, int16_t)>;
+using RobotFactory = std::function<Enki::Robot*(QString, QString, unsigned &, int16_t)>;
 template <typename RobotT>
-Enki::Robot* createRobotSingleVMNode(QString robotName, QString typeName, unsigned port, int16_t nodeId) {
+Enki::Robot* createRobotSingleVMNode(QString robotName, QString typeName, unsigned & port, int16_t nodeId) {
     return new RobotT(typeName, robotName, port, nodeId);
 }
 
@@ -367,7 +367,7 @@ int main(int argc, char* argv[]) {
             const auto qRobotNameRaw(robotE.attribute("name", QString("%1 %2").arg(qTypeName).arg(countOfThisType)));
             const auto qRobotNameFull(QObject::tr("%2 on %3").arg(qRobotNameRaw).arg(QHostInfo::localHostName()));
             const auto cppRobotName(qRobotNameFull.toStdString());
-            const unsigned port = 0;
+            unsigned port = 0;
             const int16_t nodeId(robotE.attribute("nodeId", "1").toInt());
 
             // create
@@ -383,7 +383,8 @@ int main(int argc, char* argv[]) {
             world.addObject(robot);
 
             // log
-            viewer.log(app.tr("New robot %0 of type %1 on port %2").arg(qRobotNameRaw).arg(qTypeName).arg(port),
+            viewer.log(app.tr("New robot %0 of type %1 on port %2")
+                           .arg(qRobotNameRaw).arg(qTypeName).arg(port),
                        Qt::white);
         } else
             viewer.log("Error, unknown robot type " + type, Qt::red);

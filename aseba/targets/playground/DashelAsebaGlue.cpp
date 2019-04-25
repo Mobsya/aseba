@@ -26,17 +26,26 @@
 
 namespace Aseba {
 
-SimpleConnectionBase::SimpleConnectionBase(const QString & type, const QString & name, unsigned port):
+SimpleConnectionBase::SimpleConnectionBase(const QString & type, const QString & name, unsigned & port):
     m_server(new QTcpServer(this)), m_client(nullptr), m_zeroconf(new QZeroConf(this)),
     m_robotType(type),
     m_robotName(name) {
     connect(m_server, &QTcpServer::newConnection, this, &SimpleConnectionBase::onNewConnection);
+    connect(m_server, &QTcpServer::newConnection, this, &SimpleConnectionBase::onNewConnection);
     m_server->listen(QHostAddress::LocalHost, port);
-
+    port = m_server->serverPort();
     m_server->setMaxPendingConnections(1);
     startServiceRegistration();
-
 }
+
+uint16_t SimpleConnectionBase::serverPort() const {
+    return m_server->serverPort();
+}
+
+SimpleConnectionBase::~SimpleConnectionBase() {
+    m_zeroconf->stopServicePublish();
+}
+
 void SimpleConnectionBase::onNewConnection() {
     if(m_client) {
         qWarning() << "This Virtual Robot is already connected to a peer";
@@ -45,7 +54,30 @@ void SimpleConnectionBase::onNewConnection() {
     }
     SEND_NOTIFICATION(LOG_INFO, "client connected", "");
     m_client = m_server->nextPendingConnection();
+    m_server->pauseAccepting();
     m_client->open(QIODevice::ReadWrite);
+    connect(m_client, &QTcpSocket::disconnected, this, &SimpleConnectionBase::onConnectionClosed);
+    connect(m_client, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
+            this, &SimpleConnectionBase::onClientError);
+}
+
+void SimpleConnectionBase::onClientError() {
+    SEND_NOTIFICATION(LOG_ERROR, "client disconnected", m_client->errorString().toStdString());
+    onConnectionClosed();
+}
+
+void SimpleConnectionBase::onServerError() {
+    SEND_NOTIFICATION(LOG_ERROR, "server error", m_server->errorString().toStdString());
+}
+
+void SimpleConnectionBase::onConnectionClosed() {
+    SEND_NOTIFICATION(LOG_INFO, "client disconnected", m_robotName.toStdString());
+    disconnect(m_client);
+    m_client->deleteLater();
+    m_client = nullptr;
+    m_server->resumeAccepting();
+    m_messageSize = 0;
+    m_lastMessage.clear();
 }
 
 void SimpleConnectionBase::startServiceRegistration() {
@@ -111,19 +143,6 @@ uint16_t SimpleConnectionBase::getBuffer(uint8_t* data, uint16_t maxLength, uint
         m_messageSize = 0;
     return s;
 }
-
-/*void SimpleConnectionBase::connectionClosed(Dashel::Stream* stream, bool abnormal) {
-    // if the stream being closed is the current one (not old), clear breakpoints and reset current
-    if(stream == this->stream) {
-        clearBreakpoints();
-        this->stream = nullptr;
-    }
-    if(abnormal) {
-        SEND_NOTIFICATION(LOG_WARNING, "client disconnected abnormally", stream->getTargetName());
-    } else {
-        SEND_NOTIFICATION(LOG_INFO, "client disconnected properly", stream->getTargetName());
-    }
-}*/
 
 //! Clear breakpoints on all VM that are linked to this connection
 void SimpleConnectionBase::clearBreakpoints() {
