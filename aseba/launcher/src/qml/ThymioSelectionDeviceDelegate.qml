@@ -127,18 +127,25 @@ Item {
         }
 
         onHoveredChanged: {
-            tooltipText = ""
+            const host = device.endpoint.hostName
+            if(host.endsWith(".local"))
+                host = host.slice(0, -6)
+            if(device.endpoint.isLocalhostPeer)
+                tooltipText = qsTr("%1 on this computer").arg(device.name)
+            else
+                tooltipText = qsTr("%1 on %2").arg(device.name).arg(host)
+
             if(!selectable) {
                 if(isInGroup && !launcher.selectedApp.supportsGroups) {
-                    tooltipText = qsTr("This device cannot be selected because it is in a group")
+                    tooltipText += "\n" + qsTr("This device cannot be selected because it is in a group")
                 }
                 else {
-                    tooltipText = qsTr("This device cannot be selected because it is already being used")
+                    tooltipText += "\n" + qsTr("This device cannot be selected because it is already being used")
                 }
             }
         }
         ToolTip.text: tooltipText
-        ToolTip.visible: tooltipText != "" && device_mouse_area.containsMouse
+        ToolTip.visible: device_mouse_area.containsMouse
 
         cursorShape: device_ready ? Qt.PointingHandCursor : null
 

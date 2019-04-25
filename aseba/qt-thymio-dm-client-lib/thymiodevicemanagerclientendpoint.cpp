@@ -10,8 +10,8 @@
 
 namespace mobsya {
 
-ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QObject* parent)
-    : QObject(parent), m_socket(socket), m_message_size(0) {
+ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QString host, QObject* parent)
+    : QObject(parent), m_socket(socket), m_message_size(0), m_host_name(std::move(host)) {
 
     m_socket->setParent(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &ThymioDeviceManagerClientEndpoint::onReadyRead);
@@ -40,6 +40,10 @@ void ThymioDeviceManagerClientEndpoint::write(const tagged_detached_flatbuffer& 
 
 QHostAddress ThymioDeviceManagerClientEndpoint::peerAddress() const {
     return m_socket->peerAddress();
+}
+
+QString ThymioDeviceManagerClientEndpoint::hostName() const {
+    return m_host_name;
 }
 
 void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {

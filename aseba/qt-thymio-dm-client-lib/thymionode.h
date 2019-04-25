@@ -89,6 +89,9 @@ public:
     Q_PROPERTY(bool hasAvailableFirmwareUpdate READ hasAvailableFirmwareUpdate NOTIFY modified)
 
 
+    Q_PROPERTY(QObject* endpoint READ endpoint_qml CONSTANT)
+
+
     ThymioNode(std::shared_ptr<ThymioDeviceManagerClientEndpoint>, const QUuid& uuid, const QString& name,
                mobsya::ThymioNode::NodeType type, QObject* parent = nullptr);
 Q_SIGNALS:
@@ -172,6 +175,8 @@ public:
     Q_INVOKABLE Request upgradeFirmware();
 
 private:
+    Q_INVOKABLE QObject* endpoint_qml() const;
+
     void onExecutionStateChanged(const fb::VMExecutionStateChangedT& msg);
     void onVariablesChanged(VariableMap variables, const QDateTime& timestamp);
 
