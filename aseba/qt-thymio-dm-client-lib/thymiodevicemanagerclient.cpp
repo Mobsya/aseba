@@ -41,7 +41,8 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
 
     if(!endpoint) {
         QTcpSocket* socket = new QTcpSocket;
-        endpoint = std::shared_ptr<ThymioDeviceManagerClientEndpoint>(new ThymioDeviceManagerClientEndpoint(socket),
+        endpoint = std::shared_ptr<ThymioDeviceManagerClientEndpoint>
+            (new ThymioDeviceManagerClientEndpoint(socket, service.host()),
             [](ThymioDeviceManagerClientEndpoint* ep) { ep->deleteLater(); });
         socket->connectToHost(service.ip(), service.port());
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,

@@ -10,15 +10,21 @@ namespace mobsya {
 class ThymioDeviceManagerClientEndpoint : public QObject,
                                           public std::enable_shared_from_this<ThymioDeviceManagerClientEndpoint> {
     Q_OBJECT
+    Q_PROPERTY(QString hostName READ hostName CONSTANT)
+    Q_PROPERTY(bool isLocalhostPeer READ isLocalhostPeer CONSTANT)
+    Q_PROPERTY(QUrl websocketConnectionUrl READ websocketConnectionUrl CONSTANT)
+
 
 public:
-    ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QObject* parent = nullptr);
+    ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QString host, QObject* parent = nullptr);
     ~ThymioDeviceManagerClientEndpoint();
 
 public:
     std::shared_ptr<ThymioNode> node(const QUuid& id) const;
 
     QHostAddress peerAddress() const;
+    QString hostName() const;
+
     QUrl websocketConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
 
@@ -83,6 +89,7 @@ private:
     quint16 m_ws_port = 0;
     bool m_islocalhostPeer = false;
     QMap<detail::RequestDataBase::request_id, detail::RequestDataBase::shared_ptr> m_pending_requests;
+    QString m_host_name;
 };
 
 }  // namespace mobsya

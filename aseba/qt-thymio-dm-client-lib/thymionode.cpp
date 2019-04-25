@@ -42,6 +42,11 @@ std::shared_ptr<ThymioGroup> ThymioNode::group() const {
     return m_group;
 }
 
+Q_INVOKABLE QObject* ThymioNode::endpoint_qml() const {
+    return static_cast<QObject*>(m_endpoint.get());
+}
+
+
 QString ThymioNode::name() const {
     return m_name;
 }
