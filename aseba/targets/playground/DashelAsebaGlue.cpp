@@ -59,7 +59,8 @@ void SimpleConnectionBase::startServiceRegistration() {
         name.c_str(),
         "_aseba._tcp",
         "local",
-        m_server->serverPort());
+        m_server->serverPort(),
+        QZeroConf::service_option::localhost_only);
 }
 
 void SimpleConnectionBase::sendBuffer(uint16_t nodeId, const uint8_t* data, uint16_t length) {
