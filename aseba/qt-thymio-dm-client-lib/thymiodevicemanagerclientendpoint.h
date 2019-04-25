@@ -3,6 +3,8 @@
 #include <QTcpSocket>
 #include <aseba/flatbuffers/fb_message_ptr.h>
 #include <QUrl>
+#include <QDateTime>
+#include <QTimer>
 #include "request.h"
 #include "thymionode.h"
 
@@ -53,6 +55,7 @@ private Q_SLOTS:
     void onReadyRead();
     void onConnected();
     void cancelAllRequests();
+    void checkSocketHealth();
     void write(const flatbuffers::DetachedBuffer& buffer);
     void write(const tagged_detached_flatbuffer& buffer);
 
@@ -90,6 +93,8 @@ private:
     bool m_islocalhostPeer = false;
     QMap<detail::RequestDataBase::request_id, detail::RequestDataBase::shared_ptr> m_pending_requests;
     QString m_host_name;
+    QDateTime m_last_message_reception_date;
+    QTimer* m_socket_health_check_timer;
 };
 
 }  // namespace mobsya

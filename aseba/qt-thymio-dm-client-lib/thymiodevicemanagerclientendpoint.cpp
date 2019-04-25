@@ -11,7 +11,11 @@
 namespace mobsya {
 
 ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket* socket, QString host, QObject* parent)
-    : QObject(parent), m_socket(socket), m_message_size(0), m_host_name(std::move(host)) {
+    : QObject(parent)
+    , m_socket(socket)
+    , m_message_size(0)
+    , m_host_name(std::move(host))
+    , m_socket_health_check_timer(new QTimer(this)) {
 
     m_socket->setParent(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &ThymioDeviceManagerClientEndpoint::onReadyRead);
@@ -20,6 +24,10 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     connect(m_socket, &QTcpSocket::connected, this, &ThymioDeviceManagerClientEndpoint::onConnected);
     connect(m_socket, qOverload<QAbstractSocket::SocketError>(&QAbstractSocket::error), this,
             &ThymioDeviceManagerClientEndpoint::cancelAllRequests);
+
+    // The TDM pings every 25000ms
+    m_socket_health_check_timer->start(15000);
+    connect(m_socket_health_check_timer, &QTimer::timeout, this, &ThymioDeviceManagerClientEndpoint::checkSocketHealth);
 }
 
 ThymioDeviceManagerClientEndpoint::~ThymioDeviceManagerClientEndpoint() {
@@ -60,6 +68,14 @@ QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     return u;
 }
 
+void ThymioDeviceManagerClientEndpoint::checkSocketHealth() {
+    if(m_last_message_reception_date.msecsTo(QDateTime::currentDateTime()) > 10 * 1000) {
+        qWarning() << "Connection timed out";
+        m_socket->disconnectFromHost();
+        disconnect(m_socket_health_check_timer);
+    }
+}
+
 void ThymioDeviceManagerClientEndpoint::onReadyRead() {
     if(m_message_size == 0) {
         if(m_socket->bytesAvailable() < 4)
@@ -89,6 +105,7 @@ std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid&
 
 void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
     qDebug() << "ThymioDeviceManagerClientEndpoint::handleIncommingMessage" << EnumNameAnyMessage(msg.message_type());
+    m_last_message_reception_date = QDateTime::currentDateTime();
     switch(msg.message_type()) {
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
             auto message = msg.as<mobsya::fb::ConnectionHandshake>();
