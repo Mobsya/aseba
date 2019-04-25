@@ -59,6 +59,10 @@ namespace ThymioVPL {
 
         connect(this, SIGNAL(selectionChanged()), SIGNAL(highlightChanged()));
         USAGE_LOG(setScene(this));
+
+        errorGraphicsItem->setScale(4.0);
+        referredGraphicsItem->setScale(4.0);
+        warningGraphicsItem->setScale(4.0);
     }
 
     Scene::~Scene() {
@@ -362,47 +366,6 @@ namespace ThymioVPL {
         return true;
     }
 
-    /*void Scene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
-    {
-        Scene::dragEnterEvent(event);
-        if (isDnDValid(event))
-        {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-        }
-    }
-
-    void Scene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
-    {
-        Scene::dragMoveEvent(event);
-        if (isDnDValid(event))
-        {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-        }
-    }
-
-    void Scene::dropEvent(QGraphicsSceneDragDropEvent *event)
-    {
-        Scene::dropEvent(event);
-        if (isDnDValid(event))
-        {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-        }
-    }
-
-    bool Scene::isDnDValid(QGraphicsSceneDragDropEvent *event) const
-    {
-        if (event->mimeData()->hasFormat("EventActionsSet") ||
-            event->mimeData()->hasFormat("Block")
-        )
-        {
-            if (items(event->pos(), Qt::ContainsItemBoundingRect, Qt::AscendingOrder).empty())
-                return true;
-        }
-        return false;
-    }*/
 
     void Scene::rearrangeSets(int row) {
         for(int i = row; i < eventActionsSets.size(); ++i)
@@ -487,42 +450,31 @@ namespace ThymioVPL {
             eventActionsSet->setErrorType(errorType);
         }
 
-        // force update when error notification changed position to work around issue 360
-        bool forceUpdate(false);
         if(warningEventActionsSet) {
-            QSizeF errorSize(errorGraphicsItem->boundingRect().size());
+            QSizeF errorSize(errorGraphicsItem->boundingRect().size() * errorGraphicsItem->scale());
 
-            qreal errorY(warningEventActionsSet->scenePos().y() +
-                         warningEventActionsSet->innerBoundingRect().height() / 2);
-            qreal oldPosY(warningGraphicsItem->pos().y());
-            warningGraphicsItem->setPos(-(errorSize.width() + 40), errorY - errorSize.height() / 2);
-            if(warningGraphicsItem->pos().y() != oldPosY)
-                forceUpdate = true;
+            qreal errorY(warningEventActionsSet->y() +
+                         warningEventActionsSet->innerBoundingRect().height() / 2.0);
+            warningGraphicsItem->setPos(-(errorSize.width() + 20), errorY - errorSize.height() / 2.0);
         }
         if(errorEventActionsSet) {
-            QSizeF errorSize(errorGraphicsItem->boundingRect().size());
+            QSizeF errorSize(errorGraphicsItem->boundingRect().size() * errorGraphicsItem->scale());
 
-            qreal errorY(errorEventActionsSet->scenePos().y() + errorEventActionsSet->innerBoundingRect().height() / 2);
-            qreal oldPosY(errorGraphicsItem->pos().y());
-            errorGraphicsItem->setPos(-(errorSize.width() + 40), errorY - errorSize.height() / 2);
-            if(errorGraphicsItem->pos().y() != oldPosY)
-                forceUpdate = true;
+            qreal errorY(errorEventActionsSet->y() + errorEventActionsSet->innerBoundingRect().height() / 2.0);
+            errorGraphicsItem->setPos(-(errorSize.width() + 20), errorY - errorSize.height() / 2.0);
+
 
             if(referredEventActionsSet) {
-                qreal referredY(referredEventActionsSet->scenePos().y() +
-                                referredEventActionsSet->innerBoundingRect().height() / 2);
-                oldPosY = referredGraphicsItem->pos().y();
-                referredGraphicsItem->setPos(-(errorSize.width() + 40), referredY - errorSize.height() / 2);
-                if(referredGraphicsItem->pos().y() != oldPosY)
-                    forceUpdate = true;
+                qreal referredY(referredEventActionsSet->y() +
+                                referredEventActionsSet->innerBoundingRect().height() / 2.0);
+                referredGraphicsItem->setPos(-(errorSize.width() + 20 ), referredY - errorSize.height() / 2.0);
 
-                referredLineItem->setLine(-(errorSize.width() / 2 + 40), referredY + errorSize.height() / 2 + 10,
-                                          -(errorSize.width() / 2 + 40), errorY - errorSize.height() / 2 - 10);
+                referredLineItem->setLine(-((errorSize.width()) / 2.0 + 20), referredY + (errorSize.height() + 20),
+                                          -((errorSize.width()) / 2.0 + 20), errorY - (errorSize.height() + 20));
             }
         }
 
-        if(forceUpdate)
-            update();
+        update();
 
         emit contentRecompiled();
     }
