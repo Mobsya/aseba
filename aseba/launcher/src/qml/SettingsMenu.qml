@@ -1,6 +1,10 @@
 import QtQuick 2.11
+import QtQuick.Controls 2.4
+
 
 Rectangle {
+    property bool showExperimentalApps: showExperimentalAppsCheckbox.checked
+
     color: "#535353"
     id:pane
     width: 350
@@ -74,6 +78,22 @@ Rectangle {
                 }
             }
         }
+
+        CheckBox {
+            id: showExperimentalAppsCheckbox
+            contentItem: Text {
+                leftPadding: parent.indicator.width + parent.spacing
+                text: parent.text
+                font: parent.font
+                color: "white"
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+           }
+           text: qsTr("Show Experimental Applications")
+           checked: false
+           anchors.bottom: parent.bottom
+           palette.text:"#0a9eeb"
+       }
 
         PropertyAnimation {
             id: showAnimation

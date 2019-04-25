@@ -1,9 +1,10 @@
 import QtQuick 2.0
 
 Item {
-    id:item
+    id: item
     property var selectedApp
     property var selectedAppLauncher
+    property bool showExperimentalApps : settingsMenu.showExperimentalApps
 
     Rectangle {
         id: bg
@@ -19,9 +20,11 @@ Item {
         spacing: 0
         currentIndex: -1
         delegate: Item {
+            visible: !experimental || item.showExperimentalApps
             anchors.verticalCenter: parent.verticalCenter
-            height: icon.height + label.height + 12
-            width:  (app_view.width) / app_view.count
+            height: visible ? icon.height + label.height + 12 : 0
+            width:  visible ? (app_view.width) / (app_view.count -
+                                                  (item.showExperimentalApps ? 0 : app_view.model.experimentalCount)) : 0
 
             Column {
                 anchors.fill: parent

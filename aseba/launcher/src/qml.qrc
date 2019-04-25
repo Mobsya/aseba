@@ -61,5 +61,7 @@
         <file>qml/SettingsMenu.qml</file>
         <file>assets/launcher-icon-close.svg</file>
         <file>qml/FirmwareUpdateDialog.qml</file>
+        <file>apps/vpl3/description.jpg</file>
+        <file>apps/vpl3/launcher-icon-vpl3.png</file>
     </qresource>
 </RCC>

@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 ListModel {
     id: appsModel
+    property int experimentalCount: 1
 
 
     function launch_blockly(device) {
@@ -46,10 +47,17 @@ ListModel {
         }
     }
 
+    function launch_vpl3(device) {
+        const url = "/*TODO*/vpl.html?&ui=ui/svg/ui.json&appearance=svg&role=student&robot=thymio-tdm&language=aseba&uuid=%2&w=%3"
+            .arg(device.id).arg(device.websocketEndpoint())
+        return Utils.openUrl(url)
+    }
+
     property var launch_functions : {
         "blockly" : launch_blockly,
         "scratch" : launch_scratch,
         "vplClassic" : launch_vplClassic,
+        "vpl3" : launch_vpl3,
         "studio" : launch_studio
     }
 
@@ -69,6 +77,17 @@ ListModel {
         descriptionTextFile: "qrc:/apps/vpl/desc.en.html"
         supportsGroups: false
         supportsWatchMode: false
+    }
+    ListElement {
+        appId:"vpl3"
+        name: "VPL 3"
+        animatedIcon:"qrc:/apps/vpl3/launcher-icon-vpl3.png"
+        icon: "qrc:/apps/vpl3/launcher-icon-vpl3.png"
+        descriptionImage: "qrc:/apps/vpl3/description.jpg"
+        descriptionTextFile: "qrc:/apps/vpl3/desc.en.html"
+        supportsGroups: false
+        supportsWatchMode: false
+        experimental: true
     }
     ListElement {
         appId: "scratch"

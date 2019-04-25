@@ -147,7 +147,7 @@ Item {
         ToolTip.text: tooltipText
         ToolTip.visible: device_mouse_area.containsMouse
 
-        cursorShape: device_ready ? Qt.PointingHandCursor : null
+        cursorShape: device_ready ? Qt.PointingHandCursor : 0
 
         DeviceContextMenu {
             id: contextMenu
@@ -216,7 +216,7 @@ Item {
                          onClicked: {
                              upgradeFirmware()
                          }
-                         acceptedButtons: type === ThymioNode.Thymio2 ? MouseArea.LeftButton : null
+                         acceptedButtons: type === ThymioNode.Thymio2 ? Qt.LeftButton : 0
                      }
 
                      ToolTip {
