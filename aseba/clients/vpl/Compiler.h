@@ -41,7 +41,7 @@ namespace ThymioVPL {
     class Compiler {
     public:
         //! Possible errors that can happen during compilation
-        enum ErrorType { NO_ERROR = 0, MISSING_EVENT, MISSING_ACTION, DUPLICATED_EVENT };
+        enum ErrorType { VPL_NO_ERROR = 0, MISSING_EVENT, MISSING_ACTION, DUPLICATED_EVENT };
 
         //! Result of a compilation
         struct CompilationResult {

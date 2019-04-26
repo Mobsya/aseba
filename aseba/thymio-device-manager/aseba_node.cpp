@@ -451,7 +451,7 @@ void aseba_node::set_breakpoints(std::vector<breakpoint> breakpoints, breakpoint
     auto pc_from_line = [this](int line) -> int {
         for(std::size_t i = 0; i < m_bytecode.size(); i++) {
             if(m_bytecode[i].line == line - 1)
-                return i;
+                return int(i);
         }
         return -1;
     };
