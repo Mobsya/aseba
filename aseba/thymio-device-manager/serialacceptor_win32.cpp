@@ -150,7 +150,7 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
     deviceInfoData.cbSize = sizeof(deviceInfoData);
 
     DWORD index = 0;
-    while(true) {
+    while(!m_requests.empty()) {
         int32_t res = ::SetupDiEnumDeviceInfo(deviceInfoSet, index++, &deviceInfoData);
         if(res == 0) {
             if(GetLastError() != ERROR_NO_MORE_ITEMS) {
