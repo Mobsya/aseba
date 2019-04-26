@@ -24,6 +24,7 @@ ConstantsWidget::ConstantsWidget(QWidget* parent) : QWidget(parent) {
     m_view->setShowGrid(false);
     m_view->verticalHeader()->hide();
     m_view->horizontalHeader()->hide();
+    m_view->setMinimumHeight(20);
 
     m_view->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_view->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -32,7 +33,6 @@ ConstantsWidget::ConstantsWidget(QWidget* parent) : QWidget(parent) {
     m_view->setDragEnabled(true);
     m_view->setDropIndicatorShown(true);
     m_view->setItemDelegateForColumn(1, new SpinBoxDelegate(-32768, 32767, this));
-    m_view->setMinimumHeight(100);
     m_view->setSecondColumnLongestContent("-88888##");
     m_view->resizeRowsToContents();
 
