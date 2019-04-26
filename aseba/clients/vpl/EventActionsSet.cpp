@@ -65,7 +65,7 @@ namespace ThymioVPL {
         , totalWidth(0)
         , columnPos(0)
         , row(row)
-        , errorType(Compiler::NO_ERROR)
+        , errorType(Compiler::VPL_NO_ERROR)
         , beingDragged(false)
         , wasDroppedTarget(false) {
         setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);

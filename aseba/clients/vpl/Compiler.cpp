@@ -28,7 +28,7 @@ namespace ThymioVPL {
     using namespace std;
 
     //! Create a compilation result object representing a success
-    Compiler::CompilationResult::CompilationResult() : errorType(NO_ERROR), errorLine(-1), referredLine(-1) {}
+    Compiler::CompilationResult::CompilationResult() : errorType(VPL_NO_ERROR), errorLine(-1), referredLine(-1) {}
 
     //! Create a compilation result object with a given error type and lines
     Compiler::CompilationResult::CompilationResult(ErrorType errorType, int errorLine, int referredLine)
@@ -36,13 +36,13 @@ namespace ThymioVPL {
 
     //! Return whether the compilation was a success or not
     bool Compiler::CompilationResult::isSuccessful() const {
-        return errorType == NO_ERROR;
+        return errorType == VPL_NO_ERROR;
     }
 
     //! Return the error message for this result
     QString Compiler::CompilationResult::getMessage(bool advanced) const {
         switch(errorType) {
-            case NO_ERROR: {
+            case VPL_NO_ERROR: {
                 return QObject::tr("Compilation success");
             }
             case MISSING_EVENT: {

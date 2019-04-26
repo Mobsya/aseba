@@ -445,7 +445,7 @@ namespace ThymioVPL {
                 errorType = lastCompilationResult.errorType;
                 referredEventActionsSet = eventActionsSet;
             } else {
-                errorType = Compiler::NO_ERROR;
+                errorType = Compiler::VPL_NO_ERROR;
             }
             eventActionsSet->setErrorType(errorType);
         }
