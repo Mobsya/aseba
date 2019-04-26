@@ -52,14 +52,14 @@ std::string remove_host_from_name(const std::string& str) {
 }
 
 void aseba_tcp_acceptor::do_accept() {
-    std::unique_lock<std::mutex> _(m_queue_mutex);
+    std::unique_lock<std::mutex> queue_mutex_lock(m_queue_mutex);
     if(m_pending_contacts.empty()) {
         return;
     }
     auto session = aseba_endpoint::create_for_tcp(m_iocontext);
     aware::contact contact = m_pending_contacts.front();
     m_pending_contacts.pop();
-    m_queue_mutex.unlock();
+    queue_mutex_lock.unlock();
 
     if(contact.empty() || contact.type() != "aseba") {
         boost::asio::post(m_iocontext, boost::bind(&aseba_tcp_acceptor::do_accept, this));
