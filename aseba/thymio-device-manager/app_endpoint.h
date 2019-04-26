@@ -875,12 +875,14 @@ private:
 
     void start_sending_pings() {
         m_pings_timer.expires_from_now(boost::posix_time::milliseconds(2500));
-        m_pings_timer.async_wait([ptr = shared_from_this()](boost::system::error_code ec) {
+        m_pings_timer.async_wait([ptr = weak_from_this()](boost::system::error_code ec) {
             if(ec)
                 return;
-            flatbuffers::FlatBufferBuilder builder;
-            ptr->write_message(wrap_fb(builder, fb::CreatePing(builder)));
-            ptr->start_sending_pings();
+            if(auto that = ptr.lock()) {
+                flatbuffers::FlatBufferBuilder builder;
+                that->write_message(wrap_fb(builder, fb::CreatePing(builder)));
+                that->start_sending_pings();
+            }
         });
     }
     boost::asio::deadline_timer m_pings_timer;
