@@ -944,6 +944,8 @@ void NodeTab::setupWidgets() {
     m_eventsWidget = new EventsWidget;
     rightPaneLayout->addWidget(m_constantsWidget);
     rightPaneLayout->addWidget(m_eventsWidget);
+    m_eventsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+    rightPaneLayout->setStretchFactor(m_eventsWidget, 4);
 
     QWidget* rightPane = new QWidget();
     rightPane->setLayout(rightPaneLayout);

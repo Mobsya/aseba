@@ -70,6 +70,7 @@ EventsWidget::EventsWidget(QWidget* parent) : QWidget(parent) {
     m_logger = new QListWidget;
     m_logger->setMinimumSize(80, 100);
     m_logger->setSelectionMode(QAbstractItemView::NoSelection);
+    m_logger->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
     eventsDockLayout->addWidget(m_logger, 3);
     auto clearLogger = new QPushButton(tr("Clear"));
     eventsDockLayout->addWidget(clearLogger);

@@ -47,7 +47,6 @@ QMimeData* DraggableListWidget::mimeData(const QList<QListWidgetItem*> items) co
 
 FixedWidthTableView::FixedWidthTableView() {
     col1Width = 50;
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 void FixedWidthTableView::setSecondColumnLongestContent(const QString& content) {
@@ -68,7 +67,6 @@ void FixedWidthTableView::resizeEvent(QResizeEvent* event) {
         setColumnWidth(1, col1Width);
         setColumnWidth(2, 22);
     }
-
 }
 
 void FixedWidthTableView::startDrag(Qt::DropActions supportedActions) {
