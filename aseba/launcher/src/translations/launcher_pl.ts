@@ -6,7 +6,7 @@
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="78"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 &lt;b&gt;BETA&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 &lt;b&gt;BETA&lt;/b</translation>
     </message>
 </context>
 <context>
@@ -14,17 +14,17 @@
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="99"/>
         <source>This device cannot be selected because it is in a group</source>
-        <translation type="unfinished"></translation>
+        <translation>Tego urządzenia nie można wybrać, ponieważ znajduje się w grupie</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="102"/>
         <source>This device cannot be selected because it is already being used</source>
-        <translation type="unfinished"></translation>
+        <translation>Tego urządzenia nie można wybrać, ponieważ jest w użyciu</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="176"/>
         <source>A new firmware is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>Dostępne jest nowe oprogramowanie sprzętowe!</translation>
     </message>
 </context>
 <context>
@@ -32,12 +32,12 @@
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="147"/>
         <source>Choose a Thymio</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz Thymio</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="172"/>
         <source>Launch %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Uruchom %1</translation>
     </message>
 </context>
 <context>
@@ -45,7 +45,7 @@
     <message>
         <location filename="../launcher.cpp" line="82"/>
         <source>Save %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz %1</translation>
     </message>
 </context>
 </TS>
