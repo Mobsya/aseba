@@ -12,7 +12,7 @@ import subprocess
 LUPDATE  = "@_qt5_linguisttools_install_prefix@/bin/lupdate"
 LRELEASE = "@_qt5_linguisttools_install_prefix@/bin/lrelease"
 BASEPATH = "@PROJECT_SOURCE_DIR@"
-LANGS    = ["fr", "es", "de", "tl", "it", "pl", "tr", "ja", "zh"]
+LANGS    = ["fr", "es", "de", "el", "it", "pl", "tr", "ja", "zh"]
 
 
 # files used when updating translations for the compiler

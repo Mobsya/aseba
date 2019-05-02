@@ -9,7 +9,6 @@
     <file>translations/asebastudio_el.qm</file>
     <file>translations/asebastudio_tr.qm</file>
     <file>translations/asebastudio_ru.qm</file>
-    <file>translations/asebastudio_tl.qm</file>
     <!-- insert translation here (DO NOT REMOVE) -->
     <file>translations/compiler_fr.qm</file>
     <file>translations/compiler_de.qm</file>
@@ -20,7 +19,6 @@
     <file>translations/compiler_el.qm</file>
     <file>translations/compiler_tr.qm</file>
     <file>translations/compiler_ru.qm</file>
-    <file>translations/compiler_tl.qm</file>
     <!-- insert compiler translation here (DO NOT REMOVE) -->
     <file>images/ok.png</file>
     <file>images/no.png</file>
