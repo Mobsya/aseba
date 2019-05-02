@@ -6,73 +6,73 @@
     <message>
         <location filename="ThymioWNetConfig.cpp" line="75"/>
         <source>Wireless Thymio Network Configurator</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurator sieci bezprzewodowej Thymio</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="94"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="95"/>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="96"/>
         <source>2</source>
-        <translation type="unfinished"></translation>
+        <translation>2</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="98"/>
         <source>Channel:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanał:</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="110"/>
         <source>Network identifier:</source>
-        <translation type="unfinished"></translation>
+        <translation>Identyfikator sieci:</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="120"/>
         <source>Dongle node identifier:</source>
-        <translation type="unfinished"></translation>
+        <translation>Identyfikator węzła odbiornika RF USB:</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="127"/>
         <location filename="ThymioWNetConfig.cpp" line="208"/>
         <source>Enable pairing</source>
-        <translation type="unfinished"></translation>
+        <translation>Włącz parowanie</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="128"/>
         <source>Flash into dongle</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz w pamięci odbiornika RF USB</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="129"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyjście</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="147"/>
         <source>Wireless dongle firmware version %0</source>
-        <translation type="unfinished"></translation>
+        <translation>Wersja firmware odbiornika RF USB %0</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="158"/>
         <source>Connection error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd połączenia</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="159"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot connect to dongle!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure a Wireless Thymio dongle is connected!&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;Nie można połączyć się z odbiornikiem RF USB! &lt;/b&gt;&lt;/p&gt;&lt;p&gt;Upewnij się, że odbiornik RF Thymio jest podłączony!&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="206"/>
         <source>Disable pairing</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyłączanie parowania</translation>
     </message>
 </context>
 <context>
@@ -80,22 +80,22 @@
     <message>
         <location filename="ThymioWNetConfig.cpp" line="248"/>
         <source>Wireless Thymio dongle not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezprzewodowy odbiornik Thymio RF nie odnaleziony</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="249"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find a Wireless Thymio dongle!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a dongle into one of your USB ports and try again.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;Nie można wykryć bezprzewodowego odbiornika Thymio RF!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;włóż odbiornik do jednego z portów USB i spróbuj ponownie.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="254"/>
         <source>Multiple Wireless Thymio dongles found</source>
-        <translation type="unfinished"></translation>
+        <translation>Wykryto kilka bezprzewodowych odbiorników Thymio RF</translation>
     </message>
     <message>
         <location filename="ThymioWNetConfig.cpp" line="255"/>
         <source>&lt;p&gt;&lt;b&gt;More than one Wireless Thymio dongles found!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Plug a single dongle into your computer and try again.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;Wykryto kilka bezprzewodowych odbiorników Thymio RF!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Podłącz pojedynczy odbiornik do komputera i spróbuj ponownie.&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>
