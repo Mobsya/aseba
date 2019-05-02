@@ -119,7 +119,13 @@ bool Launcher::openUrl(const QUrl& url) {
     e->rootContext()->setContextProperty("Utils", qobject_cast<QObject*>(this));
     e->rootContext()->setContextProperty("appUrl", url);
     e->load(source);
+
+    // FIXME: On OSX, let the engine leak, otherwise the application
+    // might crash
+    // see https://bugreports.qt.io/browse/QTBUG-75165
+#ifndef Q_OS_OSX
     connect(e, &QQmlApplicationEngine::quit, &QQmlApplicationEngine::deleteLater);
+#endif
     return true;
 }
 
