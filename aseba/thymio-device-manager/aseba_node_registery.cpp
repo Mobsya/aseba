@@ -187,8 +187,31 @@ std::shared_ptr<mobsya::group> aseba_node_registery::group_from_id(const node_id
     return {};
 }
 
+void aseba_node_registery::register_endpoint(std::shared_ptr<aseba_endpoint> p) {
+    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
+                           [p](std::weak_ptr<aseba_endpoint> o) { return o.lock() == p; });
+    if(it == m_endpoints.end()) {
+        m_endpoints.push_back(p);
+    }
+    m_endpoints_changed_signal();
+}
+
+void aseba_node_registery::unregister_endpoint(std::shared_ptr<aseba_endpoint> p) {
+    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
+                           [p](std::weak_ptr<aseba_endpoint> o) { return o.lock() == p; });
+    if(it != m_endpoints.end()) {
+        m_endpoints.erase(it);
+        m_endpoints_changed_signal();
+    }
+}
+
 node_status_monitor::~node_status_monitor() {
     m_connection.disconnect();
 }
+
+endpoint_monitor::~endpoint_monitor() {
+    m_connection.disconnect();
+}
+
 
 }  // namespace mobsya

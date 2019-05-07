@@ -128,7 +128,8 @@ private:
 
 template <typename Socket>
 class application_endpoint : public application_endpoint_base<application_endpoint<Socket>, Socket>,
-                             public node_status_monitor {
+                             public node_status_monitor,
+                             public endpoint_monitor {
 public:
     using base = application_endpoint_base<application_endpoint<Socket>, Socket>;
     application_endpoint(boost::asio::io_context& ctx) : base(ctx), m_ctx(ctx), m_pings_timer(ctx) {}
@@ -151,6 +152,9 @@ public:
 
         // Subscribe to node change events
         start_node_monitoring(registery());
+
+        // Subscribe to endpoints change events
+        start_endpoints_monitoring(registery());
     }
 
     template <typename CB>
@@ -289,7 +293,8 @@ public:
 
         /* Disconnecting the node monotoring status before unlocking the nodes,
          * otherwise we would receive node status event during destroying the endpoint, leading to a crash */
-        disconnect();
+        node_status_monitor::disconnect();
+        endpoint_monitor::disconnect();
 
         for(auto& p : m_locked_nodes) {
             auto ptr = p.second.lock();
@@ -342,6 +347,10 @@ public:
         boost::asio::defer(this->m_strand, [that = this->shared_from_this(), node, state]() {
             that->do_node_execution_state_changed(node, state);
         });
+    }
+
+    void endpoints_changed() {
+        boost::asio::defer(this->m_strand, [that = this->shared_from_this()]() { that->do_endpoints_changed(); });
     }
 
 private:
@@ -407,6 +416,28 @@ private:
             return;
         write_message(serialize_execution_state(*node, state));
     }
+
+
+    void do_endpoints_changed() {
+        send_list_of_thymio2_dongles();
+    }
+
+    void send_list_of_thymio2_dongles() {
+        flatbuffers::FlatBufferBuilder fb;
+        auto dongles = registery().thymio2_wireless_dongles();
+
+        std::vector<flatbuffers::Offset<fb::Thymio2WirelessDongle>> offsets;
+        std::transform(
+            dongles.begin(), dongles.end(), std::back_inserter(offsets), [&fb](std::shared_ptr<aseba_endpoint> ep) {
+                auto uuidOffset = ep->uuid().fb(fb);
+                const auto settings = ep->wireless_get_settings();
+                return mobsya::fb::CreateThymio2WirelessDongle(fb, uuidOffset, settings.network_id, settings.channel);
+            });
+        auto vecOffset = fb.CreateVector(offsets);
+        auto offset = mobsya::fb::CreateThymio2WirelessDonglesChanged(fb, vecOffset);
+        write_message(wrap_fb(fb, offset));
+    }
+
 
     void send_full_node_list() {
         flatbuffers::FlatBufferBuilder builder;
