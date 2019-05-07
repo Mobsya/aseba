@@ -201,6 +201,8 @@ private:
     //!< a textChanged signal
     int errorPos;   //!< position of last error, -1 if compilation was success
     int currentPC;  //!< current program counter
+
+    bool m_hasCompilationError;
 };
 
 }  // namespace Aseba
