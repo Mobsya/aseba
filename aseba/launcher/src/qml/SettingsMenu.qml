@@ -14,16 +14,43 @@ Rectangle {
             name: qsTr("Download maps for the simulator")
             action: "playground-faq"
         }
+
+        ListElement {
+            name: qsTr("Pair a Thymio Wireless to a Dongle")
+            action: "thymio2-pairing"
+        }
+
+        ListElement {
+            name: qsTr("Pair a case of thymios")
+            action: "thymio2-valise-pairing"
+        }
     }
 
+    function thymio2PairingWizard(valiseMode) {
+        var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessConfigurator.qml");
+        if (component.status === Component.Error) {
+            console.log("Error loading WirelessConfigurator component:", component.errorString());
+        }
 
+        var dialog = component.createObject(launcher, {
+                "valiseMode": valiseMode
+            }
+        )
+    }
 
     function onMenuEntryClicked(action) {
+        pane.visible = false
         if(action === "playground") {
             Utils.launchPlayground()
         }
         else if(action === "playground-faq") {
             Qt.openUrlExternally(qsTr("https://www.thymio.org/thymio-simulator"))
+        }
+        else if(action === "thymio2-pairing") {
+            thymio2PairingWizard(false)
+        }
+        else if(action === "thymio2-valise-pairing") {
+            thymio2PairingWizard(true)
         }
     }
 
