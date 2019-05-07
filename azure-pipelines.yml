@@ -40,7 +40,7 @@ jobs:
       certPwd: $(mobsya-mac-p12)
 
   - script: |
-      curl -sL https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190415.1/thymio-blockly.tar.gz | tar xzf - -C .
+      curl -sL https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz | tar xzf - -C .
       curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190329.1/scratch-gui.tar.gz | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
