@@ -35,8 +35,9 @@ NodeTab::NodeTab(QWidget* parent)
     , m_compilation_watcher(new mobsya::CompilationRequestWatcher(this))
     , m_breakpoints_watcher(new mobsya::BreakpointsRequestWatcher(this))
     , m_aseba_vm_description_watcher(new mobsya::AsebaVMDescriptionRequestWatcher(this))
-    , currentPC(-1) {
-    errorPos = -1;
+    , errorPos(-1)
+    , currentPC(-1)
+    , m_hasCompilationError(false) {
 
 
     m_vm_variables_filter_model.setSourceModel(&m_vm_variables_model);
@@ -256,6 +257,7 @@ void NodeTab::compilationCompleted() {
     }
 
     auto res = m_compilation_watcher->getResult();
+    m_hasCompilationError = !m_hasCompilationError;
 
 
     clearEditorProperty(QStringLiteral("errorPos"));
@@ -294,6 +296,8 @@ void NodeTab::updateMemoryUsage(const mobsya::CompilationResult& res) {
 }
 
 void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
+
+    m_hasCompilationError = !res.success();
     compilationResultText->setVisible(!res.success());
     compilationResultImage->setVisible(!res.success());
     if(res.success()) {
@@ -301,6 +305,7 @@ void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
     }
     compilationResultText->setText(res.error().errorMessage());
     compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/warning.png")));
+    runButton->setEnabled(false);
 
     if(res.error().charater()) {
         errorPos = res.error().charater();
@@ -965,7 +970,7 @@ void NodeTab::setupConnections() {
     connect(this, &NodeTab::executionStateChanged, [this] {
         bool ready = m_thymio && m_thymio->status() == mobsya::ThymioNode::Status::Ready;
 
-        runButton->setEnabled(ready);
+        runButton->setEnabled(ready && !m_hasCompilationError);
         runButton->setVisible(true);
         pauseButton->setEnabled(ready);
         pauseButton->setVisible(true);
