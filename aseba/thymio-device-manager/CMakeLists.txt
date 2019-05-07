@@ -26,6 +26,7 @@ add_library(thymio-device-manager-lib STATIC
     app_server.h
     app_token_manager.h
     app_endpoint.h
+    app_endpoint.cpp
     flatbuffers_message_reader.h
     flatbuffers_message_writer.h
     flatbuffers_messages.h

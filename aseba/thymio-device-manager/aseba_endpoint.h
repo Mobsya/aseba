@@ -16,10 +16,11 @@
 #include "aseba_message_writer.h"
 #include "aseba_node.h"
 #include "log.h"
+#include "group.h"
 #include "variant_compat.h"
-#include "aseba_node_registery.h"
 #include "utils.h"
 #include "thymio2_fwupgrade.h"
+#include "uuid_provider.h"
 
 namespace mobsya {
 
@@ -32,9 +33,7 @@ class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 public:
     enum class endpoint_type { unknown, thymio, simulated_thymio, simulated_dummy_node };
 
-    ~aseba_endpoint() {
-        std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
-    }
+    ~aseba_endpoint();
 
     using pointer = std::shared_ptr<aseba_endpoint>;
     using tcp_socket = boost::asio::ip::tcp::socket;
@@ -84,11 +83,7 @@ public:
         return variant_ns::get<usb_serial_port>(m_endpoint);
     }
 
-    static pointer create_for_serial(boost::asio::io_context& io) {
-        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
-        ptr->m_group = group::make_group_for_endpoint(io, ptr);
-        return ptr;
-    }
+    static pointer create_for_serial(boost::asio::io_context& io);
 #endif
 
     const tcp_socket& tcp() const {
@@ -99,11 +94,7 @@ public:
         return variant_ns::get<tcp_socket>(m_endpoint);
     }
 
-    static pointer create_for_tcp(boost::asio::io_context& io) {
-        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
-        ptr->m_group = group::make_group_for_endpoint(io, ptr);
-        return ptr;
-    }
+    static pointer create_for_tcp(boost::asio::io_context& io);
 
     std::string endpoint_name() const {
         return m_endpoint_name;
@@ -117,6 +108,10 @@ public:
     }
     void set_endpoint_type(endpoint_type type) {
         m_endpoint_type = type;
+    }
+
+    node_id uuid() {
+        return m_uuid;
     }
 
     bool is_usb() const {
@@ -133,7 +128,6 @@ public:
         return false;
     }
 
-
     bool is_wireless() const {
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
@@ -149,7 +143,6 @@ public:
     }
 
     bool wireless_enable_configuration_mode(bool enable);
-    bool wireless_enable_pairing(bool enable);
     bool wireless_cfg_mode_enabled() const;
     bool wireless_flash();
     struct wireless_settings {
@@ -171,18 +164,7 @@ public:
         return nodes;
     }
 
-    void start() {
-        read_aseba_message();
-
-
-        // A newly connected thymio may not be ready yet
-        // Delay asking for its node id to let it start up the vm
-        // otherwhise it may never get our request.
-        schedule_send_ping(boost::posix_time::milliseconds(200));
-
-        if(needs_health_check())
-            schedule_nodes_health_check();
-    }
+    void start();
 
     template <typename CB = write_callback>
     void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages, CB&& cb = {}) {
@@ -419,11 +401,7 @@ private:
         }
     }
 
-    aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type = endpoint_type::thymio)
-        : m_endpoint(std::move(e))
-        , m_strand(io_context.get_executor())
-        , m_io_context(io_context)
-        , m_endpoint_type(type) {}
+    aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type = endpoint_type::thymio);
 
     const Aseba::CommonDefinitions& aseba_compiler_definitions() const {
         return m_defs;
@@ -451,6 +429,9 @@ private:
     std::shared_ptr<mobsya::group> m_group;
     std::vector<std::pair<std::shared_ptr<Aseba::Message>, write_callback>> m_msg_queue;
     Aseba::CommonDefinitions m_defs;
+
+    node_id m_uuid;
+
 
     struct WirelessDongleSettings {
         PACK(struct Data {

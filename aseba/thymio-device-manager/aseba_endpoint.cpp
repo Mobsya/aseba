@@ -9,7 +9,63 @@
 #    include "usbacceptor.h"
 #endif
 
+#include "aseba_node_registery.h"
+
 namespace mobsya {
+
+
+aseba_endpoint::~aseba_endpoint() {
+    auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
+    // registery.unregister_endpoint(shared_from_this());
+    std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
+}
+
+aseba_endpoint::aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type)
+    : m_endpoint(std::move(e))
+    , m_strand(io_context.get_executor())
+    , m_io_context(io_context)
+    , m_endpoint_type(type)
+    , m_uuid(boost::asio::use_service<uuid_generator>(io_context).generate()) {}
+
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+aseba_endpoint::pointer aseba_endpoint::create_for_serial(boost::asio::io_context& io) {
+    auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+    ptr->m_group = group::make_group_for_endpoint(io, ptr);
+    return ptr;
+}
+#endif
+aseba_endpoint::pointer aseba_endpoint::create_for_tcp(boost::asio::io_context& io) {
+    auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+    ptr->m_group = group::make_group_for_endpoint(io, ptr);
+    return ptr;
+}
+
+
+void aseba_endpoint::start() {
+    // Briefly put the dongle (if  any) in configuration
+    // Mode to read its settings
+    if(wireless_enable_configuration_mode(true)) {
+        wireless_enable_configuration_mode(false);
+        auto settings = this->wireless_get_settings();
+        mLogInfo("Thymio 2 Dongle Wireless settings: network: {:x}, channel: {}", settings.network_id,
+                 settings.channel);
+    }
+
+    auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
+    registery.register_endpoint(shared_from_this());
+
+
+    read_aseba_message();
+
+
+    // A newly connected thymio may not be ready yet
+    // Delay asking for its node id to let it start up the vm
+    // otherwhise it may never get our request.
+    schedule_send_ping(boost::posix_time::milliseconds(200));
+
+    if(needs_health_check())
+        schedule_nodes_health_check();
+}
 
 std::optional<std::pair<Aseba::EventDescription, std::size_t>>
 aseba_endpoint::get_event(const std::string& name) const {
@@ -113,9 +169,6 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
         m_wireless_dongle_settings = std::make_unique<WirelessDongleSettings>();
     }
     if(m_wireless_dongle_settings->cfg_mode != enable) {
-        if(!enable && m_wireless_dongle_settings->pairing) {
-            wireless_enable_pairing(false);
-        }
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             usb().close();
@@ -133,11 +186,12 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
         }
 #endif
     }
+    m_wireless_dongle_settings->cfg_mode = enable;
     if(enable) {
         if(!sync_wireless_dongle_settings())
             return false;
     }
-    m_wireless_dongle_settings->cfg_mode = enable;
+
 
     return true;
 }
@@ -154,22 +208,12 @@ bool aseba_endpoint::sync_wireless_dongle_settings() {
             auto read = device.read_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec);
             if(read < s - 1)
                 return false;
+
+            // Notify the registery that this endpoint may have changed
+            boost::asio::use_service<aseba_node_registery>(m_io_context).register_endpoint(shared_from_this());
             return true;
         },
         m_endpoint);
-}
-
-bool aseba_endpoint::wireless_enable_pairing(bool enable) {
-    if(enable)
-        wireless_enable_configuration_mode(true);
-
-    if(m_wireless_dongle_settings->pairing == enable)
-        return true;
-    m_wireless_dongle_settings->data.ctrl = 0x04;  // toogle pairing
-    if(!sync_wireless_dongle_settings())
-        return false;
-    m_wireless_dongle_settings->pairing = enable;
-    return true;
 }
 
 bool aseba_endpoint::wireless_set_settings(uint8_t channel, uint16_t networkId, uint16_t dongleId) {
@@ -184,7 +228,7 @@ aseba_endpoint::wireless_settings aseba_endpoint::wireless_get_settings() const 
     if(!m_wireless_dongle_settings)
         return {};
     return {m_wireless_dongle_settings->data.panId, m_wireless_dongle_settings->data.nodeId,
-            uint8_t(m_wireless_dongle_settings->data.channel - uint8_t(15) / uint8_t(5))};
+            uint8_t((m_wireless_dongle_settings->data.channel - uint8_t(15)) / uint8_t(5))};
 }
 
 bool aseba_endpoint::wireless_flash() {

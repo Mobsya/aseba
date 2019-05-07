@@ -5,11 +5,12 @@
 #include <chrono>
 #include <aware/aware.hpp>
 #include <boost/signals2.hpp>
-
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
 #include "aseba_node.h"
 #include "node_id.h"
 #include "group.h"
-
+#include "aseba_endpoint.h"
 
 namespace mobsya {
 
@@ -34,6 +35,14 @@ public:
 
     std::shared_ptr<mobsya::group> group_from_id(const node_id&) const;
 
+    void register_endpoint(std::shared_ptr<aseba_endpoint> ep);
+    void unregister_endpoint(std::shared_ptr<aseba_endpoint> p);
+
+    auto thymio2_wireless_dongles() {
+        return m_endpoints | ranges::view::transform([](auto&& ep) { return ep.lock(); }) |
+            ranges::view::filter([](auto&& ep) { return ep && ep->is_wireless(); });
+    }
+
 private:
     void remove_duplicated_node(const std::shared_ptr<aseba_node>& node);
 
@@ -49,6 +58,9 @@ private:
     boost::uuids::uuid m_service_uid;
 
     node_map m_aseba_nodes;
+    // Listing the endpoints is useful to be able to configure
+    // Thymio 2 dongles
+    std::vector<std::weak_ptr<aseba_endpoint>> m_endpoints;
 
     //
     struct last_known_node_group {
@@ -68,6 +80,9 @@ private:
     boost::signals2::signal<void(std::shared_ptr<aseba_node>, node_id, aseba_node::status)>
         m_node_status_changed_signal;
     friend class node_status_monitor;
+
+    boost::signals2::signal<void()> m_endpoints_changed_signal;
+    friend class endpoint_monitor;
 };
 
 
@@ -85,6 +100,24 @@ protected:
         m_connection = registery.m_node_status_changed_signal.connect(
             boost::bind(&node_status_monitor::node_changed, this, boost::placeholders::_1, boost::placeholders::_2,
                         boost::placeholders::_3));
+    }
+
+private:
+    boost::signals2::scoped_connection m_connection;
+};
+
+class endpoint_monitor {
+public:
+    virtual ~endpoint_monitor();
+    void disconnect() {
+        m_connection.disconnect();
+    }
+    virtual void endpoints_changed() = 0;
+
+protected:
+    void start_endpoints_monitoring(aseba_node_registery& registery) {
+        m_connection =
+            registery.m_endpoints_changed_signal.connect(boost::bind(&endpoint_monitor::endpoints_changed, this));
     }
 
 private:
