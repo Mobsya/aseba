@@ -103,6 +103,7 @@ int main(int argc, char** argv) {
     mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
+    w.rootContext()->setContextProperty("client", &client);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);
     w.setMinimumSize(1024, 640);

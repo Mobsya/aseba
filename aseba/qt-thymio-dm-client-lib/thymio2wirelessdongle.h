@@ -1,17 +1,35 @@
-#ifndef THYMIO2WIRELESSDONGLE_H
-#define THYMIO2WIRELESSDONGLE_H
+#pragma once
 
 #include <QObject>
+#include <QUuid>
+#include <QMap>
 
-class Thymio2WirelessDongle : public QObject
-{
-    Q_OBJECT
-public:
-    explicit Thymio2WirelessDongle(QObject *parent = nullptr);
+namespace mobsya {
 
-signals:
-
-public slots:
+struct Thymio2WirelessDongle {
+    QUuid uuid;
+    uint16_t networkId;
 };
 
-#endif // THYMIO2WIRELESSDONGLE_H
+class Thymio2WirelessDonglesManager : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QStringList dongles READ qml_dongles NOTIFY donglesChanged)
+
+public:
+    Thymio2WirelessDonglesManager(QObject* parent = nullptr);
+    Q_INVOKABLE uint16_t networkId(const QUuid& uuid);
+
+Q_SIGNALS:
+    void donglesChanged();
+
+private:
+    friend class ThymioDeviceManagerClientEndpoint;
+    void clear();
+    void updateDongle(const QUuid& id, uint16_t networkId);
+    QStringList qml_dongles() const;
+    QMap<QUuid, Thymio2WirelessDongle> m_dongles;
+};
+
+}  // namespace mobsya
+
+Q_DECLARE_METATYPE(mobsya::Thymio2WirelessDonglesManager*)

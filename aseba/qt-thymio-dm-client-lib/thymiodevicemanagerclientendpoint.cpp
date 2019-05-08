@@ -15,7 +15,8 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     , m_socket(socket)
     , m_message_size(0)
     , m_host_name(std::move(host))
-    , m_socket_health_check_timer(new QTimer(this)) {
+    , m_socket_health_check_timer(new QTimer(this))
+    , m_dongles_manager(new Thymio2WirelessDonglesManager(this)) {
 
     m_socket->setParent(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &ThymioDeviceManagerClientEndpoint::onReadyRead);
@@ -68,6 +69,10 @@ QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     return u;
 }
 
+Thymio2WirelessDonglesManager* ThymioDeviceManagerClientEndpoint::donglesManager() const {
+    return m_dongles_manager;
+}
+
 void ThymioDeviceManagerClientEndpoint::checkSocketHealth() {
     if(m_last_message_reception_date.msecsTo(QDateTime::currentDateTime()) > 10 * 1000) {
         qWarning() << "Connection timed out";
@@ -110,6 +115,7 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
             auto message = msg.as<mobsya::fb::ConnectionHandshake>();
             m_islocalhostPeer = message->localhostPeer();
+            localPeerChanged();
             // TODO handle versionning, etc
             break;
         }
@@ -304,6 +310,18 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             if(!node)
                 break;
             node->onFirmwareUpgradeProgress(message->progress());
+            break;
+        }
+        case mobsya::fb::AnyMessage::Thymio2WirelessDonglesChanged: {
+            auto message = msg.as<mobsya::fb::Thymio2WirelessDonglesChanged>();
+            if(!message || !message->dongles())
+                break;
+            m_dongles_manager->clear();
+            for(auto&& d : *message->dongles()) {
+                auto dongleId = qfb::uuid(d->dongle_id()->UnPack());
+                auto networkId = d->network_id();
+                m_dongles_manager->updateDongle(dongleId, networkId);
+            }
             break;
         }
         default: Q_EMIT onMessage(msg);

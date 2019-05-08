@@ -2,6 +2,8 @@
 #include "thymiodevicemanagerclient.h"
 #include "thymionode.h"
 #include "thymiodevicesmodel.h"
+#include "thymio2wirelessdongle.h"
+#include "thymiodevicemanagerclientendpoint.h"
 #ifdef QT_QML_LIB
 #    include "request.h"
 #    include <QtQml/QtQml>
@@ -13,6 +15,8 @@ constexpr const unsigned minProtocolVersion = 1;
 
 #ifdef QT_QML_LIB
 void register_qml_types() {
+    qRegisterMetaType<mobsya::ThymioDeviceManagerClientEndpoint*>("ThymioDeviceManagerClientEndpoint*");
+    qRegisterMetaType<mobsya::Thymio2WirelessDonglesManager*>("Thymio2WirelessDonglesManager*");
     qmlRegisterUncreatableType<mobsya::ThymioNode>("org.mobsya", 1, 0, "ThymioNode", "Enum");
 }
 #endif

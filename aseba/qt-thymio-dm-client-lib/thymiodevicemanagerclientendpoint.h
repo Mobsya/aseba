@@ -7,6 +7,7 @@
 #include <QTimer>
 #include "request.h"
 #include "thymionode.h"
+#include "thymio2wirelessdongle.h"
 
 namespace mobsya {
 class ThymioDeviceManagerClientEndpoint : public QObject,
@@ -15,6 +16,7 @@ class ThymioDeviceManagerClientEndpoint : public QObject,
     Q_PROPERTY(QString hostName READ hostName CONSTANT)
     Q_PROPERTY(bool isLocalhostPeer READ isLocalhostPeer CONSTANT)
     Q_PROPERTY(QUrl websocketConnectionUrl READ websocketConnectionUrl CONSTANT)
+    Q_PROPERTY(Thymio2WirelessDonglesManager* donglesManager READ donglesManager CONSTANT)
 
 
 public:
@@ -50,6 +52,10 @@ public:
     Request emitNodeEvents(const ThymioNode& node, const ThymioNode::EventMap& vars);
     Request setScratchPad(const QUuid& id, const QByteArray& data, fb::ProgrammingLanguage language);
     Request upgradeFirmware(const QUuid& id);
+    Request pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId, uint16_t networkId, uint8_t channel);
+
+
+    Thymio2WirelessDonglesManager* donglesManager() const;
 
 private Q_SLOTS:
     void onReadyRead();
@@ -66,6 +72,7 @@ Q_SIGNALS:
 
     void onMessage(const fb_message_ptr& msg) const;
     void disconnected();
+    void localPeerChanged();
 
 private:
     template <typename T>
@@ -95,6 +102,10 @@ private:
     QString m_host_name;
     QDateTime m_last_message_reception_date;
     QTimer* m_socket_health_check_timer;
+    Thymio2WirelessDonglesManager* m_dongles_manager;
 };
 
 }  // namespace mobsya
+
+
+Q_DECLARE_METATYPE(mobsya::ThymioDeviceManagerClientEndpoint*)
