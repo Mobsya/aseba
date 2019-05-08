@@ -36,7 +36,7 @@ public:
     std::shared_ptr<mobsya::group> group_from_id(const node_id&) const;
 
     void register_endpoint(std::shared_ptr<aseba_endpoint> ep);
-    void unregister_endpoint(std::shared_ptr<aseba_endpoint> p);
+    void unregister_expired_endpoints();
 
     auto thymio2_wireless_dongles() {
         return m_endpoints | ranges::view::transform([](auto&& ep) { return ep.lock(); }) |
