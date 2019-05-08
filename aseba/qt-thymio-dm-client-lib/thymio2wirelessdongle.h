@@ -17,7 +17,7 @@ class Thymio2WirelessDonglesManager : public QObject {
 
 public:
     Thymio2WirelessDonglesManager(QObject* parent = nullptr);
-    Q_INVOKABLE uint16_t networkId(const QUuid& uuid);
+    Q_INVOKABLE quint16 networkId(const QUuid& uuid);
 
 Q_SIGNALS:
     void donglesChanged();

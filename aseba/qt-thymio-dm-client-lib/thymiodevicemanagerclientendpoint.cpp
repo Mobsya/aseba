@@ -29,6 +29,12 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     // The TDM pings every 25000ms
     m_socket_health_check_timer->start(15000);
     connect(m_socket_health_check_timer, &QTimer::timeout, this, &ThymioDeviceManagerClientEndpoint::checkSocketHealth);
+
+
+    connect(this, &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
+            &ThymioDeviceManagerClientEndpoint::nodesChanged);
+    connect(this, &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
+            &ThymioDeviceManagerClientEndpoint::nodesChanged);
 }
 
 ThymioDeviceManagerClientEndpoint::~ThymioDeviceManagerClientEndpoint() {
@@ -619,6 +625,18 @@ Request ThymioDeviceManagerClientEndpoint::upgradeFirmware(const QUuid& id) {
     return r;
 }
 
+Request ThymioDeviceManagerClientEndpoint::pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
+                                                               quint16 networkId, quint8 channel) {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto dongleUuidOffset = serialize_uuid(builder, dongleId);
+    auto robotUuidOffset = serialize_uuid(builder, nodeId);
+    write(wrap_fb(builder,
+                  fb::CreateThymio2WirelessDonglePairingRequest(builder, r.id(), dongleUuidOffset, robotUuidOffset,
+                                                                networkId, channel)));
+    return r;
+}
+
 std::vector<std::shared_ptr<ThymioNode>> ThymioDeviceManagerClientEndpoint::nodes(const QUuid& node_or_group_id) const {
     std::vector<std::shared_ptr<ThymioNode>> nodes;
     for(auto&& node : m_nodes) {
@@ -642,6 +660,20 @@ std::shared_ptr<ThymioGroup> ThymioDeviceManagerClientEndpoint::group_from_id(co
             return node->group();
     }
     return {};
+}
+
+
+QQmlListProperty<ThymioNode> ThymioDeviceManagerClientEndpoint::qml_nodes() {
+    static auto at_function = [](QQmlListProperty<ThymioNode>* p, int index) {
+        auto that = static_cast<const ThymioDeviceManagerClientEndpoint*>(p->data);
+        if(index < 0 || index >= that->m_nodes.size())
+            return (ThymioNode*)(nullptr);
+        return (that->m_nodes.begin() + index).value().get();
+    };
+    static auto count_function = [](QQmlListProperty<ThymioNode>* p) {
+        return static_cast<const ThymioDeviceManagerClientEndpoint*>(p->data)->m_nodes.size();
+    };
+    return QQmlListProperty<ThymioNode>(this, this, count_function, at_function);
 }
 
 

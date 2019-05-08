@@ -389,7 +389,8 @@ table Thymio2WirelessDonglesChanged {
     dongles: [Thymio2WirelessDongle];
 }
 
-table RequestThymio2WirelessDonglePairing {
+table Thymio2WirelessDonglePairingRequest {
+    request_id:uint;
     dongle_id:NodeId;
     node_id:NodeId;
     network_id: uint16;
@@ -427,7 +428,7 @@ union AnyMessage {
     FirmwareUpgradeStatus,
     Ping,
     Thymio2WirelessDonglesChanged,
-    RequestThymio2WirelessDonglePairing
+    Thymio2WirelessDonglePairingRequest
 }
 
 table Message {
