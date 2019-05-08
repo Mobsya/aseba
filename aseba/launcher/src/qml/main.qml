@@ -1,5 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.4
+import "wirelessconfigurator"
 
 Item {
     id: launcher
@@ -31,6 +32,8 @@ Item {
             id: deviceSelectionView
         }
     }
+
+    WirelessConfigurator {}
 
     function goToDeviceSelectionWithApp() {
         if(app_view.selectedApp && main_layout.depth == 1) {

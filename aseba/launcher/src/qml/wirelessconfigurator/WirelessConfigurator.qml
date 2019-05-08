@@ -8,6 +8,23 @@ Rectangle {
     anchors.fill: parent
     TitleBar {}
 
+    property var localEndpoint: client.localEndpoint
+    property var donglesManager: null
+    property var dongles: null
+
+    Component.onCompleted: {
+        client.localEndpointChanged.connect(function () {
+            localEndpoint = client.localEndpoint
+            donglesManager = localEndpoint.donglesManager
+            dongles = donglesManager.dongles
+            donglesManager.donglesChanged.connect(function () {
+                dongles = donglesManager.dongles
+                console.log("Dongles connected: %1".arg(dongles.length))
+            })
+        })
+        localEndpoint = client.localEndpoint
+    }
+
     Item {
         anchors.fill: parent
         anchors.margins: 60
@@ -57,6 +74,7 @@ Rectangle {
             spacing: 22
             Button {
                 text: qsTr("Start Pairing")
+                enabled: dongles && dongles.length === 1
             }
             Button {
                 text: qsTr("Advanced Mode")

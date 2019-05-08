@@ -28,6 +28,9 @@ class ThymioDeviceManagerClientEndpoint;
 
 class ThymioDeviceManagerClient : public QObject {
     Q_OBJECT
+    Q_PROPERTY(ThymioDeviceManagerClientEndpoint* localEndpoint READ qml_localEndpoint NOTIFY localEndpointChanged)
+
+
 public:
     ThymioDeviceManagerClient(QObject* parent = nullptr);
     std::shared_ptr<ThymioNode> node(const QUuid& id) const;
@@ -49,17 +52,21 @@ private Q_SLOTS:
     void onServiceRemoved(QZeroConfService);
     void onNodeAdded(std::shared_ptr<ThymioNode>);
     void onNodeRemoved(std::shared_ptr<ThymioNode>);
+    void onLocalPeerChanged();
 
 Q_SIGNALS:
     void nodeAdded(std::shared_ptr<ThymioNode>);
     void nodeRemoved(std::shared_ptr<ThymioNode>);
     void nodeModified(std::shared_ptr<ThymioNode>);
+    void localEndpointChanged();
     void localPeerDisconnected();
     void zeroconfBrowserStatusChanged();
+
 
 private:
     friend class ThymioDevicesModel;
     void onEndpointDisconnected();
+    ThymioDeviceManagerClientEndpoint* qml_localEndpoint() const;
 
     QVector<QZeroConfService> m_services;
     QZeroConf* m_register;
