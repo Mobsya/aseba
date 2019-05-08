@@ -15,9 +15,11 @@ namespace mobsya {
 
 
 aseba_endpoint::~aseba_endpoint() {
-    auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
-    // registery.unregister_endpoint(shared_from_this());
     std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
+    boost::asio::post([ctx = &m_io_context]() {
+        auto& registery = boost::asio::use_service<aseba_node_registery>(*ctx);
+        registery.unregister_expired_endpoints();
+    });
 }
 
 aseba_endpoint::aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type)
