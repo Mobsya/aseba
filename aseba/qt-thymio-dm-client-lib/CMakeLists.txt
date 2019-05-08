@@ -31,6 +31,7 @@ add_library(qt-thymio-dm-client-lib-qml OBJECT
 target_link_libraries(qt-thymio-dm-client-lib  PUBLIC
     Qt5::Core
     Qt5::Network
+    Qt5::Quick
     QtZeroConf
     thymio-flatbuffers
     range-v3

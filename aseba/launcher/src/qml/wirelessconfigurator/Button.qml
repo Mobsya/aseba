@@ -8,6 +8,7 @@ Rectangle {
     width : 220
     radius: 20
     color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
+    opacity: enabled ? 1 : 0.3
     Text {
         id: text
         font.family: "Roboto Bold"
@@ -20,7 +21,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: enabled
         id: mouse_area
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: parent.enabled ? Qt.PointingHandCursor : Qt.ForbiddenCursor
     }
 
     Component.onCompleted: {

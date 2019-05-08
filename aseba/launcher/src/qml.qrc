@@ -82,5 +82,6 @@
         <file>assets/usb-cable-and-dongle.svg</file>
         <file>assets/one-thymio-one-dongle.svg</file>
         <file>qml/wirelessconfigurator/Button.qml</file>
+        <file>assets/alert.svg</file>
     </qresource>
 </RCC>

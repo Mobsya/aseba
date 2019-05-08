@@ -14,9 +14,10 @@ constexpr const unsigned protocolVersion = 1;
 constexpr const unsigned minProtocolVersion = 1;
 
 #ifdef QT_QML_LIB
-void register_qml_types() {
+void inline register_qml_types() {
     qRegisterMetaType<mobsya::ThymioDeviceManagerClientEndpoint*>("ThymioDeviceManagerClientEndpoint*");
     qRegisterMetaType<mobsya::Thymio2WirelessDonglesManager*>("Thymio2WirelessDonglesManager*");
+    qRegisterMetaType<QQmlListProperty<mobsya::ThymioNode>>("QQmlListProperty<ThymioNode>");
     qmlRegisterUncreatableType<mobsya::ThymioNode>("org.mobsya", 1, 0, "ThymioNode", "Enum");
 }
 #endif

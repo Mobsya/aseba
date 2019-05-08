@@ -3,7 +3,7 @@
 namespace mobsya {
 
 Thymio2WirelessDonglesManager::Thymio2WirelessDonglesManager(QObject* parent) : QObject(parent) {}
-uint16_t Thymio2WirelessDonglesManager::networkId(const QUuid& uuid) {
+quint16 Thymio2WirelessDonglesManager::networkId(const QUuid& uuid) {
     return m_dongles.value(uuid).networkId;
 }
 
