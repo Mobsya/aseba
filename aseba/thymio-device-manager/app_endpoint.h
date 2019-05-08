@@ -899,6 +899,7 @@ private:
         // Once the handshake is complete, send a list of nodes, that will also flush out all pending outgoing
         // messages
         send_full_node_list();
+        send_list_of_thymio2_dongles();
 
         start_sending_pings();
         read_message();
