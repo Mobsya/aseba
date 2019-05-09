@@ -170,6 +170,7 @@ public:
     int available_firwmware_version() const;
     void set_available_firmware_version(int version);
     bool upgrade_firmware(std::function<void(boost::system::error_code ec, double progress, bool complete)> cb);
+    bool set_rf_settings(uint16_t network, uint16_t node, uint8_t channel);
 
 private:
     friend class aseba_endpoint;
@@ -212,7 +213,6 @@ private:
     void on_event_received(const std::unordered_map<std::string, property>& events,
                            const std::chrono::system_clock::time_point& timestamp);
 
-    bool set_rf_settings(uint16_t network, uint16_t channel = 0, uint16_t node = 0);
 
     node_id_t m_id;
     node_id m_uuid;

@@ -140,6 +140,7 @@ void serial_acceptor_service::on_udev_event(const boost::system::error_code& ec)
             return async_wait();
         }
         handle_request(dev, m_requests.front());
+        udev_device_unref(dev);
         async_wait();
     }
 }

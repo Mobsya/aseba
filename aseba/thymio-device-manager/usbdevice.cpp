@@ -31,7 +31,11 @@ void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
 }
 
 
-void usb_device_service::cancel(implementation_type& /*impl*/) {}
+void usb_device_service::cancel(implementation_type& impl) {
+    close(impl);
+    open(impl);
+    impl.read_buffer = {};
+}
 
 void usb_device_service::close(implementation_type& impl) {
     if(impl.handle) {
@@ -40,6 +44,7 @@ void usb_device_service::close(implementation_type& impl) {
         impl.handle = nullptr;
     }
     impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
+    impl.read_buffer = {};
 }
 
 bool usb_device_service::is_open(implementation_type& impl) {
