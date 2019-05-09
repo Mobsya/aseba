@@ -46,8 +46,8 @@ aseba_endpoint::pointer aseba_endpoint::create_for_tcp(boost::asio::io_context& 
 void aseba_endpoint::start() {
     // Briefly put the dongle (if  any) in configuration
     // Mode to read its settings
-    if(wireless_enable_configuration_mode(true)) {
-        wireless_enable_configuration_mode(false);
+    if(is_wireless()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         auto settings = this->wireless_get_settings();
         mLogInfo("Thymio 2 Dongle Wireless settings: network: {:x}, channel: {}", settings.network_id,
                  settings.channel);
@@ -57,16 +57,34 @@ void aseba_endpoint::start() {
     registery.register_endpoint(shared_from_this());
 
 
-    read_aseba_message();
-
-
     // A newly connected thymio may not be ready yet
     // Delay asking for its node id to let it start up the vm
     // otherwhise it may never get our request.
     schedule_send_ping(boost::posix_time::milliseconds(200));
 
+    read_aseba_message();
+
     if(needs_health_check())
         schedule_nodes_health_check();
+}
+
+void aseba_endpoint::cancel_all_ops() {
+    // serial().cancel();
+    m_msg_queue.clear();
+}
+
+void aseba_endpoint::stop() {
+    // serial().cancel();
+    // serial().close();
+    // boost::asio::use_service<serial_acceptor_service>(m_io_context).free_device(serial().device_path());
+}
+
+
+void aseba_endpoint::reboot() {
+    if(m_nodes.size() == 1) {
+        write_message(std::make_shared<Aseba::Reboot>(m_nodes.begin()->second.node->native_id()));
+    }
+    m_rebooting = true;
 }
 
 std::optional<std::pair<Aseba::EventDescription, std::size_t>>
@@ -171,6 +189,7 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
         m_wireless_dongle_settings = std::make_unique<WirelessDongleSettings>();
     }
     if(m_wireless_dongle_settings->cfg_mode != enable) {
+        m_wireless_dongle_settings->cfg_mode = enable;
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
             usb().close();
@@ -181,30 +200,38 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
 #endif
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
         if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
-            serial().close();
-            serial().open();
+            boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(true);
+            boost::system::error_code ec;
+            serial().close(ec);
+            mLogError("{}", ec.message());
+            do {
+                ec = {};
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                serial().open(ec);
+                mLogError("{}", ec.message());
+            } while(ec);
+
             serial().set_rts(enable);
             serial().set_data_terminal_ready(!enable);
+            boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(false);
         }
 #endif
     }
-    m_wireless_dongle_settings->cfg_mode = enable;
-    if(enable) {
-        if(!sync_wireless_dongle_settings())
-            return false;
+    if(!enable) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        read_aseba_message();
     }
-
-
     return true;
 }
 
-bool aseba_endpoint::sync_wireless_dongle_settings() {
-    if(!wireless_cfg_mode_enabled())
+bool aseba_endpoint::sync_wireless_dongle_settings(bool flash) {
+    if(!wireless_enable_configuration_mode(true))
         return false;
     const auto s = sizeof(&m_wireless_dongle_settings->data);
-    return variant_ns::visit(
-        [this, s](auto& device) {
+    auto res = variant_ns::visit(
+        [this, s, flash](auto& device) {
             boost::system::error_code ec;
+            m_wireless_dongle_settings->data.ctrl = flash ? 0x01 : 0;
             if(device.write_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec) != s)
                 return false;
             auto read = device.read_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec);
@@ -216,26 +243,24 @@ bool aseba_endpoint::sync_wireless_dongle_settings() {
             return true;
         },
         m_endpoint);
+    wireless_enable_configuration_mode(false);
+    return res;
 }
 
-bool aseba_endpoint::wireless_set_settings(uint8_t channel, uint16_t networkId, uint16_t dongleId) {
+bool aseba_endpoint::wireless_set_settings(uint16_t networkId, uint16_t dongleId, uint8_t channel) {
     m_wireless_dongle_settings->data.ctrl = 0;
     m_wireless_dongle_settings->data.channel = 15 + 5 * channel;
-    m_wireless_dongle_settings->data.nodeId = dongleId;
+    m_wireless_dongle_settings->data.nodeId = 1024;
     m_wireless_dongle_settings->data.panId = networkId;
-    return sync_wireless_dongle_settings();
+    return sync_wireless_dongle_settings(true);
 }
 
-aseba_endpoint::wireless_settings aseba_endpoint::wireless_get_settings() const {
-    if(!m_wireless_dongle_settings)
+aseba_endpoint::wireless_settings aseba_endpoint::wireless_get_settings() {
+    // return {};
+    if(!m_wireless_dongle_settings && !sync_wireless_dongle_settings(false))
         return {};
     return {m_wireless_dongle_settings->data.panId, m_wireless_dongle_settings->data.nodeId,
             uint8_t((m_wireless_dongle_settings->data.channel - uint8_t(15)) / uint8_t(5))};
-}
-
-bool aseba_endpoint::wireless_flash() {
-    m_wireless_dongle_settings->data.ctrl = 0x04;  // toogle flash
-    return sync_wireless_dongle_settings();
 }
 
 bool aseba_endpoint::wireless_cfg_mode_enabled() const {

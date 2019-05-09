@@ -7,6 +7,7 @@
 #include <boost/signals2.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 #include "aseba_node.h"
 #include "node_id.h"
 #include "group.h"
@@ -38,9 +39,17 @@ public:
     void register_endpoint(std::shared_ptr<aseba_endpoint> ep);
     void unregister_expired_endpoints();
 
-    auto thymio2_wireless_dongles() {
+    auto thymio2_wireless_dongles() const {
         return m_endpoints | ranges::view::transform([](auto&& ep) { return ep.lock(); }) |
-            ranges::view::filter([](auto&& ep) { return ep && ep->is_wireless(); });
+            ranges::view::filter([](auto&& ep) { return ep && ep->is_wireless(); }) | ranges::to_vector;
+    }
+
+    std::shared_ptr<aseba_endpoint> thymio2_wireless_dongle(const node_id& id) const {
+        auto v = thymio2_wireless_dongles();
+        auto it = ranges::find_if(v, [&id](auto&& ep) { return ep->uuid() == id; });
+        if(it == ranges::end(v))
+            return {};
+        return *it;
     }
 
 private:

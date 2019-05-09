@@ -27,7 +27,7 @@ Rectangle {
     }
 
     function getRandomChannel() {
-        return getRandomInt(1, 3)
+        return getRandomInt(0, 2)
     }
 
     function getRandomNetworkId() {
@@ -94,7 +94,13 @@ Rectangle {
         updateState()
         if(!ready)
             return
-        const request = localEndpoint.pairThymio2Wireless(selectedDongleId, selectedRobotId, selectedNetworkId, selectedChannel)
+        console.log("Pairing node %1 to dongle %2; network %3 - channel %4"
+            .arg(selectedRobotId.toString())
+            .arg(selectedDongleId)
+            .arg(selectedNetworkId)
+            .arg(selectedChannel))
+        const request = localEndpoint.pairThymio2Wireless(selectedDongleId,
+                                                          selectedRobotId, selectedNetworkId, selectedChannel)
     }
 
 
@@ -104,12 +110,17 @@ Rectangle {
             donglesManager = localEndpoint.donglesManager
             dongles = donglesManager.dongles
             donglesManager.donglesChanged.connect(function () {
-                dongles = donglesManager.dongles
-                console.log("Dongles connected: %1".arg(dongles.length))
+                dongles = null
+                if(donglesManager) {
+                    dongles = donglesManager.dongles
+                    console.log("Dongles connected: %1".arg(dongles.length))
+                }
                 updateState()
             })
             localEndpoint.nodesChanged.connect(function () {
-                nodes = localEndpoint.nodes
+                nodes = null
+                if(localEndpoint)
+                    nodes = localEndpoint.nodes
                 updateState()
             })
         })

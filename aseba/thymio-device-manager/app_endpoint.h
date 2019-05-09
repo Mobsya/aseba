@@ -273,6 +273,17 @@ public:
                 break;
             }
 
+            case mobsya::fb::AnyMessage::Thymio2WirelessDonglePairingRequest: {
+                auto req = msg.as<fb::Thymio2WirelessDonglePairingRequest>();
+                if(!req->node_id() || !req->dongle_id()) {
+                    write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
+                    break;
+                }
+                this->pair_thymio2_and_dongle(req->request_id(), req->dongle_id(), req->node_id(), req->network_id(),
+                                              req->channel_id());
+                break;
+            }
+
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
     }
@@ -727,6 +738,25 @@ private:
         }
     }
 
+    void pair_thymio2_and_dongle(uint32_t request_id, node_id dongle_id, node_id robot_id, uint16_t network_id,
+                                 uint8_t channel) {
+        auto dongle = registery().thymio2_wireless_dongle(dongle_id);
+        auto node = registery().node_from_id(robot_id);
+        if(!dongle || !node) {
+            // error
+            return;
+        }
+        aseba_endpoint::wireless_settings settings = dongle->wireless_get_settings();
+        if(!dongle->wireless_set_settings(network_id, settings.dongle_id, channel)) {
+            // error
+            return;
+        }
+        settings = dongle->wireless_get_settings();
+        if(!node->set_rf_settings(settings.network_id, 4242, settings.channel)) {
+            // error
+            return;
+        }
+    }
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
         auto group = registery().group_from_id(id);
         auto node = registery().node_from_id(id);

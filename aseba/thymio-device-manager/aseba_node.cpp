@@ -773,12 +773,12 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
             return;
         const auto d = (uint16_t*)info.data.data();
         m_th2_rfid_settings = {bswap16(d[0]), bswap16(d[1]), bswap16(d[2])};
-        mLogInfo("node {} : net node={}, network={}, channel={}", native_id(), m_th2_rfid_settings.node_id,
+        mLogInfo("node {} : net node={:x}, network={}, channel={}", native_id(), m_th2_rfid_settings.node_id,
                  m_th2_rfid_settings.network_id, m_th2_rfid_settings.channel);
     }
 }
 
-bool aseba_node::set_rf_settings(uint16_t network, uint16_t channel, uint16_t node) {
+bool aseba_node::set_rf_settings(uint16_t network, uint16_t node, uint8_t channel) {
     if(m_description.protocolVersion < 9)
         return false;
     if(node == 0)
@@ -788,7 +788,11 @@ bool aseba_node::set_rf_settings(uint16_t network, uint16_t channel, uint16_t no
     (uint16_t&)(*(data.data())) = bswap16(network);
     (uint16_t&)(*(data.data() + 2)) = bswap16(node);
     (uint16_t&)(*(data.data() + 4)) = bswap16(channel);
+
+    auto ep = endpoint();
+
     write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS, data));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     write_message(std::make_shared<Aseba::Reboot>(native_id()));
     return true;
 }
