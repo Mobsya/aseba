@@ -167,6 +167,7 @@ public:
     void start();
     void stop();
     void cancel_all_ops();
+    void free_endpoint();
     void reboot();
 
     template <typename CB = write_callback>
@@ -342,6 +343,10 @@ private:
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
                     it = m_nodes.erase(it);
+
+                    if(!is_wireless())
+                        this->cancel_all_ops();
+
                 } else {
                     ++it;
                 }
@@ -354,6 +359,8 @@ private:
 
     // Do not run pings / health check for usb-connected nodes
     bool needs_health_check() const {
+        if(variant_ns::holds_alternative<tcp_socket>(m_endpoint))
+            return true;
 #ifdef MOBSYA_TDM_ENABLE_USB
         return variant_ns::holds_alternative<usb_device>(m_endpoint) &&
             usb().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
@@ -379,7 +386,6 @@ private:
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
         mLogDebug("Message '{}' sent : {}", m_msg_queue.front().first->message_name(), ec.message());
         if(ec) {
-            variant_ns::visit([](auto& underlying) { underlying.cancel(); }, m_endpoint);
             m_msg_queue = {};
             return;
         }

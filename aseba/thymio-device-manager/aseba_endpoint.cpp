@@ -8,6 +8,7 @@
 #ifdef MOBSYA_TDM_ENABLE_USB
 #    include "usbacceptor.h"
 #endif
+#include "aseba_tcpacceptor.h"
 
 #include "aseba_node_registery.h"
 
@@ -15,11 +16,13 @@ namespace mobsya {
 
 
 aseba_endpoint::~aseba_endpoint() {
+    mLogInfo("Destroying endpoint");
     std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
     boost::asio::post([ctx = &m_io_context]() {
         auto& registery = boost::asio::use_service<aseba_node_registery>(*ctx);
         registery.unregister_expired_endpoints();
     });
+    free_endpoint();
 }
 
 aseba_endpoint::aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type)
@@ -69,14 +72,37 @@ void aseba_endpoint::start() {
 }
 
 void aseba_endpoint::cancel_all_ops() {
-    // serial().cancel();
+    boost::system::error_code ec;
+    variant_ns::visit([&ec](auto& underlying) { return underlying.cancel(); }, m_endpoint);
     m_msg_queue.clear();
+}
+
+void aseba_endpoint::free_endpoint() {
+    variant_ns::visit(
+        overloaded{[this](tcp_socket& socket) {
+                       boost::asio::use_service<aseba_tcp_acceptor>(m_io_context).free_endpoint(this);
+                   }
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+                   ,
+                   [this](mobsya::usb_serial_port& d) {
+                       boost::asio::use_service<serial_acceptor_service>(m_io_context).free_device(d.device_path());
+                   }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_USB
+                   ,
+                   [this](mobsya::usb_device& d) {
+                       boost::asio::use_service<usb_acceptor_service>(m_io_context)
+                           .free_device(libusb_get_device(d.native_handle()));
+                   }
+#endif
+        },
+        m_endpoint);
 }
 
 void aseba_endpoint::stop() {
     // serial().cancel();
     // serial().close();
-    // boost::asio::use_service<serial_acceptor_service>(m_io_context).free_device(serial().device_path());
+    // ;
 }
 
 
@@ -295,8 +321,7 @@ bool aseba_endpoint::upgrade_firmware(
                                 cb(err, progress, complete);
                                 // mark the associated device path as unconnected and start accepting devices again
                                 if(err || complete) {
-                                    boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context)
-                                        .free_device(libusb_get_device(ptr->usb().native_handle()));
+                                    ptr->free_endpoint();
                                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
@@ -318,8 +343,7 @@ bool aseba_endpoint::upgrade_firmware(
                                 cb(err, progress, complete);
                                 // mark the associated device path as unconnected and start accepting devices again
                                 if(err || complete) {
-                                    boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context)
-                                        .free_device(ptr->serial().device_path());
+                                    ptr->free_endpoint();
                                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
