@@ -14,17 +14,17 @@
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="99"/>
         <source>This device cannot be selected because it is in a group</source>
-        <translation>Questo  robot non può essere selezionato perché si trova in un gruppo</translation>
+        <translation>Non puoi scegliere il robot perché appartiene ad un gruppo</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="102"/>
         <source>This device cannot be selected because it is already being used</source>
-        <translation>Questo robot non può essere selezionato perché è già in uso</translation>
+        <translation>Non puoi scegliere questo robot perché risulta in uso da parte di una diversa applicazione</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="176"/>
         <source>A new firmware is available!</source>
-        <translation>È disponibile un nuovo firmware!</translation>
+        <translation>È disponibile un nuovo firmware. Clicca per procedere con l&apos;upgrade</translation>
     </message>
 </context>
 <context>
@@ -32,7 +32,7 @@
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="147"/>
         <source>Choose a Thymio</source>
-        <translation>Scegliere un Thymio</translation>
+        <translation>Scegli un Thymio</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="172"/>
@@ -45,7 +45,7 @@
     <message>
         <location filename="../launcher.cpp" line="82"/>
         <source>Save %1</source>
-        <translation>Salvare %1</translation>
+        <translation>Salva %1</translation>
     </message>
 </context>
 </TS>

@@ -24,7 +24,7 @@
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="176"/>
         <source>A new firmware is available!</source>
-        <translation>Un nouveau firmware est disponible !</translation>
+        <translation>Un nouveau firmware est disponible. Cliquer ici pour faire l&apos;upgrade</translation>
     </message>
 </context>
 <context>
@@ -37,7 +37,7 @@
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="172"/>
         <source>Launch %1</source>
-        <translation>Lancez %1</translation>
+        <translation>Lancer %1</translation>
     </message>
 </context>
 <context>
@@ -45,7 +45,7 @@
     <message>
         <location filename="../launcher.cpp" line="82"/>
         <source>Save %1</source>
-        <translation>Sauvegardez %1</translation>
+        <translation>Sauvegarder %1</translation>
     </message>
 </context>
 </TS>
