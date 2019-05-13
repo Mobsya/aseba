@@ -948,7 +948,7 @@ Znalezione</translation>
     <message>
         <location filename="../../studio/NodeTab.cpp" line="420"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
-        <translation>&lt;b styl=&apos;kolor:#CA3433&apos;&gt;Nie podłączony&lt;/b&gt;</translation>
+        <translation>&lt;b styl=&apos;kolor:#CA3433&apos;&gt;Niepodłączony&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../../studio/NodeTab.cpp" line="429"/>
@@ -968,7 +968,7 @@ Znalezione</translation>
     <message>
         <location filename="../../studio/NodeTab.cpp" line="439"/>
         <source>(Not Locked)</source>
-        <translation>(Nie zamknięty)</translation>
+        <translation>(Niezamknięty)</translation>
     </message>
     <message>
         <location filename="../../studio/NodeTab.cpp" line="443"/>
@@ -1039,7 +1039,7 @@ Znalezione</translation>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="24"/>
         <source>Values</source>
-        <translation>Wartość</translation>
+        <translation>Wartości</translation>
     </message>
 </context>
 <context>
@@ -1101,12 +1101,12 @@ Znalezione</translation>
     <message>
         <location filename="../../vpl/Block.cpp" line="128"/>
         <source>tap detection / tilt</source>
-        <translation>wykrywanie stuknięć / trzęsienia</translation>
+        <translation>wykrycie wstrząsu / nachylenia</translation>
     </message>
     <message>
         <location filename="../../vpl/Block.cpp" line="130"/>
         <source>clap detection</source>
-        <translation>wykrywanie klaskania</translation>
+        <translation>wykrycie klaśnięcia</translation>
     </message>
     <message>
         <location filename="../../vpl/Block.cpp" line="132"/>
