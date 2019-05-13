@@ -59,6 +59,12 @@ public:
 #endif
     }
 
+    void purge() {
+#ifdef _WIN32
+        PurgeComm(native_handle(), PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_RXABORT);
+#endif
+    }
+
 private:
     friend class serial_acceptor_service;
     usb_device_identifier m_device_id;

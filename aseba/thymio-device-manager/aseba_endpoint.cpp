@@ -228,15 +228,7 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
         if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
             boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(true);
             boost::system::error_code ec;
-            serial().close(ec);
-            mLogError("{}", ec.message());
-            do {
-                ec = {};
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                serial().open(ec);
-                mLogError("{}", ec.message());
-            } while(ec);
-
+            serial().purge();
             serial().set_rts(enable);
             serial().set_data_terminal_ready(!enable);
             boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(false);
