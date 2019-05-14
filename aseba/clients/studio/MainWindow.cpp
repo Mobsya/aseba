@@ -153,7 +153,7 @@ void MainWindow::openFile(const QString& path) {
         return;
 
     for(auto&& tab : nodes->devicesTabs()) {
-        tab->editor->clear();
+        tab->clearEverything();
     }
 
     // open the file
@@ -185,6 +185,8 @@ void MainWindow::openFile(const QString& path) {
     QFile file(fileName);
     if(!file.open(QFile::ReadOnly))
         return;
+
+    actualFileName = fileName;
 
     auto groups = nodes->groups();
     if(groups.size() != 1)
