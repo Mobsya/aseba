@@ -768,7 +768,7 @@ private:
         auto n = boost::asio::use_service<aseba_nodeid_generator>(m_ctx).generate();
 
         settings = dongle->wireless_get_settings();
-        if(!node->set_rf_settings(settings.network_id, node->native_id(), channel)) {
+        if(!node->set_rf_settings(settings.network_id, node->native_id(), settings.channel)) {
             // error
             return;
         }
