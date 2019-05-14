@@ -277,10 +277,9 @@ bool aseba_endpoint::sync_wireless_dongle_settings(bool flash) {
     return res;
 }
 
-bool aseba_endpoint::wireless_set_settings(uint16_t networkId, uint16_t dongleId, uint8_t channel) {
+bool aseba_endpoint::wireless_set_settings(uint16_t networkId, uint8_t channel) {
     m_wireless_dongle_settings->data.ctrl = 0;
     m_wireless_dongle_settings->data.channel = 15 + 5 * channel;
-    m_wireless_dongle_settings->data.nodeId = dongleId;
     m_wireless_dongle_settings->data.panId = networkId;
     return sync_wireless_dongle_settings(true);
 }
