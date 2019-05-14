@@ -750,18 +750,30 @@ private:
         auto d = boost::asio::use_service<aseba_nodeid_generator>(m_ctx).generate();
 
         aseba_endpoint::wireless_settings settings = dongle->wireless_get_settings();
-        if(settings.network_id != network_id && !dongle->wireless_set_settings(network_id, d, channel)) {
-            // error
-            return;
+
+        mLogTrace("Current wireless settings: node id   = {}, network id = {}", settings.dongle_id,
+                  settings.network_id);
+
+        if(settings.network_id != network_id) {
+            if(!dongle->wireless_set_settings(network_id, channel)) {
+                // error
+                return;
+                settings = dongle->wireless_get_settings();
+                mLogTrace("new wireless settings: node id   = {}, network id = {}", settings.dongle_id,
+                          settings.network_id);
+            }
         }
+
 
         auto n = boost::asio::use_service<aseba_nodeid_generator>(m_ctx).generate();
 
         settings = dongle->wireless_get_settings();
-        if(!node->set_rf_settings(settings.network_id, n, channel)) {
+        if(!node->set_rf_settings(settings.network_id, node->native_id(), channel)) {
             // error
             return;
         }
+        mLogTrace("New wireless setting for node: node id   = {}, network id = {}, channel = {}", node->native_id(),
+                  settings.network_id, channel);
     }
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
         auto group = registery().group_from_id(id);

@@ -151,7 +151,7 @@ public:
         uint8_t channel = 0;
     };
 
-    bool wireless_set_settings(uint16_t network_id, uint16_t dongle_id, uint8_t channel);
+    bool wireless_set_settings(uint16_t network_id, uint8_t channel);
     wireless_settings wireless_get_settings();
 
     bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb,
