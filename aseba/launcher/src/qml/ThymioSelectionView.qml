@@ -53,8 +53,8 @@ Item {
         }
 
         SvgButton {
-            source: "qrc:/assets/vertical-close.svg"
-            height: 12
+            source: "qrc:/assets/launcher-icon-close.svg"
+            height: 22
             width : 22
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
