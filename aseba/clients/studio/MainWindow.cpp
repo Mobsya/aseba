@@ -136,11 +136,9 @@ void MainWindow::about() {
 
 bool MainWindow::newFile() {
     if(askUserBeforeDiscarding()) {
-        // clear content
-        clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
         for(auto&& tab : nodes->devicesTabs()) {
-            tab->editor->clear();
+            tab->clearEverything();
         }
         // reset opened file name
         clearOpenedFileName(false);
@@ -534,27 +532,6 @@ void MainWindow::sourceChanged() {
     updateWindowTitle();
 }
 
-void MainWindow::clearDocumentSpecificTabs() {
-    /*bool changed = false;
-    do {
-        changed = false;
-        for(int i = 0; i < nodes->count(); i++) {
-            QWidget* tab = nodes->widget(i);
-
-#ifdef HAVE_QWT
-            if(dynamic_cast<AbsentNodeTab*>(tab) || dynamic_cast<EventViewer*>(tab))
-#else   // HAVE_QWT
-            if(dynamic_cast<AbsentNodeTab*>(tab))
-#endif  // HAVE_QWT
-            {
-                nodes->removeAndDeleteTab(i);
-                changed = true;
-                break;
-            }
-        }
-    } while(changed);*/
-}
-
 void MainWindow::setupWidgets() {
     currentScriptTab = nullptr;
     nodes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -562,13 +539,6 @@ void MainWindow::setupWidgets() {
     auto* splitter = new QSplitter();
     splitter->addWidget(nodes);
     setCentralWidget(splitter);
-
-#ifdef HAVE_QWT
-    plotEventButton = new QPushButton(QPixmap(QString(":/images/plot.png")), "");
-    plotEventButton->setEnabled(false);
-    plotEventButton->setToolTip(tr("Plot this event"));
-#endif  // HAVE_QWT
-
 
     // dialog box
     compilationMessageBox = new CompilationLogDialog(this);

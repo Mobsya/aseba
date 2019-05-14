@@ -319,6 +319,11 @@ Request ThymioGroup::removeEvent(const QString& name) {
     return m_endpoint->setNodeEventsTable(m_group_id, table);
 }
 
+Q_INVOKABLE Request ThymioGroup::clearEventsAndVariables() {
+    m_endpoint->setNodeEventsTable(m_group_id, {});
+    return m_endpoint->setGroupVariables(*this, {});
+}
+
 QVector<EventDescription> ThymioGroup::eventsDescriptions() const {
     return m_events_table;
 }

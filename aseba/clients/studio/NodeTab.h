@@ -48,6 +48,8 @@ public:
     const std::shared_ptr<const mobsya::ThymioNode> thymio() const;
     QVariantMap getVariables() const;
 
+    void clearEverything();
+
 Q_SIGNALS:
     void uploadReadynessChanged(bool);
     void compilationSucceed();
