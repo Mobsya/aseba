@@ -8,6 +8,7 @@
 #include "flatbuffers_message_reader.h"
 #include "flatbuffers_messages.h"
 #include "aseba_node_registery.h"
+#include "aseba_nodeid_generator.h"
 #include "tdm.h"
 #include "log.h"
 #include "app_token_manager.h"
@@ -746,13 +747,18 @@ private:
             // error
             return;
         }
+        auto d = boost::asio::use_service<aseba_nodeid_generator>(m_ctx).generate();
+
         aseba_endpoint::wireless_settings settings = dongle->wireless_get_settings();
-        if(!dongle->wireless_set_settings(network_id, settings.dongle_id, channel)) {
+        if(settings.network_id != network_id && !dongle->wireless_set_settings(network_id, d, channel)) {
             // error
             return;
         }
+
+        auto n = boost::asio::use_service<aseba_nodeid_generator>(m_ctx).generate();
+
         settings = dongle->wireless_get_settings();
-        if(!node->set_rf_settings(settings.network_id, 4242, settings.channel)) {
+        if(!node->set_rf_settings(settings.network_id, n, channel)) {
             // error
             return;
         }

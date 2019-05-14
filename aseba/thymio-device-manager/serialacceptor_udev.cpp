@@ -61,8 +61,12 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
 
 
     boost::system::error_code ec;
+    auto n = udev_device_get_devnode(dev);
+    if(!n)
+        return false;
+
     r.d.m_device_name = s;
-    r.d.m_port_name = udev_device_get_devnode(dev);
+    r.d.m_port_name = n;
     r.d.m_device_id = id;
     r.d.open(ec);
     if(ec) {

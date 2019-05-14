@@ -91,8 +91,10 @@ void aseba_endpoint::free_endpoint() {
 #ifdef MOBSYA_TDM_ENABLE_USB
                    ,
                    [this](mobsya::usb_device& d) {
-                       boost::asio::use_service<usb_acceptor_service>(m_io_context)
-                           .free_device(libusb_get_device(d.native_handle()));
+                       if(d.native_handle()) {
+                           boost::asio::use_service<usb_acceptor_service>(m_io_context)
+                               .free_device(libusb_get_device(d.native_handle()));
+                       }
                    }
 #endif
         },
@@ -108,9 +110,20 @@ void aseba_endpoint::stop() {
 
 void aseba_endpoint::reboot() {
     if(m_nodes.size() == 1) {
-        write_message(std::make_shared<Aseba::Reboot>(m_nodes.begin()->second.node->native_id()));
+        const auto id = m_nodes.begin()->second.node->native_id();
+        std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
+        m_nodes.clear();
+        write_message(std::make_shared<Aseba::Reboot>(id));
     }
     m_rebooting = true;
+    auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+    timer->expires_from_now(boost::posix_time::seconds(1));
+    timer->async_wait([timer, ptr = weak_from_this()](boost::system::error_code ec) {
+        if(auto that = ptr.lock()) {
+            that->m_rebooting = false;
+            that->start();
+        }
+    });
 }
 
 std::optional<std::pair<Aseba::EventDescription, std::size_t>>
@@ -218,8 +231,7 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
         m_wireless_dongle_settings->cfg_mode = enable;
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
-            usb().close();
-            usb().open();
+            usb().cancel();
             usb().set_rts(enable);
             usb().set_data_terminal_ready(!enable);
         }
@@ -268,7 +280,7 @@ bool aseba_endpoint::sync_wireless_dongle_settings(bool flash) {
 bool aseba_endpoint::wireless_set_settings(uint16_t networkId, uint16_t dongleId, uint8_t channel) {
     m_wireless_dongle_settings->data.ctrl = 0;
     m_wireless_dongle_settings->data.channel = 15 + 5 * channel;
-    m_wireless_dongle_settings->data.nodeId = 1024;
+    m_wireless_dongle_settings->data.nodeId = dongleId;
     m_wireless_dongle_settings->data.panId = networkId;
     return sync_wireless_dongle_settings(true);
 }

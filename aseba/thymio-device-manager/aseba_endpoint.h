@@ -259,7 +259,7 @@ public:
             // Update node status
             it->second.last_seen = std::chrono::steady_clock::now();
         }
-        if(m_rebooting || m_upgrading_firmware || this->wireless_cfg_mode_enabled())
+        if(is_rebooting() || this->wireless_cfg_mode_enabled())
             return;
         read_aseba_message();
     }
@@ -296,7 +296,7 @@ private:
     }
 
     void schedule_send_ping(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
-        if(m_rebooting || wireless_cfg_mode_enabled() || m_upgrading_firmware)
+        if(is_rebooting() || wireless_cfg_mode_enabled())
             return;
 
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
@@ -324,7 +324,7 @@ private:
     }
 
     void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(5)) {
-        if(m_rebooting || wireless_cfg_mode_enabled() || m_upgrading_firmware)
+        if(wireless_cfg_mode_enabled() || m_upgrading_firmware)
             return;
 
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
@@ -338,7 +338,7 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(!m_rebooting && !m_upgrading_firmware && !wireless_cfg_mode_enabled() && d.count() >= 5) {
+                if(!is_rebooting() && !wireless_cfg_mode_enabled() && d.count() >= 5) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
@@ -399,8 +399,7 @@ private:
     }
 
     void write_next() {
-        if(m_rebooting && m_msg_queue.empty()) {
-            stop();
+        if(is_rebooting() && m_msg_queue.empty()) {
             return;
         }
 
@@ -425,6 +424,10 @@ private:
     }
 
     void restore_firmware();
+
+    bool is_rebooting() const {
+        return m_upgrading_firmware || m_rebooting;
+    }
 
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
