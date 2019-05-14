@@ -158,6 +158,18 @@ void NodeTab::reset() {
     currentPC = -1;
 }
 
+
+void NodeTab::clearEverything() {
+    editor->clear();
+    if(m_thymio) {
+        m_thymio->group()->clearEventsAndVariables();
+    } else {
+        m_events_model.clear();
+        m_constants_model.clear();
+    }
+    reset();
+}
+
 void NodeTab::run() {
     if(!m_thymio) {
         return;
