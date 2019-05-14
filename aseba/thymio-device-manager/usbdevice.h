@@ -7,6 +7,7 @@
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/beast/core/detail/type_traits.hpp>
 #include <boost/bind.hpp>
+#include <map>
 
 // Include asio before libusb !
 #include <libusb/libusb.h>
@@ -53,9 +54,10 @@ public:
 
 
         void read(const boost::asio::mutable_buffer& b) {
-            const auto n = b.size();
+            const auto n = std::min(b.size(), v.size());
             std::copy(v.data(), v.data() + n, static_cast<uint8_t*>(b.data()));
-            std::vector<uint8_t>(v.begin() + n, v.end()).swap(v);
+            auto tmp = std::vector<uint8_t>(v.begin() + n, v.end());
+            v = std::move(tmp);
             s -= n;
         }
 
@@ -92,6 +94,8 @@ public:
         std::size_t read_size = 0;
         std::size_t write_size = 0;
         buffer read_buffer;
+        std::vector<libusb_transfer*> transfers;
+        std::map<std::shared_ptr<buffer>, bool> buffers_pool;
     };
     void construct(implementation_type&);
     void move_construct(implementation_type& impl, implementation_type& other_impl);
@@ -144,7 +148,6 @@ private:
     bool send_encoding(implementation_type& impl);
 };
 
-
 class usb_device : public boost::asio::basic_io_object<usb_device_service> {
     using ReadDirection = std::true_type;
     using WriteDirection = std::false_type;
@@ -160,7 +163,8 @@ public:
     using lowest_layer_type = usb_device;
 
     usb_device(boost::asio::io_context& io_context);
-    usb_device(usb_device&&) = default;
+    ~usb_device();
+    usb_device(usb_device&&);
     void assign(libusb_device*);
     void cancel();
     void close();
@@ -316,7 +320,38 @@ usb_device_service::read_some(implementation_type& impl, const MutableBufferSequ
     }
     return total_read;
 }
+
 namespace detail {
+
+    inline usb_device_service::buffer* alloc_buffer(usb_device_service::implementation_type& impl, std::size_t size) {
+        auto it = std::find_if(impl.buffers_pool.begin(), impl.buffers_pool.end(),
+                               [](const auto& p) { return p.second == true; });
+        if(it == impl.buffers_pool.end()) {
+            it = impl.buffers_pool.emplace(std::make_shared<usb_device_service::buffer>(), true).first;
+        }
+        it->second = false;
+        usb_device_service::buffer* b = it->first.get();
+        b->reserve(size, impl.read_size);
+        return b;
+    }
+    inline void commit_buffer(usb_device_service::implementation_type& impl, uint8_t* head, std::size_t size) {
+        auto it = std::find_if(impl.buffers_pool.begin(), impl.buffers_pool.end(),
+                               [head](const auto& p) { return p.first->write_begin() == head; });
+        assert(it != impl.buffers_pool.end());
+        impl.read_buffer.reserve(impl.read_size, size);
+        std::copy(head, head + size, impl.read_buffer.write_begin());
+        impl.read_buffer.commit(size);
+        impl.buffers_pool.erase(it);
+    }
+
+    inline void release(usb_device_service::implementation_type& impl, uint8_t* head) {
+        auto it = std::find_if(impl.buffers_pool.begin(), impl.buffers_pool.end(),
+                               [head](const auto& p) { return p.first->write_begin() == head; });
+        assert(it != impl.buffers_pool.end());
+        impl.buffers_pool.erase(it);
+    }
+
+
     template <typename BufferSequence, typename Callback, typename TransferDirection>
     void prepare_transfer(usb_device_service::implementation_type& impl, libusb_transfer* transfer,
                           const BufferSequence& buffers, std::size_t& index, Callback&& cb, void* user_data) {
@@ -328,9 +363,9 @@ namespace detail {
             auto to_read = std::accumulate(it, boost::asio::buffer_sequence_end(buffers), std::size_t{0},
                                            [](const auto& a, const auto& b) { return a + b.size(); });
 
-            impl.read_buffer.reserve(to_read, impl.read_size);
-            buffer_size = impl.read_buffer.write_capacity();
-            buffer = impl.read_buffer.write_begin();
+            auto b = alloc_buffer(impl, to_read);
+            buffer_size = b->write_capacity();
+            buffer = b->write_begin();
             address = impl.in_address;
 
         } else {
@@ -383,12 +418,16 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
         const auto deleter = [dev = &d->device](libusb_transfer* t) { dev->free_transfer(t); };
         auto transfer = std::unique_ptr<libusb_transfer, decltype(deleter)>{transfer_, deleter};
 
+        auto& impl = d->device.get_implementation();
+        auto it = std::find(impl.transfers.begin(), impl.transfers.end(), transfer_);
+        if(it != impl.transfers.end())
+            impl.transfers.erase(it);
+
         // Successful transfer and full buffer => read some more in the next buffer
         if(transfer->status == LIBUSB_TRANSFER_COMPLETED) {
             auto it = boost::asio::buffer_sequence_begin(d->seq) + d->idx;
-            auto& impl = d->device.get_implementation();
             if constexpr(TransferDirection::value) {
-                impl.read_buffer.commit(transfer->actual_length);
+                detail::commit_buffer(impl, transfer->buffer, transfer->actual_length);
                 usb_device_service& service = d->device.get_service();
                 it = service.read_from_buffer<BufferSequence>(impl, it, boost::asio::buffer_sequence_end(d->seq),
                                                               d->total_transfered);
@@ -405,6 +444,7 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
                                          TransferDirection>(impl, transfer.get(), d->seq, d->idx,
                                                             (libusb_transfer_cb_fn)transfer->callback,
                                                             transfer->user_data);
+                impl.transfers.push_back(transfer.get());
                 libusb_submit_transfer(transfer.release());
                 d.release();
                 return;
@@ -412,6 +452,7 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
         }
         boost::system::error_code ec;
         if(transfer->status != LIBUSB_TRANSFER_COMPLETED) {
+            detail::release(impl, transfer->buffer);
             ec = usb::make_error_code_from_transfer(transfer->status);
         }
 
@@ -442,6 +483,7 @@ void usb_device::async_transfer_some(const BufferSequence& buffers, CompletionHa
             data->device.get_executor(),
             boost::beast::bind_handler(std::forward<CompletionHandler>(handler), usb::make_error_code(r), 0));
     } else {
+        impl.transfers.push_back(transfer);
         data.release();
     }
 }

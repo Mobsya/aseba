@@ -34,10 +34,12 @@ void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
 void usb_device_service::cancel(implementation_type& impl) {
     close(impl);
     open(impl);
-    impl.read_buffer = {};
 }
 
 void usb_device_service::close(implementation_type& impl) {
+    for(auto&& t : impl.transfers)
+        libusb_cancel_transfer(t);
+    impl.transfers.clear();
     if(impl.handle) {
         libusb_close(impl.handle);
         m_context->mark_not_open(impl.device);
@@ -45,6 +47,8 @@ void usb_device_service::close(implementation_type& impl) {
     }
     impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
     impl.read_buffer = {};
+    impl.rts = false;
+    impl.dtr = false;
 }
 
 bool usb_device_service::is_open(implementation_type& impl) {
@@ -188,6 +192,13 @@ bool usb_device_service::send_encoding(implementation_type& impl) {
 
 usb_device::usb_device(boost::asio::io_context& io_context)
     : boost::asio::basic_io_object<usb_device_service>(io_context) {}
+
+
+usb_device::~usb_device() {
+    close();
+}
+
+usb_device::usb_device(usb_device&&) = default;
 
 void usb_device::assign(libusb_device* d) {
     this->get_service().assign(this->get_implementation(), d);

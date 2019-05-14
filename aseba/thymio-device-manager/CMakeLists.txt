@@ -15,6 +15,7 @@ add_library(thymio-device-manager-lib STATIC
     aseba_message_writer.h
     aseba_node_registery.h
     aseba_node_registery.cpp
+    aseba_nodeid_generator.h
     uuid_provider.h
     aseba_endpoint.h
     aseba_endpoint.cpp

@@ -793,7 +793,7 @@ bool aseba_node::set_rf_settings(uint16_t network, uint16_t node, uint8_t channe
 
     write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS, data));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    write_message(std::make_shared<Aseba::Reboot>(native_id()));
+    endpoint()->reboot();
     return true;
 }
 
