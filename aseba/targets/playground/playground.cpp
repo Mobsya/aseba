@@ -138,11 +138,18 @@ int main(int argc, char* argv[]) {
     do {
         if(ask) {
             QString lastFileName = QSettings("EPFL-LSRO-Mobots", "Aseba Playground").value("last file").toString();
-            auto loc = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+            if(lastFileName.isEmpty()) {
 
-            if(lastFileName.isEmpty() && !loc.empty())
+
+//On windows goo loog for scenarios in the examples folder
+#ifdef Q_OS_WIN32
+            lastFileName = QCoreApplication::applicationDirPath() + "/../examples/";
+#else
+            auto loc = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+            if(!loc.empty())
                 lastFileName = loc.first();
-
+#endif
+            }
 
             sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
                                                          app.tr("playground scenario (*.playground)"));
