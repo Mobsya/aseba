@@ -273,7 +273,7 @@ void aseba_node::set_vm_execution_state(vm_execution_state_command state, write_
         case vm_execution_state_command::Stop:
             compile_and_send_aseba_command(R"(
                                          motor.left.target = 0
-                                         motor.left.target = 0 )");
+                                         motor.right.target = 0 )");
             write_message(std::make_shared<Aseba::Run>(native_id()), std::move(cb));
             write_message(std::make_shared<Aseba::Stop>(native_id()), std::move(cb));
             break;
