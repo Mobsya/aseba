@@ -298,9 +298,11 @@ void NodeTab::updateMemoryUsage(const mobsya::CompilationResult& res) {
 void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
 
     m_hasCompilationError = !res.success();
-    compilationResultText->setVisible(!res.success());
-    compilationResultImage->setVisible(!res.success());
+    compilationResultText->setVisible(true);
+    compilationResultImage->setVisible(true);
     if(res.success()) {
+        compilationResultText->setText(tr("Compilation Success"));
+        compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/ok.png")));
         return;
     }
     compilationResultText->setText(res.error().errorMessage());
