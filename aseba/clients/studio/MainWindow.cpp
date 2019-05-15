@@ -187,6 +187,8 @@ void MainWindow::openFile(const QString& path) {
         return;
 
     actualFileName = fileName;
+    updateRecentFiles(actualFileName);
+    updateWindowTitle();
 
     auto groups = nodes->groups();
     if(groups.size() != 1)
