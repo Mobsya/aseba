@@ -14,6 +14,7 @@ Item {
         sourceSize: Qt.size(width, height)
         antialiasing: true
         mipmap:true
+        smooth:true
     }
     MouseArea {
         id: mouse_area
