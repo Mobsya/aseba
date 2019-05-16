@@ -206,10 +206,8 @@ bool MainWindow::save() {
 
 bool MainWindow::saveFile(const QString& previousFileName) {
 
-    const auto groups = nodes->groups();
-    if(groups.size() != 1)
+    if(ranges::empty(nodes->devicesTabs()))
         return false;
-    const auto group = groups.front();
 
     QString fileName = previousFileName;
 
@@ -242,14 +240,25 @@ bool MainWindow::saveFile(const QString& previousFileName) {
     root.appendChild(document.createComment("list of global events"));
 
 
-    for(auto&& e : group->eventsDescriptions()) {
+    std::map<QString, mobsya::EventDescription> events;
+    std::map<QString, mobsya::ThymioVariable> sharedVariables;
+    for(auto&& tab : nodes->devicesTabs()) {
+        auto nodeEvents = tab->eventsDescriptions();
+        for(auto&& event : nodeEvents) {
+            events.emplace(event.name(), event);
+        }
+        auto nodeSharedVars = tab->groupVariables().toStdMap();
+        sharedVariables.insert(nodeSharedVars.begin(), nodeSharedVars.end());
+    }
+
+    for(auto&& e : events) {
         QDomElement element = document.createElement("event");
-        element.setAttribute("name", e.name());
-        element.setAttribute("size", e.size());
+        element.setAttribute("name", e.second.name());
+        element.setAttribute("size", e.second.size());
         root.appendChild(element);
     }
 
-    for(auto&& v : group->sharedVariables().toStdMap()) {
+    for(auto&& v : sharedVariables) {
         QDomElement element = document.createElement("constant");
         element.setAttribute("name", v.first);
         element.setAttribute("value", v.second.value().toInt());
@@ -279,9 +288,6 @@ bool MainWindow::saveFile(const QString& previousFileName) {
     QTextStream out(&file);
     document.save(out, 0);
 
-    // sourceModified = false;
-    // constantsDefinitionsModel->clearWasModified();
-    // eventsDescriptionsModel->clearWasModified();
     updateWindowTitle();
 
     return true;

@@ -502,6 +502,7 @@ void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
 }
 
 void NodeTab::onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    m_group_variables = vars;
     m_constants_model.clear();
     for(auto it = vars.begin(); it != vars.end(); ++it) {
         it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
@@ -546,7 +547,16 @@ QVariantMap NodeTab::getVariables() const {
     return m_vm_variables_model.getVariables();
 }
 
+QVector<mobsya::EventDescription> NodeTab::eventsDescriptions() const {
+    return m_events_descriptions;
+}
+
+mobsya::ThymioNode::VariableMap NodeTab::groupVariables() const {
+    return m_group_variables;
+}
+
 void NodeTab::onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events) {
+    m_events_descriptions = events;
     m_events_model.clear();
     for(const auto& e : events) {
         m_events_model.addVariable(e.name(), e.size());
