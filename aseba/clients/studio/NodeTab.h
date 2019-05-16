@@ -50,6 +50,9 @@ public:
 
     void clearEverything();
 
+    QVector<mobsya::EventDescription> eventsDescriptions() const;
+    mobsya::ThymioNode::VariableMap groupVariables() const;
+
 Q_SIGNALS:
     void uploadReadynessChanged(bool);
     void compilationSucceed();
@@ -164,10 +167,12 @@ private:
     ConstantsModel m_constants_model;
     ConstantsWidget* m_constantsWidget;
 
-
     MaskableVariablesModel m_events_model;
     EventsWidget* m_eventsWidget;
 
+
+    mobsya::ThymioNode::VariableMap m_group_variables;
+    QVector<mobsya::EventDescription> m_events_descriptions;
 
     QLabel* cursorPosText;
     QLabel* compilationResultImage;
