@@ -54,7 +54,9 @@ public:
     Request emitNodeEvents(const ThymioNode& node, const ThymioNode::EventMap& vars);
     Request setScratchPad(const QUuid& id, const QByteArray& data, fb::ProgrammingLanguage language);
     Request upgradeFirmware(const QUuid& id);
-    Q_INVOKABLE Request pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId, quint16 networkId,
+
+    Thymio2WirelessDongleInfoRequest requestDongleInfo(const QUuid& uuid);
+    Request pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId, quint16 networkId,
                                             quint8 channel);
 
 

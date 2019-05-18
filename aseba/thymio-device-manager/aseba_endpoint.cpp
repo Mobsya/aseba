@@ -47,14 +47,6 @@ aseba_endpoint::pointer aseba_endpoint::create_for_tcp(boost::asio::io_context& 
 
 
 void aseba_endpoint::start() {
-    // Briefly put the dongle (if  any) in configuration
-    // Mode to read its settings
-    if(is_wireless()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        auto settings = this->wireless_get_settings();
-        mLogInfo("Thymio 2 Dongle Wireless settings: network: {:x}, channel: {}", settings.network_id,
-                 settings.channel);
-    }
 
     auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_context);
     registery.register_endpoint(shared_from_this());
