@@ -276,7 +276,7 @@ void group::assign_scratchpads() {
 
     auto free_nodes = [&] {
         auto used = m_scratchpads | ranges::view::transform([](const scratchpad& s) { return s.nodeid; }) |
-            ranges::view::remove_if([](const node_id& id) { return id.is_nil(); }) | ranges::to_<std::vector>();
+            ranges::view::remove_if([](const node_id& id) { return id.is_nil(); }) | ranges::to<std::vector>();
         return connected_nodes | ranges::view::remove_if([used](const aseba_node& node) {
                    return ranges::find(used, node.uuid()) != ranges::end(used);
                });

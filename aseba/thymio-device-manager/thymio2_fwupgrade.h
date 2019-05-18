@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
-#include <range/v3/to_container.hpp>
-#include <range/v3/span.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/span.hpp>
 #include "utils.h"
 #include "log.h"
 #ifdef MOBSYA_TDM_ENABLE_USB

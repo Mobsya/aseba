@@ -3,7 +3,7 @@
 #include <boost/asio/use_future.hpp>
 #include <boost/thread/future.hpp>
 #include <vector>
-#include <range/v3/span.hpp>
+#include <range/v3/view/span.hpp>
 
 #include "log.h"
 #include "aseba_node.h"

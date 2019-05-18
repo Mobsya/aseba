@@ -2,6 +2,7 @@
 #include <belle/belle.hh>
 #include <pugixml.hpp>
 #include <range/v3/algorithm.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 
 namespace belle = OB::Belle;
 

@@ -1,6 +1,7 @@
 #include "thymio2_fwupgrade.h"
 #include <fstream>
 #include <range/v3/algorithm.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 
 namespace mobsya {
 namespace details {

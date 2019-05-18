@@ -1,6 +1,6 @@
 #include "thymio2_fwupgrade.h"
 #include "log.h"
-#include "range/v3/span.hpp"
+#include <range/v3/view/span.hpp>
 #include "error.h"
 
 #if defined(__APPLE__) or defined(__linux__)
