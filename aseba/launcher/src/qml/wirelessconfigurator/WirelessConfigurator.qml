@@ -82,25 +82,38 @@ Rectangle {
                 .arg(nodes.length)
             return
         }
-        ready = true
 
         selectedRobotId = nodes[0].id
         selectedDongleId = dongles[0]
-        selectedNetworkId = getNonDefaultNetworkId(donglesManager.networkId(dongles[0]))
-        selectedChannel = getRandomChannel()
+        ready = true
     }
 
     function pairSelectedRobotAndDongle() {
         updateState()
         if(!ready)
             return
-        console.log("Pairing node %1 to dongle %2; network %3 - channel %4"
-            .arg(selectedRobotId.toString())
-            .arg(selectedDongleId)
-            .arg(selectedNetworkId)
-            .arg(selectedChannel))
-        const request = localEndpoint.pairThymio2Wireless(selectedDongleId,
-                                                          selectedRobotId, selectedNetworkId, selectedChannel)
+
+        console.log("Requesting info for dongle %1"
+            .arg(selectedDongleId))
+        let req = donglesManager.dongleInfo(dongles[0])
+        Request.onFinished(req, function(status, res) {
+            console.log("Info for dongle %1 : network %2 - channel : %3"
+                .arg(selectedDongleId)
+                .arg(res.networkId())
+                .arg(res.channel()))
+
+            selectedNetworkId = getNonDefaultNetworkId(res.networkId())
+            selectedChannel = getRandomChannel()
+            console.log("Pairing node %1 to dongle %2; network %3 - channel %4"
+                .arg(selectedRobotId.toString())
+                .arg(selectedDongleId)
+                .arg(selectedNetworkId)
+                .arg(selectedChannel))
+            const request = donglesManager.pairThymio2Wireless(selectedDongleId,
+                                                              selectedRobotId, selectedNetworkId, selectedChannel)
+        })
+
+
     }
 
 

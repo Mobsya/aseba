@@ -274,6 +274,16 @@ public:
                 break;
             }
 
+            case mobsya::fb::AnyMessage::Thymio2WirelessDongleInfoRequest: {
+                auto req = msg.as<fb::Thymio2WirelessDongleInfoRequest>();
+                if(!req->dongle_id()) {
+                    write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
+                    break;
+                }
+                this->send_thymio2_dongle_info(req->request_id(), req->dongle_id());
+                break;
+            }
+
             case mobsya::fb::AnyMessage::Thymio2WirelessDonglePairingRequest: {
                 auto req = msg.as<fb::Thymio2WirelessDonglePairingRequest>();
                 if(!req->node_id() || !req->dongle_id()) {
@@ -438,13 +448,9 @@ private:
         flatbuffers::FlatBufferBuilder fb;
         auto dongles = registery().thymio2_wireless_dongles();
 
-        std::vector<flatbuffers::Offset<fb::Thymio2WirelessDongle>> offsets;
-        std::transform(
-            dongles.begin(), dongles.end(), std::back_inserter(offsets), [&fb](std::shared_ptr<aseba_endpoint> ep) {
-                auto uuidOffset = ep->uuid().fb(fb);
-                const auto settings = ep->wireless_get_settings();
-                return mobsya::fb::CreateThymio2WirelessDongle(fb, uuidOffset, settings.network_id, settings.channel);
-            });
+        std::vector<flatbuffers::Offset<fb::NodeId>> offsets;
+        std::transform(dongles.begin(), dongles.end(), std::back_inserter(offsets),
+                       [&fb](std::shared_ptr<aseba_endpoint> ep) { return ep->uuid().fb(fb); });
         auto vecOffset = fb.CreateVector(offsets);
         auto offset = mobsya::fb::CreateThymio2WirelessDonglesChanged(fb, vecOffset);
         write_message(wrap_fb(fb, offset));
@@ -737,6 +743,23 @@ private:
         if(!update_started) {
             write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
         }
+    }
+
+    void send_thymio2_dongle_info(uint32_t request_id, node_id dongle_id) {
+        auto dongle = registery().thymio2_wireless_dongle(dongle_id);
+        if(!dongle) {
+            // error
+            return;
+        }
+        aseba_endpoint::wireless_settings settings = dongle->wireless_get_settings();
+        mLogTrace("Current wireless settings: node id   = {}, network id = {}", settings.dongle_id,
+                  settings.network_id);
+
+        flatbuffers::FlatBufferBuilder builder;
+        const auto node_offset = dongle_id.fb(builder);
+        write_message(wrap_fb(
+            builder,
+            fb::CreateThymio2WirelessDongle(builder, request_id, node_offset, settings.network_id, settings.channel)));
     }
 
     void pair_thymio2_and_dongle(uint32_t request_id, node_id dongle_id, node_id robot_id, uint16_t network_id,

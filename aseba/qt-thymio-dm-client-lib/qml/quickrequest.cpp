@@ -156,6 +156,7 @@ QtObject {
         qmlRegisterSingletonType<QmlRequest>("org.mobsya", 1, 0, "Request", provider);
         QmlRequest::registerType<SimpleRequestResult>();
         QmlRequest::registerType<CompilationResult>();
+        QmlRequest::registerType<Thymio2WirelessDongleInfoResult>();
         qRegisterMetaType<Request>("Request");
         qRegisterMetaType<CompilationError>();
         qRegisterMetaType<SetBreakpointRequestResult>();

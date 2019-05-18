@@ -380,13 +380,19 @@ table FirmwareUpgradeStatus {
 }
 
 table Thymio2WirelessDongle {
+    request_id : uint;
     dongle_id:NodeId;
     network_id: uint16;
     channel_id: uint8;
 }
 
 table Thymio2WirelessDonglesChanged {
-    dongles: [Thymio2WirelessDongle];
+    dongles: [NodeId];
+}
+
+table Thymio2WirelessDongleInfoRequest {
+    request_id:uint;
+    dongle_id:NodeId;
 }
 
 table Thymio2WirelessDonglePairingRequest {
@@ -428,6 +434,8 @@ union AnyMessage {
     FirmwareUpgradeStatus,
     Ping,
     Thymio2WirelessDonglesChanged,
+    Thymio2WirelessDongleInfoRequest,
+    Thymio2WirelessDongle,
     Thymio2WirelessDonglePairingRequest
 }
 

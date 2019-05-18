@@ -283,6 +283,28 @@ public:
     }
 };
 
+
+struct Thymio2WirelessDongleInfoResult {
+    Q_GADGET
+
+public:
+    Thymio2WirelessDongleInfoResult() = default;
+    Thymio2WirelessDongleInfoResult(uint16_t network, uint8_t channel) : m_networkId(network), m_channel(channel) {}
+
+    static constexpr quint32 type = 0x478fa12d;
+    Q_INVOKABLE quint16 networkId() const {
+        return m_networkId;
+    }
+
+    Q_INVOKABLE quint8 channel() const {
+        return m_channel;
+    }
+
+private:
+    uint16_t m_networkId;
+    uint16_t m_channel;
+};
+
 struct CompilationError {
 
     CompilationError(const QString& msg, quint32 pos, quint32 line, quint32 column)
@@ -484,9 +506,11 @@ private:
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
+using Thymio2WirelessDongleInfoRequest = BasicRequest<Thymio2WirelessDongleInfoResult>;
+using Thymio2WirelessDongleInfoRequestWatcher = BasicRequestWatcher<Thymio2WirelessDongleInfoResult>;
+
 using CompilationRequest = BasicRequest<CompilationResult>;
 using CompilationRequestWatcher = BasicRequestWatcher<CompilationResult>;
-
 
 using BreakpointsRequest = BasicRequest<SetBreakpointRequestResult>;
 using BreakpointsRequestWatcher = BasicRequestWatcher<SetBreakpointRequestResult>;
