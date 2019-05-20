@@ -20,8 +20,8 @@ class Thymio2WirelessDonglesManager : public QObject {
 public:
     Thymio2WirelessDonglesManager(ThymioDeviceManagerClientEndpoint* parent);
     Q_INVOKABLE mobsya::Thymio2WirelessDongleInfoRequest dongleInfo(const QUuid& uuid);
-    Q_INVOKABLE Request pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId, quint16 networkId,
-                                            quint8 channel);
+    Q_INVOKABLE mobsya::Thymio2WirelessDongleInfoRequest pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
+                                                                             quint16 networkId, quint8 channel);
 
 Q_SIGNALS:
     void donglesChanged();

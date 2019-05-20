@@ -56,8 +56,8 @@ public:
     Request upgradeFirmware(const QUuid& id);
 
     Thymio2WirelessDongleInfoRequest requestDongleInfo(const QUuid& uuid);
-    Request pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId, quint16 networkId,
-                                            quint8 channel);
+    Thymio2WirelessDonglePairingRequest pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
+                                                            quint16 networkId, quint8 channel);
 
 
     Thymio2WirelessDonglesManager* donglesManager() const;
