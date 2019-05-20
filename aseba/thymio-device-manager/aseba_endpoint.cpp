@@ -22,6 +22,7 @@ aseba_endpoint::~aseba_endpoint() {
         auto& registery = boost::asio::use_service<aseba_node_registery>(*ctx);
         registery.unregister_expired_endpoints();
     });
+    stop();
     free_endpoint();
 }
 
@@ -70,33 +71,49 @@ void aseba_endpoint::cancel_all_ops() {
 }
 
 void aseba_endpoint::free_endpoint() {
-    variant_ns::visit(
-        overloaded{[this](tcp_socket& socket) {
-                       boost::asio::use_service<aseba_tcp_acceptor>(m_io_context).free_endpoint(this);
-                   }
+    variant_ns::visit(overloaded{[this](tcp_socket& socket) {
+                                     boost::asio::post(m_io_context, [this, &ctx = m_io_context] {
+                                         boost::asio::use_service<aseba_tcp_acceptor>(ctx).free_endpoint(this);
+                                     });
+                                 }
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
-                   ,
-                   [this](mobsya::usb_serial_port& d) {
-                       boost::asio::use_service<serial_acceptor_service>(m_io_context).free_device(d.device_path());
-                   }
+                                 ,
+                                 [this](mobsya::usb_serial_port& d) {
+                                     auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+                                     timer->expires_from_now(boost::posix_time::seconds(5));
+                                     timer->async_wait([timer, path = d.device_path(), &ctx = m_io_context](auto ec) {
+                                         if(!ec)
+                                             boost::asio::use_service<serial_acceptor_service>(ctx).free_device(path);
+                                     });
+                                 }
 #endif
 #ifdef MOBSYA_TDM_ENABLE_USB
-                   ,
-                   [this](mobsya::usb_device& d) {
-                       if(d.native_handle()) {
-                           boost::asio::use_service<usb_acceptor_service>(m_io_context)
-                               .free_device(libusb_get_device(d.native_handle()));
-                       }
-                   }
+                                 ,
+                                 [this](mobsya::usb_device& d) {
+                                     if(d.native_handle()) {
+                                         boost::asio::post(m_io_context, [h = libusb_get_device(d.native_handle(), &ctx = m_io_context] {
+                                             boost::asio::use_service<usb_acceptor_service>(ctx)
+                                                 .free_device(h));
+                                         });
+                                     }
+                                 }
 #endif
-        },
-        m_endpoint);
-}
+                      },
+                      m_endpoint);
+}  // namespace mobsya
 
 void aseba_endpoint::stop() {
-    // serial().cancel();
-    // serial().close();
-    // ;
+    variant_ns::visit(overloaded{[this](tcp_socket& socket) { socket.cancel(); }
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+                                 ,
+                                 [this](mobsya::usb_serial_port& d) { d.cancel(); }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_USB
+                                 ,
+                                 [this](mobsya::usb_device& d) { d.cancel(); }
+#endif
+                      },
+                      m_endpoint);
 }
 
 
