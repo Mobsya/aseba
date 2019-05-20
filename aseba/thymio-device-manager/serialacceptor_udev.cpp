@@ -40,6 +40,12 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
         mLogError("Fail to list null device");
         return false;
     }
+
+    if(std::find(m_known_devices.begin(), m_known_devices.end(), udev_device_get_syspath(dev)) !=
+       m_known_devices.end()) {
+        return false;
+    }
+
     auto usb = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_device");
     if(!usb) {
         return false;
@@ -69,11 +75,10 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
     r.d.m_port_name = n;
     r.d.m_device_id = id;
     r.d.open(ec);
+
+
     if(ec) {
-        if(std::find(m_known_devices.begin(), m_known_devices.end(), udev_device_get_syspath(dev)) !=
-           m_known_devices.end()) {
-            return false;
-        }
+
         mLogError("serial acceptor: {}", ec.message());
         return false;
     }
