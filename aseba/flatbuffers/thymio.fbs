@@ -236,7 +236,7 @@ table UnlockNode {
 
 
 //see WatchNode
-enum CompilationOptions : int (bit_flags) {
+enum CompilationOptions : uint (bit_flags) {
     NoOption,
     LoadOnTarget,
     FetchBytecode,
