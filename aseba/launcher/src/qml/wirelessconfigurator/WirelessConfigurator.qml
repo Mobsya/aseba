@@ -111,6 +111,11 @@ Rectangle {
                 .arg(selectedChannel))
             const request = donglesManager.pairThymio2Wireless(selectedDongleId,
                                                               selectedRobotId, selectedNetworkId, selectedChannel)
+            Request.onFinished(request, function(status, res) {
+                console.log("Pairing complete: network %1 - channel %2"
+                    .arg(res.networkId())
+                    .arg(res.channel()))
+            })
         })
 
 

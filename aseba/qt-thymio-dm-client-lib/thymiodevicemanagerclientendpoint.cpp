@@ -643,9 +643,11 @@ Thymio2WirelessDongleInfoRequest ThymioDeviceManagerClientEndpoint::requestDongl
     return r;
 }
 
-Request ThymioDeviceManagerClientEndpoint::pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
-                                                               quint16 networkId, quint8 channel) {
-    Request r = prepare_request<Request>();
+Thymio2WirelessDonglePairingRequest ThymioDeviceManagerClientEndpoint::pairThymio2Wireless(const QUuid& dongleId,
+                                                                                           const QUuid& nodeId,
+                                                                                           quint16 networkId,
+                                                                                           quint8 channel) {
+    Thymio2WirelessDonglePairingRequest r = prepare_request<Thymio2WirelessDonglePairingRequest>();
     flatbuffers::FlatBufferBuilder builder;
     auto dongleUuidOffset = serialize_uuid(builder, dongleId);
     auto robotUuidOffset = serialize_uuid(builder, nodeId);

@@ -11,8 +11,10 @@ Thymio2WirelessDongleInfoRequest Thymio2WirelessDonglesManager::dongleInfo(const
     return m_ep->requestDongleInfo(uuid);
 }
 
-Request Thymio2WirelessDonglesManager::pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
-                                                           quint16 networkId, quint8 channel) {
+Thymio2WirelessDonglePairingRequest Thymio2WirelessDonglesManager::pairThymio2Wireless(const QUuid& dongleId,
+                                                                                       const QUuid& nodeId,
+                                                                                       quint16 networkId,
+                                                                                       quint8 channel) {
     return m_ep->pairThymio2Wireless(dongleId, nodeId, networkId, channel);
 }
 

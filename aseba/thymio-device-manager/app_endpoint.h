@@ -777,7 +777,7 @@ private:
         mLogTrace("Current wireless settings: node id   = {}, network id = {}", settings.dongle_id,
                   settings.network_id);
 
-        if(settings.network_id != network_id) {
+        if(settings.network_id != network_id || settings.channel != channel) {
             if(!dongle->wireless_set_settings(network_id, channel)) {
                 // error
                 return;
@@ -786,7 +786,6 @@ private:
                           settings.network_id);
             }
         }
-
 
         auto n = boost::asio::use_service<aseba_nodeid_generator>(m_ctx).generate();
 
@@ -797,6 +796,12 @@ private:
         }
         mLogTrace("New wireless setting for node: node id   = {}, network id = {}, channel = {}", node->native_id(),
                   settings.network_id, channel);
+
+        flatbuffers::FlatBufferBuilder builder;
+        const auto node_offset = dongle_id.fb(builder);
+        write_message(wrap_fb(
+            builder,
+            fb::CreateThymio2WirelessDongle(builder, request_id, node_offset, settings.network_id, settings.channel)));
     }
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
         auto group = registery().group_from_id(id);

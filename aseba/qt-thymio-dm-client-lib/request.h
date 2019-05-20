@@ -506,8 +506,13 @@ private:
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
+
+using Thymio2WirelessDonglePairingRequest = BasicRequest<Thymio2WirelessDongleInfoResult>;
+using Thymio2WirelessDonglePairingRequestWatcher = BasicRequestWatcher<Thymio2WirelessDongleInfoResult>;
+
 using Thymio2WirelessDongleInfoRequest = BasicRequest<Thymio2WirelessDongleInfoResult>;
 using Thymio2WirelessDongleInfoRequestWatcher = BasicRequestWatcher<Thymio2WirelessDongleInfoResult>;
+
 
 using CompilationRequest = BasicRequest<CompilationResult>;
 using CompilationRequestWatcher = BasicRequestWatcher<CompilationResult>;
