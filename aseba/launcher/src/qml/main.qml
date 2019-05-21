@@ -33,7 +33,9 @@ Item {
         }
     }
 
-    WirelessConfigurator {}
+    WirelessConfigurator {
+        valiseMode: true
+    }
 
     function goToDeviceSelectionWithApp() {
         if(app_view.selectedApp && main_layout.depth == 1) {

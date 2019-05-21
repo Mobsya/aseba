@@ -8,6 +8,7 @@ Rectangle {
     anchors.fill: parent
     TitleBar {}
 
+    property bool valiseMode: false
     property var localEndpoint: client.localEndpoint
     property var donglesManager: null
     property var dongles: null
@@ -21,7 +22,9 @@ Rectangle {
     property var selectedChannel: null
 
 
-    property var pairedDongleUUID: []
+    property var pairedDongleUUIDs: []
+    property var pairedDongleNetworkIds: []
+    property var pairedRobotUUIDs: []
 
 
     function getRandomInt(min, max) {
@@ -64,14 +67,18 @@ Rectangle {
         selectedNetworkId = null
         selectedChannel = null
 
-        if(!dongles)
+        if(!dongles) {
+            errorBanner.text = qsTr("Unable to list the dongles - please relaunch Thymio Suite")
             return
+        }
 
         const nodes = usbThymios()
 
         if(waitingForUnplug) {
-            if(dongles.length === 0 && nodes.length === 0) {
+            if(dongles.length === 0 || pairedDongleUUIDs.indexOf(dongles[0])  < 0 ) {
                 errorBanner.text = qsTr("Pairing successful")
+                nextButton.visible = true
+                pairButton.visible = false
                 waitingForUnplug = false
             }
             return
@@ -79,11 +86,16 @@ Rectangle {
 
         //Dongles have a new UUID each time they are unplugged
         //If we see a dongle we previously paired, ask the user to uplug it
-        if(dongles.length >= 0 && pairedDongleUUID.indexOf(dongles[0]) >= 0) {
+        if(dongles.length === 1 && pairedDongleUUIDs.indexOf(dongles[0]) >= 0) {
             errorBanner.text = qsTr("Please unplug the dongle to complete the process")
+            nextButton.visible = false
+            pairButton.visible = false
             waitingForUnplug = true
             return
         }
+
+        if(nextButton.visible)
+            return;
 
         errorBanner.text = ""
         if (dongles.length < 1) {
@@ -108,6 +120,12 @@ Rectangle {
             return
         }
 
+        if(valiseMode && nodes.length === 1 && pairedRobotUUIDs.indexOf(nodes[0].id.toString()) >= 0) {
+            errorBanner.text = qsTr("You have alredy paired this robot")
+            return
+        }
+
+
         selectedRobotId = nodes[0].id
         selectedDongleId = dongles[0]
         ready = true
@@ -129,22 +147,38 @@ Rectangle {
 
             selectedNetworkId = getNonDefaultNetworkId(res.networkId())
             selectedChannel = getRandomChannel()
+
+
+            if(valiseMode && pairedDongleNetworkIds.indexOf(selectedNetworkId) >= 0) {
+                ready = false
+                errorBanner.text = qsTr("You have alredy paired this dongle with another robot")
+                return
+            }
+
+
             console.log("Pairing node %1 to dongle %2; network %3 - channel %4"
                 .arg(selectedRobotId.toString())
                 .arg(selectedDongleId)
                 .arg(selectedNetworkId)
                 .arg(selectedChannel))
 
-            pairedDongleUUID.push(selectedDongleId)
-
+            ready = false
             const request = donglesManager.pairThymio2Wireless(selectedDongleId,
                                                               selectedRobotId, selectedNetworkId, selectedChannel)
+
+            pairedDongleUUIDs.push(selectedDongleId)
+            pairedRobotUUIDs.push(selectedRobotId.toString())
+            pairedDongleNetworkIds.push(selectedNetworkId)
+
+
             Request.onFinished(request, function(status, res) {
                 console.log("Pairing complete: network %1 - channel %2"
                     .arg(res.networkId())
                     .arg(res.channel()))
+
                 waitingForUnplug = true
                 updateState()
+
             })
         })
 
@@ -229,15 +263,23 @@ Rectangle {
             anchors.centerIn: parent
             spacing: 22
             Button {
+                id : pairButton
                 text: qsTr("Start Pairing")
                 enabled: ready
                 onClicked: {
                     pairSelectedRobotAndDongle()
                 }
             }
-            /*Button {
-                text: qsTr("Advanced Mode")
-            }*/
+            Button {
+                visible: false
+                id : nextButton
+                text: valiseMode ? qsTr("Pair the next Robot") : qsTr("Pair another robot")
+                onClicked: {
+                    pairButton.visible = true
+                    nextButton.visible = false
+                    updateState()
+                }
+            }
         }
     }
 
