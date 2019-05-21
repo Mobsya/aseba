@@ -13,11 +13,15 @@ Rectangle {
     property var dongles: null
     property var nodes: null
     property var ready: false
+    property var waitingForUnplug: false
 
     property var selectedDongleId: null
     property var selectedRobotId: null
     property var selectedNetworkId: null
     property var selectedChannel: null
+
+
+    property var pairedDongleUUID: []
 
 
     function getRandomInt(min, max) {
@@ -62,6 +66,25 @@ Rectangle {
 
         if(!dongles)
             return
+
+        const nodes = usbThymios()
+
+        if(waitingForUnplug) {
+            if(dongles.length === 0 && nodes.length === 0) {
+                errorBanner.text = qsTr("Pairing successful")
+                waitingForUnplug = false
+            }
+            return
+        }
+
+        //Dongles have a new UUID each time they are unplugged
+        //If we see a dongle we previously paired, ask the user to uplug it
+        if(dongles.length >= 0 && pairedDongleUUID.indexOf(dongles[0]) >= 0) {
+            errorBanner.text = qsTr("Please unplug the dongle to complete the process")
+            waitingForUnplug = true
+            return
+        }
+
         errorBanner.text = ""
         if (dongles.length < 1) {
             errorBanner.text = qsTr("Please plug a wireless dongle in an USB port of this computer")
@@ -72,7 +95,9 @@ Rectangle {
                 .arg(dongles.length)
             return
         }
-        const nodes = usbThymios()
+
+
+
         if(nodes.length < 1) {
             errorBanner.text = qsTr("Please plug a Thymio 2 Wireless Robot in an USB port of this computer")
             return
@@ -109,12 +134,17 @@ Rectangle {
                 .arg(selectedDongleId)
                 .arg(selectedNetworkId)
                 .arg(selectedChannel))
+
+            pairedDongleUUID.push(selectedDongleId)
+
             const request = donglesManager.pairThymio2Wireless(selectedDongleId,
                                                               selectedRobotId, selectedNetworkId, selectedChannel)
             Request.onFinished(request, function(status, res) {
                 console.log("Pairing complete: network %1 - channel %2"
                     .arg(res.networkId())
                     .arg(res.channel()))
+                waitingForUnplug = true
+                updateState()
             })
         })
 
