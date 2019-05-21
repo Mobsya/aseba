@@ -26,6 +26,8 @@ Rectangle {
     property var pairedDongleNetworkIds: []
     property var pairedRobotUUIDs: []
 
+    property var robotCount: 0
+
 
     function getRandomInt(min, max) {
       min = Math.ceil(min);
@@ -35,6 +37,10 @@ Rectangle {
 
     function getRandomChannel() {
         return getRandomInt(0, 2)
+    }
+
+    function getChannel() {
+        return valiseMode ? robotCount % 3 : getRandomChannel()
     }
 
     function getRandomNetworkId() {
@@ -146,7 +152,7 @@ Rectangle {
                 .arg(res.channel()))
 
             selectedNetworkId = getNonDefaultNetworkId(res.networkId())
-            selectedChannel = getRandomChannel()
+            selectedChannel = getChannel()
 
 
             if(valiseMode && pairedDongleNetworkIds.indexOf(selectedNetworkId) >= 0) {
@@ -175,7 +181,7 @@ Rectangle {
                 console.log("Pairing complete: network %1 - channel %2"
                     .arg(res.networkId())
                     .arg(res.channel()))
-
+                robotCount ++
                 waitingForUnplug = true
                 updateState()
 
@@ -241,7 +247,13 @@ Rectangle {
             anchors.right: parent.right
 
             Text {
-                text: qsTr("<ol><li><b>Plug the Thymio you want to pair using the USB cable</b></li><br/><li><b>Plug the USB dongle</b></li></ol>")
+                text: {
+                    let txt = qsTr("<ol><li><b>Plug the Thymio you want to pair using the USB cable</b></li><br/><li><b>Plug the USB dongle</b></li></ol>")
+                    if (valiseMode) {
+                        txt += qsTr("<p><em>Tip: Put a sticker dot of the same color on both the thymio and the dongle to identify them!</em></p>")
+                    }
+                    return txt
+                }
                 font.pointSize: 15
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
@@ -264,7 +276,7 @@ Rectangle {
             spacing: 22
             Button {
                 id : pairButton
-                text: qsTr("Start Pairing")
+                text: valiseMode ? qsTr("Pair robot #%1").arg(robotCount+1) : qsTr("Pair !")
                 enabled: ready
                 onClicked: {
                     pairSelectedRobotAndDongle()
