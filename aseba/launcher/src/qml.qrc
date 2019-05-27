@@ -83,5 +83,8 @@
         <file>assets/one-thymio-one-dongle.svg</file>
         <file>qml/wirelessconfigurator/Button.qml</file>
         <file>assets/alert.svg</file>
+        <file>qml/wirelessconfigurator/ChannelButton.qml</file>
+        <file>qml/wirelessconfigurator/ChannelSelector.qml</file>
+        <file>qml/wirelessconfigurator/NetworkIdInput.qml</file>
     </qresource>
 </RCC>
