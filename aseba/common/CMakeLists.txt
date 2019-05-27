@@ -24,8 +24,11 @@ else()
     target_link_libraries(asebacommon PUBLIC dashel)
 endif()
 
-add_subdirectory(about)
 
-if(HAS_ZEROCONF_SUPPORT)
-	add_subdirectory(zeroconf)
+if(NOT ANDROID)
+    add_subdirectory(about)
+
+    if(HAS_ZEROCONF_SUPPORT)
+        add_subdirectory(zeroconf)
+    endif()
 endif()

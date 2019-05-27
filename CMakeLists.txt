@@ -31,8 +31,10 @@ include(CMakeModules/dashel.cmake)
 include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
 
+
+include(CMakeModules/boost.cmake)
+
 if(NOT ANDROID)
-    include(CMakeModules/boost.cmake)
     include(CMakeModules/enki.cmake)
     find_package(Threads REQUIRED)
 endif()
@@ -158,7 +160,11 @@ include(CPack)
 
 
 add_subdirectory(aseba)
-add_subdirectory(js)
+
+
+if(NOT ANDROID)
+	add_subdirectory(js)
+endif()
 
 if(NOT ANDROID)
     # Unit tests
