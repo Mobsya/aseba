@@ -20,8 +20,12 @@ set_source_files_properties(${TRANSLATIONS_SOURCES} PROPERTIES OUTPUT_LOCATION "
 qt5_add_translation(TRANSLATIONS ${TRANSLATIONS_SOURCES} )
 qt5_add_resources(QT_RESOURCES_TRANSLATIONS translations.qrc)
 
-
-add_executable(thymio-launcher WIN32 MACOSX_BUNDLE
+if(ANDROID)
+    add_library(thymio-launcher SHARED)
+else()
+    add_executable(thymio-launcher WIN32 MACOSX_BUNDLE)
+endif()
+target_sources(thymio-launcher PRIVATE
     ${QT_RESOURCES}
     ${QT_RESOURCES_PRECOMPILED}
     ${QT_RESOURCES_TRANSLATIONS}
@@ -52,7 +56,7 @@ target_link_libraries(thymio-launcher
     qtsingleapplication
 )
 
-if(APPLE)
+if(APPLE OR ANDROID)
     target_link_libraries(thymio-launcher Qt5::WebView)
 else()
     target_link_libraries(thymio-launcher Qt5::WebEngine)
@@ -67,8 +71,11 @@ if(WIN32)
     message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY} "${QWEBENGINE_PATH}/QtWebEngineProcess.exe")
     configure_file("${QWEBENGINE_PATH}/QtWebEngineProcess.exe" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE} COPYONLY)
 endif()
-codesign(thymio-launcher)
-install_qt_app(thymio-launcher)
+
+if(NOT ANDROID)
+    codesign(thymio-launcher)
+    install_qt_app(thymio-launcher)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
@@ -92,3 +99,12 @@ if(APPLE)
     set_source_files_properties(${launcher_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     target_sources(thymio-launcher PRIVATE ${launcher_icon})
 endif()
+
+
+if(ANDROID)
+    add_qt_android_apk(thymio-launcher-apk thymio-launcher
+        PACKAGE_NAME org.mobsya.ThymioSuite
+        QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
+    )
+endif()
+
