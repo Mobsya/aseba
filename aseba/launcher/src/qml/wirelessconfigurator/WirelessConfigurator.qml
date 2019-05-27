@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Layouts 1.12
 import org.mobsya  1.0
 import ".."
 
@@ -9,6 +10,7 @@ Rectangle {
     TitleBar {}
 
     property bool valiseMode: false
+    property bool advancedMode: false
     property var localEndpoint: client.localEndpoint
     property var donglesManager: null
     property var dongles: null
@@ -222,6 +224,10 @@ Rectangle {
     }
 
     Item {
+        id:  simpleModeLayout
+        visible: !advancedMode
+
+
         anchors.fill: parent
         anchors.margins: 60
 
@@ -266,7 +272,159 @@ Rectangle {
     }
 
 
+
     Item {
+        id:  advancedModeLayout
+        visible: advancedMode
+        anchors.fill: parent
+        anchors.topMargin: 30 + 60
+
+        Item {
+            width : parent.width
+            anchors.top: parent.top
+            anchors.bottom: advancedModeOuterFrame.top
+            anchors.margins: 30
+
+            Row {
+                spacing: 60
+                anchors.fill: parent
+                Item {
+                    width: (parent.width / 2) - 30
+                    height: parent.height
+                    Column {
+                        anchors.fill: parent
+                        spacing: 30
+                        Image {
+                             source : "qrc:/assets/one-thymio-one-dongle.svg"
+                             fillMode: Image.PreserveAspectFit
+                             height: 120
+                             width: 120
+                             smooth: true
+                             antialiasing: true
+                             anchors.horizontalCenter: parent.horizontalCenter
+                        }
+                        Text {
+                             id:txtOneDongle
+                             color: "white"
+                             font.pointSize: 10
+                             anchors.horizontalCenter: parent.horizontalCenter
+                             horizontalAlignment:Text.AlignHCenter
+                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                             text: {
+                                 let txt = qsTr("<p><b>To pair one robot to one dongle on an independant network:</b><br/></p>")
+                                 txt +=  qsTr("<p>Use different <b>Channels</b> and different <b>network identifiers</b> for each robot/dongle pair you have</p>")
+                                 return txt
+                             }
+                             width: parent.width
+                        }
+                    }
+                }
+                Item {
+                    width: (parent.width / 2) - 30
+                    height: parent.height
+                    Column {
+                        anchors.fill: parent
+                        spacing: 30
+                        Image {
+                             source : "qrc:/assets/multiple-thymio-one-dongle.svg"
+                             fillMode: Image.PreserveAspectFit
+                             height: 120
+                             width: 120
+                             smooth: true
+                             antialiasing: true
+                             anchors.horizontalCenter: parent.horizontalCenter
+                        }
+                        Text {
+                             color: "white"
+                             font.pointSize: 10
+                             anchors.horizontalCenter: parent.horizontalCenter
+                             horizontalAlignment:Text.AlignHCenter
+                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                             text: {
+                                 let txt = qsTr("<p><b>To pair multiple Thymios to one dongle:</b><br/></p>")
+                                 txt +=  qsTr("<p>Use the same <b>Channels</b> and <b>network identifier</b> for every robot you want in the same network</p>")
+                                 return txt
+                             }
+                             width: parent.width
+                        }
+                    }
+                }
+            }
+        }
+
+
+        Rectangle{
+            id:advancedModeOuterFrame
+            color: Style.mid
+            height: 290
+            width: parent.width
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: 80
+            Item {
+                anchors.fill: parent
+                anchors.topMargin: 80
+                RowLayout {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 130
+                    Item {
+                        width: 230
+                        height: 130
+                        Text {
+                            text: qsTr("01. Select a channel")
+                            color: "white"
+                            font.bold: true
+                            font.pointSize: 10
+                        }
+                        ChannelSelector {
+                            width: parent.width
+                            height: 40
+                            anchors.bottom: parent.bottom
+                        }
+                    }
+                    Item {
+                        width: 230
+                        height: 130
+                        Text {
+                            text: qsTr("<b>02. Define the network identifier</b><br/>4 characters in hexadecimal (0 to 9 and A-F)")
+                            color: "white"
+                            font.pointSize: 10
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            width: parent.width
+                        }
+                        NetworkIdInput {
+                            width: parent.width
+                            height: 40
+                            anchors.bottom: parent.bottom
+                        }
+                    }
+                    Item {
+                        width: 230
+                        height: 130
+                        Text {
+                            text: qsTr("<b>03. Click on start pairing</b>")
+                            color: "white"
+                            font.pointSize: 10
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            width: parent.width
+                        }
+                        Button {
+                            id : pairButtonAdvanced
+                            text: qsTr("Pair !")
+                            enabled: ready
+                            onClicked: {
+                                pairSelectedRobotAndDongle()
+                            }
+                            anchors.bottom: parent.bottom
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Item {
+        visible: !advancedMode
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 60
         height: 40
@@ -290,6 +448,15 @@ Rectangle {
                     pairButton.visible = true
                     nextButton.visible = false
                     updateState()
+                }
+            }
+
+            Button {
+                id : advancedButton
+                visible: !valiseMode
+                text: advancedMode ? qsTr("Simple Mode") : qsTr("Advanced Mode")
+                onClicked: {
+                    advancedMode = ! advancedMode
                 }
             }
         }

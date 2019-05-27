@@ -34,7 +34,7 @@ Item {
     }
 
     WirelessConfigurator {
-        valiseMode: true
+       // valiseMode: true
     }
 
     function goToDeviceSelectionWithApp() {
