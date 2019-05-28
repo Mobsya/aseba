@@ -35,6 +35,9 @@ private:
     void start();
     void download_thymio_2_firmware();
     void update_nodes_versions(mobsya::aseba_node::node_type);
+    void download_firmare_info(mobsya::aseba_node::node_type type);
+    void download_firmare_data(mobsya::aseba_node::node_type type);
+    std::set<mobsya::aseba_node::node_type> m_downloading;
     std::map<mobsya::aseba_node::node_type, int> m_versions;
     std::map<mobsya::aseba_node::node_type, std::string> m_urls;
     std::map<mobsya::aseba_node::node_type, std::vector<std::byte>> m_firmwares_data;

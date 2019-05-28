@@ -118,6 +118,21 @@ public:
         m_endpoint_type = type;
     }
 
+    bool is_usb() const {
+#ifdef MOBSYA_TDM_ENABLE_USB
+        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
+            return variant_ns::get<usb_device>(m_endpoint).usb_device_id() == THYMIO2_DEVICE_ID;
+        }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
+            return variant_ns::get<usb_serial_port>(m_endpoint).usb_device_id() == THYMIO2_DEVICE_ID;
+        }
+#endif
+        return false;
+    }
+
+
     bool is_wireless() const {
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
@@ -213,10 +228,14 @@ public:
             mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
             if(!ec && !m_upgrading_firmware)
                 read_aseba_message();
-            if(!wireless_cfg_mode_enabled())
+            if(!wireless_cfg_mode_enabled()) {
+                if(!m_has_had_sucessful_read)
+                    restore_firmware();
                 return;
+            }
         }
         mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
+        m_has_had_sucessful_read = true;
 
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
@@ -400,6 +419,8 @@ private:
         return m_defs;
     }
 
+    void restore_firmware();
+
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
 
@@ -435,6 +456,7 @@ private:
         bool pairing = false;
     };
     bool m_upgrading_firmware = false;
+    bool m_has_had_sucessful_read = false;
 
     std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
     bool sync_wireless_dongle_settings();

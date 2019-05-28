@@ -263,5 +263,15 @@ bool aseba_endpoint::upgrade_firmware(
     return true;
 }
 
+void aseba_endpoint::restore_firmware() {
+    if(!is_usb())
+        return;
+    auto cb = [ptr = shared_from_this()](auto err, auto progress, bool completed) {
+        mLogTrace("{} - {} - {}", progress, completed, err);
+    };
+    mLogInfo("Device unresponsive - Attempting to restore firmare");
+    upgrade_firmware(0, cb);
+}
+
 
 }  // namespace mobsya
