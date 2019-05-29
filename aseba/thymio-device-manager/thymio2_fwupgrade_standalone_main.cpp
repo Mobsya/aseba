@@ -70,10 +70,10 @@ int main(int argc, char** argv) {
     namespace po = boost::program_options;
 
     po::options_description desc{"Install a firmware on a thymio 2"};
-    desc.add_options()("help,h", "Help")("firmware-hex-file", po::value<std::string>()->required(),
+    desc.add_options()("help,h", "Help")("firmware-hex-file", po::value<std::string>(),
                                          "Path of the firmware file(.hex)")(
         "no-reboot", po::bool_switch(),
-        "Do not attempt to reboot the device - this is useful when the bootloader has been corrupted");
+        "Do not attempt to reboot the device - this is useful when the firmware has been corrupted");
 
     po::positional_options_description positional_desc;
     positional_desc.add("firmware-hex-file", 1);
@@ -101,12 +101,17 @@ int main(int argc, char** argv) {
     if(vm["no-reboot"].as<bool>())
         opts = mobsya::firmware_update_options::no_reboot;
 
-    std::ifstream file(vm["firmware-hex-file"].as<std::string>());
+    const auto file_name = vm["firmware-hex-file"].as<std::string>();
+    std::ifstream file(file_name);
+    if(file.fail()) {
+        mLogError("Unable to open firmware file {}", file_name);
+        return 1;
+    }
     std::string firmware((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
     auto pages = mobsya::details::extract_pages_from_hex(firmware);
     if(!pages.has_value()) {
-        // error
+        mLogError("{} is not a valid firmware or is corrupted", file_name);
         return 1;
     }
 
