@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
 
     // Translation support
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name());
+    qtTranslator.load("qtbase_" + QLocale::system().name());
     app.installTranslator(&qtTranslator);
 
     QTranslator translator;

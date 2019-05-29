@@ -54,10 +54,10 @@ int main(int argc, char* argv[]) {
             qDebug() << "Didn't load translation" << name;
         }
     };
-    load_trads("asebastudio_", ":/translations");
-    load_trads("compiler_", ":/translations");
+    load_trads("asebastudio_", ":/translations/");
+    load_trads("compiler_", ":/translations/");
     load_trads("qtabout_", ":/");
-    load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
     QCommandLineParser parser;
     QCommandLineOption uuid(QStringLiteral("uuid"),
