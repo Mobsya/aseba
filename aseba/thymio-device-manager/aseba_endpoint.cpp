@@ -197,7 +197,8 @@ bool aseba_endpoint::wireless_cfg_mode_enabled() const {
 }
 
 bool aseba_endpoint::upgrade_firmware(
-    uint16_t id, std::function<void(boost::system::error_code ec, double progress, bool complete)> cb) {
+    uint16_t id, std::function<void(boost::system::error_code ec, double progress, bool complete)> cb,
+    firmware_update_options options) {
 
     if(is_wireless())
         return false;
@@ -206,14 +207,14 @@ bool aseba_endpoint::upgrade_firmware(
 
     auto firmware =
         boost::asio::use_service<firmware_update_service>(m_io_context).firmware_data(aseba_node::node_type::Thymio2);
-    firmware.then([id, ptr = shared_from_this(), cb](auto f) {
+    firmware.then([id, ptr = shared_from_this(), cb, options](auto f) {
         // if the firmware if empty let it fail as a special case of invalid data
         auto firmware = f.get();
 
         variant_ns::visit(
             overloaded{
 #ifdef MOBSYA_TDM_ENABLE_USB
-                [&ptr, id, &firmware, &cb](usb_device& usb) {
+                [&ptr, id, &firmware, &cb, options](usb_device& usb) {
                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                     mobsya::upgrade_thymio2_endpoint(
                         ptr->usb().native_handle(), firmware, id,
@@ -228,11 +229,12 @@ bool aseba_endpoint::upgrade_firmware(
                                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
-                        });
+                        },
+                        options);
                 },
 #endif
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
-                [&ptr, id, &firmware, &cb](usb_serial_port& serial) {
+                [&ptr, id, &firmware, &cb, options](usb_serial_port& serial) {
                     // Ignore new device during the update
                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(true);
                     boost::system::error_code ec;
@@ -250,7 +252,8 @@ bool aseba_endpoint::upgrade_firmware(
                                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
-                        });
+                        },
+                        options);
                 },
 #endif
                 // can never happen
@@ -270,7 +273,7 @@ void aseba_endpoint::restore_firmware() {
         mLogTrace("{} - {} - {}", progress, completed, err);
     };
     mLogInfo("Device unresponsive - Attempting to restore firmare");
-    upgrade_firmware(0, cb);
+    upgrade_firmware(0, cb, firmware_update_options::no_reboot);
 }
 
 

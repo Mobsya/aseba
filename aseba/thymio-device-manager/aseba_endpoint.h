@@ -19,6 +19,7 @@
 #include "variant_compat.h"
 #include "aseba_node_registery.h"
 #include "utils.h"
+#include "thymio2_fwupgrade.h"
 
 namespace mobsya {
 
@@ -160,7 +161,8 @@ public:
     bool wireless_set_settings(uint8_t channel, uint16_t network_id, uint16_t dongle_id);
     wireless_settings wireless_get_settings() const;
 
-    bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb);
+    bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb,
+                          firmware_update_options options = firmware_update_options::no_option);
 
     std::vector<std::shared_ptr<aseba_node>> nodes() const {
         std::vector<std::shared_ptr<aseba_node>> nodes;
