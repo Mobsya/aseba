@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     load_trads("asebastudio_", ":/translations");
     load_trads("compiler_", ":/translations");
     load_trads("qtabout_", ":/");
-    load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
     Aseba::ThymioVPLApplication vpl(id);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &vpl,
