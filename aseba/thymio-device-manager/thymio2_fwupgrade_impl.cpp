@@ -533,10 +533,13 @@ namespace details {
         int out;
     };
     void upgrade_thymio2_usb_endpoint(libusb_device_handle* h, const thymio2_firmware_data& data, uint16_t id,
-                                      firmware_upgrade_callback cb) {
+                                      firmware_upgrade_callback cb, firmware_update_options options) {
         int page = 0;
-        mLogInfo("Reboot...");
-        write(h, Aseba::Reboot(id));
+
+        if(!(int(options) & int(firmware_update_options::no_reboot))) {
+            mLogInfo("Reboot...");
+            write(h, Aseba::Reboot(id));
+        }
 
         // Give a chance to the device to enter the bootloader
         std::this_thread::sleep_for(std::chrono::milliseconds(2));

@@ -251,11 +251,12 @@ void upgrade_thymio2_endpoint(std::string path, ranges::span<std::byte> firmware
 #ifdef MOBSYA_TDM_ENABLE_USB
 void upgrade_thymio2_endpoint(libusb_device_handle* d, ranges::span<std::byte> firmware, uint16_t id,
                               firmware_upgrade_callback cb, firmware_update_options options) {
-    auto f = [d](const thymio2_firmware_data& data, firmware_upgrade_callback cb, uint16_t id) {
+    auto f = [d](const thymio2_firmware_data& data, firmware_upgrade_callback cb, uint16_t id,
+                 firmware_update_options options) {
         details::upgrade_thymio2_usb_endpoint(d, data, id, std::move(cb), options);
     };
 
-    std::thread t(details::do_upgrade_thymio2_endpoint<decltype(f)>, firmware, f, id, std::move(cb));
+    std::thread t(details::do_upgrade_thymio2_endpoint<decltype(f)>, firmware, f, id, std::move(cb), options);
     t.detach();
 }
 #endif
