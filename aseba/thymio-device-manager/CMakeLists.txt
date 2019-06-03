@@ -108,6 +108,8 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
     Boost::filesystem Boost::asio
     Boost::date_time
     Boost::thread
+    Boost::beast
+    Boost::asio
     spdlog
     tl_expected
     aware
