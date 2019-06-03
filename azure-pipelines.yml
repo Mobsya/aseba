@@ -12,9 +12,28 @@ jobs:
   pool:
     vmImage: 'Ubuntu-16.04'
   container: fpkde
+  strategy:
+    matrix:
+      x64:
+        ARCH: 'x86_64'
+      aarch64:
+        ARCH: 'aarch64'
+      arm:
+        ARCH: 'arm'
   steps:
   - script: |
-      git submodule update --init --recursive
+      sudo apt-get update
+      sudo apt-get install -y --no-install-recommends \
+        qemu-user-static \
+        binfmt-support
+      sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+      sudo update-binfmts --enable qemu-arm
+      sudo update-binfmts --enable qemu-aarch64
+      git submodule init
+      git submodule update --recursive --remote
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
+      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
+      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
