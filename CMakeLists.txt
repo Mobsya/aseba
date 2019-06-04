@@ -48,6 +48,7 @@ add_subdirectory(third_party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/quazip EXCLUDE_FROM_ALL)
 
 SET(BUILD_SHARED_LIBS_CACHED ${BUILD_SHARED_LIBS} CACHE BOOL "" FORCE)
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
