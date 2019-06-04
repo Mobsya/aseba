@@ -1,26 +1,40 @@
 resources:
    containers:
-   - container: fpkde
+   - container: flatpak-container-x86_64
      options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
+   - container: flatpak-container-aarch64
+     options: '--privileged'
+     image: mobsya/flatpak-builders:kde-latest-arm64
+   - container: flatpak-container-arm
+     options: '--privileged'
+     image: mobsya/flatpak-builders:kde-latest-arm64
 
 variables:
 - group: passwords
 
 jobs:
-- job: 'BuildFlatpak'
+- job: 'BuildFlatpak_arm'
   pool:
     vmImage: 'Ubuntu-16.04'
-  container: fpkde
   strategy:
     matrix:
-      x64:
-        ARCH: 'x86_64'
       aarch64:
         ARCH: 'aarch64'
+        SUFFIX: '-arm64'
       arm:
         ARCH: 'arm'
+        SUFFIX: '-arm64'
+      x86_64:
+        ARCH: 'x86_64'
+        SUFFIX: ''
   steps:
+  - script: sudo docker pull mobsya/flatpak-builders:kde-latest$(SUFFIX)
+    displayName: 'Pulling flatpak-builder'
+  - script: sudo docker pull multiarch/qemu-user-static:register
+    displayName: 'Register Docker QEMU'
+  - script: sudo docker run --rm --privileged multiarch/qemu-user-static:register --reset
+    displayName: 'Register Docker QEMU'
   - script: |
       sudo apt-get update
       sudo apt-get install -y --no-install-recommends \
@@ -35,7 +49,7 @@ jobs:
       (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
       (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
+      flatpak-builder --user --arch=$ARCH --install-deps-from=flathub --ccache --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
