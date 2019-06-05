@@ -249,21 +249,24 @@ public:
             if(event) {
                 on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first, timestamp);
             }
-        } else if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
-            if(!node) {
-                const auto protocol_version = static_cast<Aseba::NodePresent*>(msg.get())->version;
-                it = m_nodes
-                         .insert({node_id,
-                                  {aseba_node::create(m_io_context, node_id, protocol_version, shared_from_this()),
-                                   std::chrono::steady_clock::now()}})
-                         .first;
-                // Reading move this, we need to return immediately after
-                it->second.node->get_description();
+        } else if(!node && (msg->type == ASEBA_MESSAGE_NODE_PRESENT || msg->type == ASEBA_MESSAGE_DESCRIPTION)) {
+            const auto protocol_version = (msg->type == ASEBA_MESSAGE_NODE_PRESENT) ?
+                static_cast<Aseba::NodePresent*>(msg.get())->version :
+                static_cast<Aseba::Description*>(msg.get())->protocolVersion;
+            it = m_nodes
+                     .insert({node_id,
+                              {aseba_node::create(m_io_context, node_id, protocol_version, shared_from_this()),
+                               std::chrono::steady_clock::now()}})
+                     .first;
+            node = it->second.node;
+            // Reading move this, we need to return immediately after
+            if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
+                node->get_description();
+                return;
             }
-        } else if(node) {
-            node->on_message(*msg);
         }
         if(node) {
+            node->on_message(*msg);
             // Update node status
             it->second.last_seen = std::chrono::steady_clock::now();
         }
@@ -319,6 +322,11 @@ private:
                 return;
 
             that->write_message(std::make_unique<Aseba::ListNodes>());
+            if(that->m_first_ping && that->is_usb()) {
+                that->write_message(std::make_unique<Aseba::GetDescription>());
+                that->m_first_ping = false;
+            }
+
             if(that->needs_ping())
                 that->schedule_send_ping();
         });
@@ -459,6 +467,7 @@ private:
     };
     bool m_upgrading_firmware = false;
     bool m_has_had_sucessful_read = false;
+    bool m_first_ping = true;
 
     std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
     bool sync_wireless_dongle_settings();
