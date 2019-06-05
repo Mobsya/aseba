@@ -16,7 +16,7 @@ variables:
 jobs:
 - job: 'BuildFlatpak'
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'Ubuntu-18.04'
   strategy:
     matrix:
       aarch64:
@@ -43,10 +43,13 @@ jobs:
   - script: sudo docker run --rm --privileged multiarch/qemu-user-static:register --reset
     displayName: 'Register Docker QEMU'
   - script: |
+      sudo add-apt-repository ppa:alexlarsson/flatpak
       sudo apt-get update
       sudo apt-get install -y --no-install-recommends \
         qemu-user-static \
-        binfmt-support
+        binfmt-support \
+        flatpak-builder \
+        flatpak
       sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
       sudo update-binfmts --enable qemu-arm
       sudo update-binfmts --enable qemu-aarch64
@@ -56,7 +59,7 @@ jobs:
       (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
       (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-      flatpak-builder --user --arch=$ARCH --install-deps-from=flathub --ccache --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
+      flatpak-builder  --disable-rofiles-fuse  --user --arch=$ARCH --install-deps-from=flathub --ccache --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
