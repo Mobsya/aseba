@@ -8,8 +8,7 @@ resources:
      options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
    - container: windows
-     image: mobsyatest2.azurecr.io/windows-dev-env:latest
-     endpoint: mobsya-azure-registery-test2
+     image: mobsya/windows-dev-env:latest
 
 
 jobs:
@@ -41,9 +40,9 @@ jobs:
   - script: |
       git submodule init
       git submodule update --recursive --remote
-      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
-      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
-      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
+      cmd /c "cd third_party/spdlog/spdlog/ && git checkout v1.2.1"
+      cmd /c "cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58"
+      cmd /c "cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066"
       mkdir build
       cd build
       cmake.exe ../aseba -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=..\aseba\windows\cl-toolchain.cmake -DOPENSSL_USE_STATIC_LIBS=ON -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON -T v142
