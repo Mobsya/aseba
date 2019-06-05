@@ -14,7 +14,7 @@ variables:
 - group: passwords
 
 jobs:
-- job: 'BuildFlatpak_arm'
+- job: 'BuildFlatpak'
   pool:
     vmImage: 'Ubuntu-16.04'
   strategy:
@@ -29,10 +29,17 @@ jobs:
         ARCH: 'x86_64'
         SUFFIX: ''
   steps:
+  - script: |
+      git submodule init
+      git submodule update --recursive --remote
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
+      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
+      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
+    displayName: 'Clone submodules'
   - script: sudo docker pull mobsya/flatpak-builders:kde-latest$(SUFFIX)
     displayName: 'Pulling flatpak-builder'
   - script: sudo docker pull multiarch/qemu-user-static:register
-    displayName: 'Register Docker QEMU'
+    displayName: 'Pulling docker QEMU Image'
   - script: sudo docker run --rm --privileged multiarch/qemu-user-static:register --reset
     displayName: 'Register Docker QEMU'
   - script: |
