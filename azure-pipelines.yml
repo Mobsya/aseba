@@ -1,13 +1,16 @@
+variables:
+- group: passwords
+
+
 resources:
    containers:
    - container: fpkde
      options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
    - container: windows
-     image: mobsya/windows-dev-env:latest
+     image: mobsyatest2.azurecr.io/windows-dev-env:latest
+     endpoint: mobsya-azure-registery-test2
 
-variables:
-- group: passwords
 
 jobs:
 - job: 'BuildFlatpak'
