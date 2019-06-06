@@ -59,7 +59,7 @@ install:
   - ps: Start-Process "Win64OpenSSL-1_1_1c.exe" -ArgumentList "/silent /verysilent /sp- /suppressmsgboxes" -Wait
 
   - cd "%APPVEYOR_BUILD_FOLDER%"
-  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190513.2/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
+  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190606.2/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
   - appveyor DownloadFile https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz -FileName thymio-blockly.tar.gz
   - 7z e thymio-blockly.tar.gz && 7z x thymio-blockly.tar
   - 7z e scratch-gui.tar.gz && 7z x scratch-gui.tar
