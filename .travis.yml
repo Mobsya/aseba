@@ -60,11 +60,7 @@ matrix:
 
 before_script:
 - cd ${TRAVIS_BUILD_DIR}
-- git submodule update --remote
-- (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
-- (cd third_party/flatbuffers && git checkout 600f3fbcd4ef38b15398b1273f90697587b5a1d1)
-- (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
-- (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
+- git submodule update --init --recursive
 - rm -rf thymio-blockly-standalone
 - git clone --depth 1 https://github.com/mobsya/thymio-blockly-standalone.git thymio-blockly-standalone --recurse-submodules
 
