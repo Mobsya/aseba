@@ -15,7 +15,6 @@
     ],
     "command": "thymio-launcher",
     "rename-desktop-file": "thymio-launcher.desktop",
-    "rename-icon": "thymio-launcher",
     "modules": [
         {
             "name": "avahi",
