@@ -57,6 +57,7 @@ target_link_libraries(${STUDIO_EXECUTABLE_NAME}
     Qt5::Xml
     Qt5::Widgets
     Qt5::Charts
+    ${Qt5Core_QTMAIN_LIBRARIES}
     range-v3
 )
 
