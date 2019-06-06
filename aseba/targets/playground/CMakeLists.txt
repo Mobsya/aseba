@@ -56,7 +56,9 @@ if (Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
         asebaqtabout
         enkiviewer
         QtZeroConf
-        Qt5::Xml Qt5::Svg Qt5::Network ${EXTRA_LIBS})
+        quazip_static
+        Qt5::Xml Qt5::Svg Qt5::Network ${EXTRA_LIBS}
+        ${Qt5Core_QTMAIN_LIBRARIES})
 
 	install_qt_app(${PLAYGROUND_EXECUTABLE_NAME})
 	codesign(${PLAYGROUND_EXECUTABLE_NAME})

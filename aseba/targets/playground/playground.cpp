@@ -41,6 +41,8 @@
 #include <QHash>
 #include <QHostInfo>
 #include <utility>
+#include <quazip.h>
+#include <quazipfile.h>
 
 #ifdef HAVE_DBUS
 #    include "PlaygroundDBusAdaptors.h"
@@ -112,7 +114,7 @@ int main(int argc, char* argv[]) {
 
     // Translation support
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name());
+    qtTranslator.load("qtbase_" + QLocale::system().name());
     app.installTranslator(&qtTranslator);
 
     QTranslator translator;
@@ -126,6 +128,7 @@ int main(int argc, char* argv[]) {
     // create document
     QDomDocument domDocument("aseba-playground");
     QString sceneFileName;
+    QuaZip zipFile;
 
     // Get cmd line arguments
     bool ask = true;
@@ -135,18 +138,23 @@ int main(int argc, char* argv[]) {
     }
 
     // Try to load xml config file
-    do {
-        if(ask) {
-            QString lastFileName = QSettings("EPFL-LSRO-Mobots", "Aseba Playground").value("last file").toString();
-            auto loc = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+    while(ask) {
+        QString lastFileName = QSettings("EPFL-LSRO-Mobots", "Aseba Playground").value("last file").toString();
+        if(lastFileName.isEmpty()) {
 
-            if(lastFileName.isEmpty() && !loc.empty())
+
+// On windows go look for scenarios in the examples folder
+#ifdef Q_OS_WIN32
+            lastFileName = QCoreApplication::applicationDirPath() + "/../examples/";
+#else
+            auto loc = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+            if(!loc.empty())
                 lastFileName = loc.first();
-
-
-            sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
-                                                         app.tr("playground scenario (*.playground)"));
+#endif
         }
+
+        sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
+                                                     app.tr("playground scenario (*.playground)"));
         ask = true;
 
         if(sceneFileName.isEmpty()) {
@@ -156,23 +164,40 @@ int main(int argc, char* argv[]) {
             exit(1);
         }
 
+        QString data;
         QFile file(sceneFileName);
-        if(file.open(QIODevice::ReadOnly)) {
-            QString errorStr;
-            int errorLine, errorColumn;
-            if(!domDocument.setContent(&file, false, &errorStr, &errorLine, &errorColumn)) {
-                QMessageBox::information(nullptr, "Aseba Playground",
-                                         app.tr("Parse error at file %1, line %2, column %3:\n%4")
-                                             .arg(sceneFileName)
-                                             .arg(errorLine)
-                                             .arg(errorColumn)
-                                             .arg(errorStr));
-            } else {
-                QSettings("EPFL-LSRO-Mobots", "Aseba Playground").setValue("last file", sceneFileName);
-                break;
-            }
+        if(!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::information(nullptr, "Aseba Playground", app.tr("Unable to open file %1").arg(sceneFileName));
+            continue;
+        };
+        // Try zip
+        zipFile.setZipName(sceneFileName);
+        if(zipFile.open(QuaZip::Mode::mdUnzip)) {
+            zipFile.setCurrentFile("world.xml");
+            QuaZipFile entry(&zipFile);
+            entry.open(QIODevice::ReadOnly);
+            data = entry.readAll();
+        } else {
+            data = file.readAll();
         }
-    } while(true);
+
+
+        QString errorStr;
+        int errorLine, errorColumn;
+
+
+        if(!domDocument.setContent(data, false, &errorStr, &errorLine, &errorColumn)) {
+            QMessageBox::information(nullptr, "Aseba Playground",
+                                     app.tr("Parse error at file %1, line %2, column %3:\n%4")
+                                         .arg(sceneFileName)
+                                         .arg(errorLine)
+                                         .arg(errorColumn)
+                                         .arg(errorStr));
+        } else {
+            QSettings("EPFL-LSRO-Mobots", "Aseba Playground").setValue("last file", sceneFileName);
+            break;
+        }
+    }
 
     // Scan for colors
     typedef QMap<QString, Enki::Color> ColorsMap;
@@ -209,9 +234,18 @@ int main(int argc, char* argv[]) {
         worldColor = colorsMap[worldE.attribute("color")];
     Enki::World::GroundTexture groundTexture;
     if(worldE.hasAttribute("groundTexture")) {
-        const QString groundTextureFileName(QFileInfo(sceneFileName).absolutePath() + QDir::separator() +
-                                            worldE.attribute("groundTexture"));
-        QImage image(groundTextureFileName);
+        const QString textureName = worldE.attribute("groundTexture");
+        QImage image;
+        if(zipFile.isOpen() && zipFile.setCurrentFile(textureName)) {
+            QuaZipFile entry(&zipFile);
+            entry.open(QIODevice::ReadOnly);
+            image.load(&entry, QFileInfo(textureName).suffix().toUtf8().data());
+        } else if(!zipFile.isOpen()) {
+            const QString groundTextureFileName(QFileInfo(sceneFileName).absolutePath() + QDir::separator() +
+                                                textureName);
+            image.load(groundTextureFileName);
+        }
+
         if(!image.isNull()) {
             // flip vertically as y-coordinate is inverted in an image
             image = image.mirrored();
@@ -223,7 +257,7 @@ int main(int argc, char* argv[]) {
             std::copy(imageData, imageData + image.width() * image.height(), std::back_inserter(groundTexture.data));
             // Note: this works in little endian, in big endian data should be swapped
         } else {
-            qDebug() << "Could not load ground texture file named" << groundTextureFileName;
+            qDebug() << "Could not load ground texture file named" << textureName;
         }
     }
     Enki::World world(worldE.attribute("w").toDouble(), worldE.attribute("h").toDouble(), worldColor, groundTexture);

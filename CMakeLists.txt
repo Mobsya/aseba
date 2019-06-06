@@ -4,13 +4,14 @@
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 
+cmake_policy(SET CMP0071 NEW)
+cmake_policy(SET CMP0020 NEW)
+
 project(ThymioSuite)
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-cmake_policy(SET CMP0071 NEW)
-cmake_policy(SET CMP0020 NEW)
 
 
 # ensure a minimal version of CMake
@@ -48,6 +49,7 @@ add_subdirectory(third_party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/quazip EXCLUDE_FROM_ALL)
 
 SET(BUILD_SHARED_LIBS_CACHED ${BUILD_SHARED_LIBS} CACHE BOOL "" FORCE)
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -90,6 +92,7 @@ enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
+cmake_policy(SET CMP0020 NEW)
 
 if(CREATE_QT_CONF_FILE)
     #create an empty qt.conf file

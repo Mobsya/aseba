@@ -1,4 +1,4 @@
-#include "fw_update_service.h"
+﻿#include "fw_update_service.h"
 #include <belle/belle.hh>
 #include <pugixml.hpp>
 #include <range/v3/algorithm.hpp>
@@ -37,6 +37,10 @@ void firmware_update_service::node_changed(std::shared_ptr<aseba_node> node, con
         return;
     }
 
+    download_firmare_info(type);
+}
+
+void firmware_update_service::download_firmare_info(mobsya::aseba_node::node_type type) {
     if(type == aseba_node::node_type::Thymio2) {
         download_thymio_2_firmware();
         return;
@@ -45,8 +49,14 @@ void firmware_update_service::node_changed(std::shared_ptr<aseba_node> node, con
 
 void firmware_update_service::download_thymio_2_firmware() {
     m_http_client->on_http_error([](auto& ctx) { mLogWarn("Http error", ctx.ec.message()); });
+    if(m_downloading.find(aseba_node::node_type::Thymio2) != m_downloading.end())
+        return;
+    m_downloading.insert(aseba_node::node_type::Thymio2);
+
     mLogInfo("Downloading https://{}/{}", UPDATE_SERVER, THYMIO2_CHECK_PATH);
     m_http_client->on_http(THYMIO2_CHECK_PATH, [this](auto& ctx) {
+        m_downloading.erase(aseba_node::node_type::Thymio2);
+
         if(ctx.res.result() != belle::Status::ok) {
             mLogWarn("Http request failed: https://{}/{}", UPDATE_SERVER, THYMIO2_CHECK_PATH);
             return;
@@ -62,12 +72,11 @@ void firmware_update_service::download_thymio_2_firmware() {
             auto v = node.attribute("version").as_int(0);
             if(v != 0) {
                 m_versions[aseba_node::node_type::Thymio2] = v;
-                update_nodes_versions(aseba_node::node_type::Thymio2);
-                mLogInfo("Last firmware available for Thymio 2: {}", v);
-
-
                 auto str = node.attribute("url").as_string();
                 m_urls[aseba_node::node_type::Thymio2] = str;
+
+                update_nodes_versions(aseba_node::node_type::Thymio2);
+                mLogInfo("Last firmware available for Thymio 2: {}", v);
             }
         }
     });
@@ -92,6 +101,9 @@ void firmware_update_service::update_nodes_versions(mobsya::aseba_node::node_typ
                 boost::asio::post([n, v = it->second] { n->set_available_firmware_version(v); });
         }
     }
+    auto pit = m_waiting.find(type);
+    if(pit != m_waiting.end() && pit->second.size() > 0)
+        download_firmare_data(type);
 }
 
 boost::unique_future<ranges::span<std::byte>>
@@ -106,9 +118,10 @@ firmware_update_service::firmware_data(mobsya::aseba_node::node_type type) {
         p.set_value(it->second);
         return p.get_future();
     }
+
     auto url_it = m_urls.find(type);
     if(url_it == m_urls.end()) {
-        p.set_value({});
+        download_firmare_info(type);
         return p.get_future();
     }
 
@@ -116,8 +129,17 @@ firmware_update_service::firmware_data(mobsya::aseba_node::node_type type) {
 
     m_waiting[type].emplace_back(std::move(p));
 
-    if(m_waiting[type].size() > 1)
-        return f;
+    if(m_waiting[type].size() == 1)
+        download_firmare_data(type);
+
+    return f;
+}
+
+void firmware_update_service::download_firmare_data(mobsya::aseba_node::node_type type) {
+    auto url_it = m_urls.find(type);
+    if(url_it == m_urls.end()) {
+        return;
+    }
 
     auto cb = [type, this, url = url_it->second](auto& ctx) {
         mLogInfo("{} : {}", url, ctx.res.result());
@@ -137,7 +159,6 @@ firmware_update_service::firmware_data(mobsya::aseba_node::node_type type) {
 
     m_http_client->on_http(url_it->second, std::move(cb));
     m_http_client->connect();
-    return f;
-}
+}  // namespace mobsya
 
 }  // namespace mobsya

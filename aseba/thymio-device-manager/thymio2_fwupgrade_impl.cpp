@@ -262,8 +262,8 @@ namespace details {
         }
 
         boost::system::error_code flush(boost::asio::serial_port::native_handle_type handle) {
-            if(!FlushFileBuffers(handle))
-                return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
+            // if(!FlushFileBuffers(handle))
+            //    return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
             return {};
         }
 
@@ -302,9 +302,9 @@ namespace details {
 
             cto.ReadIntervalTimeout = 10;
             cto.ReadTotalTimeoutConstant = 100;
-            cto.ReadTotalTimeoutMultiplier = 1;
+            cto.ReadTotalTimeoutMultiplier = 0;
             cto.WriteTotalTimeoutConstant = 100;
-            cto.WriteTotalTimeoutMultiplier = 1;
+            cto.WriteTotalTimeoutMultiplier = 0;
 
 
             if(!SetCommTimeouts(handle, &cto)) {
@@ -451,7 +451,7 @@ namespace details {
 
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
     void upgrade_thymio2_serial_endpoint(std::string path, const thymio2_firmware_data& data, uint16_t id,
-                                         firmware_upgrade_callback cb) {
+                                         firmware_upgrade_callback cb, firmware_update_options options) {
         int page = 0;
 
         // On OSX it is important to wait between close and open
@@ -468,24 +468,29 @@ namespace details {
         // Give a chance to the device to boot up
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        if(id == 0) {
+        if(id == 0 && !(int(options) & int(firmware_update_options::no_reboot))) {
             mLogTrace("Trying to get the node id...");
             id = get_node_id(*h);
             mLogInfo("Node Id is now {}", id);
         }
 
-        mLogInfo("Reboot...");
-        write(*h, Aseba::Reboot(id));
+        if(!(int(options) & int(firmware_update_options::no_reboot))) {
+            mLogInfo("Reboot...");
+            write(*h, Aseba::Reboot(id));
 
-        reset_device(*h);
+            reset_device(*h);
 
-        // Give a chance to the device to enter the bootloader
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            // Give a chance to the device to enter the bootloader
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-        uint8_t buffer[64] = {};
-        native_size_type s = 0;
-        auto err = read(*h, buffer, s);
-        mLogInfo("Reading: {} - {}\n", s, err.message());
+            uint8_t buffer[64] = {};
+            native_size_type s = 0;
+            auto err = read(*h, buffer, s);
+            mLogInfo("Reading: {} - {}\n", s, err.message());
+
+        } else {
+            reset_device(*h);
+        }
 
         do {
             mLogInfo("Sending pages...");
@@ -528,10 +533,13 @@ namespace details {
         int out;
     };
     void upgrade_thymio2_usb_endpoint(libusb_device_handle* h, const thymio2_firmware_data& data, uint16_t id,
-                                      firmware_upgrade_callback cb) {
+                                      firmware_upgrade_callback cb, firmware_update_options options) {
         int page = 0;
-        mLogInfo("Reboot...");
-        write(h, Aseba::Reboot(id));
+
+        if(!(int(options) & int(firmware_update_options::no_reboot))) {
+            mLogInfo("Reboot...");
+            write(h, Aseba::Reboot(id));
+        }
 
         // Give a chance to the device to enter the bootloader
         std::this_thread::sleep_for(std::chrono::milliseconds(2));

@@ -226,6 +226,8 @@ public:
     Q_INVOKABLE Request removeEvent(const QString& name);
     Q_INVOKABLE Request loadAesl(const QByteArray& code);
 
+    Q_INVOKABLE Request clearEventsAndVariables();
+
     QVector<EventDescription> eventsDescriptions() const;
     VariableMap sharedVariables() const;
     std::vector<std::shared_ptr<ThymioNode>> nodes() const;

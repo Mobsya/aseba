@@ -92,7 +92,10 @@ int main(int argc, char** argv) {
         }
     };
     load_trads("launcher_", ":/translations");
-    load_trads("qt_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    load_trads("qtdeclarative_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    load_trads("qtwebengine_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+
 
     QApplication::setApplicationName(QObject::tr("Thymio Suite"));
     QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));

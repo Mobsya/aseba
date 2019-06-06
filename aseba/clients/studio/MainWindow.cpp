@@ -136,11 +136,9 @@ void MainWindow::about() {
 
 bool MainWindow::newFile() {
     if(askUserBeforeDiscarding()) {
-        // clear content
-        clearDocumentSpecificTabs();
         // we must only have NodeTab* left, clear content of editors in tabs
         for(auto&& tab : nodes->devicesTabs()) {
-            tab->editor->clear();
+            tab->clearEverything();
         }
         // reset opened file name
         clearOpenedFileName(false);
@@ -155,7 +153,7 @@ void MainWindow::openFile(const QString& path) {
         return;
 
     for(auto&& tab : nodes->devicesTabs()) {
-        tab->editor->clear();
+        tab->clearEverything();
     }
 
     // open the file
@@ -188,6 +186,10 @@ void MainWindow::openFile(const QString& path) {
     if(!file.open(QFile::ReadOnly))
         return;
 
+    actualFileName = fileName;
+    updateRecentFiles(actualFileName);
+    updateWindowTitle();
+
     auto groups = nodes->groups();
     if(groups.size() != 1)
         return;
@@ -206,10 +208,8 @@ bool MainWindow::save() {
 
 bool MainWindow::saveFile(const QString& previousFileName) {
 
-    const auto groups = nodes->groups();
-    if(groups.size() != 1)
+    if(ranges::empty(nodes->devicesTabs()))
         return false;
-    const auto group = groups.front();
 
     QString fileName = previousFileName;
 
@@ -242,14 +242,25 @@ bool MainWindow::saveFile(const QString& previousFileName) {
     root.appendChild(document.createComment("list of global events"));
 
 
-    for(auto&& e : group->eventsDescriptions()) {
+    std::map<QString, mobsya::EventDescription> events;
+    std::map<QString, mobsya::ThymioVariable> sharedVariables;
+    for(auto&& tab : nodes->devicesTabs()) {
+        auto nodeEvents = tab->eventsDescriptions();
+        for(auto&& event : nodeEvents) {
+            events.emplace(event.name(), event);
+        }
+        auto nodeSharedVars = tab->groupVariables().toStdMap();
+        sharedVariables.insert(nodeSharedVars.begin(), nodeSharedVars.end());
+    }
+
+    for(auto&& e : events) {
         QDomElement element = document.createElement("event");
-        element.setAttribute("name", e.name());
-        element.setAttribute("size", e.size());
+        element.setAttribute("name", e.second.name());
+        element.setAttribute("size", e.second.size());
         root.appendChild(element);
     }
 
-    for(auto&& v : group->sharedVariables().toStdMap()) {
+    for(auto&& v : sharedVariables) {
         QDomElement element = document.createElement("constant");
         element.setAttribute("name", v.first);
         element.setAttribute("value", v.second.value().toInt());
@@ -279,9 +290,6 @@ bool MainWindow::saveFile(const QString& previousFileName) {
     QTextStream out(&file);
     document.save(out, 0);
 
-    // sourceModified = false;
-    // constantsDefinitionsModel->clearWasModified();
-    // eventsDescriptionsModel->clearWasModified();
     updateWindowTitle();
 
     return true;
@@ -534,27 +542,6 @@ void MainWindow::sourceChanged() {
     updateWindowTitle();
 }
 
-void MainWindow::clearDocumentSpecificTabs() {
-    /*bool changed = false;
-    do {
-        changed = false;
-        for(int i = 0; i < nodes->count(); i++) {
-            QWidget* tab = nodes->widget(i);
-
-#ifdef HAVE_QWT
-            if(dynamic_cast<AbsentNodeTab*>(tab) || dynamic_cast<EventViewer*>(tab))
-#else   // HAVE_QWT
-            if(dynamic_cast<AbsentNodeTab*>(tab))
-#endif  // HAVE_QWT
-            {
-                nodes->removeAndDeleteTab(i);
-                changed = true;
-                break;
-            }
-        }
-    } while(changed);*/
-}
-
 void MainWindow::setupWidgets() {
     currentScriptTab = nullptr;
     nodes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -562,13 +549,6 @@ void MainWindow::setupWidgets() {
     auto* splitter = new QSplitter();
     splitter->addWidget(nodes);
     setCentralWidget(splitter);
-
-#ifdef HAVE_QWT
-    plotEventButton = new QPushButton(QPixmap(QString(":/images/plot.png")), "");
-    plotEventButton->setEnabled(false);
-    plotEventButton->setToolTip(tr("Plot this event"));
-#endif  // HAVE_QWT
-
 
     // dialog box
     compilationMessageBox = new CompilationLogDialog(this);

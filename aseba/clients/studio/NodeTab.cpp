@@ -64,7 +64,7 @@ NodeTab::NodeTab(QWidget* parent)
 
 
     connect(&m_constants_model, &ConstantsModel::constantModified,
-            [this](const QString& name, const QVariant& value) { this->setVariable(name, {value}); });
+            [this](const QString& name, const QVariant& value) { this->setGroupVariable(name, {value}); });
     m_constantsWidget->setModel(&m_constants_model);
     m_eventsWidget->setModel(&m_events_model);
 
@@ -156,6 +156,18 @@ void NodeTab::reset() {
     lastLoadedSource.clear();
     editor->debugging = false;
     currentPC = -1;
+}
+
+
+void NodeTab::clearEverything() {
+    editor->clear();
+    if(m_thymio) {
+        m_thymio->group()->clearEventsAndVariables();
+    } else {
+        m_events_model.clear();
+        m_constants_model.clear();
+    }
+    reset();
 }
 
 void NodeTab::run() {
@@ -298,9 +310,11 @@ void NodeTab::updateMemoryUsage(const mobsya::CompilationResult& res) {
 void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
 
     m_hasCompilationError = !res.success();
-    compilationResultText->setVisible(!res.success());
-    compilationResultImage->setVisible(!res.success());
+    compilationResultText->setVisible(true);
+    compilationResultImage->setVisible(true);
     if(res.success()) {
+        compilationResultText->setText(tr("Compilation Success"));
+        compilationResultImage->setPixmap(QPixmap(QStringLiteral(":/images/ok.png")));
         return;
     }
     compilationResultText->setText(res.error().errorMessage());
@@ -488,6 +502,7 @@ void NodeTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
 }
 
 void NodeTab::onGroupVariablesChanged(const mobsya::ThymioNode::VariableMap& vars) {
+    m_group_variables = vars;
     m_constants_model.clear();
     for(auto it = vars.begin(); it != vars.end(); ++it) {
         it->value().isNull() ? m_constants_model.removeVariable(it.key()) :
@@ -532,7 +547,16 @@ QVariantMap NodeTab::getVariables() const {
     return m_vm_variables_model.getVariables();
 }
 
+QVector<mobsya::EventDescription> NodeTab::eventsDescriptions() const {
+    return m_events_descriptions;
+}
+
+mobsya::ThymioNode::VariableMap NodeTab::groupVariables() const {
+    return m_group_variables;
+}
+
 void NodeTab::onGlobalEventsTableChanged(const QVector<mobsya::EventDescription>& events) {
+    m_events_descriptions = events;
     m_events_model.clear();
     for(const auto& e : events) {
         m_events_model.addVariable(e.name(), e.size());

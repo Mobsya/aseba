@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
     QTranslator translator;
     app.installTranslator(&qtTranslator);
     app.installTranslator(&translator);
-    qtTranslator.load(QString("qt_") + QLocale::system().name(),
+    qtTranslator.load(QString("qtbase_") + QLocale::system().name(),
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     translator.load(QString(":/thymiownetconfig_") + QLocale::system().name());
 

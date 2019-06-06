@@ -7,10 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Qt5QuickCompiler)
 if(Qt5QuickCompiler_FOUND)
-qtquick_compiler_add_resources(QT_RESOURCES qml.qrc)
-else()
-    qt5_add_resources(QT_RESOURCES qml.qrc)
+qtquick_compiler_add_resources(QT_RESOURCES_BIN qml.qrc)
 endif()
+qt5_add_resources(QT_RESOURCES qml.qrc)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/launcher.rc.in
@@ -24,6 +23,7 @@ qt5_add_resources(QT_RESOURCES_TRANSLATIONS translations.qrc)
 
 add_executable(thymio-launcher WIN32 MACOSX_BUNDLE
     ${QT_RESOURCES}
+    ${QT_RESOURCES_PRECOMPILED}
     ${QT_RESOURCES_TRANSLATIONS}
     main.cpp
     launcher.h
@@ -46,6 +46,7 @@ target_link_libraries(thymio-launcher
     Qt5::Quick
     Qt5::QuickWidgets
     Qt5::Svg
+    ${Qt5Core_QTMAIN_LIBRARIES}
     qt-thymio-dm-client-lib
     qt-thymio-dm-client-lib-qml
     qtsingleapplication

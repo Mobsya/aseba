@@ -16,7 +16,7 @@ if (HAS_DYN_VERSION)
     add_dependencies(thymiownetconfig versionheader)
 endif (HAS_DYN_VERSION)
 
-target_link_libraries(thymiownetconfig Qt5::Widgets asebacommon)
+target_link_libraries(thymiownetconfig Qt5::Widgets ${Qt5Core_QTMAIN_LIBRARIES} asebacommon)
 
 install_qt_app(thymiownetconfig)
 codesign(thymiownetconfig)

@@ -10,10 +10,20 @@ Rectangle {
             name: qsTr("Launch a Simulator")
             action: "playground"
         }
+        ListElement {
+            name: qsTr("Download maps for the simulator")
+            action: "playground-faq"
+        }
     }
+
+
+
     function onMenuEntryClicked(action) {
         if(action === "playground") {
             Utils.launchPlayground()
+        }
+        else if(action === "playground-faq") {
+            Qt.openUrlExternally(qsTr("https://www.thymio.org/thymio-simulator"))
         }
     }
 

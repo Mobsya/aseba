@@ -19,6 +19,7 @@
 #include "variant_compat.h"
 #include "aseba_node_registery.h"
 #include "utils.h"
+#include "thymio2_fwupgrade.h"
 
 namespace mobsya {
 
@@ -118,6 +119,21 @@ public:
         m_endpoint_type = type;
     }
 
+    bool is_usb() const {
+#ifdef MOBSYA_TDM_ENABLE_USB
+        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
+            return variant_ns::get<usb_device>(m_endpoint).usb_device_id() == THYMIO2_DEVICE_ID;
+        }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
+            return variant_ns::get<usb_serial_port>(m_endpoint).usb_device_id() == THYMIO2_DEVICE_ID;
+        }
+#endif
+        return false;
+    }
+
+
     bool is_wireless() const {
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
@@ -145,7 +161,8 @@ public:
     bool wireless_set_settings(uint8_t channel, uint16_t network_id, uint16_t dongle_id);
     wireless_settings wireless_get_settings() const;
 
-    bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb);
+    bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb,
+                          firmware_update_options options = firmware_update_options::no_option);
 
     std::vector<std::shared_ptr<aseba_node>> nodes() const {
         std::vector<std::shared_ptr<aseba_node>> nodes;
@@ -213,10 +230,14 @@ public:
             mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
             if(!ec && !m_upgrading_firmware)
                 read_aseba_message();
-            if(!wireless_cfg_mode_enabled())
+            if(!wireless_cfg_mode_enabled()) {
+                if(!m_has_had_sucessful_read)
+                    restore_firmware();
                 return;
+            }
         }
         mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
+        m_has_had_sucessful_read = true;
 
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
@@ -228,21 +249,24 @@ public:
             if(event) {
                 on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first, timestamp);
             }
-        } else if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
-            if(!node) {
-                const auto protocol_version = static_cast<Aseba::NodePresent*>(msg.get())->version;
-                it = m_nodes
-                         .insert({node_id,
-                                  {aseba_node::create(m_io_context, node_id, protocol_version, shared_from_this()),
-                                   std::chrono::steady_clock::now()}})
-                         .first;
-                // Reading move this, we need to return immediately after
-                it->second.node->get_description();
+        } else if(!node && (msg->type == ASEBA_MESSAGE_NODE_PRESENT || msg->type == ASEBA_MESSAGE_DESCRIPTION)) {
+            const auto protocol_version = (msg->type == ASEBA_MESSAGE_NODE_PRESENT) ?
+                static_cast<Aseba::NodePresent*>(msg.get())->version :
+                static_cast<Aseba::Description*>(msg.get())->protocolVersion;
+            it = m_nodes
+                     .insert({node_id,
+                              {aseba_node::create(m_io_context, node_id, protocol_version, shared_from_this()),
+                               std::chrono::steady_clock::now()}})
+                     .first;
+            node = it->second.node;
+            // Reading move this, we need to return immediately after
+            if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
+                node->get_description();
+                return;
             }
-        } else if(node) {
-            node->on_message(*msg);
         }
         if(node) {
+            node->on_message(*msg);
             // Update node status
             it->second.last_seen = std::chrono::steady_clock::now();
         }
@@ -298,6 +322,11 @@ private:
                 return;
 
             that->write_message(std::make_unique<Aseba::ListNodes>());
+            if(that->m_first_ping && that->is_usb()) {
+                that->write_message(std::make_unique<Aseba::GetDescription>());
+                that->m_first_ping = false;
+            }
+
             if(that->needs_ping())
                 that->schedule_send_ping();
         });
@@ -400,6 +429,8 @@ private:
         return m_defs;
     }
 
+    void restore_firmware();
+
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(const std::string& name) const;
     std::optional<std::pair<Aseba::EventDescription, std::size_t>> get_event(uint16_t id) const;
 
@@ -435,6 +466,8 @@ private:
         bool pairing = false;
     };
     bool m_upgrading_firmware = false;
+    bool m_has_had_sucessful_read = false;
+    bool m_first_ping = true;
 
     std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
     bool sync_wireless_dongle_settings();
