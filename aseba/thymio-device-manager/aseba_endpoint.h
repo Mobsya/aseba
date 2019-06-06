@@ -259,9 +259,9 @@ public:
                                std::chrono::steady_clock::now()}})
                      .first;
             node = it->second.node;
-            // Reading move this, we need to return immediately after
             if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
                 node->get_description();
+                read_aseba_message();
                 return;
             }
         }
