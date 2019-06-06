@@ -96,8 +96,7 @@
             "post-install": [
                 "install -D --target-directory /app/share/mobsya/Playground/  aseba/targets/playground/examples/*",
                 "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebaonlinehelp asebastudio thymiownetconfig; do mv /app/share/applications/$i.desktop /app/share/applications/org.mobsya.ThymioSuite-$i.desktop; done",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebahelp asebastudio thymiownetconfig; do mv /app/share/icons/hicolor/scalable/apps/$i.svg /app/share/icons/hicolor/scalable/apps/org.mobsya.ThymioSuite-$i.svg; done",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebahelp asebastudio thymiownetconfig; do mv /app/share/icons/hicolor/48x48/apps/$i.png /app/share/icons/hicolor/48x48/apps/org.mobsya.ThymioSuite-$i.svg; done",
+                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebahelp asebastudio thymiownetconfig; do mv /app/share/icons/hicolor/48x48/apps/$i.png /app/share/icons/hicolor/48x48/apps/org.mobsya.ThymioSuite-$i.png; done",
                 "desktop-file-edit --set-key=Icon --set-value=org.mobsya.ThymioSuite-asebahelp /app/share/applications/org.mobsya.ThymioSuite-asebaonlinehelp.desktop",
                 "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebastudio thymiownetconfig; do desktop-file-edit --set-key=Icon --set-value=org.mobsya.ThymioSuite-$i /app/share/applications/org.mobsya.ThymioSuite-$i.desktop; done",
                 "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebaonlinehelp asebastudio thymiownetconfig; do desktop-file-edit --set-key=X-Flatpak-RenamedFrom --set-value=$i.desktop /app/share/applications/org.mobsya.ThymioSuite-$i.desktop; done"
