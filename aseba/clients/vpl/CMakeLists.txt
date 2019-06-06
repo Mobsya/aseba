@@ -47,6 +47,7 @@ target_link_libraries(${VPL_EXECUTABLE_NAME}
     Qt5::Network
     Qt5::Xml
     Qt5::Widgets
+    ${Qt5Core_QTMAIN_LIBRARIES}
 )
 
 install_qt_app(${VPL_EXECUTABLE_NAME})

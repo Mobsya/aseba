@@ -4,13 +4,14 @@
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 
+cmake_policy(SET CMP0071 NEW)
+cmake_policy(SET CMP0020 NEW)
+
 project(ThymioSuite)
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-cmake_policy(SET CMP0071 NEW)
-cmake_policy(SET CMP0020 NEW)
 
 
 # ensure a minimal version of CMake
