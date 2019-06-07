@@ -32,9 +32,8 @@ include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
 
 
-include(CMakeModules/boost.cmake)
-
 if(NOT ANDROID)
+    include(CMakeModules/boost.cmake)
     include(CMakeModules/enki.cmake)
     find_package(Threads REQUIRED)
 endif()

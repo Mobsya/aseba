@@ -48,11 +48,11 @@ message(STATUS "Found Android NDK: ${QT_ANDROID_NDK_ROOT}")
 
 
 if(NOT ANDROID_STL)
-    set(STL_NAME "libc++")
+    set(STL_NAME "c++-shared")
 else()
     set(STL_NAME "${ANDROID_STL}")
 endif()
-find_library(QT_ANDROID_STL_LIBRARY "${STL_NAME}" NAMES "${STL_NAME}" PATHS "${ANDROID_STL_PATH}/libs/${ANDROID_ABI}" NO_DEFAULT_PATH)
+find_library(QT_ANDROID_STL_LIBRARY "${STL_NAME}" NAMES "${STL_NAME}")
 if(NOT QT_ANDROID_STL_LIBRARY)
     message(FATAL_ERROR "Could not find STL, please specify what STL implementation to use using the ANDROID_STL variable")
 endif()

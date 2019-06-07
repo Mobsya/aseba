@@ -25,6 +25,38 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite.flatpak'
 
+- job: 'BuildAndroid_armeabi'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  strategy:
+    matrix:
+      armeabi:
+        TARGET_ARCH: 'armeabi-v7a'
+      aarch64:
+        TARGET_ARCH: 'x86_64'
+      x86_64:
+        TARGET_ARCH: 'x86_64'
+  steps:
+  - script: |
+      docker pull mobsya/android-dev-env:$TARGET_ARCH
+  - script: |
+      wget -q https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz && tar xzf thymio-blockly.tar.gz -C .
+      wget -q https://github.com/Mobsya/scratch-gui/releases/download/v20190606.2/scratch-gui.tar.gz && tar xzf scratch-gui.tar.gz -C .
+    displayName: 'Extract scratch and blockly'
+
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
+
+  - script: |
+      sudo docker run --rm -e TARGET_ARCH=${TARGET_ARCH} -v $(pwd):/src:rw -v $(Build.ArtifactStagingDirectory):/build:rw mobsya/android-dev-env:$TARGET_ARCH /bin/bash -c 'apt-get install pkg-config python3 -y --no-install-recommends && cd /src && mkdir build && cd build && export CMAKE_PREFIX_PATH="/Qt/android_${TARGET_ARCH}" && cmake -DANDROID_PLATFORM=android-22 -DANDROID_ABI=${TARGET_ARCH}  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/Qt/android_${TARGET_ARCH} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ../ && ninja && cp bin/*.apk /build/thymio-suite-${TARGET_ARCH}.apk'
+    displayName: 'Build Thymio Suite'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite-android'
+
 - job: BuilOnOsX
   pool:
     vmImage: 'macOS-10.13'
