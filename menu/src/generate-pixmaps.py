@@ -37,6 +37,7 @@ if __name__ == '__main__':
 
 		print 'Generating freedesktop files'
 		convert('../freedesktop/48x48', '48')
+		convert('../freedesktop/256x256', '256')
 
 		if cmd_exists('convert'):
 			print 'Generating Windows ico'
