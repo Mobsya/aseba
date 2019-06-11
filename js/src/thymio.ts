@@ -215,7 +215,7 @@ export interface IBasicNode {
      *
      * @param flags bitflag of [[fb.mobsya.WatchableInfo]]
      */
-    watchSharedVariablesAndEvents(flags : number) : Promise<any>
+    watchSharedVariablesAndEvents(enable : boolean) : Promise<any>
 
     /**
      * Send events to a group
