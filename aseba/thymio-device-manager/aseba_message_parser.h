@@ -1,6 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
-#include <boost/beast.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/core/handler_ptr.hpp>
 #include <aseba/common/msg/msg.h>
 #include <boost/endian/arithmetic.hpp>
 #include <iostream>

@@ -11,7 +11,7 @@ template <typename socket_type>
 class application_server {
 public:
     application_server(boost::asio::io_context& io_context, uint16_t port = 0)
-        : m_acceptor(io_context, tcp::endpoint(tcp::v6(), port)) {
+        : m_io_context(io_context), m_acceptor(io_context, tcp::endpoint(tcp::v6(), port)) {
         // Make sure we accept both ipv4 + ipv6
         boost::asio::ip::v6_only opt(false);
         boost::system::error_code ec;
@@ -24,7 +24,7 @@ public:
     }
 
     void accept() {
-        auto endpoint = std::make_shared<application_endpoint<socket_type>>(m_acceptor.get_io_context());
+        auto endpoint = std::make_shared<application_endpoint<socket_type>>(m_io_context);
         m_acceptor.async_accept(endpoint->tcp_socket(), [this, endpoint](const boost::system::error_code& error) {
             mLogInfo("New connection from {} {}", endpoint->tcp_socket().remote_endpoint().address().to_string(),
                      error.message());
@@ -37,6 +37,7 @@ public:
     }
 
 private:
+    boost::asio::io_context& m_io_context;
     tcp::acceptor m_acceptor;
 };
 }  // namespace mobsya
