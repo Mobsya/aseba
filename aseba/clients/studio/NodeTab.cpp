@@ -1064,5 +1064,17 @@ void NodeTab::showHidden(bool show) {
     m_vm_variables_filter_model.showHidden(show);
 }
 
+void NodeTab::hideEvent(QHideEvent*) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(false);
+    }
+}
+
+void NodeTab::showEvent(QShowEvent*) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
+    }
+}
+
 
 }  // namespace Aseba
