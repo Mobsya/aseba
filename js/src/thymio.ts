@@ -247,8 +247,8 @@ class BasicNode implements IBasicNode {
         return this._id
     }
 
-    watchSharedVariablesAndEvents(flags : number) {
-        return this._set_monitoring_flags(mobsya.fb.WatchableInfo.SharedEventsDescription | mobsya.fb.WatchableInfo.SharedVariables, flags)
+    watchSharedVariablesAndEvents(enable : boolean) {
+        return this._set_monitoring_flags(mobsya.fb.WatchableInfo.SharedEventsDescription | mobsya.fb.WatchableInfo.SharedVariables, enable)
     }
 
     _set_monitoring_flags(flag, set) {
