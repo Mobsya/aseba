@@ -74,7 +74,8 @@ public Q_SLOTS:
     void clearExecutionErrors();
     void refreshCompleterModel(LocalContext context);
 
-    // void sortCompleterModel();
+    void hideEvent(QHideEvent*) override;
+    void showEvent(QShowEvent*) override;
 
 protected Q_SLOTS:
 
