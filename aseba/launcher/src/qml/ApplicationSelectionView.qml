@@ -10,57 +10,72 @@ Item {
         anchors.fill: parent
         color: Style.main_bg_color
     }
-    ListView {
+    Item {
         anchors.margins: Style.window_margin + Style.column_margin + Style.column_width
         anchors.fill: parent
-        model: Applications {}
-        orientation: Qt.Horizontal
-        id : app_view
-        spacing: 0
-        currentIndex: -1
-        delegate: Item {
-            anchors.verticalCenter: parent.verticalCenter
-            height: icon.height + label.height + 12
-            width:  (app_view.width) / app_view.count
+        Column {
+            anchors.fill: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            Text {
+                id: titleText
+                anchors.horizontalCenter: parent.horizontalCenter
+                textFormat: Text.RichText
+                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to learn with Thymio</div>")
+            }
 
-            Column {
-                anchors.fill: parent
-                AnimatedImage {
-                    id: icon
-                    source: animatedIcon
-                    playing: false
+            ListView {
+                width:parent.width
+                height:parent.height - titleText.height
+                model: Applications {}
+                orientation: Qt.Horizontal
+                id : app_view
+                spacing: 0
+                currentIndex: -1
+                delegate: Item {
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: icon.height + label.height + 12
+                    width:  (app_view.width) / app_view.count
 
-
-                    height: width
-                    width : Math.max(48, Math.min(256, parent.width - 2 * 30))
-
-                    MouseArea {
+                    Column {
                         anchors.fill: parent
-                        hoverEnabled: true
-                        onEntered: {
-                            icon.playing = true
+                        AnimatedImage {
+                            id: icon
+                            source: animatedIcon
+                            playing: false
+
+
+                            height: width
+                            width : Math.max(48, Math.min(256, parent.width - 2 * 30))
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    icon.playing = true
+                                }
+                                onClicked: {
+                                    //Make sure the index changed signal is always emitted on click
+                                    app_view.currentIndex = -1
+                                    app_view.currentIndex = index
+                                    item.selectedApp = app_view.model.get(app_view.currentIndex)
+                                    item.selectedAppLauncher = app_view.model.launch_function(item.selectedApp)
+                                }
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                            anchors.horizontalCenter: parent.horizontalCenter
                         }
-                        onClicked: {
-                            //Make sure the index changed signal is always emitted on click
-                            app_view.currentIndex = -1
-                            app_view.currentIndex = index
-                            item.selectedApp = app_view.model.get(app_view.currentIndex)
-                            item.selectedAppLauncher = app_view.model.launch_function(item.selectedApp)
+
+                        Item {
+                            height: 12
+                            width: parent.width
                         }
-                        cursorShape: Qt.PointingHandCursor
+
+                        Text {
+                            id: label
+                            anchors.horizontalCenter: icon.horizontalCenter
+                            text: name
+                        }
                     }
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Item {
-                    height: 12
-                    width: parent.width
-                }
-
-                Text {
-                    id: label
-                    anchors.horizontalCenter: icon.horizontalCenter
-                    text: name
                 }
             }
         }

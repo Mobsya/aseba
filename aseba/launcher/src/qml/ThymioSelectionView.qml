@@ -158,13 +158,16 @@ Item {
                 anchors.top: parent.top
                 anchors.leftMargin: 30
                 anchors.rightMargin: 30
+                anchors.topMargin: 12
                 Text {
-                    text: qsTr("Choose a Thymio")
+                    anchors.centerIn: parent
+                    text: qsTr("Connect a Thymio or <a href='#'>launch a simulator</a>")
+                    color: "white"
+                    linkColor: "#0a9eeb"
                     font.family: "Roboto Bold"
-                    font.bold: true
-                    font.pointSize: 10
-                    color : "white"
-
+                    font.pointSize: 12
+                    onLinkActivated: Utils.launchPlayground()
+                    wrapMode: Text.WordWrap
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -233,19 +236,6 @@ Item {
                     model: thymios
 
                     delegate:  ThymioSelectionDeviceDelegate { }
-                }
-                Text {
-                    anchors.centerIn: parent
-                    visible: Utils.isZeroconfRunning && device_view.count == 0
-                    id: noRobotMessage
-                    text: qsTr("Connect a Thymio or <a href='#'>launch a simulator</a>")
-                    color: "white"
-                    linkColor: "#0a9eeb"
-                    font.family: "Roboto Bold"
-                    font.pointSize: 13
-                    onLinkActivated: Utils.launchPlayground()
-                    wrapMode: Text.WordWrap
-                    width: parent.width * 0.90
                 }
             }
             Text {
