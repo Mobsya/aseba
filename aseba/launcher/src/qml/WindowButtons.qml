@@ -4,7 +4,7 @@ import QtQuick.Controls 2.4
 Item {
     anchors.topMargin: 30
     anchors.rightMargin: 30
-    Column {
+    Row {
         anchors.top: parent.top
         anchors.right: parent.right
         spacing: 15
