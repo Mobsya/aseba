@@ -117,7 +117,7 @@ Item {
                                  width: scrollview.width - 10
                                  id: description_text
                                  textFormat: Text.RichText
-                                 text:  Utils.readFileContent(launcher.selectedApp.descriptionTextFile)
+                                 text:  Utils.readFileContent(Utils.filenameForLocale(launcher.selectedApp.descriptionTextFile))
                                  wrapMode: Text.WordWrap
                                  onLinkActivated: Qt.openUrlExternally(link)
 

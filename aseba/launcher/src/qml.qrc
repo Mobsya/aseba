@@ -63,5 +63,13 @@
         <file>qml/FirmwareUpdateDialog.qml</file>
         <file>assets/launcher-icon-menu.svg</file>
         <file>assets/launcher-icon-help.svg</file>
+        <file>apps/vpl/desc.fr.html</file>
+        <file>apps/vpl/desc.it.html</file>
+        <file>apps/studio/desc.fr.html</file>
+        <file>apps/studio/desc.it.html</file>
+        <file>apps/scratch/desc.fr.html</file>
+        <file>apps/scratch/desc.it.html</file>
+        <file>apps/blockly/desc.fr.html</file>
+        <file>apps/blockly/desc.it.html</file>
     </qresource>
 </RCC>
