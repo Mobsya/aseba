@@ -92,6 +92,19 @@ Rectangle {
             return
         }
 
+        if(advancedMode && dongles.length === 1) {
+            let req = donglesManager.dongleInfo(dongles[0])
+            Request.onFinished(req, function(status, res) {
+                console.log("Info for dongle %1 : network %2 - channel : %3"
+                    .arg(dongles[0])
+                    .arg(res.networkId())
+                    .arg(res.channel()))
+
+                selectedNetworkId = getNonDefaultNetworkId(res.networkId())
+                selectedChannel = getChannel()
+            })
+        }
+
         //Dongles have a new UUID each time they are unplugged
         //If we see a dongle we previously paired, ask the user to uplug it
         if(dongles.length === 1 && pairedDongleUUIDs.indexOf(dongles[0]) >= 0) {
@@ -107,7 +120,7 @@ Rectangle {
 
         errorBanner.text = ""
         if (dongles.length < 1) {
-            errorBanner.text = qsTr("Please plug a wireless dongle in an USB port of this computer")
+            errorBanner.text = qsTr("Please plug a wireless dongle in a USB port of this computer")
             return
         }
         if (dongles.length > 1) {
@@ -119,7 +132,7 @@ Rectangle {
 
 
         if(nodes.length < 1) {
-            errorBanner.text = qsTr("Please plug a Thymio 2 Wireless Robot in an USB port of this computer")
+            errorBanner.text = qsTr("Please plug a Thymio 2 Wireless Robot in a USB port of this computer")
             return
         }
         if (nodes.length > 1) {
@@ -139,14 +152,44 @@ Rectangle {
         ready = true
     }
 
+    function pairRobotAndDongle(robotId, dongleId, networkId, channel) {
+        console.log("Pairing node %1 to dongle %2; network %3 - channel %4"
+            .arg(robotId.toString())
+            .arg(dongleId)
+            .arg(networkId)
+            .arg(channel))
+
+        ready = false
+        const request = donglesManager.pairThymio2Wireless(dongleId, robotId, networkId, channel)
+
+        pairedDongleUUIDs.push(dongleId)
+        pairedRobotUUIDs.push(robotId.toString())
+        pairedDongleNetworkIds.push(networkId)
+
+
+        Request.onFinished(request, function(status, res) {
+            console.log("Pairing complete: network %1 - channel %2"
+                .arg(res.networkId())
+                .arg(res.channel()))
+            robotCount ++
+            waitingForUnplug = true
+            updateState()
+        })
+    }
+
     function pairSelectedRobotAndDongle() {
+        if(advancedMode) {
+            if(!ready)
+                return
+            selectedNetworkId = parseInt(networkSelector.text, 16)
+            selectedChannel = channelSelector.channel
+            pairRobotAndDongle(selectedRobotId, selectedDongleId, selectedNetworkId, selectedChannel)
+            return
+        }
+
         updateState()
         if(!ready)
             return
-
-        console.log("Requesting info for dongle %1"
-            .arg(selectedDongleId))
-        let req = donglesManager.dongleInfo(dongles[0])
         Request.onFinished(req, function(status, res) {
             console.log("Info for dongle %1 : network %2 - channel : %3"
                 .arg(selectedDongleId)
@@ -156,41 +199,13 @@ Rectangle {
             selectedNetworkId = getNonDefaultNetworkId(res.networkId())
             selectedChannel = getChannel()
 
-
             if(valiseMode && pairedDongleNetworkIds.indexOf(selectedNetworkId) >= 0) {
                 ready = false
                 errorBanner.text = qsTr("You have alredy paired this dongle with another robot")
                 return
             }
-
-
-            console.log("Pairing node %1 to dongle %2; network %3 - channel %4"
-                .arg(selectedRobotId.toString())
-                .arg(selectedDongleId)
-                .arg(selectedNetworkId)
-                .arg(selectedChannel))
-
-            ready = false
-            const request = donglesManager.pairThymio2Wireless(selectedDongleId,
-                                                              selectedRobotId, selectedNetworkId, selectedChannel)
-
-            pairedDongleUUIDs.push(selectedDongleId)
-            pairedRobotUUIDs.push(selectedRobotId.toString())
-            pairedDongleNetworkIds.push(selectedNetworkId)
-
-
-            Request.onFinished(request, function(status, res) {
-                console.log("Pairing complete: network %1 - channel %2"
-                    .arg(res.networkId())
-                    .arg(res.channel()))
-                robotCount ++
-                waitingForUnplug = true
-                updateState()
-
-            })
+            pairRobotAndDongle(selectedRobotId, selectedDongleId, selectedNetworkId, selectedChannel)
         })
-
-
     }
 
 
@@ -278,6 +293,11 @@ Rectangle {
         visible: advancedMode
         anchors.fill: parent
         anchors.topMargin: 30 + 60
+        onVisibleChanged: {
+            if(visible) {
+                updateState()
+            }
+        }
 
         Item {
             width : parent.width
@@ -377,9 +397,11 @@ Rectangle {
                             font.pointSize: 10
                         }
                         ChannelSelector {
+                            id: channelSelector
                             width: parent.width
                             height: 40
                             anchors.bottom: parent.bottom
+                            channel: selectedChannel ? selectedChannel : -1
                         }
                     }
                     Item {
@@ -393,9 +415,11 @@ Rectangle {
                             width: parent.width
                         }
                         NetworkIdInput {
+                            id: networkSelector
                             width: parent.width
                             height: 40
                             anchors.bottom: parent.bottom
+                            text: selectedNetworkId
                         }
                     }
                     Item {
