@@ -11,7 +11,7 @@ Rectangle {
     radius: 180
     Text {
         anchors.centerIn: parent
-        text: "%1".arg(channel)
+        text: "%1".arg(channel + 1)
         font.pointSize: 15
         font.bold: true
         color: "white"
