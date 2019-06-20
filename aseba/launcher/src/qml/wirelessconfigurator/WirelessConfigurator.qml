@@ -419,7 +419,7 @@ Rectangle {
                             width: parent.width
                             height: 40
                             anchors.bottom: parent.bottom
-                            text: selectedNetworkId
+                            text: Number(selectedNetworkId).toString(16)
                         }
                     }
                     Item {
