@@ -63,6 +63,7 @@
         <file>qml/FirmwareUpdateDialog.qml</file>
         <file>assets/launcher-icon-menu.svg</file>
         <file>assets/launcher-icon-help.svg</file>
+        <file>assets/launcher-icon-help-blue.svg</file>
         <file>apps/vpl/desc.fr.html</file>
         <file>apps/vpl/desc.it.html</file>
         <file>apps/studio/desc.fr.html</file>
