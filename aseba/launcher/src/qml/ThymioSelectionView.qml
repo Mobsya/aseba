@@ -53,12 +53,26 @@ Item {
         }
 
         SvgButton {
+            source: "qrc:/assets/launcher-icon-help-blue.svg"
+            height: 22
+            width : 22
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: icon_close.left
+            anchors.rightMargin: (parent.height - height) / 2
+            onClicked: {
+                Qt.openUrlExternally(launcher.selectedApp.helpUrl)
+            }
+        }
+
+
+        SvgButton {
             source: "qrc:/assets/launcher-icon-close.svg"
             height: 22
             width : 22
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: (parent.height - height) / 2
+            id: icon_close
             onClicked: {
                 launcher.goToAppSelectionScreen()
             }
