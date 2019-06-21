@@ -23,6 +23,7 @@ aseba_endpoint::~aseba_endpoint() {
         registery.unregister_expired_endpoints();
     });
     stop();
+    close();
     free_endpoint();
 }
 
@@ -80,7 +81,7 @@ void aseba_endpoint::free_endpoint() {
                                  ,
                                  [this](mobsya::usb_serial_port& d) {
                                      auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
-                                     timer->expires_from_now(boost::posix_time::seconds(5));
+                                     timer->expires_from_now(boost::posix_time::milliseconds(500));
                                      timer->async_wait([timer, path = d.device_path(), &ctx = m_io_context](auto ec) {
                                          if(!ec)
                                              boost::asio::use_service<serial_acceptor_service>(ctx).free_device(path);
@@ -111,6 +112,20 @@ void aseba_endpoint::stop() {
 #ifdef MOBSYA_TDM_ENABLE_USB
                                  ,
                                  [this](mobsya::usb_device& d) { d.cancel(); }
+#endif
+                      },
+                      m_endpoint);
+}
+
+void aseba_endpoint::close() {
+    variant_ns::visit(overloaded{[this](tcp_socket& socket) {}
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+                                 ,
+                                 [this](mobsya::usb_serial_port& d) { d.close(); }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_USB
+                                 ,
+                                 [this](mobsya::usb_device& d) {}
 #endif
                       },
                       m_endpoint);

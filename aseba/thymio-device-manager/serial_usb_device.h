@@ -26,13 +26,16 @@ public:
     void open(boost::system::error_code& ec) {
         boost::asio::serial_port::open(m_port_name, ec);
 #if defined(__linux__) or defined(__APPLE__)
-        // ioctl(native_handle(), USBDEVFS_RESET, 0);
+        ioctl(native_handle(), _IO('U', 20), 0);
         ioctl(native_handle(), TIOCEXCL);
         tcflush(native_handle(), TCIOFLUSH);
 #endif
     }
 
     void close() {
+        ioctl(native_handle(), _IO('U', 20), 0);
+        ioctl(native_handle(), TIOCEXCL);
+        tcflush(native_handle(), TCIOFLUSH);
         boost::system::error_code ec;
         close(ec);
     }

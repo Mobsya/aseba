@@ -164,6 +164,7 @@ public:
         return nodes;
     }
 
+    void close();
     void start();
     void stop();
     void cancel_all_ops();
@@ -338,7 +339,8 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(!is_rebooting() && !wireless_cfg_mode_enabled() && d.count() >= 5) {
+                if(!is_rebooting() && !wireless_cfg_mode_enabled() &&
+                   d.count() >= (info.node->get_status() == aseba_node::status::connected ? 25 : 5)) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
                     info.node->set_status(aseba_node::status::disconnected);
