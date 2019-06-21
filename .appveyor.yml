@@ -133,7 +133,7 @@ environment:
 
     - ARCH: x64
       COMPILER: MSVC
-      QT5: C:\Qt\5.11\msvc2017_64
+      QT5: C:\Qt\5.12\msvc2017_64
       USE_VS_TOOLCHAIN: true
       BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
 
