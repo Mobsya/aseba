@@ -33,9 +33,11 @@ public:
     }
 
     void close() {
+#if defined(__linux__) or defined(__APPLE__)
         ioctl(native_handle(), _IO('U', 20), 0);
         ioctl(native_handle(), TIOCEXCL);
         tcflush(native_handle(), TCIOFLUSH);
+#endif
         boost::system::error_code ec;
         close(ec);
     }
