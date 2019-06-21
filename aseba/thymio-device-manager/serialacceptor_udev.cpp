@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/beast/core/bind_handler.hpp>
+#include <boost/thread/thread.hpp>
 #include "log.h"
 
 namespace mobsya {
@@ -71,17 +72,24 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
     if(!n)
         return false;
 
+
     r.d.m_device_name = s;
     r.d.m_port_name = n;
     r.d.m_device_id = id;
-    r.d.open(ec);
-
+    int tries = 0;
+    do {
+        ec = {};
+        r.d.open(ec);
+        if(ec) {
+            mLogError("serial acceptor: {}", ec.message());
+        }
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+    } while(ec && tries++ < 50);
 
     if(ec) {
-
-        mLogError("serial acceptor: {}", ec.message());
         return false;
     }
+
     auto handler = std::move(r.handler);
     const auto executor = boost::asio::get_associated_executor(handler, r.acceptor.get_executor());
     m_requests.pop();

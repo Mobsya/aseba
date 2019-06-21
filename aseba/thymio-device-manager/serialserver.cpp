@@ -14,9 +14,9 @@ void serial_server::accept() {
         }
         mLogInfo("New Aseba endpoint over USB device connected");
         usb_serial_port& d = session->serial();
-        d.set_option(boost::asio::serial_port::baud_rate(115200));
-        d.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
-        d.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
+        d.set_option(boost::asio::serial_port::baud_rate(115200), ec);
+        d.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none), ec);
+        d.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one), ec);
         d.set_data_terminal_ready(true);
         session->set_endpoint_type(aseba_endpoint::endpoint_type::thymio);
         session->set_endpoint_name(d.device_name());

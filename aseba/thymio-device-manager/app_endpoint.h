@@ -1013,6 +1013,6 @@ private:
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;
-};  // namespace mobsya
+};
 
 }  // namespace mobsya
