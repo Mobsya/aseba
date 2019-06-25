@@ -190,6 +190,7 @@ Rectangle {
         updateState()
         if(!ready)
             return
+        let req = donglesManager.dongleInfo(dongles[0])
         Request.onFinished(req, function(status, res) {
             console.log("Info for dongle %1 : network %2 - channel : %3"
                 .arg(selectedDongleId)
