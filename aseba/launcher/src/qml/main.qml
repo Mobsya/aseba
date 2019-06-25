@@ -33,10 +33,6 @@ Item {
         }
     }
 
-    WirelessConfigurator {
-       // valiseMode: true
-    }
-
     function goToDeviceSelectionWithApp() {
         if(app_view.selectedApp && main_layout.depth == 1) {
             var component = deviceSelectionViewFactory.createObject(main_layout)
