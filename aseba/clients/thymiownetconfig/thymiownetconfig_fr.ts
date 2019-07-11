@@ -63,12 +63,12 @@
     <message>
         <location line="+11"/>
         <source>Connection error</source>
-        <translation>Erreure de connexion</translation>
+        <translation>Erreur de connexion</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot connect to dongle!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure a Wireless Thymio dongle is connected!&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;Ne peut pas se connecter au dongle !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous qu&apos;un dongle wireless Thymio est connecté !&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;Ne peut pas se connecter au dongle !&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous qu&apos;un dongle Wireless Thymio est connecté !&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;Cannot connect to dongle!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure a Thymio Wireless dongle is connected!&lt;/p&gt;</source>
