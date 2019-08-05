@@ -41,7 +41,7 @@ jobs:
       docker pull mobsya/android-dev-env:$TARGET_ARCH
   - script: |
       wget -q https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz && tar xzf thymio-blockly.tar.gz -C .
-      wget -q https://github.com/Mobsya/scratch-gui/releases/download/v20190606.2/scratch-gui.tar.gz && tar xzf scratch-gui.tar.gz -C .
+      wget -q https://github.com/Mobsya/scratch-gui/releases/download/v20190805.1/scratch-gui.tar.gz && tar xzf scratch-gui.tar.gz -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
@@ -72,7 +72,7 @@ jobs:
 
   - script: |
       curl -sL https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz | tar xzf - -C .
-      curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190606.2/scratch-gui.tar.gz | tar xzf - -C .
+      curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190805.1/scratch-gui.tar.gz | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |

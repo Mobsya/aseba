@@ -87,8 +87,8 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190606.2/scratch-gui.tar.gz",
-                    "sha256": "660ae22633f839fea83a5f8e8d7d5d93c9c9998782c058f855e430c8a62bff8a",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190805.1/scratch-gui.tar.gz",
+                    "sha256": "9260e6eb463dd8e4e82fc44d799446242e6bb0876a2fd36187218df58dce3972",
                     "strip-components": 0
                 }
             ],
