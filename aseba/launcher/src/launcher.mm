@@ -1,6 +1,6 @@
 #include "launcher.h"
 #include <Foundation/Foundation.h>
-#include <AppKit/NSWorkspace.h>
+#include <UIKit/UIKit.h>
 #include <QDir>
 #include <QCoreApplication>
 #include <QDebug>
@@ -14,8 +14,9 @@ auto QStringListToNSArray(const QStringList &list)
         [result addObject:str.toNSString()];
     }
     return result;
-}
 
+}
+#ifdef Q_OS_OSX
 bool Launcher::doLaunchPlaygroundBundle() const {
     const auto path = QDir(QCoreApplication::applicationDirPath() +
                            QStringLiteral("/../Applications/AsebaPlayground.app")).absolutePath();
@@ -24,10 +25,10 @@ bool Launcher::doLaunchPlaygroundBundle() const {
         NSLog(@"Unable to find the bundle");
         return false;
     }
-    auto ws = [NSWorkspace sharedWorkspace];
-    [ws launchApplicationAtURL:[bundle bundleURL]
-        options:NSWorkspaceLaunchNewInstance
-        configuration:@{} error:nil];
+//    auto ws = [NSWorkspace sharedWorkspace];
+//    [ws launchApplicationAtURL:[bundle bundleURL]
+//        options:NSWorkspaceLaunchNewInstance
+//        configuration:@{} error:nil];
     return true;
 
 }
@@ -58,13 +59,13 @@ bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) c
 
     auto urls = @[appUrl.toNSURL()];
 
-    auto ws = [NSWorkspace sharedWorkspace];
-    [ws openURLs:urls
-                 withApplicationAtURL:url
-                 options:NSWorkspaceLaunchNewInstance
-                 configuration:@{} error:nil];
+//    auto ws = [NSWorkspace sharedWorkspace];
+//    [ws openURLs:urls
+//                 withApplicationAtURL:url
+//                 options:NSWorkspaceLaunchNewInstance
+//                 configuration:@{} error:nil];
     return true;
 
 }
-
+#endif //OSX
 }

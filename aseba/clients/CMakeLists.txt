@@ -1,5 +1,5 @@
 ## text-based
-if(NOT ANDROID)
+if(NOT ANDROID AND NOT IOS)
     # text-based using QtCore
     add_subdirectory(massloader)
     set(CMAKE_CXX_STANDARD 17)

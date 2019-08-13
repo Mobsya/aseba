@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QUrl>
 #include <qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
+#include <QDir>
+#include <QCoreApplication>
 
 namespace mobsya {
 
@@ -13,7 +15,7 @@ public:
     Launcher(mobsya::ThymioDeviceManagerClient* client, QObject* parent = nullptr);
     Q_INVOKABLE bool platformIsOsX() const;
     Q_INVOKABLE bool platformIsLinux() const;
-#ifdef Q_OS_MAC
+#ifdef Q_OS_OSX
     Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
     bool doLaunchOsXBundle(const QString& name, const QVariantMap& args) const;
 #endif
@@ -26,7 +28,7 @@ public:
     Q_INVOKABLE QString filenameForLocale(QString pattern);
     Q_INVOKABLE QString getDownloadPath(const QUrl& url);
     Q_INVOKABLE bool launchPlayground() const;
-#ifdef Q_OS_MAC
+#ifdef Q_OS_OSX
     bool doLaunchPlaygroundBundle() const;
 #endif
 

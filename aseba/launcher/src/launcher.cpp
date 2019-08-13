@@ -77,11 +77,13 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 }
 
 bool Launcher::launch_process(const QString& program, const QStringList& args) const {
+#ifndef Q_OS_IOS
     return QProcess::startDetached(program, args);
+#endif
 }
 
 bool Launcher::launchPlayground() const {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_OSX
     return doLaunchPlaygroundBundle();
 #else
     auto exe = search_program("asebaplayground");

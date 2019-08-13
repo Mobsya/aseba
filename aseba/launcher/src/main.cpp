@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
     QQmlDebuggingEnabler enabler;
 #endif
 
+
     // Ensure a single instance
     QtSingleApplication app(argc, argv);
 

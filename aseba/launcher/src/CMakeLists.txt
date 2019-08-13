@@ -39,22 +39,34 @@ target_sources(thymio-launcher PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc
 )
 
-if(APPLE)
+if(APPLE AND NOT IOS)
     target_sources(thymio-launcher PRIVATE launcher.mm)
 endif()
 
+if(IOS)
+    #use the addQtIos cmake to manage links
+    INCLUDE(../../../ios/AddQtIosApp.cmake)
+    INCLUDE(../../../ios/QtStaticCMake.cmake)
+    qt5_use_modules( thymio-launcher Core  QuickControls2  QuickWidgets QuickTemplates2 Svg Qml Quick)
+    add_qt_ios_app(thymio-launcher)
+else()
+
+    target_link_libraries(thymio-launcher
+        Qt5::Widgets
+        Qt5::Qml
+        Qt5::Quick
+        Qt5::QuickWidgets
+        Qt5::Svg
+        ${Qt5Core_QTMAIN_LIBRARIES}
+    )
+endif() #IOS
+
 target_link_libraries(thymio-launcher
     asebacommon
-    Qt5::Widgets
-    Qt5::Qml
-    Qt5::Quick
-    Qt5::QuickWidgets
-    Qt5::Svg
-    ${Qt5Core_QTMAIN_LIBRARIES}
     qt-thymio-dm-client-lib
     qt-thymio-dm-client-lib-qml
-    qtsingleapplication
-)
+    qtsingleapplication)
+
 
 if(APPLE OR ANDROID)
     target_link_libraries(thymio-launcher Qt5::WebView)
@@ -72,9 +84,40 @@ if(WIN32)
     configure_file("${QWEBENGINE_PATH}/QtWebEngineProcess.exe" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE} COPYONLY)
 endif()
 
-if(NOT ANDROID)
+if(NOT ANDROID AND NOT IOS)
     codesign(thymio-launcher)
     install_qt_app(thymio-launcher)
+endif()
+
+if(IOS)
+    #create app reference
+    add_qt_ios_app(thymio-launcher
+        NAME "thymio-launcher"
+        BUNDLE_IDENTIFIER "com.company.app"
+        VERSION "1.2.3"
+        SHORT_VERSION "1.2.3"
+        LONG_VERSION "1.2.3.456"
+      #  CUSTOM_PLIST "path/to/MacOSXBundleInfo.plist.in"
+        CODE_SIGN_IDENTITY "iPhone Developer"
+        TEAM_ID "Icare Institut"
+        COPYRIGHT "My Cool Copyright"
+        QML_DIR "${QT_WINDOWS_QT_ROOT}/qml"
+        ASSET_DIR "${PROJECT_SOURCE_DIR}/ios/bundle/Assets.xcassets"
+        MAIN_STORYBOARD "${PROJECT_SOURCE_DIR}/ios/bundle/Main.storyboard"
+                    LAUNCHSCREEN_STORYBOARD "${PROJECT_SOURCE_DIR}/ios/bundle/LaunchScreen.storyboard"
+                    CATALOG_APPICON "AppIcon"
+    #                CATALOG_LAUNCHIMAGE "LaunchImage"
+        ORIENTATION_PORTRAIT
+        ORIENTATION_PORTRAIT_UPSIDEDOWN
+        ORIENTATION_LANDSCAPELEFT
+        ORIENTATION_LANDSCAPERIGHT
+        SUPPORT_IPAD
+        REQUIRES_FULL_SCREEN
+        HIDDEN_STATUS_BAR
+        VERBOSE
+     )
+    qt_generate_qml_plugin_import(thymio-launcher QML_SRC ${CMAKE_CURRENT_SOURCE_DIR} VERBOSE)
+    qt_generate_plugin_import(thymio-launcher VERBOSE)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)
@@ -83,11 +126,15 @@ endif()
 
 if(APPLE)
     find_library(FOUNDATION_FRAMEWORK Foundation)
-    find_library(AppKit_FRAMEWORK AppKit)
+    if(IOS)
+          find_library(UIKit_FRAMEWORK UIKit)
+    else()
+          find_library(AppKit_FRAMEWORK AppKit)
+    endif()
+
+    if(NOT IOS)
+        #IOS part should already be handled via the dedicated cmake
     target_link_libraries(thymio-launcher ${FOUNDATION_FRAMEWORK} ${AppKit_FRAMEWORK})
-
-
-
     set(MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/osx/Launcher.plist)
     set(MACOSX_BUNDLE_BUNDLE_NAME "Thymio Suite")
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
@@ -98,7 +145,9 @@ if(APPLE)
     set(launcher_icon ${PROJECT_SOURCE_DIR}/menu/osx/launcher.icns)
     set_source_files_properties(${launcher_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     target_sources(thymio-launcher PRIVATE ${launcher_icon})
+    endif() #NOT IOS
 endif()
+
 
 
 if(ANDROID)

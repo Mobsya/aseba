@@ -2,7 +2,10 @@
 # kate: replace-tabs off; tab-width 4; indent-width 4; tab-indents true; indent-mode normal
 # vim: ts=4:sw=4:noexpandtab
 
+if(APPLE AND NOT IOS)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
+endif()
+
 
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
@@ -34,7 +37,9 @@ include(CMakeModules/CMakeQuery.cmake)
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
-    include(CMakeModules/enki.cmake)
+    if(NOT IOS)
+        include(CMakeModules/enki.cmake)
+    endif()
     find_package(Threads REQUIRED)
 endif()
 
@@ -64,9 +69,14 @@ target_include_directories(mpark_variant INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/third_party/mpark.variant/include>
   $<INSTALL_INTERFACE:include>)
 
-if (ANDROID)
+if (ANDROID )
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
 endif()
+
+if(IOS)
+    set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
+endif()
+
 set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
 add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 
@@ -84,7 +94,11 @@ if (NOT TARGET flatc)
     )
     add_executable(flatc IMPORTED GENERATED)
     set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc)
+    if(IOS)
+         #add_dependencies(flatc flatc_build)
+    else()
     add_dependencies(flatc flatc_build)
+    endif()
 endif()
 
 # testing and defines
@@ -101,12 +115,10 @@ if(CREATE_QT_CONF_FILE)
     install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
 endif()
 
-
-
 # Qt and Qwt
 find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools Charts)
 
-if (NOT ANDROID)
+if (NOT ANDROID AND NOT IOS)
     find_package(Qt5Help)
     find_package(Qwt)
 endif()
@@ -145,6 +157,10 @@ set(CPACK_BUNDLE_NAME ThymioSuite)
 set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/osx/Info.plist)
 set(CPACK_BUNDLE_ICON ${PROJECT_SOURCE_DIR}/menu/osx/asebastudio.icns)
 
+if(IOS)
+set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/ios/bundle/Info.plist)
+endif()
+
 macro(install_symlink filepath sympath)
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${filepath} ${sympath})")
     install(CODE "message(\"-- Created symlink: ${sympath} -> ${filepath}\")")
@@ -156,10 +172,7 @@ SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${ASEBA_VERSION_PATCH}")
 include(CPack)
 
-
-
 add_subdirectory(aseba)
-
 
 if(NOT ANDROID)
 	add_subdirectory(js)
