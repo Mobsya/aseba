@@ -206,8 +206,23 @@ Then you can build vpl2 with cmake. An APK will be generated in ``build/bin``
     make
 
 
-Advanced Setup
---------------
+Getting Started on iOS
+--------------------------
+Current build is not working. But that's how far I've been able to go.
+
+Require recent Xcode and QT libraries
+
+Since iOS require to build and sign with XCode, I've been aiming at having a working xcode project.
+
+In it's current state the xcode project fail to build, because it's trying to build flatc, instead of using the one on the building system.
+
+
+
+For the current WIP, this is
+
+    cmake  -DCMAKE_PREFIX_PATH="<PATH_TO_QT_IOS_INSTALLATION>" -DDEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=./ios/ios-cmake/ios.toolchain.cmake -DIOS_ARCH=arm64 -DENABLE_BITCODE=FALSE -G Xcode -B <build_directory> -DARGIOS_VERBOSE=ON
+
+
 
 Running tests
 ~~~~~~~~~~~~~
