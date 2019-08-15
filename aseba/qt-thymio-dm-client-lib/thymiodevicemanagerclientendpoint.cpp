@@ -82,7 +82,7 @@ Thymio2WirelessDonglesManager* ThymioDeviceManagerClientEndpoint::donglesManager
 void ThymioDeviceManagerClientEndpoint::checkSocketHealth() {
     if(m_last_message_reception_date.msecsTo(QDateTime::currentDateTime()) > 10 * 1000) {
         qWarning() << "Connection timed out";
-        m_socket->disconnectFromHost();
+        // m_socket->disconnectFromHost();
         disconnect(m_socket_health_check_timer);
     }
 }

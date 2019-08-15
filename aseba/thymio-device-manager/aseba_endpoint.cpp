@@ -104,10 +104,13 @@ void aseba_endpoint::free_endpoint() {
 }  // namespace mobsya
 
 void aseba_endpoint::stop() {
-    variant_ns::visit(overloaded{[this](tcp_socket& socket) { socket.cancel(); }
+    variant_ns::visit(overloaded{[](tcp_socket& socket) { socket.cancel(); }
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
                                  ,
-                                 [this](mobsya::usb_serial_port& d) { d.cancel(); }
+                                 [](mobsya::usb_serial_port& d) {
+                                     boost::system::error_code ec;
+                                     d.cancel(ec);
+                                 }
 #endif
 #ifdef MOBSYA_TDM_ENABLE_USB
                                  ,
@@ -263,7 +266,6 @@ bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
         if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
             boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(true);
-            boost::system::error_code ec;
             serial().purge();
             serial().set_rts(enable);
             serial().set_data_terminal_ready(!enable);
@@ -286,8 +288,11 @@ bool aseba_endpoint::sync_wireless_dongle_settings(bool flash) {
         [this, s, flash](auto& device) {
             boost::system::error_code ec;
             m_wireless_dongle_settings->data.ctrl = flash ? 0x01 : 0;
+            mLogDebug("Write");
             if(device.write_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec) != s)
                 return false;
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+            mLogDebug("Read");
             auto read = device.read_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec);
             if(read < s - 1)
                 return false;
