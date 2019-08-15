@@ -209,24 +209,35 @@ Rectangle {
         })
     }
 
-
     Component.onCompleted: {
         client.localEndpointChanged.connect(function () {
             localEndpoint = client.localEndpoint
+            donglesManager = null
+            dongles = null
+            if(!localEndpoint) {
+                return
+            }
+
             donglesManager = localEndpoint.donglesManager
+
+            if(!donglesManager) {
+                return
+            }
+
             dongles = donglesManager.dongles
-            donglesManager.donglesChanged.connect(function () {
-                dongles = null
-                if(donglesManager) {
-                    dongles = donglesManager.dongles
-                    console.log("Dongles connected: %1".arg(dongles.length))
-                }
+            donglesManager.donglesChanged.connect(function() {
+                if(!wirelessConfigurator)
+                    return;
+
+                wirelessConfigurator.dongles = donglesManager.dongles
+                console.log("Dongles connected: %1".arg(dongles.length))
                 updateState()
             })
+
             localEndpoint.nodesChanged.connect(function () {
-                nodes = null
-                if(localEndpoint)
-                    nodes = localEndpoint.nodes
+                if(!wirelessConfigurator)
+                    return;
+                wirelessConfigurator.nodes = localEndpoint.nodes
                 updateState()
             })
         })
