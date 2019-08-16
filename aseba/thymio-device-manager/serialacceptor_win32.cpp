@@ -114,8 +114,12 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
                 str.resize(bytesRequired / sizeof(str) + 1, 0);
                 continue;
             } else if(ret == ERROR_SUCCESS) {
-                if(dataType == REG_SZ)
+                if(dataType == REG_SZ) {
+                    if(str.find("COM") == 0) {
+                        return fmt::format("\\\\.\\{}", str);
+                    }
                     return str;
+                }
                 else if(dataType == REG_DWORD)
                     return fmt::format("\\\\.\\COM{}", *(PDWORD(&str[0])));
             }
