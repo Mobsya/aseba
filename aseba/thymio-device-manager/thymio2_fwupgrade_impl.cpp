@@ -318,6 +318,7 @@ namespace details {
 
         tl::expected<boost::asio::serial_port::native_handle_type, boost::system::error_code>
         make_serial_device(std::string path) {
+            mLogInfo("Opening device: {}", path);
             auto handle = CreateFileA(path.c_str(), GENERIC_WRITE | GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
             if(handle == nullptr) {
                 return tl::make_unexpected(
