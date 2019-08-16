@@ -72,5 +72,10 @@
         <file>apps/scratch/desc.it.html</file>
         <file>apps/blockly/desc.fr.html</file>
         <file>apps/blockly/desc.it.html</file>
+        <file>apps/vpl/desc.de.html</file>
+        <file>apps/scratch/desc.de.html</file>
+        <file>apps/blockly/desc.de.html</file>
+        <file>apps/studio/desc.de.html</file>
+
     </qresource>
 </RCC>
