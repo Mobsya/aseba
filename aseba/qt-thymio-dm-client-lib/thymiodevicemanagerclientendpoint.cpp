@@ -324,21 +324,25 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                 break;
             m_dongles_manager->clear();
             for(auto&& d : *message->dongles()) {
-                auto dongleId = qfb::uuid(d->UnPack());
-                m_dongles_manager->updateDongle(dongleId);
+                const auto& v = d->UnPack();
+                auto dongleId = qfb::uuid(*v->dongle_id);
+
+                m_dongles_manager->updateDongle(
+                    Thymio2WirelessDongle{dongleId, v->network_id, v->dongle_node, v->channel_id});
             }
             break;
         }
-        case mobsya::fb::AnyMessage::Thymio2WirelessDongle: {
-            auto message = msg.as<mobsya::fb::Thymio2WirelessDongle>();
+        case mobsya::fb::AnyMessage::Thymio2WirelessDonglePairingResponse: {
+            auto message = msg.as<mobsya::fb::Thymio2WirelessDonglePairingResponse>();
             auto basic_req = get_request(message->request_id());
             if(!basic_req)
                 break;
-            if(auto req = basic_req->as<Thymio2WirelessDongleInfoRequest::internal_ptr_type>()) {
-                req->setResult(Thymio2WirelessDongleInfoResult(message->network_id(), message->channel_id()));
+            if(auto req = basic_req->as<Thymio2WirelessDonglePairingRequest::internal_ptr_type>()) {
+                req->setResult(Thymio2WirelessDonglePairingResult(message->network_id(), message->channel_id()));
             }
             break;
         }
+
 
         default: Q_EMIT onMessage(msg);
     }
@@ -635,13 +639,13 @@ Request ThymioDeviceManagerClientEndpoint::upgradeFirmware(const QUuid& id) {
     return r;
 }
 
-Thymio2WirelessDongleInfoRequest ThymioDeviceManagerClientEndpoint::requestDongleInfo(const QUuid& uuid) {
-    Thymio2WirelessDongleInfoRequest r = prepare_request<Thymio2WirelessDongleInfoRequest>();
+Request ThymioDeviceManagerClientEndpoint::enableWirelessPairingMode() {
+    Request r = prepare_request<Request>();
     flatbuffers::FlatBufferBuilder builder;
-    auto dongleUuidOffset = serialize_uuid(builder, uuid);
-    write(wrap_fb(builder, fb::CreateThymio2WirelessDongleInfoRequest(builder, r.id(), dongleUuidOffset)));
+    write(wrap_fb(builder, fb::CreateEnableThymio2PairingMode(builder)));
     return r;
 }
+
 
 Thymio2WirelessDonglePairingRequest ThymioDeviceManagerClientEndpoint::pairThymio2Wireless(const QUuid& dongleId,
                                                                                            const QUuid& nodeId,

@@ -55,7 +55,7 @@ public:
     Request setScratchPad(const QUuid& id, const QByteArray& data, fb::ProgrammingLanguage language);
     Request upgradeFirmware(const QUuid& id);
 
-    Thymio2WirelessDongleInfoRequest requestDongleInfo(const QUuid& uuid);
+    Q_INVOKABLE Request enableWirelessPairingMode();
     Thymio2WirelessDonglePairingRequest pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
                                                             quint16 networkId, quint8 channel);
 

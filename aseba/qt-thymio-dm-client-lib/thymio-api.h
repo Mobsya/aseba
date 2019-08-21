@@ -19,6 +19,8 @@ void inline register_qml_types() {
     qRegisterMetaType<mobsya::Thymio2WirelessDonglesManager*>("Thymio2WirelessDonglesManager*");
     qRegisterMetaType<QQmlListProperty<mobsya::ThymioNode>>("QQmlListProperty<ThymioNode>");
     qmlRegisterUncreatableType<mobsya::ThymioNode>("org.mobsya", 1, 0, "ThymioNode", "Enum");
+    qRegisterMetaType<mobsya::Thymio2WirelessDongle>("Thymio2WirelessDongle");
+    qRegisterMetaType<QList<mobsya::Thymio2WirelessDongle>>();
 }
 #endif
 

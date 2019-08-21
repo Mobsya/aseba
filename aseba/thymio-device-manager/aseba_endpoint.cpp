@@ -2,6 +2,8 @@
 #include <aseba/common/utils/utils.h>
 #include "aseba_property.h"
 #include "fw_update_service.h"
+#include "aseba_node_registery.h"
+
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
 #    include "serialacceptor.h"
 #endif
@@ -10,12 +12,16 @@
 #endif
 #include "aseba_tcpacceptor.h"
 
-#include "aseba_node_registery.h"
-
 namespace mobsya {
 
 
 aseba_endpoint::~aseba_endpoint() {
+    destroy();
+}
+
+void aseba_endpoint::destroy() {
+    if(m_endpoint.is_empty())
+        return;
     mLogInfo("Destroying endpoint");
     std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
     boost::asio::post([ctx = &m_io_context]() {
@@ -24,10 +30,20 @@ aseba_endpoint::~aseba_endpoint() {
     });
     stop();
     close();
-    free_endpoint();
 }
 
-aseba_endpoint::aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type)
+void aseba_endpoint::close() {
+    m_endpoint.close();
+}
+void aseba_endpoint::stop() {
+    m_endpoint.stop();
+}
+void aseba_endpoint::cancel_all_ops() {
+    m_endpoint.cancel_all_ops();
+}
+
+
+aseba_endpoint::aseba_endpoint(boost::asio::io_context& io_context, aseba_device&& e, endpoint_type type)
     : m_endpoint(std::move(e))
     , m_strand(io_context.get_executor())
     , m_io_context(io_context)
@@ -36,13 +52,13 @@ aseba_endpoint::aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&&
 
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
 aseba_endpoint::pointer aseba_endpoint::create_for_serial(boost::asio::io_context& io) {
-    auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_serial_port(io)));
+    auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, aseba_device(usb_serial_port(io))));
     ptr->m_group = group::make_group_for_endpoint(io, ptr);
     return ptr;
 }
 #endif
 aseba_endpoint::pointer aseba_endpoint::create_for_tcp(boost::asio::io_context& io) {
-    auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, tcp_socket(io)));
+    auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, aseba_device(tcp_socket(io))));
     ptr->m_group = group::make_group_for_endpoint(io, ptr);
     return ptr;
 }
@@ -63,94 +79,6 @@ void aseba_endpoint::start() {
 
     if(needs_health_check())
         schedule_nodes_health_check();
-}
-
-void aseba_endpoint::cancel_all_ops() {
-    boost::system::error_code ec;
-    variant_ns::visit([&ec](auto& underlying) { return underlying.cancel(); }, m_endpoint);
-    m_msg_queue.clear();
-}
-
-void aseba_endpoint::free_endpoint() {
-    variant_ns::visit(overloaded{[this](tcp_socket& socket) {
-                                     boost::asio::post(m_io_context, [this, &ctx = m_io_context] {
-                                         boost::asio::use_service<aseba_tcp_acceptor>(ctx).free_endpoint(this);
-                                     });
-                                 }
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-                                 ,
-                                 [this](mobsya::usb_serial_port& d) {
-                                     auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
-                                     timer->expires_from_now(boost::posix_time::milliseconds(500));
-                                     timer->async_wait([timer, path = d.device_path(), &ctx = m_io_context](auto ec) {
-                                         if(!ec)
-                                             boost::asio::use_service<serial_acceptor_service>(ctx).free_device(path);
-                                     });
-                                 }
-#endif
-#ifdef MOBSYA_TDM_ENABLE_USB
-                                 ,
-                                 [this](mobsya::usb_device& d) {
-                                     if(d.native_handle()) {
-                                         boost::asio::post(m_io_context, [h = libusb_get_device(d.native_handle(), &ctx = m_io_context] {
-                                             boost::asio::use_service<usb_acceptor_service>(ctx)
-                                                 .free_device(h));
-                                         });
-                                     }
-                                 }
-#endif
-                      },
-                      m_endpoint);
-}  // namespace mobsya
-
-void aseba_endpoint::stop() {
-    variant_ns::visit(overloaded{[](tcp_socket& socket) { socket.cancel(); }
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-                                 ,
-                                 [](mobsya::usb_serial_port& d) {
-                                     boost::system::error_code ec;
-                                     d.cancel(ec);
-                                 }
-#endif
-#ifdef MOBSYA_TDM_ENABLE_USB
-                                 ,
-                                 [this](mobsya::usb_device& d) { d.cancel(); }
-#endif
-                      },
-                      m_endpoint);
-}
-
-void aseba_endpoint::close() {
-    variant_ns::visit(overloaded{[this](tcp_socket& socket) {}
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-                                 ,
-                                 [this](mobsya::usb_serial_port& d) { d.close(); }
-#endif
-#ifdef MOBSYA_TDM_ENABLE_USB
-                                 ,
-                                 [this](mobsya::usb_device& d) {}
-#endif
-                      },
-                      m_endpoint);
-}
-
-
-void aseba_endpoint::reboot() {
-    if(m_nodes.size() == 1) {
-        const auto id = m_nodes.begin()->second.node->native_id();
-        std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
-        m_nodes.clear();
-        write_message(std::make_shared<Aseba::Reboot>(id));
-    }
-    m_rebooting = true;
-    auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
-    timer->expires_from_now(boost::posix_time::seconds(1));
-    timer->async_wait([timer, ptr = weak_from_this()](boost::system::error_code ec) {
-        if(auto that = ptr.lock()) {
-            that->m_rebooting = false;
-            that->start();
-        }
-    });
 }
 
 std::optional<std::pair<Aseba::EventDescription, std::size_t>>
@@ -214,7 +142,7 @@ void aseba_endpoint::emit_events(const group::properties_map& map, write_callbac
                 cb(make_error_code(error_code::no_such_variable));
             return;
         }
-        auto bytes = to_aseba_variable(event.second, event_def->first.value);
+        auto bytes = to_aseba_variable(event.second, uint16_t(event_def->first.value));
         if(!bytes) {
             if(cb)
                 cb(bytes.error());
@@ -246,84 +174,6 @@ void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::Even
     it->second.node->on_event_received(events, timestamp);
 }
 
-bool aseba_endpoint::wireless_enable_configuration_mode(bool enable) {
-    if(!is_wireless())
-        return false;
-    if(!m_wireless_dongle_settings) {
-        if(!enable)
-            return true;
-        m_wireless_dongle_settings = std::make_unique<WirelessDongleSettings>();
-    }
-    if(m_wireless_dongle_settings->cfg_mode != enable) {
-        m_wireless_dongle_settings->cfg_mode = enable;
-#ifdef MOBSYA_TDM_ENABLE_USB
-        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
-            usb().cancel();
-            usb().set_rts(enable);
-            usb().set_data_terminal_ready(!enable);
-        }
-#endif
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
-            boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(true);
-            serial().purge();
-            serial().set_rts(enable);
-            serial().set_data_terminal_ready(!enable);
-            boost::asio::use_service<serial_acceptor_service>(m_io_context).pause(false);
-        }
-#endif
-    }
-    if(!enable) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        read_aseba_message();
-    }
-    return true;
-}
-
-bool aseba_endpoint::sync_wireless_dongle_settings(bool flash) {
-    if(!wireless_enable_configuration_mode(true))
-        return false;
-    const auto s = sizeof(&m_wireless_dongle_settings->data);
-    auto res = variant_ns::visit(
-        [this, s, flash](auto& device) {
-            boost::system::error_code ec;
-            m_wireless_dongle_settings->data.ctrl = flash ? 0x01 : 0;
-            mLogDebug("Write");
-            if(device.write_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec) != s)
-                return false;
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-            mLogDebug("Read");
-            auto read = device.read_some(boost::asio::buffer(&m_wireless_dongle_settings->data, s), ec);
-            if(read < s - 1)
-                return false;
-
-            // Notify the registery that this endpoint may have changed
-            boost::asio::use_service<aseba_node_registery>(m_io_context).register_endpoint(shared_from_this());
-            return true;
-        },
-        m_endpoint);
-    wireless_enable_configuration_mode(false);
-    return res;
-}
-
-bool aseba_endpoint::wireless_set_settings(uint16_t networkId, uint8_t channel) {
-    m_wireless_dongle_settings->data.ctrl = 0;
-    m_wireless_dongle_settings->data.channel = 15 + 5 * channel;
-    m_wireless_dongle_settings->data.panId = networkId;
-    return sync_wireless_dongle_settings(true);
-}
-
-aseba_endpoint::wireless_settings aseba_endpoint::wireless_get_settings() {
-    // return {};
-    if(!m_wireless_dongle_settings && !sync_wireless_dongle_settings(false))
-        return {};
-    return {m_wireless_dongle_settings->data.panId, m_wireless_dongle_settings->data.nodeId,
-            uint8_t((m_wireless_dongle_settings->data.channel - uint8_t(15)) / uint8_t(5))};
-}
-
-bool aseba_endpoint::wireless_cfg_mode_enabled() const {
-    return m_wireless_dongle_settings && m_wireless_dongle_settings->cfg_mode;
-}
 
 bool aseba_endpoint::upgrade_firmware(
     uint16_t id, std::function<void(boost::system::error_code ec, double progress, bool complete)> cb,
@@ -339,9 +189,9 @@ bool aseba_endpoint::upgrade_firmware(
     firmware.then([id, ptr = shared_from_this(), cb, options](auto f) {
         // if the firmware if empty let it fail as a special case of invalid data
         auto firmware = f.get();
-
         variant_ns::visit(
             overloaded{
+                [](variant_ns::monostate&) {},
 #ifdef MOBSYA_TDM_ENABLE_USB
                 [&ptr, id, &firmware, &cb, options](usb_device& usb) {
                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
@@ -351,8 +201,8 @@ bool aseba_endpoint::upgrade_firmware(
                             // Make sure we are running in our executor
                             boost::asio::post(ptr->m_strand, [cb, ptr, err, progress, complete]() {
                                 cb(err, progress, complete);
-                                // mark the associated device path as unconnected and start accepting devices again
-                                if(err || complete) {
+                                // mark the associated device path as unconnected and start accepting devices
+                                again if(err || complete) {
                                     ptr->free_endpoint();
                                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
@@ -375,7 +225,7 @@ bool aseba_endpoint::upgrade_firmware(
                                 cb(err, progress, complete);
                                 // mark the associated device path as unconnected and start accepting devices again
                                 if(err || complete) {
-                                    ptr->free_endpoint();
+                                    ptr->device()->free_endpoint();
                                     boost::asio::use_service<serial_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
@@ -384,9 +234,9 @@ bool aseba_endpoint::upgrade_firmware(
                 },
 #endif
                 // can never happen
-                [](tcp_socket& underlying) {}},
+                [](tcp_socket&) {}},
 
-            ptr->m_endpoint);
+            ptr->m_endpoint.ep());
     });
 
 

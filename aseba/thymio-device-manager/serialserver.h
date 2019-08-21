@@ -9,6 +9,8 @@ public:
     void accept();
 
 private:
+    void register_configurable_dongle(usb_serial_port&& d) const;
+    bool should_open_for_configuration(const usb_serial_port& d) const;
     boost::asio::io_context& m_io_ctx;
     serial_acceptor m_acceptor;
 };

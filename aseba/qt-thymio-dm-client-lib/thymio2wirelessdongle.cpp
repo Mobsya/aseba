@@ -7,10 +7,6 @@ Thymio2WirelessDonglesManager::Thymio2WirelessDonglesManager(ThymioDeviceManager
     : QObject(parent), m_ep(parent) {}
 
 
-Thymio2WirelessDongleInfoRequest Thymio2WirelessDonglesManager::dongleInfo(const QUuid& uuid) {
-    return m_ep->requestDongleInfo(uuid);
-}
-
 Thymio2WirelessDonglePairingRequest Thymio2WirelessDonglesManager::pairThymio2Wireless(const QUuid& dongleId,
                                                                                        const QUuid& nodeId,
                                                                                        quint16 networkId,
@@ -18,20 +14,20 @@ Thymio2WirelessDonglePairingRequest Thymio2WirelessDonglesManager::pairThymio2Wi
     return m_ep->pairThymio2Wireless(dongleId, nodeId, networkId, channel);
 }
 
-QStringList Thymio2WirelessDonglesManager::qml_dongles() const {
-    QStringList lst;
-    for(auto&& d : m_dongles) {
-        lst.append(d.toString());
+QVariantList Thymio2WirelessDonglesManager::dongles() const {
+    QVariantList v;
+    for(auto&& e : m_dongles.values()) {
+        v.append(QVariant::fromValue(e));
     }
-    return lst;
+    return v;
 }
 
 void Thymio2WirelessDonglesManager::clear() {
     m_dongles.clear();
     Q_EMIT donglesChanged();
 }
-void Thymio2WirelessDonglesManager::updateDongle(const QUuid& id) {
-    m_dongles.insert(id);
+void Thymio2WirelessDonglesManager::updateDongle(const Thymio2WirelessDongle& dongle) {
+    m_dongles.insert(dongle.uuid, dongle);
     Q_EMIT donglesChanged();
 }
 
