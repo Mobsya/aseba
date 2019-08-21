@@ -22,7 +22,7 @@ class firmware_update_service : public boost::asio::detail::service_base<firmwar
 
 public:
     firmware_update_service(boost::asio::execution_context& ctx);
-    ~firmware_update_service();
+    ~firmware_update_service() override;
 
     boost::unique_future<ranges::span<std::byte>> firmware_data(mobsya::aseba_node::node_type);
 

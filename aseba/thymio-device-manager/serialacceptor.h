@@ -9,6 +9,7 @@
 #include <functional>
 #include <mutex>
 #include <thread>
+#include <boost/signals2.hpp>
 #include "usb_utils.h"
 #include "serial_usb_device.h"
 #ifdef MOBSYA_TDM_ENABLE_UDEV
@@ -48,6 +49,8 @@ public:
         }
     }
     void free_device(const std::string& s);
+
+    boost::signals2::signal<void(std::string_view)> device_unplugged;
 
 private:
     struct request {

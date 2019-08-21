@@ -10,12 +10,13 @@
 
 namespace mobsya {
 class aseba_endpoint;
+class aseba_device;
 class aseba_tcp_acceptor : public boost::asio::detail::service_base<aseba_tcp_acceptor> {
 public:
     aseba_tcp_acceptor(boost::asio::io_context& io_context);
     ~aseba_tcp_acceptor();
     void accept();
-    void free_endpoint(aseba_endpoint* ep);
+    void free_endpoint(const aseba_device* ep);
 
 private:
     void monitor();
@@ -38,7 +39,7 @@ private:
     aware::monitor_socket m_monitor;
     using known_ep = std::pair<std::string, uint16_t>;
     std::map<known_ep, std::weak_ptr<aseba_endpoint>> m_connected_endpoints;
-    std::map<aseba_endpoint*, aware::contact> m_known_contacts;
+    std::map<const aseba_device*, aware::contact> m_known_contacts;
 
     std::mutex m_endpoints_mutex;
     boost::asio::deadline_timer m_active_timer;

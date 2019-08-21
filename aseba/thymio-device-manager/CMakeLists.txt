@@ -17,6 +17,8 @@ add_library(thymio-device-manager-lib STATIC
     aseba_node_registery.cpp
     aseba_nodeid_generator.h
     uuid_provider.h
+    aseba_device.h
+    aseba_device.cpp
     aseba_endpoint.h
     aseba_endpoint.cpp
     aseba_node.h
@@ -36,6 +38,8 @@ add_library(thymio-device-manager-lib STATIC
     thymio2_fwupgrade_impl.cpp
     fw_update_service.h
     fw_update_service.cpp
+    wireless_configurator_service.h
+    wireless_configurator_service.cpp
     node_id.h
     usb_utils.h
     utils.h

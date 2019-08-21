@@ -11,12 +11,10 @@ Rectangle {
 
     property bool valiseMode: false
     property bool advancedMode: false
-    property var localEndpoint: client.localEndpoint
     property var donglesManager: null
     property var dongles: null
     property var nodes: null
     property var ready: false
-    property var waitingForUnplug: false
 
     property var selectedDongleId: null
     property var selectedRobotId: null
@@ -82,39 +80,6 @@ Rectangle {
 
         const nodes = usbThymios()
 
-        if(waitingForUnplug) {
-            if(dongles.length === 0 || pairedDongleUUIDs.indexOf(dongles[0])  < 0 ) {
-                errorBanner.text = qsTr("Pairing successful")
-                nextButton.visible = true
-                pairButton.visible = false
-                waitingForUnplug = false
-            }
-            return
-        }
-
-        if(advancedMode && dongles.length === 1) {
-            let req = donglesManager.dongleInfo(dongles[0])
-            Request.onFinished(req, function(status, res) {
-                console.log("Info for dongle %1 : network %2 - channel : %3"
-                    .arg(dongles[0])
-                    .arg(res.networkId())
-                    .arg(res.channel()))
-
-                selectedNetworkId = getNonDefaultNetworkId(res.networkId())
-                selectedChannel = getChannel()
-            })
-        }
-
-        //Dongles have a new UUID each time they are unplugged
-        //If we see a dongle we previously paired, ask the user to uplug it
-        if(dongles.length === 1 && pairedDongleUUIDs.indexOf(dongles[0]) >= 0) {
-            errorBanner.text = qsTr("Please unplug the dongle to complete the process")
-            nextButton.visible = false
-            pairButton.visible = false
-            waitingForUnplug = true
-            return
-        }
-
         if(nextButton.visible)
             return;
 
@@ -147,8 +112,10 @@ Rectangle {
         }
 
 
-        selectedRobotId = nodes[0].id
-        selectedDongleId = dongles[0]
+        selectedRobotId   = nodes[0].id
+        selectedDongleId  = dongles[0].uuid
+        selectedNetworkId = dongles[0].networkId;
+        selectedChannel   = dongles[0].channel;
         ready = true
     }
 
@@ -167,12 +134,20 @@ Rectangle {
         pairedDongleNetworkIds.push(networkId)
 
 
-        Request.onFinished(request, function(status, res) {
+        Request.onFinished(request, function(success, res) {
+            if(!success) {
+                console.log("Pairing failed")
+                return;
+            }
             console.log("Pairing complete: network %1 - channel %2"
                 .arg(res.networkId())
                 .arg(res.channel()))
             robotCount ++
-            waitingForUnplug = true
+            errorBanner.text = qsTr("Pairing successful")
+
+            nextButton.visible = true
+            pairButton.visible = false
+
             updateState()
         })
     }
@@ -190,64 +165,39 @@ Rectangle {
         updateState()
         if(!ready)
             return
-        let req = donglesManager.dongleInfo(dongles[0])
-        Request.onFinished(req, function(status, res) {
-            console.log("Info for dongle %1 : network %2 - channel : %3"
-                .arg(selectedDongleId)
-                .arg(res.networkId())
-                .arg(res.channel()))
+        selectedNetworkId = getNonDefaultNetworkId(selectedNetworkId)
+        selectedChannel = getChannel()
 
-            selectedNetworkId = getNonDefaultNetworkId(res.networkId())
-            selectedChannel = getChannel()
+        if(valiseMode && pairedDongleNetworkIds.indexOf(selectedNetworkId) >= 0) {
+            ready = false
+            errorBanner.text = qsTr("You have alredy paired this dongle with another robot")
+            return
+        }
+        pairRobotAndDongle(selectedRobotId, selectedDongleId, selectedNetworkId, selectedChannel)
+    }
 
-            if(valiseMode && pairedDongleNetworkIds.indexOf(selectedNetworkId) >= 0) {
-                ready = false
-                errorBanner.text = qsTr("You have alredy paired this dongle with another robot")
-                return
-            }
-            pairRobotAndDongle(selectedRobotId, selectedDongleId, selectedNetworkId, selectedChannel)
+    function configure() {
+        if(!client.localEndpoint)
+            return;
+        client.localEndpoint.enableWirelessPairingMode();
+        donglesManager = client.localEndpoint.donglesManager
+        nodes = client.localEndpoint.nodes
+        donglesManager.donglesChanged.connect(function() {
+            console.log(donglesManager.dongles())
+            dongles = donglesManager.dongles()
+            updateState()
         })
+        client.localEndpoint.nodesChanged.connect(function() {
+            nodes = client.localEndpoint.nodes
+            updateState()
+        })
+        dongles = donglesManager.dongles()
+        updateState()
     }
 
     Component.onCompleted: {
-        client.localEndpointChanged.connect(function () {
-            localEndpoint = client.localEndpoint
-            donglesManager = null
-            dongles = null
-            if(!localEndpoint) {
-                return
-            }
-
-            donglesManager = localEndpoint.donglesManager
-
-            if(!donglesManager) {
-                return
-            }
-
-            dongles = donglesManager.dongles
-            donglesManager.donglesChanged.connect(function() {
-                if(!wirelessConfigurator)
-                    return;
-
-                wirelessConfigurator.dongles = donglesManager.dongles
-                console.log("Dongles connected: %1".arg(dongles.length))
-                updateState()
-            })
-
-            localEndpoint.nodesChanged.connect(function () {
-                if(!wirelessConfigurator)
-                    return;
-                wirelessConfigurator.nodes = localEndpoint.nodes
-                updateState()
-            })
-        })
-        localEndpoint = client.localEndpoint
-        if(localEndpoint) {
-            donglesManager = localEndpoint.donglesManager
-            dongles = donglesManager.dongles
-            nodes = localEndpoint.nodes
-            updateState()
-        }
+        configure()
+        client.localEndpointChanged.connect(configure)
     }
 
     Item {

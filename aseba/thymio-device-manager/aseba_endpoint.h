@@ -5,13 +5,6 @@
 #include <queue>
 #include <boost/asio.hpp>
 #include <chrono>
-#include "usb_utils.h"
-#ifdef MOBSYA_TDM_ENABLE_USB
-#    include "usbdevice.h"
-#endif
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-#    include "serial_usb_device.h"
-#endif
 #include "aseba_message_parser.h"
 #include "aseba_message_writer.h"
 #include "aseba_node.h"
@@ -21,11 +14,9 @@
 #include "utils.h"
 #include "thymio2_fwupgrade.h"
 #include "uuid_provider.h"
+#include "aseba_device.h"
 
 namespace mobsya {
-
-constexpr usb_device_identifier THYMIO2_DEVICE_ID = {0x0617, 0x000a};
-constexpr usb_device_identifier THYMIO_WIRELESS_DEVICE_ID = {0x0617, 0x000c};
 
 class aseba_endpoint : public std::enable_shared_from_this<aseba_endpoint> {
 
@@ -34,19 +25,10 @@ public:
     enum class endpoint_type { unknown, thymio, simulated_thymio, simulated_dummy_node };
 
     ~aseba_endpoint();
+    void destroy();
 
     using pointer = std::shared_ptr<aseba_endpoint>;
     using tcp_socket = boost::asio::ip::tcp::socket;
-    using endpoint_t = variant_ns::variant<tcp_socket
-#ifdef MOBSYA_TDM_ENABLE_USB
-                                           ,
-                                           usb_device
-#endif
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-                                           ,
-                                           usb_serial_port
-#endif
-                                           >;
 
     using write_callback = std::function<void(boost::system::error_code)>;
 
@@ -60,11 +42,11 @@ public:
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     const usb_device& usb() const {
-        return variant_ns::get<usb_device>(m_endpoint);
+        return m_endpoint.usb();
     }
 
     usb_device& usb() {
-        return variant_ns::get<usb_device>(m_endpoint);
+        return m_endpoint.usb();
     }
 
     static pointer create_for_usb(boost::asio::io_context& io) {
@@ -76,22 +58,22 @@ public:
 
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
     const usb_serial_port& serial() const {
-        return variant_ns::get<usb_serial_port>(m_endpoint);
+        return m_endpoint.serial();
     }
 
     usb_serial_port& serial() {
-        return variant_ns::get<usb_serial_port>(m_endpoint);
+        return m_endpoint.serial();
     }
 
     static pointer create_for_serial(boost::asio::io_context& io);
 #endif
 
     const tcp_socket& tcp() const {
-        return variant_ns::get<tcp_socket>(m_endpoint);
+        return m_endpoint.tcp();
     }
 
     tcp_socket& tcp() {
-        return variant_ns::get<tcp_socket>(m_endpoint);
+        return m_endpoint.tcp();
     }
 
     static pointer create_for_tcp(boost::asio::io_context& io);
@@ -115,44 +97,13 @@ public:
     }
 
     bool is_usb() const {
-#ifdef MOBSYA_TDM_ENABLE_USB
-        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
-            return variant_ns::get<usb_device>(m_endpoint).usb_device_id() == THYMIO2_DEVICE_ID;
-        }
-#endif
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
-            return variant_ns::get<usb_serial_port>(m_endpoint).usb_device_id() == THYMIO2_DEVICE_ID;
-        }
-#endif
-        return false;
+        return m_endpoint.is_usb();
     }
 
     bool is_wireless() const {
-#ifdef MOBSYA_TDM_ENABLE_USB
-        if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
-            return variant_ns::get<usb_device>(m_endpoint).usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
-        }
-#endif
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
-            return variant_ns::get<usb_serial_port>(m_endpoint).usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
-        }
-#endif
-        return false;
+        return m_endpoint.is_wireless();
     }
 
-    bool wireless_enable_configuration_mode(bool enable);
-    bool wireless_cfg_mode_enabled() const;
-    bool wireless_flash();
-    struct wireless_settings {
-        uint16_t network_id = 0;
-        uint16_t dongle_id = 0;
-        uint8_t channel = 0;
-    };
-
-    bool wireless_set_settings(uint16_t network_id, uint8_t channel);
-    wireless_settings wireless_get_settings();
 
     bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb,
                           firmware_update_options options = firmware_update_options::no_option);
@@ -164,12 +115,10 @@ public:
         return nodes;
     }
 
-    void close();
     void start();
+    void close();
     void stop();
     void cancel_all_ops();
-    void free_endpoint();
-    void reboot();
 
     template <typename CB = write_callback>
     void write_messages(std::vector<std::shared_ptr<Aseba::Message>>&& messages, CB&& cb = {}) {
@@ -208,8 +157,9 @@ public:
             [that](boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) { that->handle_read(ec, msg); });
 
         variant_ns::visit(
-            [&cb](auto& underlying) { return mobsya::async_read_aseba_message(underlying, std::move(cb)); },
-            m_endpoint);
+            overloaded{[](variant_ns::monostate&) {},
+                       [&cb](auto& underlying) { mobsya::async_read_aseba_message(underlying, std::move(cb)); }},
+            m_endpoint.ep());
     }
 
     void handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
@@ -217,17 +167,10 @@ public:
             if(!ec && !msg && !m_upgrading_firmware)
                 read_aseba_message();
 
-            if(!wireless_cfg_mode_enabled()) {
-                if(!m_has_had_sucessful_read)
-                    restore_firmware();
-                return;
-            }
-
             mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
             return;
         }
         mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
-        m_has_had_sucessful_read = true;
 
         auto node_id = msg->source;
         auto it = m_nodes.find(node_id);
@@ -260,7 +203,7 @@ public:
             // Update node status
             it->second.last_seen = std::chrono::steady_clock::now();
         }
-        if(is_rebooting() || this->wireless_cfg_mode_enabled())
+        if(is_rebooting())
             return;
         read_aseba_message();
     }
@@ -275,6 +218,14 @@ public:
             }
         }
     }
+
+    const aseba_device* device() const {
+        return &m_endpoint;
+    }
+    aseba_device* device() {
+        return &m_endpoint;
+    }
+
 
 private:
     friend class aseba_node;
@@ -297,7 +248,7 @@ private:
     }
 
     void schedule_send_ping(boost::posix_time::time_duration delay = boost::posix_time::seconds(1)) {
-        if(is_rebooting() || wireless_cfg_mode_enabled())
+        if(is_rebooting())
             return;
 
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
@@ -308,7 +259,7 @@ private:
             if(!that || ec)
                 return;
             mLogInfo("Requesting list nodes( ec : {} )", ec.message());
-            if(that->wireless_cfg_mode_enabled() || that->m_upgrading_firmware)
+            if(that->m_upgrading_firmware)
                 return;
 
             that->write_message(std::make_unique<Aseba::ListNodes>());
@@ -325,7 +276,7 @@ private:
     }
 
     void schedule_nodes_health_check(boost::posix_time::time_duration delay = boost::posix_time::seconds(5)) {
-        if(wireless_cfg_mode_enabled() || m_upgrading_firmware)
+        if(m_upgrading_firmware)
             return;
 
         auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
@@ -339,7 +290,7 @@ private:
             for(auto it = m_nodes.begin(); it != m_nodes.end();) {
                 const auto& info = it->second;
                 auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
-                if(!is_rebooting() && !wireless_cfg_mode_enabled() &&
+                if(!is_rebooting() &&
                    d.count() >= (info.node->get_status() == aseba_node::status::connected ? 25 : 5)) {
                     mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
                               it->second.node->native_id());
@@ -361,24 +312,14 @@ private:
 
     // Do not run pings / health check for usb-connected nodes
     bool needs_health_check() const {
-        if(variant_ns::holds_alternative<tcp_socket>(m_endpoint))
-            return true;
-#ifdef MOBSYA_TDM_ENABLE_USB
-        return variant_ns::holds_alternative<usb_device>(m_endpoint) &&
-            usb().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
-#elif defined(MOBSYA_TDM_ENABLE_SERIAL)
-        return variant_ns::holds_alternative<usb_serial_port>(m_endpoint) &&
-            serial().usb_device_id() == THYMIO_WIRELESS_DEVICE_ID;
-#else
-        return false;
-#endif
+        if(m_endpoint.is_tcp() || m_endpoint.is_wireless())
+            ;
+        return true;
     }
 
     bool needs_ping() const {
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
-        if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint))
+        if(m_endpoint.is_usb())
             return true;
-#endif
         return needs_health_check();
     }
 
@@ -405,21 +346,21 @@ private:
             return;
         }
 
-        if(!m_msg_queue.empty() && !wireless_cfg_mode_enabled() && !m_upgrading_firmware) {
+        if(!m_msg_queue.empty() && !m_upgrading_firmware) {
             auto that = shared_from_this();
             auto cb =
                 boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec) { that->handle_write(ec); });
 
             auto& message = *(m_msg_queue.front().first);
-            variant_ns::visit(
-                [&cb, &message](auto& underlying) {
-                    return mobsya::async_write_aseba_message(underlying, message, std::move(cb));
-                },
-                m_endpoint);
+            variant_ns::visit(overloaded{[](variant_ns::monostate&) {},
+                                         [&cb, &message](auto& underlying) {
+                                             mobsya::async_write_aseba_message(underlying, message, std::move(cb));
+                                         }},
+                              m_endpoint.ep());
         }
     }
 
-    aseba_endpoint(boost::asio::io_context& io_context, endpoint_t&& e, endpoint_type type = endpoint_type::thymio);
+    aseba_endpoint(boost::asio::io_context& io_context, aseba_device&& e, endpoint_type type = endpoint_type::thymio);
 
     const Aseba::CommonDefinitions& aseba_compiler_definitions() const {
         return m_defs;
@@ -441,7 +382,7 @@ private:
     void on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def,
                   const std::chrono::system_clock::time_point& timestamp);
 
-    endpoint_t m_endpoint;
+    aseba_device m_endpoint;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     boost::asio::io_service& m_io_context;
     endpoint_type m_endpoint_type;
@@ -454,27 +395,9 @@ private:
 
     node_id m_uuid;
 
-
-    struct WirelessDongleSettings {
-        PACK(struct Data {
-            unsigned short nodeId = 0xffff;
-            unsigned short panId = 0xffff;
-            unsigned char channel = 0xff;
-            unsigned char txPower = 0;
-            unsigned char version = 0;
-            unsigned char ctrl = 0;
-        })
-        data;
-        bool cfg_mode = false;
-        bool pairing = false;
-    };
     bool m_upgrading_firmware = false;
-    bool m_has_had_sucessful_read = false;
     bool m_first_ping = true;
     bool m_rebooting = false;
-
-    std::unique_ptr<WirelessDongleSettings> m_wireless_dongle_settings;
-    bool sync_wireless_dongle_settings(bool flash);
-};  // namespace mobsya
+};
 
 }  // namespace mobsya

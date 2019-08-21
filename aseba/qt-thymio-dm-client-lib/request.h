@@ -284,12 +284,12 @@ public:
 };
 
 
-struct Thymio2WirelessDongleInfoResult {
+struct Thymio2WirelessDonglePairingResult {
     Q_GADGET
 
 public:
-    Thymio2WirelessDongleInfoResult() = default;
-    Thymio2WirelessDongleInfoResult(uint16_t network, uint8_t channel) : m_networkId(network), m_channel(channel) {}
+    Thymio2WirelessDonglePairingResult() = default;
+    Thymio2WirelessDonglePairingResult(uint16_t network, uint8_t channel) : m_networkId(network), m_channel(channel) {}
 
     static constexpr quint32 type = 0x478fa12d;
     Q_INVOKABLE quint16 networkId() const {
@@ -507,12 +507,8 @@ using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
 
-using Thymio2WirelessDonglePairingRequest = BasicRequest<Thymio2WirelessDongleInfoResult>;
-using Thymio2WirelessDonglePairingRequestWatcher = BasicRequestWatcher<Thymio2WirelessDongleInfoResult>;
-
-using Thymio2WirelessDongleInfoRequest = BasicRequest<Thymio2WirelessDongleInfoResult>;
-using Thymio2WirelessDongleInfoRequestWatcher = BasicRequestWatcher<Thymio2WirelessDongleInfoResult>;
-
+using Thymio2WirelessDonglePairingRequest = BasicRequest<Thymio2WirelessDonglePairingResult>;
+using Thymio2WirelessDonglePairingRequestWatcher = BasicRequestWatcher<Thymio2WirelessDonglePairingResult>;
 
 using CompilationRequest = BasicRequest<CompilationResult>;
 using CompilationRequestWatcher = BasicRequestWatcher<CompilationResult>;

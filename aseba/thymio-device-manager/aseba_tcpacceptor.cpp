@@ -28,7 +28,7 @@ aseba_tcp_acceptor::~aseba_tcp_acceptor() {
     m_monitor_thread.join();
 }
 
-void aseba_tcp_acceptor::free_endpoint(aseba_endpoint* ep) {
+void aseba_tcp_acceptor::free_endpoint(const aseba_device* ep) {
     auto it = m_known_contacts.find(ep);
     if(it != m_known_contacts.end()) {
         m_disconnected_contacts.insert(it->second);
@@ -112,7 +112,7 @@ void aseba_tcp_acceptor::do_accept_contact(aware::contact contact) {
         }
     }
 
-    m_known_contacts.emplace(session.get(), contact);
+    m_known_contacts.emplace(session->device(), contact);
     session->tcp().async_connect(
         contact.endpoint(), [this, contact = std::move(contact), session, key = key](boost::system::error_code ec) {
             const auto& properties = contact.properties();

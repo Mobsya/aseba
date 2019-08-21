@@ -193,20 +193,23 @@ void aseba_node_registery::register_endpoint(std::shared_ptr<aseba_endpoint> p) 
     if(it == m_endpoints.end()) {
         m_endpoints.push_back(p);
     }
-    m_endpoints_changed_signal();
 }
 
 void aseba_node_registery::unregister_expired_endpoints() {
     m_endpoints.erase(std::remove_if(m_endpoints.begin(), m_endpoints.end(), [](auto&& ep) { return ep.expired(); }),
                       m_endpoints.end());
-    m_endpoints_changed_signal();
+}
+
+void aseba_node_registery::disconnect_all_wireless_endpoints() {
+    for(auto w : m_endpoints) {
+        const auto ep = w.lock();
+        if(ep && ep->is_wireless()) {
+            ep->destroy();
+        }
+    }
 }
 
 node_status_monitor::~node_status_monitor() {
-    m_connection.disconnect();
-}
-
-endpoint_monitor::~endpoint_monitor() {
     m_connection.disconnect();
 }
 
