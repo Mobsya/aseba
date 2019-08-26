@@ -3,6 +3,7 @@
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/strand.hpp>
+#include <boost/signals2.hpp>
 #include <libusb/libusb.h>
 #include <queue>
 #include <functional>
@@ -17,6 +18,10 @@ class usb_acceptor;
 class usb_acceptor_service : public boost::asio::detail::service_base<usb_acceptor_service> {
 public:
     usb_acceptor_service(boost::asio::io_context& io_service);
+
+    usb_acceptor_service(boost::asio::execution_context& io_context)
+        : usb_acceptor_service(static_cast<boost::asio::io_context&>(io_context)) {}
+
     struct implementation_type {
         std::vector<usb_device_identifier> compatible_devices;
     };
@@ -48,6 +53,7 @@ public:
         }
     }
     void free_device(const libusb_device* dev);
+    boost::signals2::signal<void(const libusb_device* dev)> device_unplugged;
 
 private:
     struct request {

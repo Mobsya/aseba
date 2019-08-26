@@ -54,7 +54,7 @@ public:
     }
     void free_device(const std::string& s);
 
-    boost::signals2::signal<void(std::string_view)> device_unplugged;
+    boost::signals2::signal<void(std::string)> device_unplugged;
 
 private:
     struct request {

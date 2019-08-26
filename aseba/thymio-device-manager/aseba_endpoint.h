@@ -50,7 +50,7 @@ public:
     }
 
     static pointer create_for_usb(boost::asio::io_context& io) {
-        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, usb_device(io)));
+        auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, aseba_device(usb_device(io))));
         ptr->m_group = group::make_group_for_endpoint(io, ptr);
         return ptr;
     }

@@ -12,7 +12,11 @@ namespace mobsya {
 
 void aseba_device::cancel_all_ops() {
     boost::system::error_code ec;
-    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}, [&ec](auto& underlying) { underlying.cancel(ec); }},
+    variant_ns::visit(overloaded{[](variant_ns::monostate&) {},
+#ifdef MOBSYA_TDM_ENABLE_USB
+                                 [](usb_device& underlying) { underlying.cancel(); },
+#endif
+                                 [&ec](auto& underlying) { underlying.cancel(ec); }},
                       m_endpoint);
 }
 
@@ -52,9 +56,11 @@ void aseba_device::free_endpoint() {
                    ,
                    [this](mobsya::usb_device& d) {
                        if(d.native_handle()) {
-                                             boost::asio::post(get_executor(), [h = libusb_get_device(d.native_handle(),
-    &ctx = get_executor().context()] { boost::asio::use_service<usb_acceptor_service>(ctx) .free_device(h));
-                                             });
+                           boost::asio::post(
+                               get_executor(),
+                               [h = libusb_get_device(d.native_handle()), &ctx = get_executor().context()] {
+                                   boost::asio::use_service<usb_acceptor_service>(ctx).free_device(h);
+                               });
                        }
                    }
 #endif
@@ -87,7 +93,7 @@ void aseba_device::close() {
 #endif
 #ifdef MOBSYA_TDM_ENABLE_USB
                                  ,
-                                 [this](mobsya::usb_device& d) {}
+                                 [](mobsya::usb_device& d) { d.close(); }
 #endif
                       },
                       m_endpoint);

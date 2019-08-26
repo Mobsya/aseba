@@ -96,7 +96,40 @@ public:
         buffer read_buffer;
         std::vector<libusb_transfer*> transfers;
         std::map<std::shared_ptr<buffer>, bool> buffers_pool;
+
+        implementation_type() = default;
+
+        implementation_type(implementation_type&& o) {
+            std::swap(device, o.device);
+            std::swap(handle, o.handle);
+            std::swap(control_line, o.control_line);
+            std::swap(dtr, o.rts);
+            std::swap(out_address, o.out_address);
+            std::swap(in_address, o.in_address);
+            std::swap(read_size, o.read_size);
+            std::swap(write_size, o.write_size);
+            std::swap(read_buffer, o.read_buffer);
+            std::swap(transfers, o.transfers);
+            std::swap(buffers_pool, o.buffers_pool);
+        }
+
+        implementation_type& operator=(implementation_type&& o) {
+            std::swap(device, o.device);
+            std::swap(handle, o.handle);
+            std::swap(control_line, o.control_line);
+            std::swap(dtr, o.rts);
+            std::swap(out_address, o.out_address);
+            std::swap(in_address, o.in_address);
+            std::swap(read_size, o.read_size);
+            std::swap(write_size, o.write_size);
+            std::swap(read_buffer, o.read_buffer);
+            std::swap(transfers, o.transfers);
+            std::swap(buffers_pool, o.buffers_pool);
+            return *this;
+        }
     };
+
+
     void construct(implementation_type&);
     void move_construct(implementation_type& impl, implementation_type& other_impl);
     void destroy(implementation_type&);
@@ -174,6 +207,9 @@ public:
 
     usb_device_identifier usb_device_id() const;
     std::string usb_device_name() const;
+    int usb_device_address() const;
+
+    friend void swap(usb_device& a, usb_device& b);
 
     template <typename ConstBufferSequence, typename WriteHandler>
     BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler, void(boost::system::error_code, std::size_t))
@@ -215,7 +251,7 @@ public:
         if(r)
             return r.value();
         ec = r.error();
-        return {};
+        return 0;
     }
 
     template <typename MutableBufferSequence>
@@ -283,7 +319,7 @@ usb_device_service::write_some(implementation_type& impl, const ConstBufferSeque
         int written = 0;
         auto err = libusb_bulk_transfer(impl.handle, impl.out_address,
                                         const_cast<unsigned char*>(static_cast<const unsigned char*>(b.data())),
-                                        b.size(), &written, 10);
+                                        b.size(), &written, 100);
         if(err == LIBUSB_SUCCESS || err == LIBUSB_ERROR_TIMEOUT) {
             total_writen += written;
             if(err == LIBUSB_ERROR_TIMEOUT)

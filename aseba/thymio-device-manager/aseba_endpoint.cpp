@@ -202,8 +202,8 @@ bool aseba_endpoint::upgrade_firmware(
                             boost::asio::post(ptr->m_strand, [cb, ptr, err, progress, complete]() {
                                 cb(err, progress, complete);
                                 // mark the associated device path as unconnected and start accepting devices
-                                again if(err || complete) {
-                                    ptr->free_endpoint();
+                                if(err || complete) {
+                                    ptr->device()->free_endpoint();
                                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                                 }
                             });
