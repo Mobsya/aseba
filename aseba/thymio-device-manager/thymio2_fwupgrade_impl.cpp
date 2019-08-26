@@ -17,6 +17,7 @@
 #endif
 
 #include <boost/asio.hpp>
+#define BOOST_PREDEF_DETAIL_ENDIAN_COMPAT_H
 #include <boost/endian/conversion.hpp>
 #include <aseba/common/msg/msg.h>
 
