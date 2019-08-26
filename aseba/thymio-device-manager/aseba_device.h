@@ -103,18 +103,18 @@ public:
         return m_endpoint;
     }
 
-    boost::asio::io_context& get_io_context() {
+    boost::asio::executor get_executor() {
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
         if(variant_ns::holds_alternative<usb_serial_port>(m_endpoint)) {
-            return variant_ns::get<usb_serial_port>(m_endpoint).get_io_context();
+            return variant_ns::get<usb_serial_port>(m_endpoint).get_executor();
         }
 #endif
 #ifdef MOBSYA_TDM_ENABLE_USB
         if(variant_ns::holds_alternative<usb_device>(m_endpoint)) {
-            return variant_ns::get<usb_device>(m_endpoint).get_io_context();
+            return variant_ns::get<usb_device>(m_endpoint).get_executor();
         }
 #endif
-        return variant_ns::get<tcp_socket>(m_endpoint).get_io_context();
+        return variant_ns::get<tcp_socket>(m_endpoint).get_executor();
     }
 
     void close();

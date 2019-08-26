@@ -22,6 +22,9 @@ aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)
     m_monitor_thread = std::thread(boost::bind(&aseba_tcp_acceptor::monitor, this));
 }
 
+aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::execution_context& io_context)
+    : aseba_tcp_acceptor(static_cast<boost::asio::io_context&>(io_context)) {}
+
 aseba_tcp_acceptor::~aseba_tcp_acceptor() {
     m_stopped.store(true);
     m_monitor_ctx.stop();

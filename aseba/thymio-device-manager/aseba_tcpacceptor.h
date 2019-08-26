@@ -14,6 +14,7 @@ class aseba_device;
 class aseba_tcp_acceptor : public boost::asio::detail::service_base<aseba_tcp_acceptor> {
 public:
     aseba_tcp_acceptor(boost::asio::io_context& io_context);
+    aseba_tcp_acceptor(boost::asio::execution_context& io_context);
     ~aseba_tcp_acceptor();
     void accept();
     void free_endpoint(const aseba_device* ep);
