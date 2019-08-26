@@ -94,6 +94,14 @@ Rectangle {
             return
         }
 
+        selectedNetworkId = dongles[0].networkId;
+        selectedChannel   = dongles[0].channel;
+
+        console.log("Dongle node %1 - network %3 - channel %4"
+            .arg(dongles[0].uuid)
+            .arg(selectedNetworkId)
+            .arg(selectedChannel))
+
 
 
         if(nodes.length < 1) {
@@ -114,8 +122,7 @@ Rectangle {
 
         selectedRobotId   = nodes[0].id
         selectedDongleId  = dongles[0].uuid
-        selectedNetworkId = dongles[0].networkId;
-        selectedChannel   = dongles[0].channel;
+
         ready = true
     }
 
@@ -143,10 +150,15 @@ Rectangle {
                 .arg(res.networkId())
                 .arg(res.channel()))
             robotCount ++
-            errorBanner.text = qsTr("Pairing successful")
+            errorBanner.text = qsTr("Pairing successful (network: %1 - channel: %2)")
+              .arg(Number(res.networkId()).toString(16))
+              .arg(res.channel() + 1)
 
             nextButton.visible = true
             pairButton.visible = false
+
+            selectedChannel   = res.channel()
+            selectedNetworkId = res.networkId();
 
             updateState()
         })
@@ -200,7 +212,6 @@ Rectangle {
         client.localEndpointChanged.connect(configure)
     }
     Component.onDestruction: {
-        console.log("By!")
         if(client.localEndpoint)
             client.localEndpoint.disableWirelessPairingMode();
     }
@@ -368,7 +379,7 @@ Rectangle {
                             width: parent.width
                             height: 40
                             anchors.bottom: parent.bottom
-                            channel: selectedChannel ? selectedChannel : -1
+                            channel: selectedChannel != null ? selectedChannel : -1
                         }
                     }
                     Item {
@@ -386,7 +397,7 @@ Rectangle {
                             width: parent.width
                             height: 40
                             anchors.bottom: parent.bottom
-                            text: Number(selectedNetworkId).toString(16)
+                            text: selectedNetworkId ? Number(selectedNetworkId).toString(16) : ""
                         }
                     }
                     Item {

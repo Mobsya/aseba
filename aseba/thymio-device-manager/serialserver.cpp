@@ -25,10 +25,9 @@ bool serial_server::should_open_for_configuration(const usb_serial_port& d) cons
     return service.is_enabled() && d.usb_device_id().product_id == THYMIO_WIRELESS_DEVICE_ID.product_id;
 }
 
-void serial_server::register_configurable_dongle(usb_serial_port&& d) const {
+void serial_server::register_configurable_dongle(aseba_device&& d) const {
     auto& service = boost::asio::use_service<wireless_configurator_service>(m_io_ctx);
-    aseba_device ad(std::move(d));
-    service.register_configurable_dongle(std::move(ad));
+    service.register_configurable_dongle(std::move(d));
 }
 
 
@@ -41,7 +40,7 @@ void serial_server::accept() {
         mLogInfo("New Aseba endpoint over USB device connected");
         usb_serial_port& d = session->serial();
         if(should_open_for_configuration(d)) {
-            register_configurable_dongle(std::move(d));
+            register_configurable_dongle(std::move(*session->device()));
         } else {
             create_endpoint(session, d);
         }
