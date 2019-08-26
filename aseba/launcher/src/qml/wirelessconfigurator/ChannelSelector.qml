@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 ListView {
     id:view
-    property int channel: currentItem ? currentItem.channel : 0
+    property int channel: 0
     model: ListModel {
         ListElement {
             channelId: 0
@@ -26,7 +26,7 @@ ListView {
     spacing: 20
 
     onChannelChanged: {
-        currentIndex = -1
+        currentIndex = 0
         for (var i = 0; i < count; ++i) {
             if (model.get(i)["channelId"] === channel) {
                  currentIndex = i;
