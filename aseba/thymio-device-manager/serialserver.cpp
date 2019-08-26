@@ -27,7 +27,8 @@ bool serial_server::should_open_for_configuration(const usb_serial_port& d) cons
 
 void serial_server::register_configurable_dongle(usb_serial_port&& d) const {
     auto& service = boost::asio::use_service<wireless_configurator_service>(m_io_ctx);
-    service.register_configurable_dongle(std::move(d));
+    aseba_device ad(std::move(d));
+    service.register_configurable_dongle(std::move(ad));
 }
 
 

@@ -646,6 +646,13 @@ Request ThymioDeviceManagerClientEndpoint::enableWirelessPairingMode() {
     return r;
 }
 
+Request ThymioDeviceManagerClientEndpoint::disableWirelessPairingMode() {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    write(wrap_fb(builder, fb::CreateEnableThymio2PairingMode(builder, false)));
+    return r;
+}
+
 
 Thymio2WirelessDonglePairingRequest ThymioDeviceManagerClientEndpoint::pairThymio2Wireless(const QUuid& dongleId,
                                                                                            const QUuid& nodeId,

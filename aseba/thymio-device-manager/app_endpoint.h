@@ -283,10 +283,15 @@ public:
             }
 
             case mobsya::fb::AnyMessage::EnableThymio2PairingMode: {
+                auto req = msg.as<fb::EnableThymio2PairingMode>();
                 auto& service = boost::asio::use_service<wireless_configurator_service>(this->m_ctx);
-                if(!service.is_enabled()) {
+                if(service.is_enabled() == req->enable())
+                    break;
+                if(req->enable()) {
                     service.wireless_dongles_changed.connect([this] { this->send_list_of_thymio2_dongles(); });
                     service.enable();
+                } else {
+                    service.disable();
                 }
                 break;
             }

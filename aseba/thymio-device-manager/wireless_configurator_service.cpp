@@ -20,13 +20,22 @@ void wireless_configurator_service::enable() {
 
     auto& service = boost::asio::use_service<serial_acceptor_service>(this->m_ctx);
     service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, _1));
-
-
-    // start_node_monitoring(boost::asio::use_service<aseba_node_registery>(m_ctx));
 }
 
-void wireless_configurator_service::register_configurable_dongle(usb_serial_port&& d) {
-    const std::string id = d.device_path();
+void wireless_configurator_service::disable() {
+    m_enabled = false;
+    m_dongles.clear();
+    disconnect_all_nodes();
+}
+
+
+void wireless_configurator_service::register_configurable_dongle(aseba_device&& d) {
+    std::string id;
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+    if(variant_ns::holds_alternative<usb_serial_port>(d.ep())) {
+        id = d.serial().device_path();
+    }
+#endif
     dongle dngle{std::move(d), boost::asio::use_service<uuid_generator>(m_ctx).generate()};
     if(!sync(dngle, false))
         return;
@@ -66,12 +75,18 @@ bool wireless_configurator_service::sync(dongle& dongle, bool flash) {
 
     boost::system::error_code ec;
     boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-    d.open();
-    d.set_option(boost::asio::serial_port::baud_rate(115200), ec);
-    d.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none), ec);
-    d.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one), ec);
-    d.set_rts(true);
-    d.set_data_terminal_ready(false);
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+    if(variant_ns::holds_alternative<usb_serial_port>(d.ep())) {
+        auto& ep = d.serial();
+        ep.open();
+        ep.set_option(boost::asio::serial_port::baud_rate(115200), ec);
+        ep.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none), ec);
+        ep.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one), ec);
+        ep.set_rts(true);
+        ep.set_data_terminal_ready(false);
+    }
+#endif
+
 
     dongle_data data;
     data.ctrl = flash ? 0x01 : 0;
@@ -80,12 +95,16 @@ bool wireless_configurator_service::sync(dongle& dongle, bool flash) {
         data.channel = 15 + 5 * dongle.channel;
     }
 
-    if(d.write_some(boost::asio::buffer(&data, sizeof(data)), ec) != sizeof(data))
-        return false;
-    auto read = d.read_some(boost::asio::buffer(&data, sizeof(data)), ec);
-
-    if(read < sizeof(data) - 1)
-        return false;
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
+    if(variant_ns::holds_alternative<usb_serial_port>(d.ep())) {
+        auto& ep = d.serial();
+        if(ep.write_some(boost::asio::buffer(&data, sizeof(data)), ec) != sizeof(data))
+            return false;
+        auto read = ep.read_some(boost::asio::buffer(&data, sizeof(data)), ec);
+        if(read < sizeof(data) - 1)
+            return false;
+    }
+#endif
 
     dongle.node_id = data.nodeId;
     dongle.network_id = data.panId;

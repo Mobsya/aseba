@@ -22,12 +22,13 @@ public:
     }
 
     void enable();
+    void disable();
 
-    void register_configurable_dongle(usb_serial_port&& d);
+    void register_configurable_dongle(aseba_device&& d);
     void device_unplugged(std::string_view);
 
     struct dongle {
-        usb_serial_port device;
+        aseba_device device;
         struct node_id uuid;
 
         uint16_t node_id = 0;
