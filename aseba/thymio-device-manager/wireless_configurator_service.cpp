@@ -4,6 +4,10 @@
 #include <boost/thread.hpp>
 #include "aseba_node_registery.h"
 #include "serialacceptor.h"
+#ifdef MOBSYA_TDM_ENABLE_USB
+#    include "usbacceptor.h"
+#endif
+#include <boost/scope_exit.hpp>
 
 namespace mobsya {
 
@@ -18,8 +22,15 @@ void wireless_configurator_service::enable() {
     m_enabled = true;
     disconnect_all_nodes();
 
+#ifdef MOBSYA_TDM_ENABLE_SERIAL
     auto& service = boost::asio::use_service<serial_acceptor_service>(this->m_ctx);
     service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, _1));
+#endif
+
+#ifdef MOBSYA_TDM_ENABLE_USB
+    auto& service = boost::asio::use_service<usb_acceptor_service>(this->m_ctx);
+    service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, _1));
+#endif
 }
 
 void wireless_configurator_service::disable() {
@@ -30,8 +41,12 @@ void wireless_configurator_service::disable() {
 
 
 void wireless_configurator_service::register_configurable_dongle(aseba_device&& d) {
-    std::string id;
-#ifdef MOBSYA_TDM_ENABLE_SERIAL
+    usb_device_key id;
+#ifdef MOBSYA_TDM_ENABLE_USB
+    if(variant_ns::holds_alternative<usb_device>(d.ep())) {
+        id = libusb_get_device(d.usb().native_handle());
+    }
+#else
     if(variant_ns::holds_alternative<usb_serial_port>(d.ep())) {
         id = d.serial().device_path();
     }
@@ -51,8 +66,8 @@ void wireless_configurator_service::disconnect_all_nodes() {
     service.disconnect_all_wireless_endpoints();
 }
 
-void wireless_configurator_service::device_unplugged(std::string_view w) {
-    auto it = m_dongles.find(std::string(w));
+void wireless_configurator_service::device_unplugged(usb_device_key k) {
+    auto it = m_dongles.find(k);
     if(it != m_dongles.end()) {
         m_dongles.erase(it);
         wireless_dongles_changed();
@@ -73,6 +88,11 @@ auto wireless_configurator_service::dongles() const -> std::vector<std::referenc
 bool wireless_configurator_service::sync(dongle& dongle, bool flash) {
     auto& d = dongle.device;
 
+    BOOST_SCOPE_EXIT(&d) {
+        d.close();
+    }
+    BOOST_SCOPE_EXIT_END
+
     boost::system::error_code ec;
     boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
@@ -82,6 +102,18 @@ bool wireless_configurator_service::sync(dongle& dongle, bool flash) {
         ep.set_option(boost::asio::serial_port::baud_rate(115200), ec);
         ep.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none), ec);
         ep.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one), ec);
+        ep.set_rts(true);
+        ep.set_data_terminal_ready(false);
+    }
+#endif
+
+#ifdef MOBSYA_TDM_ENABLE_USB
+    if(variant_ns::holds_alternative<usb_device>(d.ep())) {
+        auto& ep = d.usb();
+        ep.open();
+        ep.set_baud_rate(usb_device::baud_rate::baud_115200);
+        ep.set_parity(usb_device::parity::none);
+        ep.set_stop_bits(usb_device::stop_bits::one);
         ep.set_rts(true);
         ep.set_data_terminal_ready(false);
     }
@@ -98,6 +130,16 @@ bool wireless_configurator_service::sync(dongle& dongle, bool flash) {
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
     if(variant_ns::holds_alternative<usb_serial_port>(d.ep())) {
         auto& ep = d.serial();
+        if(ep.write_some(boost::asio::buffer(&data, sizeof(data)), ec) != sizeof(data))
+            return false;
+        auto read = ep.read_some(boost::asio::buffer(&data, sizeof(data)), ec);
+        if(read < sizeof(data) - 1)
+            return false;
+    }
+#endif
+#ifdef MOBSYA_TDM_ENABLE_USB
+    if(variant_ns::holds_alternative<usb_device>(d.ep())) {
+        auto& ep = d.usb();
         if(ep.write_some(boost::asio::buffer(&data, sizeof(data)), ec) != sizeof(data))
             return false;
         auto read = ep.read_some(boost::asio::buffer(&data, sizeof(data)), ec);
@@ -131,7 +173,7 @@ auto wireless_configurator_service::configure_dongle(const node_id& n, uint16_t 
     }
     d.channel = channel;
 
-    if(!sync(d, true) || d.channel != channel || d.network_id != network_id) {
+    if(!(sync(d, true) && sync(d, false)) || d.channel != channel || d.network_id != network_id) {
         m_dongles.erase(it);
         wireless_dongles_changed();
         return tl::make_unexpected(configure_error::sync_failed);

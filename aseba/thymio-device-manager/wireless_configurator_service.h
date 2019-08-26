@@ -14,6 +14,13 @@ namespace mobsya {
 class wireless_configurator_service : public boost::asio::detail::service_base<wireless_configurator_service> {
 
 public:
+#ifdef MOBSYA_TDM_ENABLE_USB
+    using usb_device_key = const libusb_device*;
+#else
+    using usb_device_key = std::string;
+#endif
+
+
     wireless_configurator_service(boost::asio::execution_context& ctx);
     ~wireless_configurator_service() override;
 
@@ -25,7 +32,7 @@ public:
     void disable();
 
     void register_configurable_dongle(aseba_device&& d);
-    void device_unplugged(std::string_view);
+    void device_unplugged(usb_device_key);
 
     struct dongle {
         aseba_device device;
@@ -61,8 +68,7 @@ private:
         unsigned char version = 0;
         unsigned char ctrl = 0;
     });
-
-    std::unordered_map<std::string, dongle> m_dongles;
+    std::unordered_map<usb_device_key, dongle> m_dongles;
 };
 
 
