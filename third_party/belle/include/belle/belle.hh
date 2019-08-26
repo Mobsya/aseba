@@ -81,11 +81,12 @@ SOFTWARE.
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/beast/websocket.hpp>
-
+#include <boost/beast/core.hpp>
 #ifdef OB_BELLE_CONFIG_SSL_ON
-#include <boost/beast/websocket/ssl.hpp>
+//#include <boost/beast/websocket/ssl.hpp>
 #endif // OB_BELLE_CONFIG_SSL_ON
+#include <boost/beast/websocket.hpp>
+#include <boost/beast/websocket/ssl.hpp>
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/strand.hpp>
@@ -617,11 +618,11 @@ public:
   }
 
   template<typename SyncStream>
-  friend void teardown(websocket::role_type,
+  friend void boost::beast::websocket::teardown(boost::beast::role_type,
     ssl_stream<SyncStream>& stream, error_code& ec);
 
   template<typename AsyncStream, typename TeardownHandler>
-  friend void async_teardown(websocket::role_type,
+  friend void async_teardown(boost::beast::role_type role,
     ssl_stream<AsyncStream>& stream, TeardownHandler&& handler);
 
 private:
@@ -630,18 +631,19 @@ private:
 }; // class ssl_stream
 
 template<typename SyncStream>
-inline void teardown(websocket::role_type role,
+inline void teardown(boost::beast::role_type role,
   ssl_stream<SyncStream>& stream, error_code& ec)
 {
-  websocket::teardown(role, *stream._ptr, ec);
+   teardown(role, *stream._ptr, ec);
 }
 
 template<typename AsyncStream, typename TeardownHandler>
-inline void async_teardown(websocket::role_type role,
+inline void async_teardown(boost::beast::role_type role,
   ssl_stream<AsyncStream>& stream, TeardownHandler&& handler)
 {
-  websocket::async_teardown(role, *stream._ptr, std::forward<TeardownHandler>(handler));
+    async_teardown(role, *stream._ptr, std::forward<TeardownHandler>(handler));
 }
+
 #endif // OB_BELLE_CONFIG_SSL_ON
 
 } // namespace Detail
