@@ -28,7 +28,7 @@ void aseba_device::free_endpoint() {
     variant_ns::visit(
         overloaded{[](variant_ns::monostate&) {},
                    [this](tcp_socket&) {
-                       boost::asio::post(get_io_context(), [this, &ctx = get_io_context()] {
+                       boost::asio::post(get_executor(), [this, &ctx = get_executor().context()] {
                            boost::asio::use_service<aseba_tcp_acceptor>(ctx).free_endpoint(this);
                        });
                    }
@@ -39,9 +39,10 @@ void aseba_device::free_endpoint() {
                            return;
 
 
-                       auto timer = std::make_shared<boost::asio::deadline_timer>(get_io_context());
+                       auto timer = std::make_shared<boost::asio::deadline_timer>(
+                           static_cast<boost::asio::io_context&>(get_executor().context()));
                        timer->expires_from_now(boost::posix_time::milliseconds(500));
-                       timer->async_wait([timer, path = d.device_path(), &ctx = get_io_context()](auto ec) {
+                       timer->async_wait([timer, path = d.device_path(), &ctx = get_executor().context()](auto ec) {
                            if(!ec)
                                boost::asio::use_service<serial_acceptor_service>(ctx).free_device(path);
                        });
@@ -51,8 +52,8 @@ void aseba_device::free_endpoint() {
                    ,
                    [this](mobsya::usb_device& d) {
                        if(d.native_handle()) {
-                                             boost::asio::post(get_io_context(), [h = libusb_get_device(d.native_handle(),
-    &ctx = get_io_context()] { boost::asio::use_service<usb_acceptor_service>(ctx) .free_device(h));
+                                             boost::asio::post(get_executor(), [h = libusb_get_device(d.native_handle(),
+    &ctx = get_executor().context()] { boost::asio::use_service<usb_acceptor_service>(ctx) .free_device(h));
                                              });
                        }
                    }

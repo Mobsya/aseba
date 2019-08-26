@@ -23,6 +23,10 @@ class serial_acceptor;
 class serial_acceptor_service : public boost::asio::detail::service_base<serial_acceptor_service> {
 public:
     serial_acceptor_service(boost::asio::io_context& io_service);
+
+    serial_acceptor_service(boost::asio::execution_context& io_context)
+        : serial_acceptor_service(static_cast<boost::asio::io_context&>(io_context)) {}
+
     struct implementation_type {
         std::vector<usb_device_identifier> compatible_devices;
     };
