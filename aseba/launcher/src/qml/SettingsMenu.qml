@@ -27,15 +27,25 @@ Rectangle {
     }
 
     function thymio2PairingWizard(valiseMode) {
-        var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessConfigurator.qml");
-        if (component.status === Component.Error) {
-            console.log("Error loading WirelessConfigurator component:", component.errorString());
-        }
+        var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessWizardWarningDialog.qml");
+        var dialog = component.createObject(launcher);
 
-        var dialog = component.createObject(launcher, {
-                "valiseMode": valiseMode
-            }
-        )
+       if (dialog === null) {
+           console.log("Error creating dialog");
+           return
+       }
+       dialog.yes.connect(function() {
+           var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessConfigurator.qml");
+           if (component.status === Component.Error) {
+               console.log("Error loading WirelessConfigurator component:", component.errorString());
+           }
+
+           var dialog = component.createObject(launcher, {
+                   "valiseMode": valiseMode
+               }
+           )
+       })
+       dialog.visible = true
     }
 
     function onMenuEntryClicked(action) {

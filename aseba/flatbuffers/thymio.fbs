@@ -390,6 +390,7 @@ table Thymio2WirelessDongle {
 }
 
 table EnableThymio2PairingMode {
+    enable: bool = true;
 }
 
 table Thymio2WirelessDonglesChanged {

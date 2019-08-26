@@ -86,5 +86,6 @@
         <file>qml/wirelessconfigurator/ChannelButton.qml</file>
         <file>qml/wirelessconfigurator/ChannelSelector.qml</file>
         <file>qml/wirelessconfigurator/NetworkIdInput.qml</file>
+        <file>qml/wirelessconfigurator/WirelessWizardWarningDialog.qml</file>
     </qresource>
 </RCC>

@@ -3,6 +3,7 @@
 #include <memory>
 
 namespace mobsya {
+class aseba_device;
 class serial_server {
 public:
     serial_server(boost::asio::io_context& io_service, std::initializer_list<usb_device_identifier> = {});

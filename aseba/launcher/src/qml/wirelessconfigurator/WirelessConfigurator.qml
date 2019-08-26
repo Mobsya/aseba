@@ -199,6 +199,11 @@ Rectangle {
         configure()
         client.localEndpointChanged.connect(configure)
     }
+    Component.onDestruction: {
+        console.log("By!")
+        if(client.localEndpoint)
+            client.localEndpoint.disableWirelessPairingMode();
+    }
 
     Item {
         id:  simpleModeLayout
