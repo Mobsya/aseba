@@ -54,7 +54,7 @@ BINUTILS_DIR="$DEST/Contents/MacOs"
 
 #Copy the binaries we need
 mkdir -p "$BINUTILS_DIR"
-for binary in "thymio-device-manager" "thymio2-firmware-upgrader" "thymiownetconfig-cli"
+for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     cp -r "$BUILD_DIR/$binary" "$BINUTILS_DIR"
 done
@@ -111,7 +111,7 @@ do
     sign --deep $(realpath "$plugin")
 done
 
-for binary in "thymio-device-manager" "thymio2-firmware-upgrader" "thymiownetconfig-cli"
+for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
     sign --deep $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/inherited.entitlements"
