@@ -101,7 +101,6 @@
                 "/lib/cmake",
                 "/include",
                 "/share/enki",
-                "/share/dashel",
                 "/share/enki"
             ]
         }

@@ -27,7 +27,6 @@ include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
-include(CMakeModules/dashel.cmake)
 include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
 
