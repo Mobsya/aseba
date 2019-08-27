@@ -180,7 +180,6 @@ SectionGroup /e "-Thymio" GroupThymio
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiovpl.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\asebahelp.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymio-launcher.ico"
-		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiownetconfig.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiowebbridge.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\scratchblock.ico"
 
@@ -233,7 +232,6 @@ SectionGroup /e "-Thymio" GroupThymio
 			; Launcher
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 			; Thymio wireless configurator
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Wireless Thymio Network Configurator.lnk" "$INSTDIR\bin\thymiownetconfig.exe" "" "$INSTDIR\thymiownetconfig.ico"
 			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
 		!insertmacro MUI_STARTMENU_WRITE_END

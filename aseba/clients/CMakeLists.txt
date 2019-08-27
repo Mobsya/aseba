@@ -7,7 +7,6 @@ if(NOT ANDROID)
     # gui
 
     if (Qt5Widgets_FOUND)
-        add_subdirectory(thymiownetconfig)
         set(HAS_GRAPHICAL_CLIENTS ON)
 
         if(Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
