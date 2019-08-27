@@ -83,6 +83,7 @@ else()
             serialserver.cpp
             serial_usb_device.h
         )
+        target_link_libraries(thymio-device-manager-lib PUBLIC ${UDEV_LIBS})
         target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL MOBSYA_TDM_ENABLE_UDEV)
     else()
         target_sources(thymio-device-manager-lib PRIVATE
@@ -123,10 +124,16 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
     pugixml
     range-v3
     OpenSSL::SSL
-    OpenSSL::Crypto
-       )
+    OpenSSL::Crypto)
+
+if(APPLE)
+    find_library(CoreFoundation CoreFoundation)
+    find_library(IOKit IOKit)
+    target_link_libraries(thymio-device-manager-lib PUBLIC ${CoreFoundation} ${IOKit})
+endif()
+
 if(WIN32)
-    target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt)
+    target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt winspool ws2_32 setupapi)
 endif()
 
 if (MSVC)
