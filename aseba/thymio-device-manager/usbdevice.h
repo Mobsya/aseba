@@ -6,6 +6,7 @@
 #include <boost/asio/placeholders.hpp>
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/beast/core/detail/type_traits.hpp>
+#include <boost/beast/core.hpp>
 #include <boost/bind.hpp>
 #include <map>
 
@@ -315,7 +316,7 @@ tl::expected<std::size_t, boost::system::error_code>
 usb_device_service::write_some(implementation_type& impl, const ConstBufferSequence& buffers) {
 
     std::size_t total_writen = 0;
-    for(const boost::asio::const_buffer& b : boost::beast::detail::buffers_range(buffers)) {
+    for(const boost::asio::const_buffer& b : boost::beast::buffers_range(buffers)) {
         int written = 0;
         auto err = libusb_bulk_transfer(impl.handle, impl.out_address,
                                         const_cast<unsigned char*>(static_cast<const unsigned char*>(b.data())),
