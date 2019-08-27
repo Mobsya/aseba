@@ -66,7 +66,7 @@ before_build:
     )
   - git submodule update --init --recursive
 
-  - vcpkg install --triplet x64-windows-static openssl zlib boost-program-options boost-filesystem boost-asio boost-date-time boost-thread boost-beast boost-interprocess
+  - vcpkg install --triplet x64-windows-static openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess
 
 build_script:
 #Scratch
@@ -114,7 +114,6 @@ environment:
     secure: 3h/VH0p48X8zQ9cnqgpJt9yAF2/eGx+Ne8mpDXJmKaM=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
-  BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=5"
   matrix:
     #- platform: x64
