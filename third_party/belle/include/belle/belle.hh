@@ -618,31 +618,21 @@ public:
   }
 
   template<typename SyncStream>
-  friend void boost::beast::websocket::teardown(boost::beast::role_type,
-    ssl_stream<SyncStream>& stream, error_code& ec);
+  friend void teardown(boost::beast::role_type role,
+    ssl_stream<SyncStream>& stream, error_code& ec) {
+        teardown(role, *stream._ptr, ec);
+    }
 
   template<typename AsyncStream, typename TeardownHandler>
   friend void async_teardown(boost::beast::role_type role,
-    ssl_stream<AsyncStream>& stream, TeardownHandler&& handler);
+    ssl_stream<AsyncStream>& stream, TeardownHandler&& handler) {
+        async_teardown(role, *stream._ptr, std::forward<TeardownHandler>(handler));
+  }
 
 private:
 
   std::unique_ptr<stream_type> _ptr;
 }; // class ssl_stream
-
-template<typename SyncStream>
-inline void teardown(boost::beast::role_type role,
-  ssl_stream<SyncStream>& stream, error_code& ec)
-{
-   teardown(role, *stream._ptr, ec);
-}
-
-template<typename AsyncStream, typename TeardownHandler>
-inline void async_teardown(boost::beast::role_type role,
-  ssl_stream<AsyncStream>& stream, TeardownHandler&& handler)
-{
-    async_teardown(role, *stream._ptr, std::forward<TeardownHandler>(handler));
-}
 
 #endif // OB_BELLE_CONFIG_SSL_ON
 
