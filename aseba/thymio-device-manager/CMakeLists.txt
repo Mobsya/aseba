@@ -83,7 +83,7 @@ else()
             serialserver.cpp
             serial_usb_device.h
         )
-        target_link_libraries(thymio-device-manager-lib PUBLIC ${UDEV_LIBS} udev)
+        target_link_libraries(thymio-device-manager-lib PUBLIC ${UDEV_LIBRARIES})
         target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL MOBSYA_TDM_ENABLE_UDEV)
     else()
         target_sources(thymio-device-manager-lib PRIVATE

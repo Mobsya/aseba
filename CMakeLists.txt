@@ -6,8 +6,16 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
+cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0003 NEW)
+
 
 project(ThymioSuite)
+set (CMAKE_PROJECT_VERSION 2.0)
+set (CMAKE_PROJECT_VERSION_MAJOR 2)
+set (CMAKE_PROJECT_VERSION_MINOR 0)
+set(OpenGL_GL_PREFERENCE GLVND)
+
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
@@ -16,7 +24,6 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 # ensure a minimal version of CMake
 cmake_minimum_required(VERSION 3.5)
-include(FeatureSummary)
 include(InstallRequiredSystemLibraries)
 
 # additional CMake modules
@@ -29,7 +36,6 @@ include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
 include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
-
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
@@ -102,12 +108,11 @@ endif()
 
 
 
-# Qt and Qwt
+# Qt
 find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools Charts)
 
 if (NOT ANDROID)
     find_package(Qt5Help)
-    find_package(Qwt)
 endif()
 
 if (UNIX AND NOT APPLE AND NOT ANDROID)
@@ -196,6 +201,3 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
 endif()
-
-
-feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)

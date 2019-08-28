@@ -29,9 +29,6 @@
 #include <QTabWidget>
 #include <QSvgRenderer>
 #include <QPainter>
-#ifdef HAVE_QWT
-#    include <qwt_global.h>
-#endif  // HAVE_QWT
 #include <QtDebug>
 
 #include <vector>
