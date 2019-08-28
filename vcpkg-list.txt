@@ -1,0 +1,13 @@
+openssl
+zlib
+boost-signals2
+boost-program-options
+boost-filesystem
+boost-scope-exit
+boost-asio
+boost-uuid
+boost-asio
+boost-date-time
+boost-thread
+boost-beast
+boost-interprocess

@@ -25,6 +25,92 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite.flatpak'
 
+- job: 'MSVC'
+  pool:
+      vmImage: windows-2019
+  variables:
+      CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+  steps:
+  - script: |
+       git submodule update --init --recursive
+    displayName: Update submodules
+  - script: |
+       makensis  -VERSION
+    displayName: Install NSIS
+  - task: CacheBeta@0
+    displayName: Cache vcpkg
+    inputs:
+      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c" | "windows-2019" | "4"
+      path: '$(Build.BinariesDirectory)/vcpkg'
+  - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
+    displayName: 'Run vcpkg'
+    inputs:
+      vcpkgTriplet: 'x64-windows-static'
+      vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
+      vcpkgGitCommitId: 66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c
+      vcpkgGitURL: https://github.com/mobsya/vcpkg.git
+  - powershell: |
+        Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
+        Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore
+        Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/downloads -ErrorAction Ignore
+    displayName: 'Remove vcpkg object files'
+
+  - task: CacheBeta@0
+    displayName: 'Qt Cache'
+    inputs:
+      key:  Qt_5_12_3_msvc2017_64_1
+      path: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+      cacheHitVar: QT_LIB_CACHE_RESTORED
+  - powershell: |
+        $output = [System.IO.Path]::GetTempFileName()
+        Invoke-WebRequest -Verbose  -UseBasicParsing -Uri "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z" -OutFile $output
+        7z -bb -y x  $output -o$(Build.BinariesDirectory)
+        ls $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+    condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
+    displayName: Fetch Qt
+  - task: PythonScript@0
+    displayName: Fetch scratch and blockly
+    inputs:
+      scriptSource: 'inline'
+      script: |
+        from urllib.request import urlretrieve
+        import tarfile
+        def extract(url, file):
+            print("{} -> {}".format(url, file))
+            urlretrieve(url, file)
+            tar = tarfile.open(file, "r:gz")
+            tar.extractall()
+            tar.close()
+        extract('https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz', 'thymio-blockly.tar.gz')
+        extract('https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz', 'scratch-gui.tar.gz')
+  - task: lucappa.cmake-ninja-vcpkg-tasks.f2b1ec7d-bc54-4cc8-b9ed-1bc7f37c9dc6.run-cmake@0
+    displayName: 'Run CMake with Ninja'
+    inputs:
+      cmakeToolchainPath: $(Build.SourcesDirectory)\windows\cl-toolchain.cmake
+      cmakeBuildType: Release
+      useVcpkgToolchainFile: true
+      vcpkgTriplet: 'x64-windows-static'
+      buildDirectory: '$(Build.BinariesDirectory)'
+      buildWithCMakeArgs: '-- -v '
+  - task: CmdLine@2
+    displayName: 'Run CPack'
+    inputs:
+      script: |
+        if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
+        cpack.exe -G NSIS
+      workingDirectory: '$(Build.BinariesDirectory)'
+
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Build.BinariesDirectory)'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+      contents: 'ThymioSuite-*.exe'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite.exe'
+
+
 - job: 'BuildAndroid_armeabi'
   pool:
     vmImage: 'Ubuntu-16.04'
