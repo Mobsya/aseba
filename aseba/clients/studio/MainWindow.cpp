@@ -22,7 +22,6 @@
 #include "TargetModels.h"
 #include "NamedValuesVectorModel.h"
 #include "StudioAeslEditor.h"
-#include "EventViewer.h"
 #include "FindDialog.h"
 #include "ModelAggregator.h"
 #include "translations/CompilerTranslator.h"
@@ -442,21 +441,7 @@ void MainWindow::clearAllExecutionError() {
     logger->setStyleSheet(QLatin1String(""));
 }
 
-void MainWindow::eventContextMenuRequested(const QPoint&) {
-#ifdef HAVE_QWT
-    const QModelIndex index(eventsDescriptionsView->indexAt(pos));
-    if(index.isValid() && (index.column() == 0)) {
-        const QString eventName(eventsDescriptionsModel->data(index).toString());
-        QMenu menu;
-        menu.addAction(tr("Plot event %1").arg(eventName));
-        const QAction* ret = menu.exec(eventsDescriptionsView->mapToGlobal(pos));
-        if(ret) {
-            const unsigned eventId = index.row();
-            plotEvent(eventId);
-        }
-    }
-#endif  // HAVE_QWT
-}
+void MainWindow::eventContextMenuRequested(const QPoint&) {}
 
 void MainWindow::tabChanged(int index) {
     findDialog->close();

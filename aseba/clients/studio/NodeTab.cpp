@@ -3,7 +3,6 @@
 #include "TargetModels.h"
 #include "NamedValuesVectorModel.h"
 #include "StudioAeslEditor.h"
-#include "EventViewer.h"
 #include "FindDialog.h"
 #include "ModelAggregator.h"
 #include "translations/CompilerTranslator.h"
