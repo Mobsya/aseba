@@ -114,6 +114,11 @@ Rectangle {
             return
         }
 
+        if(nodes[0].fwVersion < 13) {
+            errorBanner.text = qsTr("Please update the firmware of this robot before pairing it")
+            return
+        }
+
         if(valiseMode && nodes.length === 1 && pairedRobotUUIDs.indexOf(nodes[0].id.toString()) >= 0) {
             errorBanner.text = qsTr("You have alredy paired this robot")
             return
