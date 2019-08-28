@@ -23,6 +23,7 @@ public:
     Q_INVOKABLE bool openUrl(const QUrl& url);
     Q_INVOKABLE bool launch_process(const QString& program, const QStringList& args = {}) const;
     Q_INVOKABLE QByteArray readFileContent(QString path);
+    Q_INVOKABLE QString filenameForLocale(QString pattern);
     Q_INVOKABLE QString getDownloadPath(const QUrl& url);
     Q_INVOKABLE bool launchPlayground() const;
 #ifdef Q_OS_MAC

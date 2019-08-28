@@ -37,16 +37,18 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     if(id.isNull())
         return;
 
-    std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint = m_endpoints[id];
+    auto endpoint = m_endpoints[id];
 
     if(!endpoint) {
         QTcpSocket* socket = new QTcpSocket;
-        endpoint = std::shared_ptr<ThymioDeviceManagerClientEndpoint>
-            (new ThymioDeviceManagerClientEndpoint(socket, service.host()),
+        endpoint = std::shared_ptr<ThymioDeviceManagerClientEndpoint>(
+            new ThymioDeviceManagerClientEndpoint(socket, service.host()),
             [](ThymioDeviceManagerClientEndpoint* ep) { ep->deleteLater(); });
         socket->connectToHost(service.ip(), service.port());
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
                 &ThymioDeviceManagerClient::onEndpointDisconnected);
+        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::localPeerChanged, this,
+                &ThymioDeviceManagerClient::onLocalPeerChanged);
 
         connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
                 &ThymioDeviceManagerClient::onNodeAdded);
@@ -82,28 +84,50 @@ void ThymioDeviceManagerClient::onServiceRemoved(QZeroConfService service) {
         return;
 }
 
+void ThymioDeviceManagerClient::onLocalPeerChanged() {
+    auto endpoint = qobject_cast<ThymioDeviceManagerClientEndpoint*>(sender());
+    if(!endpoint->isLocalhostPeer())
+        return;
+    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
+                           [endpoint](const auto& ep) { return ep.get() == endpoint; });
+    if(it != std::end(m_endpoints)) {
+        Q_EMIT localEndpointChanged();
+    }
+}
+
+
 void ThymioDeviceManagerClient::onEndpointDisconnected() {
     auto endpoint = qobject_cast<ThymioDeviceManagerClientEndpoint*>(sender());
-    if(endpoint && endpoint->isLocalhostPeer())
-        Q_EMIT localPeerDisconnected();
 
     auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
                            [endpoint](const auto& ep) { return ep.get() == endpoint; });
-    if(it == std::end(m_endpoints))
-        return;
-    const auto shared_endpoint = *it;
-    for(auto node_it = m_nodes.begin(); node_it != m_nodes.end();) {
-        if(!node_it.value() || node_it.value()->endpoint() == shared_endpoint) {
-            const auto node = node_it.value();
-            node_it = m_nodes.erase(node_it);
-            if(node) {
-                Q_EMIT nodeRemoved(node);
+    if(it != std::end(m_endpoints)) {
+        const auto shared_endpoint = *it;
+        for(auto node_it = m_nodes.begin(); node_it != m_nodes.end();) {
+            if(!node_it.value() || node_it.value()->endpoint() == shared_endpoint) {
+                const auto node = node_it.value();
+                node_it = m_nodes.erase(node_it);
+                if(node) {
+                    Q_EMIT nodeRemoved(node);
+                }
+                continue;
             }
-            continue;
+            ++node_it;
         }
-        ++node_it;
+        m_endpoints.erase(it);
     }
-    m_endpoints.erase(it);
+    if(endpoint && endpoint->isLocalhostPeer()) {
+        Q_EMIT localPeerDisconnected();
+        Q_EMIT localEndpointChanged();
+    }
+}
+
+ThymioDeviceManagerClientEndpoint* ThymioDeviceManagerClient::qml_localEndpoint() const {
+    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
+                           [](const auto& ep) { return ep && ep->isLocalhostPeer(); });
+    if(it == std::end(m_endpoints))
+        return nullptr;
+    return it->get();
 }
 
 void ThymioDeviceManagerClient::requestDeviceManagersShutdown() {

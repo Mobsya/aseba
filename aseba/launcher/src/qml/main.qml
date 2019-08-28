@@ -1,5 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.4
+import "wirelessconfigurator"
 
 Item {
     id: launcher

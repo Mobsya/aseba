@@ -4,7 +4,7 @@
 <context>
     <name>Enki::PlaygroundViewer</name>
     <message>
-        <location filename="PlaygroundViewer.cpp" line="+73"/>
+        <location filename="PlaygroundViewer.cpp" line="+74"/>
         <source>You are using a feature not available in the simulator, click here to buy a real Thymio.</source>
         <oldsource>You are using a feature not available in the simulator, click here to buy a real Thymio</oldsource>
         <translation>Vous utilisez une fonctionnalité non disponible dans le simulateur, cliquez ici pour acheter un Thymio réel.</translation>
@@ -12,7 +12,7 @@
     <message>
         <location line="+2"/>
         <source>https://www.thymio.org/en:thymiobuy</source>
-        <translation>https://www.thymio.org/fr:thymiobuy</translation>
+        <translation>https://www.thymio.org/fr/acheter-thymio/</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -28,7 +28,7 @@
     <message>
         <location line="+8"/>
         <source>Client disconnected properly from %0</source>
-        <translation>Client déconnecté proprement depuis %0</translation>
+        <translation>Client déconnecté correctement depuis %0</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -48,7 +48,7 @@
     <message>
         <location line="+35"/>
         <source>%0: Process failed to start</source>
-        <translation>%0 : Le processus a échoué de démarrer</translation>
+        <translation>%0 : Le processus n&apos;a pas pu démarrer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -113,13 +113,13 @@
     <message>
         <location line="+1"/>
         <source>Mouse wheel or left drag + shift: Zoom camera.</source>
-        <translation>Roue de la souris ou glisser gauche + majuscule : Zoomer la caméra.</translation>
+        <translation>Roulette de la souris ou glisser gauche + majuscule : Zoomer la caméra.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="playground.cpp" line="+382"/>
+        <location filename="playground.cpp" line="+402"/>
         <source>%2 on %3</source>
         <translation>%2 sur %3</translation>
     </message>

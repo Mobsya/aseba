@@ -1,9 +1,6 @@
 [submodule "enki"]
 	path = enki
 	url = https://github.com/Mobsya/enki
-[submodule "dashel"]
-	path = dashel
-	url = https://github.com/mobsya/dashel
 [submodule "third_party/QtZeroConf"]
 	path = third_party/qtzeroconf
 	url = https://github.com/Mobsya/QtZeroConf
@@ -40,3 +37,6 @@
 [submodule "third_party/range-v3"]
 	path = third_party/range-v3
 	url = https://github.com/ericniebler/range-v3
+[submodule "third_party/quazip"]
+	path = third_party/quazip
+	url = https://github.com/mobsya/quazip

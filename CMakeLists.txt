@@ -4,13 +4,14 @@
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 
+cmake_policy(SET CMP0071 NEW)
+cmake_policy(SET CMP0020 NEW)
+
 project(ThymioSuite)
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-cmake_policy(SET CMP0071 NEW)
-cmake_policy(SET CMP0020 NEW)
 
 
 # ensure a minimal version of CMake
@@ -26,9 +27,9 @@ include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
-include(CMakeModules/dashel.cmake)
 include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
+
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
@@ -48,6 +49,7 @@ add_subdirectory(third_party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/expected EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/qt-solutions EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/quazip EXCLUDE_FROM_ALL)
 
 SET(BUILD_SHARED_LIBS_CACHED ${BUILD_SHARED_LIBS} CACHE BOOL "" FORCE)
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -90,6 +92,7 @@ enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
+cmake_policy(SET CMP0020 NEW)
 
 if(CREATE_QT_CONF_FILE)
     #create an empty qt.conf file
@@ -155,7 +158,11 @@ include(CPack)
 
 
 add_subdirectory(aseba)
-add_subdirectory(js)
+
+
+if(NOT ANDROID)
+	add_subdirectory(js)
+endif()
 
 if(NOT ANDROID)
     # Unit tests

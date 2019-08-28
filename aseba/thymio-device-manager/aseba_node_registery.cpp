@@ -12,7 +12,7 @@ namespace mobsya {
 
 aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_context)
     : boost::asio::detail::service_base<aseba_node_registery>(static_cast<boost::asio::io_context&>(io_context))
-    , m_service_uid(boost::asio::use_service<uuid_generator>(get_io_service()).generate())
+    , m_service_uid(boost::asio::use_service<uuid_generator>(io_context).generate())
     , m_discovery_socket(static_cast<boost::asio::io_context&>(io_context))
     , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
@@ -26,7 +26,7 @@ void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
     if(it == std::end(m_aseba_nodes)) {
         node_id id = node->uuid();
         if(id.is_nil())
-            id = boost::asio::use_service<uuid_generator>(get_io_service()).generate();
+            id = boost::asio::use_service<uuid_generator>(get_io_context()).generate();
         it = m_aseba_nodes.insert({id, node}).first;
 
         restore_group_affiliation(*node);
@@ -139,7 +139,8 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
     }
     m_updating_discovery = false;
     if(m_discovery_needs_update) {
-        boost::asio::post(get_io_context(), boost::bind(&aseba_node_registery::update_discovery, this));
+        boost::asio::post(boost::asio::get_associated_executor(this),
+                          boost::bind(&aseba_node_registery::update_discovery, this));
     }
 }
 
@@ -186,8 +187,31 @@ std::shared_ptr<mobsya::group> aseba_node_registery::group_from_id(const node_id
     return {};
 }
 
+void aseba_node_registery::register_endpoint(std::shared_ptr<aseba_endpoint> p) {
+    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
+                           [p](std::weak_ptr<aseba_endpoint> o) { return o.lock() == p; });
+    if(it == m_endpoints.end()) {
+        m_endpoints.push_back(p);
+    }
+}
+
+void aseba_node_registery::unregister_expired_endpoints() {
+    m_endpoints.erase(std::remove_if(m_endpoints.begin(), m_endpoints.end(), [](auto&& ep) { return ep.expired(); }),
+                      m_endpoints.end());
+}
+
+void aseba_node_registery::disconnect_all_wireless_endpoints() {
+    for(auto w : m_endpoints) {
+        const auto ep = w.lock();
+        if(ep && ep->is_wireless()) {
+            ep->destroy();
+        }
+    }
+}
+
 node_status_monitor::~node_status_monitor() {
     m_connection.disconnect();
 }
+
 
 }  // namespace mobsya

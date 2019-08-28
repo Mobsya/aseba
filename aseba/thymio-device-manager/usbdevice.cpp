@@ -16,10 +16,11 @@ void usb_device_service::construct(implementation_type& impl) {
 }
 
 void usb_device_service::move_construct(implementation_type& impl, implementation_type& other_impl) {
-    impl = other_impl;
+    impl = std::move(other_impl);
 }
 
 void usb_device_service::destroy(implementation_type& impl) {
+    m_context->mark_not_open(impl.device);
     close(impl);
     libusb_unref_device(impl.device);
 }
@@ -28,18 +29,27 @@ void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
     close(impl);
     impl.device = d;
     libusb_ref_device(d);
+    m_context->mark_open(impl.device);
 }
 
 
-void usb_device_service::cancel(implementation_type& /*impl*/) {}
+void usb_device_service::cancel(implementation_type& impl) {
+    close(impl);
+    open(impl);
+}
 
 void usb_device_service::close(implementation_type& impl) {
+    for(auto&& t : impl.transfers)
+        libusb_cancel_transfer(t);
+    impl.transfers.clear();
     if(impl.handle) {
         libusb_close(impl.handle);
-        m_context->mark_not_open(impl.device);
         impl.handle = nullptr;
     }
     impl.in_address = impl.out_address = impl.read_size = impl.write_size = 0;
+    impl.read_buffer = {};
+    impl.rts = false;
+    impl.dtr = false;
 }
 
 bool usb_device_service::is_open(implementation_type& impl) {
@@ -184,8 +194,20 @@ bool usb_device_service::send_encoding(implementation_type& impl) {
 usb_device::usb_device(boost::asio::io_context& io_context)
     : boost::asio::basic_io_object<usb_device_service>(io_context) {}
 
+
+usb_device::~usb_device() {
+    close();
+}
+
+usb_device::usb_device(usb_device&& o) = default;
+
 void usb_device::assign(libusb_device* d) {
     this->get_service().assign(this->get_implementation(), d);
+}
+
+void swap(usb_device& a, usb_device& b) {
+    std::swap(a.get_implementation(), b.get_implementation());
+    std::swap(a.m_transfer_pool, b.m_transfer_pool);
 }
 
 tl::expected<void, boost::system::error_code> usb_device::open() {
@@ -231,6 +253,12 @@ std::string usb_device::usb_device_name() const {
     s.resize(std::size_t(l));
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(), s.end());
     return s;
+}
+
+int usb_device::usb_device_address() const {
+    if(!this->native_handle())
+        return -1;
+    return libusb_get_device_address(libusb_get_device(this->native_handle()));
 }
 
 std::size_t usb_device::write_channel_chunk_size() const {

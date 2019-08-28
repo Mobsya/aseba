@@ -88,7 +88,10 @@ enum ErrorType : int {
   node_busy = 3,
 
   ///Unsuported variable type - For SetVariables and Events
-  unsupported_variable_type
+  unsupported_variable_type = 4,
+
+  thymio2_pairing_write_dongle_failed = 5,
+  thymio2_pairing_write_robot_failed = 6,
 }
 
 
@@ -379,6 +382,35 @@ table FirmwareUpgradeStatus {
     progress   : double;
 }
 
+table Thymio2WirelessDongle {
+    dongle_id   : NodeId;
+    dongle_node : uint16;
+    network_id: uint16;
+    channel_id: uint8;
+}
+
+table EnableThymio2PairingMode {
+    enable: bool = true;
+}
+
+table Thymio2WirelessDonglesChanged {
+    dongles: [Thymio2WirelessDongle];
+}
+
+table Thymio2WirelessDonglePairingRequest {
+    request_id:uint;
+    dongle_id:NodeId;
+    node_id:NodeId;
+    network_id: uint16;
+    channel_id: uint8;
+}
+
+table Thymio2WirelessDonglePairingResponse{
+    request_id:uint;
+    network_id: uint16;
+    channel_id: uint8;
+}
+
 union AnyMessage {
     ConnectionHandshake,
     DeviceManagerShutdownRequest,
@@ -408,7 +440,11 @@ union AnyMessage {
     ScratchpadUpdate,
     FirmwareUpgradeRequest,
     FirmwareUpgradeStatus,
-    Ping
+    Ping,
+    EnableThymio2PairingMode,
+    Thymio2WirelessDonglesChanged,
+    Thymio2WirelessDonglePairingRequest,
+    Thymio2WirelessDonglePairingResponse
 }
 
 table Message {

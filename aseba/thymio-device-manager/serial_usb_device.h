@@ -7,7 +7,7 @@
 namespace mobsya {
 class usb_serial_port : public boost::asio::serial_port {
 public:
-    using serial_port::serial_port;
+    using boost::asio::serial_port::serial_port;
     usb_device_identifier usb_device_id() const {
         return m_device_id;
     }
@@ -26,8 +26,23 @@ public:
     void open(boost::system::error_code& ec) {
         boost::asio::serial_port::open(m_port_name, ec);
 #if defined(__linux__) or defined(__APPLE__)
+        ioctl(native_handle(), _IO('U', 20), 0);
         ioctl(native_handle(), TIOCEXCL);
+        tcflush(native_handle(), TCIOFLUSH);
 #endif
+    }
+
+    void close() {
+#if defined(__linux__) or defined(__APPLE__)
+        ioctl(native_handle(), _IO('U', 20), 0);
+        ioctl(native_handle(), TIOCEXCL);
+        tcflush(native_handle(), TCIOFLUSH);
+#endif
+        boost::system::error_code ec;
+        close(ec);
+    }
+    void close(boost::system::error_code& ec) {
+        boost::asio::serial_port::close(ec);
     }
 
     void set_data_terminal_ready(bool dtr) {
@@ -46,6 +61,12 @@ public:
 #if defined(__linux__) or defined(__APPLE__)
         int flag = TIOCM_RTS;
         ioctl(native_handle(), rts ? TIOCMBIS : TIOCMBIC, &flag);
+#endif
+    }
+
+    void purge() {
+#ifdef _WIN32
+        PurgeComm(native_handle(), PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_RXABORT);
 #endif
     }
 

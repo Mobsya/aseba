@@ -95,12 +95,12 @@ bool Launcher::openUrl(const QUrl& url) {
 
     qDebug() << url;
 
-    //On mac we use the native web view since chromium is not app-store compatible.
-    //But on versions prior to High Sierra, the WebKit version shipped with
-    //the OS cannot handle webassembly, which we require to run all of our web apps
-    //So, instead, defer to the system browser - which is more likely to work
-    //because the version of safari shipped with an up-to-date Sierra is more current
-    //than the system's webkit
+    // On mac we use the native web view since chromium is not app-store compatible.
+    // But on versions prior to High Sierra, the WebKit version shipped with
+    // the OS cannot handle webassembly, which we require to run all of our web apps
+    // So, instead, defer to the system browser - which is more likely to work
+    // because the version of safari shipped with an up-to-date Sierra is more current
+    // than the system's webkit
 #ifdef Q_OS_OSX
     if(QOperatingSystemVersion::current() < QOperatingSystemVersion::MacOSHighSierra) {
         return QDesktopServices::openUrl(url);
@@ -168,6 +168,24 @@ QByteArray Launcher::readFileContent(QString path) {
     QFile f(path);
     f.open(QFile::ReadOnly);
     return f.readAll();
+}
+
+static bool exists(QString file) {
+    return QFile::exists(file.replace("qrc:/", ":/"));
+}
+
+Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
+    QLocale l;
+    QString full = pattern.arg(l.name());
+    if(exists(full))
+        return full;
+    QString lang = pattern.arg(l.name().mid(0, l.name().indexOf('_')));
+    if(exists(lang))
+        return lang;
+    QString en = pattern.arg("en");
+    if(exists(en))
+        return en;
+    return pattern;
 }
 
 bool Launcher::isZeroconfRunning() const {

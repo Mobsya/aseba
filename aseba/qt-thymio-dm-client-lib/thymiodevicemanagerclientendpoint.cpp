@@ -15,7 +15,8 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     , m_socket(socket)
     , m_message_size(0)
     , m_host_name(std::move(host))
-    , m_socket_health_check_timer(new QTimer(this)) {
+    , m_socket_health_check_timer(new QTimer(this))
+    , m_dongles_manager(new Thymio2WirelessDonglesManager(this)) {
 
     m_socket->setParent(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &ThymioDeviceManagerClientEndpoint::onReadyRead);
@@ -28,6 +29,12 @@ ThymioDeviceManagerClientEndpoint::ThymioDeviceManagerClientEndpoint(QTcpSocket*
     // The TDM pings every 25000ms
     m_socket_health_check_timer->start(15000);
     connect(m_socket_health_check_timer, &QTimer::timeout, this, &ThymioDeviceManagerClientEndpoint::checkSocketHealth);
+
+
+    connect(this, &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
+            &ThymioDeviceManagerClientEndpoint::nodesChanged);
+    connect(this, &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
+            &ThymioDeviceManagerClientEndpoint::nodesChanged);
 }
 
 ThymioDeviceManagerClientEndpoint::~ThymioDeviceManagerClientEndpoint() {
@@ -68,10 +75,14 @@ QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     return u;
 }
 
+Thymio2WirelessDonglesManager* ThymioDeviceManagerClientEndpoint::donglesManager() const {
+    return m_dongles_manager;
+}
+
 void ThymioDeviceManagerClientEndpoint::checkSocketHealth() {
     if(m_last_message_reception_date.msecsTo(QDateTime::currentDateTime()) > 10 * 1000) {
         qWarning() << "Connection timed out";
-        m_socket->disconnectFromHost();
+        // m_socket->disconnectFromHost();
         disconnect(m_socket_health_check_timer);
     }
 }
@@ -110,6 +121,7 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
             auto message = msg.as<mobsya::fb::ConnectionHandshake>();
             m_islocalhostPeer = message->localhostPeer();
+            localPeerChanged();
             // TODO handle versionning, etc
             break;
         }
@@ -306,6 +318,32 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             node->onFirmwareUpgradeProgress(message->progress());
             break;
         }
+        case mobsya::fb::AnyMessage::Thymio2WirelessDonglesChanged: {
+            auto message = msg.as<mobsya::fb::Thymio2WirelessDonglesChanged>();
+            if(!message || !message->dongles())
+                break;
+            m_dongles_manager->clear();
+            for(auto&& d : *message->dongles()) {
+                const auto& v = d->UnPack();
+                auto dongleId = qfb::uuid(*v->dongle_id);
+
+                m_dongles_manager->updateDongle(
+                    Thymio2WirelessDongle{dongleId, v->network_id, v->dongle_node, v->channel_id});
+            }
+            break;
+        }
+        case mobsya::fb::AnyMessage::Thymio2WirelessDonglePairingResponse: {
+            auto message = msg.as<mobsya::fb::Thymio2WirelessDonglePairingResponse>();
+            auto basic_req = get_request(message->request_id());
+            if(!basic_req)
+                break;
+            if(auto req = basic_req->as<Thymio2WirelessDonglePairingRequest::internal_ptr_type>()) {
+                req->setResult(Thymio2WirelessDonglePairingResult(message->network_id(), message->channel_id()));
+            }
+            break;
+        }
+
+
         default: Q_EMIT onMessage(msg);
     }
 }
@@ -601,6 +639,35 @@ Request ThymioDeviceManagerClientEndpoint::upgradeFirmware(const QUuid& id) {
     return r;
 }
 
+Request ThymioDeviceManagerClientEndpoint::enableWirelessPairingMode() {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    write(wrap_fb(builder, fb::CreateEnableThymio2PairingMode(builder)));
+    return r;
+}
+
+Request ThymioDeviceManagerClientEndpoint::disableWirelessPairingMode() {
+    Request r = prepare_request<Request>();
+    flatbuffers::FlatBufferBuilder builder;
+    write(wrap_fb(builder, fb::CreateEnableThymio2PairingMode(builder, false)));
+    return r;
+}
+
+
+Thymio2WirelessDonglePairingRequest ThymioDeviceManagerClientEndpoint::pairThymio2Wireless(const QUuid& dongleId,
+                                                                                           const QUuid& nodeId,
+                                                                                           quint16 networkId,
+                                                                                           quint8 channel) {
+    Thymio2WirelessDonglePairingRequest r = prepare_request<Thymio2WirelessDonglePairingRequest>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto dongleUuidOffset = serialize_uuid(builder, dongleId);
+    auto robotUuidOffset = serialize_uuid(builder, nodeId);
+    write(wrap_fb(builder,
+                  fb::CreateThymio2WirelessDonglePairingRequest(builder, r.id(), dongleUuidOffset, robotUuidOffset,
+                                                                networkId, channel)));
+    return r;
+}
+
 std::vector<std::shared_ptr<ThymioNode>> ThymioDeviceManagerClientEndpoint::nodes(const QUuid& node_or_group_id) const {
     std::vector<std::shared_ptr<ThymioNode>> nodes;
     for(auto&& node : m_nodes) {
@@ -624,6 +691,20 @@ std::shared_ptr<ThymioGroup> ThymioDeviceManagerClientEndpoint::group_from_id(co
             return node->group();
     }
     return {};
+}
+
+
+QQmlListProperty<ThymioNode> ThymioDeviceManagerClientEndpoint::qml_nodes() {
+    static auto at_function = [](QQmlListProperty<ThymioNode>* p, int index) {
+        auto that = static_cast<const ThymioDeviceManagerClientEndpoint*>(p->data);
+        if(index < 0 || index >= that->m_nodes.size())
+            return (ThymioNode*)(nullptr);
+        return (that->m_nodes.begin() + index).value().get();
+    };
+    static auto count_function = [](QQmlListProperty<ThymioNode>* p) {
+        return static_cast<const ThymioDeviceManagerClientEndpoint*>(p->data)->m_nodes.size();
+    };
+    return QQmlListProperty<ThymioNode>(this, this, count_function, at_function);
 }
 
 

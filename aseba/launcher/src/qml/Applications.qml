@@ -66,9 +66,10 @@ ListModel {
         animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
         icon: "qrc:/apps/vpl/launcher-icon-vpl.svg"
         descriptionImage: "qrc:/apps/vpl/description.jpg"
-        descriptionTextFile: "qrc:/apps/vpl/desc.en.html"
+        descriptionTextFile: "qrc:/apps/vpl/desc.%1.html"
         supportsGroups: false
         supportsWatchMode: false
+        helpUrl: "https://www.thymio.org/program/vpl/"
     }
     ListElement {
         appId: "scratch"
@@ -76,9 +77,10 @@ ListModel {
         animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
         icon: "qrc:/apps/scratch/launcher-icon-scratch.svg"
         descriptionImage: "qrc:/apps/scratch/description.jpg"
-        descriptionTextFile: "qrc:/apps/scratch/desc.en.html"
+        descriptionTextFile: "qrc:/apps/scratch/desc.%1.html"
         supportsGroups: false
         supportsWatchMode: false
+        helpUrl: "https://www.thymio.org/program/scratch/"
     }
 
     ListElement {
@@ -87,9 +89,10 @@ ListModel {
         animatedIcon: "qrc:/apps/blockly/blockly-animated-icon.webp"
         icon: "qrc:/apps/blockly/blockly-icon.svg"
         descriptionImage: "qrc:/apps/blockly/description.jpg"
-        descriptionTextFile: "qrc:/apps/blockly/desc.en.html"
+        descriptionTextFile: "qrc:/apps/blockly/desc.%1.html"
         supportsGroups: false
         supportsWatchMode: false
+        helpUrl: "https://www.thymio.org/program/blockly/"
     }
 
      ListElement {
@@ -98,8 +101,9 @@ ListModel {
          animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
          icon: "qrc:/apps/studio/launcher-icon-studio.svg"
          descriptionImage: "qrc:/apps/studio/description.jpg"
-         descriptionTextFile: "qrc:/apps/studio/desc.en.html"
+         descriptionTextFile: "qrc:/apps/studio/desc.%1.html"
          supportsGroups: true
          supportsWatchMode: true
+         helpUrl: "https://www.thymio.org/program/aseba/"
      }
 }

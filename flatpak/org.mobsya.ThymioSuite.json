@@ -15,7 +15,6 @@
     ],
     "command": "thymio-launcher",
     "rename-desktop-file": "thymio-launcher.desktop",
-    "rename-icon": "thymio-launcher",
     "modules": [
         {
             "name": "avahi",
@@ -51,8 +50,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2",
-                    "sha256": "8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406"
+                    "url":  "http://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz",
+                    "sha256": "882b48708d211a5f48e60b0124cf5863c1534cd544ecd0664bb534a4b5d506e9"
                 }
             ],
             "buildsystem": "simple",
@@ -88,19 +87,13 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190513.2/scratch-gui.tar.gz",
-                    "sha256": "ca820c3e356be447228c72b051a6f4cebd0ba26cde21dcf86bf1864e6a39292c",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz",
+                    "sha256": "6b37d38f9b12819c9c7b6b92f86e23c25a62f60206ced44731c3e2087cdadcde",
                     "strip-components": 0
                 }
             ],
             "post-install": [
-                "install -D --target-directory /app/share/mobsya/Playground/  aseba/targets/playground/examples/*",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebaonlinehelp asebastudio thymiownetconfig; do mv /app/share/applications/$i.desktop /app/share/applications/org.mobsya.ThymioSuite-$i.desktop; done",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebahelp asebastudio thymiownetconfig; do mv /app/share/icons/hicolor/scalable/apps/$i.svg /app/share/icons/hicolor/scalable/apps/org.mobsya.ThymioSuite-$i.svg; done",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebahelp asebastudio thymiownetconfig; do mv /app/share/icons/hicolor/48x48/apps/$i.png /app/share/icons/hicolor/48x48/apps/org.mobsya.ThymioSuite-$i.svg; done",
-                "desktop-file-edit --set-key=Icon --set-value=org.mobsya.ThymioSuite-asebahelp /app/share/applications/org.mobsya.ThymioSuite-asebaonlinehelp.desktop",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebastudio thymiownetconfig; do desktop-file-edit --set-key=Icon --set-value=org.mobsya.ThymioSuite-$i /app/share/applications/org.mobsya.ThymioSuite-$i.desktop; done",
-                "for i in asebachallenge asebaplayground asebastudiothymio thymiovpl asebaonlinehelp asebastudio thymiownetconfig; do desktop-file-edit --set-key=X-Flatpak-RenamedFrom --set-value=$i.desktop /app/share/applications/org.mobsya.ThymioSuite-$i.desktop; done"
+                "install -D --target-directory /app/share/mobsya/Playground/  aseba/targets/playground/examples/*"
             ],
             "cleanup": [
                 "/bin/flatc",
@@ -108,7 +101,6 @@
                 "/lib/cmake",
                 "/include",
                 "/share/enki",
-                "/share/dashel",
                 "/share/enki"
             ]
         }

@@ -1,4 +1,5 @@
 ﻿#include "fw_update_service.h"
+#define BOOST_PREDEF_DETAIL_ENDIAN_COMPAT_H
 #include <belle/belle.hh>
 #include <pugixml.hpp>
 #include <range/v3/algorithm.hpp>

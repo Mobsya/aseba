@@ -15,6 +15,8 @@ add_library(qt-thymio-dm-client-lib STATIC
     thymionode.cpp
     thymionode.h
     thymio-api.h
+    thymio2wirelessdongle.h
+    thymio2wirelessdongle.cpp
     qflatbuffers.h
     request.h
     request.cpp
@@ -29,6 +31,7 @@ add_library(qt-thymio-dm-client-lib-qml OBJECT
 target_link_libraries(qt-thymio-dm-client-lib  PUBLIC
     Qt5::Core
     Qt5::Network
+    Qt5::Quick
     QtZeroConf
     thymio-flatbuffers
     range-v3

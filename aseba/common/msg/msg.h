@@ -86,10 +86,6 @@ public:
 
     // (de-)serialization methods
 
-#ifndef ASEBA_NO_DASHEL
-    void serialize(Dashel::Stream* stream) const;
-    static Message* receive(Dashel::Stream* stream);
-#endif
     static Message* create(uint16_t source, uint16_t type, SerializationBuffer& buffer);
     Message* clone() const;
     void dump(std::wostream& stream) const;
@@ -708,10 +704,6 @@ protected:
 
 bool operator==(const SetBytecode& lhs, const SetBytecode& rhs);
 
-#ifndef ASEBA_NO_DASHEL
-//! Call the SetBytecode multiple time in order to send all the bytecode
-void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint16_t>& bytecode);
-#endif
 //! Call the SetBytecode multiple time in order to send all the bytecode
 void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
                   const std::vector<uint16_t>& bytecode);

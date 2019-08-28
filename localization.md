@@ -19,7 +19,6 @@ To modify the translation, first [fork the Aseba repository](https://github.com/
 Then, modify the relevant files using Qt Linguist, these files are:
 * For about boxes: `common/about/qtabout_LL.ts`
 * For Studio: `clients/studio/asebastudio_LL.ts` and `clients/studio/compiler_LL.ts`
-* For Thymio Wireless Configurator: `clients/thymiownetconfig/thymiownetconfig_LL.ts`
 * For Aseba Playground: `targets/challenge/asebaplayground_LL.ts`
 * For Aseba Challenge: `targets/challenge/asebachallenge_LL.ts`
 Where `LL` is the [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code of your language.

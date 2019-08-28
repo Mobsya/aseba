@@ -5,11 +5,13 @@
 #include <chrono>
 #include <aware/aware.hpp>
 #include <boost/signals2.hpp>
-
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 #include "aseba_node.h"
 #include "node_id.h"
 #include "group.h"
-
+#include "aseba_endpoint.h"
 
 namespace mobsya {
 
@@ -34,6 +36,11 @@ public:
 
     std::shared_ptr<mobsya::group> group_from_id(const node_id&) const;
 
+    void register_endpoint(std::shared_ptr<aseba_endpoint> ep);
+    void unregister_expired_endpoints();
+
+    void disconnect_all_wireless_endpoints();
+
 private:
     void remove_duplicated_node(const std::shared_ptr<aseba_node>& node);
 
@@ -49,6 +56,9 @@ private:
     boost::uuids::uuid m_service_uid;
 
     node_map m_aseba_nodes;
+    // Listing the endpoints is useful to be able to configure
+    // Thymio 2 dongles
+    std::vector<std::weak_ptr<aseba_endpoint>> m_endpoints;
 
     //
     struct last_known_node_group {

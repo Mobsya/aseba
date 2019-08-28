@@ -18,12 +18,9 @@ jobs:
   container: fpkde
   steps:
   - script: |
-      git submodule init
-      git submodule update --recursive --remote
-      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
-      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
-      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
-      flatpak-builder build-dir flatpak/org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs -v --repo=bundle
+      git submodule update --init --recursive
+      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
@@ -32,7 +29,10 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite.flatpak'
 
+
 - job: 'BuildWindows'
+  variables:
+    system.debug: true
   pool:
     vmImage: 'win1803'
   container: windows
@@ -55,6 +55,38 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'build\ThymioSuite-*.exe'
 
+- job: 'BuildAndroid_armeabi'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  strategy:
+    matrix:
+      armeabi:
+        TARGET_ARCH: 'armeabi-v7a'
+      aarch64:
+        TARGET_ARCH: 'arm64-v8a'
+      x86_64:
+        TARGET_ARCH: 'x86_64'
+  steps:
+  - script: |
+      docker pull mobsya/android-dev-env:$TARGET_ARCH
+  - script: |
+      wget -q https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz && tar xzf thymio-blockly.tar.gz -C .
+      wget -q https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz && tar xzf scratch-gui.tar.gz -C .
+    displayName: 'Extract scratch and blockly'
+
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
+
+  - script: |
+      sudo docker run --rm -e TARGET_ARCH=${TARGET_ARCH} -v $(pwd):/src:rw -v $(Build.ArtifactStagingDirectory):/build:rw mobsya/android-dev-env:$TARGET_ARCH /bin/bash -c 'cd /src && mkdir build && cd build && export CMAKE_PREFIX_PATH="/Qt/android_${TARGET_ARCH}" && cmake -DANDROID_PLATFORM=android-22 -DANDROID_ABI=${TARGET_ARCH}  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/Qt/android_${TARGET_ARCH} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ../ -GNinja && ninja && cp bin/*.apk /build/thymio-suite-${TARGET_ARCH}.apk'
+    displayName: 'Build Thymio Suite'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite-android'
+
 - job: BuilOnOsX
   pool:
     vmImage: 'macOS-10.13'
@@ -70,7 +102,7 @@ jobs:
 
   - script: |
       curl -sL https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz | tar xzf - -C .
-      curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190513.2/scratch-gui.tar.gz | tar xzf - -C .
+      curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
@@ -79,11 +111,7 @@ jobs:
     displayName: 'Install dependencies with HomeBrew'
 
   - script: |
-      git submodule init
-      git submodule update --recursive --remote
-      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
-      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
-      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
+      git submodule update --init --recursive
     displayName: 'Clone submodules'
 
   - script: |
