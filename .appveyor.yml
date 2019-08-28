@@ -59,14 +59,15 @@ install:
 
 
 before_build:
-  - cd "%APPVEYOR_BUILD_FOLDER%"
   - if [%USE_VS_TOOLCHAIN%]==[true] (
       set "PATH=%QT5%\bin;%PATH%" &&
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %ARCH%
     )
-  - git submodule update --init --recursive
+  - cd C:\projects && git clone https://github.com/Mobsya/vcpkg.git && cd vcpkg && .\bootstrap-vcpkg.bat
+  - C:\projects\vcpkg\vcpkg.exe install --triplet "%ARCH%-windows-static" openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess
 
-  - vcpkg install --triplet x64-windows-static openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess
+  - cd "%APPVEYOR_BUILD_FOLDER%"
+  - git submodule update --init --recursive
 
 build_script:
 #Scratch
@@ -75,13 +76,13 @@ build_script:
   - mkdir build
   - cd build
   - if [%COMPILER%]==[ClangCL] (
-      cmake .. -GNinja "-DBoost_DEBUG=ON" -DBUILD_SHARED_LIBS=OFF -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILEE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%"  "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON &&
+      cmake .. -GNinja "-DBoost_DEBUG=ON" -DBUILD_SHARED_LIBS=OFF -DCMAKE_TOOLCHAIN_FILE=c:/projects/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILEE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%;"  "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON &&
       ninja -v &&
       cpack -D CPACK_GENERATOR="NSIS"
     )
 
   - if [%COMPILER%]==[MSVC] (
-      cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\cl-toolchain.cmake" "-DCMAKE_PREFIX_PATH=%QT5%;" -DCMAKE_BUILD_TYPE=Release "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static"
+      cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_TOOLCHAIN_FILE=c:/projects/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\cl-toolchain.cmake" "-DCMAKE_PREFIX_PATH=%QT5%;" -DCMAKE_BUILD_TYPE=Release "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static"
       -DCREATE_QT_CONF_FILE=ON &&
       ninja -v &&
       ctest &&
@@ -98,7 +99,7 @@ cache:
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
   - 'C:\Program Files (x86)\NSIS'
-  - c:\tools\vcpkg\installed\
+  - C:\projects\vcpkg\installed\
 
 image: Visual Studio 2017
 platform: x64
@@ -135,8 +136,6 @@ environment:
       COMPILER: MSVC
       QT5: C:\Qt\5.12\msvc2017_64
       USE_VS_TOOLCHAIN: true
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
-
 deploy:
   tag: nightly
   release: nightly
