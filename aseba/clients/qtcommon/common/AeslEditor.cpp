@@ -35,30 +35,14 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
     QTextCharFormat keywordFormat;
     keywordFormat.setForeground(Qt::darkRed);
     QStringList keywordPatterns;
-    keywordPatterns << QStringLiteral("\\bemit\\b")
-                    << QStringLiteral("\\bwhile\\b")
-                    << QStringLiteral("\\bdo\\b")
-                    << QStringLiteral("\\bfor\\b")
-                    << QStringLiteral("\\bin\\b")
-                    << QStringLiteral("\\bstep\\b")
-                    << QStringLiteral("\\bif\\b")
-                    << QStringLiteral("\\bthen\\b")
-                    << QStringLiteral("\\belse\\b")
-                    << QStringLiteral("\\belseif\\b")
-                    << QStringLiteral("\\bend\\b")
-                    << QStringLiteral("\\bvar\\b")
-                    << QStringLiteral("\\bconst\\b")
-                    << QStringLiteral("\\bcall\\b")
-                    << QStringLiteral("\\bonevent\\b")
-                    << QStringLiteral("\\bontimer\\b")
-                    << QStringLiteral("\\bwhen\\b")
-                    << QStringLiteral("\\band\\b")
-                    << QStringLiteral("\\bor\\b")
-                    << QStringLiteral("\\bnot\\b")
-                    << QStringLiteral("\\babs\\b")
-                    << QStringLiteral("\\bsub\\b")
-                    << QStringLiteral("\\bcallsub\\b")
-                    << QStringLiteral("\\breturn\\b");
+    keywordPatterns << QStringLiteral("\\bemit\\b") << QStringLiteral("\\bwhile\\b") << QStringLiteral("\\bdo\\b")
+                    << QStringLiteral("\\bfor\\b") << QStringLiteral("\\bin\\b") << QStringLiteral("\\bstep\\b")
+                    << QStringLiteral("\\bif\\b") << QStringLiteral("\\bthen\\b") << QStringLiteral("\\belse\\b")
+                    << QStringLiteral("\\belseif\\b") << QStringLiteral("\\bend\\b") << QStringLiteral("\\bvar\\b")
+                    << QStringLiteral("\\bconst\\b") << QStringLiteral("\\bcall\\b") << QStringLiteral("\\bonevent\\b")
+                    << QStringLiteral("\\bontimer\\b") << QStringLiteral("\\bwhen\\b") << QStringLiteral("\\band\\b")
+                    << QStringLiteral("\\bor\\b") << QStringLiteral("\\bnot\\b") << QStringLiteral("\\babs\\b")
+                    << QStringLiteral("\\bsub\\b") << QStringLiteral("\\bcallsub\\b") << QStringLiteral("\\breturn\\b");
     foreach(QString pattern, keywordPatterns) {
         rule.pattern = QRegExp(pattern);
         rule.format = keywordFormat;
@@ -249,7 +233,7 @@ QSize AeslEditorSidebar::sizeHint() const {
     return QSize(idealWidth(), 0);
 }
 
-void AeslEditorSidebar::paintEvent(QPaintEvent* event) {
+void AeslEditorSidebar::paintEvent(QPaintEvent*) {
     QSize newSizeHint = sizeHint();
 
     if(currentSizeHint != newSizeHint) {
@@ -794,7 +778,7 @@ bool AeslEditor::handleNewLine(QKeyEvent* event) {
     return true;
 }
 
-void AeslEditor::detectLocalContextChange(QKeyEvent* event) {
+void AeslEditor::detectLocalContextChange(QKeyEvent*) {
     // this function spy the events to detect the local context
     LocalContext currentContext = UnknownContext;
     QString previous = previousWord();

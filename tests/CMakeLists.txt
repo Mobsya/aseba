@@ -7,7 +7,6 @@ check_include_files(getopt.h HAVE_GETOPT_H)
 if (HAVE_GETOPT_H)
 	add_subdirectory(compiler)
 	add_subdirectory(vm)
-	add_subdirectory(simulator)
 endif()
 
 

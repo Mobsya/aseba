@@ -160,7 +160,7 @@ void PlaygroundViewer::processReadyRead() {
         log(tr("%0: %1").arg((Q_PID_PRINT)process->pid()).arg(process->readLine().constData()), Qt::yellow);
 }
 
-void PlaygroundViewer::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+void PlaygroundViewer::processFinished(int, QProcess::ExitStatus) {
     auto* process(polymorphic_downcast<QProcess*>(sender()));
     // do not display to avoid clutter
     /*if (exitStatus == QProcess::NormalExit)

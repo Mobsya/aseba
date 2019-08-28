@@ -73,7 +73,7 @@ CompilationLogDialog::CompilationLogDialog(QWidget* parent) : QDialog(parent), t
     resize(600, 560);
 }
 
-void CompilationLogDialog::hideEvent(QHideEvent* event) {
+void CompilationLogDialog::hideEvent(QHideEvent*) {
     if(!isVisible())
         emit hidden();
 }
@@ -442,7 +442,7 @@ void MainWindow::clearAllExecutionError() {
     logger->setStyleSheet(QLatin1String(""));
 }
 
-void MainWindow::eventContextMenuRequested(const QPoint& pos) {
+void MainWindow::eventContextMenuRequested(const QPoint&) {
 #ifdef HAVE_QWT
     const QModelIndex index(eventsDescriptionsView->indexAt(pos));
     if(index.isValid() && (index.column() == 0)) {
@@ -969,7 +969,7 @@ void MainWindow::applySettings() {
     showLineNumbers->setChecked(ConfigDialog::getShowLineNumbers());
 }
 
-void MainWindow::clearOpenedFileName(bool isModified) {
+void MainWindow::clearOpenedFileName(bool) {
     actualFileName.clear();
     updateWindowTitle();
 }

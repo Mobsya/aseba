@@ -10,7 +10,7 @@ void ModelAggregator::addModel(QAbstractItemModel* model, unsigned int column) {
     models.append(description);
 }
 
-int ModelAggregator::columnCount(const QModelIndex& parent) const {
+int ModelAggregator::columnCount(const QModelIndex&) const {
     return 1;
 }
 
@@ -56,7 +56,7 @@ QModelIndex ModelAggregator::index(int row, int column, const QModelIndex& paren
     return hasIndex(row, column, parent) ? createIndex(row, column) : QModelIndex();
 }
 
-QModelIndex ModelAggregator::parent(const QModelIndex& child) const {
+QModelIndex ModelAggregator::parent(const QModelIndex&) const {
     return QModelIndex();
 }
 
@@ -71,11 +71,11 @@ void TreeChainsawFilter::setSourceModel(QAbstractItemModel* sourceModel) {
     sort(0, Qt::AscendingOrder);
 }
 
-int TreeChainsawFilter::rowCount(const QModelIndex& parent) const {
+int TreeChainsawFilter::rowCount(const QModelIndex&) const {
     return indexList.count();
 }
 
-int TreeChainsawFilter::columnCount(const QModelIndex& parent) const {
+int TreeChainsawFilter::columnCount(const QModelIndex&) const {
     return 1;
 }
 
@@ -93,7 +93,7 @@ QModelIndex TreeChainsawFilter::index(int row, int column, const QModelIndex& pa
     return hasIndex(row, column, parent) ? createIndex(row, column) : QModelIndex();
 }
 
-QModelIndex TreeChainsawFilter::parent(const QModelIndex& child) const {
+QModelIndex TreeChainsawFilter::parent(const QModelIndex&) const {
     return QModelIndex();
 }
 

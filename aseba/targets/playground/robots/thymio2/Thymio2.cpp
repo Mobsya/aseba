@@ -67,7 +67,7 @@ AsebaThymio2::AsebaThymio2(std::string robotName, int16_t nodeId)
         openSDCardFile(-1);
 }
 
-void AsebaThymio2::collisionEvent(PhysicalObject* o) {
+void AsebaThymio2::collisionEvent(PhysicalObject*) {
     thisStepCollided = true;
 }
 

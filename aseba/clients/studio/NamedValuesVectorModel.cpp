@@ -161,7 +161,7 @@ QVariant MaskableVariablesModel::data(const QModelIndex& index, int role) const 
     if(index.column() != 2)
         return FlatVariablesModel::data(index, role);
     bool visible = true;
-    if(m_events_visibility.size() > index.row())
+    if(m_events_visibility.size() > size_t(index.row()))
         visible = m_events_visibility[index.row()];
 
 
@@ -196,7 +196,7 @@ bool MaskableVariablesModel::isVisible(const QString& key) const {
 }
 
 void MaskableVariablesModel::toggle(const QModelIndex& index) {
-    if(index.row() >= m_events_visibility.size())
+    if(size_t(index.row()) >= m_events_visibility.size())
         m_events_visibility.resize(index.row() + 1);
 
     m_events_visibility[index.row()] = !m_events_visibility[index.row()];

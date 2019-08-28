@@ -98,7 +98,7 @@ namespace ThymioVPL {
         virtual bool isAnyAdvancedFeature() const {
             return isAdvancedBlock();
         }
-        virtual void setAdvanced(bool advanced) {}
+        virtual void setAdvanced(bool) {}
 
         QMimeData* mimeData() const;
         QDomElement serialize(QDomDocument& document) const;
@@ -146,10 +146,10 @@ namespace ThymioVPL {
         unsigned valuesCount() const override {
             return 0;
         }
-        int getValue(unsigned i) const override {
+        int getValue(unsigned) const override {
             return -1;
         }
-        void setValue(unsigned i, int value) override {}
+        void setValue(unsigned, int) override {}
         QVector<uint16_t> getValuesCompressed() const override {
             return QVector<uint16_t>();
         }

@@ -36,7 +36,7 @@ class read_aseba_message_op {
         char headerBuffer[6];
         Aseba::Message::SerializationBuffer dataBuffer;
 
-        explicit state(Handler const& handler, AsyncReadStream& stream) : stream(stream) {}
+        explicit state(Handler const&, AsyncReadStream& stream) : stream(stream) {}
     };
     boost::beast::handler_ptr<state, Handler> m_p;
 

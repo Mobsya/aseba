@@ -312,9 +312,10 @@ private:
 
     // Do not run pings / health check for usb-connected nodes
     bool needs_health_check() const {
-        if(m_endpoint.is_tcp() || m_endpoint.is_wireless())
-            ;
-        return true;
+        if(m_endpoint.is_tcp() || m_endpoint.is_wireless()) {
+            return true;
+        }
+        return false;
     }
 
     bool needs_ping() const {

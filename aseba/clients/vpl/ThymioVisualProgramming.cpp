@@ -915,7 +915,7 @@ namespace ThymioVPL {
             if(!ok)
                 return;
         }
-        if(n >= 0 && n < scene->setsCount()) {
+        if(n >= 0 && unsigned(n) < scene->setsCount()) {
             (*(scene->setsBegin() + n))->blink();
         }
     }
@@ -1099,7 +1099,7 @@ namespace ThymioVPL {
             (*itr)->setIconSize(iconSize);
     }
 
-    void ThymioVisualProgramming::timerEvent(QTimerEvent* event) {
+    void ThymioVisualProgramming::timerEvent(QTimerEvent*) {
 #ifdef Q_OS_WIN
         // for unknown reason, animation does not work some times on Windows, so setting image
         // directly from QIcon

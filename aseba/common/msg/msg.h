@@ -305,6 +305,7 @@ protected:
     operator const char*() const override {
         return "get node description fragment";
     }
+
 private:
     int16_t m_fragment;
 };
@@ -383,8 +384,8 @@ public:
     Disconnected() : Message(ASEBA_MESSAGE_DISCONNECTED) {}
 
 protected:
-    void serializeSpecific(SerializationBuffer& buffer) const override {}
-    void deserializeSpecific(SerializationBuffer& buffer) override {}
+    void serializeSpecific(SerializationBuffer&) const override {}
+    void deserializeSpecific(SerializationBuffer&) override {}
     void dumpSpecific(std::wostream&) const override {}
     operator const char*() const override {
         return "disconnected";

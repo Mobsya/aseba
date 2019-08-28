@@ -85,7 +85,7 @@ EPuckFeeding::EPuckFeeding(Robot* owner) : energy(EPUCK_FEEDER_INITIAL_ENERGY) {
     this->owner = owner;
 }
 
-void EPuckFeeding::objectStep(double dt, World* w, PhysicalObject* po) {
+void EPuckFeeding::objectStep(double dt, World*, PhysicalObject* po) {
     auto* epuck = dynamic_cast<FeedableEPuck*>(po);
     if(epuck && energy > 0) {
         double dEnergy = dt * EPUCK_FEEDER_D_ENERGY;
@@ -96,7 +96,7 @@ void EPuckFeeding::objectStep(double dt, World* w, PhysicalObject* po) {
     }
 }
 
-void EPuckFeeding::finalize(double dt, World* w) {
+void EPuckFeeding::finalize(double dt, World*) {
     if((energy < EPUCK_FEEDER_THRESHOLD_SHOW) && (energy + dt >= EPUCK_FEEDER_THRESHOLD_SHOW))
         owner->setColor(EPUCK_FEEDER_COLOR_ACTIVE);
     energy += EPUCK_FEEDER_RECHARGE_RATE * dt;
@@ -114,7 +114,7 @@ EPuckFeeder::EPuckFeeder() : feeding(this) {
 
 // ScoreModifier
 
-void ScoreModifier::step(double dt, World* w) {
+void ScoreModifier::step(double dt, World*) {
     double x = owner->pos.x;
     double y = owner->pos.y;
     if((x > 32) && (x < 110.4 - 32) && (y > 67.2) && (y < 110.4 - 32))

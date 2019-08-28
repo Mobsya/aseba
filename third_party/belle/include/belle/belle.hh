@@ -2299,7 +2299,7 @@ public:
     _address {address_},
     _port {port_}
   {
-    _attr->ssl = true;
+    _attr->ssl = ssl_;
   }
 #endif // OB_BELLE_CONFIG_SSL_ON
 

@@ -324,7 +324,7 @@ QModelIndex VariablesModel::index(int row, int column, const QModelIndex& parent
     auto parentItem = getItem(parent);
     if(!parentItem)
         return {};
-    auto item = row >= 0 && row < parentItem->children.size() ? parentItem->children[row].get() : nullptr;
+    auto item = row >= 0 && size_t(row) < parentItem->children.size() ? parentItem->children[row].get() : nullptr;
     return createIndex(row, column, item);
 }
 
