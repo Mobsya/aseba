@@ -403,7 +403,7 @@ namespace ThymioVPL {
         // painter->drawLine(128, 136, 128+sinf(angle)*50, 136-cosf(angle)*50);
     }
 
-    void TimerActionBlock::frameChanged(int frame) {
+    void TimerActionBlock::frameChanged(int) {
         update();
     }
 
@@ -452,11 +452,11 @@ namespace ThymioVPL {
         return 0;
     }
 
-    int TimerActionBlock::getValue(unsigned i) const {
+    int TimerActionBlock::getValue(unsigned) const {
         return duration;
     }
 
-    void TimerActionBlock::setValue(unsigned i, int value) {
+    void TimerActionBlock::setValue(unsigned, int value) {
         setDuration(value);
     }
 

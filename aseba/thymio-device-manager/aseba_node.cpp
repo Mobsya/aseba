@@ -209,9 +209,8 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
 }
 
 tl::expected<aseba_node::compilation_result, boost::system::error_code>
-aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs,
-                               fb::ProgrammingLanguage language, const std::string& program,
-                               Aseba::BytecodeVector& bytecode) {
+aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions&, fb::ProgrammingLanguage language,
+                               const std::string& program, Aseba::BytecodeVector& bytecode) {
 
     if(language == fb::ProgrammingLanguage::Aesl) {
         return tl::make_unexpected(make_error_code(mobsya::error_code::unsupported_language));
@@ -529,7 +528,7 @@ void aseba_node::cancel_pending_breakpoint_request() {
 }
 
 aseba_node::vm_execution_state aseba_node::execution_state() const {
-    return {m_vm_state.state, m_vm_state.line};
+    return {m_vm_state.state, m_vm_state.line, fb::VMExecutionError::NoError, {}};
 }
 
 void aseba_node::on_event_received(const std::unordered_map<std::string, property>& events,

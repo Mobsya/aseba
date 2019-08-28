@@ -31,7 +31,7 @@ namespace Aseba {
 class SimpleConnectionBase : public QObject, public AbstractNodeConnection {
     Q_OBJECT
 public:
-    SimpleConnectionBase(const QString & type, const QString & name, unsigned &port);
+    SimpleConnectionBase(const QString& type, const QString& name, unsigned& port);
     ~SimpleConnectionBase();
 
     uint16_t serverPort() const;
@@ -45,17 +45,17 @@ private Q_SLOTS:
     uint16_t getBuffer(uint8_t* data, uint16_t maxLength, uint16_t* source) override;
 
 
-    //void connectionCreated(Dashel::Stream* stream) override;
-   // ;
+    // void connectionCreated(Dashel::Stream* stream) override;
+    // ;
 
-    //void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
+    // void connectionClosed(Dashel::Stream* stream, bool abnormal) override;
 
 
 private:
     void startServiceRegistration();
     QTcpServer* m_server;
     QTcpSocket* m_client;
-    QZeroConf * m_zeroconf;
+    QZeroConf* m_zeroconf;
     QString m_robotType;
     QString m_robotName;
     uint16_t m_messageSize = 0;
@@ -70,22 +70,18 @@ protected:
 template <typename Robot>
 class SimpleConnection : public SimpleConnectionBase, public Robot {
 public:
-    SimpleConnection(const QString & type, const QString & name, unsigned & port, uint16_t nodeId):
-        SimpleConnectionBase(type, name, port), Robot(name.toStdString(), nodeId) {
+    SimpleConnection(const QString& type, const QString& name, unsigned& port, uint16_t nodeId)
+        : SimpleConnectionBase(type, name, port), Robot(name.toStdString(), nodeId) {
 
         Aseba::vmStateToEnvironment[&this->vm] =
             std::make_pair((Aseba::AbstractNodeGlue*)this, (Aseba::AbstractNodeConnection*)this);
-
     }
 
 public:
-    void externalInputStep(double dt) {
+    void externalInputStep(double) {
         handleSingleMessageData();
     }
 };
-
-
-
 
 
 }  // namespace Aseba

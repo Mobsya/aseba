@@ -129,7 +129,6 @@ void NodeTabsManager::onNodeRemoved(std::shared_ptr<mobsya::ThymioNode> thymio) 
     auto it = m_tabs.find(thymio->uuid());
     if(it != m_tabs.end()) {
         (*it)->setThymio({});
-        auto idx = QTabWidget::indexOf(*it);
     }
 }
 

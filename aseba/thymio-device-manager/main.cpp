@@ -117,10 +117,10 @@ int main() {
 
     try {
         return start();
-    } catch(boost::system::system_error e) {
+    } catch(boost::system::system_error& e) {
         mLogError("Exception thrown: {}", e.what());
         std::exit(e.code().value());
-    } catch(std::exception e) {
+    } catch(std::exception& e) {
         mLogError("Exception thrown: {}", e.what());
         std::exit(1);
     } catch(boost::exception& e) {

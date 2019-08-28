@@ -16,7 +16,7 @@ int ThymioDevicesModel::rowCount(const QModelIndex&) const {
 }
 
 QVariant ThymioDevicesModel::data(const QModelIndex& index, int role) const {
-    auto idx = index.row();
+    size_t idx = index.row();
     if(idx >= m_manager.m_nodes.size())
         return {};
     auto item = (m_manager.m_nodes.begin() + idx).value();
@@ -45,7 +45,7 @@ QHash<int, QByteArray> ThymioDevicesModel::roleNames() const {
 }
 
 bool ThymioDevicesModel::setData(const QModelIndex& index, const QVariant& value, int role) {
-    auto idx = index.row();
+    size_t idx = index.row();
     if(idx >= m_manager.m_nodes.size())
         return false;
     auto item = (m_manager.m_nodes.begin() + idx).value();

@@ -99,7 +99,7 @@ T swapEndianCopy(const T& v) {
     return v;
 }
 template <typename T>
-void swapEndian(T& v) { /* do nothing */
+void swapEndian(T&) { /* do nothing */
 }
 
 #endif

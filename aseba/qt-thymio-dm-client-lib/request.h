@@ -36,6 +36,8 @@ public:
             case E::unknown_node: return "Unknown node";
             case E::unsupported_variable_type: return "Unsupported variable type";
             case E::unknown_error: return "Unknown error";
+            case E::thymio2_pairing_write_dongle_failed: return "Unable to save the wireless settings in the dongle";
+            case E::thymio2_pairing_write_robot_failed: return "Unable to save the wireless settings in the robot";
             case E::no_error: break;
         }
         return {};

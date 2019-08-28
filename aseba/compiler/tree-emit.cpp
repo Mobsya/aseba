@@ -126,7 +126,7 @@ void AssignmentNode::emit(PreLinkBytecode& bytecodes) const {
 }
 
 
-void IfWhenNode::emit(PreLinkBytecode& bytecodes) const {
+void IfWhenNode::emit(PreLinkBytecode&) const {
     abort();
 }
 
@@ -213,7 +213,7 @@ unsigned FoldedIfWhenNode::getStackDepth() const {
 }
 
 
-void WhileNode::emit(PreLinkBytecode& bytecodes) const {
+void WhileNode::emit(PreLinkBytecode&) const {
     abort();
 }
 

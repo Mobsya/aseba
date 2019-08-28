@@ -62,7 +62,7 @@ public:
 
     void do_write_message(const flatbuffers::DetachedBuffer& buffer) {
         auto that = this->shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::size_t s) {
+        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::size_t) {
             static_cast<Self&>(*that).handle_write(ec);
         });
         m_socket.async_write(boost::asio::buffer(buffer.data(), buffer.size()), std::move(cb));
@@ -775,7 +775,6 @@ private:
                   dongle.network_id, dongle.channel);
 
         flatbuffers::FlatBufferBuilder builder;
-        const auto node_offset = dongle_id.fb(builder);
         write_message(wrap_fb(
             builder,
             fb::CreateThymio2WirelessDonglePairingResponse(builder, request_id, dongle.network_id, dongle.channel)));
@@ -970,7 +969,6 @@ private:
             }
         });
     }
-    boost::asio::deadline_timer m_pings_timer;
 
     std::shared_ptr<application_endpoint<Socket>> shared_from_this() {
         return std::static_pointer_cast<application_endpoint<Socket>>(base::shared_from_this());
@@ -981,6 +979,7 @@ private:
     }
 
     boost::asio::io_context& m_ctx;
+    boost::asio::deadline_timer m_pings_timer;
     std::queue<tagged_detached_flatbuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;

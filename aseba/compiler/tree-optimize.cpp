@@ -134,7 +134,7 @@ Node* IfWhenNode::optimize(std::wostream* dump) {
     return foldedNode;
 }
 
-Node* FoldedIfWhenNode::optimize(std::wostream* dump) {
+Node* FoldedIfWhenNode::optimize(std::wostream*) {
     abort();
     return nullptr;
 }
@@ -185,12 +185,12 @@ Node* WhileNode::optimize(std::wostream* dump) {
     return foldedNode;
 }
 
-Node* FoldedWhileNode::optimize(std::wostream* dump) {
+Node* FoldedWhileNode::optimize(std::wostream*) {
     abort();
     return nullptr;
 }
 
-Node* EventDeclNode::optimize(std::wostream* dump) {
+Node* EventDeclNode::optimize(std::wostream*) {
     return this;
 }
 
@@ -204,11 +204,11 @@ Node* EmitNode::optimize(std::wostream* dump) {
     return this;
 }
 
-Node* SubDeclNode::optimize(std::wostream* dump) {
+Node* SubDeclNode::optimize(std::wostream*) {
     return this;
 }
 
-Node* CallSubNode::optimize(std::wostream* dump) {
+Node* CallSubNode::optimize(std::wostream*) {
     return this;
 }
 
@@ -435,15 +435,15 @@ Node* UnaryArithmeticNode::optimize(std::wostream* dump) {
         return this;
 }
 
-Node* ImmediateNode::optimize(std::wostream* dump) {
+Node* ImmediateNode::optimize(std::wostream*) {
     return this;
 }
 
-Node* LoadNode::optimize(std::wostream* dump) {
+Node* LoadNode::optimize(std::wostream*) {
     return this;
 }
 
-Node* StoreNode::optimize(std::wostream* dump) {
+Node* StoreNode::optimize(std::wostream*) {
     return this;
 }
 

@@ -73,7 +73,7 @@ void aseba_tcp_acceptor::do_accept() {
     if(m_pending_contacts.empty()) {
         if(!m_disconnected_contacts.empty()) {
             m_active_timer.expires_from_now(boost::posix_time::seconds(1));
-            m_active_timer.async_wait([this](auto ec) {
+            m_active_timer.async_wait([this](auto) {
                 std::copy(m_disconnected_contacts.begin(), m_disconnected_contacts.end(),
                           std::back_inserter(m_pending_contacts));
                 boost::asio::post(m_iocontext, boost::bind(&aseba_tcp_acceptor::do_accept, this));
