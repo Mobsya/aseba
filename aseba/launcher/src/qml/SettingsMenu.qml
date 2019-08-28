@@ -16,12 +16,12 @@ Rectangle {
         }
 
         ListElement {
-            name: qsTr("Pair a Thymio Wireless to a Dongle")
+            name: qsTr("Pair a Wireless Thymio to a Wireless dongle")
             action: "thymio2-pairing"
         }
 
         ListElement {
-            name: qsTr("Pair a case of thymios")
+            name: qsTr("Pair a case of Wireless Thymios")
             action: "thymio2-valise-pairing"
         }
     }

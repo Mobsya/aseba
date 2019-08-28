@@ -85,11 +85,11 @@ Rectangle {
 
         errorBanner.text = ""
         if (dongles.length < 1) {
-            errorBanner.text = qsTr("Please plug a wireless dongle in a USB port of this computer")
+            errorBanner.text = qsTr("Plug the Wireless dongle in a USB port of this computer")
             return
         }
         if (dongles.length > 1) {
-            errorBanner.text = qsTr("%1 dongles detected - Please plug a single dongle while pairing a Thymio")
+            errorBanner.text = qsTr("%1 dongles detected - Please plug a single Wireless dongle")
                 .arg(dongles.length)
             return
         }
@@ -105,11 +105,11 @@ Rectangle {
 
 
         if(nodes.length < 1) {
-            errorBanner.text = qsTr("Please plug a Thymio 2 Wireless Robot in a USB port of this computer")
+            errorBanner.text = qsTr("Plug a Wireless Thymio robot to this computer with a USB cable")
             return
         }
         if (nodes.length > 1) {
-            errorBanner.text = qsTr("%1 Thymios detected - Please plug a single Thymio 2 Wireless Robot to pair it")
+            errorBanner.text = qsTr("%1 Thymios detected - Please plug a single  Wireless Thymio robot")
                 .arg(nodes.length)
             return
         }
@@ -247,9 +247,9 @@ Rectangle {
 
             Text {
                 text: {
-                    let txt = qsTr("<ol><li><b>Plug the Thymio you want to pair using the USB cable</b></li><br/><li><b>Plug the USB dongle</b></li></ol>")
+                    let txt = qsTr("<ol><li><b>Plug the Wireless Thymio robot you want to pair using the USB cable</b></li><br/><li><b>Plug the Wireless dongle</b></li></ol>")
                     if (valiseMode) {
-                        txt += qsTr("<p><em>Tip: Put a sticker dot of the same color on both the thymio and the dongle to identify them!</em></p>")
+                        txt += qsTr("<p><em>Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!</em></p>")
                     }
                     return txt
                 }
@@ -339,7 +339,7 @@ Rectangle {
                              horizontalAlignment:Text.AlignHCenter
                              wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                              text: {
-                                 let txt = qsTr("<p><b>To pair multiple Thymios to one dongle:</b><br/></p>")
+                                 let txt = qsTr("<p><b>To pair multiple Wireless Thymio robots to one Wireless dongle:</b><br/></p>")
                                  txt +=  qsTr("<p>Use the same <b>Channels</b> and <b>network identifier</b> for every robot you want in the same network</p>")
                                  return txt
                              }
@@ -404,7 +404,7 @@ Rectangle {
                         width: 230
                         height: 130
                         Text {
-                            text: qsTr("<b>03. Click on start pairing</b>")
+                            text: qsTr("<b>03. Click on Pair!</b>")
                             color: "white"
                             font.pointSize: 10
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -412,7 +412,7 @@ Rectangle {
                         }
                         Button {
                             id : pairButtonAdvanced
-                            text: qsTr("Pair !")
+                            text: qsTr("Pair!")
                             enabled: ready
                             onClicked: {
                                 pairSelectedRobotAndDongle()
