@@ -6,6 +6,16 @@ resources:
 
 variables:
 - group: passwords
+- name: blockly_version
+  value: "v20190507.3"
+- name: scratch_version
+  value: "v20190820.1"
+- name: blockly_url
+  value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
+- name: scratch_url
+  value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
+- name: vcpkg_commit
+  value: "66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c"
 
 jobs:
 - job: 'BuildFlatpak'
@@ -40,14 +50,14 @@ jobs:
   - task: CacheBeta@0
     displayName: Cache vcpkg
     inputs:
-      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c" | "windows-2019" | "4"
+      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "4"
       path: '$(Build.BinariesDirectory)/vcpkg'
   - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
     displayName: 'Run vcpkg'
     inputs:
       vcpkgTriplet: 'x64-windows-static'
       vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
-      vcpkgGitCommitId: 66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c
+      vcpkgGitCommitId: "$(vcpkg_commit)"
       vcpkgGitURL: https://github.com/mobsya/vcpkg.git
   - powershell: |
         Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
@@ -81,8 +91,8 @@ jobs:
             tar = tarfile.open(file, "r:gz")
             tar.extractall()
             tar.close()
-        extract('https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz', 'thymio-blockly.tar.gz')
-        extract('https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz', 'scratch-gui.tar.gz')
+        extract('$(blockly_url)', 'thymio-blockly.tar.gz')
+        extract('$(scratch_url)', 'scratch-gui.tar.gz')
   - task: lucappa.cmake-ninja-vcpkg-tasks.f2b1ec7d-bc54-4cc8-b9ed-1bc7f37c9dc6.run-cmake@0
     displayName: 'Run CMake with Ninja'
     inputs:
@@ -126,8 +136,8 @@ jobs:
   - script: |
       docker pull mobsya/android-dev-env:$TARGET_ARCH
   - script: |
-      wget -q https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz && tar xzf thymio-blockly.tar.gz -C .
-      wget -q https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz && tar xzf scratch-gui.tar.gz -C .
+      wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
+      wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
@@ -157,8 +167,8 @@ jobs:
       certPwd: $(mobsya-mac-p12)
 
   - script: |
-      curl -sL https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz | tar xzf - -C .
-      curl -sL https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz | tar xzf - -C .
+      curl -sL $(blockly_url) | tar xzf - -C .
+      curl -sL $(scratch_url) | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
