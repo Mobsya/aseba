@@ -14,7 +14,13 @@ exists = binary != None and os.path.isfile(binary)
 scp  = os.environ.get("SIGNTOOL_SCP")
 key  = os.environ.get("SIGNTOOL_KEY")
 pfx  = os.environ.get("SIGNTOOL_PFX")
-pss  = os.environ.get("SIGNTOOL_PASSPHRASE")
+
+if not pfx:
+    pfx = os.environ.get("SIGNTOOL_PFX")
+
+pss  = os.environ.get("wincert.secureFilePath")
+if not pss:
+    pss = os.environ.get("mobsya-win-p12")
 
 
 if not ((scp and key) or (pss and pfx)):
