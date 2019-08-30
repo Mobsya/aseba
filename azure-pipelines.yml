@@ -93,6 +93,10 @@ jobs:
             tar.close()
         extract('$(blockly_url)', 'thymio-blockly.tar.gz')
         extract('$(scratch_url)', 'scratch-gui.tar.gz')
+  - task: DownloadSecureFile@1
+    name: wincert
+    inputs:
+      secureFile: "mobsya-windows.pfx"
   - task: lucappa.cmake-ninja-vcpkg-tasks.f2b1ec7d-bc54-4cc8-b9ed-1bc7f37c9dc6.run-cmake@0
     displayName: 'Run CMake with Ninja'
     inputs:
