@@ -21,7 +21,7 @@ Rectangle {
         }
 
         ListElement {
-            name: qsTr("Pair a case of Wireless Thymios")
+            name: qsTr("Pair a case of Wireless Thymio")
             action: "thymio2-valise-pairing"
         }
     }
