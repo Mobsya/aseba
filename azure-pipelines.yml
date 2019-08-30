@@ -38,8 +38,20 @@ jobs:
 - job: 'MSVC'
   pool:
       vmImage: windows-2019
-  variables:
-      CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+  strategy:
+    matrix:
+      x64:
+        ARCH: 'x64'
+        vcpkgTriplet: 'x64-windows-static'
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+        cmake_generator: "Ninja"
+      x86:
+        ARCH: 'x86'
+        vcpkgTriplet: 'x86-windows-static'
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x86.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017
+        cmake_generator: "VS15Win32"
   steps:
   - script: |
        git submodule update --init --recursive
@@ -50,12 +62,18 @@ jobs:
   - task: CacheBeta@0
     displayName: Cache vcpkg
     inputs:
-      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "4"
+      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "4" | $(vcpkgTriplet)
       path: '$(Build.BinariesDirectory)/vcpkg'
+  - task: CacheBeta@0
+    displayName: 'Qt Cache'
+    inputs:
+      key:  Qt_5_12_3 | "$(QT_URL)" | "2"
+      path: $(Build.BinariesDirectory)/Qt/
+      cacheHitVar: QT_LIB_CACHE_RESTORED
   - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
     displayName: 'Run vcpkg'
     inputs:
-      vcpkgTriplet: 'x64-windows-static'
+      vcpkgTriplet: '$(vcpkgTriplet)'
       vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
       vcpkgGitCommitId: "$(vcpkg_commit)"
       vcpkgGitURL: https://github.com/mobsya/vcpkg.git
@@ -64,18 +82,10 @@ jobs:
         Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore
         Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/downloads -ErrorAction Ignore
     displayName: 'Remove vcpkg object files'
-
-  - task: CacheBeta@0
-    displayName: 'Qt Cache'
-    inputs:
-      key:  Qt_5_12_3_msvc2017_64_1
-      path: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
-      cacheHitVar: QT_LIB_CACHE_RESTORED
   - powershell: |
         $output = [System.IO.Path]::GetTempFileName()
-        Invoke-WebRequest -Verbose  -UseBasicParsing -Uri "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z" -OutFile $output
+        Invoke-WebRequest -Verbose  -UseBasicParsing -Uri "$(QT_URL)" -OutFile $output
         7z -bb -y x  $output -o$(Build.BinariesDirectory)
-        ls $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
     condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
     displayName: Fetch Qt
   - task: PythonScript@0
@@ -100,10 +110,11 @@ jobs:
   - task: lucappa.cmake-ninja-vcpkg-tasks.f2b1ec7d-bc54-4cc8-b9ed-1bc7f37c9dc6.run-cmake@0
     displayName: 'Run CMake with Ninja'
     inputs:
+      cmakeGenerator: $(cmake_generator)
       cmakeToolchainPath: $(Build.SourcesDirectory)\windows\cl-toolchain.cmake
       cmakeBuildType: Release
       useVcpkgToolchainFile: true
-      vcpkgTriplet: 'x64-windows-static'
+      vcpkgTriplet: '$(vcpkgTriplet)'
       buildDirectory: '$(Build.BinariesDirectory)'
       buildWithCMakeArgs: '-- -v '
   - task: CmdLine@2
