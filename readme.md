@@ -1,7 +1,6 @@
 
 
-[![Build Status](https://travis-ci.org/Mobsya/aseba.svg?branch=master)](https://travis-ci.org/Mobsya/aseba)
-[![Build status](https://ci.appveyor.com/api/projects/status/jbeub93xpefxnd2f/branch/master?svg=true)](https://ci.appveyor.com/project/cor3ntin/aseba/branch/master)
+[![Build Status](https://dev.azure.com/mobsya/Thymio%20Software%20Suite/_apis/build/status/Mobsya.aseba?branchName=master)](https://dev.azure.com/mobsya/Thymio%20Software%20Suite/_build/latest?definitionId=6&branchName=master)
 
 # Thymio suite
 
