@@ -51,7 +51,7 @@ jobs:
         vcpkgTriplet: 'x86-windows-static'
         QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x86.7z"
         CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017
-        cmake_generator: "VS15Win32"
+        cmake_generator: "VS16Win32"
   steps:
   - script: |
        git submodule update --init --recursive
@@ -116,7 +116,6 @@ jobs:
       useVcpkgToolchainFile: true
       vcpkgTriplet: '$(vcpkgTriplet)'
       buildDirectory: '$(Build.BinariesDirectory)'
-      buildWithCMakeArgs: '-- -v '
   - task: CmdLine@2
     displayName: 'Run CPack'
     inputs:

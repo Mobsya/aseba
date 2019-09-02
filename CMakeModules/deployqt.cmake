@@ -71,9 +71,6 @@ function(windeployqt target directory)
             CONTENT "${_TARGET_SOURCE_DIR}"
         )
 
-
-        
-
         # Before installation, run a series of commands that copy each of the Qt
         # runtime files to the appropriate directory for installation
         install(CODE
