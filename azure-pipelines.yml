@@ -112,10 +112,13 @@ jobs:
     inputs:
       cmakeGenerator: $(cmake_generator)
       cmakeToolchainPath: $(Build.SourcesDirectory)\windows\cl-toolchain.cmake
-      cmakeBuildType: Release
+      cmakeBuildType: 'Release'
       useVcpkgToolchainFile: true
       vcpkgTriplet: '$(vcpkgTriplet)'
       buildDirectory: '$(Build.BinariesDirectory)'
+    env:
+      SIGNTOOL_PFX:  $(wincert.secureFilePath)
+      SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
   - task: CmdLine@2
     displayName: 'Run CPack'
     inputs:

@@ -23,7 +23,7 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 
 # ensure a minimal version of CMake
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 include(InstallRequiredSystemLibraries)
 
 # additional CMake modules

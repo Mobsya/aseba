@@ -14,13 +14,7 @@ exists = binary != None and os.path.isfile(binary)
 scp  = os.environ.get("SIGNTOOL_SCP")
 key  = os.environ.get("SIGNTOOL_KEY")
 pfx  = os.environ.get("SIGNTOOL_PFX")
-
-if not pfx:
-    pfx = os.environ.get("SIGNTOOL_PFX")
-
-pss  = os.environ.get("wincert.secureFilePath")
-if not pss:
-    pss = os.environ.get("mobsya-win-p12")
+pss  = os.environ.get("SIGNTOOL_PASSPHRASE")
 
 
 if not ((scp and key) or (pss and pfx)):
@@ -56,6 +50,9 @@ if ext[1:] not in ['exe', 'dll']:
 	print("Not a signable file, ignoring")
 	exit(0)
 
+if pfx.startswith("$"):
+    print("Probably a Pull request")
+    exit(0)
 
 #signtool ( native windows)
 if pss and pfx:
