@@ -21,6 +21,7 @@
 #include "tdmsupervisor.h"
 #include "launcherwindow.h"
 
+
 int main(int argc, char** argv) {
 
 #ifndef MOBSYA_USE_WEBENGINE
@@ -97,7 +98,7 @@ int main(int argc, char** argv) {
     load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     load_trads("qtwebengine_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
-
+    
     QApplication::setApplicationName(QObject::tr("Thymio Suite"));
     QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 
@@ -106,7 +107,14 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);
+    
+#ifdef Q_OS_IOS
+    auto size = launcher.GetLandscapeScreenSize();
+#else
     w.setMinimumSize(1024, 640);
+#endif
+    
+    w.setMinimumSize(size.rwidth() , size.rheight());
     w.showNormal();
 
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&client]() {

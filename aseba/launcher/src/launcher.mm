@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+
 namespace mobsya {
 
 auto QStringListToNSArray(const QStringList &list)
@@ -14,8 +15,21 @@ auto QStringListToNSArray(const QStringList &list)
         [result addObject:str.toNSString()];
     }
     return result;
+    
 
 }
+#ifdef Q_OS_IOS
+
+QSize Launcher::GetLandscapeScreenSize()
+{
+    
+    CGRect r = [[UIScreen mainScreen] bounds];
+ 
+    QSize ss (MAX(r.size.height, r.size.width), MIN(r.size.height, r.size.width));
+    return ss;
+    
+}
+#endif
 #ifdef Q_OS_OSX
 bool Launcher::doLaunchPlaygroundBundle() const {
     const auto path = QDir(QCoreApplication::applicationDirPath() +

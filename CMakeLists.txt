@@ -75,11 +75,18 @@ endif()
 
 if(IOS)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
+    set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
+    set(FLATBUFFERS_BUILD_FLATHASH OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
+
+    add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 endif()
 
-set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
-add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
+if(NOT IOS)
+    set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
+    add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
+endif()
 
+if(NOT IOS)
 if (NOT TARGET flatc)
     include( ExternalProject )
     list(APPEND CMAKE_ARGS "-DFLATBUFFERS_BUILD_FLATLIB=OFF")
@@ -97,10 +104,10 @@ if (NOT TARGET flatc)
     if(IOS)
          #add_dependencies(flatc flatc_build)
     else()
-    add_dependencies(flatc flatc_build)
+         add_dependencies(flatc flatc_build)
     endif()
 endif()
-
+endif() #NOT IOS
 # testing and defines
 enable_testing()
 
@@ -158,7 +165,7 @@ set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/osx/Info.plist)
 set(CPACK_BUNDLE_ICON ${PROJECT_SOURCE_DIR}/menu/osx/asebastudio.icns)
 
 if(IOS)
-set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/ios/bundle/Info.plist)
+#set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/ios/bundle/Info.plist)
 endif()
 
 macro(install_symlink filepath sympath)
@@ -202,14 +209,17 @@ if(FLAT_PACK_BUILD)
     SET(MOBSYA_WEBAPPS_ROOT_DIR "share/")
 endif()
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
+if(NOT IOS)
+    if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
+        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
+        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
+    endif()
+    if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
+        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
+        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
+    endif()
 endif()
-if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
-endif()
+
 
 
 feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
