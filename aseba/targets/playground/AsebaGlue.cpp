@@ -51,7 +51,7 @@ uint16_t RecvBufferNodeConnection::getBuffer(uint8_t* data, uint16_t maxLength, 
         *source = lastMessageSource;
         size_t len(std::min<size_t>(maxLength, lastMessageData.size()));
         memcpy(data, &lastMessageData[0], len);
-        return len;
+        return uint16_t(len);
     }
     return 0;
 }

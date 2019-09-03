@@ -258,7 +258,7 @@ Node* TupleVectorNode::expandVectorialNodes(std::wostream* dump, Compiler* compi
         total += child->getVectorSize();
         if(index < total) {
             // the index points to this child
-            return child->expandVectorialNodes(dump, compiler, index - prevTotal);
+            return child->expandVectorialNodes(dump, compiler, index - unsigned(prevTotal));
         }
     }
 

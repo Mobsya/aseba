@@ -151,11 +151,11 @@ AsebaFeedableEPuck::AsebaFeedableEPuck(std::string robotName, int16_t nodeId)
     : Aseba::SingleVMNodeGlue(std::move(robotName), nodeId) {
     bytecode.resize(1024);
     vm.bytecode = &bytecode[0];
-    vm.bytecodeSize = bytecode.size();
+    vm.bytecodeSize = uint16_t(bytecode.size());
 
     stack.resize(32);
     vm.stack = &stack[0];
-    vm.stackSize = stack.size();
+    vm.stackSize = uint16_t(stack.size());
 
     vm.variables = reinterpret_cast<int16_t*>(&variables);
     vm.variablesOld = reinterpret_cast<int16_t*>(&variablesOld);

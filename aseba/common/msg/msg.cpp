@@ -944,7 +944,7 @@ void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
+    unsigned bytecodeCount = unsigned(bytecode.size());
 
     while(bytecodeCount > bytecodePayloadSize) {
         auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
@@ -969,7 +969,7 @@ void sendBytecode(std::vector<std::shared_ptr<Message> >& messagesVector, uint16
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
+    unsigned bytecodeCount = unsigned(bytecode.size());
 
     while(bytecodeCount > bytecodePayloadSize) {
         auto setBytecodeMessage = make_shared<SetBytecode>(dest, bytecodeStart);
