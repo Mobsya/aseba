@@ -42,7 +42,7 @@ ThymioDeviceManagerClientEndpoint::~ThymioDeviceManagerClientEndpoint() {
 }
 
 void ThymioDeviceManagerClientEndpoint::write(const flatbuffers::DetachedBuffer& buffer) {
-    uint32_t size = buffer.size();
+    uint32_t size = uint32_t(buffer.size());
     m_socket->write(reinterpret_cast<const char*>(&size), sizeof(size));
     m_socket->write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
     m_socket->flush();

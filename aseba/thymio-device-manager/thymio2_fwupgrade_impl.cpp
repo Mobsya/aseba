@@ -319,7 +319,7 @@ namespace details {
 
         boost::system::error_code write(boost::asio::serial_port::native_handle_type h,
                                         ranges::span<unsigned char> data, native_size_type& written) {
-            auto r = WriteFile(h, data.data(), data.size(), &written, nullptr);
+            auto r = WriteFile(h, data.data(), int(data.size()), &written, nullptr);
             if(!r) {
                 return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
             }
@@ -329,7 +329,7 @@ namespace details {
         boost::system::error_code read(boost::asio::serial_port::native_handle_type h, ranges::span<unsigned char> data,
                                        native_size_type& read, int timeout_ms = 100) {
 
-            if(!ReadFile(h, data.data(), data.size(), &read, nullptr)) {
+            if(!ReadFile(h, data.data(), int(data.size()), &read, nullptr)) {
                 return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
             }
             return {};

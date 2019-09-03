@@ -710,7 +710,7 @@ Node* Compiler::parseSubDecl() {
     if(it != subroutineReverseTable.end())
         throw TranslatableError(tokens.front().pos, ERROR_SUBROUTINE_ALREADY_DEF).arg(name);
 
-    const unsigned subroutineId = subroutineTable.size();
+    const unsigned subroutineId = unsigned(subroutineTable.size());
     subroutineTable.emplace_back(name, 0, pos.row);
     subroutineReverseTable[name] = subroutineId;
 

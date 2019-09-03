@@ -51,8 +51,8 @@ inline tagged_detached_flatbuffer create_compilation_result_response(uint32_t re
         return wrap_fb(fb, offset);
     }
     auto offset = mobsya::fb::CreateCompilationResultSuccess(
-        fb, request_id, result.result->bytecode_size, result.result->bytecode_total_size, result.result->variables_size,
-        result.result->variables_total_size);
+        fb, request_id, uint32_t(result.result->bytecode_size), uint32_t(result.result->bytecode_total_size), uint32_t(result.result->variables_size),
+        uint32_t(result.result->variables_total_size));
     return wrap_fb(fb, offset);
 }
 
@@ -165,7 +165,7 @@ inline tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::gr
     int i = 0;
     for(auto&& desc : descs) {
         auto str_offset = fb.CreateString(desc.name);
-        auto descTable = fb::CreateEventDescription(fb, str_offset, desc.size, i++);
+        auto descTable = fb::CreateEventDescription(fb, str_offset, uint32_t(desc.size), i++);
         descOffsets.push_back(descTable);
     }
     auto offset = fb::CreateEventsDescriptionsChanged(fb, idOffset, fb.CreateVector(descOffsets));

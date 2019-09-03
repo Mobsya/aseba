@@ -123,7 +123,7 @@ int main() {
     } catch(std::exception& e) {
         mLogError("Exception thrown: {}", e.what());
         std::exit(1);
-    } catch(boost::exception& e) {
+    } catch(boost::exception&) {
         mLogError("Exception thrown: {}");
         std::exit(1);
     } catch(...) {

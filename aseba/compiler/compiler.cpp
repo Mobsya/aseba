@@ -252,14 +252,14 @@ bool Compiler::link(const PreLinkBytecode& preLinkBytecode, BytecodeVector& byte
     bytecode.clear();
 
     // event vector table size
-    unsigned addr = preLinkBytecode.events.size() * 2 + 1;
+    unsigned addr = unsigned(preLinkBytecode.events.size()) * 2 + 1;
     bytecode.push_back(addr);
 
     // events
     for(const auto& event : preLinkBytecode.events) {
         bytecode.push_back(event.first);  // id
         bytecode.push_back(addr);         // addr
-        addr += event.second.size();      // next bytecode addr
+        addr += unsigned(event.second.size());      // next bytecode addr
     }
 
     // evPreLinkBytecode::ents bytecode
@@ -269,7 +269,7 @@ bool Compiler::link(const PreLinkBytecode& preLinkBytecode, BytecodeVector& byte
 
     // subrountines bytecode
     for(const auto& subroutine : preLinkBytecode.subroutines) {
-        subroutineTable[subroutine.first].address = bytecode.size();
+        subroutineTable[subroutine.first].address = unsigned(bytecode.size());
         std::copy(subroutine.second.begin(), subroutine.second.end(), std::back_inserter(bytecode));
     }
 
@@ -292,7 +292,7 @@ bool Compiler::link(const PreLinkBytecode& preLinkBytecode, BytecodeVector& byte
 
 //! Change "stop" bytecode to "return from subroutine"
 void BytecodeVector::changeStopToRetSub() {
-    const unsigned bytecodeEndPos(size());
+    const unsigned bytecodeEndPos((unsigned(size())));
     for(unsigned pc = 0; pc < bytecodeEndPos;) {
         BytecodeElement& element((*this)[pc]);
         if((element.bytecode >> 12) == ASEBA_BYTECODE_STOP)
@@ -332,11 +332,11 @@ void Compiler::disassemble(BytecodeVector& bytecode, const PreLinkBytecode& preL
     std::map<unsigned, unsigned> subroutinesAddr;
 
     // build subroutine map
-    for(size_t id = 0; id < subroutineTable.size(); ++id)
+    for(unsigned id = 0; id < subroutineTable.size(); ++id)
         subroutinesAddr[subroutineTable[id].address] = id;
 
     // event table
-    const unsigned eventCount = eventAddr.size();
+    const unsigned eventCount = unsigned(eventAddr.size());
     const float fillPercentage = float(bytecode.size() * 100.f) / float(targetDescription->bytecodeSize);
     dump << "Disassembling " << eventCount + subroutineTable.size() << " segments (" << bytecode.size() << " words on "
          << targetDescription->bytecodeSize << ", " << fillPercentage << "% filled):\n";

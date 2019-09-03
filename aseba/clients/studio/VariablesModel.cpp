@@ -93,7 +93,7 @@ int VariablesModel::rowCount(const QModelIndex& index) const {
         return 0;
     if(item->has_aseba_integer_value())
         return 0;
-    return item->children.size();
+    return int(item->children.size());
 }
 
 int VariablesModel::columnCount(const QModelIndex&) const {

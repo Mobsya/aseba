@@ -702,7 +702,7 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
             }
         }
         data_it = data_it + count;
-        start += count;
+        start += uint16_t(count);
     }
 }
 

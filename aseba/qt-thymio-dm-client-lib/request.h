@@ -345,7 +345,7 @@ public:
 public:
     Q_INVOKABLE QString toString() const {
         if(m_errors.empty()) {
-            return QStringLiteral("Compilation ok - bytecode: %1, variables %2").arg(m_bytecode_size, m_variables_size);
+            return QStringLiteral("Compilation ok - bytecode: %1, variables %2").arg(int(m_bytecode_size), int(m_variables_size));
         }
         return QStringLiteral("Compilation error :").arg(m_errors.first().errorMessage());
     }
