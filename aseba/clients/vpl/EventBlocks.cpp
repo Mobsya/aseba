@@ -320,7 +320,7 @@ namespace ThymioVPL {
 
     //! Return the currently-selected RC keypad, or -1 if none is selected
     int ArrowButtonsEventBlock::getSelectedRCKeypadButton() const {
-        for(int i = 10; i < size_t(buttons.size()); ++i)
+        for(int i = 10; size_t(i) < size_t(buttons.size()); ++i)
             if(buttons[i]->getValue())
                 return i - 10;
         return -1;
@@ -328,7 +328,7 @@ namespace ThymioVPL {
 
     void ArrowButtonsEventBlock::ensureSingleRCArrowButtonSelected(int current) {
         for(int i = 5; i < 10; ++i)
-            if((size_t(current + 5) != i) && buttons[i] != sender())
+            if((size_t(current + 5) != size_t(i)) && buttons[i] != sender())
                 buttons[i]->setValue(0);
             else if(buttons[i] == sender())
                 buttons[i]->setValue(1);

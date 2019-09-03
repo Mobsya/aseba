@@ -155,7 +155,7 @@ Compiler::EventsMap::const_iterator Compiler::findGlobalEvent(const std::wstring
         if(allEventsMap.find(name) != allEventsMap.end())
             throw TranslatableError(pos, ERROR_EMIT_LOCAL_EVENT).arg(name);
         else
-            throw e;
+            throw std::move(e);
     }
 }
 

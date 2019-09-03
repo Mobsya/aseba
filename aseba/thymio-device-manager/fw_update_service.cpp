@@ -2,7 +2,8 @@
 #define BOOST_PREDEF_DETAIL_ENDIAN_COMPAT_H
 #include <belle/belle.hh>
 #include <pugixml.hpp>
-#include <range/v3/algorithm.hpp>
+#include <range/v3/algorithm/transform.hpp>
+#include <range/v3/span.hpp>
 
 namespace belle = OB::Belle;
 

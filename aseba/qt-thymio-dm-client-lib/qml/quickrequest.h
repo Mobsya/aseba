@@ -67,7 +67,7 @@ namespace qml {
             return req.isCanceled();
         }
 
-        void onFinished(QPointer<QQmlEngine> engine, const QVariant& v, const QJSValue& func, QObject* owner) {
+        void onFinished(QPointer<QQmlEngine> engine, const QVariant& v, const QJSValue& func, QObject* owner) override {
             QPointer<QObject> context = owner;
             if(!func.isCallable()) {
                 qWarning() << "Request: isFinished Callback is not callable";
@@ -100,7 +100,7 @@ namespace qml {
             }
         }
 
-        void onCanceled(QPointer<QQmlEngine> engine, const QVariant& v, const QJSValue& func, QObject* owner) {
+        void onCanceled(QPointer<QQmlEngine> engine, const QVariant& v, const QJSValue& func, QObject* owner) override {
             QPointer<QObject> context = owner;
             if(!func.isCallable()) {
                 qWarning() << "Request: isCanceled Callback is not callable";
@@ -133,7 +133,7 @@ namespace qml {
             }
         }
 
-        QVariant result(const QVariant& request) {
+        QVariant result(const QVariant& request) override {
             BasicRequest<T> r = request.value<BasicRequest<T>>();
             if(!r.isFinished() || !r.success()) {
                 qWarning() << "BasicRequest.result(): The result is not ready!";
@@ -149,7 +149,7 @@ namespace qml {
             return ret;
         }
 
-        QVariant error(const QVariant& v) {
+        QVariant error(const QVariant& v) override {
             BasicRequest<T> r = v.value<BasicRequest<T>>();
             if(!r.isFinished()) {
                 qWarning() << "BasicRequest.error(): The result is not ready!";
@@ -158,7 +158,7 @@ namespace qml {
             return QVariant::fromValue<Error>(r.getError());
         }
 
-        virtual bool success(const QVariant& v) {
+        virtual bool success(const QVariant& v) override {
             BasicRequest<T> r = v.value<BasicRequest<T>>();
             if(!r.isFinished()) {
                 qWarning() << "BasicRequest.success(): The result is not ready!";

@@ -102,7 +102,7 @@ QMimeData* FlatVariablesModel::mimeData(const QModelIndexList& indexes) const {
 
 void FlatVariablesModel::addVariable(const QString& name, const QVariant& value) {
     auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
-                               [&name](const auto& v, const QString& n) { return v.first < n; });
+                               [](const auto& v, const QString& n) { return v.first < n; });
     auto dest = std::distance(m_values.begin(), it);
     if(it != m_values.end() && it->first == name) {
         it->second = value;
@@ -117,7 +117,7 @@ void FlatVariablesModel::addVariable(const QString& name, const QVariant& value)
 
 void FlatVariablesModel::removeVariable(const QString& name) {
     auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
-                               [&name](const auto& v, const QString& n) { return v.first < n; });
+                               [](const auto& v, const QString& n) { return v.first < n; });
     if(it == std::end(m_values))
         return;
     if(it->first != name)

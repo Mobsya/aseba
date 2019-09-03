@@ -67,7 +67,7 @@ void NodeTabsManager::setupButtons(NodeTab* tab) {
     auto lock = new LockButton(this);
     tabBar()->setTabButton(index, QTabBar::RightSide, lock);
 
-    connect(tab, &NodeTab::statusChanged, this, [this, tab, lock]() {
+    connect(tab, &NodeTab::statusChanged, this, [tab, lock]() {
         const auto thymio = tab->thymio();
         if(!thymio) {
             lock->setUnAvailable();
