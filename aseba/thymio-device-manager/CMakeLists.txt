@@ -27,6 +27,7 @@ add_library(thymio-device-manager-lib STATIC
     aseba_tcpacceptor.cpp
     aseba_property.h
     app_server.h
+    app_server.cpp
     app_token_manager.h
     app_endpoint.h
     app_endpoint.cpp
