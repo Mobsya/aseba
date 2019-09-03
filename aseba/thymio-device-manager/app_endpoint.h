@@ -991,4 +991,7 @@ private:
     bool m_local_endpoint = false;
 };
 
+extern template class application_endpoint<websocket_t>;
+extern template class application_endpoint<mobsya::tcp::socket>;
+
 }  // namespace mobsya

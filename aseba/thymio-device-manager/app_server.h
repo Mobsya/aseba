@@ -40,4 +40,8 @@ private:
     boost::asio::io_context& m_io_context;
     tcp::acceptor m_acceptor;
 };
+
+extern template class application_server<websocket_t>;
+extern template class application_server<mobsya::tcp::socket>;
+
 }  // namespace mobsya
