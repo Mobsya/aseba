@@ -126,6 +126,9 @@ jobs:
         if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
         cpack.exe -G NSIS
       workingDirectory: '$(Build.BinariesDirectory)'
+    env:
+      SIGNTOOL_PFX:  $(wincert.secureFilePath)
+      SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
 
   - task: CopyFiles@2
     inputs:
