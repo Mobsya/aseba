@@ -328,7 +328,7 @@ bool aseba_endpoint::upgrade_firmware(
             overloaded{
                 [](variant_ns::monostate&) {},
 #ifdef MOBSYA_TDM_ENABLE_USB
-                [&ptr, id, &firmware, &cb, options](usb_device& usb) {
+                [&ptr, id, &firmware, &cb, options](usb_device&) {
                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                     mobsya::upgrade_thymio2_endpoint(
                         ptr->usb().native_handle(), firmware, id,

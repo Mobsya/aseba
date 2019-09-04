@@ -41,7 +41,6 @@ public:
     using native_handle_type = libusb_device_handle*;
 
     usb_device_service(boost::asio::io_context& io_context);
-    usb_device_service(usb_device_service&&) = default;
     void shutdown() override;
 
 
