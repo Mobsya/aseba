@@ -6,7 +6,6 @@ if(APPLE AND NOT IOS)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 endif()
 
-
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
 
@@ -69,22 +68,17 @@ target_include_directories(mpark_variant INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/third_party/mpark.variant/include>
   $<INSTALL_INTERFACE:include>)
 
-if (ANDROID )
+if (ANDROID)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
 endif()
 
 if(IOS)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
     set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
-    set(FLATBUFFERS_BUILD_FLATHASH OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
-
-    add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 endif()
 
-if(NOT IOS)
-    set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
-    add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
-endif()
+set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
+add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 
 if(NOT IOS)
 if (NOT TARGET flatc)
@@ -101,13 +95,10 @@ if (NOT TARGET flatc)
     )
     add_executable(flatc IMPORTED GENERATED)
     set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc)
-    if(IOS)
-         #add_dependencies(flatc flatc_build)
-    else()
-         add_dependencies(flatc flatc_build)
-    endif()
+    add_dependencies(flatc flatc_build)
 endif()
 endif() #NOT IOS
+
 # testing and defines
 enable_testing()
 
@@ -164,9 +155,6 @@ set(CPACK_BUNDLE_NAME ThymioSuite)
 set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/osx/Info.plist)
 set(CPACK_BUNDLE_ICON ${PROJECT_SOURCE_DIR}/menu/osx/asebastudio.icns)
 
-if(IOS)
-#set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/ios/bundle/Info.plist)
-endif()
 
 macro(install_symlink filepath sympath)
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${filepath} ${sympath})")
@@ -189,6 +177,7 @@ if(NOT ANDROID)
     # Unit tests
     add_subdirectory(tests)
 endif()
+
 
 # User entries
 if (UNIX)
@@ -218,8 +207,6 @@ if(NOT IOS)
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
         file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
     endif()
-endif()
-
-
+endif() #NOT IOS
 
 feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
