@@ -117,18 +117,17 @@ jobs:
       vcpkgTriplet: '$(vcpkgTriplet)'
       buildDirectory: '$(Build.BinariesDirectory)'
     env:
-      SIGNTOOL_PFX:  $(wincert.secureFilePath)
+      SIGNTOOL_PFX: $(wincert.secureFilePath)
       SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
-  - task: CmdLine@2
-    displayName: 'Run CPack'
-    inputs:
-      script: |
+
+  - script: |
         if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
         cpack.exe -G NSIS
-      workingDirectory: '$(Build.BinariesDirectory)'
+    workingDirectory: '$(Build.BinariesDirectory)'
+    displayName: "Run cpack"
     env:
-      SIGNTOOL_PFX:  $(wincert.secureFilePath)
-      SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
+      SIGNTOOL_PFX: '$(wincert.secureFilePath)'
+      SIGNTOOL_PASSPHRASE: '$(mobsya-win-p12)'
 
   - task: CopyFiles@2
     inputs:
