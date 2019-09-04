@@ -18,6 +18,7 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 Unicode true
 
 
@@ -403,5 +404,5 @@ Section "Uninstall"
 	DetailPrint $(STR_Done)
 SectionEnd
 
-
-!finalize 'python "${INSTALLER_SOURCE_DIRECTORY}\..\CMakeModules\sign.py" "%1"'
+!verbose 4
+!finalize '"${PYTHON}" "${INSTALLER_SOURCE_DIRECTORY}\..\CMakeModules\sign.py" "%1"'

@@ -133,11 +133,12 @@ set(LIB_VERSION_MINOR 0)
 set(LIB_VERSION_PATCH 0)
 set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH})
 
+find_package(Python3)
 
 if(WIN32)
     add_subdirectory(third_party/bonjour)
     set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows)
     set(CPACK_MONOLITHIC_INSTALL 1)
     configure_file(
         ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
