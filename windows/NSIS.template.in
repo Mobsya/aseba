@@ -405,4 +405,4 @@ Section "Uninstall"
 SectionEnd
 
 !verbose 4
-!finalize '"${PYTHON}" "${INSTALLER_SOURCE_DIRECTORY}\..\CMakeModules\sign.py" "%1"'
+!finalize '"${PYTHON}" "${ASEBA_SOURCE_DIRECTORY}/CMakeModules/sign.py" "%1"'
