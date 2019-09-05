@@ -49,7 +49,6 @@ int main(int argc, char** argv) {
     QQmlDebuggingEnabler enabler;
 #endif
 
-
     // Ensure a single instance
     QtSingleApplication app(argc, argv);
 
@@ -77,8 +76,6 @@ int main(int argc, char** argv) {
     mobsya::Launcher launcher(&client);
     mobsya::TDMSupervisor supervisor(launcher);
     supervisor.startLocalTDM();
-
-
     mobsya::ThymioDevicesModel model(client);
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
@@ -98,7 +95,7 @@ int main(int argc, char** argv) {
     load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     load_trads("qtwebengine_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
-    
+
     QApplication::setApplicationName(QObject::tr("Thymio Suite"));
     QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
 

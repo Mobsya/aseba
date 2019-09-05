@@ -74,7 +74,7 @@ QStringList Launcher::webappsFolderSearchPaths() const {
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/../Resources/").absolutePath());
 #endif
 #ifdef Q_OS_IOS
-    files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/Share/").absolutePath());
+    files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath());
 #endif
     return files;
 }
@@ -157,9 +157,7 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
                                                                    {"scratch", "scratch"}};
     auto it = default_folder_name.find(name);
     if(it == default_folder_name.end())
-        return {};
-    
-    
+        return {};    
     for(auto dirpath : webappsFolderSearchPaths()) {
         QFileInfo d(dirpath + "/" + it->second);
         if(d.exists()) {

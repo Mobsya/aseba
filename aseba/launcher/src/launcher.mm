@@ -1,10 +1,13 @@
 #include "launcher.h"
 #include <Foundation/Foundation.h>
+#ifdef Q_OS_IOS
 #include <UIKit/UIKit.h>
+#else
+#include <AppKit/NSWorkspace.h>
+#endif
 #include <QDir>
 #include <QCoreApplication>
 #include <QDebug>
-
 
 namespace mobsya {
 
@@ -15,19 +18,13 @@ auto QStringListToNSArray(const QStringList &list)
         [result addObject:str.toNSString()];
     }
     return result;
-    
-
 }
 #ifdef Q_OS_IOS
-
 QSize Launcher::GetLandscapeScreenSize()
 {
-    
     CGRect r = [[UIScreen mainScreen] bounds];
- 
     QSize ss (MAX(r.size.height, r.size.width), MIN(r.size.height, r.size.width));
     return ss;
-    
 }
 #endif
 #ifdef Q_OS_OSX
@@ -39,10 +36,13 @@ bool Launcher::doLaunchPlaygroundBundle() const {
         NSLog(@"Unable to find the bundle");
         return false;
     }
-//    auto ws = [NSWorkspace sharedWorkspace];
-//    [ws launchApplicationAtURL:[bundle bundleURL]
-//        options:NSWorkspaceLaunchNewInstance
-//        configuration:@{} error:nil];
+    
+#ifndef Q_OS_IOS
+    auto ws = [NSWorkspace sharedWorkspace];
+    [ws launchApplicationAtURL:[bundle bundleURL]
+        options:NSWorkspaceLaunchNewInstance
+        configuration:@{} error:nil];
+#endif
     return true;
 
 }
@@ -72,12 +72,14 @@ bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) c
 
 
     auto urls = @[appUrl.toNSURL()];
-
-//    auto ws = [NSWorkspace sharedWorkspace];
-//    [ws openURLs:urls
-//                 withApplicationAtURL:url
-//                 options:NSWorkspaceLaunchNewInstance
-//                 configuration:@{} error:nil];
+#ifndef Q_OS_IOS
+    auto ws = [NSWorkspace sharedWorkspace];
+    [ws openURLs:urls
+                 withApplicationAtURL:url
+                 options:NSWorkspaceLaunchNewInstance
+                 configuration:@{} error:nil];
+#endif
+    
     return true;
 
 }
