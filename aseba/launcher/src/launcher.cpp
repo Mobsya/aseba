@@ -174,12 +174,21 @@ static bool exists(QString file) {
     return QFile::exists(file.replace("qrc:/", ":/"));
 }
 
-Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
+QString get_ui_language() {
     QLocale l;
-    QString full = pattern.arg(l.name());
+    QStringList langs = QLocale().uiLanguages();
+    if(langs.empty()) {
+        return l.name();
+    }
+    return langs.first();
+}
+
+Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
+    QString lang = get_ui_language();
+    QString full = pattern.arg(lang);
     if(exists(full))
         return full;
-    QString lang = pattern.arg(l.name().mid(0, l.name().indexOf('_')));
+    lang = pattern.arg(lang.mid(0, 2));
     if(exists(lang))
         return lang;
     QString en = pattern.arg("en");
