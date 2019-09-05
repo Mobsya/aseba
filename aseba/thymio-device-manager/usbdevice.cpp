@@ -34,14 +34,13 @@ void usb_device_service::assign(implementation_type& impl, libusb_device* d) {
 
 
 void usb_device_service::cancel(implementation_type& impl) {
-    close(impl);
-    open(impl);
-}
-
-void usb_device_service::close(implementation_type& impl) {
     for(auto&& t : impl.transfers)
         libusb_cancel_transfer(t);
     impl.transfers.clear();
+}
+
+void usb_device_service::close(implementation_type& impl) {
+    cancel(impl);
     if(impl.handle) {
         libusb_close(impl.handle);
         impl.handle = nullptr;
