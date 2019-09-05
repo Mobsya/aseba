@@ -111,11 +111,12 @@ jobs:
       secureFile: "mobsya-windows.pfx"
   - script: |
         if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
+        set "PATH=%PATH%;C:\Program Files (x86)\Windows Kits\10\App Certification Kit\\"
+
         cpack.exe --version
         cmake.exe --version
 
         cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
-
         cmake --build . --config Release --parallel
         cpack.exe -G NSIS --verbose --debug
 
@@ -124,11 +125,6 @@ jobs:
     env:
       SIGNTOOL_PFX: $(wincert.secureFilePath)
       SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
-
-  - powershell: |
-        Get-Content -Path .\resources\NSIS.definitions.nsh
-    workingDirectory: '$(Build.BinariesDirectory)'
-
 
   - task: CopyFiles@2
     inputs:
