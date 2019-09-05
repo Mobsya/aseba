@@ -55,6 +55,15 @@ jobs:
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A Win32"
   steps:
+  - powershell: |
+      $output = [System.IO.Path]::GetTempFileName()
+      Invoke-WebRequest -Verbose  -UseBasicParsing -Uri "https://github.com/Kitware/CMake/releases/download/v3.15.3/cmake-3.15.3-win64-x64.zip" -OutFile $output
+      7z x $output -o$(Build.BinariesDirectory)
+      Move-Item -Path $(Build.BinariesDirectory)\cmake-* -Destination $(Build.BinariesDirectory)\cmake
+      $env:Path = "$(Build.BinariesDirectory)\cmake\bin;" + $env:Path
+      $(Build.BinariesDirectory)\cmake\bin\cmake.exe --version
+      cmake --version
+      cpack --version
   - script: |
        git submodule update --init --recursive
     displayName: Update submodules
@@ -110,6 +119,8 @@ jobs:
     inputs:
       secureFile: "mobsya-windows.pfx"
   - script: |
+        set "PATH=$(Build.BinariesDirectory)\cmake\bin;%PATH%"
+        cmake --version
         cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
         cmake --build . --config Release --parallel
     workingDirectory: '$(Build.BinariesDirectory)'
@@ -119,7 +130,8 @@ jobs:
       SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
 
   - script: |
-        if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
+        set "PATH=$(Build.BinariesDirectory)\cmake\bin;%PATH%"
+        cpack --version
         cpack.exe -G NSIS --verbose --debug
     displayName: "Run cpack"
     workingDirectory: '$(Build.BinariesDirectory)'

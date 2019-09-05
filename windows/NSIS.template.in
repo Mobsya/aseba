@@ -21,6 +21,8 @@
 
 Unicode true
 
+!verbose 4
+
 
   !define VERSION "@CPACK_PACKAGE_VERSION@"
   !define PATCH  "@CPACK_PACKAGE_VERSION_PATCH@"
