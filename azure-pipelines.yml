@@ -110,22 +110,25 @@ jobs:
     inputs:
       secureFile: "mobsya-windows.pfx"
   - script: |
+        if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
+        cpack.exe --version
+        cmake.exe --version
+
         cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
+
         cmake --build . --config Release --parallel
+        cpack.exe -G NSIS --verbose --debug
+
     workingDirectory: '$(Build.BinariesDirectory)'
-    displayName: 'Run CMake with Ninja'
+    displayName: 'Run CMake and CPack'
     env:
       SIGNTOOL_PFX: $(wincert.secureFilePath)
       SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
 
-  - script: |
-        if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
-        cpack.exe -G NSIS --verbose --debug
-    displayName: "Run cpack"
+  - powershell: |
+        Get-Content -Path .\resources\NSIS.definitions.nsh
     workingDirectory: '$(Build.BinariesDirectory)'
-    env:
-      SIGNTOOL_PFX: $(wincert.secureFilePath)
-      SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
+
 
   - task: CopyFiles@2
     inputs:
