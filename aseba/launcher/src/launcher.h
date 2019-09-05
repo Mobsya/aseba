@@ -6,9 +6,6 @@
 #include <QDir>
 #include <QCoreApplication>
 
-#ifdef Q_OS_IOS
-#include <QSize>
-#endif
 
 namespace mobsya {
 
@@ -17,9 +14,6 @@ class Launcher : public QObject {
     Q_PROPERTY(bool isZeroconfRunning READ isZeroconfRunning NOTIFY zeroconfStatusChanged)
 public:
     Launcher(mobsya::ThymioDeviceManagerClient* client, QObject* parent = nullptr);
-#ifdef Q_OS_IOS
-    QSize GetLandscapeScreenSize();
-#endif
     Q_INVOKABLE bool platformIsOsX() const;
     Q_INVOKABLE bool platformIsLinux() const;
 #ifdef Q_OS_OSX

@@ -104,16 +104,14 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("thymios", &model);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);
+
     
 #ifdef Q_OS_IOS
-    auto size = launcher.GetLandscapeScreenSize();
+    w.showFullScreen();
 #else
     w.setMinimumSize(1024, 640);
-#endif
-    
-    w.setMinimumSize(size.rwidth() , size.rheight());
     w.showNormal();
-
+#endif
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&client]() {
         auto windows = qApp->allWindows();
         for(auto w : windows) {
@@ -130,3 +128,5 @@ int main(int argc, char** argv) {
 
     return app.exec();
 }
+
+

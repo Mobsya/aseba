@@ -21,6 +21,7 @@ namespace mobsya {
 
 Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : m_client(client), QObject(parent) {
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
+   
 }
 
 
