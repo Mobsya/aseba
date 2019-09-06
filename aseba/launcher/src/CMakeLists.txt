@@ -6,8 +6,8 @@ cmake_policy(SET CMP0071 NEW)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(Qt5QuickCompiler)
-if(Qt5QuickCompiler_FOUND)
-qtquick_compiler_add_resources(QT_RESOURCES_BIN qml.qrc)
+if((NOT FLAT_PACK_BUILD)  AND Qt5QuickCompiler_FOUND)
+    qtquick_compiler_add_resources(QT_RESOURCES_BIN qml.qrc)
 endif()
 qt5_add_resources(QT_RESOURCES qml.qrc)
 
