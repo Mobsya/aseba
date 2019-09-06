@@ -6,8 +6,10 @@ if(APPLE AND NOT IOS)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 endif()
 
+
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
+
 
 project(ThymioSuite)
 
@@ -16,6 +18,14 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 
 
+if(IOS)
+    set(IOS_DEPLOYMENT_TARGET ${DEPLOYMENT_TARGET})
+    if(IOS_ARCHIVE_BUILD)
+        set(CMAKE_XCODE_ATTRIBUTE_INSTALL_PATH "")
+        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin/libraries")
+    endif()
+endif()
+
 # ensure a minimal version of CMake
 cmake_minimum_required(VERSION 3.5)
 include(FeatureSummary)
@@ -23,6 +33,7 @@ include(InstallRequiredSystemLibraries)
 
 # additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
+
 
 include(CMakeModules/ParseVersion.cmake)
 include(CMakeModules/cpp_features.cmake)
@@ -41,6 +52,8 @@ if(NOT ANDROID)
     endif()
     find_package(Threads REQUIRED)
 endif()
+
+
 
 if(ANDROID)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/android/qt-android-cmake/)
@@ -105,6 +118,7 @@ enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
+
 cmake_policy(SET CMP0020 NEW)
 
 if(CREATE_QT_CONF_FILE)
