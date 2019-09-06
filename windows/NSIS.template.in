@@ -101,12 +101,12 @@ Function ${un}CleanShortcuts
 	DetailPrint $(STR_Uninst_Menu)
 	; Try both current user / all users
 	SetShellVarContext all		; current / all. Install program for all users
-	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
+	; !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+	; RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 
 	SetShellVarContext current		; current / all. Install program for all users
-	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
+	; !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+	; RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 
 	DetailPrint $(STR_Done)
 FunctionEnd
@@ -133,7 +133,7 @@ FunctionEnd
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
-  !insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
+  ;!insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
 
@@ -213,10 +213,10 @@ SectionGroup /e "-Thymio" GroupThymio
 		SetShellVarContext all		; current / all. Install program for all users
 		!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 			; Application
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Uninstall).lnk" "$INSTDIR\Uninstall.exe"
+;			CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+;			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Uninstall).lnk" "$INSTDIR\Uninstall.exe"
 			; Doc
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)"
+;			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)"
 ;  			${If} $Language == '1036'
 ;  				; French
 ;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/fr:start" "$INSTDIR\asebahelp.ico" "0"
@@ -231,10 +231,10 @@ SectionGroup /e "-Thymio" GroupThymio
 ;  			${EndIf}
 			; Thymio stuff?
 			; Launcher
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
+			CreateShortCut "$SMPROGRAMS\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 			; Thymio wireless configurator
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
+;			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
+;			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
 		!insertmacro MUI_STARTMENU_WRITE_END
 
 		@CPACK_NSIS_EXTRA_INSTALL_COMMANDS@
