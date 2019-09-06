@@ -126,6 +126,12 @@ jobs:
       SIGNTOOL_PFX: $(wincert.secureFilePath)
       SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
 
+  - powershell: |
+      $file = Get-ChildItem -Path $(Build.BinariesDirectory) -Filter NSISOutput.log -Recurse -ErrorAction SilentlyContinue -Force
+      Get-Content -Path $file
+    workingDirectory: '$(Build.BinariesDirectory)'
+    displayName: 'NSIS LOGS'
+
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.BinariesDirectory)'
