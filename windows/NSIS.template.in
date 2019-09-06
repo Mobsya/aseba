@@ -101,12 +101,12 @@ Function ${un}CleanShortcuts
 	DetailPrint $(STR_Uninst_Menu)
 	; Try both current user / all users
 	SetShellVarContext all		; current / all. Install program for all users
-	; !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-	; RMDir /r "$SMPROGRAMS\$StartMenuFolder"
+	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 
 	SetShellVarContext current		; current / all. Install program for all users
-	; !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-	; RMDir /r "$SMPROGRAMS\$StartMenuFolder"
+	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 
 	DetailPrint $(STR_Done)
 FunctionEnd
@@ -133,7 +133,7 @@ FunctionEnd
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
-  ;!insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
+  !insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
 
