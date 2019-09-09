@@ -47,7 +47,7 @@ Download and install the following components:
    "Qt 5.12+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt WebEngine`` and ``Qt Charts`` components. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
    Node & Npm, "`Download <https://nodejs.org/en/download/>`_", ``npm.exe`` must be in the path
    7Zip, "`Download <https://www.7-zip.org/download.html>`_"
-   NSIS 2, "`Download <https://sourceforge.net/projects/nsis/files/NSIS%202/>`_", For building the installer; ``nsis.exe`` must be in the path;
+   NSIS 2, "`Download <https://nsis.sourceforge.io/Download>`_", For building the installer; ``nsis.exe`` must be in the path;
    Python, "`Download <https://www.python.org/downloads/windows/>`_", For signing the installer; ``python.exe`` must be in the path;
 
 
@@ -59,9 +59,11 @@ To do so:
 
    Navigate to the directory in which you want to build aseba. It is recommended not to build in the source directory
 
-2. `Clone VCPKG <https://github.com/Mobsya/vcpkg>`_ from the Mobsya repository and follow the instruction there
+2. `Clone VCPKG <https://github.com/Mobsya/vcpkg>`_ from the Mobsya repository and install it runing ``.\bootstrap-vcpkg.bat`` and navigate to VCPKG directory
 
-3. Install the required packages ``vcpkg install @<ASEBA_SOURCE_DIRECTORY>\vcpkg-list.txt --triplet x64-windows static``. This might take a while. Replace `x64` by `x86` if you target a 32 buits build.
+3. Install the required packages ``vcpkg install @<ASEBA_SOURCE_DIRECTORY>\vcpkg-list.txt --triplet x64-windows-static``.
+Or run ``vcpkg install openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess --triplet x64-windows-static`` if previous is not working.
+This might take a while. Replace `x64` by `x86` if you target a 32 buits build. 
 
 4. To build for x64:
 
@@ -83,7 +85,7 @@ To build for x86:
    cmake -G"Visual Studio 16 2019" -A Win32 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x86-windows-static" <ASEBA_SOURCE_DIRECTORY>
 
 
-Then, to build the project, you can either run ``msbuild aseba.sln`` or open ``aseba.sln`` with Visual Studio 2017.
+Then, to build the project, you can either run ``msbuild ThymioSuite.sln`` or open ``ThymioSuite.sln`` with Visual Studio 2019.
 Refer to the documentation of msbuild and Visual Studio for more informations.
 
 Getting Started on OSX
