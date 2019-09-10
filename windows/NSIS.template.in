@@ -202,6 +202,16 @@ SectionGroup /e "-Thymio" GroupThymio
 
 		;Create uninstaller
 		WriteUninstaller "$INSTDIR\Uninstall.exe"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"DisplayName" "Thymio Suite"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"Publisher" "Mobsya Association"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"DisplayVersion" "2.0.0"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"DisplayIcon" "$\"$INSTDIR\thymio-launcher.ico$\""
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
 
 		; Populate the start menu
 		${If} $AlreadyInstalled == "true"
@@ -399,7 +409,7 @@ Section "Uninstall"
 	DetailPrint $(STR_Done)
 
 	Call un.CleanShortcuts
-
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite"
 	DeleteRegKey HKCU ${REGISTRY_KEY}
 	DetailPrint $(STR_Done)
 SectionEnd
