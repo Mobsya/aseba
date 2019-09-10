@@ -100,11 +100,11 @@ Function ${un}CleanShortcuts
 
 	DetailPrint $(STR_Uninst_Menu)
 	; Try both current user / all users
-;	SetShellVarContext all		; current / all. Install program for all users
+	SetShellVarContext all		; current / all. Install program for all users
 ;	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 ;	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
-
-;	SetShellVarContext current		; current / all. Install program for all users
+	Delete "$SMPROGRAMS\Thymio Suite.lnk"
+	SetShellVarContext current		; current / all. Install program for all users
 ;	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 ;	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 	Delete "$SMPROGRAMS\Thymio Suite.lnk"
