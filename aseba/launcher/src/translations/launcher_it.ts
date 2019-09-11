@@ -6,7 +6,7 @@
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="23"/>
         <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to learn with Thymio&lt;/div&gt;</source>
-        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in  Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
+        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuto in  Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
@@ -79,12 +79,12 @@ Do not unplug the device while the update is in progress.</source>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="140"/>
         <source>This device cannot be selected because it is in a group</source>
-        <translation>Non puoi scegliere il robot perché appartiene ad un gruppo</translation>
+        <translation>Non si puo&apos; selezionare  il robot perché appartiene ad un gruppo</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
         <source>This device cannot be selected because it is already being used</source>
-        <translation>Non puoi scegliere questo robot perché risulta in uso da parte di una diversa applicazione</translation>
+        <translation>Non si puo&apos; selezionare questo robot perché risulta in uso da parte di una diversa applicazione</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="225"/>
@@ -122,12 +122,12 @@ Connect the robot with an usb cable to install it</source>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="261"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
-        <translation>Nessun robot trovato perché Avahi Daemon mancante o non in funzione. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</translation>
+        <translation>Nessun robot trovato perché Avahi Daemon mancante o non in funzione. &lt;a href=&apos;http://google.com&apos;&gt;Risoluzione dei problemi&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="263"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
-        <translation>Nessun robot trovato perché servizio Bonjour mancante o non in esecuzione. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</translation>
+        <translation>Nessun robot trovato perché servizio Bonjour mancante o non in esecuzione. &lt;a href=&apos;https://www.thymio.org/it/faq/il-mio-robot-thymio-non-appare-nella-lista-di-selezione-dei-robot/&apos;&gt;Risoluzione dei problemi&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
