@@ -63,7 +63,7 @@ To do so:
 
 3. Install the required packages ``vcpkg install @<ASEBA_SOURCE_DIRECTORY>\vcpkg-list.txt --triplet x64-windows-static``.
 Or run ``vcpkg install openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess --triplet x64-windows-static`` if previous is not working.
-This might take a while. Replace `x64` by `x86` if you target a 32 buits build. 
+This might take a while. Replace `x64` by `x86` if you target a 32 buits build.
 
 4. To build for x64:
 
@@ -210,20 +210,17 @@ Then you can build vpl2 with cmake. An APK will be generated in ``build/bin``
 
 Getting Started on iOS
 --------------------------
-Current build is not working. But that's how far I've been able to go.
 
 Require recent Xcode and QT libraries
 
-Since iOS require to build and sign with XCode, I've been aiming at having a working xcode project.
-
-In it's current state the xcode project fail to build, because it's trying to build flatc, instead of using the one on the building system.
+On it's current state, on iOS, you'll need to generate an xcode project using the following line. This will allow you to launch the project, configure your certificate / provisioning profile, and launch the target "Thymio-launcher" on your debuging device.
 
 
+    cmake -B <build_dir> -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=10.0 -DCMAKE_TOOLCHAIN_FILE=./ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH=<path_to_qt_ios_dir> -G Xcode
 
-For the current WIP, this is
+At compile times you might need to have flatbuffer installed on your machine
 
-    cmake  -DCMAKE_PREFIX_PATH="<PATH_TO_QT_IOS_INSTALLATION>" -DDEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=./ios/ios-cmake/ios.toolchain.cmake -DIOS_ARCH=arm64 -DENABLE_BITCODE=FALSE -G Xcode -B <build_directory> -DARGIOS_VERBOSE=ON
-
+    brew install flatbuffers
 
 
 Running tests
