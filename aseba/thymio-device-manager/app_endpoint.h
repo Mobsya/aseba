@@ -8,6 +8,8 @@
 #include "flatbuffers_message_reader.h"
 #include "flatbuffers_messages.h"
 #include "aseba_node_registery.h"
+#include "aseba_nodeid_generator.h"
+#include "wireless_configurator_service.h"
 #include "tdm.h"
 #include "log.h"
 #include "app_token_manager.h"
@@ -60,7 +62,7 @@ public:
 
     void do_write_message(const flatbuffers::DetachedBuffer& buffer) {
         auto that = this->shared_from_this();
-        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::size_t s) {
+        auto cb = boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::size_t) {
             static_cast<Self&>(*that).handle_write(ec);
         });
         m_socket.async_write(boost::asio::buffer(buffer.data(), buffer.size()), std::move(cb));
@@ -269,6 +271,31 @@ public:
                 break;
             }
 
+            case mobsya::fb::AnyMessage::Thymio2WirelessDonglePairingRequest: {
+                auto req = msg.as<fb::Thymio2WirelessDonglePairingRequest>();
+                if(!req->node_id() || !req->dongle_id()) {
+                    write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
+                    break;
+                }
+                this->pair_thymio2_and_dongle(req->request_id(), req->dongle_id(), req->node_id(), req->network_id(),
+                                              req->channel_id());
+                break;
+            }
+
+            case mobsya::fb::AnyMessage::EnableThymio2PairingMode: {
+                auto req = msg.as<fb::EnableThymio2PairingMode>();
+                auto& service = boost::asio::use_service<wireless_configurator_service>(this->m_ctx);
+                if(service.is_enabled() == req->enable())
+                    break;
+                if(req->enable()) {
+                    service.wireless_dongles_changed.connect([this] { this->send_list_of_thymio2_dongles(); });
+                    service.enable();
+                } else {
+                    service.disable();
+                }
+                break;
+            }
+
             default: mLogWarn("Message {} from application unsupported", EnumNameAnyMessage(msg.message_type())); break;
         }
     }
@@ -289,7 +316,7 @@ public:
 
         /* Disconnecting the node monotoring status before unlocking the nodes,
          * otherwise we would receive node status event during destroying the endpoint, leading to a crash */
-        disconnect();
+        node_status_monitor::disconnect();
 
         for(auto& p : m_locked_nodes) {
             auto ptr = p.second.lock();
@@ -407,6 +434,26 @@ private:
             return;
         write_message(serialize_execution_state(*node, state));
     }
+
+
+    void send_list_of_thymio2_dongles() {
+        const auto& service = boost::asio::use_service<wireless_configurator_service>(this->m_ctx);
+
+        flatbuffers::FlatBufferBuilder fb;
+        const auto dongles = service.dongles();
+        mLogDebug("{} test", dongles.size());
+
+        std::vector<flatbuffers::Offset<fb::Thymio2WirelessDongle>> offsets;
+        std::transform(dongles.begin(), dongles.end(), std::back_inserter(offsets),
+                       [&fb](const wireless_configurator_service::dongle& d) {
+                           return mobsya::fb::CreateThymio2WirelessDongle(fb, d.uuid.fb(fb), d.node_id, d.network_id,
+                                                                          d.channel);
+                       });
+        auto vecOffset = fb.CreateVector(offsets);
+        auto offset = mobsya::fb::CreateThymio2WirelessDonglesChanged(fb, vecOffset);
+        write_message(wrap_fb(fb, offset));
+    }
+
 
     void send_full_node_list() {
         flatbuffers::FlatBufferBuilder builder;
@@ -696,6 +743,43 @@ private:
         }
     }
 
+    void pair_thymio2_and_dongle(uint32_t request_id, node_id dongle_id, node_id robot_id, uint16_t network_id,
+                                 uint8_t channel) {
+
+        auto node = registery().node_from_id(robot_id);
+        if(!node) {
+            mLogWarn("pair_thymio2_and_dongle: node {} does not exist or can not be paired", robot_id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto& service = boost::asio::use_service<wireless_configurator_service>(this->m_ctx);
+        tl::expected<std::reference_wrapper<const wireless_configurator_service::dongle>,
+                     wireless_configurator_service::configure_error>
+            res = service.configure_dongle(dongle_id, network_id, channel);
+        if(!res.has_value()) {
+            mLogWarn("pair_thymio2_and_dongle: writing dongle failed", robot_id);
+            write_message(create_error_response(request_id, fb::ErrorType::thymio2_pairing_write_dongle_failed));
+            return;
+        }
+        const auto& dongle = res->get();
+
+        mLogTrace("New wireless settings: node id   = {}, network id = {}, channel: {}", dongle.node_id,
+                  dongle.network_id, dongle.channel);
+
+        if(!node->set_rf_settings(dongle.network_id, node->native_id(), dongle.channel)) {
+            mLogWarn("pair_thymio2_and_dongle: writing robot failed", robot_id);
+            write_message(create_error_response(request_id, fb::ErrorType::thymio2_pairing_write_robot_failed));
+            return;
+        }
+        mLogTrace("New wireless setting for node: node id   = {}, network id = {}, channel = {}", node->native_id(),
+                  dongle.network_id, dongle.channel);
+
+        flatbuffers::FlatBufferBuilder builder;
+        write_message(wrap_fb(
+            builder,
+            fb::CreateThymio2WirelessDonglePairingResponse(builder, request_id, dongle.network_id, dongle.channel)));
+    }
+
     void watch_node_or_group(uint32_t request_id, const aseba_node_registery::node_id& id, uint32_t flags) {
         auto group = registery().group_from_id(id);
         auto node = registery().node_from_id(id);
@@ -885,7 +969,6 @@ private:
             }
         });
     }
-    boost::asio::deadline_timer m_pings_timer;
 
     std::shared_ptr<application_endpoint<Socket>> shared_from_this() {
         return std::static_pointer_cast<application_endpoint<Socket>>(base::shared_from_this());
@@ -896,6 +979,7 @@ private:
     }
 
     boost::asio::io_context& m_ctx;
+    boost::asio::deadline_timer m_pings_timer;
     std::queue<tagged_detached_flatbuffer> m_queue;
     std::unordered_map<aseba_node_registery::node_id, std::weak_ptr<aseba_node>, boost::hash<boost::uuids::uuid>>
         m_locked_nodes;
@@ -905,6 +989,9 @@ private:
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
     bool m_local_endpoint = false;
-};  // namespace mobsya
+};
+
+extern template class application_endpoint<websocket_t>;
+extern template class application_endpoint<mobsya::tcp::socket>;
 
 }  // namespace mobsya

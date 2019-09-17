@@ -6,13 +6,6 @@
 
 namespace mobsya {
 
-int LIBUSB_CALL hotplug_callback(struct libusb_context* ctx, struct libusb_device* dev, libusb_hotplug_event event,
-                                 void* user_data) {
-
-    auto service = static_cast<usb_acceptor_service*>(user_data);
-    return service->device_plugged(ctx, dev, event);
-}
-
 usb_acceptor_service::usb_acceptor_service(boost::asio::io_context& io_service)
     : boost::asio::detail::service_base<usb_acceptor_service>(io_service)
     , m_context(details::usb_context::acquire_context())
@@ -35,25 +28,18 @@ void usb_acceptor_service::shutdown() {
 }
 
 void usb_acceptor_service::free_device(const libusb_device* dev) {
-    m_known_devices.erase(std::find(m_known_devices.begin(), m_known_devices.end(), dev));
+    auto it = std::find(m_known_devices.begin(), m_known_devices.end(), dev);
+    if(it != m_known_devices.end())
+        m_known_devices.erase(it);
     m_active_timer.expires_from_now(boost::posix_time::milliseconds(500));
     m_active_timer.async_wait(boost::asio::bind_executor(
         m_strand, boost::bind(&usb_acceptor_service::handle_request_by_active_enumeration, this)));
 }
 
-void usb_acceptor_service::register_request(request& r) {
-    bool hotplug = libusb_has_capability(LIBUSB_CAP_HAS_HOTPLUG) &&
-        libusb_hotplug_register_callback(*m_context, /*context*/
-                                         LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED /*events*/,
-                                         LIBUSB_HOTPLUG_ENUMERATE /*flags */, LIBUSB_HOTPLUG_MATCH_ANY, /* vendor id */
-                                         LIBUSB_HOTPLUG_MATCH_ANY,                                      /* product id */
-                                         LIBUSB_HOTPLUG_MATCH_ANY /* class*/, hotplug_callback, this,
-                                         &r.req_id) == LIBUSB_SUCCESS;
-    if(!hotplug) {  // we have to resort to a timer.
-        m_active_timer.expires_from_now(boost::posix_time::millisec(1));
-        m_active_timer.async_wait(boost::asio::bind_executor(
-            m_strand, boost::bind(&usb_acceptor_service::on_active_timer, this, boost::placeholders::_1)));
-    }
+void usb_acceptor_service::register_request(request&) {
+    m_active_timer.expires_from_now(boost::posix_time::seconds(1));
+    m_active_timer.async_wait(boost::asio::bind_executor(
+        m_strand, boost::bind(&usb_acceptor_service::on_active_timer, this, boost::placeholders::_1)));
 }
 
 void usb_acceptor_service::on_active_timer(const boost::system::error_code& ec) {
@@ -66,21 +52,6 @@ void usb_acceptor_service::on_active_timer(const boost::system::error_code& ec) 
         m_active_timer.async_wait(boost::asio::bind_executor(
             m_strand, boost::bind(&usb_acceptor_service::on_active_timer, this, boost::placeholders::_1)));
     }
-}
-
-int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev,
-                                         libusb_hotplug_event event) {
-
-    std::unique_lock<std::mutex> lock(m_req_mutex);
-    if(m_requests.empty() || m_paused) {
-        return 0;
-    }
-    if(event != LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED) {
-        return 0;
-    }
-
-    request& req = m_requests.front();
-    return device_plugged(ctx, dev, req);
 }
 
 int usb_acceptor_service::device_plugged(struct libusb_context* ctx, struct libusb_device* dev, request& req) {
@@ -125,6 +96,12 @@ void usb_acceptor_service::handle_request_by_active_enumeration() {
         }
     }
     libusb_free_device_list(devices, true);
+
+    for(auto&& d : m_known_devices) {
+        if(std::find(sessions.begin(), sessions.end(), d) == sessions.end()) {
+            device_unplugged(d);
+        }
+    }
     m_known_devices = std::move(sessions);
 }
 

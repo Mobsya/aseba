@@ -30,11 +30,6 @@ PROJECTS = {
         "trdir"   : "aseba/targets/playground",
         "qrcfile" : "aseba/targets/playground/asebaplayground.qrc"
     },
-    "thymiownetconfig" : {
-        "dirs"   : ["aseba/clients/thymiownetconfig"],
-        "trdir"  : "aseba/clients/thymiownetconfig",
-        "qrcfile" : "aseba/clients/thymiownetconfig/thymiownetconfig.qrc"
-    },
     "asebastudio" : {
         "dirs"    : ["aseba/clients/qtcommon/common", "aseba/clients/studio", "aseba/clients/vpl"],
         "trdir"   : "aseba/clients/qtcommon/translations",

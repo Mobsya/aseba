@@ -5,8 +5,10 @@
 #include <QUrl>
 #include <QDateTime>
 #include <QTimer>
+#include <QQmlListProperty>
 #include "request.h"
 #include "thymionode.h"
+#include "thymio2wirelessdongle.h"
 
 namespace mobsya {
 class ThymioDeviceManagerClientEndpoint : public QObject,
@@ -15,6 +17,8 @@ class ThymioDeviceManagerClientEndpoint : public QObject,
     Q_PROPERTY(QString hostName READ hostName CONSTANT)
     Q_PROPERTY(bool isLocalhostPeer READ isLocalhostPeer CONSTANT)
     Q_PROPERTY(QUrl websocketConnectionUrl READ websocketConnectionUrl CONSTANT)
+    Q_PROPERTY(Thymio2WirelessDonglesManager* donglesManager READ donglesManager CONSTANT)
+    Q_PROPERTY(QQmlListProperty<ThymioNode> nodes READ qml_nodes NOTIFY nodesChanged)
 
 
 public:
@@ -51,6 +55,14 @@ public:
     Request setScratchPad(const QUuid& id, const QByteArray& data, fb::ProgrammingLanguage language);
     Request upgradeFirmware(const QUuid& id);
 
+    Q_INVOKABLE Request enableWirelessPairingMode();
+    Q_INVOKABLE Request disableWirelessPairingMode();
+    Thymio2WirelessDonglePairingRequest pairThymio2Wireless(const QUuid& dongleId, const QUuid& nodeId,
+                                                            quint16 networkId, quint8 channel);
+
+
+    Thymio2WirelessDonglesManager* donglesManager() const;
+
 private Q_SLOTS:
     void onReadyRead();
     void onConnected();
@@ -60,12 +72,14 @@ private Q_SLOTS:
     void write(const tagged_detached_flatbuffer& buffer);
 
 Q_SIGNALS:
+    void nodesChanged();
     void nodeAdded(std::shared_ptr<ThymioNode>);
     void nodeRemoved(std::shared_ptr<ThymioNode>);
     void nodeModified(std::shared_ptr<ThymioNode>);
 
     void onMessage(const fb_message_ptr& msg) const;
     void disconnected();
+    void localPeerChanged();
 
 private:
     template <typename T>
@@ -74,6 +88,8 @@ private:
         m_pending_requests.insert(r.id(), r.get_ptr());
         return r;
     }
+
+    QQmlListProperty<ThymioNode> qml_nodes();
 
     void onNodesChanged(const fb::NodesChangedT& nc_msg);
     void handleIncommingMessage(const fb_message_ptr& msg);
@@ -95,6 +111,11 @@ private:
     QString m_host_name;
     QDateTime m_last_message_reception_date;
     QTimer* m_socket_health_check_timer;
+    Thymio2WirelessDonglesManager* m_dongles_manager;
 };
 
 }  // namespace mobsya
+
+
+Q_DECLARE_METATYPE(mobsya::ThymioDeviceManagerClientEndpoint*)
+Q_DECLARE_METATYPE(QQmlListProperty<mobsya::ThymioNode>)

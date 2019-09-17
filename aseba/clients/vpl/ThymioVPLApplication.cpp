@@ -36,15 +36,7 @@
 namespace Aseba {
 
 ThymioVPLApplication::ThymioVPLApplication(const QUuid& thymioId)
-    :  // options
-       // useAnyTarget(useAnyTarget)
-       //, debugLog(debugLog)
-       //, execFeedback(execFeedback)
-       //,
-       // setup initial values
-    vpl(nullptr)
-    , allocatedVariablesCount(0)
-    , m_thymioId(thymioId) {
+    : m_thymioId(thymioId), vpl(nullptr), allocatedVariablesCount(0) {
 
     m_client = new mobsya::ThymioDeviceManagerClient(this);
     connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLApplication::onNodeChanged);
@@ -411,10 +403,7 @@ void ThymioVPLApplication::teardownConnection() {
 }
 
 //! The execution state logic thinks variables might need a refresh
-void ThymioVPLApplication::variablesMemoryEstimatedDirty(unsigned node) {
-    // if(node == id)
-    //    target->getVariables(id, 0, allocatedVariablesCount);
-}
+void ThymioVPLApplication::variablesMemoryEstimatedDirty(unsigned) {}
 
 //! Update the window title with filename and modification status
 void ThymioVPLApplication::updateWindowTitle(bool modified) {

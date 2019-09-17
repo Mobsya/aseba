@@ -114,10 +114,14 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
                 str.resize(bytesRequired / sizeof(str) + 1, 0);
                 continue;
             } else if(ret == ERROR_SUCCESS) {
-                if(dataType == REG_SZ)
+                if(dataType == REG_SZ) {
+                    if(str.find("COM") == 0) {
+                        return fmt::format("\\\\.\\{}", str);
+                    }
                     return str;
+                }
                 else if(dataType == REG_DWORD)
-                    return fmt::format("COM{}", *(PDWORD(&str[0])));
+                    return fmt::format("\\\\.\\COM{}", *(PDWORD(&str[0])));
             }
             return {};
         }
@@ -132,6 +136,7 @@ static std::string get_com_portname(HDEVINFO info_set, PSP_DEVINFO_DATA device_i
 void serial_acceptor_service::handle_request_by_active_enumeration() {
     if(m_requests.empty() || m_paused)
         return;
+    const auto devices = m_requests.front().acceptor.compatible_devices();
 
 
     const HDEVINFO deviceInfoSet = ::SetupDiGetClassDevs(&GUID_DEVCLASS_PORTS, nullptr, nullptr, DIGCF_PRESENT);
@@ -149,8 +154,10 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
     ::memset(&deviceInfoData, 0, sizeof(deviceInfoData));
     deviceInfoData.cbSize = sizeof(deviceInfoData);
 
+
+
     DWORD index = 0;
-    while(!m_requests.empty()) {
+    while(true) {
         int32_t res = ::SetupDiEnumDeviceInfo(deviceInfoSet, index++, &deviceInfoData);
         if(res == 0) {
             if(GetLastError() != ERROR_NO_MORE_ITEMS) {
@@ -159,23 +166,23 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             break;
         }
 
-        auto& req = m_requests.front();
+
         const auto str = device_instance_identifier(deviceInfoData.DevInst);
-        //mLogTrace("{}", str);
         const auto id = device_id_from_interface_id(str);
-        const auto& devices = req.acceptor.compatible_devices();
+
         if(std::find(std::begin(devices), std::end(devices), id) == std::end(devices)) {
-            //mLogTrace("device not compatible : {:#06X}-{:#06X} ", id.vendor_id, id.product_id);
             continue;
         }
         const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
+
+        known_devices.push_back(port_name);
+        if(m_requests.empty() || std::find(m_known_devices.begin(), m_known_devices.end(), port_name) != m_known_devices.end())
+            continue;
+
         const auto device_name = get_device_name(deviceInfoSet, &deviceInfoData);
 
 
-        known_devices.push_back(port_name);
-        if(std::find(m_known_devices.begin(), m_known_devices.end(), port_name) != m_known_devices.end())
-            continue;
-
+        auto& req = m_requests.front();
         mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
         boost::system::error_code ec;
         req.d.m_device_id = id;
@@ -187,6 +194,13 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
             const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
             m_requests.pop();
             boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
+        }
+    }
+
+    for(auto&& e : m_known_devices) {
+        if(std::find(known_devices.begin(), known_devices.end(), e) == known_devices.end()) {
+            mLogError("Removed {}", e);
+            device_unplugged(e);
         }
     }
     m_known_devices = known_devices;

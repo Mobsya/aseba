@@ -26,9 +26,6 @@
 #include <map>
 #include <iterator>
 #include <utility>
-#ifndef ASEBA_NO_DASHEL
-#    include <dashel/dashel.h>
-#endif
 using namespace std;
 
 namespace Aseba {
@@ -148,53 +145,6 @@ bool operator==(const TargetDescription::NativeFunction& lhs, const TargetDescri
     return lhs.name == rhs.name && lhs.description == rhs.description && lhs.parameters == rhs.parameters;
 }
 
-//
-#ifndef ASEBA_NO_DASHEL
-void Message::serialize(Stream* stream) const {
-    SerializationBuffer buffer;
-    serializeSpecific(buffer);
-    auto len = static_cast<uint16_t>(buffer.rawData.size());
-
-    if(len > ASEBA_MAX_EVENT_ARG_SIZE) {
-        cerr << "Message::serialize() : fatal error: message size exceeds maximum packet size.\n";
-        cerr << "message payload size: " << len
-             << ", maximum packet payload size (excluding type): " << ASEBA_MAX_EVENT_ARG_SIZE
-             << ", message type: " << hex << showbase << type << dec << noshowbase;
-        cerr << endl;
-        throw std::runtime_error("serialization error");
-    }
-    uint16_t t;
-    swapEndian(len);
-    stream->write(&len, 2);
-    t = swapEndianCopy(source);
-    stream->write(&t, 2);
-    t = swapEndianCopy(type);
-    stream->write(&t, 2);
-    if(buffer.rawData.size())
-        stream->write(&buffer.rawData[0], buffer.rawData.size());
-}
-
-Message* Message::receive(Stream* stream) {
-    // read header
-    uint16_t len, source, type;
-    stream->read(&len, 2);
-    swapEndian(len);
-    stream->read(&source, 2);
-    swapEndian(source);
-    stream->read(&type, 2);
-    swapEndian(type);
-
-    // read content
-    SerializationBuffer buffer;
-    buffer.rawData.resize(len);
-    if(len)
-        stream->read(&buffer.rawData[0], len);
-
-    // deserialize message
-    return create(source, type, buffer);
-}
-#endif
-
 Message* Message::create(uint16_t source, uint16_t type, SerializationBuffer& buffer) {
     // create message
     Message* message = messageTypesInitializer.createMessage(type);
@@ -207,7 +157,7 @@ Message* Message::create(uint16_t source, uint16_t type, SerializationBuffer& bu
 
         // deserialize it
         message->deserializeSpecific(buffer);
-    } catch(std::runtime_error) {
+    } catch(const std::runtime_error&) {
         return nullptr;
     }
 
@@ -719,7 +669,7 @@ bool operator==(const Variables& lhs, const Variables& rhs) {
 
 //
 
-void ChangedVariables::serializeSpecific(SerializationBuffer& buffer) const {
+void ChangedVariables::serializeSpecific(SerializationBuffer&) const {
     assert(false && "Unimplemented");
 }
 
@@ -730,8 +680,8 @@ void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
         if(size == 0)
             continue;
 
-        if((buffer.rawData.size() - buffer.readPos) < size * sizeof (int16_t))
-             return;
+        if((buffer.rawData.size() - buffer.readPos) < size * sizeof(int16_t))
+            return;
 
         VariablesDataVector v;
         v.reserve(size);
@@ -989,37 +939,12 @@ bool operator==(const SetBytecode& lhs, const SetBytecode& rhs) {
     return static_cast<const CmdMessage&>(lhs) == static_cast<const CmdMessage&>(rhs) && lhs.start == rhs.start &&
         lhs.bytecode == rhs.bytecode;
 }
-#ifndef ASEBA_NO_DASHEL
-void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint16_t>& bytecode) {
-    const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
-    unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
-
-    while(bytecodeCount > bytecodePayloadSize) {
-        SetBytecode setBytecodeMessage(dest, bytecodeStart);
-        setBytecodeMessage.bytecode.resize(bytecodePayloadSize);
-        copy(bytecode.begin() + bytecodeStart, bytecode.begin() + bytecodeStart + bytecodePayloadSize,
-             setBytecodeMessage.bytecode.begin());
-        setBytecodeMessage.serialize(stream);
-
-        bytecodeStart += bytecodePayloadSize;
-        bytecodeCount -= bytecodePayloadSize;
-    }
-
-    {
-        SetBytecode setBytecodeMessage(dest, bytecodeStart);
-        setBytecodeMessage.bytecode.resize(bytecodeCount);
-        copy(bytecode.begin() + bytecodeStart, bytecode.end(), setBytecodeMessage.bytecode.begin());
-        setBytecodeMessage.serialize(stream);
-    }
-}
-#endif
 
 void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
+    unsigned bytecodeCount = unsigned(bytecode.size());
 
     while(bytecodeCount > bytecodePayloadSize) {
         auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
@@ -1044,7 +969,7 @@ void sendBytecode(std::vector<std::shared_ptr<Message> >& messagesVector, uint16
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
+    unsigned bytecodeCount = unsigned(bytecode.size());
 
     while(bytecodeCount > bytecodePayloadSize) {
         auto setBytecodeMessage = make_shared<SetBytecode>(dest, bytecodeStart);
@@ -1248,7 +1173,7 @@ void GetDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
     buffer.add(uint16_t(info));
 }
 
-void GetDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {}
+void GetDeviceInfo::deserializeSpecific(SerializationBuffer&) {}
 
 void GetDeviceInfo::dumpSpecific(std::wostream& stream) const {
     CmdMessage::dumpSpecific(stream);

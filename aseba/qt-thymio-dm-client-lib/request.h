@@ -36,6 +36,8 @@ public:
             case E::unknown_node: return "Unknown node";
             case E::unsupported_variable_type: return "Unsupported variable type";
             case E::unknown_error: return "Unknown error";
+            case E::thymio2_pairing_write_dongle_failed: return "Unable to save the wireless settings in the dongle";
+            case E::thymio2_pairing_write_robot_failed: return "Unable to save the wireless settings in the robot";
             case E::no_error: break;
         }
         return {};
@@ -283,6 +285,28 @@ public:
     }
 };
 
+
+struct Thymio2WirelessDonglePairingResult {
+    Q_GADGET
+
+public:
+    Thymio2WirelessDonglePairingResult() = default;
+    Thymio2WirelessDonglePairingResult(uint16_t network, uint8_t channel) : m_networkId(network), m_channel(channel) {}
+
+    static constexpr quint32 type = 0x478fa12d;
+    Q_INVOKABLE quint16 networkId() const {
+        return m_networkId;
+    }
+
+    Q_INVOKABLE quint8 channel() const {
+        return m_channel;
+    }
+
+private:
+    uint16_t m_networkId;
+    uint16_t m_channel;
+};
+
 struct CompilationError {
 
     CompilationError(const QString& msg, quint32 pos, quint32 line, quint32 column)
@@ -321,7 +345,7 @@ public:
 public:
     Q_INVOKABLE QString toString() const {
         if(m_errors.empty()) {
-            return QStringLiteral("Compilation ok - bytecode: %1, variables %2").arg(m_bytecode_size, m_variables_size);
+            return QStringLiteral("Compilation ok - bytecode: %1, variables %2").arg(int(m_bytecode_size), int(m_variables_size));
         }
         return QStringLiteral("Compilation error :").arg(m_errors.first().errorMessage());
     }
@@ -484,9 +508,12 @@ private:
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
+
+using Thymio2WirelessDonglePairingRequest = BasicRequest<Thymio2WirelessDonglePairingResult>;
+using Thymio2WirelessDonglePairingRequestWatcher = BasicRequestWatcher<Thymio2WirelessDonglePairingResult>;
+
 using CompilationRequest = BasicRequest<CompilationResult>;
 using CompilationRequestWatcher = BasicRequestWatcher<CompilationResult>;
-
 
 using BreakpointsRequest = BasicRequest<SetBreakpointRequestResult>;
 using BreakpointsRequestWatcher = BasicRequestWatcher<SetBreakpointRequestResult>;

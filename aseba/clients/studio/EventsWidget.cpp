@@ -198,7 +198,7 @@ void EventsWidget::onEvents(const mobsya::ThymioNode::EventMap& events) {
     }
 }
 
-void EventsWidget::logError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
+void EventsWidget::logError(mobsya::ThymioNode::VMExecutionError, const QString& message, uint32_t line) {
     QString text = QTime::currentTime().toString("hh:mm:ss.zzz");
     text += "\n" + tr("Line %1: %2").arg(line).arg(message);
 

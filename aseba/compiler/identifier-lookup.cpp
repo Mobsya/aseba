@@ -67,7 +67,7 @@ bool NamedValuesVector::contains(const std::wstring& s, size_t* position) const 
 //! Compute the edit distance between two vector-style containers, inspired from
 //! http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.2B.2B
 template <class T>
-unsigned int editDistance(const T& s1, const T& s2, const unsigned maxDist) {
+unsigned int editDistance(const T& s1, const T& s2, const unsigned) {
     // Dynamic programming implementation.
     // Uses only O(len(s2)) space and O(len(s1)*len(s2)) time.
     const auto l1(s1.size());
@@ -155,7 +155,7 @@ Compiler::EventsMap::const_iterator Compiler::findGlobalEvent(const std::wstring
         if(allEventsMap.find(name) != allEventsMap.end())
             throw TranslatableError(pos, ERROR_EMIT_LOCAL_EVENT).arg(name);
         else
-            throw e;
+            throw std::move(e);
     }
 }
 

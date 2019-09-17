@@ -15,7 +15,10 @@ add_library(thymio-device-manager-lib STATIC
     aseba_message_writer.h
     aseba_node_registery.h
     aseba_node_registery.cpp
+    aseba_nodeid_generator.h
     uuid_provider.h
+    aseba_device.h
+    aseba_device.cpp
     aseba_endpoint.h
     aseba_endpoint.cpp
     aseba_node.h
@@ -24,8 +27,10 @@ add_library(thymio-device-manager-lib STATIC
     aseba_tcpacceptor.cpp
     aseba_property.h
     app_server.h
+    app_server.cpp
     app_token_manager.h
     app_endpoint.h
+    app_endpoint.cpp
     flatbuffers_message_reader.h
     flatbuffers_message_writer.h
     flatbuffers_messages.h
@@ -34,6 +39,8 @@ add_library(thymio-device-manager-lib STATIC
     thymio2_fwupgrade_impl.cpp
     fw_update_service.h
     fw_update_service.cpp
+    wireless_configurator_service.h
+    wireless_configurator_service.cpp
     node_id.h
     usb_utils.h
     utils.h
@@ -77,6 +84,7 @@ else()
             serialserver.cpp
             serial_usb_device.h
         )
+        target_link_libraries(thymio-device-manager-lib PUBLIC ${UDEV_LIBRARIES})
         target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL MOBSYA_TDM_ENABLE_UDEV)
     else()
         target_sources(thymio-device-manager-lib PRIVATE
@@ -117,10 +125,16 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
     pugixml
     range-v3
     OpenSSL::SSL
-    OpenSSL::Crypto
-       )
+    OpenSSL::Crypto)
+
+if(APPLE)
+    find_library(CoreFoundation CoreFoundation)
+    find_library(IOKit IOKit)
+    target_link_libraries(thymio-device-manager-lib PUBLIC ${CoreFoundation} ${IOKit})
+endif()
+
 if(WIN32)
-    target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt)
+    target_link_libraries(thymio-device-manager-lib PUBLIC bcrypt winspool ws2_32 setupapi)
 endif()
 
 if (MSVC)

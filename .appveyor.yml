@@ -50,7 +50,7 @@ install:
   - set "PATH=%PATH%;C:\Program Files (x86)\NSIS"
 
   - cd "%APPVEYOR_BUILD_FOLDER%"
-  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190807.2/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
+  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190904.1/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
   - appveyor DownloadFile https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz -FileName thymio-blockly.tar.gz
   - 7z e thymio-blockly.tar.gz && 7z x thymio-blockly.tar
   - 7z e scratch-gui.tar.gz && 7z x scratch-gui.tar
@@ -59,14 +59,18 @@ install:
 
 
 before_build:
-  - cd "%APPVEYOR_BUILD_FOLDER%"
   - if [%USE_VS_TOOLCHAIN%]==[true] (
       set "PATH=%QT5%\bin;%PATH%" &&
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %ARCH%
     )
-  - git submodule update --init --recursive
+  - cd C:\projects
+  - if exist C:\projects\vcpkg (move C:\projects\vcpkg  C:\projects\vcpkg_copy)
+  - git clone https://github.com/Mobsya/vcpkg.git && cd vcpkg
+  - if exist C:\projects\vcpkg_copy\installed (move C:\projects\vcpkg_copy\installed  C:\projects\vcpkg\installed)
+  - C:\projects\vcpkg\bootstrap-vcpkg.bat && C:\projects\vcpkg\vcpkg.exe install --triplet "%ARCH%-windows-static" openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess
 
-  - vcpkg install openssl:x86-windows-static openssl:x64-windows-static zlib:x86-windows-static zlib:x64-windows-static
+  - cd "%APPVEYOR_BUILD_FOLDER%"
+  - git submodule update --init --recursive
 
 build_script:
 #Scratch
@@ -75,13 +79,13 @@ build_script:
   - mkdir build
   - cd build
   - if [%COMPILER%]==[ClangCL] (
-      cmake .. -GNinja "-DBoost_DEBUG=ON" -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILEE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%"  "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON &&
+      cmake .. -GNinja "-DBoost_DEBUG=ON" -DBUILD_SHARED_LIBS=OFF -DCMAKE_TOOLCHAIN_FILE=c:/projects/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILEE=%APPVEYOR_BUILD_FOLDER%\windows\clang-cl-toolchain.cmake" "-DCMAKE_LINKER=%LLD_LINK%" "-DCMAKE_PREFIX_PATH=%QT5%;"  "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static" -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON &&
       ninja -v &&
       cpack -D CPACK_GENERATOR="NSIS"
     )
 
   - if [%COMPILER%]==[MSVC] (
-      cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_LIBRARYDIR%" -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\cl-toolchain.cmake" "-DCMAKE_PREFIX_PATH=%QT5%;" -DCMAKE_BUILD_TYPE=Release "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static"
+      cmake .. -GNinja -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_TOOLCHAIN_FILE=c:/projects/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=%APPVEYOR_BUILD_FOLDER%\windows\cl-toolchain.cmake" "-DCMAKE_PREFIX_PATH=%QT5%;" -DCMAKE_BUILD_TYPE=Release "-DVCPKG_TARGET_TRIPLET=%ARCH%-windows-static"
       -DCREATE_QT_CONF_FILE=ON &&
       ninja -v &&
       ctest &&
@@ -98,13 +102,13 @@ cache:
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
   - 'C:\Program Files (x86)\NSIS'
+  - C:\projects\vcpkg\installed\
 
 image: Visual Studio 2017
 platform: x64
 
 environment:
   NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip
-  SDL_URL: https://libsdl.org/release/SDL2-devel-2.0.7-VC.zip
   CMAKE_URL: https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0-win64-x64.zip
   SIGNTOOL_PFX: '%APPVEYOR_BUILD_FOLDER%\windows\appveyor\mobsya.pfx'
   PFX_SECURE_FILE_DECODE:
@@ -113,7 +117,6 @@ environment:
     secure: 3h/VH0p48X8zQ9cnqgpJt9yAF2/eGx+Ne8mpDXJmKaM=
 
   #CMake expect forward slashes (see https://gitlab.kitware.com/cmake/cmake/issues/16816)
-  BOOST_ROOT: 'C:\Libraries\boost_1_69_0'
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=5"
   matrix:
     #- platform: x64
@@ -133,10 +136,8 @@ environment:
 
     - ARCH: x64
       COMPILER: MSVC
-      QT5: C:\Qt\5.11\msvc2017_64
+      QT5: C:\Qt\5.12\msvc2017_64
       USE_VS_TOOLCHAIN: true
-      BOOST_LIBRARYDIR: 'C:/Libraries/boost_1_69_0/lib64-msvc-14.1'
-
 deploy:
   tag: nightly
   release: nightly

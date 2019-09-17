@@ -3,7 +3,6 @@
 #include "TargetModels.h"
 #include "NamedValuesVectorModel.h"
 #include "StudioAeslEditor.h"
-#include "EventViewer.h"
 #include "FindDialog.h"
 #include "ModelAggregator.h"
 #include "translations/CompilerTranslator.h"
@@ -105,29 +104,29 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         if(node->status() == mobsya::ThymioNode::Status::Available)
             node->lock();
         auto ptr = node.get();
-        node->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
-        node->setWatchSharedVariablesEnabled(true);
-        node->setWatchEventsEnabled(true);
-        node->setWatchEventsDescriptionEnabled(true);
-        node->setWatchVMExecutionStateEnabled(true);
+        ptr->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
+        ptr->setWatchSharedVariablesEnabled(true);
+        ptr->setWatchEventsEnabled(true);
+        ptr->setWatchEventsDescriptionEnabled(true);
+        ptr->setWatchVMExecutionStateEnabled(true);
         m_vm_variables_model.clear();
 
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::onExecutionPosChanged);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
-        connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
-        connect(node.get(), &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
-        connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
-        connect(node.get(), &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
-        connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
-        connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::onExecutionPosChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
+        connect(ptr, &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
+        connect(ptr, &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
+        connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
+        connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
+        connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
-        connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
 
         onStatusChanged();
         updateAsebaVMDescription();
@@ -448,8 +447,6 @@ void NodeTab::updateStatusLabel() {
     }
 
     const auto executionStatus = m_thymio->vmExecutionState();
-    const bool busy = status == mobsya::ThymioNode::Status::Busy;
-
     QString statusLabel;
     switch(executionStatus) {
         case mobsya::ThymioNode::VMExecutionState::Stopped: statusLabel = tr("Stopped"); break;
@@ -587,22 +584,6 @@ void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
     m_eventsWidget->onEvents(events);
 }
 
-
-static void write16(QIODevice& dev, const uint16_t v) {
-    dev.write((const char*)&v, 2);
-}
-
-static void write16(QIODevice& dev, const VariablesDataVector& data, const char* varName) {
-    if(data.empty()) {
-        std::cerr << "Warning, cannot find " << varName << " required to save bytecode, using 0" << std::endl;
-        write16(dev, 0);
-    } else
-        dev.write((const char*)&data[0], 2);
-}
-
-static uint16_t crcXModem(const uint16_t oldCrc, const QString& s) {
-    return crcXModem(oldCrc, s.toStdWString());
-}
 
 void NodeTab::saveBytecode() const {
     /* const QString& nodeName(target->getName(id));

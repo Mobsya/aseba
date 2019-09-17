@@ -271,7 +271,7 @@ struct EventDeclNode : Node {
         return new EventDeclNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -295,7 +295,7 @@ struct EmitNode : Node {
         return new EmitNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -316,7 +316,7 @@ struct SubDeclNode : Node {
         return new SubDeclNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -417,7 +417,7 @@ struct ImmediateNode : Node {
     }
 
     Node* expandVectorialNodes(std::wostream* dump, Compiler* compiler = nullptr, unsigned int index = 0) override;
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::INT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -444,7 +444,7 @@ struct StoreNode : Node {
         return new StoreNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -473,7 +473,7 @@ struct LoadNode : Node {
         return new LoadNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::INT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -504,7 +504,7 @@ struct ArrayWriteNode : Node {
         return new ArrayWriteNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -534,7 +534,7 @@ struct ArrayReadNode : Node {
         return new ArrayReadNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::INT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -565,7 +565,7 @@ struct LoadNativeArgNode : Node {
         return new LoadNativeArgNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::INT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -588,7 +588,7 @@ struct CallNode : Node {
         return new CallNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
     Node* optimize(std::wostream* dump) override;
@@ -608,10 +608,10 @@ struct ReturnNode : Node {
         return new ReturnNode(*this);
     }
 
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         return ReturnType::UNIT;
     }
-    Node* optimize(std::wostream* dump) override {
+    Node* optimize(std::wostream*) override {
         return this;
     }
     unsigned getStackDepth() const override {
@@ -638,16 +638,16 @@ struct AbstractTreeNode : Node {
     Node* expandAbstractNodes(std::wostream* dump) override = 0;
 
     // Following operations should not be performed on abstraction nodes
-    ReturnType typeCheck(Compiler* compiler) override {
+    ReturnType typeCheck(Compiler*) override {
         abort();
     }
-    Node* optimize(std::wostream* dump) override {
+    Node* optimize(std::wostream*) override {
         abort();
     }
     unsigned getStackDepth() const override {
         abort();
     }
-    void emit(PreLinkBytecode& bytecodes) const override {
+    void emit(PreLinkBytecode&) const override {
         abort();
     }
 };
@@ -731,7 +731,7 @@ struct ArithmeticAssignmentNode : AbstractTreeNode {
 
     void checkVectorSize() const override;
     Node* expandAbstractNodes(std::wostream* dump) override;
-    Node* expandVectorialNodes(std::wostream* dump, Compiler* compiler = nullptr, unsigned int index = 0) override {
+    Node* expandVectorialNodes(std::wostream*, Compiler* = nullptr, unsigned int = 0) override {
         abort();
     }  // should not happen
     std::wstring toWString() const override;
@@ -760,7 +760,7 @@ struct UnaryArithmeticAssignmentNode : AbstractTreeNode {
     }
 
     Node* expandAbstractNodes(std::wostream* dump) override;
-    Node* expandVectorialNodes(std::wostream* dump, Compiler* compiler = nullptr, unsigned int index = 0) override {
+    Node* expandVectorialNodes(std::wostream*, Compiler* = nullptr, unsigned int = 0) override {
         abort();
     }  // should not happen
     std::wstring toWString() const override;

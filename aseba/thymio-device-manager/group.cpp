@@ -101,9 +101,8 @@ void group::emit_events(const properties_map& map, write_callback&& cb) {
     }
 }
 
-void group::on_event_received(std::shared_ptr<aseba_endpoint> source_ep, const node_id& source_node,
-                              const group::properties_map& events,
-                              const std::chrono::system_clock::time_point& timestamp) {
+void group::on_event_received(std::shared_ptr<aseba_endpoint> source_ep, const node_id&,
+                              const group::properties_map& events, const std::chrono::system_clock::time_point&) {
     // Broadcast the events to other endpoints
     for(const auto& ep : endpoints()) {
         if(ep == source_ep)

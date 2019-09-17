@@ -209,9 +209,8 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
 }
 
 tl::expected<aseba_node::compilation_result, boost::system::error_code>
-aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs,
-                               fb::ProgrammingLanguage language, const std::string& program,
-                               Aseba::BytecodeVector& bytecode) {
+aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions&, fb::ProgrammingLanguage language,
+                               const std::string& program, Aseba::BytecodeVector& bytecode) {
 
     if(language == fb::ProgrammingLanguage::Aesl) {
         return tl::make_unexpected(make_error_code(mobsya::error_code::unsupported_language));
@@ -529,7 +528,7 @@ void aseba_node::cancel_pending_breakpoint_request() {
 }
 
 aseba_node::vm_execution_state aseba_node::execution_state() const {
-    return {m_vm_state.state, m_vm_state.line};
+    return {m_vm_state.state, m_vm_state.line, fb::VMExecutionError::NoError, {}};
 }
 
 void aseba_node::on_event_received(const std::unordered_map<std::string, property>& events,
@@ -703,7 +702,7 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
             }
         }
         data_it = data_it + count;
-        start += count;
+        start += uint16_t(count);
     }
 }
 
@@ -773,12 +772,12 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
             return;
         const auto d = (uint16_t*)info.data.data();
         m_th2_rfid_settings = {bswap16(d[0]), bswap16(d[1]), bswap16(d[2])};
-        mLogInfo("node {} : net node={}, network={}, channel={}", native_id(), m_th2_rfid_settings.node_id,
+        mLogInfo("node {} : net node={:x}, network={}, channel={}", native_id(), m_th2_rfid_settings.node_id,
                  m_th2_rfid_settings.network_id, m_th2_rfid_settings.channel);
     }
 }
 
-bool aseba_node::set_rf_settings(uint16_t network, uint16_t channel, uint16_t node) {
+bool aseba_node::set_rf_settings(uint16_t network, uint16_t node, uint8_t channel) {
     if(m_description.protocolVersion < 9)
         return false;
     if(node == 0)
@@ -788,7 +787,12 @@ bool aseba_node::set_rf_settings(uint16_t network, uint16_t channel, uint16_t no
     (uint16_t&)(*(data.data())) = bswap16(network);
     (uint16_t&)(*(data.data() + 2)) = bswap16(node);
     (uint16_t&)(*(data.data() + 4)) = bswap16(channel);
+
+    auto ep = endpoint();
+
     write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_THYMIO2_RF_SETTINGS, data));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    write_message(std::make_shared<Aseba::Reboot>(native_id()));
     write_message(std::make_shared<Aseba::Reboot>(native_id()));
     return true;
 }

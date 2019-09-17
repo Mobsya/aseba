@@ -42,7 +42,6 @@ These directories contain source code:
   * `studio`: integrated development environment
   * `joy`: joystick client using SDL2
   * `thymioupdater`: firmware updater for the Thymio II robot
-  * `thymiownetconfig`: GUI to configure the network settings of Wireless Thymio
   * `massloader`: very quickly load the same code to several robots
 * `tests`: unit tests
   * `compiler`: for compiler

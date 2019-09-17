@@ -50,6 +50,9 @@ if ext[1:] not in ['exe', 'dll']:
 	print("Not a signable file, ignoring")
 	exit(0)
 
+if pfx.startswith("$"):
+    print("Probably a Pull request")
+    exit(0)
 
 #signtool ( native windows)
 if pss and pfx:

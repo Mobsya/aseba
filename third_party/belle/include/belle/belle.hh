@@ -1,3 +1,5 @@
+// clang-format off
+
 /*
                                     88888888
                                   888888888888
@@ -79,11 +81,12 @@ SOFTWARE.
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/beast/websocket.hpp>
-
+#include <boost/beast/core.hpp>
 #ifdef OB_BELLE_CONFIG_SSL_ON
-#include <boost/beast/websocket/ssl.hpp>
+//#include <boost/beast/websocket/ssl.hpp>
 #endif // OB_BELLE_CONFIG_SSL_ON
+#include <boost/beast/websocket.hpp>
+#include <boost/beast/websocket/ssl.hpp>
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/strand.hpp>
@@ -615,31 +618,22 @@ public:
   }
 
   template<typename SyncStream>
-  friend void teardown(websocket::role_type,
-    ssl_stream<SyncStream>& stream, error_code& ec);
+  friend void teardown(boost::beast::role_type role,
+    ssl_stream<SyncStream>& stream, error_code& ec) {
+        teardown(role, *stream._ptr, ec);
+    }
 
   template<typename AsyncStream, typename TeardownHandler>
-  friend void async_teardown(websocket::role_type,
-    ssl_stream<AsyncStream>& stream, TeardownHandler&& handler);
+  friend void async_teardown(boost::beast::role_type role,
+    ssl_stream<AsyncStream>& stream, TeardownHandler&& handler) {
+        async_teardown(role, *stream._ptr, std::forward<TeardownHandler>(handler));
+  }
 
 private:
 
   std::unique_ptr<stream_type> _ptr;
 }; // class ssl_stream
 
-template<typename SyncStream>
-inline void teardown(websocket::role_type role,
-  ssl_stream<SyncStream>& stream, error_code& ec)
-{
-  websocket::teardown(role, *stream._ptr, ec);
-}
-
-template<typename AsyncStream, typename TeardownHandler>
-inline void async_teardown(websocket::role_type role,
-  ssl_stream<AsyncStream>& stream, TeardownHandler&& handler)
-{
-  websocket::async_teardown(role, *stream._ptr, std::forward<TeardownHandler>(handler));
-}
 #endif // OB_BELLE_CONFIG_SSL_ON
 
 } // namespace Detail
@@ -1154,12 +1148,13 @@ private:
 
   public:
 
-    Websocket_Base(net::io_context& io_, std::shared_ptr<Attr> const attr_,
+
+    Websocket_Base(boost::asio::executor e, std::shared_ptr<Attr> const attr_,
       Request&& req_, fns_on_websocket const& on_websocket_) :
       _attr {attr_},
       _ctx {static_cast<Derived&>(*this), std::move(req_), _attr->channels},
       _on_websocket {on_websocket_},
-      _strand {io_.get_executor()}
+      _strand {e}
     {
     }
 
@@ -1401,7 +1396,7 @@ private:
     std::shared_ptr<Attr> const _attr;
     Websocket_Ctx _ctx;
     fns_on_websocket const& _on_websocket;
-    net::strand<net::io_context::executor_type> _strand;
+    net::strand<net::executor> _strand;
     boost::beast::multi_buffer _buf;
     std::deque<std::shared_ptr<std::string const>> _que {};
   }; // class Websocket_Base
@@ -1414,7 +1409,7 @@ private:
 
     Websocket(tcp::socket&& socket_, std::shared_ptr<Attr> const attr_,
       Request&& req_, fns_on_websocket const& on_websocket_) :
-      Websocket_Base<Websocket> {socket_.get_executor().context(), attr_,
+      Websocket_Base<Websocket> {socket_.get_executor(), attr_,
         std::move(req_), on_websocket_},
       _socket {std::move(socket_)}
     {
@@ -1474,7 +1469,7 @@ private:
 
     Websockets(Detail::ssl_stream<tcp::socket>&& socket_, std::shared_ptr<Attr> const attr_,
       Request&& req_, fns_on_websocket const& on_websocket_) :
-      Websocket_Base<Websockets> {socket_.get_executor().context(), attr_,
+      Websocket_Base<Websockets> {socket_.get_executor(), attr_,
         std::move(req_), on_websocket_},
       _socket {std::move(socket_)}
     {
@@ -2019,7 +2014,7 @@ private:
   public:
 
     Http(tcp::socket socket_, std::shared_ptr<Attr> const attr_) :
-      Http_Base<Http, Websocket> {socket_.get_executor().context(), attr_},
+      Http_Base<Http, Websocket> {static_cast<boost::asio::io_context&>(socket_.get_executor().context()), attr_},
       _socket {std::move(socket_)}
     {
     }
@@ -2078,7 +2073,7 @@ private:
   public:
 
     Https(tcp::socket&& socket_, std::shared_ptr<Attr> const attr_) :
-      Http_Base<Https, Websockets> {socket_.get_executor().context(), attr_},
+      Http_Base<Https, Websockets> {static_cast<boost::asio::io_context&>(socket_.get_executor().context()), attr_},
       _socket {std::move(socket_), attr_->ssl_context}
     {
       this->_close = true;
@@ -2304,7 +2299,7 @@ public:
     _address {address_},
     _port {port_}
   {
-    _attr->ssl = true;
+    _attr->ssl = ssl_;
   }
 #endif // OB_BELLE_CONFIG_SSL_ON
 

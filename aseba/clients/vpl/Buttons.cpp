@@ -81,7 +81,7 @@ namespace ThymioVPL {
         colors.push_back(qMakePair(brushColor, penColor));
     }
 
-    void GeometryShapeButton::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+    void GeometryShapeButton::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
         painter->setBrush(colors[curState].first);
         painter->setPen(QPen(colors[curState].second, 5, Qt::SolidLine, Qt::RoundCap,
                              Qt::RoundJoin));  // outline
@@ -154,7 +154,7 @@ namespace ThymioVPL {
         return QRectF(0, 0, Style::addRemoveButtonWidth, Style::addRemoveButtonHeight);
     }
 
-    void AddRemoveButton::mousePressEvent(QGraphicsSceneMouseEvent* event) {}
+    void AddRemoveButton::mousePressEvent(QGraphicsSceneMouseEvent*) {}
 
     void AddRemoveButton::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
         if(boundingRect().contains(event->pos()))
@@ -186,7 +186,7 @@ namespace ThymioVPL {
         return QRectF(0, 0, Style::removeBlockButtonWidth, Style::removeBlockButtonHeight);
     }
 
-    void RemoveBlockButton::mousePressEvent(QGraphicsSceneMouseEvent* event) {}
+    void RemoveBlockButton::mousePressEvent(QGraphicsSceneMouseEvent*) {}
 
     void RemoveBlockButton::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
         if(boundingRect().contains(event->pos()))

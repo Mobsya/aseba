@@ -86,10 +86,6 @@ public:
 
     // (de-)serialization methods
 
-#ifndef ASEBA_NO_DASHEL
-    void serialize(Dashel::Stream* stream) const;
-    static Message* receive(Dashel::Stream* stream);
-#endif
     static Message* create(uint16_t source, uint16_t type, SerializationBuffer& buffer);
     Message* clone() const;
     void dump(std::wostream& stream) const;
@@ -309,6 +305,7 @@ protected:
     operator const char*() const override {
         return "get node description fragment";
     }
+
 private:
     int16_t m_fragment;
 };
@@ -387,8 +384,8 @@ public:
     Disconnected() : Message(ASEBA_MESSAGE_DISCONNECTED) {}
 
 protected:
-    void serializeSpecific(SerializationBuffer& buffer) const override {}
-    void deserializeSpecific(SerializationBuffer& buffer) override {}
+    void serializeSpecific(SerializationBuffer&) const override {}
+    void deserializeSpecific(SerializationBuffer&) override {}
     void dumpSpecific(std::wostream&) const override {}
     operator const char*() const override {
         return "disconnected";
@@ -708,10 +705,6 @@ protected:
 
 bool operator==(const SetBytecode& lhs, const SetBytecode& rhs);
 
-#ifndef ASEBA_NO_DASHEL
-//! Call the SetBytecode multiple time in order to send all the bytecode
-void sendBytecode(Dashel::Stream* stream, uint16_t dest, const std::vector<uint16_t>& bytecode);
-#endif
 //! Call the SetBytecode multiple time in order to send all the bytecode
 void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
                   const std::vector<uint16_t>& bytecode);

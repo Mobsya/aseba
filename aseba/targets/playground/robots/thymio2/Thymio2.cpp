@@ -43,11 +43,11 @@ AsebaThymio2::AsebaThymio2(std::string robotName, int16_t nodeId)
 
     bytecode.resize(766 + 768);
     vm.bytecode = &bytecode[0];
-    vm.bytecodeSize = bytecode.size();
+    vm.bytecodeSize = uint16_t(bytecode.size());
 
     stack.resize(32);
     vm.stack = &stack[0];
-    vm.stackSize = stack.size();
+    vm.stackSize = uint16_t(stack.size());
 
     vm.variables = reinterpret_cast<int16_t*>(&variables);
     vm.variablesOld = reinterpret_cast<int16_t*>(&variablesOld);
@@ -67,7 +67,7 @@ AsebaThymio2::AsebaThymio2(std::string robotName, int16_t nodeId)
         openSDCardFile(-1);
 }
 
-void AsebaThymio2::collisionEvent(PhysicalObject* o) {
+void AsebaThymio2::collisionEvent(PhysicalObject*) {
     thisStepCollided = true;
 }
 
@@ -137,8 +137,8 @@ void AsebaThymio2::controlStep(double dt) {
     variables.proxGroundReflected[1] = static_cast<int16_t>(groundSensor1.getValue());
     variables.proxGroundDelta[0] = static_cast<int16_t>(groundSensor0.getValue());
     variables.proxGroundDelta[1] = static_cast<int16_t>(groundSensor1.getValue());
-    variables.motorLeftSpeed = leftSpeed * 500. / 16.6;
-    variables.motorRightSpeed = rightSpeed * 500. / 16.6;
+    variables.motorLeftSpeed = int16_t(leftSpeed * 500. / 16.6);
+    variables.motorRightSpeed = int16_t(rightSpeed * 500. / 16.6);
 
     // run timers
     timer0.step(dt);

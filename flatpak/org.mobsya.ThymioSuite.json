@@ -50,8 +50,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2",
-                    "sha256": "8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406"
+                    "url":  "http://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz",
+                    "sha256": "882b48708d211a5f48e60b0124cf5863c1534cd544ecd0664bb534a4b5d506e9"
                 }
             ],
             "buildsystem": "simple",
@@ -87,8 +87,8 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190807.2/scratch-gui.tar.gz",
-                    "sha256": "735009cd1b4363ead59915cfc5211f958346c9ec01ea546ffebaa49f3747fa45",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190904.1/scratch-gui.tar.gz",
+                    "sha256": "b038c572194f4009d30668fd1c259e978ed3a428ee734cae5d9d2ccba616513f",
                     "strip-components": 0
                 }
             ],
@@ -101,7 +101,6 @@
                 "/lib/cmake",
                 "/include",
                 "/share/enki",
-                "/share/dashel",
                 "/share/enki"
             ]
         }

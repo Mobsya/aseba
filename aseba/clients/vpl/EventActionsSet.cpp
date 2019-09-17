@@ -689,7 +689,7 @@ namespace ThymioVPL {
     }
 
     //! Disable delete block button
-    void EventActionsSet::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
+    void EventActionsSet::hoverLeaveEvent(QGraphicsSceneHoverEvent*) {
         deleteBlockButton->hide();
         removeBlockIndex = -1;
     }

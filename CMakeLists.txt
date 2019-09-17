@@ -9,9 +9,17 @@ endif()
 
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
+cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0003 NEW)
+
 
 
 project(ThymioSuite)
+set (CMAKE_PROJECT_VERSION 2.0)
+set (CMAKE_PROJECT_VERSION_MAJOR 2)
+set (CMAKE_PROJECT_VERSION_MINOR 0)
+set(OpenGL_GL_PREFERENCE GLVND)
+
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
@@ -27,8 +35,7 @@ if(IOS)
 endif()
 
 # ensure a minimal version of CMake
-cmake_minimum_required(VERSION 3.5)
-include(FeatureSummary)
+cmake_minimum_required(VERSION 3.13)
 include(InstallRequiredSystemLibraries)
 
 # additional CMake modules
@@ -40,10 +47,8 @@ include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
 include(CMakeModules/aseba_conf.cmake)
 include(CMakeModules/codesign.cmake)
-include(CMakeModules/dashel.cmake)
 include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
-
 
 if(NOT ANDROID)
     include(CMakeModules/boost.cmake)
@@ -127,12 +132,13 @@ if(CREATE_QT_CONF_FILE)
     install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
 endif()
 
-# Qt and Qwt
+
+
+# Qt
 find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools Charts)
 
 if (NOT ANDROID AND NOT IOS)
     find_package(Qt5Help)
-    find_package(Qwt)
 endif()
 
 if (UNIX AND NOT APPLE AND NOT ANDROID)
@@ -153,11 +159,12 @@ set(LIB_VERSION_MINOR 0)
 set(LIB_VERSION_PATCH 0)
 set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH})
 
+find_package(Python3)
 
 if(WIN32)
     add_subdirectory(third_party/bonjour)
     set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    set(CPACK_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows ${CPACK_MODULE_PATH})
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows)
     set(CPACK_MONOLITHIC_INSTALL 1)
     configure_file(
         ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
@@ -213,14 +220,12 @@ if(FLAT_PACK_BUILD)
 endif()
 
 if(NOT IOS)
-    if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
-        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
-    endif()
-    if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
-        install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
-        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
-    endif()
+if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
+endif()
+if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
+endif()
 endif() #NOT IOS
-
-feature_summary( WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)

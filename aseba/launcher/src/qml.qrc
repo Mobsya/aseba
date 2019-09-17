@@ -72,5 +72,20 @@
         <file>apps/scratch/desc.it.html</file>
         <file>apps/blockly/desc.fr.html</file>
         <file>apps/blockly/desc.it.html</file>
+        <file>apps/vpl/desc.de.html</file>
+        <file>apps/scratch/desc.de.html</file>
+        <file>apps/blockly/desc.de.html</file>
+        <file>apps/studio/desc.de.html</file>
+        <file>qml/wirelessconfigurator/WirelessConfigurator.qml</file>
+        <file>qml/wirelessconfigurator/TitleBar.qml</file>
+        <file>assets/multiple-thymio-one-dongle.svg</file>
+        <file>assets/usb-cable-and-dongle.svg</file>
+        <file>assets/one-thymio-one-dongle.svg</file>
+        <file>qml/wirelessconfigurator/Button.qml</file>
+        <file>assets/alert.svg</file>
+        <file>qml/wirelessconfigurator/ChannelButton.qml</file>
+        <file>qml/wirelessconfigurator/ChannelSelector.qml</file>
+        <file>qml/wirelessconfigurator/NetworkIdInput.qml</file>
+        <file>qml/wirelessconfigurator/WirelessWizardWarningDialog.qml</file>
     </qresource>
 </RCC>

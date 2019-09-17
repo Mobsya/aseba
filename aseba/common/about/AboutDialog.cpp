@@ -20,7 +20,6 @@
 #include "AboutDialog.h"
 #include "../consts.h"
 #include "../authors.h"
-#include "dashel/dashel.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -30,9 +29,6 @@
 #include <QTabWidget>
 #include <QSvgRenderer>
 #include <QPainter>
-#ifdef HAVE_QWT
-#    include <qwt_global.h>
-#endif  // HAVE_QWT
 #include <QtDebug>
 
 #include <vector>
@@ -44,7 +40,6 @@ namespace Aseba {
 // Assume T is a sorted container
 template <class T>
 static bool haveCommonElements(const T& container1, const T& container2) {
-    using I = typename T::const_iterator;
     auto first1(container1.begin());
     auto last1(container1.end());
     auto first2(container2.begin());
@@ -202,17 +197,10 @@ AboutBox::AboutBox(QWidget* parent, const Parameters& parameters) : QDialog(pare
     const QString libEntryText = tr("<b><a href=\"%3\">%1</a></b> version %2");
     const QString asebaBuildInfo =
         tr("build version %1, protocol version %2").arg(ASEBA_REVISION).arg(ASEBA_PROTOCOL_VERSION);
-    const QString dashelStreamInfo =
-        tr("supported stream types: %1").arg(QString::fromStdString(Dashel::streamTypeRegistry.list()));
     const QString liStart = "<li style=\"margin-top:5px; margin-bottom:5px;\">";
     const QString libraryText = welcomeText + "<ul>" + liStart +
         libEntryText.arg("Aseba").arg(ASEBA_VERSION).arg("http://aseba.io") + "<br/>" + asebaBuildInfo + "</li>" +
-        liStart + libEntryText.arg("Dashel").arg(DASHEL_VERSION).arg("http://mobsya.github.io/dashel/") +
-        "<br/>" + dashelStreamInfo + "</li>" + liStart +
-        libEntryText.arg("Qt").arg(qVersion()).arg("https://www.qt.io/") + "</li>" +
-#ifdef HAVE_QWT
-        liStart + libEntryText.arg("Qwt").arg(QWT_VERSION_STR).arg("http://qwt.sourceforge.net/") + "</li>" +
-#endif  // HAVE_QWT
+        liStart + libEntryText.arg("Qt").arg(qVersion()).arg("https://www.qt.io/") + "</li>" +
 #ifdef HAVE_ENKI
         liStart + libEntryText.arg("Enki").arg("2.0~pre").arg("https://github.com/enki-community/enki") + "</li>" +
 #endif  // HAVE_ENKI

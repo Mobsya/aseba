@@ -9,6 +9,7 @@
 #include <functional>
 #include <mutex>
 #include <thread>
+#include <boost/signals2.hpp>
 #include "usb_utils.h"
 #include "serial_usb_device.h"
 #ifdef MOBSYA_TDM_ENABLE_UDEV
@@ -22,6 +23,10 @@ class serial_acceptor;
 class serial_acceptor_service : public boost::asio::detail::service_base<serial_acceptor_service> {
 public:
     serial_acceptor_service(boost::asio::io_context& io_service);
+
+    serial_acceptor_service(boost::asio::execution_context& io_context)
+        : serial_acceptor_service(static_cast<boost::asio::io_context&>(io_context)) {}
+
     struct implementation_type {
         std::vector<usb_device_identifier> compatible_devices;
     };
@@ -48,6 +53,8 @@ public:
         }
     }
     void free_device(const std::string& s);
+
+    boost::signals2::signal<void(std::string)> device_unplugged;
 
 private:
     struct request {

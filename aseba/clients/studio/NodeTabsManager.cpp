@@ -67,7 +67,7 @@ void NodeTabsManager::setupButtons(NodeTab* tab) {
     auto lock = new LockButton(this);
     tabBar()->setTabButton(index, QTabBar::RightSide, lock);
 
-    connect(tab, &NodeTab::statusChanged, this, [this, tab, lock]() {
+    connect(tab, &NodeTab::statusChanged, this, [tab, lock]() {
         const auto thymio = tab->thymio();
         if(!thymio) {
             lock->setUnAvailable();
@@ -129,7 +129,6 @@ void NodeTabsManager::onNodeRemoved(std::shared_ptr<mobsya::ThymioNode> thymio) 
     auto it = m_tabs.find(thymio->uuid());
     if(it != m_tabs.end()) {
         (*it)->setThymio({});
-        auto idx = QTabWidget::indexOf(*it);
     }
 }
 

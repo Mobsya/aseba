@@ -223,7 +223,7 @@ Item {
                          visible: update_icon_ma.containsMouse
                          text: (type === ThymioNode.Thymio2) ?
                                    qsTr("A new firmware is available!\nClick to install it") :
-                                   qsTr("A new firmware is available!\nConnect the robot with an usb cable to install it")
+                                   qsTr("A new firmware is available!\nConnect the robot with a usb cable to install it")
                      }
                 }
             }
