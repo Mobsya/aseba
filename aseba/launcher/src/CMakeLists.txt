@@ -69,26 +69,26 @@ if(IOS)
     #target_link_libraries(thymio-launcher )
     qt_generate_qml_plugin_import(thymio-launcher QML_SRC ${CMAKE_CURRENT_SOURCE_DIR}/qml VERBOSE)
     qt_generate_plugin_import(thymio-launcher VERBOSE)
-
-   # link_directories("${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libraries")
 endif()
 
 # For developement icare dev identity
-set(SIGNING_ID "K62V5ND5Y9")
-set (CODE_SIGN_IDENTITY "iPhone Developer")
-
+set (SIGNING_ID "P97H86YL8K")
+#if(IOS AND IOS_ARCHIVE_BUILD)
+#    set (CODE_SIGN_IDENTITY "iPhone Distribution")
+#else()
+#    set (CODE_SIGN_IDENTITY "iPhone Developer")
+#endif()
 
 if(IOS)
-
     #create app reference
     add_qt_ios_app(thymio-launcher
         NAME "ThymiOS"
-        BUNDLE_IDENTIFIER "ch.icare.thymio.launcher"
+        BUNDLE_IDENTIFIER "org.mobsya.thymio.launcher.ios"
         VERSION "0.2.0"
         SHORT_VERSION "0.2.0"
         LONG_VERSION "1.2.3.456"
         CUSTOM_PLIST "${PROJECT_SOURCE_DIR}/ios/MacOSXBundleInfo.plist.in"
-        CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY}
+   #     CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY}
         TEAM_ID ${SIGNING_ID}
         IPHONEOS_DEPLOYMENT_TARGET "11.0"
         COPYRIGHT "My Cool Copyright"
@@ -110,11 +110,12 @@ if(IOS)
      )
 
  #overriding information for publishing
- qt_ios_set_xcode_property(thymio-launcher CODE_SIGN_STYLE "Manual" "Release")
- qt_ios_set_xcode_property(thymio-launcher CODE_SIGN_IDENTITY "E77CDEB209064D8DA26EE765F8AAF91ED5D005B3" "Release")
- qt_ios_set_xcode_property(thymio-launcher DEVELOPMENT_TEAM "Icare Institut de recherche en informatique" "Release")
- qt_ios_set_xcode_property(thymio-launcher PROVISIONING_PROFILE_SPECIFIER "OTA Sign All *" "Release")
 
+# qt_ios_set_xcode_property(thymio-launcher CODE_SIGN_IDENTITY "iPhone Distribution" "Release")
+
+# qt_ios_set_xcode_property(thymio-launcher CODE_SIGN_STYLE "Manual" "Release")
+# qt_ios_set_xcode_property(thymio-launcher DEVELOPMENT_TEAM "Icare Institut de recherche en informatique" "Release")
+# qt_ios_set_xcode_property(thymio-launcher PROVISIONING_PROFILE_SPECIFIER "OTA Sign All *" "Release")
 
  qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}" "Debug")
  qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}" "MinSizeRel")
@@ -140,17 +141,9 @@ target_link_libraries(thymio-launcher
 if(IOS AND IOS_ARCHIVE_BUILD)
 
     set_target_properties(thymio-launcher PROPERTIES
-    XCODE_ATTRIBUTE_INSTALL_PATH "${PROJECT_BINARY_DIR}/bin/"
+    XCODE_ATTRIBUTE_INSTALL_PATH "/Applications"
     XCODE_ATTRIBUTE_SKIP_INSTALL "No"
     )
-
-#    file(GLOB_RECURSE CUSTOM_ARCHIVE_LIB ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/*.a)
-#    target_link_libraries(thymio-launcher
-#        ${CUSTOM_ARCHIVE_LIB}
-#        )
-
-#    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin/libraries")
-#    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin/libraries")
 endif()
 
 file(GLOB_RECURSE QT_ADDITIONAL_PLUGINS ${CMAKE_PREFIX_PATH}/qml/*.a)
