@@ -210,5 +210,21 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
-
+#ifdef Q_OS_IOS
+Q_INVOKABLE  void Launcher::applicationStateChanged(Qt::ApplicationState state)
+{
+    static Qt::ApplicationState lastState = Qt::ApplicationActive;
+    
+    if((lastState == Qt::ApplicationActive ) && (state < Qt::ApplicationActive))
+    {
+        //Check if it could be interessting to store the current connected device to force reconnect to it later, if the browser is open
+    }
+    else if ( (lastState  < Qt::ApplicationActive) &&  (state == Qt::ApplicationActive ) )
+    {
+        //Fix the posisbility to reconnect from the thymio selection after the device sleeping, but does not provied the browser to reconnect
+        m_client->restartBrowser();
+    }
+    lastState = state;
+}
+#endif
 }  // namespace mobsya

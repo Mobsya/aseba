@@ -32,6 +32,9 @@ public:
 #ifdef Q_OS_OSX
     bool doLaunchPlaygroundBundle() const;
 #endif
+#ifdef Q_OS_IOS
+    Q_INVOKABLE void applicationStateChanged(Qt::ApplicationState state);
+#endif
 
     bool isZeroconfRunning() const;
 
