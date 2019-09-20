@@ -28,17 +28,16 @@ bool Launcher::doLaunchPlaygroundBundle() const {
         NSLog(@"Unable to find the bundle");
         return false;
     }
-    
-#ifndef Q_OS_IOS
     auto ws = [NSWorkspace sharedWorkspace];
     [ws launchApplicationAtURL:[bundle bundleURL]
         options:NSWorkspaceLaunchNewInstance
         configuration:@{} error:nil];
-#endif
     return true;
 
 }
 
+
+    
 bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) const {
     //Get the bundle path
     const auto path = QDir(QCoreApplication::applicationDirPath() +
@@ -64,14 +63,11 @@ bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) c
 
 
     auto urls = @[appUrl.toNSURL()];
-#ifndef Q_OS_IOS
     auto ws = [NSWorkspace sharedWorkspace];
     [ws openURLs:urls
                  withApplicationAtURL:url
                  options:NSWorkspaceLaunchNewInstance
-                 configuration:@{} error:nil];
-#endif
-    
+                 configuration:@{} error:nil];    
     return true;
 
 }
