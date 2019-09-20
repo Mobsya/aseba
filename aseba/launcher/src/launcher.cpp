@@ -116,7 +116,11 @@ bool Launcher::openUrl(const QUrl& url) {
 #ifdef MOBSYA_USE_WEBENGINE
     QUrl source("qrc:/qml/webview.qml");
 #else
+#ifdef Q_OS_IOS
+    QUrl source("qrc:/qml/webview_native_ipad.qml");
+#else
     QUrl source("qrc:/qml/webview_native.qml");
+#endif
 #endif
 
 
