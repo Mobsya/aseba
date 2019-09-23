@@ -126,7 +126,8 @@ int main(int argc, char** argv) {
     app.setActivationWindow(&w, true);
     app.setQuitOnLastWindowClosed(false);
     
+#ifdef Q_OS_IOS
     QObject::connect(&app, &QGuiApplication::applicationStateChanged, &launcher, &mobsya::Launcher::applicationStateChanged);
-        
+#endif
     return app.exec();
 }
