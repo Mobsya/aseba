@@ -145,7 +145,7 @@ Verbinden Sie den Roboter mit einem USB-Kabel, um diese zu installieren</transla
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="263"/>
-        <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
+        <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Kein Roboter gefunden, da der Bonjour-Dienst fehlt oder nicht funktioniert. &lt;a href=&apos;http://google.com&apos;&gt;Problemlösung&lt;/a&gt;</translation>
     </message>
 </context>
