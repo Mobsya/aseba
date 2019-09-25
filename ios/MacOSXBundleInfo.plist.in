@@ -49,7 +49,7 @@
 
     <!-- Short Version -->
     <key>CFBundleShortVersionString</key>
-    <string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>    
+    <string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
 
     <key>CFBundleSignature</key>
     <string>????</string>
@@ -64,6 +64,31 @@
     <!-- Copyright -->
     <key>NSHumanReadableCopyright</key>
     <string>${MACOSX_BUNDLE_COPYRIGHT}</string>
+
+    <!-- PERMISSIONS -->
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>Folder</string>
+    <key>NSFileProviderDomainUsageDescription</key>
+    <string>File</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>Download Folder</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Media Library</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Photo Library</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Camera</string>
+    <key>NSFileProviderPresenceUsageDescription</key>
+    <string>FileProv</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
 
     <!-- Ui Orientation -->
     <key>UISupportedInterfaceOrientations</key>

@@ -84,14 +84,14 @@ if(IOS)
     add_qt_ios_app(thymio-launcher
         NAME "ThymiOS"
         BUNDLE_IDENTIFIER "org.mobsya.thymio.launcher.ios"
-        VERSION "0.2.0"
-        SHORT_VERSION "0.2.0"
-        LONG_VERSION "1.2.3.456"
+        VERSION ${ASEBA_VERSION}
+        SHORT_VERSION ${ASEBA_VERSION}
+        LONG_VERSION "${ASEBA_VERSION}-${GIT_REVISION}"
         CUSTOM_PLIST "${PROJECT_SOURCE_DIR}/ios/MacOSXBundleInfo.plist.in"
    #     CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY}
         TEAM_ID ${SIGNING_ID}
         IPHONEOS_DEPLOYMENT_TARGET "11.0"
-        COPYRIGHT "My Cool Copyright"
+        COPYRIGHT "Mobysa"
         QML_DIR "${QT_WINDOWS_QT_ROOT}/qml"
         ASSET_DIR "${PROJECT_SOURCE_DIR}/ios/bundle/Assets.xcassets"
         MAIN_STORYBOARD "${PROJECT_SOURCE_DIR}/ios/bundle/Main.storyboard"
@@ -108,14 +108,6 @@ if(IOS)
        # HIDDEN_STATUS_BAR
         VERBOSE
      )
-
- #overriding information for publishing
-
-# qt_ios_set_xcode_property(thymio-launcher CODE_SIGN_IDENTITY "iPhone Distribution" "Release")
-
-# qt_ios_set_xcode_property(thymio-launcher CODE_SIGN_STYLE "Manual" "Release")
-# qt_ios_set_xcode_property(thymio-launcher DEVELOPMENT_TEAM "Icare Institut de recherche en informatique" "Release")
-# qt_ios_set_xcode_property(thymio-launcher PROVISIONING_PROFILE_SPECIFIER "OTA Sign All *" "Release")
 
  qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}" "Debug")
  qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}" "MinSizeRel")
