@@ -260,7 +260,7 @@ Item {
                     if(Utils.platformIsLinux()) {
                         return qsTr("No robot found because the Avahi Daemon is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
                     }
-                    return qsTr("No robot found because the Bonjour service is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
+                    return qsTr("No robot found because the Bonjour service is missing or not running. <a href='https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/'>Troubleshooting</a>")
                 }
                 color: "#DE7459"
                 linkColor: "#F9F871"

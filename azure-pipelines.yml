@@ -7,9 +7,9 @@ resources:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20190507.3"
+  value: "v20190910.1"
 - name: scratch_version
-  value: "v20190904.1"
+  value: "v20190923.2"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
