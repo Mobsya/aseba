@@ -9,7 +9,116 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#ifdef Q_OS_IOS
+#include <WebKit/WebKit.h>
+
+@interface LauncherDelegate : NSObject<WKNavigationDelegate,UIScrollViewDelegate>
+@property (strong,nonatomic) WKWebView* mwebview;
++(WKWebView*)createWebViewWithBaseURL:(NSURL*)url;
+@end
+
+@implementation LauncherDelegate
++(void)closeCurrentWebView
+{
+    if([self shareInstance].mwebview !=nil)
+    {
+        [[self shareInstance].mwebview removeFromSuperview];
+        [self shareInstance].mwebview = nil;
+    }
+    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+}
++ (LauncherDelegate*)shareInstance {
+    static LauncherDelegate *webviewmanager = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        webviewmanager = [[self alloc] init];
+    });
+    return webviewmanager;
+}
+
++(WKWebView*)createWebViewWithBaseURL:(NSURL*)url
+{
+    
+    if([self shareInstance].mwebview == nil)
+    {
+        WKWebViewConfiguration* conf = [[WKWebViewConfiguration alloc] init];
+        conf.preferences.javaScriptCanOpenWindowsAutomatically = true;
+        [self shareInstance].mwebview = [[WKWebView alloc] initWithFrame:[[[UIApplication sharedApplication] keyWindow]rootViewController].view.bounds  configuration:conf];
+        [self shareInstance].mwebview.scrollView.bounces = false;
+        [self shareInstance].mwebview.scrollView.scrollEnabled = false;
+        [self shareInstance].mwebview.scrollView.delegate = [self shareInstance];
+        [[self shareInstance].mwebview setNavigationDelegate:[self shareInstance]];
+        [[self shareInstance].mwebview setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+        
+        //Adding close button
+        UIButton* b = [UIButton buttonWithType:UIButtonTypeSystem];
+        [b setTitle:@"X" forState:UIControlStateNormal];
+        [b setTintColor:UIColor.blueColor];
+        [b setBackgroundColor:UIColor.whiteColor];
+        
+        [b.layer setCornerRadius:15];
+        [[b.heightAnchor constraintEqualToConstant:30] setActive:YES];
+        [[b.widthAnchor constraintEqualToConstant:30] setActive:YES];
+        
+        [b setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[self shareInstance].mwebview addSubview:b];
+        [[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:10] setActive:YES];
+        [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-10] setActive:YES];
+        [b addTarget:self  action:@selector(closeCurrentWebView) forControlEvents:UIControlEventTouchUpInside];
+      
+    }
+
+    QString s = QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath();
+    NSURL* pathURL = [NSURL fileURLWithPath:s.toNSString()];
+    [[self shareInstance].mwebview loadFileURL:url allowingReadAccessToURL:pathURL];
+    return [self shareInstance].mwebview;
+    
+}
+
+-(void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    //disabling zoom
+    if(webView.scrollView.pinchGestureRecognizer && webView.scrollView.pinchGestureRecognizer.isEnabled)
+    {
+        [webView.scrollView.pinchGestureRecognizer setEnabled:NO];
+    }
+
+    NSString* urlRequest = [[[navigationAction request] URL] absoluteString];
+    if([urlRequest containsString:@"https://scratch.mit.edu"])
+    {
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
+    }
+    decisionHandler(WKNavigationActionPolicyAllow);
+    
+}
+
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
+    NSString *javascript = @"var meta = document.createElement('meta');meta.setAttribute('name', 'viewport');meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');document.getElementsByTagName('head')[0].appendChild(meta);";
+    [webView evaluateJavaScript:javascript completionHandler:nil];
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    return nil;
+}
+
+@end
+#endif //Q_OS_IOS
+
 namespace mobsya {
+#ifdef Q_OS_IOS
+void Launcher::OpenUrlInNativeWebView(const QUrl& qurl)
+{
+    WKWebView* v = [LauncherDelegate createWebViewWithBaseURL:qurl.toNSURL()];
+    if(v.superview == nil)
+    {
+        [[[[UIApplication sharedApplication] keyWindow]rootViewController].view addSubview:v];
+    }
+    
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+}
+#endif
 
 auto QStringListToNSArray(const QStringList &list)
 {
@@ -19,6 +128,8 @@ auto QStringListToNSArray(const QStringList &list)
     }
     return result;
 }
+
+
 #ifdef Q_OS_OSX
 bool Launcher::doLaunchPlaygroundBundle() const {
     const auto path = QDir(QCoreApplication::applicationDirPath() +
@@ -73,3 +184,6 @@ bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) c
 }
 #endif //OSX
 }
+
+
+

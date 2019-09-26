@@ -20,6 +20,9 @@ public:
     Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
     bool doLaunchOsXBundle(const QString& name, const QVariantMap& args) const;
 #endif
+#ifdef Q_OS_IOS
+    void OpenUrlInNativeWebView(const QUrl& url);
+#endif
 
     Q_INVOKABLE QString search_program(const QString& name) const;
     Q_INVOKABLE QUrl webapp_base_url(const QString& name) const;

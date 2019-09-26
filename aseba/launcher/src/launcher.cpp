@@ -112,6 +112,11 @@ bool Launcher::openUrl(const QUrl& url) {
         return QDesktopServices::openUrl(url);
     }
 #endif
+    
+#ifdef Q_OS_IOS
+    OpenUrlInNativeWebView(url);
+    return true;
+#endif
 
 #ifdef MOBSYA_USE_WEBENGINE
     QUrl source("qrc:/qml/webview.qml");
