@@ -97,6 +97,23 @@ bool Launcher::launchPlayground() const {
 #endif
 }
 
+
+static bool openUrlWithParameters(const QUrl& url) {
+    QTemporaryFile t(QDir::tempPath() + "/XXXXXX.html");
+    t.setAutoRemove(false);
+    if(!t.open())
+        return false;
+
+    t.write(QStringLiteral(R"(
+<html><head>
+  <meta http-equiv="refresh" content="0;URL='%1" />
+</head></html>)")
+                .arg(url.toString())
+                .toUtf8());
+    QTimer::singleShot(10000, [f = t.fileName()] { QFile::remove(f); });
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
+}
+
 bool Launcher::openUrl(const QUrl& url) {
 
     qDebug() << url;
@@ -109,7 +126,7 @@ bool Launcher::openUrl(const QUrl& url) {
     // than the system's webkit
 #ifdef Q_OS_OSX
     if(QOperatingSystemVersion::current() < QOperatingSystemVersion::MacOSHighSierra) {
-        return QDesktopServices::openUrl(url);
+        return openUrlWithParameters(url);
     }
 #endif
     
