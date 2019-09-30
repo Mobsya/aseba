@@ -22,6 +22,8 @@ public:
 #endif
 #ifdef Q_OS_IOS
     void OpenUrlInNativeWebView(const QUrl& url);
+    //dummy implementation
+    Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
 #endif
 
     Q_INVOKABLE QString search_program(const QString& name) const;

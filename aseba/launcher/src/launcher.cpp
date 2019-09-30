@@ -46,6 +46,12 @@ bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) con
     return doLaunchOsXBundle(name, args);
 }
 #endif
+#ifdef Q_OS_IOS
+//Dummy implementation to iOS
+bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
+    return false;
+}
+#endif
 
 QString Launcher::search_program(const QString& name) const {
     qDebug() << "Searching for " << name;
