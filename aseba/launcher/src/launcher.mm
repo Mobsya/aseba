@@ -12,7 +12,7 @@
 #ifdef Q_OS_IOS
 #include <WebKit/WebKit.h>
 
-@interface LauncherDelegate : NSObject<WKNavigationDelegate,UIScrollViewDelegate>
+@interface LauncherDelegate : NSObject<WKNavigationDelegate,UIScrollViewDelegate,WKUIDelegate>
 @property (strong,nonatomic) WKWebView* mwebview;
 +(WKWebView*)createWebViewWithBaseURL:(NSURL*)url;
 @end
@@ -48,6 +48,7 @@
         [self shareInstance].mwebview.scrollView.scrollEnabled = false;
         [self shareInstance].mwebview.scrollView.delegate = [self shareInstance];
         [[self shareInstance].mwebview setNavigationDelegate:[self shareInstance]];
+        [[self shareInstance].mwebview setUIDelegate:[self shareInstance]];
         [[self shareInstance].mwebview setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
         
         //Adding close button
@@ -74,6 +75,36 @@
     return [self shareInstance].mwebview;
     
 }
+//allows the "new project" button to work
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message
+                                                                             message:nil
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"OK"
+                                                        style:UIAlertActionStyleCancel
+                                                      handler:^(UIAlertAction *action) {
+                                                          completionHandler();
+                                                      }]];
+    
+    
+    [[[[UIApplication sharedApplication] keyWindow]rootViewController] presentViewController:alertController animated:YES completion:^{}];
+}
+- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler {
+ 
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message
+                                                                                message:nil
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+       [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+           completionHandler(YES);
+       }]];
+       [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+           completionHandler(NO);
+       }]];
+       
+       [[[[UIApplication sharedApplication] keyWindow]rootViewController] presentViewController:alertController animated:YES completion:^{}];
+}
+
 
 -(void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
