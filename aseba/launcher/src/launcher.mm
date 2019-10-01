@@ -57,14 +57,14 @@
         [b setTintColor:UIColor.blueColor];
         [b setBackgroundColor:UIColor.whiteColor];
         
-        [b.layer setCornerRadius:15];
-        [[b.heightAnchor constraintEqualToConstant:30] setActive:YES];
-        [[b.widthAnchor constraintEqualToConstant:30] setActive:YES];
+        [b.layer setCornerRadius:18];
+        [[b.heightAnchor constraintEqualToConstant:36] setActive:YES];
+        [[b.widthAnchor constraintEqualToConstant:36] setActive:YES];
         
         [b setTranslatesAutoresizingMaskIntoConstraints:NO];
         [[self shareInstance].mwebview addSubview:b];
-        [[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:10] setActive:YES];
-        [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-10] setActive:YES];
+        [[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:5] setActive:YES];
+        [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-15] setActive:YES];
         [b addTarget:self  action:@selector(closeCurrentWebView) forControlEvents:UIControlEventTouchUpInside];
       
     }
