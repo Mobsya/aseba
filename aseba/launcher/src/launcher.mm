@@ -12,7 +12,7 @@
 #ifdef Q_OS_IOS
 #include <WebKit/WebKit.h>
 
-@interface LauncherDelegate : NSObject<WKNavigationDelegate,UIScrollViewDelegate,WKUIDelegate>
+@interface LauncherDelegate : NSObject<WKNavigationDelegate,UIScrollViewDelegate,WKUIDelegate,WKScriptMessageHandler>
 @property (strong,nonatomic) WKWebView* mwebview;
 +(WKWebView*)createWebViewWithBaseURL:(NSURL*)url;
 @end
@@ -43,6 +43,23 @@
     {
         WKWebViewConfiguration* conf = [[WKWebViewConfiguration alloc] init];
         conf.preferences.javaScriptCanOpenWindowsAutomatically = true;
+        conf.websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+        /*
+         
+         Need to add this code in  lib/download-blob.js
+         
+         if (/ipad/i.test(navigator.userAgent)) {
+             var reader = new FileReader();
+             reader.readAsDataURL(blob);
+             reader.onloadend = function () {
+                var base64data = reader.result;
+                window.webkit.messageHandlers.blobReady.postMessage({data: base64data, filename: filename});
+            }
+         }
+         */
+        
+        [conf.userContentController addScriptMessageHandler:[self shareInstance] name:@"blobReady"];
+    
         [self shareInstance].mwebview = [[WKWebView alloc] initWithFrame:[[[UIApplication sharedApplication] keyWindow]rootViewController].view.bounds  configuration:conf];
         [self shareInstance].mwebview.scrollView.bounces = false;
         [self shareInstance].mwebview.scrollView.scrollEnabled = false;
@@ -75,7 +92,34 @@
     return [self shareInstance].mwebview;
     
 }
-//allows the "new project" button to work
+
+//File Saving, via the 'blobReady' handler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    // window.webkit.messageHandlers.blobReady.postMessage(blob);
+    if([message.name isEqualToString:@"blobReady"])
+    {
+        NSDictionary* d = [message body];
+        NSString* b64 = [d objectForKey:@"data"];
+        NSString* name = [d objectForKey:@"filename"];
+        NSData* datas = [[NSData alloc] initWithBase64EncodedString:[[b64 componentsSeparatedByString:@","] lastObject] options:0];
+        //First save it in the app with a real name
+        // create url
+        NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
+        [datas writeToURL:url atomically:NO];
+        
+        //Transfer it to the save dialog
+        UIActivityViewController* saveDial = [[UIActivityViewController alloc] initWithActivityItems:@[url] applicationActivities:nil];
+        saveDial.modalPresentationStyle = UIModalPresentationPopover;
+        saveDial.popoverPresentationController.sourceView = [[[UIApplication sharedApplication] keyWindow]rootViewController].view;
+        saveDial.popoverPresentationController.sourceRect = CGRectMake(50, 50, 300, 300);
+       
+        [[[[UIApplication sharedApplication] keyWindow]rootViewController] presentViewController:saveDial animated:YES completion:^{
+            
+        }];
+        
+    }
+}
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message
@@ -124,6 +168,19 @@
     
 }
 
+//correction done to the inner website when loaded
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    //When loaded, cleaning the useless elements in the view
+    NSString* removeNotFinishedFunctions = @"var myClasses = document.querySelectorAll('.menu-bar_coming-soon_3yU1L'),\n i = 0,\n l = myClasses.length; \n   for (i; i < l; i++) { \n   myClasses[i].style.display = 'none'; \n   } ; document.querySelector('.menu-bar_feedback-link_1BnAR').firstElementChild.style.display = 'none'; ";
+    [webView evaluateJavaScript:removeNotFinishedFunctions completionHandler:nil];
+}
+
+
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    qDebug() << QString([error.localizedDescription cStringUsingEncoding:0]) ;
+}
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
     NSString *javascript = @"var meta = document.createElement('meta');meta.setAttribute('name', 'viewport');meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');document.getElementsByTagName('head')[0].appendChild(meta);";
     [webView evaluateJavaScript:javascript completionHandler:nil];
