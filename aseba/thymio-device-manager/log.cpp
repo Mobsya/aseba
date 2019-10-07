@@ -3,12 +3,15 @@
 #include <boost/utility/string_view.hpp>
 #include <fmt/format.h>
 
-std::shared_ptr<spdlog::logger> mobsya::logger = []() {
+
+auto get_logger() {
     auto log = spdlog::stdout_color_mt("console");
     log->set_level(spdlog::level::trace);
     log->flush_on(spdlog::level::trace);
     return log;
-}();
+}
+
+std::shared_ptr<spdlog::logger> mobsya::logger = get_logger();
 
 std::string mobsya::log_filename(const char* path) {
     auto sw = boost::string_view(path);
