@@ -1,12 +1,22 @@
-import QtQuick 2.0
+import QtQuick 2.10
 import QtQuick.Layouts 1.12
 import org.mobsya  1.0
 import ".."
 
 Rectangle {
     id: wirelessConfigurator
-    color: Style.light
+    color: Style.mid
     anchors.fill: parent
+
+    /*
+      Put a mouse area over all the interface to prevent the
+      mouse events to propagate to the main launcher interface
+      which lays underneath
+    */
+    MouseArea {
+        anchors.fill: parent
+    }
+
     TitleBar {}
 
     property bool valiseMode: false
@@ -222,6 +232,8 @@ Rectangle {
     }
 
     Item {
+        anchors.leftMargin: 30
+        anchors.rightMargin: 30
         id:  simpleModeLayout
         visible: !advancedMode
 
@@ -252,9 +264,9 @@ Rectangle {
 
             Text {
                 text: {
-                    let txt = qsTr("<ol><li><b>Plug the Wireless Thymio robot you want to pair using the USB cable</b></li><br/><li><b>Plug the Wireless dongle</b></li></ol>")
+                    let txt = qsTr("<p>01. <b>Plug the Wireless Thymio robot you want to pair using the USB cable</b><br/></p><p>02. <b>Plug the Wireless dongle</b></p>")
                     if (valiseMode) {
-                        txt += qsTr("<p><em>Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!</em></p>")
+                        txt += qsTr("<p><small>Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!</small></p>")
                     }
                     return txt
                 }
@@ -265,13 +277,15 @@ Rectangle {
                 wrapMode: Text.WordWrap
                 color: "white"
                 clip: true
+                textFormat: Text.RichText
             }
         }
     }
 
 
 
-    Item {
+    Rectangle {
+        color: Style.mid
         id:  advancedModeLayout
         visible: advancedMode
         anchors.fill: parent
@@ -291,6 +305,8 @@ Rectangle {
             Row {
                 spacing: 60
                 anchors.fill: parent
+                anchors.leftMargin: 30
+                anchors.rightMargin: 30
                 Item {
                     width: (parent.width / 2) - 30
                     height: parent.height
@@ -319,6 +335,7 @@ Rectangle {
                                  return txt
                              }
                              width: parent.width
+                             anchors.bottomMargin: 30
                         }
                     }
                 }
@@ -349,6 +366,8 @@ Rectangle {
                                  return txt
                              }
                              width: parent.width
+                             height: contentHeight + 10
+                             anchors.bottomMargin: 30
                         }
                     }
                 }
@@ -356,17 +375,17 @@ Rectangle {
         }
 
 
-        Rectangle{
+        Rectangle {
+            color: Style.light
             id:advancedModeOuterFrame
-            color: Style.mid
-            height: 290
             width: parent.width
             anchors.bottom: parent.bottom
+            height: 260
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 80
+            anchors.topMargin: 60
             Item {
                 anchors.fill: parent
-                anchors.topMargin: 80
+                anchors.topMargin: 20
                 RowLayout {
                     anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 130
@@ -485,9 +504,9 @@ Rectangle {
                 source : "qrc:/assets/alert.svg"
                 fillMode: Image.PreserveAspectFit
                 anchors.verticalCenter: parent.verticalCenter
-                smooth: true
                 height: 22
                 antialiasing: true
+                mipmap: true
             }
             Text {
                 text: ""
