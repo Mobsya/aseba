@@ -7,6 +7,16 @@ Rectangle {
     id: wirelessConfigurator
     color: Style.mid
     anchors.fill: parent
+
+    /*
+      Put a mouse area over all the interface to prevent the
+      mouse events to propagate to the main launcher interface
+      which lays underneath
+    */
+    MouseArea {
+        anchors.fill: parent
+    }
+
     TitleBar {}
 
     property bool valiseMode: false
