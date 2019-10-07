@@ -11,7 +11,7 @@ Rectangle  {
         color: "white"
         font.bold: true
         font.family: "Roboto"
-        font.pointSize: 18
+        font.pointSize: 12
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: 22
         anchors.left: parent.left
