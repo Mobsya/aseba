@@ -215,12 +215,12 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
     <message>
         <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="267"/>
         <source>&lt;p&gt;01. &lt;b&gt;Plug the Wireless Thymio robot you want to pair using the USB cable&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;02. &lt;b&gt;Plug the Wireless dongle&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;01. &lt;b&gt;Branchez le Wireless Thymio que vous voulez appairer grâce à un câble USB&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;02. &lt;b&gt;Branchez le dongle Wireless&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="269"/>
         <source>&lt;p&gt;&lt;small&gt;Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;small&gt;Astuce: Mettez un point autocollant de la même couleur sur le robot Wireless Thymio et le Wireless dongle pour les identifier !&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="333"/>
