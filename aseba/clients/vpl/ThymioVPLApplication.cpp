@@ -227,6 +227,23 @@ bool ThymioVPLApplication::saveFile(bool as) {
         element.setAttribute("nodeId", m_thymio->uuid().toString());
     }
     element.appendChild(document.createTextNode(editor->toPlainText()));
+
+    if(m_thymio && m_thymio->group()) {
+        for(auto&& e : m_thymio->group()->eventsDescriptions()) {
+            QDomElement element = document.createElement("event");
+            element.setAttribute("name", e.name());
+            element.setAttribute("size", e.size());
+            root.appendChild(element);
+        }
+
+        for(auto&& v : m_thymio->group()->sharedVariables().toStdMap()) {
+            QDomElement element = document.createElement("constant");
+            element.setAttribute("name",  v.first);
+            element.setAttribute("value", v.second.value().toInt());
+            root.appendChild(element);
+        }
+    }
+
     QDomDocument vplDocument(vpl->saveToDom());
     if(!vplDocument.isNull()) {
         QDomElement plugins = document.createElement("toolsPlugins");
