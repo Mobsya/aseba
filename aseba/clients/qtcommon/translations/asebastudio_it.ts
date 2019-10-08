@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="../common/AeslEditor.cpp" line="+461"/>
+        <location filename="../common/AeslEditor.cpp" line="+445"/>
         <source>Clear breakpoint</source>
         <translation>Azzera i breakpoint</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+71"/>
+        <location filename="../../studio/MainWindow.cpp" line="+70"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: Risultato dell&apos;ultima compilazione</translation>
     </message>
@@ -248,56 +248,44 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
-        <translation>Tempo (secondi)</translation>
+        <translation type="vanished">Tempo (secondi)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Values</source>
-        <translation>Valori</translation>
+        <translation type="vanished">Valori</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+78"/>
         <source>Recording...</source>
-        <translation>Sto registrando...</translation>
+        <translation type="vanished">Sto registrando...</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+77"/>
         <source>&amp;Pause</source>
-        <translation>&amp;Pausa</translation>
+        <translation type="vanished">&amp;Pausa</translation>
     </message>
     <message>
-        <location line="-73"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Cancella</translation>
+        <translation type="vanished">&amp;Cancella</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>time &amp;window:</source>
-        <translation>&amp;w finestra temporale:</translation>
+        <translation type="vanished">&amp;w finestra temporale:</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Save &amp;As...</source>
-        <translation>S&amp;alva con nome...</translation>
+        <translation type="vanished">S&amp;alva con nome...</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Paused...</source>
-        <translation>In pausa...</translation>
+        <translation type="vanished">In pausa...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Record</source>
-        <translation>&amp;Registra</translation>
+        <translation type="vanished">&amp;Registra</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Save plot data to file</source>
-        <translation>Salva i dati per il grafico su file</translation>
+        <translation type="vanished">Salva i dati per il grafico su file</translation>
     </message>
 </context>
 <context>
@@ -635,7 +623,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Informazioni sulla versione:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Versione %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(tipi di flusso supportati: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2013 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; e altri collaboratori.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba è open-source con licenza LGPL versione 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+549"/>
+        <location filename="../../studio/MainWindow.cpp" line="+535"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/it:start</translation>
     </message>
@@ -644,7 +632,7 @@ Occurrences</source>
         <translation type="vanished">Riguardo Aseba Studio</translation>
     </message>
     <message>
-        <location line="-439"/>
+        <location line="-425"/>
         <source>Open Script</source>
         <translation>Apri Script</translation>
     </message>
@@ -731,9 +719,8 @@ Occurrences</source>
         <translation type="vanished">Valore non valido  per l&apos;argomento %0 dell&apos;evento %1</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>Plot event %1</source>
-        <translation>Grafico evento %1</translation>
+        <translation type="vanished">Grafico evento %1</translation>
     </message>
     <message>
         <source>plot of %1</source>
@@ -844,7 +831,7 @@ event %0 : </source>
         <translation type="vanished">Pulisci</translation>
     </message>
     <message>
-        <location line="+152"/>
+        <location line="+210"/>
         <source>...inside %0</source>
         <translation>...dentro %0</translation>
     </message>
@@ -1141,7 +1128,7 @@ event %0 : </source>
         <translation type="obsolete">F11</translation>
     </message>
     <message>
-        <location line="-656"/>
+        <location line="-642"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio è un ambiente per la programmazione interattiva di robot utilizzando un linguaggio di testo.</translation>
     </message>
@@ -1151,7 +1138,7 @@ event %0 : </source>
         <translation>https://www.thymio.org/it:asebastudio</translation>
     </message>
     <message>
-        <location line="+617"/>
+        <location line="+603"/>
         <source>&amp;Go To Line...</source>
         <translation>Vai alla &amp;linea...</translation>
     </message>
@@ -1382,7 +1369,7 @@ event %0 : </source>
         <translation type="vanished">Ripristina</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+868"/>
+        <location filename="../../studio/NodeTab.cpp" line="+849"/>
         <source>Run</source>
         <translation>Esegui</translation>
     </message>
@@ -1404,7 +1391,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Esecuzione&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-576"/>
+        <location line="-558"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>variabili: %1 %2 (%3 %)</translation>
     </message>
@@ -1424,7 +1411,7 @@ event %0 : </source>
         <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Non collegato&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Stopped</source>
         <translation>Fermato</translation>
     </message>
@@ -1449,7 +1436,7 @@ event %0 : </source>
         <translation>(Controllato da un&apos;altra applicazione o utente)</translation>
     </message>
     <message>
-        <location line="+396"/>
+        <location line="+380"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
@@ -1508,7 +1495,7 @@ event %0 : </source>
         <translation type="vanished">bytecode: %1 su %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-650"/>
+        <location line="-632"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Utilizzo della memoria&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1517,7 +1504,7 @@ event %0 : </source>
         <translation type="vanished">in esecuzione</translation>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+547"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
@@ -2045,7 +2032,7 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
         <translation>Collegamento con Thymio...</translation>
     </message>
@@ -2086,7 +2073,7 @@ event %0 : </source>
         <translation>Collegamento a Thymio perso... assicurarsi che Thymio sia acceso e collegare il cavo USB o il dongle</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+77"/>
         <source>[modified] </source>
         <translation>[modificato] </translation>
     </message>

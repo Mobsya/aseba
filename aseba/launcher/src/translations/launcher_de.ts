@@ -160,127 +160,135 @@ Verbinden Sie den Roboter mit einem USB-Kabel, um diese zu installieren</transla
 <context>
     <name>WirelessConfigurator</name>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="77"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="87"/>
         <source>Unable to list the dongles - please relaunch Thymio Suite</source>
         <translation type="unfinished">Die Dongles können nicht aufgelistet werden - bitte starten Sie die Thymio Suite neu</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="88"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="98"/>
         <source>Plug the Wireless dongle in a USB port of this computer</source>
         <translation type="unfinished">Schließen Sie den Wireless Dongle in den USB anschluss an</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="92"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="102"/>
         <source>%1 dongles detected - Please plug a single Wireless dongle</source>
         <translation type="unfinished">%1 Dongles erkannt - Bitte stecken Sie einen einzelnen Wireless-Dongle ein</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="108"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="118"/>
         <source>Plug a Wireless Thymio robot to this computer with a USB cable</source>
         <translation type="unfinished">Verbinden Sie den Wireless Thymio mit einem kabel zum Computer</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="112"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="122"/>
         <source>%1 Thymios detected - Please plug a single  Wireless Thymio robot</source>
         <translation type="unfinished">%1 Thymios erkannt - Bitte schließen Sie einen einzelnen Wireless Thymio-Roboter an</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="118"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="128"/>
         <source>Please update the firmware of this robot before pairing it</source>
         <translation type="unfinished">Instalieren Sie Bitte die neue Firmware vor den Roboter zu paaren</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="123"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="133"/>
         <source>You have alredy paired this robot</source>
         <translation type="unfinished">Du hast diesen Roboter schon gekoppelt</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="158"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="168"/>
         <source>Pairing successful (network: %1 - channel: %2)</source>
         <translation type="unfinished">Paarung erfolgreich (Netzwerk: %1 - Kanal: %2)</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="190"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="200"/>
         <source>You have alredy paired this dongle with another robot</source>
         <translation type="unfinished">Du hast diesen dongle schon mit einem anderen Roboter gekoppelt</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="255"/>
         <source>&lt;ol&gt;&lt;li&gt;&lt;b&gt;Plug the Wireless Thymio robot you want to pair using the USB cable&lt;/b&gt;&lt;/li&gt;&lt;br/&gt;&lt;li&gt;&lt;b&gt;Plug the Wireless dongle&lt;/b&gt;&lt;/li&gt;&lt;/ol&gt;</source>
-        <translation type="unfinished">&lt;ol&gt;&lt;li&gt;&lt;b&gt;Schliessen Sie den Wireless Thymio-Roboter, den Sie Paaren möchten, über das USB-Kabel an&lt;/b&gt;&lt;/li&gt;&lt;br/&gt;&lt;li&gt;&lt;b&gt;Schliessen Sie den Wireless Dongel an&lt;/b&gt;&lt;/li&gt;&lt;/ol&gt;</translation>
+        <translation type="obsolete">&lt;ol&gt;&lt;li&gt;&lt;b&gt;Schliessen Sie den Wireless Thymio-Roboter, den Sie Paaren möchten, über das USB-Kabel an&lt;/b&gt;&lt;/li&gt;&lt;br/&gt;&lt;li&gt;&lt;b&gt;Schliessen Sie den Wireless Dongel an&lt;/b&gt;&lt;/li&gt;&lt;/ol&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="257"/>
         <source>&lt;p&gt;&lt;em&gt;Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!&lt;/em&gt;&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;&lt;em&gt;Tipp:Stellen Sie einem Aufkleber auf das Wireless Thymio und den Wireless Dongel um Sie zu unterscheiden!&lt;/em&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p&gt;&lt;em&gt;Tipp:Stellen Sie einem Aufkleber auf das Wireless Thymio und den Wireless Dongel um Sie zu unterscheiden!&lt;/em&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="317"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="267"/>
+        <source>&lt;p&gt;01. &lt;b&gt;Plug the Wireless Thymio robot you want to pair using the USB cable&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;02. &lt;b&gt;Plug the Wireless dongle&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="269"/>
+        <source>&lt;p&gt;&lt;small&gt;Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!&lt;/small&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="333"/>
         <source>&lt;p&gt;&lt;b&gt;To pair one robot to one dongle on an independant network:&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;Um ein Roboter zu einem Dongel in einen unabhängiges Netzwerk:&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="318"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="334"/>
         <source>&lt;p&gt;Use different &lt;b&gt;Channels&lt;/b&gt; and different &lt;b&gt;network identifiers&lt;/b&gt; for each robot/dongle pair you have&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Nutzen Sie einen anderen &lt;b&gt;Kannal&lt;/b&gt; und einen anderen&lt;b&gt;Network Identifikatoren&lt;/b&gt;für jeder Roboter/Dongel Paar Sie haben&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="347"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="364"/>
         <source>&lt;p&gt;&lt;b&gt;To pair multiple Wireless Thymio robots to one Wireless dongle:&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;Um mehrere Wireless Thymio Robotern mit einem Wireless Dongel:&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="348"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="365"/>
         <source>&lt;p&gt;Use the same &lt;b&gt;Channels&lt;/b&gt; and &lt;b&gt;network identifier&lt;/b&gt; for every robot you want in the same network&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Nutzen Sie die gleiche&lt;b&gt;Kanäle&lt;/b&gt; und &lt;/b&gt;Network Identifikatoren&lt;/b&gt;für jeder Roboter Sie in den gleichen Network wollen&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="377"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="396"/>
         <source>01. Select a channel</source>
         <translation type="unfinished">01. Wählen Sie einen Kanal</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="394"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="413"/>
         <source>&lt;b&gt;02. Define the network identifier&lt;/b&gt;&lt;br/&gt;4 characters in hexadecimal (0 to 9 and A-F)</source>
         <translation type="unfinished">&lt;b&gt;02. Wählen Sie die Network Identifikatoren&lt;/b&gt;&lt;br/&gt;4 hexadezimale Zeichenl (0 to 9 and A-F)</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="412"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="431"/>
         <source>&lt;b&gt;03. Click on Pair!&lt;/b&gt;</source>
         <translation type="unfinished">&lt;b&gt;03. Klicken Sie auf Paaren!&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="420"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="439"/>
         <source>Pair!</source>
         <translation type="unfinished">Paaren!</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="444"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="463"/>
         <source>Pair robot #%1</source>
         <translation type="unfinished">Roboter #%1 paaren</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="444"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="463"/>
         <source>Pair !</source>
         <translation type="unfinished">Paaren!</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="453"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="472"/>
         <source>Pair the next Robot</source>
         <translation type="unfinished">Paare der nächste Roboter</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="453"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="472"/>
         <source>Pair another robot</source>
         <translation type="unfinished">Paare einen anderen Roboter</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="464"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="483"/>
         <source>Simple Mode</source>
         <translation type="unfinished">Einfach Modus</translation>
     </message>
     <message>
-        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="464"/>
+        <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="483"/>
         <source>Advanced Mode</source>
         <translation type="unfinished">Fortgeschritten Modus</translation>
     </message>
@@ -303,7 +311,7 @@ Weiter?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="136"/>
+        <location filename="../launcher.cpp" line="153"/>
         <source>Save %1</source>
         <translation>%1 Speichern</translation>
     </message>
