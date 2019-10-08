@@ -206,12 +206,12 @@ Connect the robot with a usb cable to install it</source>
     <message>
         <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="267"/>
         <source>&lt;p&gt;01. &lt;b&gt;Plug the Wireless Thymio robot you want to pair using the USB cable&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;02. &lt;b&gt;Plug the Wireless dongle&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;01. &lt;b&gt;Podłącz robota Thymio RF, którego chcesz sparować używając kabla USB&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;02. &lt;b&gt;Plug the Wireless dongle&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="269"/>
         <source>&lt;p&gt;&lt;small&gt;Tip: Put a sticker dot of the same color on both the Wireless Thymio robot and the Wireless dongle to identify them!&lt;/small&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;small&gt;Wskazówka: W celu łatwej identyfikacji naklej sticker tego samego koloru na robocie Thymio RF i odpowiadającym mu odbiorniku RF!&lt;/small&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../qml/wirelessconfigurator/WirelessConfigurator.qml" line="333"/>
