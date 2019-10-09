@@ -40,8 +40,6 @@ target_sources(thymio-launcher PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/launcher.rc
 )
 
-
-
 if(IOS)
 
   target_sources(thymio-launcher PUBLIC "${PROJECT_SOURCE_DIR}/scratch")
@@ -59,9 +57,7 @@ if(IOS)
     #use the addQtIos cmake to manage links
     INCLUDE("${PROJECT_SOURCE_DIR}/ios/AddQtIosApp.cmake")
     INCLUDE("${PROJECT_SOURCE_DIR}/ios/QtStaticCMake.cmake")
-
 endif()
-
 
 if(IOS)
     #use the addQtIos cmake to manage links

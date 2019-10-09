@@ -217,7 +217,6 @@ auto QStringListToNSArray(const QStringList &list)
     return result;
 }
 
-
 #ifdef Q_OS_OSX
 bool Launcher::doLaunchPlaygroundBundle() const {
     const auto path = QDir(QCoreApplication::applicationDirPath() +
@@ -234,8 +233,6 @@ bool Launcher::doLaunchPlaygroundBundle() const {
     return true;
 
 }
-
-
     
 bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) const {
     //Get the bundle path
@@ -272,6 +269,3 @@ bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) c
 }
 #endif //OSX
 }
-
-
-

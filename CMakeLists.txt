@@ -6,12 +6,10 @@ if(APPLE AND NOT IOS)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
 endif()
 
-
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0003 NEW)
-
 
 
 project(ThymioSuite)
@@ -41,7 +39,6 @@ include(InstallRequiredSystemLibraries)
 # additional CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
 
-
 include(CMakeModules/ParseVersion.cmake)
 include(CMakeModules/cpp_features.cmake)
 include(CMakeModules/workarounds.cmake)
@@ -57,8 +54,6 @@ if(NOT ANDROID)
     endif()
     find_package(Threads REQUIRED)
 endif()
-
-
 
 if(ANDROID)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/android/qt-android-cmake/)
