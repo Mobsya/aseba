@@ -59,6 +59,7 @@
          */
         
         [conf.userContentController addScriptMessageHandler:[self shareInstance] name:@"blobReady"];
+        conf.applicationNameForUserAgent = @"Thymio Suite iPad";
     
         [self shareInstance].mwebview = [[WKWebView alloc] initWithFrame:[[[UIApplication sharedApplication] keyWindow]rootViewController].view.bounds  configuration:conf];
         [self shareInstance].mwebview.scrollView.bounces = false;
