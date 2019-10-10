@@ -200,6 +200,10 @@ QString get_ui_language() {
     return langs.first();
 }
 
+QString Launcher::uiLanguage() const {
+    return get_ui_language().mid(0, 2);
+}
+
 Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
     QString lang = get_ui_language();
     QString full = pattern.arg(lang);
