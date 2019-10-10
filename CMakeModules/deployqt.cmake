@@ -65,8 +65,8 @@ function(windeployqt target directory)
                     --dry-run
                     --list mapping
                     --plugindir bin/plugins
-                    --qmldir $<TARGET_PROPERTY:${target},SOURCE_DIR>
                     --no-compiler-runtime
+                    --qmldir $<TARGET_PROPERTY:${target},SOURCE_DIR>
                     $<TARGET_FILE:${target}>
             OUTPUT_VARIABLE _output
             OUTPUT_STRIP_TRAILING_WHITESPACE
