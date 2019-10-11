@@ -103,10 +103,12 @@
         NSDictionary* d = [message body];
         NSString* b64 = [d objectForKey:@"data"];
         NSString* name = [d objectForKey:@"filename"];
+        if(name.length<=4)
+            name = [@"Thymio" stringByAppendingString:name];
         NSData* datas = [[NSData alloc] initWithBase64EncodedString:[[b64 componentsSeparatedByString:@","] lastObject] options:0];
         //First save it in the app with a real name
         // create url
-        NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
+        NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
         [datas writeToURL:url atomically:NO];
         
         //Transfer it to the save dialog
