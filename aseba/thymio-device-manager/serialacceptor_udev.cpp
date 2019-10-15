@@ -4,6 +4,7 @@
 #include <boost/bind.hpp>
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/scope_exit.hpp>
 #include "log.h"
 
 namespace mobsya {
@@ -124,8 +125,11 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         if(n)
             known_devices.insert(n);
         try {
+            BOOST_SCOPE_EXIT(dev) {
+                udev_device_unref(dev);
+            }
+            BOOST_SCOPE_EXIT_END
             if(handle_request(dev, m_requests.front())) {
-                udev_enumerate_unref(enumerate);
                 break;
             }
         } catch(...) {
