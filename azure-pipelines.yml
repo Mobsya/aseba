@@ -7,7 +7,7 @@ resources:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20191015.1"
+  value: "v20191015.2"
 - name: scratch_version
   value: "v20190923.2"
 - name: blockly_url
