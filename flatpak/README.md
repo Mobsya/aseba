@@ -46,7 +46,7 @@ Until then, please install the Flatpak bundle.
 ## Install the development version of Thymio Suite
 
 
-1. [Download the Thymio Suite Flatpak bundle 📦 ](https://github.com/Mobsya/aseba/releases/download/nightly/thymio-suite.flatpak)
+1. [Download the Thymio Suite Flatpak bundle 📦 ](https://github.com/Mobsya/aseba/releases/download/2.0.0-RC3/ThymioSuite-2.0.0-RC3-linux.flatpak)
 2. In a terminal, execute
 
 ```
