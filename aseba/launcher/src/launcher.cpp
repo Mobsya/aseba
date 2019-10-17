@@ -119,9 +119,7 @@ bool Launcher::openUrl(const QUrl& url) {
     // because the version of safari shipped with an up-to-date Sierra is more current
     // than the system's webkit
 #ifdef Q_OS_OSX
-    if(QOperatingSystemVersion::current() < QOperatingSystemVersion::MacOSHighSierra) {
-        return openUrlWithParameters(url);
-    }
+    return openUrlWithParameters(url);
 #endif
 
 #ifdef MOBSYA_USE_WEBENGINE
