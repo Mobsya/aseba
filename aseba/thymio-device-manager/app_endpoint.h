@@ -13,6 +13,7 @@
 #include "tdm.h"
 #include "log.h"
 #include "app_token_manager.h"
+#include "system_sleep_manager.h"
 #include "utils.h"
 #include <pugixml.hpp>
 
@@ -141,6 +142,10 @@ public:
 
     void start() {
         mLogInfo("Starting app endpoint");
+
+        // Prevent the system to go to sleep while an app is connected
+        boost::asio::use_service<mobsya::system_sleep_manager>(m_ctx).app_connected();
+
         base::start();
     }
 
@@ -313,6 +318,10 @@ public:
 
     ~application_endpoint() {
         mLogInfo("Stopping app endpoint");
+
+
+        // Allow the system to go to sleep when no more apps are connected
+        boost::asio::use_service<mobsya::system_sleep_manager>(m_ctx).app_disconnected();
 
         /* Disconnecting the node monotoring status before unlocking the nodes,
          * otherwise we would receive node status event during destroying the endpoint, leading to a crash */
