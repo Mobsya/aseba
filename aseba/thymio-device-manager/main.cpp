@@ -10,6 +10,7 @@
 #include "aseba_node_registery.h"
 #include "app_server.h"
 #include "app_token_manager.h"
+#include "system_sleep_manager.h"
 #include "fw_update_service.h"
 #include "wireless_configurator_service.h"
 #include "aseba_endpoint.h"
@@ -39,6 +40,9 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
     [[maybe_unused]] mobsya::app_token_manager& token_manager =
         boost::asio::make_service<mobsya::app_token_manager>(ctx);
+
+    [[maybe_unused]] mobsya::system_sleep_manager& system_sleep_manager =
+        boost::asio::make_service<mobsya::system_sleep_manager>(ctx);
 
     // mobsya::firmware_update_service needs to be initialized after mobsya::aseba_node_registery
     [[maybe_unused]] mobsya::firmware_update_service& us =

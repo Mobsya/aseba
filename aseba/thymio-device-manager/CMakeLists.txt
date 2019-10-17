@@ -41,6 +41,7 @@ add_library(thymio-device-manager-lib STATIC
     fw_update_service.cpp
     wireless_configurator_service.h
     wireless_configurator_service.cpp
+    system_sleep_manager.h
     node_id.h
     usb_utils.h
     utils.h
