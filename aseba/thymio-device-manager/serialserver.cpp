@@ -11,7 +11,8 @@ serial_server::serial_server(boost::asio::io_context& io_service, std::initializ
 bool create_endpoint(aseba_endpoint::pointer session, usb_serial_port& d) {
     boost::system::error_code ec;
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    d.open(ec);
+    if(!d.is_open())
+        d.open(ec);
     if(ec)
         return false;
     d.set_option(boost::asio::serial_port::baud_rate(115200), ec);
