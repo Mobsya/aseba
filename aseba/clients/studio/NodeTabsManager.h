@@ -64,7 +64,7 @@ protected:
     enum class plot_type { event, variable };
 
     void createPlotTab(NodeTab* tab, const QString& name, plot_type type);
-    void createPlotTab(std::shared_ptr<const mobsya::ThymioNode>, const QString& name, plot_type type);
+    void createPlotTab(std::shared_ptr<mobsya::ThymioNode>, const QString& name, plot_type type);
     void resetHighlight(int index);
     void tabInserted(int index) override;
 

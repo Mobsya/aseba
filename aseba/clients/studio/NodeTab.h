@@ -45,7 +45,7 @@ public:
     }
 
     void setThymio(std::shared_ptr<mobsya::ThymioNode> node);
-    const std::shared_ptr<const mobsya::ThymioNode> thymio() const;
+    const std::shared_ptr<mobsya::ThymioNode> thymio() const;
     QVariantMap getVariables() const;
 
     void clearEverything();

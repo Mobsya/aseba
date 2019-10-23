@@ -17,8 +17,8 @@ class PlotTab : public QWidget {
 
 public:
     PlotTab(QWidget* parent = nullptr);
-    void setThymio(std::shared_ptr<const mobsya::ThymioNode> node);
-    const std::shared_ptr<const mobsya::ThymioNode> thymio() const;
+    void setThymio(std::shared_ptr<mobsya::ThymioNode> node);
+    const std::shared_ptr<mobsya::ThymioNode> thymio() const;
 
     void addEvent(const QString& name);
     QStringList plottedEvents() const;
@@ -26,6 +26,9 @@ public:
 
     void addVariable(const QString& name);
     QStringList plottedVariables() const;
+
+    void hideEvent(QHideEvent*) override;
+    void showEvent(QShowEvent*) override;
 
 private Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp);
@@ -38,7 +41,7 @@ private:
     QMap<QString, QVector<QtCharts::QXYSeries*>> m_events;
     QMap<QString, QVector<QtCharts::QXYSeries*>> m_variables;
 
-    std::shared_ptr<const mobsya::ThymioNode> m_thymio;
+    std::shared_ptr<mobsya::ThymioNode> m_thymio;
     QtCharts::QChart* m_chart;
     QtCharts::QValueAxis* m_xAxis;
     QtCharts::QValueAxis* m_yAxis;

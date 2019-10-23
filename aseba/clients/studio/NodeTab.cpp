@@ -133,7 +133,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     }
 }
 
-const std::shared_ptr<const mobsya::ThymioNode> NodeTab::thymio() const {
+const std::shared_ptr<mobsya::ThymioNode> NodeTab::thymio() const {
     return m_thymio;
 }
 
