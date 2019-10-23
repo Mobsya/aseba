@@ -25,7 +25,6 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 
 if(IOS)
-    set(IOS_DEPLOYMENT_TARGET ${DEPLOYMENT_TARGET})
     if(IOS_ARCHIVE_BUILD)
         set(CMAKE_XCODE_ATTRIBUTE_INSTALL_PATH "")
         set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin/libraries")

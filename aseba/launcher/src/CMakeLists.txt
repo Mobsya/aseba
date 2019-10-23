@@ -86,7 +86,6 @@ if(IOS)
         CUSTOM_PLIST "${PROJECT_SOURCE_DIR}/ios/MacOSXBundleInfo.plist.in"
    #     CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY}
         TEAM_ID ${SIGNING_ID}
-        IPHONEOS_DEPLOYMENT_TARGET "11.0"
         COPYRIGHT "Mobysa"
         QML_DIR "${QT_WINDOWS_QT_ROOT}/qml"
         ASSET_DIR "${PROJECT_SOURCE_DIR}/ios/bundle/Assets.xcassets"
@@ -105,9 +104,9 @@ if(IOS)
         VERBOSE
      )
 
- qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}" "Debug")
- qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}" "MinSizeRel")
- qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET  "${DEPLOYMENT_TARGET}" "Release")
+ qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${IOS_DEPLOYMENT_TARGET}" "Debug")
+ qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET "${IOS_DEPLOYMENT_TARGET}" "MinSizeRel")
+ qt_ios_set_xcode_property(thymio-launcher IPHONEOS_DEPLOYMENT_TARGET  "${IOS_DEPLOYMENT_TARGET}" "Release")
 endif()
 
 target_link_libraries(thymio-launcher
