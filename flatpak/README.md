@@ -38,7 +38,7 @@ Save the file (`Ctrl+x` if you use `nano`), then execute
 sudo udevadm control --reload-rules
 ```
 
-## Instal Thymio Suite from Flathub
+## Install Thymio Suite from Flathub
 
 You can [Install Thymio Suite from Flathub](https://flathub.org/apps/details/org.mobsya.ThymioSuite). **This is the recommanded installation method**.
 
