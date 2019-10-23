@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="../common/AeslEditor.cpp" line="+464"/>
+        <location filename="../common/AeslEditor.cpp" line="+445"/>
         <source>Clear breakpoint</source>
         <translation>Kırılım noktasını temizle</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+71"/>
+        <location filename="../../studio/MainWindow.cpp" line="+70"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: Son derlemenin çıktısı</translation>
     </message>
@@ -119,102 +119,83 @@
 <context>
     <name>Aseba::DashelConnectionDialog</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
         <source>Discovered targets</source>
-        <translation>Keşfedilen hedefler</translation>
+        <translation type="vanished">Keşfedilen hedefler</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Selected target</source>
-        <translation>Seçilmiş hedefler</translation>
+        <translation type="vanished">Seçilmiş hedefler</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Serial port</source>
-        <translation>Seri port noktası</translation>
+        <translation type="vanished">Seri port noktası</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Local TCP</source>
-        <translation>Yerel TCP</translation>
+        <translation type="vanished">Yerel TCP</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>TCP</source>
-        <translation>TCP</translation>
+        <translation type="vanished">TCP</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Documentation</source>
-        <translation>Dokümantasyon</translation>
+        <translation type="vanished">Dokümantasyon</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Language</source>
-        <translation>Dil</translation>
+        <translation type="vanished">Dil</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Connect</source>
-        <translation>Bağlan</translation>
+        <translation type="vanished">Bağlan</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Cancel</source>
-        <translation>İptal et</translation>
+        <translation type="vanished">İptal et</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Aseba Target Selection</source>
-        <translation>Aseba Hedef Seçimi</translation>
+        <translation type="vanished">Aseba Hedef Seçimi</translation>
     </message>
     <message>
-        <location line="+48"/>
         <source> – type %1</source>
-        <translation> – tür %1</translation>
+        <translation type="vanished"> – tür %1</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>local on computer</source>
-        <translation>bilgisayarda yerel</translation>
+        <translation type="vanished">bilgisayarda yerel</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>distant on network</source>
-        <translation>ağdan uzak</translation>
+        <translation type="vanished">ağdan uzak</translation>
     </message>
     <message>
-        <location line="+55"/>
         <source> – device %1</source>
-        <translation> – cihaz %1</translation>
+        <translation type="vanished"> – cihaz %1</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>serial port or USB</source>
-        <translation>Seri port noktası veya USB</translation>
+        <translation type="vanished">Seri port noktası veya USB</translation>
     </message>
 </context>
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+103"/>
         <source>Thymio not found</source>
-        <translation>Thymio bulunamadı</translation>
+        <translation type="vanished">Thymio bulunamadı</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt; Thymio bulamadı!&lt;/b&gt;&lt;/p&gt;&lt;p&gt; USB kablo/dongle kullanarak bilgisayarınıza Thymio bağlayın ve Thymio kullanan başka bir program olmadığına emin olun.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt; Thymio bulamadı!&lt;/b&gt;&lt;/p&gt;&lt;p&gt; USB kablo/dongle kullanarak bilgisayarınıza Thymio bağlayın ve Thymio kullanan başka bir program olmadığına emin olun.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Connection to command line target failed</source>
-        <translation>Komut satırı hedefine bağlantı başarısız oldu</translation>
+        <translation type="vanished">Komut satırı hedefine bağlantı başarısız oldu</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Cannot connect to target %0</source>
-        <translation>Hedefe bağlanamadı %0</translation>
+        <translation type="vanished">Hedefe bağlanamadı %0</translation>
     </message>
 </context>
 <context>
@@ -238,56 +219,44 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
-        <translation>Zaman (saniye) </translation>
+        <translation type="vanished">Zaman (saniye) </translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Values</source>
-        <translation>Değerler</translation>
+        <translation type="vanished">Değerler</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+78"/>
         <source>Recording...</source>
-        <translation>Kaydediliyor...</translation>
+        <translation type="vanished">Kaydediliyor...</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+77"/>
         <source>&amp;Pause</source>
-        <translation>&amp;Durdur</translation>
+        <translation type="vanished">&amp;Durdur</translation>
     </message>
     <message>
-        <location line="-73"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Temizle</translation>
+        <translation type="vanished">&amp;Temizle</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>time &amp;window:</source>
-        <translation>zaman &amp;window:</translation>
+        <translation type="vanished">zaman &amp;window:</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Save &amp;As...</source>
-        <translation>Kaydet &amp; gibi...</translation>
+        <translation type="vanished">Kaydet &amp; gibi...</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Paused...</source>
-        <translation>Durduruldu</translation>
+        <translation type="vanished">Durduruldu</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Record</source>
-        <translation>&amp;Kaydı</translation>
+        <translation type="vanished">&amp;Kaydı</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Save plot data to file</source>
-        <translation>Pilot verileri dosyaya kaydet</translation>
+        <translation type="vanished">Pilot verileri dosyaya kaydet</translation>
     </message>
 </context>
 <context>
@@ -299,12 +268,12 @@
     </message>
     <message>
         <location line="+20"/>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Add a new event</source>
         <translation type="unfinished">Yeni bir etkinlik ekle</translation>
     </message>
     <message>
-        <location line="-37"/>
+        <location line="-38"/>
         <source>Remove this event</source>
         <translation type="unfinished">Bu etkinliği kaldır</translation>
     </message>
@@ -319,7 +288,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Clear</source>
         <translation type="unfinished">Temizle</translation>
     </message>
@@ -599,7 +568,7 @@ Occurrences</source>
         <translation type="vanished">Olay sayısı %0</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+52"/>
+        <location filename="../../studio/MainWindow.cpp" line="+57"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio robotlarla etkileşimli olarak metin dili ile programlanabilen bir ortamdır.</translation>
     </message>
@@ -609,7 +578,7 @@ Occurrences</source>
         <translation>https://www.thymio.org/en:asebastudio</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+51"/>
         <source>Open Script</source>
         <translation>Açık Komut Dosyası</translation>
     </message>
@@ -630,12 +599,12 @@ Occurrences</source>
         <translation type="vanished">XML kaynak dosyasındaki hata: %0 %1 satırda, %2 sütunda</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+37"/>
         <source>Save Script</source>
         <translation>Kaynak Dosyasını Kaydet</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+82"/>
         <source>Export memory content</source>
         <translation>Bellek içeriğini dışa aktar</translation>
     </message>
@@ -696,9 +665,8 @@ Occurrences</source>
         <translation type="vanished">%1 etkinliğinin %0 argümanı için geçersiz değer</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>Plot event %1</source>
-        <translation>Pilot etkinlik %1</translation>
+        <translation type="vanished">Pilot etkinlik %1</translation>
     </message>
     <message>
         <source>plot of %1</source>
@@ -794,9 +762,8 @@ event %0 : </source>
         <translation type="vanished">Bu etkinliği gönder</translation>
     </message>
     <message>
-        <location line="+126"/>
         <source>Plot this event</source>
-        <translation>Bu etkinliği çiz</translation>
+        <translation type="vanished">Bu etkinliği çiz</translation>
     </message>
     <message>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
@@ -807,7 +774,7 @@ event %0 : </source>
         <translation type="vanished">Temizle</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+210"/>
         <source>...inside %0</source>
         <translation>...içinde %0</translation>
     </message>
@@ -1318,7 +1285,7 @@ event %0 : </source>
         <translation type="vanished">Sıfırla</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+832"/>
+        <location filename="../../studio/NodeTab.cpp" line="+849"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
@@ -1340,7 +1307,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Uygulama&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-561"/>
+        <location line="-558"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1350,12 +1317,17 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+15"/>
+        <source>Compilation Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+130"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Stopped</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1380,7 +1352,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+386"/>
+        <location line="+380"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1439,7 +1411,7 @@ event %0 : </source>
         <translation type="vanished">bytecodeu: %1 - %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-635"/>
+        <location line="-632"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Hafıza kullanımı&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1448,7 +1420,7 @@ event %0 : </source>
         <translation type="vanished">çalışıyor</translation>
     </message>
     <message>
-        <location line="+550"/>
+        <location line="+547"/>
         <source>Pause</source>
         <translation>Durdur</translation>
     </message>
@@ -1480,19 +1452,16 @@ event %0 : </source>
 <context>
     <name>Aseba::ReconnectionDialog</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
-        <translation>Bağlantı kapatıldı</translation>
+        <translation type="vanished">Bağlantı kapatıldı</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Warning, connection closed: I am trying to reconnect.</source>
-        <translation>Uyarı, bağlantı kapatıldı: tekrar bağlanmayı deniyorum.</translation>
+        <translation type="vanished">Uyarı, bağlantı kapatıldı: tekrar bağlanmayı deniyorum.</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Stop trying</source>
-        <translation>Denemeyi durdur</translation>
+        <translation type="vanished">Denemeyi durdur</translation>
     </message>
 </context>
 <context>
@@ -1837,7 +1806,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
         <translation type="unfinished">Thymio ile bağlantı kuruluyor...</translation>
     </message>
@@ -1878,7 +1847,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation type="unfinished">Thymio ile bağlantı kesildi... Thymio&apos;nun açık olduğundan emin olun ve USB kablosunu/bağlantı parçasını bağlayın</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+77"/>
         <source>[modified] </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1961,33 +1930,27 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
-        <location line="+7"/>
         <source>Protocol version mismatch</source>
-        <translation>Protokol versiyonlarının eşleşmemesi</translation>
+        <translation type="vanished">Protokol versiyonlarının eşleşmemesi</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Aseba Studio uses an older protocol (%1) than node %0 (%2), please upgrade Aseba Studio.</source>
-        <translation>Aseba Studio eski (%1) protokolünü kullanırken %0 düğümü (%2) protokolünü kullanmakta, lütfen Aseba Studioyu güncelleyin. </translation>
+        <translation type="vanished">Aseba Studio eski (%1) protokolünü kullanırken %0 düğümü (%2) protokolünü kullanmakta, lütfen Aseba Studioyu güncelleyin. </translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Node %0 uses an older protocol (%2) than Aseba Studio (%1), please upgrade the node firmware.</source>
-        <translation>%0 düğümü eski (%2) protokolünü kullanırken Aseba Studio (%1) protokolünü kullanmakta, lütfen düğüm yazılımını güncelleyin.</translation>
+        <translation type="vanished">%0 düğümü eski (%2) protokolünü kullanırken Aseba Studio (%1) protokolünü kullanmakta, lütfen düğüm yazılımını güncelleyin.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location line="-405"/>
         <source>Unexpected Dashel Error</source>
-        <translation>Beklenmedik Dashel Hatası</translation>
+        <translation type="vanished">Beklenmedik Dashel Hatası</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>A communication error happened:</source>
-        <translation>Bir iletişim hatası gerçekleşti:</translation>
+        <translation type="vanished">Bir iletişim hatası gerçekleşti:</translation>
     </message>
     <message>
         <location filename="../../vpl/Compiler.cpp" line="+46"/>

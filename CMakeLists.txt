@@ -155,6 +155,7 @@ set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_P
 find_package(Python3)
 
 if(WIN32)
+    include (MobsyaInstallRequiredSystemLibraries)
     add_subdirectory(third_party/bonjour)
     set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows)

@@ -64,6 +64,14 @@ Rectangle {
         }
     }
 
+    function anchorToParent() {
+        x =  launcher.width - (visible ? 350 : 0)
+    }
+
+    Component.onCompleted: {
+        parent.onWidthChanged.connect(anchorToParent)
+    }
+
     Item {
         anchors.fill: parent
         anchors.margins: 10
@@ -126,13 +134,13 @@ Rectangle {
             id: showAnimation
             property: "x"
             target: pane
-            from: pane.parent.width
-            to: pane.parent.width - 350
+            from: launcher.width
+            to: launcher.width - 350
             duration: 200
             easing.type: Easing.InOutQuad
         }
         onVisibleChanged: {
-            x = pane.parent.width
+            x = launcher.width
             showAnimation.running = true
         }
     }
