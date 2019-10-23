@@ -211,16 +211,67 @@ Then you can build vpl2 with cmake. An APK will be generated in ``build/bin``
 Getting Started on iOS
 --------------------------
 
-Require recent Xcode and QT libraries
+Require a recent version of Xcode and QT. Building the output require xcode to sign the binary.
+You'll also need to be able to build part of the project for macOS. installing the brew bundle is also advised. 
 
-On it's current state, on iOS, you'll need to generate an xcode project using the following line. This will allow you to launch the project, configure your certificate / provisioning profile, and launch the target "Thymio-launcher" on your debuging device.
+::
+    brew update brew tap homebrew/bundle brew bundle
+
+Generic commands
+
+::
+    mkdir build
+    cd build
+    export QTDIR=<YOUR_BASE_QT_DIR>
+
+First, we need to be sure we have flatc (flatbuffers) installed. If it's not the case. It can be build from the sources of this repository. 
+
+::
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="${QTDIR}/clang_64" -DRANGE_V3_DOCS="OFF"
+    //build and install flatbuffers as a command line
+    cmake --build . --target flatc
+    cmake --build . --target flatbuffers
+    make install -C third_party/flatbuffers
+    //clear the current folder
+    rm -rf ./*
 
 
-    cmake -B <build_dir> -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=10.0 -DCMAKE_TOOLCHAIN_FILE=./ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH=<path_to_qt_ios_dir> -G Xcode
 
-At compile times you might need to have flatbuffer installed on your machine
+Building Thymio Suite lanncher. This require to generate the xcode project, and use it via xcodebuild command line.
 
-    brew install flatbuffers
+::
+    cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=./ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="${QTDIR}/ios" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+
+Building and archiving the build
+
+::
+    xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries   -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0
+
+Generation the IPA 
+
+::
+    xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild -allowProvisioningUpdates
+
+
+Note that to generate the IPA without error you'll need to have the Provisioning profile  and the related certificate installed. 
+
+
+Provisioning profile  
+You must have at least one valid provisioning profile installed in `~/Library/MobileDevice/Provisioning Profiles`. The codesign process will look in this folder for a valid one. 
+
+::
+    mv <valid_provisioining_profile> ~/Library/MobileDevice/Provisioning\ Profiles
+
+
+Installing the certificate : 
+
+if `error: exportArchive: No valid Apple Distribution certificate found.` 
+Allows the code sign process to access a certificate and import the new certificate
+
+::
+    security unlock-keychain -p <user_keychain_access_password>
+    security import <Certificate_p12_path> -k ~/Library/Keychains/login.keychain -P <certificate_p12_password> -T /usr/bin/codesign
+
 
 
 Running tests
