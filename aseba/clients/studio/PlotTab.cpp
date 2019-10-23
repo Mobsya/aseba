@@ -8,7 +8,7 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 
     auto layout = new QVBoxLayout;
     m_chart = new QtCharts::QChart();
-    QChartView* chartView = new QChartView(m_chart);
+    QChartView* chartView = new QChartView(m_chart, this);
     chartView->setRubberBand(QChartView::VerticalRubberBand);
     chartView->setRenderHint(QPainter::Antialiasing);
     layout->addWidget(chartView);
@@ -31,10 +31,10 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 }
 
 
-void PlotTab::setThymio(std::shared_ptr<const mobsya::ThymioNode> node) {
+void PlotTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     m_thymio = node;
     if(node) {
-        // node->setWatchEventsEnabled(true);
+        m_thymio->setWatchEventsEnabled(true);
         connect(node.get(), &mobsya::ThymioNode::events, this, &PlotTab::onEvents);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &PlotTab::onVariablesChanged);
         // connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
@@ -42,7 +42,7 @@ void PlotTab::setThymio(std::shared_ptr<const mobsya::ThymioNode> node) {
     }
 }
 
-const std::shared_ptr<const mobsya::ThymioNode> PlotTab::thymio() const {
+const std::shared_ptr<mobsya::ThymioNode> PlotTab::thymio() const {
     return m_thymio;
 }
 
@@ -122,6 +122,18 @@ void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXY
             }
             serie->append(m_start.msecsTo(timestamp), d);
         }
+    }
+}
+
+void PlotTab::hideEvent(QHideEvent*) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(false);
+    }
+}
+
+void PlotTab::showEvent(QShowEvent*) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(true);
     }
 }
 
