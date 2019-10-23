@@ -118,7 +118,7 @@ void ScoreModifier::step(double dt, World*) {
     double x = owner->pos.x;
     double y = owner->pos.y;
     if((x > 32) && (x < 110.4 - 32) && (y > 67.2) && (y < 110.4 - 32))
-        polymorphic_downcast<FeedableEPuck*>(owner)->score += dt * SCORE_MODIFIER_COEFFICIENT;
+        dynamic_cast<FeedableEPuck*>(owner)->score += dt * SCORE_MODIFIER_COEFFICIENT;
 }
 
 // FeedableEPuck

@@ -111,7 +111,7 @@ Node* IfWhenNode::optimize(std::wostream* dump) {
         children[1] = new BlockNode(sourcePos);
 
     // fold operation inside if
-    auto* operation = polymorphic_downcast<BinaryArithmeticNode*>(children[0]);
+    auto* operation = dynamic_cast<BinaryArithmeticNode*>(children[0]);
     auto* foldedNode = new FoldedIfWhenNode(sourcePos);
     foldedNode->op = operation->op;
     foldedNode->edgeSensitive = edgeSensitive;
@@ -168,7 +168,7 @@ Node* WhileNode::optimize(std::wostream* dump) {
     }
 
     // fold operation inside loop
-    auto* operation = polymorphic_downcast<BinaryArithmeticNode*>(children[0]);
+    auto* operation = dynamic_cast<BinaryArithmeticNode*>(children[0]);
     auto* foldedNode = new FoldedWhileNode(sourcePos);
     foldedNode->op = operation->op;
     foldedNode->children.push_back(operation->children[0]);
@@ -380,13 +380,13 @@ void BinaryArithmeticNode::deMorganNotRemoval() {
         // logic: invert and call recursively
         case ASEBA_OP_OR:
             op = ASEBA_OP_AND;
-            polymorphic_downcast<BinaryArithmeticNode*>(children[0])->deMorganNotRemoval();
-            polymorphic_downcast<BinaryArithmeticNode*>(children[1])->deMorganNotRemoval();
+            dynamic_cast<BinaryArithmeticNode*>(children[0])->deMorganNotRemoval();
+            dynamic_cast<BinaryArithmeticNode*>(children[1])->deMorganNotRemoval();
             break;
         case ASEBA_OP_AND:
             op = ASEBA_OP_OR;
-            polymorphic_downcast<BinaryArithmeticNode*>(children[0])->deMorganNotRemoval();
-            polymorphic_downcast<BinaryArithmeticNode*>(children[1])->deMorganNotRemoval();
+            dynamic_cast<BinaryArithmeticNode*>(children[0])->deMorganNotRemoval();
+            dynamic_cast<BinaryArithmeticNode*>(children[1])->deMorganNotRemoval();
             break;
         default: abort();
     };
