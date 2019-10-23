@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="../common/AeslEditor.cpp" line="+461"/>
+        <location filename="../common/AeslEditor.cpp" line="+445"/>
         <source>Clear breakpoint</source>
         <translation>Enlever le point d&apos;arrêt</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+71"/>
+        <location filename="../../studio/MainWindow.cpp" line="+70"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: résultat de la dernière compilation</translation>
     </message>
@@ -263,56 +263,44 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
-        <translation>Temps (seconde)</translation>
+        <translation type="vanished">Temps (seconde)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Values</source>
-        <translation>Valeurs</translation>
+        <translation type="vanished">Valeurs</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+78"/>
         <source>Recording...</source>
-        <translation>Enregistrement...</translation>
+        <translation type="vanished">Enregistrement...</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+77"/>
         <source>&amp;Pause</source>
-        <translation>&amp;Pause</translation>
+        <translation type="vanished">&amp;Pause</translation>
     </message>
     <message>
-        <location line="-73"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Effacer</translation>
+        <translation type="vanished">&amp;Effacer</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>time &amp;window:</source>
-        <translation>fenêtre &amp;temporelle:</translation>
+        <translation type="vanished">fenêtre &amp;temporelle:</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Save &amp;As...</source>
-        <translation>Enregistrer &amp;sous...</translation>
+        <translation type="vanished">Enregistrer &amp;sous...</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Paused...</source>
-        <translation>En pause...</translation>
+        <translation type="vanished">En pause...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Record</source>
-        <translation>&amp;Enregistrer</translation>
+        <translation type="vanished">&amp;Enregistrer</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Save plot data to file</source>
-        <translation>Sauvegarer les données du graph dans un fichier</translation>
+        <translation type="vanished">Sauvegarer les données du graph dans un fichier</translation>
     </message>
 </context>
 <context>
@@ -692,7 +680,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;b&gt;Événements&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+474"/>
+        <location line="+460"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -759,7 +747,7 @@ event %0 : </source>
         <translation type="vanished">Une partie du contenu n&apos;a pas été importé</translation>
     </message>
     <message>
-        <location line="-322"/>
+        <location line="-308"/>
         <source>Go To Line</source>
         <translation>Aller à la ligne</translation>
     </message>
@@ -769,9 +757,8 @@ event %0 : </source>
         <translation>ligne:</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>Plot event %1</source>
-        <translation>Graph de l&apos;événement %1</translation>
+        <translation type="vanished">Graph de l&apos;événement %1</translation>
     </message>
     <message>
         <source>plot of %1</source>
@@ -782,7 +769,7 @@ event %0 : </source>
         <translation type="obsolete">Aide d&apos;Aseba Studio: Studio</translation>
     </message>
     <message>
-        <location line="+201"/>
+        <location line="+259"/>
         <source>Thymio programming tutorial...</source>
         <translation>Didacticiel de programmation Thymio...</translation>
     </message>
@@ -817,7 +804,7 @@ event %0 : </source>
         <translation>Site web d&apos;Aseba...</translation>
     </message>
     <message>
-        <location line="-491"/>
+        <location line="-477"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio est un environnement pour programmer des robots interactivement avec un langage texte.</translation>
     </message>
@@ -827,7 +814,7 @@ event %0 : </source>
         <translation>https://www.thymio.org/fr:asebastudio</translation>
     </message>
     <message>
-        <location line="+490"/>
+        <location line="+476"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/fr:start</translation>
     </message>
@@ -1300,7 +1287,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;p&gt;Aseba pre-version:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba SVN rev. %0 / protocole ver. %1&lt;/li&gt;&lt;li&gt;Dashel ver. </translation>
     </message>
     <message>
-        <location line="-513"/>
+        <location line="-499"/>
         <source>Export memory content</source>
         <translation>Exporter le contenu de la mémoire</translation>
     </message>
@@ -1329,7 +1316,7 @@ event %0 : </source>
         <translation type="obsolete">Ne peut pas ouvrir le fichier d&apos;aide.</translation>
     </message>
     <message>
-        <location line="+303"/>
+        <location line="+289"/>
         <source>...inside %0</source>
         <translation>...dans %0</translation>
     </message>
@@ -1495,7 +1482,7 @@ event %0 : </source>
         <translation type="vanished">Resetter</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+868"/>
+        <location filename="../../studio/NodeTab.cpp" line="+849"/>
         <source>Run</source>
         <translation>Exécuter</translation>
     </message>
@@ -1533,7 +1520,7 @@ event %0 : </source>
         <translation type="vanished">bytecode: %1 sur %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-567"/>
+        <location line="-549"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Utilisation de la mémoire&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1542,7 +1529,7 @@ event %0 : </source>
         <translation type="vanished">exécution</translation>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+547"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
@@ -1568,7 +1555,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Mots clés&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="-556"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>variables: %1 %2 (%3 %)</translation>
     </message>
@@ -1588,7 +1575,7 @@ event %0 : </source>
         <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Non connecté&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Stopped</source>
         <translation>Arrété</translation>
     </message>
@@ -1613,7 +1600,7 @@ event %0 : </source>
         <translation>(contrôlé par une autre application ou un autre utilisateur)</translation>
     </message>
     <message>
-        <location line="+396"/>
+        <location line="+380"/>
         <source>Stop</source>
         <translation>Arrêter</translation>
     </message>
@@ -2200,7 +2187,7 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
         <translation>Connection à Thymio...</translation>
     </message>
@@ -2241,7 +2228,7 @@ event %0 : </source>
         <translation>Connexion à Thymio perdue... assurez-vous que Thymio est allumé et connecter le cable USB ou le dongle</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+77"/>
         <source>[modified] </source>
         <translation>[modifié] </translation>
     </message>

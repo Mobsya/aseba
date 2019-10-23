@@ -69,7 +69,10 @@ void aseba_device::free_endpoint() {
 }
 
 void aseba_device::stop() {
-    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}, [](tcp_socket& socket) { socket.cancel(); }
+    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}, [](tcp_socket& socket) {
+                                     boost::system::error_code e;
+                                     socket.cancel(e);
+                                 }
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
                                  ,
                                  [](mobsya::usb_serial_port& d) {

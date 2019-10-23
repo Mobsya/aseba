@@ -60,7 +60,7 @@ Item {
             anchors.right: icon_close.left
             anchors.rightMargin: (parent.height - height) / 2
             onClicked: {
-                Qt.openUrlExternally(launcher.selectedApp.helpUrl)
+                Qt.openUrlExternally(launcher.selectedApp.helpUrl.arg(Utils.uiLanguage))
             }
         }
 

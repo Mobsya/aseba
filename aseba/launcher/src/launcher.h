@@ -12,8 +12,11 @@ namespace mobsya {
 class Launcher : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool isZeroconfRunning READ isZeroconfRunning NOTIFY zeroconfStatusChanged)
+    Q_PROPERTY(QString uiLanguage READ uiLanguage)
 public:
     Launcher(mobsya::ThymioDeviceManagerClient* client, QObject* parent = nullptr);
+
+    QString uiLanguage() const;
     Q_INVOKABLE bool platformIsOsX() const;
     Q_INVOKABLE bool platformIsLinux() const;
 #ifdef Q_OS_OSX

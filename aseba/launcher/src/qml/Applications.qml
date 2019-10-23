@@ -69,7 +69,7 @@ ListModel {
         descriptionTextFile: "qrc:/apps/vpl/desc.%1.html"
         supportsGroups: false
         supportsWatchMode: false
-        helpUrl: "https://www.thymio.org/program/vpl/"
+        helpUrl: "https://www.thymio.org/%1/program/vpl/"
     }
     ListElement {
         appId: "scratch"
@@ -80,7 +80,7 @@ ListModel {
         descriptionTextFile: "qrc:/apps/scratch/desc.%1.html"
         supportsGroups: false
         supportsWatchMode: false
-        helpUrl: "https://www.thymio.org/program/scratch/"
+        helpUrl: "https://www.thymio.org/%1/program/scratch/"
     }
 
     ListElement {
@@ -92,7 +92,7 @@ ListModel {
         descriptionTextFile: "qrc:/apps/blockly/desc.%1.html"
         supportsGroups: false
         supportsWatchMode: false
-        helpUrl: "https://www.thymio.org/program/blockly/"
+        helpUrl: "https://www.thymio.org/%1/program/blockly/"
     }
 
      ListElement {
@@ -104,6 +104,6 @@ ListModel {
          descriptionTextFile: "qrc:/apps/studio/desc.%1.html"
          supportsGroups: true
          supportsWatchMode: true
-         helpUrl: "https://www.thymio.org/program/aseba/"
+         helpUrl: "https://www.thymio.org/%1/program/aseba/"
      }
 }

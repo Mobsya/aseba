@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="../common/AeslEditor.cpp" line="+464"/>
+        <location filename="../common/AeslEditor.cpp" line="+445"/>
         <source>Clear breakpoint</source>
         <translation>Quitar interrupción</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+71"/>
+        <location filename="../../studio/MainWindow.cpp" line="+70"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: Resultado de la compilación anterior</translation>
     </message>
@@ -140,102 +140,83 @@
         <translation type="vanished">Personalizado</translation>
     </message>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
         <source>Discovered targets</source>
-        <translation>Objetivos encontrados</translation>
+        <translation type="vanished">Objetivos encontrados</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Selected target</source>
-        <translation>Objetivo seleccionado</translation>
+        <translation type="vanished">Objetivo seleccionado</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Serial port</source>
-        <translation>Puerto serial</translation>
+        <translation type="vanished">Puerto serial</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Local TCP</source>
-        <translation>TCP local</translation>
+        <translation type="vanished">TCP local</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>TCP</source>
-        <translation>TCP</translation>
+        <translation type="vanished">TCP</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Documentation</source>
-        <translation>Docuemntación</translation>
+        <translation type="vanished">Docuemntación</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Language</source>
-        <translation>Idioma</translation>
+        <translation type="vanished">Idioma</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Connect</source>
-        <translation>Conectar</translation>
+        <translation type="vanished">Conectar</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Aseba Target Selection</source>
-        <translation>Selección de objetivo Aseba</translation>
+        <translation type="vanished">Selección de objetivo Aseba</translation>
     </message>
     <message>
-        <location line="+48"/>
         <source> – type %1</source>
-        <translation> - tipo %1</translation>
+        <translation type="vanished"> - tipo %1</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>local on computer</source>
-        <translation type="unfinished">local en PC</translation>
+        <translation type="obsolete">local en PC</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>distant on network</source>
-        <translation>a distancia en la red</translation>
+        <translation type="vanished">a distancia en la red</translation>
     </message>
     <message>
-        <location line="+55"/>
         <source> – device %1</source>
-        <translation> – dispositivo %1</translation>
+        <translation type="vanished"> – dispositivo %1</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>serial port or USB</source>
-        <translation>Puerto serial o USB</translation>
+        <translation type="vanished">Puerto serial o USB</translation>
     </message>
 </context>
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+103"/>
         <source>Thymio not found</source>
-        <translation>No se encontró ningún Thymio</translation>
+        <translation type="vanished">No se encontró ningún Thymio</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;&lt;b&gt;Thymio no encontrado!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Conecte el Thymio a su PC usando el cable USB o adaptador inalámbrico, y asegúrese de que ningún otro programa esté usando el robot.&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p&gt;&lt;b&gt;Thymio no encontrado!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Conecte el Thymio a su PC usando el cable USB o adaptador inalámbrico, y asegúrese de que ningún otro programa esté usando el robot.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Connection to command line target failed</source>
-        <translation>Falló la conexión con el objetivo por línea de comandos</translation>
+        <translation type="vanished">Falló la conexión con el objetivo por línea de comandos</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Cannot connect to target %0</source>
-        <translation>No se logró conectar al objetivo %0</translation>
+        <translation type="vanished">No se logró conectar al objetivo %0</translation>
     </message>
 </context>
 <context>
@@ -279,56 +260,44 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
-        <translation>Tiempo (segundos)</translation>
+        <translation type="vanished">Tiempo (segundos)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Values</source>
-        <translation>Valores</translation>
+        <translation type="vanished">Valores</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+78"/>
         <source>Recording...</source>
-        <translation>Grabando...</translation>
+        <translation type="vanished">Grabando...</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+77"/>
         <source>&amp;Pause</source>
-        <translation>&amp;Pausa</translation>
+        <translation type="vanished">&amp;Pausa</translation>
     </message>
     <message>
-        <location line="-73"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Limpiar gráfica</translation>
+        <translation type="vanished">&amp;Limpiar gráfica</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>time &amp;window:</source>
-        <translation>Ventana de &amp;tiempo:</translation>
+        <translation type="vanished">Ventana de &amp;tiempo:</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Save &amp;As...</source>
-        <translation>G&amp;uardar como...</translation>
+        <translation type="vanished">G&amp;uardar como...</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Paused...</source>
-        <translation>Pausado...</translation>
+        <translation type="vanished">Pausado...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Record</source>
-        <translation>G&amp;rabación</translation>
+        <translation type="vanished">G&amp;rabación</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Save plot data to file</source>
-        <translation>Guardar datos graficados</translation>
+        <translation type="vanished">Guardar datos graficados</translation>
     </message>
 </context>
 <context>
@@ -340,12 +309,12 @@
     </message>
     <message>
         <location line="+20"/>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Add a new event</source>
         <translation type="unfinished">Adicionar nuevo evento</translation>
     </message>
     <message>
-        <location line="-37"/>
+        <location line="-38"/>
         <source>Remove this event</source>
         <translation type="unfinished">Remover evento</translation>
     </message>
@@ -360,7 +329,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Clear</source>
         <translation type="unfinished">Limpiar</translation>
     </message>
@@ -665,7 +634,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Información de la versión Aseba:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2012 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;StÃ©phane Magnenat&lt;/a&gt; and other contributors.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba is open-source licensed under the LGPL version 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+564"/>
+        <location filename="../../studio/MainWindow.cpp" line="+535"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -674,7 +643,7 @@ Occurrences</source>
         <translation type="vanished">Acerca de Aseba Studio</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-478"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio es un entorno para la programación interactiva de robots con un lenguaje de texto.</translation>
     </message>
@@ -684,7 +653,7 @@ Occurrences</source>
         <translation>https://www.thymio.org/es:asebastudio</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+51"/>
         <source>Open Script</source>
         <translation>Abrir script</translation>
     </message>
@@ -705,12 +674,12 @@ Occurrences</source>
         <translation type="vanished">Error en archivo fuente XML: %0, línea %1, columna %2</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+37"/>
         <source>Save Script</source>
         <translation>Guardar Script</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+82"/>
         <source>Export memory content</source>
         <translation>Exportar el contenido de la memoria</translation>
     </message>
@@ -773,9 +742,8 @@ Occurrences</source>
         <translation type="vanished">Valor inválido para el argumento %0 del evento %1</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>Plot event %1</source>
-        <translation>Graficar evento %1</translation>
+        <translation type="vanished">Graficar evento %1</translation>
     </message>
     <message>
         <source>plot of %1</source>
@@ -872,9 +840,8 @@ evento %0 : </translation>
         <translation type="vanished">Enviar este evento</translation>
     </message>
     <message>
-        <location line="+126"/>
         <source>Plot this event</source>
-        <translation>Graficar este evento</translation>
+        <translation type="vanished">Graficar este evento</translation>
     </message>
     <message>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
@@ -885,7 +852,7 @@ evento %0 : </translation>
         <translation type="vanished">Limpiar</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+210"/>
         <source>...inside %0</source>
         <translation>...dentro de %0</translation>
     </message>
@@ -1435,7 +1402,7 @@ evento %0 : </translation>
         <translation type="vanished">Restablecer</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+832"/>
+        <location filename="../../studio/NodeTab.cpp" line="+849"/>
         <source>Run</source>
         <translation>Ejecutar</translation>
     </message>
@@ -1457,7 +1424,7 @@ evento %0 : </translation>
         <translation type="vanished">&lt;b&gt;Ejecución&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-561"/>
+        <location line="-558"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1467,12 +1434,17 @@ evento %0 : </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+15"/>
+        <source>Compilation Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+130"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Stopped</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1497,7 +1469,7 @@ evento %0 : </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+386"/>
+        <location line="+380"/>
         <source>Stop</source>
         <translation type="unfinished">Detener</translation>
     </message>
@@ -1552,7 +1524,7 @@ evento %0 : </translation>
         <translation type="vanished">bytecode: %1 en %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-635"/>
+        <location line="-632"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Uso de memoria&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1561,7 +1533,7 @@ evento %0 : </translation>
         <translation type="vanished">ejecutando</translation>
     </message>
     <message>
-        <location line="+550"/>
+        <location line="+547"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
@@ -1597,19 +1569,16 @@ evento %0 : </translation>
         <translation type="obsolete">Aseba Studio - Conexión cerrada</translation>
     </message>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
-        <translation>Conexión cerrada</translation>
+        <translation type="vanished">Conexión cerrada</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Warning, connection closed: I am trying to reconnect.</source>
-        <translation>Atención, conexión cerrada: intentando conectarse nuevamente.</translation>
+        <translation type="vanished">Atención, conexión cerrada: intentando conectarse nuevamente.</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Stop trying</source>
-        <translation>Dejar de intentarlo</translation>
+        <translation type="vanished">Dejar de intentarlo</translation>
     </message>
 </context>
 <context>
@@ -2097,7 +2066,7 @@ evento %0 : </translation>
 <context>
     <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
         <translation type="unfinished">Conectándose a Thymio...</translation>
     </message>
@@ -2138,7 +2107,7 @@ evento %0 : </translation>
         <translation type="unfinished">Se perdió la conexión con Thymio... verifique que Thymio esté encendido y conectado a traves del cable USB o del adaptador inalámbrico</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+77"/>
         <source>[modified] </source>
         <translation type="unfinished">[modificado] </translation>
     </message>
@@ -2321,20 +2290,16 @@ evento %0 : </translation>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
-        <location line="+7"/>
         <source>Protocol version mismatch</source>
-        <translation>Incompatibilidad en versiones de protocolo</translation>
+        <translation type="vanished">Incompatibilidad en versiones de protocolo</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Aseba Studio uses an older protocol (%1) than node %0 (%2), please upgrade Aseba Studio.</source>
-        <translation>Aseba Studio utiliza un protocolo anterior(%1) al utilizado por el nodo %0 (%2). Por favor actualice Aseba Studio.</translation>
+        <translation type="vanished">Aseba Studio utiliza un protocolo anterior(%1) al utilizado por el nodo %0 (%2). Por favor actualice Aseba Studio.</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Node %0 uses an older protocol (%2) than Aseba Studio (%1), please upgrade the node firmware.</source>
-        <translation>El nodo %0 utiliza un protocolo anterior(%2) al utilizado por Aseba Studio (%1). Por favor actualice el firmware del nodo.</translation>
+        <translation type="vanished">El nodo %0 utiliza un protocolo anterior(%2) al utilizado por Aseba Studio (%1). Por favor actualice el firmware del nodo.</translation>
     </message>
 </context>
 <context>
@@ -2439,14 +2404,12 @@ evento %0 : </translation>
         <translation>Error VPL desconocido</translation>
     </message>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="-405"/>
         <source>Unexpected Dashel Error</source>
-        <translation>Error Dashel inesperado</translation>
+        <translation type="vanished">Error Dashel inesperado</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>A communication error happened:</source>
-        <translation>Ocurrió un error de comunicación:</translation>
+        <translation type="vanished">Ocurrió un error de comunicación:</translation>
     </message>
     <message>
         <location filename="../../studio/CustomDelegate.cpp" line="+80"/>

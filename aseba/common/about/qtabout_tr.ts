@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AboutBox</name>
     <message>
-        <location filename="AboutDialog.cpp" line="+77"/>
+        <location filename="AboutDialog.cpp" line="+72"/>
         <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -69,12 +69,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>supported stream types: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+17"/>
         <source>Libraries</source>
         <translation type="unfinished"></translation>
     </message>

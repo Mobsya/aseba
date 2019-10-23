@@ -125,9 +125,7 @@ bool Launcher::openUrl(const QUrl& url) {
     // because the version of safari shipped with an up-to-date Sierra is more current
     // than the system's webkit
 #ifdef Q_OS_OSX
-    if(QOperatingSystemVersion::current() < QOperatingSystemVersion::MacOSHighSierra) {
-        return openUrlWithParameters(url);
-    }
+    return openUrlWithParameters(url);
 #endif
 
 #ifdef MOBSYA_USE_WEBENGINE
@@ -204,6 +202,10 @@ QString get_ui_language() {
         return l.name();
     }
     return langs.first();
+}
+
+QString Launcher::uiLanguage() const {
+    return get_ui_language().mid(0, 2);
 }
 
 Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {

@@ -4,7 +4,7 @@
 <context>
     <name>Enki::PlaygroundViewer</name>
     <message>
-        <location filename="PlaygroundViewer.cpp" line="+73"/>
+        <location filename="PlaygroundViewer.cpp" line="+74"/>
         <source>You are using a feature not available in the simulator, click here to buy a real Thymio.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -118,7 +118,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="playground.cpp" line="+382"/>
+        <location filename="playground.cpp" line="+402"/>
         <source>%2 on %3</source>
         <translation type="unfinished"></translation>
     </message>

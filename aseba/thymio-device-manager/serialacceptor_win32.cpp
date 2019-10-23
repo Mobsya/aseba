@@ -175,7 +175,6 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         }
         const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
 
-        known_devices.push_back(port_name);
         if(m_requests.empty() || std::find(m_known_devices.begin(), m_known_devices.end(), port_name) != m_known_devices.end())
             continue;
 
@@ -192,6 +191,9 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         if(!ec) {
             auto handler = std::move(req.handler);
             const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
+
+            known_devices.push_back(port_name);
+
             m_requests.pop();
             boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
         }
