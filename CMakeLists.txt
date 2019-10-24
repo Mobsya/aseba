@@ -2,7 +2,9 @@
 # kate: replace-tabs off; tab-width 4; indent-width 4; tab-indents true; indent-mode normal
 # vim: ts=4:sw=4:noexpandtab
 
+if(APPLE AND NOT IOS)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
+endif()
 
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
@@ -22,6 +24,13 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 
 
+if(IOS)
+    if(IOS_ARCHIVE_BUILD)
+        set(CMAKE_XCODE_ATTRIBUTE_INSTALL_PATH "")
+        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin/libraries")
+    endif()
+endif()
+
 # ensure a minimal version of CMake
 cmake_minimum_required(VERSION 3.13)
 include(InstallRequiredSystemLibraries)
@@ -38,8 +47,10 @@ include(CMakeModules/deployqt.cmake)
 include(CMakeModules/CMakeQuery.cmake)
 
 if(NOT ANDROID)
+    if(NOT IOS)
     include(CMakeModules/boost.cmake)
     include(CMakeModules/enki.cmake)
+    endif()
     find_package(Threads REQUIRED)
 endif()
 
@@ -72,9 +83,15 @@ target_include_directories(mpark_variant INTERFACE
 if (ANDROID)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
 endif()
+
+if(IOS)
+    set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
+endif()
+
 set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
 add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 
+if(NOT IOS)
 if (NOT TARGET flatc)
     include( ExternalProject )
     list(APPEND CMAKE_ARGS "-DFLATBUFFERS_BUILD_FLATLIB=OFF")
@@ -91,6 +108,7 @@ if (NOT TARGET flatc)
     set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc)
     add_dependencies(flatc flatc_build)
 endif()
+endif() #NOT IOS
 
 # testing and defines
 enable_testing()
@@ -98,6 +116,7 @@ enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
+
 cmake_policy(SET CMP0020 NEW)
 
 if(CREATE_QT_CONF_FILE)
@@ -111,7 +130,7 @@ endif()
 # Qt
 find_package(Qt5 OPTIONAL_COMPONENTS Core Gui Widgets OpenGL Network Concurrent Xml Svg Test LinguistTools Charts)
 
-if (NOT ANDROID)
+if (NOT ANDROID AND NOT IOS)
     find_package(Qt5Help)
 endif()
 
@@ -151,6 +170,7 @@ set(CPACK_BUNDLE_NAME ThymioSuite)
 set(CPACK_BUNDLE_PLIST ${PROJECT_SOURCE_DIR}/osx/Info.plist)
 set(CPACK_BUNDLE_ICON ${PROJECT_SOURCE_DIR}/menu/osx/asebastudio.icns)
 
+
 macro(install_symlink filepath sympath)
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${filepath} ${sympath})")
     install(CODE "message(\"-- Created symlink: ${sympath} -> ${filepath}\")")
@@ -162,10 +182,7 @@ SET(CPACK_PACKAGE_VERSION_MINOR "${ASEBA_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${ASEBA_VERSION_PATCH}")
 include(CPack)
 
-
-
 add_subdirectory(aseba)
-
 
 if(NOT ANDROID)
 	add_subdirectory(js)
@@ -175,6 +192,7 @@ if(NOT ANDROID)
     # Unit tests
     add_subdirectory(tests)
 endif()
+
 
 # User entries
 if (UNIX)
@@ -195,6 +213,7 @@ if(FLAT_PACK_BUILD)
     SET(MOBSYA_WEBAPPS_ROOT_DIR "share/")
 endif()
 
+if(NOT IOS)
 if(EXISTS ${PROJECT_SOURCE_DIR}/scratch/index.html)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scratch/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}scratch")
@@ -203,3 +222,4 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
 endif()
+endif() #NOT IOS

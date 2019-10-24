@@ -75,8 +75,6 @@ int main(int argc, char** argv) {
     mobsya::Launcher launcher(&client);
     mobsya::TDMSupervisor supervisor(launcher);
     supervisor.startLocalTDM();
-
-
     mobsya::ThymioDevicesModel model(client);
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
@@ -105,10 +103,13 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("thymios", &model);
     w.rootContext()->setContextProperty("client", &client);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    w.setResizeMode(QQuickWidget::SizeRootObjectToView);
+    w.setResizeMode(QQuickWidget::SizeRootObjectToView);    
+#ifdef Q_OS_IOS
+    w.showFullScreen();
+#else
     w.setMinimumSize(1024, 640);
     w.showNormal();
-
+#endif
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&client]() {
         auto windows = qApp->allWindows();
         for(auto w : windows) {
@@ -121,7 +122,9 @@ int main(int argc, char** argv) {
 
     app.setActivationWindow(&w, true);
     app.setQuitOnLastWindowClosed(false);
-
-
+    
+#ifdef Q_OS_IOS
+    QObject::connect(&app, &QGuiApplication::applicationStateChanged, &launcher, &mobsya::Launcher::applicationStateChanged);
+#endif
     return app.exec();
 }

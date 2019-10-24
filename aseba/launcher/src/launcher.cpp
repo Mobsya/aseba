@@ -45,6 +45,12 @@ bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) con
     return doLaunchOsXBundle(name, args);
 }
 #endif
+#ifdef Q_OS_IOS
+//Dummy implementation to iOS
+bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
+    return false;
+}
+#endif
 
 QString Launcher::search_program(const QString& name) const {
     qDebug() << "Searching for " << name;
@@ -73,15 +79,20 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 #ifdef Q_OS_OSX
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/../Resources/").absolutePath());
 #endif
+#ifdef Q_OS_IOS
+    files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath());
+#endif
     return files;
 }
 
 bool Launcher::launch_process(const QString& program, const QStringList& args) const {
+#ifndef Q_OS_IOS
     return QProcess::startDetached(program, args);
+#endif
 }
 
 bool Launcher::launchPlayground() const {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_OSX
     return doLaunchPlaygroundBundle();
 #else
     auto exe = search_program("asebaplayground");
@@ -120,6 +131,11 @@ bool Launcher::openUrl(const QUrl& url) {
     // than the system's webkit
 #ifdef Q_OS_OSX
     return openUrlWithParameters(url);
+#endif
+    
+#ifdef Q_OS_IOS
+    OpenUrlInNativeWebView(url);
+    return true;
 #endif
 
 #ifdef MOBSYA_USE_WEBENGINE
@@ -167,7 +183,7 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
                                                                    {"scratch", "scratch"}};
     auto it = default_folder_name.find(name);
     if(it == default_folder_name.end())
-        return {};
+        return {};    
     for(auto dirpath : webappsFolderSearchPaths()) {
         QFileInfo d(dirpath + "/" + it->second);
         if(d.exists()) {
@@ -219,5 +235,21 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
-
+#ifdef Q_OS_IOS
+Q_INVOKABLE  void Launcher::applicationStateChanged(Qt::ApplicationState state)
+{
+    static Qt::ApplicationState lastState = Qt::ApplicationActive;
+    
+    if((lastState == Qt::ApplicationActive ) && (state < Qt::ApplicationActive))
+    {
+        //Check if it could be interessting to store the current connected device to force reconnect to it later, if the browser is open
+    }
+    else if ( (lastState  < Qt::ApplicationActive) &&  (state == Qt::ApplicationActive ) )
+    {
+        //Fix the posisbility to reconnect from the thymio selection after the device sleeping, but does not provied the browser to reconnect
+        m_client->restartBrowser();
+    }
+    lastState = state;
+}
+#endif
 }  // namespace mobsya

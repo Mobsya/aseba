@@ -2,14 +2,29 @@ function(compile_flatbuffers_schema_to_cpp SRC_FBS HEADER)
   get_filename_component(SRC_FBS_ABS ${SRC_FBS} ABSOLUTE)
   string(REGEX REPLACE "\\.fbs$" "_generated.h" GEN_HEADER ${SRC_FBS})
   set(${HEADER} ${GEN_HEADER})
+
+  if(NOT IOS)
   add_custom_command(
     OUTPUT ${GEN_HEADER}
     COMMAND flatc --cpp --no-includes --gen-mutable --scoped-enums
             --gen-object-api -o "${CMAKE_CURRENT_BINARY_DIR}"
             --cpp-ptr-type std::unique_ptr
-            "${SRC_FBS_ABS}"
-    DEPENDS flatc ${SRC_FBS_ABS}
-    )
+            "${SRC_FBS_ABS}"            
+             DEPENDS flatc ${SRC_FBS_ABS}
+
+     )
+    else()
+        add_custom_command(
+          OUTPUT ${GEN_HEADER}
+          COMMAND flatc --cpp --no-includes --gen-mutable --scoped-enums
+                  --gen-object-api -o "${CMAKE_CURRENT_BINARY_DIR}"
+                  --cpp-ptr-type std::unique_ptr
+                  "${SRC_FBS_ABS}"
+                  USES_TERMINAL
+
+           )
+    endif()
+
     set(${HEADER} "${${HEADER}}" PARENT_SCOPE)
 endfunction()
 
@@ -17,13 +32,25 @@ function(compile_flatbuffers_schema_to_js SRC_FBS HEADER)
   get_filename_component(SRC_FBS_ABS ${SRC_FBS} ABSOLUTE)
   string(REGEX REPLACE "\\.fbs$" "_generated.js" GEN_HEADER ${SRC_FBS})
   set(${HEADER} ${GEN_HEADER})
-  add_custom_command(
-    OUTPUT ${GEN_HEADER}
-    COMMAND flatc --js --gen-mutable --es6-js-export
-            --gen-object-api -o "${CMAKE_BINARY_DIR}/js"
-            "${SRC_FBS_ABS}"
-    DEPENDS flatc ${SRC_FBS_ABS}
-    )
+  if(NOT IOS)
+      add_custom_command(
+        OUTPUT ${GEN_HEADER}
+        COMMAND flatc --js --gen-mutable --es6-js-export
+                --gen-object-api -o "${CMAKE_BINARY_DIR}/js"
+                "${SRC_FBS_ABS}"
+                DEPENDS flatc ${SRC_FBS_ABS}
+
+
+      )
+    else()
+        add_custom_command(
+          OUTPUT ${GEN_HEADER}
+          COMMAND flatc --js --gen-mutable --es6-js-export
+                  --gen-object-api -o "${CMAKE_BINARY_DIR}/js"
+                  "${SRC_FBS_ABS}"
+                   USES_TERMINAL
+        )
+    endif()
     set(${HEADER} "${${HEADER}}" PARENT_SCOPE)
 endfunction()
 
