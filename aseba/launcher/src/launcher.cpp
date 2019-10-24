@@ -31,7 +31,13 @@ bool Launcher::platformIsOsX() const {
     return false;
 #endif
 }
-
+bool Launcher::platformIsIos() const {
+#ifdef Q_OS_IOS
+    return true;
+#else
+    return false;
+#endif
+}
 bool Launcher::platformIsLinux() const {
 #ifdef Q_OS_LINUX
     return true;

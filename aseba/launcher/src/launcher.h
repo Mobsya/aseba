@@ -18,6 +18,7 @@ public:
 
     QString uiLanguage() const;
     Q_INVOKABLE bool platformIsOsX() const;
+    Q_INVOKABLE bool platformIsIos() const;
     Q_INVOKABLE bool platformIsLinux() const;
 #ifdef Q_OS_OSX
     Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
