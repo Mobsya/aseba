@@ -22,8 +22,15 @@ Item {
             source: "qrc:/assets/launcher-icon-menu.svg"
             width: 30
             height: 30
+            visible: false
             onClicked: {
                 settingsMenu.visible = true
+            }
+            Component.onCompleted: {
+               if(!Utils.platformIsIos())
+                {
+                     visible = true
+                }
             }
         }
     }
