@@ -4,6 +4,11 @@ resources:
      options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
 
+trigger:
+  tags:
+    include:
+    - 2.*
+
 variables:
 - group: passwords
 - name: blockly_version

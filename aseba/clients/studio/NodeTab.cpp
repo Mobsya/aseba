@@ -133,7 +133,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     }
 }
 
-const std::shared_ptr<const mobsya::ThymioNode> NodeTab::thymio() const {
+const std::shared_ptr<mobsya::ThymioNode> NodeTab::thymio() const {
     return m_thymio;
 }
 
@@ -325,7 +325,7 @@ void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
         QTextBlock textBlock = editor->document()->findBlock(errorPos);
         int posInBlock = errorPos - textBlock.position();
         if(textBlock.userData())
-            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] =
+            dynamic_cast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] =
                 posInBlock;
         else
             textBlock.setUserData(new AeslEditorUserData(QStringLiteral("errorPos"), posInBlock));
@@ -720,7 +720,7 @@ bool NodeTab::setEditorProperty(const QString& property, const QVariant& value, 
     QTextBlock block = editor->document()->begin();
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
         if(lineCounter == line) {
             // set propety
             if(uData) {
@@ -759,7 +759,7 @@ bool NodeTab::clearEditorProperty(const QString& property, unsigned line) {
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
         if(lineCounter == line) {
-            auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+            auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
             if(uData && uData->properties.contains(property)) {
                 uData->properties.remove(property);
                 if(uData->properties.isEmpty()) {
@@ -782,7 +782,7 @@ bool NodeTab::clearEditorProperty(const QString& property) {
     // go through all blocks, remove property if found
     QTextBlock block = editor->document()->begin();
     while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
         if(uData && uData->properties.contains(property)) {
             uData->properties.remove(property);
             if(uData->properties.isEmpty()) {
@@ -800,7 +800,7 @@ bool NodeTab::clearEditorProperty(const QString& property) {
 void NodeTab::switchEditorProperty(const QString& oldProperty, const QString& newProperty) {
     QTextBlock block = editor->document()->begin();
     while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
         if(uData && uData->properties.contains(oldProperty)) {
             uData->properties.remove(oldProperty);
             uData->properties[newProperty] = QVariant();

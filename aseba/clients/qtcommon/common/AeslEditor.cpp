@@ -87,7 +87,7 @@ AeslHighlighter::AeslHighlighter(AeslEditor* editor, QTextDocument* parent)
 }
 
 void AeslHighlighter::highlightBlock(const QString& text) {
-    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(currentBlockUserData());
+    auto* uData = dynamic_cast<AeslEditorUserData*>(currentBlockUserData());
 
     // current line background blue
     bool isActive = uData && uData->properties.contains(QStringLiteral("active"));
@@ -493,7 +493,7 @@ void AeslEditor::insertKeyword(QString kw) {
 }
 
 bool AeslEditor::isBreakpoint(QTextBlock block) const {
-    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
     return (uData &&
             (uData->properties.contains(QStringLiteral("breakpoint")) ||
              uData->properties.contains(QStringLiteral("breakpointPending"))));
@@ -520,7 +520,7 @@ void AeslEditor::setBreakpoint() {
 }
 
 void AeslEditor::setBreakpoint(QTextBlock block) {
-    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
     if(!uData) {
         // create user data
         uData = new AeslEditorUserData(QStringLiteral("breakpointPending"));
@@ -535,7 +535,7 @@ void AeslEditor::clearBreakpoint() {
 }
 
 void AeslEditor::clearBreakpoint(QTextBlock block) {
-    auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+    auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
     uData->properties.remove(QStringLiteral("breakpointPending"));
     uData->properties.remove(QStringLiteral("breakpoint"));
     if(uData->properties.isEmpty()) {
@@ -547,7 +547,7 @@ void AeslEditor::clearBreakpoint(QTextBlock block) {
 
 void AeslEditor::clearAllBreakpoints() {
     for(QTextBlock it = document()->begin(); it != document()->end(); it = it.next()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(it.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(it.userData());
         if(uData) {
             uData->properties.remove(QStringLiteral("breakpoint"));
             uData->properties.remove(QStringLiteral("breakpointPending"));

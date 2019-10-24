@@ -920,12 +920,12 @@ namespace ThymioVPL {
         }
     }
     void ThymioVisualProgramming::addEvent() {
-        auto* button(polymorphic_downcast<BlockButton*>(sender()));
+        auto* button(dynamic_cast<BlockButton*>(sender()));
         view->ensureVisible(scene->addEvent(button->getName()));
     }
 
     void ThymioVisualProgramming::addAction() {
-        auto* button(polymorphic_downcast<BlockButton*>(sender()));
+        auto* button(dynamic_cast<BlockButton*>(sender()));
         view->ensureVisible(scene->addAction(button->getName()));
     }
 

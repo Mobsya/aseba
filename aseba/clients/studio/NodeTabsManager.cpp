@@ -91,8 +91,7 @@ void NodeTabsManager::createPlotTab(NodeTab* tab, const QString& name, plot_type
     createPlotTab(thymio, name, type);
 }
 
-void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> thymio, const QString& name,
-                                    plot_type type) {
+void NodeTabsManager::createPlotTab(std::shared_ptr<mobsya::ThymioNode> thymio, const QString& name, plot_type type) {
     PlotTab* t = nullptr;
     auto v =
         eventsTabs() | ranges::view::filter([&](PlotTab* t) {
@@ -100,7 +99,7 @@ void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> th
                 (type == plot_type::event ? t->plottedEvents().contains(name) : t->plottedVariables().contains(name));
         });
     if(v.begin() == v.end()) {
-        t = new PlotTab;
+        t = new PlotTab(this);
         t->setThymio(thymio);
         auto deviceTab = tabForNode(thymio);
         insertTab(indexOf(deviceTab) + 1, t, tr("%1 on %2").arg(name, thymio->name()));
