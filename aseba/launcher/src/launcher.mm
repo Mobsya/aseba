@@ -221,6 +221,15 @@ auto QStringListToNSArray(const QStringList &list)
 }
 
 #ifdef Q_OS_OSX
+
+bool Launcher::hasOsXBundle(const QString& name) const {
+    const auto path = QDir(QCoreApplication::applicationDirPath() +
+                           QStringLiteral("/../Applications/%1.app").arg(name)).absolutePath();
+
+    auto* bundle = [NSBundle bundleWithPath:path.toNSString()];
+    return bundle != nullptr;
+}
+
 bool Launcher::doLaunchPlaygroundBundle() const {
     const auto path = QDir(QCoreApplication::applicationDirPath() +
                            QStringLiteral("/../Applications/AsebaPlayground.app")).absolutePath();

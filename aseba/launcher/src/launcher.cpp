@@ -46,17 +46,41 @@ bool Launcher::platformIsLinux() const {
 #endif
 }
 
+Q_INVOKABLE bool Launcher::platformHasSerialPorts() const {
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+    return false;
+#else
+    return true;
+#endif
+}
+
 #ifdef Q_OS_MACOS
 bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
     return doLaunchOsXBundle(name, args);
 }
 #endif
 #ifdef Q_OS_IOS
-//Dummy implementation to iOS
+// Dummy implementation for iOS
 bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
     return false;
 }
 #endif
+
+
+bool Launcher::isPlaygroundAvailable() const {
+// No Playground on mobile platforms
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+    return false;
+#elif defined(Q_OS_OSX)
+    // Search for a bundle on osx
+    return hasOsXBundle("AsebaPlayground");
+#else
+    // Search for am executable (linux, windows)
+    return !search_program("asebaplayground").isEmpty();
+#endif
+    return false;
+}
+
 
 QString Launcher::search_program(const QString& name) const {
     qDebug() << "Searching for " << name;
@@ -138,7 +162,7 @@ bool Launcher::openUrl(const QUrl& url) {
 #ifdef Q_OS_OSX
     return openUrlWithParameters(url);
 #endif
-    
+
 #ifdef Q_OS_IOS
     OpenUrlInNativeWebView(url);
     return true;
@@ -189,7 +213,7 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
                                                                    {"scratch", "scratch"}};
     auto it = default_folder_name.find(name);
     if(it == default_folder_name.end())
-        return {};    
+        return {};
     for(auto dirpath : webappsFolderSearchPaths()) {
         QFileInfo d(dirpath + "/" + it->second);
         if(d.exists()) {
@@ -242,17 +266,15 @@ bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
 #ifdef Q_OS_IOS
-Q_INVOKABLE  void Launcher::applicationStateChanged(Qt::ApplicationState state)
-{
+Q_INVOKABLE void Launcher::applicationStateChanged(Qt::ApplicationState state) {
     static Qt::ApplicationState lastState = Qt::ApplicationActive;
-    
-    if((lastState == Qt::ApplicationActive ) && (state < Qt::ApplicationActive))
-    {
-        //Check if it could be interessting to store the current connected device to force reconnect to it later, if the browser is open
-    }
-    else if ( (lastState  < Qt::ApplicationActive) &&  (state == Qt::ApplicationActive ) )
-    {
-        //Fix the posisbility to reconnect from the thymio selection after the device sleeping, but does not provied the browser to reconnect
+
+    if((lastState == Qt::ApplicationActive) && (state < Qt::ApplicationActive)) {
+        // Check if it could be interessting to store the current connected device to force reconnect to it later, if
+        // the browser is open
+    } else if((lastState < Qt::ApplicationActive) && (state == Qt::ApplicationActive)) {
+        // Fix the posisbility to reconnect from the thymio selection after the device sleeping, but does not provied
+        // the browser to reconnect
         m_client->restartBrowser();
     }
     lastState = state;
