@@ -177,6 +177,11 @@
     //When loaded, cleaning the useless elements in the view
     NSString* removeNotFinishedFunctions = @"var myClasses = document.querySelectorAll('.menu-bar_coming-soon_3yU1L'),\n i = 0,\n l = myClasses.length; \n   for (i; i < l; i++) { \n   myClasses[i].style.display = 'none'; \n   } ; document.querySelector('.menu-bar_feedback-link_1BnAR').firstElementChild.style.display = 'none'; ";
     [webView evaluateJavaScript:removeNotFinishedFunctions completionHandler:nil];
+    
+    //Copy the document.title into top bar.
+    NSString* titleObserver = @"var target = document.querySelector('title');var observer = new MutationObserver(function(mutations) {mutations.forEach(function(mutation) {document.querySelector('.menu-bar_main-menu_3wjWH').lastChild.replaceWith(document.title)});});var config = {childList: true,};observer.observe(target, config);";
+    [webView evaluateJavaScript:titleObserver completionHandler:nil];
+    
 }
 
 
