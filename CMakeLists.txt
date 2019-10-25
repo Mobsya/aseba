@@ -80,35 +80,48 @@ target_include_directories(mpark_variant INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/third_party/mpark.variant/include>
   $<INSTALL_INTERFACE:include>)
 
-if (ANDROID)
-    set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
-endif()
-
-if(IOS)
+if (ANDROID OR IOS)
     set(FLATBUFFERS_BUILD_FLATC OFF CACHE BOOL "FLATBUFFERS_BUILD_FLATC" FORCE)
 endif()
 
 set(FLATBUFFERS_BUILD_TESTS OFF CACHE BOOL "FLATBUFFERS_BUILD_TESTS" FORCE)
 add_subdirectory(third_party/flatbuffers EXCLUDE_FROM_ALL)
 
-if(NOT IOS)
 if (NOT TARGET flatc)
     include( ExternalProject )
-    list(APPEND CMAKE_ARGS "-DFLATBUFFERS_BUILD_FLATLIB=OFF")
-    list(APPEND CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release")
-    list(APPEND CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/flatc")
-
     ExternalProject_Add(flatc_build
-      SOURCE_DIR ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/
-      CMAKE_ARGS "${CMAKE_ARGS}"
-      BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc
-      PREFIX ${CMAKE_CURRENT_BINARY_DIR}/flatc
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/
+        PREFIX ${CMAKE_CURRENT_BINARY_DIR}/flatc
+        BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/flatc/src/flatc_build-build/flatc
+                        ${CMAKE_CURRENT_BINARY_DIR}/flatc/src/flatc_build-build/Release/flatc
+        USES_TERMINAL_CONFIGURE ON
+        USES_TERMINAL_BUILD ON
+        CMAKE_ARGS
+            "-DCMAKE_CONFIGURATION_TYPE=Release"
+            "-DCMAKE_SYSTEM_NAME=''"
+            "-DCMAKE_OSX_SYSROOT=''"
+            "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/flatc"
+            "-DFLATBUFFERS_BUILD_FLATLIB:BOOL=OFF"
+            "-DFLATBUFFERS_BUILD_TESTS:BOOL=OFF"
+            "-DFLATBUFFERS_BUILD_FLATHASH:BOOL=OFF"
+            "-DFLATBUFFERS_BUILD_FLATC:BOOL=ON"
+            "-DFLATBUFFERS_INSTALL:BOOL=ON"
+        BUILD_COMMAND
+            cmake
+            --build .
+            --target flatc
+            --config Release
     )
     add_executable(flatc IMPORTED GENERATED)
-    set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/flatc/bin/flatc)
+    ExternalProject_Get_property(flatc_build BINARY_DIR)
+    if(IOS)
+        set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${BINARY_DIR}/Release/flatc )
+    else()
+        set_property(TARGET flatc PROPERTY IMPORTED_LOCATION ${BINARY_DIR}/flatc)
+    endif()
     add_dependencies(flatc flatc_build)
 endif()
-endif() #NOT IOS
+
 
 # testing and defines
 enable_testing()
@@ -140,7 +153,7 @@ if (UNIX AND NOT APPLE AND NOT ANDROID)
 endif ()
 
 # Zeroconf
-if (NOT ANDROID)
+if (NOT ANDROID AND NOT IOS)
     include(CMakeModules/zeroconf.cmake)
     add_subdirectory(third_party/aware)
 endif()
