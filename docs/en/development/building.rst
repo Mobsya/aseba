@@ -212,7 +212,7 @@ Getting Started on iOS
 --------------------------
 
 Require a recent version of Xcode and QT. Building the output require xcode to sign the binary.
-You'll also need to be able to build part of the project for macOS. installing the brew bundle is also advised. 
+You'll also need to be able to build part of the project for macOS. installing the brew bundle is also advised.
 
 ::
 
@@ -226,20 +226,6 @@ Generic commands
     cd build
     export QTDIR=<YOUR_BASE_QT_DIR>
 
-First, we need to be sure we have flatc (flatbuffers) installed. If it's not the case. It can be build from the sources of this repository. 
-
-::
-
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="${QTDIR}/clang_64" -DRANGE_V3_DOCS="OFF"
-    //build and install flatbuffers as a command line
-    cmake --build . --target flatc
-    cmake --build . --target flatbuffers
-    make install -C third_party/flatbuffers
-    //clear the current folder
-    rm -rf ./*
-
-
-
 Building Thymio Suite lanncher. This require to generate the xcode project, and use it via xcodebuild command line.
 
 ::
@@ -252,27 +238,27 @@ Building and archiving the build
 
     xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries   -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0
 
-Generation the IPA 
+Generation the IPA
 
 ::
 
     xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild -allowProvisioningUpdates
 
 
-Note that to generate the IPA without error you'll need to have the Provisioning profile  and the related certificate installed. 
+Note that to generate the IPA without error you'll need to have the Provisioning profile  and the related certificate installed.
 
 
-Provisioning profile  
-You must have at least one valid provisioning profile installed in `~/Library/MobileDevice/Provisioning Profiles`. The codesign process will look in this folder for a valid one. 
+Provisioning profile
+You must have at least one valid provisioning profile installed in `~/Library/MobileDevice/Provisioning Profiles`. The codesign process will look in this folder for a valid one.
 
 ::
 
     mv <valid_provisioining_profile> ~/Library/MobileDevice/Provisioning\ Profiles
 
 
-Installing the certificate : 
+Installing the certificate :
 
-if `error: exportArchive: No valid Apple Distribution certificate found.` 
+if `error: exportArchive: No valid Apple Distribution certificate found.`
 Allows the code sign process to access a certificate and import the new certificate
 
 ::
