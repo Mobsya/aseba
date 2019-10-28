@@ -133,11 +133,11 @@ if(IOS AND IOS_ARCHIVE_BUILD)
     )
 endif()
 
-file(GLOB_RECURSE QT_ADDITIONAL_PLUGINS ${CMAKE_PREFIX_PATH}/qml/*.a)
+#file(GLOB_RECURSE QT_ADDITIONAL_PLUGINS ${CMAKE_PREFIX_PATH}/qml/*.a)
 
-target_link_libraries(thymio-launcher
-    ${QT_ADDITIONAL_PLUGINS}
-    )
+#target_link_libraries(thymio-launcher
+#      ${QT_ADDITIONAL_PLUGINS}
+#    )
 
 if(APPLE OR ANDROID)
     target_link_libraries(thymio-launcher Qt5::WebView)

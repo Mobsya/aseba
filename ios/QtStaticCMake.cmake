@@ -16,6 +16,7 @@ SET(QT_STATIC_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
 # Indicate that we have found the root sdk
 SET(QT_STATIC_CMAKE_FOUND ON CACHE BOOL "QtStaticCMake have been found" FORCE)
 SET(QT_STATIC_CMAKE_VERSION "1.0.1" CACHE STRING "QtStaticCMake version" FORCE)
+include(JSONParser)
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                    GENERATE QML PLUGIN                           │
@@ -24,7 +25,7 @@ SET(QT_STATIC_CMAKE_VERSION "1.0.1" CACHE STRING "QtStaticCMake version" FORCE)
 # We need to parse some arguments
 INCLUDE(CMakeParseArguments)
 
-# Usage: 
+# Usage:
 # qt_generate_qml_plugin_import(YourApp
 #   QML_DIR "/path/to/qtsdk"
 #   QML_SRC "/path/to/yourApp/qml"
@@ -96,36 +97,30 @@ MACRO(qt_generate_qml_plugin_import TARGET)
 
         # Get Qml Plugin dependencies
         EXECUTE_PROCESS(
-            COMMAND ${QT_STATIC_QT_ROOT}/bin/qmlimportscanner -rootPath ${QT_STATIC_QML_SRC} -importPath ${QT_STATIC_QML_DIR} 
+            COMMAND ${QT_STATIC_QT_ROOT}/bin/qmlimportscanner -rootPath ${QT_STATIC_QML_SRC} -importPath ${QT_STATIC_QML_DIR}
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             OUTPUT_VARIABLE QT_STATIC_QML_DEPENDENCIES_JSON
             OUTPUT_STRIP_TRAILING_WHITESPACE
         )
 
         # Dump Json File for debug
-        #MESSAGE(STATUS ${QT_STATIC_QML_DEPENDENCIES_JSON})
+        MESSAGE(STATUS ${QT_STATIC_QML_DEPENDENCIES_JSON})
+        sbeParseJson(jsonData QT_STATIC_QML_DEPENDENCIES_JSON)
+        foreach(var ${jsonData})
+            if (var MATCHES "^[0-9]+$")
+                SET(_PLUGIN  "${jsonData_${var}.plugin}")
+                SET(_CLASSNAME "${jsonData_${var}.classname}")
+                SET(_PATH "${jsonData_${var}.path}")
+                message("${_PLUGIN} ${_CLASSNAME} ${_PATH}")
+                LIST(FIND QT_STATIC_QML_DEPENDENCIES_PLUGINS "${_CLASSNAME}" _PLUGIN_INDEX)
+                IF(_PLUGIN_INDEX EQUAL -1)
+                    target_link_directories(${QT_STATIC_TARGET} PUBLIC ${_PATH})
+                    target_link_libraries(${QT_STATIC_TARGET} ${_PLUGIN})
+                    LIST(APPEND QT_STATIC_QML_DEPENDENCIES_PLUGINS ${_CLASSNAME})
+                ENDIF(_PLUGIN_INDEX EQUAL -1)
+            endif()
+        endforeach()
 
-        # match all classname: (QtPluginStuff)
-        STRING(REGEX MATCHALL "\"classname\"\\: \"([a-zA-Z0-9]*)\""
-           QT_STATIC_QML_DEPENDENCIES_JSON_MATCH ${QT_STATIC_QML_DEPENDENCIES_JSON})
-
-        # Show regex match for debug
-        #MESSAGE(STATUS "match : ${QT_STATIC_QML_DEPENDENCIES_JSON_MATCH}")
-
-        # Loop over each match to extract plugin name
-        FOREACH(MATCH ${QT_STATIC_QML_DEPENDENCIES_JSON_MATCH})
-            # Debug output
-            #MESSAGE(STATUS "MATCH : ${MATCH}")
-            # Extract plugin name
-            STRING(REGEX MATCH "\"classname\"\\: \"([a-zA-Z0-9]*)\"" MATCH_OUT ${MATCH})
-            # Debug output
-            #MESSAGE(STATUS "CMAKE_MATCH_1 : ${CMAKE_MATCH_1}")
-            # Check plugin isn't present in the list QT_STATIC_QML_DEPENDENCIES_PLUGINS
-            LIST(FIND QT_STATIC_QML_DEPENDENCIES_PLUGINS ${CMAKE_MATCH_1} _PLUGIN_INDEX)
-            IF(_PLUGIN_INDEX EQUAL -1)
-                LIST(APPEND QT_STATIC_QML_DEPENDENCIES_PLUGINS ${CMAKE_MATCH_1})
-            ENDIF(_PLUGIN_INDEX EQUAL -1)
-        ENDFOREACH()
 
         # Print dependencies
         IF(QT_STATIC_VERBOSE)
@@ -168,7 +163,7 @@ ENDMACRO(qt_generate_qml_plugin_import TARGET)
 # │                     GENERATE QT PLUGIN                           │
 # └──────────────────────────────────────────────────────────────────┘
 
-# Usage: 
+# Usage:
 # qt_generate_qml_plugin_import(YourApp
 #   OUTPUT "YourApp_plugin_import.cpp"
 #   OUTPUT_DIR "/path/to/generate"
@@ -232,7 +227,7 @@ MACRO(qt_generate_plugin_import TARGET)
 
     # Get all available Qt5 module
     FILE(GLOB QT_STATIC_AVAILABLES_QT_DIRECTORIES
-        LIST_DIRECTORIES true 
+        LIST_DIRECTORIES true
         RELATIVE ${QT_STATIC_QT_ROOT}/lib/cmake
         ${QT_STATIC_QT_ROOT}/lib/cmake/Qt5*)
     FOREACH(DIR ${QT_STATIC_AVAILABLES_QT_DIRECTORIES})
