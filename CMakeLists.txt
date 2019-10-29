@@ -197,11 +197,11 @@ include(CPack)
 
 add_subdirectory(aseba)
 
-if(NOT ANDROID)
+if(NOT ANDROID AND NOT IOS)
 	add_subdirectory(js)
 endif()
 
-if(NOT ANDROID)
+if(NOT ANDROID AND NOT IOS)
     # Unit tests
     add_subdirectory(tests)
 endif()
