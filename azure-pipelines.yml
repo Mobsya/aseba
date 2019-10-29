@@ -179,7 +179,7 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite-android'
 
-- job: BuilOnOsX
+- job: BuildOnOsX
   pool:
     vmImage: 'macOS-10.13'
   steps:
@@ -226,3 +226,47 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.dmg'
+
+
+- job: BuildForIOs
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '9.x'
+
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+
+  - script: |
+      curl -sL $(blockly_url) | tar xzf - -C .
+      curl -sL $(scratch_url) | tar xzf - -C .
+    displayName: 'Extract scratch and blockly'
+
+    #we need 7z to extract qt so brew needs to run first
+  - script: |
+      brew update
+      brew bundle
+    displayName: 'Install dependencies with HomeBrew'
+
+  - script: |
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.0-ios.7z --output ios.7z
+      7z x ios.7z
+    displayName: 'Download Qt 5.13 for ios'
+
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
+
+  - script: |
+      sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
+      mkdir build && cd build;
+      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.0/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+      cmake --build . --target flac_build --config Release -- -sdk macosx
+      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0
+      xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild -allowProvisioningUpdates
+    displayName: 'Build with cmake'
