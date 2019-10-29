@@ -93,10 +93,11 @@ if (NOT TARGET flatc)
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/
         PREFIX ${CMAKE_CURRENT_BINARY_DIR}/flatc
         BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/flatc/src/flatc_build-build/flatc
-                        ${CMAKE_CURRENT_BINARY_DIR}/flatc/src/flatc_build-build/Release/flatc
+                         ${CMAKE_CURRENT_BINARY_DIR}/flatc/src/flatc_build-build/Release/flatc
         USES_TERMINAL_CONFIGURE ON
         USES_TERMINAL_BUILD ON
-        CMAKE_ARGS
+        CONFIGURE_COMMAND
+            cmake
             "-DCMAKE_CONFIGURATION_TYPE=Release"
             "-DCMAKE_SYSTEM_NAME=''"
             "-DCMAKE_OSX_SYSROOT=''"
@@ -106,11 +107,12 @@ if (NOT TARGET flatc)
             "-DFLATBUFFERS_BUILD_FLATHASH:BOOL=OFF"
             "-DFLATBUFFERS_BUILD_FLATC:BOOL=ON"
             "-DFLATBUFFERS_INSTALL:BOOL=ON"
+            "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
+            "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
+            "-DCMAKE_OSX_DEPLOYMENT_TARGET=10.12"
+            "${PROJECT_SOURCE_DIR}/third_party/flatbuffers/"
         BUILD_COMMAND
-            cmake
-            --build .
-            --target flatc
-            --config Release
+            cmake "--build" "." "--target" "flatc" "--config" "Release" "--" "-sdk" "macosx"
     )
     add_executable(flatc IMPORTED GENERATED)
     ExternalProject_Get_property(flatc_build BINARY_DIR)
