@@ -241,6 +241,12 @@ jobs:
       certSecureFile: 'Mobsya.p12'
       certPwd: $(mobsya-mac-p12)
 
+  - task: InstallAppleProvisioningProfile@1
+    inputs:
+      provisioningProfileLocation: 'secureFiles'
+      provProfileSecureFile: 'Thymio_Launcher_iOS.mobileprovision'
+      removeProfile: true
+
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
