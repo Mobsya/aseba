@@ -121,23 +121,24 @@
     <message>
         <location filename="playground.cpp" line="+156"/>
         <source>Open Scenario</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir un terrain</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>playground scenario</source>
-        <translation type="unfinished"></translation>
+        <translation>terrain playground</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Unable to open file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;ouvrir le fichier %1</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Parse error at file %1, line %2, column %3:
 %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur d&apos;analyse au fichier %1, ligne %2, colonne %3:
+%4</translation>
     </message>
     <message>
         <location line="+211"/>
@@ -147,12 +148,12 @@
     <message>
         <location line="+18"/>
         <source>New robot %0 of type %1 on port %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau robot %0 de type %1 sur port %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Aseba Playground - Simulate your robots!</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseba Playground - Simulez vos robots !</translation>
     </message>
 </context>
 </TS>
