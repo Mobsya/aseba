@@ -179,7 +179,7 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite-android'
 
-- job: BuilOnOsX
+- job: BuildOnOsX
   pool:
     vmImage: 'macOS-10.13'
   steps:
@@ -226,3 +226,75 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.dmg'
+
+
+- job: BuildForIOs
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '9.x'
+
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+
+  - task: InstallAppleProvisioningProfile@1
+    inputs:
+      provisioningProfileLocation: 'secureFiles'
+      provProfileSecureFile: 'Thymio_Launcher_iOS.mobileprovision'
+      removeProfile: true
+
+  - task: InstallAppleProvisioningProfile@1
+    inputs:
+      provisioningProfileLocation: 'secureFiles'
+      provProfileSecureFile: 'dev_thymio_ios.mobileprovision'
+      removeProfile: true
+
+  - script: |
+      curl -sL $(blockly_url) | tar xzf - -C .
+      curl -sL $(scratch_url) | tar xzf - -C .
+    displayName: 'Extract scratch and blockly'
+
+    #we need 7z to extract qt so brew needs to run first
+  - script: |
+      brew update
+      brew bundle
+    displayName: 'Install dependencies with HomeBrew'
+
+  - script: |
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.0-ios.7z --output ios.7z
+      7z x ios.7z
+    displayName: 'Download Qt 5.13 for ios'
+
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
+
+  - script: |
+      sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
+      mkdir build && cd build;
+      mkdir flatc && cd flatc;
+      cmake ../../third_party/flatbuffers -GXcode
+      cmake --build . --config Release --target flatc
+      export FLATC=`pwd`/Release/flatc
+      cd ..
+      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.0/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+    displayName: 'CONFIGURE with cmake'
+
+  - script: |
+      cd build;
+      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO;
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 -allowProvisioningUpdates CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO;
+    displayName: 'Build with cmake - Unsigned'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+
+  - script:  |
+      cd build;
+      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0
+      xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild
+    displayName: 'Build with cmake - SIGNED'
+    condition: ne(variables['Build.Reason'], 'PullRequest')

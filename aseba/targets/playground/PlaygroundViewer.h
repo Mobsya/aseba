@@ -32,6 +32,8 @@
 #include "common/utils/utils.h"
 #include <viewer/Viewer.h>
 #include <QProcess>
+#include "opengl.h"
+
 
 #define LOG_HISTORY_COUNT 20
 
