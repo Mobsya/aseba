@@ -247,12 +247,6 @@ jobs:
       provProfileSecureFile: 'Ios2019dist.mobileprovision'
       removeProfile: true
 
-  - task: InstallAppleProvisioningProfile@1
-    inputs:
-      provisioningProfileLocation: 'secureFiles'
-      provProfileSecureFile: 'dev_thymio_ios.mobileprovision'
-      removeProfile: true
-
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
