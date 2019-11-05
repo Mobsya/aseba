@@ -67,24 +67,30 @@ if(IOS)
     qt_generate_plugin_import(thymio-launcher VERBOSE)
 endif()
 
-# For developement icare dev identity
-set (SIGNING_ID "P97H86YL8K")
-#if(IOS AND IOS_ARCHIVE_BUILD)
-#    set (CODE_SIGN_IDENTITY "iPhone Distribution")
-#else()
-#    set (CODE_SIGN_IDENTITY "iPhone Developer")
-#endif()
+
+
+
 
 if(IOS)
+    #Getting the timestamp to use it as a version. (Apple Store require numbers, and check that the next version is higher than the current one)
+    string(TIMESTAMP CUR_TIME %s)
+
+    set (SIGNING_ID "P97H86YL8K")
+    #Code signing should not be necessary since it's set to auto.
+    #if(IOS AND IOS_ARCHIVE_BUILD)
+    #    set (CODE_SIGN_IDENTITY "iPhone Distribution")
+    #else()
+    #    set (CODE_SIGN_IDENTITY "iPhone Developer")
+    #endif()
+
     #create app reference
     add_qt_ios_app(thymio-launcher
-        NAME "ThymiOS"
+        NAME "Thymio Suite"
         BUNDLE_IDENTIFIER "org.mobsya.thymio.launcher.ios"
-        VERSION ${ASEBA_VERSION}
+        VERSION ${CUR_TIME}
         SHORT_VERSION ${ASEBA_VERSION}
         LONG_VERSION "${ASEBA_VERSION}-${GIT_REVISION}"
         CUSTOM_PLIST "${PROJECT_SOURCE_DIR}/ios/MacOSXBundleInfo.plist.in"
-   #     CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY}
         TEAM_ID ${SIGNING_ID}
         COPYRIGHT "Mobysa"
         QML_DIR "${QT_WINDOWS_QT_ROOT}/qml"
@@ -98,9 +104,7 @@ if(IOS)
         ORIENTATION_LANDSCAPE_LEFT
         ORIENTATION_LANDSCAPE_RIGHT
         SUPPORT_IPAD
-     #   SUPPORT_IPHONE
         REQUIRES_FULL_SCREEN
-       # HIDDEN_STATUS_BAR
         VERBOSE
      )
 
