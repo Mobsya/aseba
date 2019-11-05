@@ -247,12 +247,6 @@ jobs:
       provProfileSecureFile: 'Ios2019dist.mobileprovision'
       removeProfile: true
 
-  - task: InstallAppleProvisioningProfile@1
-    inputs:
-      provisioningProfileLocation: 'secureFiles'
-      provProfileSecureFile: 'dev_thymio_ios.mobileprovision'
-      removeProfile: true
-
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
@@ -294,7 +288,7 @@ jobs:
   - script:  |
       cd build;
       cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0
-      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 
       xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild
     displayName: 'Build with cmake - SIGNED'
     condition: ne(variables['Build.Reason'], 'PullRequest')
