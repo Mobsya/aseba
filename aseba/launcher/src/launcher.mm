@@ -18,8 +18,7 @@
 @end
 
 @implementation LauncherDelegate
-+(void)closeCurrentWebView
-{
++(void)closeCurrentWebView {
     if([self shareInstance].mwebview !=nil)
     {
         [[self shareInstance].mwebview removeFromSuperview];
@@ -36,8 +35,7 @@
     return webviewmanager;
 }
 
-+(WKWebView*)createWebViewWithBaseURL:(NSURL*)url
-{
++(WKWebView*)createWebViewWithBaseURL:(NSURL*)url {
     
     if([self shareInstance].mwebview == nil)
     {
@@ -95,8 +93,7 @@
 }
 
 //File Saving, via the 'blobReady' handler
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
     // window.webkit.messageHandlers.blobReady.postMessage(blob);
     if([message.name isEqualToString:@"blobReady"])
     {
@@ -123,8 +120,7 @@
         
     }
 }
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
-{
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message
                                                                              message:nil
                                                                       preferredStyle:UIAlertControllerStyleAlert];
@@ -153,8 +149,7 @@
 }
 
 
--(void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
-{
+-(void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
     //disabling zoom
     if(webView.scrollView.pinchGestureRecognizer && webView.scrollView.pinchGestureRecognizer.isEnabled)
     {
@@ -172,16 +167,19 @@
 }
 
 //correction done to the inner website when loaded
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
     //When loaded, cleaning the useless elements in the view
     NSString* removeNotFinishedFunctions = @"var myClasses = document.querySelectorAll('.menu-bar_coming-soon_3yU1L'),\n i = 0,\n l = myClasses.length; \n   for (i; i < l; i++) { \n   myClasses[i].style.display = 'none'; \n   } ; document.querySelector('.menu-bar_feedback-link_1BnAR').firstElementChild.style.display = 'none'; ";
     [webView evaluateJavaScript:removeNotFinishedFunctions completionHandler:nil];
+    
+    //Copy the document.title into top bar.
+    NSString* titleObserver = @"var target = document.querySelector('title');var observer = new MutationObserver(function(mutations) {mutations.forEach(function(mutation) {document.querySelector('.menu-bar_main-menu_3wjWH').lastChild.replaceWith(document.title)});});var config = {childList: true,};observer.observe(target, config);";
+    [webView evaluateJavaScript:titleObserver completionHandler:nil];
+    
 }
 
 
-- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
-{
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     qDebug() << QString([error.localizedDescription cStringUsingEncoding:0]) ;
 }
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
@@ -189,8 +187,7 @@
     [webView evaluateJavaScript:javascript completionHandler:nil];
 }
 
-- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
-{
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return nil;
 }
 
@@ -199,8 +196,7 @@
 
 namespace mobsya {
 #ifdef Q_OS_IOS
-void Launcher::OpenUrlInNativeWebView(const QUrl& qurl)
-{
+void Launcher::OpenUrlInNativeWebView(const QUrl& qurl) {
     WKWebView* v = [LauncherDelegate createWebViewWithBaseURL:qurl.toNSURL()];
     if(v.superview == nil)
     {

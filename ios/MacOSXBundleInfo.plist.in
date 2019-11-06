@@ -9,6 +9,10 @@
     <key>CFBundleExecutable</key>
     <string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 
+    <!-- Specify that the language is manged internaly in the app -->
+    <key>CFBundleAllowMixedLocalizations</key>
+    <true/>
+
     <!-- Info for finder -->
     <key>CFBundleGetInfoString</key>
     <string>${MACOSX_BUNDLE_INFO_STRING}</string>
