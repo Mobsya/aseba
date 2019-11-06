@@ -292,3 +292,8 @@ jobs:
       xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild
     displayName: 'Build with cmake - SIGNED'
     condition: ne(variables['Build.Reason'], 'PullRequest')
+    
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite.app'
