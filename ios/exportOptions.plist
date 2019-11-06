@@ -12,7 +12,10 @@
     <false/>
     <key>uploadSymbols</key>
     <false/>
-    <key>signingStyle</key>
-    <string>automatic</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>org.mobsya.thymio.launcher.ios</key>
+        <string>Ios-2019-dist</string>
+    </dict>
 </dict>
 </plist>
