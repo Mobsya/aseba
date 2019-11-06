@@ -288,7 +288,7 @@ jobs:
   - script:  |
       cd build;
       cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0
-      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 PROVISIONING_PROFILE_SPECIFIER="Ios-2019-dist" CODE_SIGN_IDENTITY="iPhone Distribution" CODE_SIGN_STYLE="Manual"
       xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild
     displayName: 'Build with cmake - SIGNED'
     condition: ne(variables['Build.Reason'], 'PullRequest')
