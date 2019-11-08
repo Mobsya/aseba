@@ -112,7 +112,7 @@ FunctionEnd
 !insertmacro CleanShortcuts "un."
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\Thymio"
+  InstallDir "$PROGRAMFILES64\Thymio"
 
 ;--------------------------------
 ;Pages
