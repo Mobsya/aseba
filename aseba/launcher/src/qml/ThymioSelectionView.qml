@@ -7,7 +7,14 @@ Item {
     id:selection_view
     property alias selectedDevice: device_view.selectedDevice
 
-    function launchSelectedAppWithSeleectedDevice() {
+
+    function isThymio(device) {
+        return device.type === ThymioNode.Thymio2
+                || device.type === ThymioNode.Thymio2Wireless
+                || device.type === ThymioNode.SimulatedThymio2
+    }
+
+    function launchSelectedAppWithSelectedDevice() {
         const device   = selection_view.selectedDevice
         const selectedAppLauncher = launcher.selectedAppLauncher;
         if(!selectedAppLauncher) {
@@ -17,7 +24,8 @@ Item {
             console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
         }
         if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
-                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups))
+                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups)
+                &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
             device_view.selectedDevice = null
     }
 
@@ -210,7 +218,7 @@ Item {
                     hoverEnabled: true
                     id: mouse_area
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: launchSelectedAppWithSeleectedDevice()
+                    onClicked: launchSelectedAppWithSelectedDevice()
                 }
                 anchors.bottomMargin: 30
             }

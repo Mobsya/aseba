@@ -76,6 +76,7 @@ ListModel {
                    descriptionTextFile: "qrc:/apps/vpl/desc.%1.html",
                    supportsGroups: false,
                    supportsWatchMode: false,
+                   supportsNonThymioDevices: false,
                    helpUrl: "https://www.thymio.org/%1/program/vpl/",
                    isIosSupported:false
                 },
@@ -88,6 +89,7 @@ ListModel {
                     descriptionTextFile: "qrc:/apps/scratch/desc.%1.html",
                     supportsGroups: false,
                     supportsWatchMode: false,
+                    supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/scratch/",
                     isIosSupported:true
                  },
@@ -101,6 +103,7 @@ ListModel {
                     descriptionTextFile: "qrc:/apps/blockly/desc.%1.html",
                     supportsGroups: false,
                     supportsWatchMode: false,
+                    supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/blockly/",
                     isIosSupported:false
                  },
@@ -114,6 +117,7 @@ ListModel {
                     descriptionTextFile: "qrc:/apps/studio/desc.%1.html",
                     supportsGroups: true,
                     supportsWatchMode: true,
+                    supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
                     isIosSupported:false
                  }
