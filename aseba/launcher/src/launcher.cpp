@@ -68,6 +68,10 @@ bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) con
 
 
 bool Launcher::isPlaygroundAvailable() const {
+// The playground is not supported on opengl ES platforms
+#ifdef QT_OPENGL_ES
+    return false;
+#endif
 // No Playground on mobile platforms
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     return false;
