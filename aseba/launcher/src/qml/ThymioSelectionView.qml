@@ -253,7 +253,11 @@ Item {
                     boundsBehavior: Flickable.StopAtBounds
                     clip:true
 
-                    ScrollBar.vertical: ScrollBar { }
+                    ScrollBar.vertical: ScrollBar {
+                        policy: device_view.contentHeight > 0.9 * device_view.height ?
+                                    ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+
+                    }
 
                     model: thymios
 
