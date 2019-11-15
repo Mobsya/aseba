@@ -164,7 +164,7 @@ Item {
             anchors.topMargin: Style.window_margin
 
             Item {
-                visible: Utils.isZeroconfRunning
+                visible: Utils.isZeroconfRunning && Utils.isPlaygroundAvailable
                 id: selection_title
                 anchors.left: parent.left
                 anchors.right: parent.right
