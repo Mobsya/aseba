@@ -83,14 +83,8 @@ bool ThymioNode::hasAvailableFirmwareUpdate() const {
     // Don't show update for remote thymios
     if(!m_endpoint || !m_endpoint->isLocalhostPeer())
         return false;
-
     const auto n = QVersionNumber::fromString(m_fw_version);
-    if(n < QVersionNumber::fromString(m_fw_version_available))
-        return true;
-    if(type() == ThymioNode::NodeType::Thymio2Wireless || type() == ThymioNode::NodeType::Thymio2)
-        // Hardcode that all thymio with a firmware 12 or older can be updated
-        return n < QVersionNumber::fromString("13");
-    return false;
+    return n < QVersionNumber::fromString(m_fw_version_available);
 }
 
 void ThymioNode::setCapabilities(const NodeCapabilities& capabilities) {
