@@ -25,6 +25,7 @@ Unicode true
   !define VERSION "@CPACK_PACKAGE_VERSION@"
   !define PATCH  "@CPACK_PACKAGE_VERSION_PATCH@"
   !define INST_DIR "@CPACK_TEMPORARY_DIRECTORY@"
+
 ;--------------------------------
 ;Includes
 
@@ -113,7 +114,7 @@ FunctionEnd
 !insertmacro CleanShortcuts "un."
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES64\Thymio"
+  InstallDir "${DEFAULT_INSTALL_DIR}"
 
 ;--------------------------------
 ;Pages
