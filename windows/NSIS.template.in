@@ -34,6 +34,7 @@ Unicode true
   !define REGISTRY_KEY "Software\Mobsya\Thymio"
   !include "x64.nsh"		; x64 support
   !include "..\..\..\resources\NSIS.definitions.nsh"
+  !include "FileFunc.nsh"
   !AddIncludeDir "${INSTALLER_SOURCE_DIRECTORY}"
 
   ; Compression
@@ -112,7 +113,7 @@ FunctionEnd
 !insertmacro CleanShortcuts "un."
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\Thymio"
+  InstallDir "$PROGRAMFILES64\Thymio"
 
 ;--------------------------------
 ;Pages
@@ -187,6 +188,10 @@ SectionGroup /e "-Thymio" GroupThymio
 			"Publisher" "Mobsya Association"
 		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
 			"DisplayVersion" "2.0.0"
+		${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+			IntFmt $0 "0x%08X" $0
+		WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"EstimatedSize" "$0"
 		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
 			"DisplayIcon" "$\"$INSTDIR\thymio-launcher.ico$\""
 		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
