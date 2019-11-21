@@ -31,7 +31,7 @@ ListModel {
             var program = Utils.search_program("asebastudio")
             if(!program)
                 return false;
-            return Utils.launch_process(program, ["--uuid", device.id])
+            return Utils.launch_process(program, ["--uuid", device.id, "--endpoint", device.tcpEndpoint()])
         }
     }
 
@@ -42,7 +42,7 @@ ListModel {
             var program = Utils.search_program("thymiovplclassic")
             if(!program)
                 return false;
-            return Utils.launch_process(program, ["--uuid", device.id])
+            return Utils.launch_process(program, ["--uuid", device.id, "--endpoint", device.tcpEndpoint()])
         }
     }
 
