@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QUrl>
 #include <qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
+#include <qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 #include <QDir>
 #include <QCoreApplication>
 
@@ -44,6 +45,10 @@ public:
     Q_INVOKABLE QString filenameForLocale(QString pattern);
     Q_INVOKABLE QString getDownloadPath(const QUrl& url);
     Q_INVOKABLE bool launchPlayground() const;
+
+    Q_INVOKABLE RemoteConnectionRequest* connectToServer(const QString& host, quint16 port) const;
+
+
 #ifdef Q_OS_OSX
     bool doLaunchPlaygroundBundle() const;
 #endif
