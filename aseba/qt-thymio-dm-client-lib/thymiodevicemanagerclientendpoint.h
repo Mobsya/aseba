@@ -80,6 +80,7 @@ Q_SIGNALS:
     void onMessage(const fb_message_ptr& msg) const;
     void disconnected();
     void localPeerChanged();
+    void handshakeCompleted(QUuid id);
 
 private:
     template <typename T>
@@ -105,6 +106,7 @@ private:
     QMap<QUuid, std::shared_ptr<ThymioNode>> m_nodes;
     QTcpSocket* m_socket;
     quint32 m_message_size;
+    QUuid m_serverUUid;
     quint16 m_ws_port = 0;
     bool m_islocalhostPeer = false;
     QMap<detail::RequestDataBase::request_id, detail::RequestDataBase::shared_ptr> m_pending_requests;

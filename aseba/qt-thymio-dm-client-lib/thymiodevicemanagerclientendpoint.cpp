@@ -119,9 +119,12 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
     m_last_message_reception_date = QDateTime::currentDateTime();
     switch(msg.message_type()) {
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
-            auto message = msg.as<mobsya::fb::ConnectionHandshake>();
-            m_islocalhostPeer = message->localhostPeer();
+            auto message = msg.as<mobsya::fb::ConnectionHandshake>()->UnPack();
+            m_islocalhostPeer = message->localhostPeer;
             localPeerChanged();
+            m_serverUUid = message->uuid ? qfb::uuid(message->uuid->id) : QUuid{};
+            m_ws_port = message->ws_port;
+            handshakeCompleted(m_serverUUid);
             // TODO handle versionning, etc
             break;
         }

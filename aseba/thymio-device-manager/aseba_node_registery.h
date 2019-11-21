@@ -31,6 +31,15 @@ public:
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
     void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
 
+
+    uint16_t ws_port() const {
+        return m_ws_endpoint.port();
+    }
+    boost::uuids::uuid endpoint_uuid() const {
+        return m_service_uid;
+    }
+
+
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
 
