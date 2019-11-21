@@ -75,6 +75,14 @@ QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     return u;
 }
 
+QUrl ThymioDeviceManagerClientEndpoint::tcpConnectionUrl() const {
+    QUrl u;
+    u.setScheme("tcp");
+    u.setHost(m_socket->peerAddress().toString());
+    u.setPort(m_socket->peerPort());
+    return u;
+}
+
 Thymio2WirelessDonglesManager* ThymioDeviceManagerClientEndpoint::donglesManager() const {
     return m_dongles_manager;
 }

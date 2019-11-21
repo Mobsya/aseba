@@ -4,6 +4,8 @@
 #include "thymiodevicesmodel.h"
 #include "thymio2wirelessdongle.h"
 #include "thymiodevicemanagerclientendpoint.h"
+#include "remoteconnectionrequest.h"
+
 #ifdef QT_QML_LIB
 #    include "request.h"
 #    include <QtQml/QtQml>
@@ -21,6 +23,7 @@ void inline register_qml_types() {
     qmlRegisterUncreatableType<mobsya::ThymioNode>("org.mobsya", 1, 0, "ThymioNode", "Enum");
     qRegisterMetaType<mobsya::Thymio2WirelessDongle>("Thymio2WirelessDongle");
     qRegisterMetaType<QList<mobsya::Thymio2WirelessDongle>>();
+    qRegisterMetaType<mobsya::RemoteConnectionRequest*>("RemoteConnectionRequest*");
 }
 #endif
 

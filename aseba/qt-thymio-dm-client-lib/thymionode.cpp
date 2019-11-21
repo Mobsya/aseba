@@ -67,6 +67,10 @@ QUrl ThymioNode::websocketEndpoint() const {
     return m_endpoint->websocketConnectionUrl();
 }
 
+Q_INVOKABLE QUrl ThymioNode::tcpEndpoint() const {
+    return m_endpoint->tcpConnectionUrl();
+}
+
 QString ThymioNode::fwVersionAvailable() const {
     return m_fw_version_available;
 }

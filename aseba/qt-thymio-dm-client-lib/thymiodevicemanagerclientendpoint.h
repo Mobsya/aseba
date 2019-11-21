@@ -28,10 +28,14 @@ public:
 public:
     std::shared_ptr<ThymioNode> node(const QUuid& id) const;
 
+    const QTcpSocket* socket() const {
+        return m_socket;
+    }
     QHostAddress peerAddress() const;
     QString hostName() const;
 
     QUrl websocketConnectionUrl() const;
+    QUrl tcpConnectionUrl() const;
     void setWebSocketMatchingPort(quint16 port);
 
     bool isLocalhostPeer() const;
