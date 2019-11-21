@@ -1007,9 +1007,11 @@ private:
                 token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
         }
         flatbuffers::FlatBufferBuilder builder;
+        auto offset = node_id(registery().endpoint_uuid()).fb(builder);
         write_message(wrap_fb(builder,
                               fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version,
-                                                            tdm::maxAppEndPointMessageSize, 0, m_local_endpoint)));
+                                                            tdm::maxAppEndPointMessageSize, 0, m_local_endpoint,
+                                                            registery().ws_port(), offset)));
 
         // the client do not have a compatible protocol version, bailing out
         if(m_protocol_version == 0) {
