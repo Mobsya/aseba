@@ -53,7 +53,7 @@ void run_service(boost::asio::io_context& ctx) {
     ws.enable();
 
     // Create a server for regular tcp connection
-    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
+    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 8596);
     node_registery.set_tcp_endpoint(tcp_server.endpoint());
    
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);

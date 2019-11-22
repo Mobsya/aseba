@@ -55,6 +55,7 @@ Dialog {
                 TextField  {
                     validator: IntValidator { bottom: 1; top: 0xFFFF }
                     maximumLength: 6
+                    text: "8596"
                     placeholderText: qsTr("Port")
                     id: portInput
                 }
