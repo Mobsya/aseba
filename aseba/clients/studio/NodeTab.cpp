@@ -991,15 +991,16 @@ void NodeTab::setupConnections() {
         switch(state) {
             case mobsya::ThymioNode::VMExecutionState::Running: {
                 runButton->setEnabled(false);
-                nextButton->setEnabled(false);
+                nextButton->hide();
                 break;
             };
             case mobsya::ThymioNode::VMExecutionState::Paused: {
                 pauseButton->setEnabled(false);
+                nextButton->show();
                 break;
             };
             case mobsya::ThymioNode::VMExecutionState::Stopped: {
-                pauseButton->hide();
+                pauseButton->setEnabled(false);
                 nextButton->hide();
                 stopButton->setEnabled(false);
                 break;
