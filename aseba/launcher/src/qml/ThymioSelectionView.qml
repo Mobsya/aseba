@@ -134,6 +134,7 @@ Item {
                             height: parent.height
                             id: scrollview
                             clip: true
+                            contentWidth: description_text.width + 10
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                             Text {
                                  width: scrollview.width - 10
