@@ -280,6 +280,7 @@ Q_INVOKABLE void Launcher::applicationStateChanged(Qt::ApplicationState state) {
         // Fix the posisbility to reconnect from the thymio selection after the device sleeping, but does not provied
         // the browser to reconnect
         m_client->restartBrowser();
+        zeroconfStatusChanged();
     }
     lastState = state;
 }
