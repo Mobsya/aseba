@@ -195,6 +195,29 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                 }
             }
+            Item {
+                visible: Utils.isZeroconfRunning && Utils.platformIsIos() && device_view.count == 0
+                id: selection_warning
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 30
+                anchors.top: parent.top
+                anchors.leftMargin: 30
+                anchors.rightMargin: 30
+                anchors.topMargin: 12
+                Text {
+                    anchors.centerIn: parent
+                    text: qsTr("Make Sure Thymio Suite is launched on a relay computer. <a href='https://www.thymio.org/news/thymio-suite/'>More Informations</a>")
+                    color: "white"
+                    linkColor: "#0a9eeb"
+                    font.family: "Roboto Bold"
+                    font.pointSize: 12
+                    onLinkActivated: Qt.openUrlExternally(link)
+                    wrapMode: Text.WordWrap
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
 
             Rectangle {
                 id:button
