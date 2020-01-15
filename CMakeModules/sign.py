@@ -66,8 +66,9 @@ if pss and pfx:
 		"/f"   , pfx,
 		"/p"   , pss,
 		"/fd"  , "sha256",
+		"/td"  , "sha256",
 		"/du"  , url,
-		"/t"   , timestamp_server,
+		"/tr"  , timestamp_server,
 		"/as"  , binary,
 	])
 	if ret != 0:
