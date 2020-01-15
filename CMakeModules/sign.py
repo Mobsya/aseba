@@ -6,7 +6,7 @@ import os
 import shutil
 
 timestamp_server = "http://timestamp.digicert.com"
-url = "http://http://www.mobsya.org/"
+url = "http://www.mobsya.org/"
 
 binary = sys.argv[1] if len(sys.argv) > 1 else None
 exists = binary != None and os.path.isfile(binary)
@@ -66,9 +66,8 @@ if pss and pfx:
 		"/f"   , pfx,
 		"/p"   , pss,
 		"/fd"  , "sha256",
-		"/td"  , "sha256",
 		"/du"  , url,
-		"/tr"  , timestamp_server,
+		"/t"   , timestamp_server,
 		"/as"  , binary,
 	])
 	if ret != 0:
