@@ -89,7 +89,8 @@ jobs:
       vcpkgTriplet: '$(vcpkgTriplet)'
       vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
       vcpkgGitCommitId: "$(vcpkg_commit)"
-      vcpkgGitURL: https://github.com/mobsya/vcpkg.git
+      vcpkgGitURL: https://github.com/microsoft/vcpkg.git
+      #vcpkgGitURL: https://github.com/mobsya/vcpkg.git
   - powershell: |
         Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
         Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore
