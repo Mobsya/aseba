@@ -23,7 +23,8 @@ variables:
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
 - name: vcpkg_commit
-  value: "66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c"
+  value: "c50852aba0aa8df22e17133352edb432a9fc1e56"
+  #value: "66fcabe4d86a0d071f41bd6d97d4ebdb617fa65c"
 
 jobs:
 - job: 'BuildFlatpak'
