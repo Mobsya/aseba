@@ -1,7 +1,7 @@
 if (NOT BUILD_SHARED_LIBS)
     set(Boost_USE_STATIC_LIBS   ON)
 endif()
-find_package(Boost 1.70 COMPONENTS chrono system filesystem thread regex date_time program_options OPTIONAL_COMPONENTS python27)
+find_package(Boost 1.72 COMPONENTS chrono system filesystem thread regex date_time program_options OPTIONAL_COMPONENTS python27)
 add_definitions(-DBOOST_ALL_NO_LIB)
 if(WIN32)
     add_definitions(-DBOOST_USE_WINDOWS_H)
