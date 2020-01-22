@@ -23,6 +23,7 @@ variables:
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
 - name: vcpkg_commit
+  #
   value: "c4f0372c638831d8d524feb1039611852eca6512"
 
 jobs:
