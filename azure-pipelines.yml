@@ -71,11 +71,11 @@ jobs:
   - script: |
        makensis  -VERSION
     displayName: Install NSIS
-  - task: CacheBeta@0
-    displayName: Cache vcpkg
-    inputs:
-      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "4" | $(vcpkgTriplet)
-      path: '$(Build.BinariesDirectory)/vcpkg'
+ # - task: CacheBeta@0
+  #  displayName: Cache vcpkg
+   # inputs:
+    #  key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "4" | $(vcpkgTriplet)
+     # path: '$(Build.BinariesDirectory)/vcpkg'
   - task: CacheBeta@0
     displayName: 'Qt Cache'
     inputs:
