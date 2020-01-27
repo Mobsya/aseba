@@ -73,7 +73,10 @@ void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTi
         const QVariant& v = it.value();
         plot(event.key(), v, event.value(), timestamp);
     }
+    // previous 2000 data point ( 1 every 10 milliseconds) = 20 seconds window
+    const int nPreviousData = 2000;
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
+    m_xAxis->setMin(m_start.msecsTo(timestamp) - 10 * nPreviousData);
 }
 
 void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp) {
@@ -84,7 +87,10 @@ void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, co
         const QVariant& v = it.value().value();
         plot(event.key(), v, event.value(), timestamp);
     }
+    // previous 2000 data point ( 1 every 10 milliseconds) = 20 seconds window
+    const int nPreviousData = 2000;
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
+    m_xAxis->setMin(m_start.msecsTo(timestamp) - 10 * nPreviousData);
 }
 
 
