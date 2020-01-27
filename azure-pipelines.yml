@@ -82,7 +82,7 @@ jobs:
       key:  Qt_5_12_3 | "$(QT_URL)" | "2"
       path: $(Build.BinariesDirectory)/Qt/
       cacheHitVar: QT_LIB_CACHE_RESTORED
-  - task: lucappa.cmake-ninja-vcpkg-tasks.a855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
+  - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
     displayName: 'Run vcpkg'
     inputs:
       vcpkgTriplet: '$(vcpkgTriplet)'
