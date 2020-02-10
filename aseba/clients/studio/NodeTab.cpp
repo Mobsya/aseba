@@ -170,10 +170,16 @@ void NodeTab::clearEverything() {
 }
 
 void NodeTab::run() {
+
     if(!m_thymio) {
         return;
     }
+
+    clearExecutionErrors();
+    lastLoadedSource.clear();
     editor->debugging = false;
+    currentPC = -1;
+
 
     auto set_breakpoints_and_run = [this] {
         auto bpwatcher = new mobsya::BreakpointsRequestWatcher(this);
@@ -215,7 +221,7 @@ void NodeTab::run() {
     auto req = m_thymio->load_aseba_code(code.toUtf8());
     watcher->setRequest(req);
     m_compilation_watcher->setRequest(req);
-}
+}  // namespace Aseba
 
 void NodeTab::pause() {
     editor->debugging = true;
@@ -990,16 +996,16 @@ void NodeTab::setupConnections() {
         auto state = m_thymio->vmExecutionState();
         switch(state) {
             case mobsya::ThymioNode::VMExecutionState::Running: {
-                runButton->setEnabled(false);
-                nextButton->setEnabled(false);
+                nextButton->hide();
                 break;
             };
             case mobsya::ThymioNode::VMExecutionState::Paused: {
                 pauseButton->setEnabled(false);
+                nextButton->show();
                 break;
             };
             case mobsya::ThymioNode::VMExecutionState::Stopped: {
-                pauseButton->hide();
+                pauseButton->setEnabled(false);
                 nextButton->hide();
                 stopButton->setEnabled(false);
                 break;

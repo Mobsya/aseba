@@ -3,6 +3,7 @@
     <file>translations/asebastudio_fr.qm</file>
     <file>translations/asebastudio_de.qm</file>
     <file>translations/asebastudio_es.qm</file>
+    <file>translations/asebastudio_en.qm</file>
     <file>translations/asebastudio_it.qm</file>
     <file>translations/asebastudio_ja.qm</file>
     <file>translations/asebastudio_zh.qm</file>
@@ -13,6 +14,7 @@
     <file>translations/compiler_fr.qm</file>
     <file>translations/compiler_de.qm</file>
     <file>translations/compiler_es.qm</file>
+    <file>translations/compiler_en.qm</file>
     <file>translations/compiler_it.qm</file>
     <file>translations/compiler_ja.qm</file>
     <file>translations/compiler_zh.qm</file>

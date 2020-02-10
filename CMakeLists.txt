@@ -159,6 +159,12 @@ if(WIN32)
     set(ASEBA_SOURCE_DIRECTORY "${PROJECT_SOURCE_DIR}")
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/windows)
     set(CPACK_MONOLITHIC_INSTALL 1)
+    if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
+        set(NSIS_DEFAULT_INSTALL_DIR "\$PROGRAMFILES64\\Thymio")
+    else()
+        set(NSIS_DEFAULT_INSTALL_DIR "\$PROGRAMFILES32\\Thymio")
+    endif()
+
     configure_file(
         ${PROJECT_SOURCE_DIR}/windows/NSIS.definitions.nsh.in
         ${CMAKE_CURRENT_BINARY_DIR}/resources/NSIS.definitions.nsh
