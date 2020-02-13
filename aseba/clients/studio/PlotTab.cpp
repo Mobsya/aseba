@@ -14,7 +14,6 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     reloadButton->setIcon(QIcon(":/images/rescan.png"));
     reloadButton->setToolTip(tr("Reload"));
     reloadButton->setText(tr("Reload"));
-    reloadButton->setStyleSheet("QPushButton:pressed { border: 1px solid blue }");
 
     spacer = new QSpacerItem(1, 1, QSizePolicy::Expanding);
 
