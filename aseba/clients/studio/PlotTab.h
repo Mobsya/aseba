@@ -1,6 +1,7 @@
 #pragma once
 #include <QtWidgets>
 #include <aseba/qt-thymio-dm-client-lib/thymionode.h>
+#include <QPushButton>
 
 
 namespace QtCharts {
@@ -33,6 +34,7 @@ public:
 private Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp);
+    void clearData();
 
 private:
     void plot(const QString& name, const QVariant& value, QVector<QtCharts::QXYSeries*>& series,
@@ -45,6 +47,9 @@ private:
     QtCharts::QChart* m_chart;
     QtCharts::QValueAxis* m_xAxis;
     QtCharts::QValueAxis* m_yAxis;
+    QPushButton* reloadButton; 
+    QAction* reloadAct;
+    QSpacerItem* spacer;
 
     bool m_range_init = false;
     QDateTime m_start = QDateTime::currentDateTime();
