@@ -4,6 +4,7 @@
 #include <boost/beast/core/handler_ptr.hpp>
 #include <aseba/common/msg/msg.h>
 #include <boost/endian/arithmetic.hpp>
+#include <boost/endian/conversion.hpp>
 #include <iostream>
 
 namespace mobsya {
