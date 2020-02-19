@@ -326,6 +326,7 @@ namespace ThymioVPL {
     void ThymioVisualProgramming::onDeviceReadyChanged(bool ready) {
         this->stopButton->setEnabled(ready);
         this->runButton->setEnabled(ready);
+        this->connectionActive = ready;
     }
 
     void ThymioVisualProgramming::openHelp() {
@@ -829,6 +830,11 @@ namespace ThymioVPL {
 
         undoButton->setEnabled(undoPos >= 0);
         redoButton->setEnabled(true);
+        // manage the case that the connection is not available anymore
+        if (!connectionActive){
+            stopButton->setEnabled(false);
+            runButton->setEnabled(false);
+        }
     }
 
     void ThymioVisualProgramming::redo() {
@@ -844,6 +850,11 @@ namespace ThymioVPL {
 
         undoButton->setEnabled(true);
         redoButton->setEnabled(undoPos < undoStack.size() - 2);
+        // manage the case that the connection is not available anymore
+        if (!connectionActive){
+            stopButton->setEnabled(false);
+            runButton->setEnabled(false);
+        }
     }
 
     void ThymioVisualProgramming::processCompilationResult() {
