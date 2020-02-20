@@ -163,9 +163,9 @@ bool Launcher::openUrl(const QUrl& url) {
     // So, instead, defer to the system browser - which is more likely to work
     // because the version of safari shipped with an up-to-date Sierra is more current
     // than the system's webkit
-#ifdef Q_OS_OSX
+/*#ifdef Q_OS_OSX
     return openUrlWithParameters(url);
-#endif
+#endif*/
 
 #ifdef Q_OS_IOS
     OpenUrlInNativeWebView(url);
