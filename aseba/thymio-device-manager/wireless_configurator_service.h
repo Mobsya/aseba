@@ -36,7 +36,7 @@ public:
 
     struct dongle {
         aseba_device device;
-        struct node_id uuid;
+        class node_id uuid;
 
         uint16_t node_id = 0;
         uint16_t network_id = 0;

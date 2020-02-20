@@ -27,6 +27,7 @@ add_library(thymio-device-manager-lib STATIC
     aseba_tcpacceptor.cpp
     aseba_property.h
     app_server.h
+    app_server.cpp
     app_token_manager.h
     app_endpoint.h
     app_endpoint.cpp
@@ -40,6 +41,7 @@ add_library(thymio-device-manager-lib STATIC
     fw_update_service.cpp
     wireless_configurator_service.h
     wireless_configurator_service.cpp
+    system_sleep_manager.h
     node_id.h
     usb_utils.h
     utils.h
@@ -83,7 +85,7 @@ else()
             serialserver.cpp
             serial_usb_device.h
         )
-        target_link_libraries(thymio-device-manager-lib PUBLIC ${UDEV_LIBS})
+        target_link_libraries(thymio-device-manager-lib PUBLIC ${UDEV_LIBRARIES})
         target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL MOBSYA_TDM_ENABLE_UDEV)
     else()
         target_sources(thymio-device-manager-lib PRIVATE

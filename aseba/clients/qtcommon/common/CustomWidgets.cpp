@@ -69,7 +69,7 @@ void FixedWidthTableView::resizeEvent(QResizeEvent* event) {
     }
 }
 
-void FixedWidthTableView::startDrag(Qt::DropActions supportedActions) {
+void FixedWidthTableView::startDrag(Qt::DropActions) {
     QModelIndex item = currentIndex();
     QModelIndexList list;
     list.append(item);

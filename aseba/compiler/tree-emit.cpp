@@ -126,7 +126,7 @@ void AssignmentNode::emit(PreLinkBytecode& bytecodes) const {
 }
 
 
-void IfWhenNode::emit(PreLinkBytecode& bytecodes) const {
+void IfWhenNode::emit(PreLinkBytecode&) const {
     abort();
 }
 
@@ -182,15 +182,15 @@ void FoldedIfWhenNode::emit(PreLinkBytecode& bytecodes) const {
     bytecodes.current->push_back(BytecodeElement(bytecode, sourcePos.row));
 
     if(children.size() == 4)
-        bytecodes.current->push_back(BytecodeElement(2 + btb.size() + 1, sourcePos.row));
+        bytecodes.current->push_back(BytecodeElement(2 + unsigned(btb.size()) + 1, sourcePos.row));
     else
-        bytecodes.current->push_back(BytecodeElement(2 + btb.size(), sourcePos.row));
+        bytecodes.current->push_back(BytecodeElement(2 + unsigned(btb.size()), sourcePos.row));
 
 
     std::copy(btb.begin(), btb.end(), std::back_inserter(*bytecodes.current));
 
     if(children.size() == 4) {
-        bytecode = AsebaBytecodeFromId(ASEBA_BYTECODE_JUMP) | (bfb.size() + 1);
+        bytecode = AsebaBytecodeFromId(ASEBA_BYTECODE_JUMP) | (unsigned(bfb.size()) + 1);
         unsigned short jumpLine;
         if(btb.size())
             jumpLine = (btb.end() - 1)->line;
@@ -213,7 +213,7 @@ unsigned FoldedIfWhenNode::getStackDepth() const {
 }
 
 
-void WhileNode::emit(PreLinkBytecode& bytecodes) const {
+void WhileNode::emit(PreLinkBytecode&) const {
     abort();
 }
 
@@ -259,7 +259,7 @@ void FoldedWhileNode::emit(PreLinkBytecode& bytecodes) const {
 
     bytecode = AsebaBytecodeFromId(ASEBA_BYTECODE_CONDITIONAL_BRANCH) | op;
     bytecodes.current->push_back(BytecodeElement(bytecode, sourcePos.row));
-    bytecodes.current->push_back(BytecodeElement(2 + bb.size() + 1, sourcePos.row));
+    bytecodes.current->push_back(BytecodeElement(2 + unsigned(bb.size()) + 1, sourcePos.row));
 
     std::copy(bb.begin(), bb.end(), std::back_inserter(*bytecodes.current));
 

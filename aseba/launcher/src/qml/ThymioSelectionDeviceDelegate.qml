@@ -18,9 +18,16 @@ Item {
         launcher.selectedAppChanged.connect(updateSelectable);
      }
 
+    function isThymio(device) {
+        return device.type === ThymioNode.Thymio2
+                || device.type === ThymioNode.Thymio2Wireless
+                || device.type === ThymioNode.SimulatedThymio2
+    }
+
     function updateSelectable() {
         selectable = (device.status === ThymioNode.Available || launcher.selectedApp.supportsWatchMode)
-        &&  (!device.isInGroup || launcher.selectedApp.supportsGroups);
+        &&  (!device.isInGroup || launcher.selectedApp.supportsGroups)
+        &&  (launcher.selectedApp.supportsNonThymioDevices || isThymio(device) );
     }
 
     function upgradeFirmware() {
@@ -138,6 +145,9 @@ Item {
             if(!selectable) {
                 if(isInGroup && !launcher.selectedApp.supportsGroups) {
                     tooltipText += "\n" + qsTr("This device cannot be selected because it is in a group")
+                }
+                else if(!isThymio(device) && !launcher.selectedApp.supportsNonThymioDevices) {
+                    tooltipText += "\n" + qsTr("This device is not compatible with %1").arg(launcher.selectedApp.name)
                 }
                 else {
                     tooltipText += "\n" + qsTr("This device cannot be selected because it is already being used")

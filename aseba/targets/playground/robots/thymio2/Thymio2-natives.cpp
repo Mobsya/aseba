@@ -337,7 +337,7 @@ extern "C" void PlaygroundThymio2Native_sd_read(AsebaVMState* vm) {
         if(thymio2->sdCardFile)
             result = dataLength;
         else
-            result = thymio2->sdCardFile.gcount() / 2;
+            result = int16_t(thymio2->sdCardFile.gcount() / 2);
 
         vm->variables[statusAddr] = result;
 

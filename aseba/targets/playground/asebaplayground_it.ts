@@ -119,9 +119,41 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="playground.cpp" line="+402"/>
+        <location filename="playground.cpp" line="+156"/>
+        <source>Open Scenario</source>
+        <translation type="unfinished">Aprire una mappa</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>playground scenario</source>
+        <translation type="unfinished">playground mappa</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Unable to open file %1</source>
+        <translation type="unfinished">Impossibile aprire il file %1</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Parse error at file %1, line %2, column %3:
+%4</source>
+        <translation type="unfinished">Analizza l&apos;errore nel file %1, riga %2, colonna %3:
+%4</translation>
+    </message>
+    <message>
+        <location line="+211"/>
         <source>%2 on %3</source>
         <translation>%2 su %3</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>New robot %0 of type %1 on port %2</source>
+        <translation type="unfinished">Nuovo robot %0 del tipo %1 sulla porta %2</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Aseba Playground - Simulate your robots!</source>
+        <translation type="unfinished">Aseba Playground - Simula i tuoi robot!</translation>
     </message>
 </context>
 </TS>

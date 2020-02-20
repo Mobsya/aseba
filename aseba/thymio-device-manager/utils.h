@@ -2,6 +2,7 @@
 
 #include <tl/expected.hpp>
 #include <limits>
+#include <type_traits>
 #include <boost/lexical_cast.hpp>
 #include <boost/system/error_code.hpp>
 

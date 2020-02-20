@@ -4,6 +4,7 @@
 #include <boost/beast/core/handler_ptr.hpp>
 #include <aseba/common/msg/msg.h>
 #include <boost/endian/arithmetic.hpp>
+#include <boost/endian/conversion.hpp>
 #include <iostream>
 
 namespace mobsya {
@@ -36,7 +37,7 @@ class read_aseba_message_op {
         char headerBuffer[6];
         Aseba::Message::SerializationBuffer dataBuffer;
 
-        explicit state(Handler const& handler, AsyncReadStream& stream) : stream(stream) {}
+        explicit state(Handler const&, AsyncReadStream& stream) : stream(stream) {}
     };
     boost::beast::handler_ptr<state, Handler> m_p;
 

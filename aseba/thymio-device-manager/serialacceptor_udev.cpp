@@ -4,6 +4,7 @@
 #include <boost/bind.hpp>
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/scope_exit.hpp>
 #include "log.h"
 
 namespace mobsya {
@@ -33,6 +34,8 @@ void serial_acceptor_service::free_device(const std::string& s) {
     if(it != m_known_devices.end()) {
         m_known_devices.erase(it);
     }
+    remove_connected_device(s);
+
     m_active_timer.expires_from_now(boost::posix_time::milliseconds(500));
     m_active_timer.async_wait(boost::asio::bind_executor(
         m_strand, boost::bind(&serial_acceptor_service::handle_request_by_active_enumeration, this)));
@@ -52,7 +55,7 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
     if(!n)
         return false;
 
-    if(std::find(m_known_devices.begin(), m_known_devices.end(), n) != m_known_devices.end()) {
+    if(std::find(m_connected_devices.begin(), m_connected_devices.end(), n) != m_connected_devices.end()) {
         return false;
     }
 
@@ -75,15 +78,18 @@ bool serial_acceptor_service::handle_request(udev_device* dev, request& r) {
         return false;
     }
 
+    m_known_devices.push_back(n);
+
     r.d.m_device_name = s;
     r.d.m_port_name = n;
     r.d.m_device_id = id;
+
+    m_connected_devices.push_back(n);
 
     auto handler = std::move(r.handler);
     const auto executor = boost::asio::get_associated_executor(handler, r.acceptor.get_executor());
     m_requests.pop();
     boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
-    m_known_devices.push_back(n);
     return true;
 }
 
@@ -124,8 +130,11 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         if(n)
             known_devices.insert(n);
         try {
+            BOOST_SCOPE_EXIT(dev) {
+                udev_device_unref(dev);
+            }
+            BOOST_SCOPE_EXIT_END
             if(handle_request(dev, m_requests.front())) {
-                udev_enumerate_unref(enumerate);
                 break;
             }
         } catch(...) {
@@ -139,6 +148,7 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         if(known_devices.find(*it) == known_devices.end()) {
             mLogError("Removed {}", *it);
             device_unplugged(*it);
+            remove_connected_device(*it);
             it = m_known_devices.erase(it);
         } else {
             ++it;

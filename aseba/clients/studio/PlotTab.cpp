@@ -1,16 +1,30 @@
 #include "PlotTab.h"
 #include <QtCharts>
 #include <QVBoxLayout>
+#include <QPushButton>
 
 namespace Aseba {
 
 PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 
     auto layout = new QVBoxLayout;
+    auto topButtonsLayout = new QHBoxLayout;
+
+    reloadButton = new QPushButton();
+    reloadButton->setIcon(QIcon(":/images/rescan.png"));
+    reloadButton->setToolTip(tr("Reload"));
+    reloadButton->setText(tr("Reload"));
+
+    spacer = new QSpacerItem(1, 1, QSizePolicy::Expanding);
+
+    topButtonsLayout->addWidget(reloadButton);
+    topButtonsLayout->addSpacerItem(spacer);
+    
     m_chart = new QtCharts::QChart();
-    QChartView* chartView = new QChartView(m_chart);
+    QChartView* chartView = new QChartView(m_chart, this);
     chartView->setRubberBand(QChartView::VerticalRubberBand);
     chartView->setRenderHint(QPainter::Antialiasing);
+    layout->addLayout(topButtonsLayout);
     layout->addWidget(chartView);
     this->setLayout(layout);
 
@@ -24,6 +38,8 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     m_yAxis->setTitleText(tr("Values"));
     m_chart->addAxis(m_yAxis, Qt::AlignLeft);
 
+    connect(reloadButton, SIGNAL(clicked()), this, SLOT(clearData()));
+
     /*QTimer* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, [this]() { m_chart->scroll(-5, 0); });
     t->start(100);
@@ -31,10 +47,10 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 }
 
 
-void PlotTab::setThymio(std::shared_ptr<const mobsya::ThymioNode> node) {
+void PlotTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     m_thymio = node;
     if(node) {
-        // node->setWatchEventsEnabled(true);
+        m_thymio->setWatchEventsEnabled(true);
         connect(node.get(), &mobsya::ThymioNode::events, this, &PlotTab::onEvents);
         connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &PlotTab::onVariablesChanged);
         // connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
@@ -42,7 +58,7 @@ void PlotTab::setThymio(std::shared_ptr<const mobsya::ThymioNode> node) {
     }
 }
 
-const std::shared_ptr<const mobsya::ThymioNode> PlotTab::thymio() const {
+const std::shared_ptr<mobsya::ThymioNode> PlotTab::thymio() const {
     return m_thymio;
 }
 
@@ -73,6 +89,7 @@ void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTi
         const QVariant& v = it.value();
         plot(event.key(), v, event.value(), timestamp);
     }
+
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
 }
 
@@ -84,7 +101,28 @@ void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, co
         const QVariant& v = it.value().value();
         plot(event.key(), v, event.value(), timestamp);
     }
+    
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
+}
+
+void PlotTab::clearData( ){
+    for(auto it = m_events.begin(); it != m_events.end(); ++it) {
+        auto series = it.value();
+        for(auto it_s = series.begin(); it_s != series.end(); ++it_s) {
+            auto serie = *it_s;
+            serie->clear();
+        }
+    }
+    for(auto it = m_variables.begin(); it != m_variables.end(); ++it) {
+        auto series = it.value();
+        for(auto it_s = series.begin(); it_s != series.end(); ++it_s) {
+            auto serie = *it_s;
+            serie->clear();
+        }
+    }
+
+    m_start = QDateTime::currentDateTime();
+    m_xAxis->setMin(0);
 }
 
 
@@ -122,6 +160,18 @@ void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXY
             }
             serie->append(m_start.msecsTo(timestamp), d);
         }
+    }
+}
+
+void PlotTab::hideEvent(QHideEvent*) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(false);
+    }
+}
+
+void PlotTab::showEvent(QShowEvent*) {
+    if(m_thymio) {
+        m_thymio->setWatchVariablesEnabled(true);
     }
 }
 

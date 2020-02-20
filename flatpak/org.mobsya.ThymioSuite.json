@@ -50,8 +50,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url":  "http://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz",
-                    "sha256": "882b48708d211a5f48e60b0124cf5863c1534cd544ecd0664bb534a4b5d506e9"
+                    "url":  "http://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz",
+                    "sha256": "c66e88d5786f2ca4dbebb14e06b566fb642a1a6947ad8cc9091f9f445134143f"
                 }
             ],
             "buildsystem": "simple",
@@ -81,14 +81,14 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz",
-                    "sha256": "0a106c7a52a9e8998abcbec203e26ece45562e14b106ee17fa52375b75dc1be3",
+                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20200213.1/thymio-blockly.tar.gz",
+                    "sha256": "c9b0b31c16134064c86ef8227d99d6a8ee548729d0d8487853c7afadf68aea23",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz",
-                    "sha256": "6b37d38f9b12819c9c7b6b92f86e23c25a62f60206ced44731c3e2087cdadcde",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20190923.2/scratch-gui.tar.gz",
+                    "sha256": "29b3c279851222a04ba08c8260f465ee588280dbd1594cc1784e30c3fd3a54b4",
                     "strip-components": 0
                 }
             ],

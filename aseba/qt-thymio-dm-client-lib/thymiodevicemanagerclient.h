@@ -44,7 +44,7 @@ public:
         return ranges::view::all(m_nodes);
     }
     void requestDeviceManagersShutdown();
-
+    void restartBrowser();
     bool isZeroconfBrowserConnected() const;
 
 private Q_SLOTS:

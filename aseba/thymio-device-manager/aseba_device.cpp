@@ -25,7 +25,7 @@ aseba_device::~aseba_device() {
 }
 
 aseba_device::aseba_device(aseba_device&& o) {
-    std::swap(m_endpoint, o.m_endpoint);
+    swap(m_endpoint, o.m_endpoint);
 }
 
 void aseba_device::free_endpoint() {
@@ -69,7 +69,10 @@ void aseba_device::free_endpoint() {
 }
 
 void aseba_device::stop() {
-    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}, [](tcp_socket& socket) { socket.cancel(); }
+    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}, [](tcp_socket& socket) {
+                                     boost::system::error_code e;
+                                     socket.cancel(e);
+                                 }
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
                                  ,
                                  [](mobsya::usb_serial_port& d) {
@@ -79,7 +82,7 @@ void aseba_device::stop() {
 #endif
 #ifdef MOBSYA_TDM_ENABLE_USB
                                  ,
-                                 [this](mobsya::usb_device& d) { d.cancel(); }
+                                 [](mobsya::usb_device& d) { d.cancel(); }
 #endif
                       },
                       m_endpoint);

@@ -326,6 +326,7 @@ namespace ThymioVPL {
     void ThymioVisualProgramming::onDeviceReadyChanged(bool ready) {
         this->stopButton->setEnabled(ready);
         this->runButton->setEnabled(ready);
+        this->connectionActive = ready;
     }
 
     void ThymioVisualProgramming::openHelp() {
@@ -829,6 +830,11 @@ namespace ThymioVPL {
 
         undoButton->setEnabled(undoPos >= 0);
         redoButton->setEnabled(true);
+        // manage the case that the connection is not available anymore
+        if (!connectionActive){
+            stopButton->setEnabled(false);
+            runButton->setEnabled(false);
+        }
     }
 
     void ThymioVisualProgramming::redo() {
@@ -844,6 +850,11 @@ namespace ThymioVPL {
 
         undoButton->setEnabled(true);
         redoButton->setEnabled(undoPos < undoStack.size() - 2);
+        // manage the case that the connection is not available anymore
+        if (!connectionActive){
+            stopButton->setEnabled(false);
+            runButton->setEnabled(false);
+        }
     }
 
     void ThymioVisualProgramming::processCompilationResult() {
@@ -915,17 +926,17 @@ namespace ThymioVPL {
             if(!ok)
                 return;
         }
-        if(n >= 0 && n < scene->setsCount()) {
+        if(n >= 0 && unsigned(n) < scene->setsCount()) {
             (*(scene->setsBegin() + n))->blink();
         }
     }
     void ThymioVisualProgramming::addEvent() {
-        auto* button(polymorphic_downcast<BlockButton*>(sender()));
+        auto* button(dynamic_cast<BlockButton*>(sender()));
         view->ensureVisible(scene->addEvent(button->getName()));
     }
 
     void ThymioVisualProgramming::addAction() {
-        auto* button(polymorphic_downcast<BlockButton*>(sender()));
+        auto* button(dynamic_cast<BlockButton*>(sender()));
         view->ensureVisible(scene->addAction(button->getName()));
     }
 
@@ -1099,7 +1110,7 @@ namespace ThymioVPL {
             (*itr)->setIconSize(iconSize);
     }
 
-    void ThymioVisualProgramming::timerEvent(QTimerEvent* event) {
+    void ThymioVisualProgramming::timerEvent(QTimerEvent*) {
 #ifdef Q_OS_WIN
         // for unknown reason, animation does not work some times on Windows, so setting image
         // directly from QIcon

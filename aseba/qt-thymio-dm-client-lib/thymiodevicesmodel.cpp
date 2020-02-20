@@ -12,14 +12,14 @@ ThymioDevicesModel::ThymioDevicesModel(const ThymioDeviceManagerClient& manager,
     connect(&manager, &ThymioDeviceManagerClient::nodeRemoved, this, &ThymioDevicesModel::updateModel);
 }
 int ThymioDevicesModel::rowCount(const QModelIndex&) const {
-    return m_manager.m_nodes.size();
+    return int(m_manager.m_nodes.size());
 }
 
 QVariant ThymioDevicesModel::data(const QModelIndex& index, int role) const {
-    auto idx = index.row();
+    size_t idx = index.row();
     if(idx >= m_manager.m_nodes.size())
         return {};
-    auto item = (m_manager.m_nodes.begin() + idx).value();
+    auto item = (m_manager.m_nodes.begin() + int(idx)).value();
     switch(role) {
         case Qt::DisplayRole: return item->name();
         case StatusRole: return int(item->status());
@@ -45,10 +45,10 @@ QHash<int, QByteArray> ThymioDevicesModel::roleNames() const {
 }
 
 bool ThymioDevicesModel::setData(const QModelIndex& index, const QVariant& value, int role) {
-    auto idx = index.row();
+    size_t idx = index.row();
     if(idx >= m_manager.m_nodes.size())
         return false;
-    auto item = (m_manager.m_nodes.begin() + idx).value();
+    auto item = (m_manager.m_nodes.begin() + int(idx)).value();
     switch(role) {
         case Qt::DisplayRole:
             if(!value.canConvert<QString>())

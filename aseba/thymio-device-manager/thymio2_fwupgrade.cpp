@@ -192,7 +192,7 @@ namespace details {
             // index inside data chunk
             unsigned chunkDataIndex = 0;
             // size of chunk in bytes
-            unsigned chunk_size = data.size();
+            unsigned chunk_size = unsigned(data.size());
 
             do {
                 // get page number

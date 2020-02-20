@@ -2,6 +2,7 @@
   <qresource>
     <file>translations/launcher_fr.qm</file>
     <file>translations/launcher_es.qm</file>
+    <file>translations/launcher_en.qm</file>
     <file>translations/launcher_de.qm</file>
     <file>translations/launcher_el.qm</file>
     <file>translations/launcher_it.qm</file>

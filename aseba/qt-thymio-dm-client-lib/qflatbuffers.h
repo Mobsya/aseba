@@ -62,13 +62,13 @@ namespace qfb {
         }
         if(r.IsString()) {
             const auto& data = r.AsBlob();
-            auto str = QString::fromUtf8(reinterpret_cast<const char*>(data.data()), data.size());
+            auto str = QString::fromUtf8(reinterpret_cast<const char*>(data.data()), int(data.size()));
             return QVariant(str);
         }
         if(r.IsVector()) {
             auto v = r.AsVector();
             QVariantList l;
-            l.reserve(v.size());
+            l.reserve(int(v.size()));
             for(size_t i = 0; i < v.size(); i++) {
                 auto p = to_qvariant(v[i]);
                 l.push_back(p);

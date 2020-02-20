@@ -38,15 +38,14 @@ Save the file (`Ctrl+x` if you use `nano`), then execute
 sudo udevadm control --reload-rules
 ```
 
-## Instal Thymio Suite from Flathub
+## Install Thymio Suite from Flathub
 
-We are looking at deploying Thymio Suite on Flathub.
-Until then, please install the Flatpak bundle.
+You can [Install Thymio Suite from Flathub](https://flathub.org/apps/details/org.mobsya.ThymioSuite). **This is the recommanded installation method**.
 
 ## Install the development version of Thymio Suite
 
 
-1. [Download the Thymio Suite Flatpak bundle 📦 ](https://github.com/Mobsya/aseba/releases/download/nightly/thymio-suite.flatpak)
+1. [Download the Thymio Suite Flatpak bundle 📦 ](https://github.com/Mobsya/aseba/releases/download/2.0.0-RC3/ThymioSuite-2.0.0-RC3-linux.flatpak)
 2. In a terminal, execute
 
 ```

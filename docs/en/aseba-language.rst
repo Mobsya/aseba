@@ -125,6 +125,17 @@ Example:
     var b = 0
     var c = 2*a + b        # warning: 'a' is not initialised
 
+Variables can be declared immutable by using `const` instead of `var`.
+
+::
+
+    const a = 1
+    const b = [0]
+
+    a = 2       # error: a cannot be modified
+    const c     # error: c needs to be initialized
+
+
 Reserved keywords
 ~~~~~~~~~~~~~~~~~
 
@@ -135,6 +146,7 @@ they are already used by the Aseba language.
  - `abs`
  - `call`
  - `callsub`
+ - `const`
  - `do`
  - `else`
  - `elseif`

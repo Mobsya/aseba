@@ -48,8 +48,7 @@ public:
         privateMimeType = mime;
     }
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
-    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
-                      const QModelIndex& parent) override {
+    bool dropMimeData(const QMimeData*, Qt::DropAction, int, int, const QModelIndex&) override {
         return false;
     }
 

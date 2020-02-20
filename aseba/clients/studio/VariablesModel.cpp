@@ -93,7 +93,7 @@ int VariablesModel::rowCount(const QModelIndex& index) const {
         return 0;
     if(item->has_aseba_integer_value())
         return 0;
-    return item->children.size();
+    return int(item->children.size());
 }
 
 int VariablesModel::columnCount(const QModelIndex&) const {
@@ -324,7 +324,7 @@ QModelIndex VariablesModel::index(int row, int column, const QModelIndex& parent
     auto parentItem = getItem(parent);
     if(!parentItem)
         return {};
-    auto item = row >= 0 && row < parentItem->children.size() ? parentItem->children[row].get() : nullptr;
+    auto item = row >= 0 && size_t(row) < parentItem->children.size() ? parentItem->children[row].get() : nullptr;
     return createIndex(row, column, item);
 }
 
@@ -378,6 +378,14 @@ QMimeData* VariablesModel::mimeData(const QModelIndexList& indexes) const {
     foreach(QModelIndex index, indexes) {
         if(index.isValid() && (index.column() == 0)) {
             QString text = data(index, Qt::DisplayRole).toString();
+            // if the current item is a leaf ( i.e. an array element ) includes
+            // in the mime also the parent key value
+            auto item = getItem(index);
+            const auto& k = item->key;
+            if(k.type() == QVariant::UInt || k.type() == QVariant::Int){
+                auto parent = getItem(index.parent());
+                text = parent->key.toString() + text;
+            }
             texts += text;
         }
     }

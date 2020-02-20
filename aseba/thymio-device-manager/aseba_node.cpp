@@ -209,9 +209,8 @@ void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, cons
 }
 
 tl::expected<aseba_node::compilation_result, boost::system::error_code>
-aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions& defs,
-                               fb::ProgrammingLanguage language, const std::string& program,
-                               Aseba::BytecodeVector& bytecode) {
+aseba_node::do_compile_program(Aseba::Compiler& compiler, Aseba::CommonDefinitions&, fb::ProgrammingLanguage language,
+                               const std::string& program, Aseba::BytecodeVector& bytecode) {
 
     if(language == fb::ProgrammingLanguage::Aesl) {
         return tl::make_unexpected(make_error_code(mobsya::error_code::unsupported_language));
@@ -529,7 +528,7 @@ void aseba_node::cancel_pending_breakpoint_request() {
 }
 
 aseba_node::vm_execution_state aseba_node::execution_state() const {
-    return {m_vm_state.state, m_vm_state.line};
+    return {m_vm_state.state, m_vm_state.line, fb::VMExecutionError::NoError, {}};
 }
 
 void aseba_node::on_event_received(const std::unordered_map<std::string, property>& events,
@@ -643,6 +642,13 @@ void aseba_node::request_variables() {
 }
 
 void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
+
+    // Set all the variables to null
+    variables_map removed;
+    for(auto&& var : m_variables) {
+        removed.emplace(var.name, property{});
+    }
+
     m_variables.clear();
     for(const auto& var : variables) {
         const auto name = Aseba::WStringToUTF8(var.first);
@@ -653,8 +659,16 @@ void aseba_node::reset_known_variables(const Aseba::VariablesMap& variables) {
                              [](const aseba_vm_variable& v, unsigned start) { return v.start < start; });
         if(insert_point == m_variables.end() || insert_point->start != start) {
             m_variables.emplace(insert_point, name, start, size);
+            // don't mark the variables we keep as removed
+            removed.erase(name);
         }
     }
+
+    // Signal the removed variables to watching applications
+    m_variables_changed_signal(shared_from_this(), removed, std::chrono::system_clock::now());
+
+    // Ask the device for all variables
+    // This will sync up the value of non-removed variables
     m_resend_all_variables = true;
 }
 
@@ -703,7 +717,7 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
             }
         }
         data_it = data_it + count;
-        start += count;
+        start += uint16_t(count);
     }
 }
 

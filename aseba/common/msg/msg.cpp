@@ -157,7 +157,7 @@ Message* Message::create(uint16_t source, uint16_t type, SerializationBuffer& bu
 
         // deserialize it
         message->deserializeSpecific(buffer);
-    } catch(std::runtime_error) {
+    } catch(const std::runtime_error&) {
         return nullptr;
     }
 
@@ -669,7 +669,7 @@ bool operator==(const Variables& lhs, const Variables& rhs) {
 
 //
 
-void ChangedVariables::serializeSpecific(SerializationBuffer& buffer) const {
+void ChangedVariables::serializeSpecific(SerializationBuffer&) const {
     assert(false && "Unimplemented");
 }
 
@@ -680,8 +680,8 @@ void ChangedVariables::deserializeSpecific(SerializationBuffer& buffer) {
         if(size == 0)
             continue;
 
-        if((buffer.rawData.size() - buffer.readPos) < size * sizeof (int16_t))
-             return;
+        if((buffer.rawData.size() - buffer.readPos) < size * sizeof(int16_t))
+            return;
 
         VariablesDataVector v;
         v.reserve(size);
@@ -944,7 +944,7 @@ void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
+    unsigned bytecodeCount = unsigned(bytecode.size());
 
     while(bytecodeCount > bytecodePayloadSize) {
         auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
@@ -969,7 +969,7 @@ void sendBytecode(std::vector<std::shared_ptr<Message> >& messagesVector, uint16
                   const std::vector<uint16_t>& bytecode) {
     const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
     unsigned bytecodeStart = 0;
-    unsigned bytecodeCount = bytecode.size();
+    unsigned bytecodeCount = unsigned(bytecode.size());
 
     while(bytecodeCount > bytecodePayloadSize) {
         auto setBytecodeMessage = make_shared<SetBytecode>(dest, bytecodeStart);
@@ -1173,7 +1173,7 @@ void GetDeviceInfo::serializeSpecific(SerializationBuffer& buffer) const {
     buffer.add(uint16_t(info));
 }
 
-void GetDeviceInfo::deserializeSpecific(SerializationBuffer& buffer) {}
+void GetDeviceInfo::deserializeSpecific(SerializationBuffer&) {}
 
 void GetDeviceInfo::dumpSpecific(std::wostream& stream) const {
     CmdMessage::dumpSpecific(stream);

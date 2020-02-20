@@ -32,7 +32,7 @@ extern "C" bool AsebaExecutionErrorOccurred() {
     return executionError;
 }
 
-extern "C" void AsebaSendMessage(AsebaVMState* vm, uint16_t type, const void* data, uint16_t size) {
+extern "C" void AsebaSendMessage(AsebaVMState*, uint16_t type, const void*, uint16_t size) {
     switch(type) {
         case ASEBA_MESSAGE_DIVISION_BY_ZERO:
             std::cerr << "Division by zero" << std::endl;
@@ -54,23 +54,23 @@ extern "C" void AsebaSendMessageWords(AsebaVMState* vm, uint16_t type, const uin
 }
 #endif
 
-extern "C" void AsebaSendChangedVariables(AsebaVMState* vm) {
+extern "C" void AsebaSendChangedVariables(AsebaVMState*) {
     std::cerr << "AsebaSendChangedVariables";
 }
 
-extern "C" void AsebaSendVariables(AsebaVMState* vm, uint16_t start, uint16_t length) {
+extern "C" void AsebaSendVariables(AsebaVMState*, uint16_t start, uint16_t length) {
     std::cerr << "AsebaSendVariables at pos " << start << ", length " << length << std::endl;
 }
 
-extern "C" void AsebaSendDescription(AsebaVMState* vm) {
+extern "C" void AsebaSendDescription(AsebaVMState*) {
     std::cerr << "AsebaSendDescription" << std::endl;
 }
 
-extern "C" void AsebaSendDescriptionFragment(AsebaVMState* vm, int16_t fragment) {
+extern "C" void AsebaSendDescriptionFragment(AsebaVMState*, int16_t) {
     std::cerr << "AsebaSendDescriptionFragment" << std::endl;
 }
 
-extern "C" void AsebaPutVmToSleep(AsebaVMState* vm) {
+extern "C" void AsebaPutVmToSleep(AsebaVMState*) {
     std::cerr << "AsebaPutVmToSleep" << std::endl;
 }
 
@@ -82,15 +82,15 @@ extern "C" void AsebaNativeFunction(AsebaVMState* vm, uint16_t id) {
     nativeFunctions[id](vm);
 }
 
-extern "C" void AsebaWriteBytecode(AsebaVMState* vm) {
+extern "C" void AsebaWriteBytecode(AsebaVMState*) {
     std::cerr << "AsebaWriteBytecode" << std::endl;
 }
 
-extern "C" void AsebaResetIntoBootloader(AsebaVMState* vm) {
+extern "C" void AsebaResetIntoBootloader(AsebaVMState*) {
     std::cerr << "AsebaResetIntoBootloader" << std::endl;
 }
 
-extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {
+extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState*, uint16_t, uint16_t*, uint16_t) {
     return 1;
 }
 

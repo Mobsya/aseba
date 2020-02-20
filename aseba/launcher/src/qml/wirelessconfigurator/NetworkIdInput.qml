@@ -10,7 +10,7 @@ TextField  {
     font.bold: true
     background: Rectangle {
         radius: 5
-        color: Style.light
+        color: Style.mid
     }
     validator: RegExpValidator { regExp: /[0-9A-Fa-f]+/ }
     maximumLength:4

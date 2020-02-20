@@ -29,9 +29,6 @@
 #include <QTabWidget>
 #include <QSvgRenderer>
 #include <QPainter>
-#ifdef HAVE_QWT
-#    include <qwt_global.h>
-#endif  // HAVE_QWT
 #include <QtDebug>
 
 #include <vector>
@@ -43,7 +40,6 @@ namespace Aseba {
 // Assume T is a sorted container
 template <class T>
 static bool haveCommonElements(const T& container1, const T& container2) {
-    using I = typename T::const_iterator;
     auto first1(container1.begin());
     auto last1(container1.end());
     auto first2(container2.begin());

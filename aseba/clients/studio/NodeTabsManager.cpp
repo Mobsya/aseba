@@ -67,7 +67,7 @@ void NodeTabsManager::setupButtons(NodeTab* tab) {
     auto lock = new LockButton(this);
     tabBar()->setTabButton(index, QTabBar::RightSide, lock);
 
-    connect(tab, &NodeTab::statusChanged, this, [this, tab, lock]() {
+    connect(tab, &NodeTab::statusChanged, this, [tab, lock]() {
         const auto thymio = tab->thymio();
         if(!thymio) {
             lock->setUnAvailable();
@@ -91,8 +91,7 @@ void NodeTabsManager::createPlotTab(NodeTab* tab, const QString& name, plot_type
     createPlotTab(thymio, name, type);
 }
 
-void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> thymio, const QString& name,
-                                    plot_type type) {
+void NodeTabsManager::createPlotTab(std::shared_ptr<mobsya::ThymioNode> thymio, const QString& name, plot_type type) {
     PlotTab* t = nullptr;
     auto v =
         eventsTabs() | ranges::view::filter([&](PlotTab* t) {
@@ -100,7 +99,7 @@ void NodeTabsManager::createPlotTab(std::shared_ptr<const mobsya::ThymioNode> th
                 (type == plot_type::event ? t->plottedEvents().contains(name) : t->plottedVariables().contains(name));
         });
     if(v.begin() == v.end()) {
-        t = new PlotTab;
+        t = new PlotTab(this);
         t->setThymio(thymio);
         auto deviceTab = tabForNode(thymio);
         insertTab(indexOf(deviceTab) + 1, t, tr("%1 on %2").arg(name, thymio->name()));
@@ -129,7 +128,6 @@ void NodeTabsManager::onNodeRemoved(std::shared_ptr<mobsya::ThymioNode> thymio) 
     auto it = m_tabs.find(thymio->uuid());
     if(it != m_tabs.end()) {
         (*it)->setThymio({});
-        auto idx = QTabWidget::indexOf(*it);
     }
 }
 

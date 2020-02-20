@@ -51,7 +51,7 @@ uint16_t RecvBufferNodeConnection::getBuffer(uint8_t* data, uint16_t maxLength, 
         *source = lastMessageSource;
         size_t len(std::min<size_t>(maxLength, lastMessageData.size()));
         memcpy(data, &lastMessageData[0], len);
-        return len;
+        return uint16_t(len);
     }
     return 0;
 }
@@ -60,7 +60,7 @@ uint16_t RecvBufferNodeConnection::getBuffer(uint8_t* data, uint16_t maxLength, 
 
 // implementation of Aseba glue C functions
 
-extern "C" void AsebaPutVmToSleep(AsebaVMState* vm) {
+extern "C" void AsebaPutVmToSleep(AsebaVMState*) {
     // not implemented in playground
 }
 
@@ -106,15 +106,15 @@ extern "C" void AsebaNativeFunction(AsebaVMState* vm, uint16_t id) {
     glue->callNativeFunction(id);
 }
 
-extern "C" void AsebaWriteBytecode(AsebaVMState* vm) {
+extern "C" void AsebaWriteBytecode(AsebaVMState*) {
     // not implemented in playground
 }
 
-extern "C" void AsebaResetIntoBootloader(AsebaVMState* vm) {
+extern "C" void AsebaResetIntoBootloader(AsebaVMState*) {
     // not implemented in playground
 }
 
-extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState* vm, uint16_t id, uint16_t* data, uint16_t dataLength) {
+extern "C" int AsebaHandleDeviceInfoMessages(AsebaVMState*, uint16_t, uint16_t*, uint16_t) {
     return 1;
 }
 

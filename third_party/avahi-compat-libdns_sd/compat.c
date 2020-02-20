@@ -650,9 +650,9 @@ static void service_browser_callback(
 
                 /* remove entry */
                 browse_list_t *tmp = entry->list_next;
-                free(entry->name);
-                free(entry->type);
-                free(entry->domain);
+                free((void*)entry->name);
+                free((void*)entry->type);
+                free((void*)entry->domain);
                 free(entry);
                 entry = tmp;
             }
@@ -963,7 +963,7 @@ static void domain_browser_callback(
 
                 /* remove entry */
                 domain_list_t *tmp = entry->list_next;
-                free(entry->domain);
+                free((void*)entry->domain);
                 free(entry);
                 entry = tmp;
             }
@@ -1482,7 +1482,7 @@ static void query_resolver_callback(
 
             /* remove entry */
             query_list_t *tmp = entry->list_next;
-            free(entry->name);
+            free((void*)entry->name);
             free(entry);
             entry = tmp;
         }

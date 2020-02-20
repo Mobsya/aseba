@@ -87,9 +87,9 @@ public:
 };
 }  // namespace Enki
 
-using RobotFactory = std::function<Enki::Robot*(QString, QString, unsigned &, int16_t)>;
+using RobotFactory = std::function<Enki::Robot*(QString, QString, unsigned&, int16_t)>;
 template <typename RobotT>
-Enki::Robot* createRobotSingleVMNode(QString robotName, QString typeName, unsigned & port, int16_t nodeId) {
+Enki::Robot* createRobotSingleVMNode(QString robotName, QString typeName, unsigned& port, int16_t nodeId) {
     return new RobotT(typeName, robotName, port, nodeId);
 }
 
@@ -97,9 +97,9 @@ Enki::Robot* createRobotSingleVMNode(QString robotName, QString typeName, unsign
 struct RobotType {
     RobotType(QString prettyName, RobotFactory factory)
         : prettyName(std::move(prettyName)), factory(std::move(factory)) {}
-    const QString prettyName;  //!< a nice-looking name of this type
-    const RobotFactory factory;    //!< the factory function to create a robot of this type
-    unsigned number = 0;           //!< number of robots of this type instantiated
+    const QString prettyName;    //!< a nice-looking name of this type
+    const RobotFactory factory;  //!< the factory function to create a robot of this type
+    unsigned number = 0;         //!< number of robots of this type instantiated
 };
 
 
@@ -153,8 +153,8 @@ int main(int argc, char* argv[]) {
 #endif
         }
 
-        sceneFileName = QFileDialog::getOpenFileName(nullptr, app.tr("Open Scenario"), lastFileName,
-                                                     app.tr("playground scenario (*.playground)"));
+        sceneFileName = QFileDialog::getOpenFileName(nullptr, QObject::tr("Open Scenario"), lastFileName,
+                                                     QObject::tr("playground scenario") + " (*.playground)");
         ask = true;
 
         if(sceneFileName.isEmpty()) {
@@ -167,7 +167,8 @@ int main(int argc, char* argv[]) {
         QString data;
         QFile file(sceneFileName);
         if(!file.open(QIODevice::ReadOnly)) {
-            QMessageBox::information(nullptr, "Aseba Playground", app.tr("Unable to open file %1").arg(sceneFileName));
+            QMessageBox::information(nullptr, "Aseba Playground",
+                                     QObject::tr("Unable to open file %1").arg(sceneFileName));
             continue;
         };
         // Try zip
@@ -188,7 +189,7 @@ int main(int argc, char* argv[]) {
 
         if(!domDocument.setContent(data, false, &errorStr, &errorLine, &errorColumn)) {
             QMessageBox::information(nullptr, "Aseba Playground",
-                                     app.tr("Parse error at file %1, line %2, column %3:\n%4")
+                                     QObject::tr("Parse error at file %1, line %2, column %3:\n%4")
                                          .arg(sceneFileName)
                                          .arg(errorLine)
                                          .arg(errorColumn)
@@ -386,7 +387,7 @@ int main(int argc, char* argv[]) {
     // load all robots in one loop
     std::map<QString, RobotType> robotTypes{
         {"thymio2", RobotType{"Thymio II", createRobotSingleVMNode<Enki::DashelAsebaThymio2>}},
-        {"e-puck",  RobotType{"E-Puck", createRobotSingleVMNode<Enki::DashelAsebaFeedableEPuck>}},
+        {"e-puck", RobotType{"E-Puck", createRobotSingleVMNode<Enki::DashelAsebaFeedableEPuck>}},
     };
     QDomElement robotE = domDocument.documentElement().firstChildElement("robot");
     unsigned asebaServerCount(0);
@@ -417,8 +418,7 @@ int main(int argc, char* argv[]) {
             world.addObject(robot);
 
             // log
-            viewer.log(app.tr("New robot %0 of type %1 on port %2")
-                           .arg(qRobotNameRaw).arg(qTypeName).arg(port),
+            viewer.log(QObject::tr("New robot %0 of type %1 on port %2").arg(qRobotNameRaw).arg(qTypeName).arg(port),
                        Qt::white);
         } else
             viewer.log("Error, unknown robot type " + type, Qt::red);
@@ -428,44 +428,9 @@ int main(int argc, char* argv[]) {
 
     // Scan for external processes
     QList<QProcess*> processes;
-    /*QDomElement procssE(domDocument.documentElement().firstChildElement("process"));
-    while(!procssE.isNull()) {
-        QString command(procssE.attribute("command"));
-        // create process
-        processes.push_back(new QProcess());
-        processes.back()->setProcessChannelMode(QProcess::MergedChannels);
-        processes.back()->setWorkingDirectory(QFileInfo(sceneFileName).canonicalPath());
-        // make sure it is killed when we close the window
-        QObject::connect(processes.back(), SIGNAL(started()), &viewer, SLOT(processStarted()));
-        QObject::connect(processes.back(), SIGNAL(error(QProcess::ProcessError)), &viewer,
-                         SLOT(processError(QProcess::ProcessError)));
-        QObject::connect(processes.back(), SIGNAL(readyReadStandardOutput()), &viewer, SLOT(processReadyRead()));
-        QObject::connect(processes.back(), SIGNAL(finished(int, QProcess::ExitStatus)), &viewer,
-                         SLOT(processFinished(int, QProcess::ExitStatus)));
-        // check whether it is a relative command
-        bool isRelative(false);
-        if(!command.isEmpty() && command[0] == ':') {
-            isRelative = true;
-            command = command.mid(1);
-        }
-        // process the command into its components
-        QStringList args(command.split(" ", QString::SkipEmptyParts));
-        if(args.size() == 0) {
-            viewer.log(app.tr("Missing program in command"), Qt::red);
-        } else {
-            const QString program(QDir::toNativeSeparators(args[0]));
-            args.pop_front();
-            if(isRelative)
-                processes.back()->start(QCoreApplication::applicationDirPath() + QDir::separator() + program, args,
-                                        QIODevice::ReadOnly);
-            else
-                processes.back()->start(program, args, QIODevice::ReadOnly);
-        }
-        procssE = procssE.nextSiblingElement("process");
-    }*/
 
     // Show and run
-    viewer.setWindowTitle(app.tr("Aseba Playground - Simulate your robots!"));
+    viewer.setWindowTitle(QObject::tr("Aseba Playground - Simulate your robots!"));
     viewer.show();
 
 // If D-Bus is used, register the viewer object

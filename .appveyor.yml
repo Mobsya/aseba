@@ -50,8 +50,8 @@ install:
   - set "PATH=%PATH%;C:\Program Files (x86)\NSIS"
 
   - cd "%APPVEYOR_BUILD_FOLDER%"
-  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190820.1/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
-  - appveyor DownloadFile https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20190507.3/thymio-blockly.tar.gz -FileName thymio-blockly.tar.gz
+  - appveyor DownloadFile https://github.com/Mobsya/scratch-gui/releases/download/v20190923.2/scratch-gui.tar.gz -FileName scratch-gui.tar.gz
+  - appveyor DownloadFile https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20191015.2/thymio-blockly.tar.gz -FileName thymio-blockly.tar.gz
   - 7z e thymio-blockly.tar.gz && 7z x thymio-blockly.tar
   - 7z e scratch-gui.tar.gz && 7z x scratch-gui.tar
 
@@ -63,8 +63,11 @@ before_build:
       set "PATH=%QT5%\bin;%PATH%" &&
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %ARCH%
     )
-  - cd C:\projects && git clone https://github.com/Mobsya/vcpkg.git && cd vcpkg && .\bootstrap-vcpkg.bat
-  - C:\projects\vcpkg\vcpkg.exe install --triplet "%ARCH%-windows-static" openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess
+  - cd C:\projects
+  - if exist C:\projects\vcpkg (move C:\projects\vcpkg  C:\projects\vcpkg_copy)
+  - git clone https://github.com/Mobsya/vcpkg.git && cd vcpkg
+  - if exist C:\projects\vcpkg_copy\installed (move C:\projects\vcpkg_copy\installed  C:\projects\vcpkg\installed)
+  - C:\projects\vcpkg\bootstrap-vcpkg.bat && C:\projects\vcpkg\vcpkg.exe install --triplet "%ARCH%-windows-static" openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess
 
   - cd "%APPVEYOR_BUILD_FOLDER%"
   - git submodule update --init --recursive
@@ -106,7 +109,6 @@ platform: x64
 
 environment:
   NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip
-  SDL_URL: https://libsdl.org/release/SDL2-devel-2.0.7-VC.zip
   CMAKE_URL: https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0-win64-x64.zip
   SIGNTOOL_PFX: '%APPVEYOR_BUILD_FOLDER%\windows\appveyor\mobsya.pfx'
   PFX_SECURE_FILE_DECODE:

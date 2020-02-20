@@ -74,12 +74,12 @@ Node* Node::expandAbstractNodes(std::wostream* dump) {
 }
 
 //! Dummy function, the node will be expanded during the vectorial pass
-Node* TupleVectorNode::expandAbstractNodes(std::wostream* dump) {
+Node* TupleVectorNode::expandAbstractNodes(std::wostream*) {
     return this;
 }
 
 //! Dummy function, the node will be expanded during the vectorial pass
-Node* MemoryVectorNode::expandAbstractNodes(std::wostream* dump) {
+Node* MemoryVectorNode::expandAbstractNodes(std::wostream*) {
     return this;
 }
 
@@ -204,7 +204,7 @@ Node* Node::expandVectorialNodes(std::wostream* dump, Compiler* compiler, unsign
 }
 
 //! Assignment between vectors is expanded into multiple scalar assignments
-Node* AssignmentNode::expandVectorialNodes(std::wostream* dump, Compiler* compiler, unsigned int index) {
+Node* AssignmentNode::expandVectorialNodes(std::wostream* dump, Compiler* compiler, unsigned int) {
     assert(children.size() == 2);
 
     // left vector should reference a memory location
@@ -229,8 +229,7 @@ Node* AssignmentNode::expandVectorialNodes(std::wostream* dump, Compiler* compil
         tempBlock->children.push_back(temp.release());
 
         // leftVector = tempVar
-        temp = std::make_unique<AssignmentNode>(sourcePos, leftVector->deepCopy(), tempVar->deepCopy());
-        tempBlock->children.push_back(temp.release());
+        tempBlock->children.push_back(new AssignmentNode(sourcePos, leftVector->deepCopy(), tempVar->deepCopy()));
 
         return tempBlock->expandVectorialNodes(dump, compiler);  // tempBlock will be reclaimed
     }
@@ -259,7 +258,7 @@ Node* TupleVectorNode::expandVectorialNodes(std::wostream* dump, Compiler* compi
         total += child->getVectorSize();
         if(index < total) {
             // the index points to this child
-            return child->expandVectorialNodes(dump, compiler, index - prevTotal);
+            return child->expandVectorialNodes(dump, compiler, index - unsigned(prevTotal));
         }
     }
 
@@ -296,19 +295,19 @@ Node* MemoryVectorNode::expandVectorialNodes(std::wostream* dump, Compiler* comp
         // indirect access foo[expr]
         // => use a ArrayWriteNode (lvalue) or ArrayReadNode (rvalue)
 
-        std::unique_ptr<Node> array;
+        Node* array;
         if(write == true)
-            array = std::make_unique<ArrayWriteNode>(sourcePos, arrayAddr, arraySize, arrayName);
+            array = new ArrayWriteNode(sourcePos, arrayAddr, arraySize, arrayName);
         else
-            array = std::make_unique<ArrayReadNode>(sourcePos, arrayAddr, arraySize, arrayName);
+            array = new ArrayReadNode(sourcePos, arrayAddr, arraySize, arrayName);
 
         array->children.push_back(children[0]->expandVectorialNodes(dump, compiler, index));
-        return array.release();
+        return array;
     }
 }
 
 //! Expand into a copy of itself
-Node* ImmediateNode::expandVectorialNodes(std::wostream* dump, Compiler* compiler, unsigned int index) {
+Node* ImmediateNode::expandVectorialNodes(std::wostream*, Compiler*, unsigned int index) {
     assert(index == 0);
 
     return shallowCopy();

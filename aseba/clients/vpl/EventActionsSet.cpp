@@ -482,11 +482,11 @@ namespace ThymioVPL {
     }
 
     void EventActionsSet::removeClicked() {
-        polymorphic_downcast<Scene*>(scene())->removeSet(row);
+        dynamic_cast<Scene*>(scene())->removeSet(row);
     }
 
     void EventActionsSet::addClicked() {
-        polymorphic_downcast<Scene*>(scene())->insertSet(row + 1);
+        dynamic_cast<Scene*>(scene())->insertSet(row + 1);
     }
 
     void EventActionsSet::removeBlockClicked() {
@@ -689,7 +689,7 @@ namespace ThymioVPL {
     }
 
     //! Disable delete block button
-    void EventActionsSet::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
+    void EventActionsSet::hoverLeaveEvent(QGraphicsSceneHoverEvent*) {
         deleteBlockButton->hide();
         removeBlockIndex = -1;
     }
@@ -727,7 +727,7 @@ namespace ThymioVPL {
         if(dragResult != Qt::IgnoreAction) {
             // find on which set the drag was droppes
             EventActionsSet* target(nullptr);
-            auto* vplScene(polymorphic_downcast<Scene*>(scene()));
+            auto* vplScene(dynamic_cast<Scene*>(scene()));
             for(Scene::SetItr it(vplScene->setsBegin()); it != vplScene->setsEnd(); ++it) {
                 if((*it)->wasDroppedTarget) {
                     target = *it;
@@ -749,7 +749,7 @@ namespace ThymioVPL {
             target->setSoleSelection();
 
             // make sure that we have an empty set at the end
-            polymorphic_downcast<Scene*>(scene())->ensureOneEmptySetAtEnd();
+            dynamic_cast<Scene*>(scene())->ensureOneEmptySetAtEnd();
 
             // disconnect the selection setting mechanism, emit, and then re-enable
             disconnect(this, SIGNAL(contentChanged()), this, SLOT(setSoleSelection()));
@@ -792,7 +792,7 @@ namespace ThymioVPL {
 
     void EventActionsSet::dropEvent(QGraphicsSceneDragDropEvent* event) {
         if(isDnDValid(event)) {
-            const bool advanced(polymorphic_downcast<Scene*>(scene())->getAdvanced());
+            const bool advanced(dynamic_cast<Scene*>(scene())->getAdvanced());
 
             USAGE_LOG(logEventActionSetDrop(this->row, event));
 
@@ -839,7 +839,7 @@ namespace ThymioVPL {
                 abort();
 
             if(scene())
-                polymorphic_downcast<Scene*>(scene())->ensureOneEmptySetAtEnd();
+                dynamic_cast<Scene*>(scene())->ensureOneEmptySetAtEnd();
         }
     }
 

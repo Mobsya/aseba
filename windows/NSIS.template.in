@@ -18,12 +18,14 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 Unicode true
 
 
   !define VERSION "@CPACK_PACKAGE_VERSION@"
   !define PATCH  "@CPACK_PACKAGE_VERSION_PATCH@"
   !define INST_DIR "@CPACK_TEMPORARY_DIRECTORY@"
+
 ;--------------------------------
 ;Includes
 
@@ -33,6 +35,7 @@ Unicode true
   !define REGISTRY_KEY "Software\Mobsya\Thymio"
   !include "x64.nsh"		; x64 support
   !include "..\..\..\resources\NSIS.definitions.nsh"
+  !include "FileFunc.nsh"
   !AddIncludeDir "${INSTALLER_SOURCE_DIRECTORY}"
 
   ; Compression
@@ -100,13 +103,9 @@ Function ${un}CleanShortcuts
 	DetailPrint $(STR_Uninst_Menu)
 	; Try both current user / all users
 	SetShellVarContext all		; current / all. Install program for all users
-	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
-
+	Delete "$SMPROGRAMS\Thymio Suite.lnk"
 	SetShellVarContext current		; current / all. Install program for all users
-	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-	RMDir /r "$SMPROGRAMS\$StartMenuFolder"
-
+	Delete "$SMPROGRAMS\Thymio Suite.lnk"
 	DetailPrint $(STR_Done)
 FunctionEnd
 !macroend
@@ -115,7 +114,7 @@ FunctionEnd
 !insertmacro CleanShortcuts "un."
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\Thymio"
+  InstallDir "${DEFAULT_INSTALL_DIR}"
 
 ;--------------------------------
 ;Pages
@@ -129,10 +128,6 @@ FunctionEnd
 
   ; Choose directory
   !insertmacro MUI_PAGE_DIRECTORY
-
-  ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Thymio"
-  !insertmacro MUI_PAGE_STARTMENU "Application" $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
 
@@ -183,24 +178,25 @@ SectionGroup /e "-Thymio" GroupThymio
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\thymiowebbridge.ico"
 		File "${ASEBA_SOURCE_DIRECTORY}\menu\windows\scratchblock.ico"
 
-;  		${If} $Language == '1036'
-;  			; French
-;  			File "README.fr.txt"
-;  		${ElseIf} $Language == '1031'
-;  			; German
-;  			File "README.de.txt"
-;  		${ElseIf} $Language == '1040'
-;  			; Italian
-;  			File "README.it.txt"
-;  		${Else}
-;  			File "README.en.txt"
-;  		${EndIf}
-
 		;Store installation folder
 		WriteRegStr HKCU ${REGISTRY_KEY} "" $INSTDIR
 
 		;Create uninstaller
 		WriteUninstaller "$INSTDIR\Uninstall.exe"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"DisplayName" "Thymio Suite"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"Publisher" "Mobsya Association"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"DisplayVersion" "2.0.0"
+		${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+			IntFmt $0 "0x%08X" $0
+		WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"EstimatedSize" "$0"
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"DisplayIcon" "$\"$INSTDIR\thymio-launcher.ico$\""
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite" \
+			"UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
 
 		; Populate the start menu
 		${If} $AlreadyInstalled == "true"
@@ -210,31 +206,8 @@ SectionGroup /e "-Thymio" GroupThymio
 		SetShellVarContext current
 		SetOutPath "$DOCUMENTS"		; Working directory for the shortcut
 		SetShellVarContext all		; current / all. Install program for all users
-		!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-			; Application
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Uninstall).lnk" "$INSTDIR\Uninstall.exe"
-			; Doc
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)"
-;  			${If} $Language == '1036'
-;  				; French
-;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/fr:start" "$INSTDIR\asebahelp.ico" "0"
-;  			${ElseIf} $Language == '1031'
-;  				; German
-;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/de:start" "$INSTDIR\asebahelp.ico" "0"
-;  			${ElseIf} $Language == '1040'
-;  				; Italian
-;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/it:start" "$INSTDIR\asebahelp.ico" "0"
-;  			${Else}
-;  				!insertmacro CreateInternetShortcut "$SMPROGRAMS\$StartMenuFolder\$(STR_Doc_Dir)\$(STR_Doc_Browser_Online)" "https://www.thymio.org/en:start" "$INSTDIR\asebahelp.ico" "0"
-;  			${EndIf}
-			; Thymio stuff?
-			; Launcher
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
-			; Thymio wireless configurator
-			CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)"
-			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Simulations)\Aseba Playground.lnk" "$INSTDIR\bin\asebaplayground.exe" "" "$INSTDIR\asebaplayground.ico"
-		!insertmacro MUI_STARTMENU_WRITE_END
+		; Launcher
+			CreateShortCut "$SMPROGRAMS\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
 
 		@CPACK_NSIS_EXTRA_INSTALL_COMMANDS@
 	SectionEnd
@@ -281,18 +254,6 @@ Section "-Install the driver" InstDriver	; Hidden section -> always executed
 		DetailPrint $(STR_Done)
 	done:
 SectionEnd
-
-; Section "-Install devcon" InstDevcon	; Hidden section -> always executed
-; 	SetOutPath "$INSTDIR"
-; 	File "${DEVCON_SRC}\restart.bat"
-; 	File "${DEVCON_SRC}\restartusb.exe"
-;
-; 	SetShellVarContext all		; current / all. Install program for all users
-; 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-; 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder\$(STR_Tools)"
-; 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$(STR_Tools)\$(STR_USB_Restart).lnk" "$INSTDIR\restart.bat" "$INSTDIR"
-; 	!insertmacro MUI_STARTMENU_WRITE_END
-; SectionEnd
 
 Section "-Install Bonjour" InstBonjour	; Hidden section -> always executed
 	SetOutPath "$INSTDIR"
@@ -398,10 +359,10 @@ Section "Uninstall"
 	DetailPrint $(STR_Done)
 
 	Call un.CleanShortcuts
-
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThymioSuite"
 	DeleteRegKey HKCU ${REGISTRY_KEY}
 	DetailPrint $(STR_Done)
 SectionEnd
 
-
-!finalize 'python "${INSTALLER_SOURCE_DIRECTORY}\..\CMakeModules\sign.py" "%1"'
+!verbose 4
+!finalize '"${PYTHON}" "${ASEBA_SOURCE_DIRECTORY}/CMakeModules/sign.py" "%1"'

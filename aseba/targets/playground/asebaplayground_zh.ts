@@ -4,7 +4,7 @@
 <context>
     <name>Enki::PlaygroundViewer</name>
     <message>
-        <location filename="PlaygroundViewer.cpp" line="+73"/>
+        <location filename="PlaygroundViewer.cpp" line="+74"/>
         <source>You are using a feature not available in the simulator, click here to buy a real Thymio.</source>
         <oldsource>You are using a feature not available in the simulator, click here to buy a real Thymio</oldsource>
         <translation>您所用的功能不能在模拟器上实现,点击这里购买Thymio机器人</translation>
@@ -119,9 +119,40 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="playground.cpp" line="+382"/>
+        <location filename="playground.cpp" line="+156"/>
+        <source>Open Scenario</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>playground scenario</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Unable to open file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Parse error at file %1, line %2, column %3:
+%4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+211"/>
         <source>%2 on %3</source>
         <translation>%2在%3上</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>New robot %0 of type %1 on port %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Aseba Playground - Simulate your robots!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

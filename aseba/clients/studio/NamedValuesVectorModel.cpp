@@ -102,7 +102,7 @@ QMimeData* FlatVariablesModel::mimeData(const QModelIndexList& indexes) const {
 
 void FlatVariablesModel::addVariable(const QString& name, const QVariant& value) {
     auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
-                               [&name](const auto& v, const QString& n) { return v.first < n; });
+                               [](const auto& v, const QString& n) { return v.first < n; });
     auto dest = std::distance(m_values.begin(), it);
     if(it != m_values.end() && it->first == name) {
         it->second = value;
@@ -117,7 +117,7 @@ void FlatVariablesModel::addVariable(const QString& name, const QVariant& value)
 
 void FlatVariablesModel::removeVariable(const QString& name) {
     auto it = std::lower_bound(m_values.begin(), m_values.end(), name,
-                               [&name](const auto& v, const QString& n) { return v.first < n; });
+                               [](const auto& v, const QString& n) { return v.first < n; });
     if(it == std::end(m_values))
         return;
     if(it->first != name)
@@ -161,7 +161,7 @@ QVariant MaskableVariablesModel::data(const QModelIndex& index, int role) const 
     if(index.column() != 2)
         return FlatVariablesModel::data(index, role);
     bool visible = true;
-    if(m_events_visibility.size() > index.row())
+    if(m_events_visibility.size() > size_t(index.row()))
         visible = m_events_visibility[index.row()];
 
 
@@ -196,7 +196,7 @@ bool MaskableVariablesModel::isVisible(const QString& key) const {
 }
 
 void MaskableVariablesModel::toggle(const QModelIndex& index) {
-    if(index.row() >= m_events_visibility.size())
+    if(size_t(index.row()) >= m_events_visibility.size())
         m_events_visibility.resize(index.row() + 1);
 
     m_events_visibility[index.row()] = !m_events_visibility[index.row()];

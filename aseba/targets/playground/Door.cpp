@@ -86,11 +86,11 @@ AreaActivating::AreaActivating(Robot* owner, const Polygon& activeArea) : active
     this->owner = owner;
 }
 
-void AreaActivating::init(double dt, World* w) {
+void AreaActivating::init(double, World*) {
     active = false;
 }
 
-void AreaActivating::objectStep(double dt, World* w, PhysicalObject* po) {
+void AreaActivating::objectStep(double, World*, PhysicalObject* po) {
     if(po != owner && dynamic_cast<Robot*>(po)) {
         active |= activeArea.isPointInside(po->pos - owner->pos);
     }

@@ -3,7 +3,6 @@
 #include "TargetModels.h"
 #include "NamedValuesVectorModel.h"
 #include "StudioAeslEditor.h"
-#include "EventViewer.h"
 #include "FindDialog.h"
 #include "ModelAggregator.h"
 #include "translations/CompilerTranslator.h"
@@ -105,36 +104,36 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         if(node->status() == mobsya::ThymioNode::Status::Available)
             node->lock();
         auto ptr = node.get();
-        node->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
-        node->setWatchSharedVariablesEnabled(true);
-        node->setWatchEventsEnabled(true);
-        node->setWatchEventsDescriptionEnabled(true);
-        node->setWatchVMExecutionStateEnabled(true);
+        ptr->setWatchVariablesEnabled(synchronizeVariablesToogle->isChecked());
+        ptr->setWatchSharedVariablesEnabled(true);
+        ptr->setWatchEventsEnabled(true);
+        ptr->setWatchEventsDescriptionEnabled(true);
+        ptr->setWatchVMExecutionStateEnabled(true);
         m_vm_variables_model.clear();
 
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::onExecutionPosChanged);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
-        connect(node.get(), &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
-        connect(node.get(), &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
-        connect(node.get(), &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
-        connect(node.get(), &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
-        connect(node.get(), &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
-        connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStarted, this, &NodeTab::executionStarted);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::executionPaused);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionPaused, this, &NodeTab::onExecutionPosChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStopped, this, &NodeTab::executionStopped);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
+        connect(ptr, &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
+        connect(ptr, &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
+        connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
+        connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
+        connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
-        connect(node.get(), &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
-        connect(node.get(), &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
+        connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
 
         onStatusChanged();
         updateAsebaVMDescription();
     }
 }
 
-const std::shared_ptr<const mobsya::ThymioNode> NodeTab::thymio() const {
+const std::shared_ptr<mobsya::ThymioNode> NodeTab::thymio() const {
     return m_thymio;
 }
 
@@ -171,10 +170,16 @@ void NodeTab::clearEverything() {
 }
 
 void NodeTab::run() {
+
     if(!m_thymio) {
         return;
     }
+
+    clearExecutionErrors();
+    lastLoadedSource.clear();
     editor->debugging = false;
+    currentPC = -1;
+
 
     auto set_breakpoints_and_run = [this] {
         auto bpwatcher = new mobsya::BreakpointsRequestWatcher(this);
@@ -216,7 +221,7 @@ void NodeTab::run() {
     auto req = m_thymio->load_aseba_code(code.toUtf8());
     watcher->setRequest(req);
     m_compilation_watcher->setRequest(req);
-}
+}  // namespace Aseba
 
 void NodeTab::pause() {
     editor->debugging = true;
@@ -326,7 +331,7 @@ void NodeTab::handleCompilationError(const mobsya::CompilationResult& res) {
         QTextBlock textBlock = editor->document()->findBlock(errorPos);
         int posInBlock = errorPos - textBlock.position();
         if(textBlock.userData())
-            polymorphic_downcast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] =
+            dynamic_cast<AeslEditorUserData*>(textBlock.userData())->properties[QStringLiteral("errorPos")] =
                 posInBlock;
         else
             textBlock.setUserData(new AeslEditorUserData(QStringLiteral("errorPos"), posInBlock));
@@ -448,8 +453,6 @@ void NodeTab::updateStatusLabel() {
     }
 
     const auto executionStatus = m_thymio->vmExecutionState();
-    const bool busy = status == mobsya::ThymioNode::Status::Busy;
-
     QString statusLabel;
     switch(executionStatus) {
         case mobsya::ThymioNode::VMExecutionState::Stopped: statusLabel = tr("Stopped"); break;
@@ -588,22 +591,6 @@ void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
 }
 
 
-static void write16(QIODevice& dev, const uint16_t v) {
-    dev.write((const char*)&v, 2);
-}
-
-static void write16(QIODevice& dev, const VariablesDataVector& data, const char* varName) {
-    if(data.empty()) {
-        std::cerr << "Warning, cannot find " << varName << " required to save bytecode, using 0" << std::endl;
-        write16(dev, 0);
-    } else
-        dev.write((const char*)&data[0], 2);
-}
-
-static uint16_t crcXModem(const uint16_t oldCrc, const QString& s) {
-    return crcXModem(oldCrc, s.toStdWString());
-}
-
 void NodeTab::saveBytecode() const {
     /* const QString& nodeName(target->getName(id));
      QString bytecodeFileName =
@@ -739,7 +726,7 @@ bool NodeTab::setEditorProperty(const QString& property, const QVariant& value, 
     QTextBlock block = editor->document()->begin();
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
         if(lineCounter == line) {
             // set propety
             if(uData) {
@@ -778,7 +765,7 @@ bool NodeTab::clearEditorProperty(const QString& property, unsigned line) {
     unsigned lineCounter = 0;
     while(block != editor->document()->end()) {
         if(lineCounter == line) {
-            auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+            auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
             if(uData && uData->properties.contains(property)) {
                 uData->properties.remove(property);
                 if(uData->properties.isEmpty()) {
@@ -801,7 +788,7 @@ bool NodeTab::clearEditorProperty(const QString& property) {
     // go through all blocks, remove property if found
     QTextBlock block = editor->document()->begin();
     while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
         if(uData && uData->properties.contains(property)) {
             uData->properties.remove(property);
             if(uData->properties.isEmpty()) {
@@ -819,7 +806,7 @@ bool NodeTab::clearEditorProperty(const QString& property) {
 void NodeTab::switchEditorProperty(const QString& oldProperty, const QString& newProperty) {
     QTextBlock block = editor->document()->begin();
     while(block != editor->document()->end()) {
-        auto* uData = polymorphic_downcast_or_null<AeslEditorUserData*>(block.userData());
+        auto* uData = dynamic_cast<AeslEditorUserData*>(block.userData());
         if(uData && uData->properties.contains(oldProperty)) {
             uData->properties.remove(oldProperty);
             uData->properties[newProperty] = QVariant();
@@ -1009,16 +996,16 @@ void NodeTab::setupConnections() {
         auto state = m_thymio->vmExecutionState();
         switch(state) {
             case mobsya::ThymioNode::VMExecutionState::Running: {
-                runButton->setEnabled(false);
-                nextButton->setEnabled(false);
+                nextButton->hide();
                 break;
             };
             case mobsya::ThymioNode::VMExecutionState::Paused: {
                 pauseButton->setEnabled(false);
+                nextButton->show();
                 break;
             };
             case mobsya::ThymioNode::VMExecutionState::Stopped: {
-                pauseButton->hide();
+                pauseButton->setEnabled(false);
                 nextButton->hide();
                 stopButton->setEnabled(false);
                 break;

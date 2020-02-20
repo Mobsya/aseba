@@ -44,26 +44,6 @@ namespace Aseba {
 */
 /*@{*/
 
-//! Asserts a dynamic cast. Similar to the one in boost/cast.hpp
-template <typename Derived, typename Base>
-static inline Derived polymorphic_downcast(Base base) {
-    auto derived = dynamic_cast<Derived>(base);
-    if(!derived)
-        abort();
-    return derived;
-}
-
-//! Asserts a dynamic cast or a null. Similar to the one in boost/cast.hpp
-template <typename Derived, typename Base>
-static inline Derived polymorphic_downcast_or_null(Base base) {
-    if(!base)
-        return nullptr;
-    auto derived = dynamic_cast<Derived>(base);
-    if(!derived)
-        abort();
-    return derived;
-}
-
 //! Hash references to T using their underlying pointer
 template <typename T>
 struct PointerHash {

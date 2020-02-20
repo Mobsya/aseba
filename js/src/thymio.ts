@@ -882,6 +882,14 @@ export interface IClient {
      * @event
      */
     onNodesChanged: (nodes: INode[]) => void;
+
+
+    /**
+     * Fired when the websocket is closed
+     * @param event
+     * @event
+     */
+    onClose: (event: CloseEvent) => void;
 }
 
 /**
@@ -896,6 +904,7 @@ class Client implements IClient {
     private _socket: WebSocket;
 
     onNodesChanged: (nodes: Node[]) => void = undefined;
+    onClose: (event: CloseEvent) => void = undefined;
 
     /**
      *  @param {external:String} url : Web socket address
@@ -912,6 +921,7 @@ class Client implements IClient {
             this._socket.binaryType = 'arraybuffer';
             this._socket.onopen = this._onopen.bind(this)
             this._socket.onmessage = this._onmessage.bind(this)
+            this._socket.onclose = this._onclose.bind(this)
         }
     }
 
@@ -927,6 +937,13 @@ class Client implements IClient {
         mobsya.fb.ConnectionHandshake.addProtocolVersion(builder, PROTOCOL_VERSION)
         mobsya.fb.ConnectionHandshake.addMinProtocolVersion(builder, MIN_PROTOCOL_VERSION)
         this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
+    }
+
+    private _onclose(event: CloseEvent) {
+        console.log("disconnected")
+        if(this.onClose) {
+            this.onClose(event);
+        }
     }
 
     private _onmessage (event: MessageEvent) {

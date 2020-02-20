@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="../common/AeslEditor.cpp" line="+464"/>
+        <location filename="../common/AeslEditor.cpp" line="+445"/>
         <source>Clear breakpoint</source>
         <translation>ブレークポイントを無効</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+71"/>
+        <location filename="../../studio/MainWindow.cpp" line="+70"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: 最新のコンパイルを出力</translation>
     </message>
@@ -141,102 +141,35 @@
         <translation type="vanished">カスタム</translation>
     </message>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
-        <source>Discovered targets</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Selected target</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Serial port</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Local TCP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>TCP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Documentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
         <source>Connect</source>
-        <translation>ひも付けする</translation>
+        <translation type="vanished">ひも付けする</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation type="vanished">キャンセル</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Aseba Target Selection</source>
-        <translation>Asebaの標的選択</translation>
-    </message>
-    <message>
-        <location line="+48"/>
-        <source> – type %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>local on computer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>distant on network</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source> – device %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>serial port or USB</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Asebaの標的選択</translation>
     </message>
 </context>
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+103"/>
         <source>Thymio not found</source>
-        <translation>Thymioが見つかりません</translation>
+        <translation type="vanished">Thymioが見つかりません</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;Thymioが見つかりません!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;USBケーブル/ドングルを使用してThymioをコンピューターに接続し、他のプログラムがThymioを使用していないことを確認してください。&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;Thymioが見つかりません!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;USBケーブル/ドングルを使用してThymioをコンピューターに接続し、他のプログラムがThymioを使用していないことを確認してください。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Connection to command line target failed</source>
-        <translation>コマンドライン標的へ接続できませんでした</translation>
+        <translation type="vanished">コマンドライン標的へ接続できませんでした</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Cannot connect to target %0</source>
-        <translation>標的%0に接続できません</translation>
+        <translation type="vanished">標的%0に接続できません</translation>
     </message>
 </context>
 <context>
@@ -260,56 +193,44 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
-        <translation>時間（秒）</translation>
+        <translation type="vanished">時間（秒）</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Values</source>
-        <translation>値</translation>
+        <translation type="vanished">値</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+78"/>
         <source>Recording...</source>
-        <translation>記録中...</translation>
+        <translation type="vanished">記録中...</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+77"/>
         <source>&amp;Pause</source>
-        <translation>一時停止</translation>
+        <translation type="vanished">一時停止</translation>
     </message>
     <message>
-        <location line="-73"/>
         <source>&amp;Clear</source>
-        <translation>すべてクリア</translation>
+        <translation type="vanished">すべてクリア</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>time &amp;window:</source>
-        <translation>時間ウインドウ:</translation>
+        <translation type="vanished">時間ウインドウ:</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Save &amp;As...</source>
-        <translation>名前を付けて保存…</translation>
+        <translation type="vanished">名前を付けて保存…</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Paused...</source>
-        <translation>一時停止...</translation>
+        <translation type="vanished">一時停止...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Record</source>
-        <translation>記録</translation>
+        <translation type="vanished">記録</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Save plot data to file</source>
-        <translation>プロットデータをフィアルに保存</translation>
+        <translation type="vanished">プロットデータをフィアルに保存</translation>
     </message>
 </context>
 <context>
@@ -321,12 +242,12 @@
     </message>
     <message>
         <location line="+20"/>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Add a new event</source>
         <translation type="unfinished">新しいイベント</translation>
     </message>
     <message>
-        <location line="-37"/>
+        <location line="-38"/>
         <source>Remove this event</source>
         <translation type="unfinished">このイベントを消す</translation>
     </message>
@@ -341,7 +262,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Clear</source>
         <translation type="unfinished">すべてクリア</translation>
     </message>
@@ -628,7 +549,7 @@ Occurrences</source>
         <translation type="vanished">イベント%0番</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+52"/>
+        <location filename="../../studio/MainWindow.cpp" line="+57"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -638,7 +559,7 @@ Occurrences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+510"/>
+        <location line="+476"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation></translation>
     </message>
@@ -647,7 +568,7 @@ Occurrences</source>
         <translation type="vanished">Aseba Studio について</translation>
     </message>
     <message>
-        <location line="-457"/>
+        <location line="-425"/>
         <source>Open Script</source>
         <translation>スクリプト開ける</translation>
     </message>
@@ -668,12 +589,12 @@ Occurrences</source>
         <translation type="vanished">XMLソースファイルのエラー:%1行、%2列の%0</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+37"/>
         <source>Save Script</source>
         <translation>スクリプト保存</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+82"/>
         <source>Export memory content</source>
         <translation>メモリ内容を出力</translation>
     </message>
@@ -734,9 +655,8 @@ Occurrences</source>
         <translation type="vanished">イベント%1の引数%0の無効値</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>Plot event %1</source>
-        <translation>プロットイベン%1</translation>
+        <translation type="vanished">プロットイベン%1</translation>
     </message>
     <message>
         <source>plot of %1</source>
@@ -835,9 +755,8 @@ event %0 : </source>
         <translation type="vanished">イベント送る</translation>
     </message>
     <message>
-        <location line="+126"/>
         <source>Plot this event</source>
-        <translation>このイベントをプロットする</translation>
+        <translation type="vanished">このイベントをプロットする</translation>
     </message>
     <message>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
@@ -848,7 +767,7 @@ event %0 : </source>
         <translation type="vanished">すべてクリア</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+210"/>
         <source>...inside %0</source>
         <translation>...%0の中</translation>
     </message>
@@ -1318,7 +1237,7 @@ event %0 : </source>
         <translation type="vanished">リセット</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+832"/>
+        <location filename="../../studio/NodeTab.cpp" line="+849"/>
         <source>Run</source>
         <translation>実行</translation>
     </message>
@@ -1340,7 +1259,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;実行&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-561"/>
+        <location line="-558"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1350,12 +1269,17 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+15"/>
+        <source>Compilation Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+130"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Stopped</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1380,7 +1304,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+386"/>
+        <location line="+380"/>
         <source>Stop</source>
         <translation type="unfinished">停止</translation>
     </message>
@@ -1439,7 +1363,7 @@ event %0 : </source>
         <translation type="vanished">バイトコード; %2 (%3%)の%1</translation>
     </message>
     <message>
-        <location line="-635"/>
+        <location line="-632"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>
 &lt;b&gt;メモリ使用量&lt;/b&gt; : %1、%2</translation>
@@ -1449,7 +1373,7 @@ event %0 : </source>
         <translation type="vanished">実行中</translation>
     </message>
     <message>
-        <location line="+550"/>
+        <location line="+547"/>
         <source>Pause</source>
         <translation>一時停止</translation>
     </message>
@@ -1481,19 +1405,16 @@ event %0 : </source>
 <context>
     <name>Aseba::ReconnectionDialog</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
-        <translation>接続をクローズ</translation>
+        <translation type="vanished">接続をクローズ</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Warning, connection closed: I am trying to reconnect.</source>
-        <translation>警告、接続がクローズされました: 再接続を試みています。</translation>
+        <translation type="vanished">警告、接続がクローズされました: 再接続を試みています。</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Stop trying</source>
-        <translation>試行を停止</translation>
+        <translation type="vanished">試行を停止</translation>
     </message>
 </context>
 <context>
@@ -1842,7 +1763,7 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
         <translation type="unfinished">Thymioに接続しています...</translation>
     </message>
@@ -1883,7 +1804,7 @@ event %0 : </source>
         <translation type="unfinished">Thymioとの接続が失われました...Thymioの電源が入っていることを確認し、ケーブル/ドングルが接続されていることを確認して下さい</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+77"/>
         <source>[modified] </source>
         <translation type="unfinished">[変更済み]</translation>
     </message>
@@ -1981,20 +1902,16 @@ event %0 : </source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
-        <location line="+7"/>
         <source>Protocol version mismatch</source>
-        <translation>プロトコルバージョンの不一致</translation>
+        <translation type="vanished">プロトコルバージョンの不一致</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Aseba Studio uses an older protocol (%1) than node %0 (%2), please upgrade Aseba Studio.</source>
-        <translation>Aseba Studioはノード%0（%2）より古いプロトコル（%1）を使用していますのでAseba Studioをアップグレードしてください。</translation>
+        <translation type="vanished">Aseba Studioはノード%0（%2）より古いプロトコル（%1）を使用していますのでAseba Studioをアップグレードしてください。</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Node %0 uses an older protocol (%2) than Aseba Studio (%1), please upgrade the node firmware.</source>
-        <translation>ノード%0Aseba Studio（%1）より古いプロトコル（%2）を使用していますのノードファームウェアをアップグレードしてください。</translation>
+        <translation type="vanished">ノード%0Aseba Studio（%1）より古いプロトコル（%2）を使用していますのノードファームウェアをアップグレードしてください。</translation>
     </message>
 </context>
 <context>
@@ -2030,14 +1947,8 @@ event %0 : </source>
         <translation>不明なVPLエラー</translation>
     </message>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="-405"/>
         <source>Unexpected Dashel Error</source>
-        <translation>予期しないDashelエラー</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>A communication error happened:</source>
-        <translation></translation>
+        <translation type="vanished">予期しないDashelエラー</translation>
     </message>
     <message>
         <location filename="../../studio/CustomDelegate.cpp" line="+80"/>

@@ -13,7 +13,7 @@ public:
     app_token_manager(boost::asio::execution_context& ctx)
         : boost::asio::detail::service_base<app_token_manager>(static_cast<boost::asio::io_context&>(ctx)) {}
 
-    bool check_token(token_view token) const {
+    bool check_token(token_view) const {
         return false;
     }
 

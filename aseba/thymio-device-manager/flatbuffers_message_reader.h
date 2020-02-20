@@ -35,7 +35,7 @@ class read_flatbuffers_message_op {
         char sizeBuffer[4];
         std::vector<uint8_t> dataBuffer;
 
-        explicit state(Handler const& handler, AsyncReadStream& stream) : stream(stream) {}
+        explicit state(Handler const&, AsyncReadStream& stream) : stream(stream) {}
     };
     boost::beast::handler_ptr<state, Handler> m_p;
 

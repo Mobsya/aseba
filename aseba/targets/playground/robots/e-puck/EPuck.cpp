@@ -85,7 +85,7 @@ EPuckFeeding::EPuckFeeding(Robot* owner) : energy(EPUCK_FEEDER_INITIAL_ENERGY) {
     this->owner = owner;
 }
 
-void EPuckFeeding::objectStep(double dt, World* w, PhysicalObject* po) {
+void EPuckFeeding::objectStep(double dt, World*, PhysicalObject* po) {
     auto* epuck = dynamic_cast<FeedableEPuck*>(po);
     if(epuck && energy > 0) {
         double dEnergy = dt * EPUCK_FEEDER_D_ENERGY;
@@ -96,7 +96,7 @@ void EPuckFeeding::objectStep(double dt, World* w, PhysicalObject* po) {
     }
 }
 
-void EPuckFeeding::finalize(double dt, World* w) {
+void EPuckFeeding::finalize(double dt, World*) {
     if((energy < EPUCK_FEEDER_THRESHOLD_SHOW) && (energy + dt >= EPUCK_FEEDER_THRESHOLD_SHOW))
         owner->setColor(EPUCK_FEEDER_COLOR_ACTIVE);
     energy += EPUCK_FEEDER_RECHARGE_RATE * dt;
@@ -114,11 +114,11 @@ EPuckFeeder::EPuckFeeder() : feeding(this) {
 
 // ScoreModifier
 
-void ScoreModifier::step(double dt, World* w) {
+void ScoreModifier::step(double dt, World*) {
     double x = owner->pos.x;
     double y = owner->pos.y;
     if((x > 32) && (x < 110.4 - 32) && (y > 67.2) && (y < 110.4 - 32))
-        polymorphic_downcast<FeedableEPuck*>(owner)->score += dt * SCORE_MODIFIER_COEFFICIENT;
+        dynamic_cast<FeedableEPuck*>(owner)->score += dt * SCORE_MODIFIER_COEFFICIENT;
 }
 
 // FeedableEPuck
@@ -151,11 +151,11 @@ AsebaFeedableEPuck::AsebaFeedableEPuck(std::string robotName, int16_t nodeId)
     : Aseba::SingleVMNodeGlue(std::move(robotName), nodeId) {
     bytecode.resize(1024);
     vm.bytecode = &bytecode[0];
-    vm.bytecodeSize = bytecode.size();
+    vm.bytecodeSize = uint16_t(bytecode.size());
 
     stack.resize(32);
     vm.stack = &stack[0];
-    vm.stackSize = stack.size();
+    vm.stackSize = uint16_t(stack.size());
 
     vm.variables = reinterpret_cast<int16_t*>(&variables);
     vm.variablesOld = reinterpret_cast<int16_t*>(&variablesOld);

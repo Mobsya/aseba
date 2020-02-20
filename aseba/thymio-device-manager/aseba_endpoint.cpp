@@ -154,6 +154,78 @@ void aseba_endpoint::emit_events(const group::properties_map& map, write_callbac
     write_messages(std::move(messages), std::move(cb));
 }
 
+
+void aseba_endpoint::read_aseba_message() {
+    auto that = shared_from_this();
+    auto cb =
+        boost::asio::bind_executor(m_strand, [that](boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
+            that->handle_read(ec, msg);
+        });
+
+    variant_ns::visit(
+        overloaded{[](variant_ns::monostate&) {},
+                   [&cb](auto& underlying) { mobsya::async_read_aseba_message(underlying, std::move(cb)); }},
+        m_endpoint.ep());
+}
+
+void aseba_endpoint::handle_read(boost::system::error_code ec, std::shared_ptr<Aseba::Message> msg) {
+    if(ec || !msg) {
+        if(!ec && !msg && !m_upgrading_firmware)
+            read_aseba_message();
+
+        mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
+        return;
+    }
+    mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
+
+    auto node_id = msg->source;
+    auto it = m_nodes.find(node_id);
+    auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
+
+    if(msg->type < 0x8000) {
+        auto timestamp = std::chrono::system_clock::now();
+        auto event = [this, &msg] { return get_event(msg->type); }();
+        if(event) {
+            on_event(static_cast<const Aseba::UserMessage&>(*msg), event->first, timestamp);
+        }
+    } else if(!node && (msg->type == ASEBA_MESSAGE_NODE_PRESENT || msg->type == ASEBA_MESSAGE_DESCRIPTION)) {
+        const auto protocol_version = (msg->type == ASEBA_MESSAGE_NODE_PRESENT) ?
+            static_cast<Aseba::NodePresent*>(msg.get())->version :
+            static_cast<Aseba::Description*>(msg.get())->protocolVersion;
+        it = m_nodes
+                 .insert({node_id,
+                          {aseba_node::create(m_io_context, node_id, protocol_version, shared_from_this()),
+                           std::chrono::steady_clock::now()}})
+                 .first;
+        node = it->second.node;
+        if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
+            node->get_description();
+            read_aseba_message();
+            return;
+        }
+    }
+    if(node) {
+        node->on_message(*msg);
+        // Update node status
+        it->second.last_seen = std::chrono::steady_clock::now();
+    }
+    if(is_rebooting())
+        return;
+    read_aseba_message();
+}
+
+void aseba_endpoint::remove_node(node_id n) {
+    for(auto it = m_nodes.begin(); it != m_nodes.end();) {
+        const auto& info = it->second;
+        if(info.node && info.node->uuid() == n) {
+            info.node->disconnect();
+            m_nodes.erase(it);
+            return;
+        }
+    }
+}
+
+
 void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::EventDescription& def,
                               const std::chrono::system_clock::time_point& timestamp) {
     group::properties_map events;
@@ -175,6 +247,69 @@ void aseba_endpoint::on_event(const Aseba::UserMessage& event, const Aseba::Even
 }
 
 
+void aseba_endpoint::schedule_send_ping(boost::posix_time::time_duration delay) {
+    if(is_rebooting())
+        return;
+
+    auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+    timer->expires_from_now(delay);
+    std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();
+    auto cb = boost::asio::bind_executor(m_strand, [timer, ptr](const boost::system::error_code& ec) {
+        auto that = ptr.lock();
+        if(!that || ec)
+            return;
+        mLogInfo("Requesting list nodes( ec : {} )", ec.message());
+        if(that->m_upgrading_firmware)
+            return;
+
+        that->write_message(std::make_unique<Aseba::ListNodes>());
+        if(that->m_first_ping && that->is_usb()) {
+            that->write_message(std::make_unique<Aseba::GetDescription>());
+            that->m_first_ping = false;
+        }
+
+        if(that->needs_ping())
+            that->schedule_send_ping();
+    });
+    mLogDebug("Waiting before requesting list node");
+    timer->async_wait(std::move(cb));
+}
+
+void aseba_endpoint::schedule_nodes_health_check(boost::posix_time::time_duration delay) {
+    if(m_upgrading_firmware)
+        return;
+
+    auto timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+    timer->expires_from_now(delay);
+    std::weak_ptr<aseba_endpoint> ptr = this->shared_from_this();
+    auto cb = boost::asio::bind_executor(m_strand, [this, timer, ptr](const boost::system::error_code&) {
+        auto that = ptr.lock();
+        if(!that)
+            return;
+        auto now = std::chrono::steady_clock::now();
+        for(auto it = m_nodes.begin(); it != m_nodes.end();) {
+            const auto& info = it->second;
+            auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
+            if(!is_rebooting() && d.count() >= (info.node->get_status() == aseba_node::status::connected ? 25 : 5)) {
+                mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
+                          it->second.node->native_id());
+                info.node->set_status(aseba_node::status::disconnected);
+                it = m_nodes.erase(it);
+
+                if(!is_wireless())
+                    this->cancel_all_ops();
+
+            } else {
+                ++it;
+            }
+        }
+        // Reschedule
+        that->schedule_nodes_health_check();
+    });
+    timer->async_wait(std::move(cb));
+}
+
+
 bool aseba_endpoint::upgrade_firmware(
     uint16_t id, std::function<void(boost::system::error_code ec, double progress, bool complete)> cb,
     firmware_update_options options) {
@@ -193,7 +328,7 @@ bool aseba_endpoint::upgrade_firmware(
             overloaded{
                 [](variant_ns::monostate&) {},
 #ifdef MOBSYA_TDM_ENABLE_USB
-                [&ptr, id, &firmware, &cb, options](usb_device& usb) {
+                [&ptr, id, &firmware, &cb, options](usb_device&) {
                     boost::asio::use_service<usb_acceptor_service>(ptr->m_io_context).pause(false);
                     mobsya::upgrade_thymio2_endpoint(
                         ptr->usb().native_handle(), firmware, id,

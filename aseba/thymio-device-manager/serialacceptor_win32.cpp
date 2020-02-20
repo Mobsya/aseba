@@ -32,8 +32,11 @@ void serial_acceptor_service::shutdown() {
 
 void serial_acceptor_service::free_device(const std::string& s) {
     const auto it = std::find(m_known_devices.begin(), m_known_devices.end(), s);
-    if(it != m_known_devices.end())
+    if(it != m_known_devices.end()) {
+        mLogError("Removed {}", s);
         m_known_devices.erase(it);
+    }
+    remove_connected_device(s);
     on_active_timer({});
 }
 
@@ -176,11 +179,11 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         const auto port_name = get_com_portname(deviceInfoSet, &deviceInfoData);
 
         known_devices.push_back(port_name);
-        if(m_requests.empty() || std::find(m_known_devices.begin(), m_known_devices.end(), port_name) != m_known_devices.end())
+        if(m_requests.empty() ||
+           std::find(m_connected_devices.begin(), m_connected_devices.end(), port_name) != m_connected_devices.end())
             continue;
 
         const auto device_name = get_device_name(deviceInfoSet, &deviceInfoData);
-
 
         auto& req = m_requests.front();
         mLogTrace("device : {:#06X}-{:#06X} on {}", id.vendor_id, id.product_id, port_name);
@@ -190,16 +193,18 @@ void serial_acceptor_service::handle_request_by_active_enumeration() {
         req.d.m_port_name = port_name;
         req.d.open(ec);
         if(!ec) {
+            m_connected_devices.push_back(port_name);
+
             auto handler = std::move(req.handler);
             const auto executor = boost::asio::get_associated_executor(handler, req.acceptor.get_executor());
             m_requests.pop();
             boost::asio::post(executor, boost::beast::bind_handler(handler, boost::system::error_code{}));
         }
     }
-
     for(auto&& e : m_known_devices) {
         if(std::find(known_devices.begin(), known_devices.end(), e) == known_devices.end()) {
             mLogError("Removed {}", e);
+            remove_connected_device(e);
             device_unplugged(e);
         }
     }

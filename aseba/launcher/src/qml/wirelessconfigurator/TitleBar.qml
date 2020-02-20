@@ -7,11 +7,11 @@ Rectangle  {
     height: Style.titlebar_height
     color: Style.dark
     Text {
-        text: "Wireless Configurator"
+        text: "Wireless Thymio Network Configurator"
         color: "white"
         font.bold: true
         font.family: "Roboto"
-        font.pointSize: 18
+        font.pointSize: 12
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: 22
         anchors.left: parent.left

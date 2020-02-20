@@ -36,7 +36,7 @@ void usb_acceptor_service::free_device(const libusb_device* dev) {
         m_strand, boost::bind(&usb_acceptor_service::handle_request_by_active_enumeration, this)));
 }
 
-void usb_acceptor_service::register_request(request& r) {
+void usb_acceptor_service::register_request(request&) {
     m_active_timer.expires_from_now(boost::posix_time::seconds(1));
     m_active_timer.async_wait(boost::asio::bind_executor(
         m_strand, boost::bind(&usb_acceptor_service::on_active_timer, this, boost::placeholders::_1)));

@@ -19,7 +19,7 @@
 
 namespace mobsya {
 
-Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : m_client(client), QObject(parent) {
+Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject(parent), m_client(client) {
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
 }
 
@@ -31,7 +31,13 @@ bool Launcher::platformIsOsX() const {
     return false;
 #endif
 }
-
+bool Launcher::platformIsIos() const {
+#ifdef Q_OS_IOS
+    return true;
+#else
+    return false;
+#endif
+}
 bool Launcher::platformIsLinux() const {
 #ifdef Q_OS_LINUX
     return true;
@@ -40,11 +46,45 @@ bool Launcher::platformIsLinux() const {
 #endif
 }
 
+Q_INVOKABLE bool Launcher::platformHasSerialPorts() const {
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+    return false;
+#else
+    return true;
+#endif
+}
+
 #ifdef Q_OS_MACOS
 bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
     return doLaunchOsXBundle(name, args);
 }
 #endif
+#ifdef Q_OS_IOS
+// Dummy implementation for iOS
+bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
+    return false;
+}
+#endif
+
+
+bool Launcher::isPlaygroundAvailable() const {
+// The playground is not supported on opengl ES platforms
+#ifdef QT_OPENGL_ES
+    return false;
+#endif
+// No Playground on mobile platforms
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+    return false;
+#elif defined(Q_OS_OSX)
+    // Search for a bundle on osx
+    return hasOsXBundle("AsebaPlayground");
+#else
+    // Search for am executable (linux, windows)
+    return !search_program("asebaplayground").isEmpty();
+#endif
+    return false;
+}
+
 
 QString Launcher::search_program(const QString& name) const {
     qDebug() << "Searching for " << name;
@@ -73,15 +113,20 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 #ifdef Q_OS_OSX
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/../Resources/").absolutePath());
 #endif
+#ifdef Q_OS_IOS
+    files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath());
+#endif
     return files;
 }
 
 bool Launcher::launch_process(const QString& program, const QStringList& args) const {
+#ifndef Q_OS_IOS
     return QProcess::startDetached(program, args);
+#endif
 }
 
 bool Launcher::launchPlayground() const {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_OSX
     return doLaunchPlaygroundBundle();
 #else
     auto exe = search_program("asebaplayground");
@@ -89,6 +134,23 @@ bool Launcher::launchPlayground() const {
         return false;
     return launch_process(exe);
 #endif
+}
+
+
+static bool openUrlWithParameters(const QUrl& url) {
+    QTemporaryFile t(QDir::tempPath() + "/XXXXXX.html");
+    t.setAutoRemove(false);
+    if(!t.open())
+        return false;
+
+    t.write(QStringLiteral(R"(
+<html><head>
+  <meta http-equiv="refresh" content="0;URL='%1" />
+</head></html>)")
+                .arg(url.toString())
+                .toUtf8());
+    QTimer::singleShot(10000, [f = t.fileName()] { QFile::remove(f); });
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
 bool Launcher::openUrl(const QUrl& url) {
@@ -101,10 +163,13 @@ bool Launcher::openUrl(const QUrl& url) {
     // So, instead, defer to the system browser - which is more likely to work
     // because the version of safari shipped with an up-to-date Sierra is more current
     // than the system's webkit
-#ifdef Q_OS_OSX
-    if(QOperatingSystemVersion::current() < QOperatingSystemVersion::MacOSHighSierra) {
-        return QDesktopServices::openUrl(url);
-    }
+/*#ifdef Q_OS_OSX
+    return openUrlWithParameters(url);
+#endif*/
+
+#ifdef Q_OS_IOS
+    OpenUrlInNativeWebView(url);
+    return true;
 #endif
 
 #ifdef MOBSYA_USE_WEBENGINE
@@ -174,12 +239,25 @@ static bool exists(QString file) {
     return QFile::exists(file.replace("qrc:/", ":/"));
 }
 
-Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
+QString get_ui_language() {
     QLocale l;
-    QString full = pattern.arg(l.name());
+    QStringList langs = QLocale().uiLanguages();
+    if(langs.empty()) {
+        return l.name();
+    }
+    return langs.first();
+}
+
+QString Launcher::uiLanguage() const {
+    return get_ui_language().mid(0, 2);
+}
+
+Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
+    QString lang = get_ui_language();
+    QString full = pattern.arg(lang);
     if(exists(full))
         return full;
-    QString lang = pattern.arg(l.name().mid(0, l.name().indexOf('_')));
+    lang = pattern.arg(lang.mid(0, 2));
     if(exists(lang))
         return lang;
     QString en = pattern.arg("en");
@@ -191,5 +269,20 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
+#ifdef Q_OS_IOS
+Q_INVOKABLE void Launcher::applicationStateChanged(Qt::ApplicationState state) {
+    static Qt::ApplicationState lastState = Qt::ApplicationActive;
 
+    if((lastState == Qt::ApplicationActive) && (state < Qt::ApplicationActive)) {
+        // Check if it could be interessting to store the current connected device to force reconnect to it later, if
+        // the browser is open
+    } else if((lastState < Qt::ApplicationActive) && (state == Qt::ApplicationActive)) {
+        // Fix the posisbility to reconnect from the thymio selection after the device sleeping, but does not provied
+        // the browser to reconnect
+        m_client->restartBrowser();
+        zeroconfStatusChanged();
+    }
+    lastState = state;
+}
+#endif
 }  // namespace mobsya

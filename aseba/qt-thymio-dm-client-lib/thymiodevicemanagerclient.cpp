@@ -140,5 +140,8 @@ void ThymioDeviceManagerClient::requestDeviceManagersShutdown() {
     Q_EMIT localPeerDisconnected();
 }
 
+void ThymioDeviceManagerClient::restartBrowser() {
+        m_register->startBrowser("_mobsya._tcp");
+}
 
 }  // namespace mobsya

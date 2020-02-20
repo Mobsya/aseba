@@ -710,7 +710,7 @@ Node* Compiler::parseSubDecl() {
     if(it != subroutineReverseTable.end())
         throw TranslatableError(tokens.front().pos, ERROR_SUBROUTINE_ALREADY_DEF).arg(name);
 
-    const unsigned subroutineId = subroutineTable.size();
+    const unsigned subroutineId = unsigned(subroutineTable.size());
     subroutineTable.emplace_back(name, 0, pos.row);
     subroutineReverseTable[name] = subroutineId;
 
@@ -1287,7 +1287,7 @@ Node* Compiler::parseFunctionCall() {
                 const unsigned tempAddr = allocateTemporaryMemory(varPos, 1);
                 // create a load native argument node to get address at run time
                 callNode->children.push_back(
-                    new LoadNativeArgNode(polymorphic_downcast<MemoryVectorNode*>(preNode.get()), tempAddr));
+                    new LoadNativeArgNode(dynamic_cast<MemoryVectorNode*>(preNode.get()), tempAddr));
                 preNode.release();
             }
             // otherwise it is resolved

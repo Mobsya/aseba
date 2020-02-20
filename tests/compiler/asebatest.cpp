@@ -27,7 +27,7 @@ extern "C" bool AsebaExecutionErrorOccurred();
 
 static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {ASEBA_NATIVES_STD_DESCRIPTIONS, nullptr};
 
-extern "C" const AsebaNativeFunctionDescription* const* AsebaGetNativeFunctionsDescriptions(AsebaVMState* vm) {
+extern "C" const AsebaNativeFunctionDescription* const* AsebaGetNativeFunctionsDescriptions(AsebaVMState*) {
     return nativeFunctionsDescriptions;
 }
 
@@ -44,7 +44,7 @@ static const struct option long_options[] = {
     {"memdump", no_argument, nullptr, 'u'},     {"memcmp", required_argument, nullptr, 'm'},
     {"steps", required_argument, nullptr, 'i'}, {nullptr, 0, nullptr, 0}};
 
-static void usage(int argc, char** argv) {
+static void usage(int, char** argv) {
     std::cerr << "Usage: " << argv[0] << " [options] source" << std::endl
               << std::endl
               << "Options:" << std::endl
@@ -107,8 +107,8 @@ struct AsebaNode {
             std::string name(nativeDesc->name);
             std::string doc(nativeDesc->doc);
 
-            TargetDescription::NativeFunction native{std::wstring(name.begin(), name.end()),
-                                                     std::wstring(doc.begin(), doc.end())};
+            TargetDescription::NativeFunction native{
+                std::wstring(name.begin(), name.end()), std::wstring(doc.begin(), doc.end()), {}};
 
             const AsebaNativeFunctionArgumentDescription* params(nativeDesc->arguments);
             while(params->size) {

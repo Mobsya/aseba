@@ -4,7 +4,7 @@
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
-        <location filename="../common/AeslEditor.cpp" line="+464"/>
+        <location filename="../common/AeslEditor.cpp" line="+445"/>
         <source>Clear breakpoint</source>
         <translation>取消断点</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>Aseba::CompilationLogDialog</name>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+71"/>
+        <location filename="../../studio/MainWindow.cpp" line="+70"/>
         <source>Aseba Studio: Output of last compilation</source>
         <translation>Aseba Studio: 上一次编译输出</translation>
     </message>
@@ -139,102 +139,83 @@
         <translation type="vanished">用户</translation>
     </message>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+83"/>
         <source>Discovered targets</source>
-        <translation>已发现的目标</translation>
+        <translation type="vanished">已发现的目标</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Selected target</source>
-        <translation>选定的目标</translation>
+        <translation type="vanished">选定的目标</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Serial port</source>
-        <translation>串行端口</translation>
+        <translation type="vanished">串行端口</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Local TCP</source>
-        <translation>本地TCP</translation>
+        <translation type="vanished">本地TCP</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>TCP</source>
-        <translation>TCP</translation>
+        <translation type="vanished">TCP</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Documentation</source>
-        <translation>文档</translation>
+        <translation type="vanished">文档</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Language</source>
-        <translation>语言</translation>
+        <translation type="vanished">语言</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Connect</source>
-        <translation>链接</translation>
+        <translation type="vanished">链接</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Aseba Target Selection</source>
-        <translation>Aseba目标选项</translation>
+        <translation type="vanished">Aseba目标选项</translation>
     </message>
     <message>
-        <location line="+48"/>
         <source> – type %1</source>
-        <translation> – 机器人%1</translation>
+        <translation type="vanished"> – 机器人%1</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>local on computer</source>
-        <translation>本地电脑</translation>
+        <translation type="vanished">本地电脑</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>distant on network</source>
-        <translation>远程网络</translation>
+        <translation type="vanished">远程网络</translation>
     </message>
     <message>
-        <location line="+55"/>
         <source> – device %1</source>
-        <translation> – 连接设备%1</translation>
+        <translation type="vanished"> – 连接设备%1</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>serial port or USB</source>
-        <translation>串行端口或USB</translation>
+        <translation type="vanished">串行端口或USB</translation>
     </message>
 </context>
 <context>
     <name>Aseba::DashelInterface</name>
     <message>
-        <location line="+103"/>
         <source>Thymio not found</source>
-        <translation>找不到Thymio</translation>
+        <translation type="vanished">找不到Thymio</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;Cannot find Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Connect a Thymio to your computer using the USB cable/dongle, and make sure no other program is using Thymio.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;找不到Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请用USB数据线或适配器将Thymio链接至你的计算机上,并且确认没有其他程序正在使用Thymio.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;找不到Thymio!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请用USB数据线或适配器将Thymio链接至你的计算机上,并且确认没有其他程序正在使用Thymio.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Connection to command line target failed</source>
-        <translation>命令行目标链接失败</translation>
+        <translation type="vanished">命令行目标链接失败</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Cannot connect to target %0</source>
-        <translation>无法链接至目标%0</translation>
+        <translation type="vanished">无法链接至目标%0</translation>
     </message>
 </context>
 <context>
@@ -258,56 +239,44 @@
 <context>
     <name>Aseba::EventViewer</name>
     <message>
-        <location filename="../../studio/EventViewer.cpp" line="+97"/>
         <source>Time (seconds)</source>
-        <translation>时间(秒)</translation>
+        <translation type="vanished">时间(秒)</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Values</source>
-        <translation>值</translation>
+        <translation type="vanished">值</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+78"/>
         <source>Recording...</source>
-        <translation>记录中...</translation>
+        <translation type="vanished">记录中...</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+77"/>
         <source>&amp;Pause</source>
-        <translation>暂停 (&amp;P)</translation>
+        <translation type="vanished">暂停 (&amp;P)</translation>
     </message>
     <message>
-        <location line="-73"/>
         <source>&amp;Clear</source>
-        <translation>清零 (&amp;C)</translation>
+        <translation type="vanished">清零 (&amp;C)</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>time &amp;window:</source>
-        <translation>时间窗 (&amp;W):</translation>
+        <translation type="vanished">时间窗 (&amp;W):</translation>
     </message>
     <message>
-        <location line="+12"/>
         <source>Save &amp;As...</source>
-        <translation>另存为(&amp;A)...</translation>
+        <translation type="vanished">另存为(&amp;A)...</translation>
     </message>
     <message>
-        <location line="+47"/>
         <source>Paused...</source>
-        <translation>已暂停...</translation>
+        <translation type="vanished">已暂停...</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>&amp;Record</source>
-        <translation>记录 (&amp;R)</translation>
+        <translation type="vanished">记录 (&amp;R)</translation>
     </message>
     <message>
-        <location line="+26"/>
         <source>Save plot data to file</source>
-        <translation>保存图像至文档</translation>
+        <translation type="vanished">保存图像至文档</translation>
     </message>
 </context>
 <context>
@@ -319,12 +288,12 @@
     </message>
     <message>
         <location line="+20"/>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Add a new event</source>
         <translation type="unfinished">添加新事件</translation>
     </message>
     <message>
-        <location line="-37"/>
+        <location line="-38"/>
         <source>Remove this event</source>
         <translation type="unfinished">取消该事件</translation>
     </message>
@@ -339,7 +308,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Clear</source>
         <translation type="unfinished">清除</translation>
     </message>
@@ -629,7 +598,7 @@ Occurrences</source>
         <translation type="vanished">&lt;h1&gt;关于Aseba&lt;/h1&gt;版本信息&lt;ul&gt;&lt;li&gt;Aseba版本: %0&lt;br/&gt;(build版本. %1/协议版本. %2)&lt;/li&gt;&lt;li&gt;Dashel版本. %3&lt;br/&gt;(支持的数据流类型: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;更多资料 &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; 以及其他参与者 (click &quot;Show details&quot; for full list)&lt;/p&gt;&lt;p&gt;Aseb为开源项目,许可证 &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL版本 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+564"/>
+        <location filename="../../studio/MainWindow.cpp" line="+535"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -638,7 +607,7 @@ Occurrences</source>
         <translation type="vanished">关于Aseba Studio</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-478"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境</translation>
     </message>
@@ -648,7 +617,7 @@ Occurrences</source>
         <translation>https://www.thymio.org/zh:asebastudio</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+51"/>
         <source>Open Script</source>
         <translation>打开脚本</translation>
     </message>
@@ -669,12 +638,12 @@ Occurrences</source>
         <translation type="vanished">XML源代码错误:%0在第%1行,第%2列</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+37"/>
         <source>Save Script</source>
         <translation>保存脚本</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+82"/>
         <source>Export memory content</source>
         <translation>输出变量</translation>
     </message>
@@ -735,9 +704,8 @@ Occurrences</source>
         <translation type="vanished">事件%1的参数%0为无效值</translation>
     </message>
     <message>
-        <location line="+72"/>
         <source>Plot event %1</source>
-        <translation>绘制事件%1</translation>
+        <translation type="vanished">绘制事件%1</translation>
     </message>
     <message>
         <source>plot of %1</source>
@@ -823,9 +791,8 @@ event %0 : </source>
         <translation type="vanished">发送该事件</translation>
     </message>
     <message>
-        <location line="+126"/>
         <source>Plot this event</source>
-        <translation>绘制该事件</translation>
+        <translation type="vanished">绘制该事件</translation>
     </message>
     <message>
         <source>&lt;b&gt;Global Events&lt;/b&gt;</source>
@@ -836,7 +803,7 @@ event %0 : </source>
         <translation type="vanished">清除</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+210"/>
         <source>...inside %0</source>
         <translation>...在节点%0内</translation>
     </message>
@@ -1291,7 +1258,7 @@ event %0 : </source>
         <translation type="vanished">重置</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+832"/>
+        <location filename="../../studio/NodeTab.cpp" line="+849"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
@@ -1313,7 +1280,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;执行&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-561"/>
+        <location line="-558"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1323,12 +1290,17 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+15"/>
+        <source>Compilation Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+130"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Stopped</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1353,7 +1325,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+386"/>
+        <location line="+380"/>
         <source>Stop</source>
         <translation type="unfinished">停止</translation>
     </message>
@@ -1412,7 +1384,7 @@ event %0 : </source>
         <translation type="vanished">字节码: %1 on %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-635"/>
+        <location line="-632"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;内存用量&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1421,7 +1393,7 @@ event %0 : </source>
         <translation type="vanished">运行中</translation>
     </message>
     <message>
-        <location line="+550"/>
+        <location line="+547"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
@@ -1453,19 +1425,16 @@ event %0 : </source>
 <context>
     <name>Aseba::ReconnectionDialog</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="+437"/>
         <source>Connection closed</source>
-        <translation>连接关闭</translation>
+        <translation type="vanished">连接关闭</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Warning, connection closed: I am trying to reconnect.</source>
-        <translation>警告,连接关闭:正在尝试重新连接.</translation>
+        <translation type="vanished">警告,连接关闭:正在尝试重新连接.</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Stop trying</source>
-        <translation>停止尝试</translation>
+        <translation type="vanished">停止尝试</translation>
     </message>
 </context>
 <context>
@@ -1809,7 +1778,7 @@ event %0 : </source>
 <context>
     <name>Aseba::ThymioVPLApplication</name>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+107"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
         <translation type="unfinished">与Thymio连接中...</translation>
     </message>
@@ -1850,7 +1819,7 @@ event %0 : </source>
         <translation type="unfinished">与Thymio的连接中断...请确认Thymio为开机状态并且连接在USB端口</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+77"/>
         <source>[modified] </source>
         <translation type="unfinished">[已修改]</translation>
     </message>
@@ -1933,33 +1902,27 @@ event %0 : </source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../studio/DashelTarget.cpp" line="-340"/>
-        <location line="+7"/>
         <source>Protocol version mismatch</source>
-        <translation>协议版本不匹配</translation>
+        <translation type="vanished">协议版本不匹配</translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Aseba Studio uses an older protocol (%1) than node %0 (%2), please upgrade Aseba Studio.</source>
-        <translation>Aseba Studio使用的网络协议(%1)低于节点%0使用的网络协议(%2),请升级Aseba Studio.</translation>
+        <translation type="vanished">Aseba Studio使用的网络协议(%1)低于节点%0使用的网络协议(%2),请升级Aseba Studio.</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Node %0 uses an older protocol (%2) than Aseba Studio (%1), please upgrade the node firmware.</source>
-        <translation>节点%0使用的网络协议(%2)低于Aseba Studio使用的网络协议(%1),请升级节点固件.</translation>
+        <translation type="vanished">节点%0使用的网络协议(%2)低于Aseba Studio使用的网络协议(%1),请升级节点固件.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location line="-405"/>
         <source>Unexpected Dashel Error</source>
-        <translation>异常的Dashel错误</translation>
+        <translation type="vanished">异常的Dashel错误</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>A communication error happened:</source>
-        <translation>出现一个通讯错误:</translation>
+        <translation type="vanished">出现一个通讯错误:</translation>
     </message>
     <message>
         <location filename="../../vpl/Compiler.cpp" line="+46"/>

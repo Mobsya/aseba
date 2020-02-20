@@ -7,7 +7,14 @@ Item {
     id:selection_view
     property alias selectedDevice: device_view.selectedDevice
 
-    function launchSelectedAppWithSeleectedDevice() {
+
+    function isThymio(device) {
+        return device.type === ThymioNode.Thymio2
+                || device.type === ThymioNode.Thymio2Wireless
+                || device.type === ThymioNode.SimulatedThymio2
+    }
+
+    function launchSelectedAppWithSelectedDevice() {
         const device   = selection_view.selectedDevice
         const selectedAppLauncher = launcher.selectedAppLauncher;
         if(!selectedAppLauncher) {
@@ -17,7 +24,8 @@ Item {
             console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
         }
         if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
-                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups))
+                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups)
+                &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
             device_view.selectedDevice = null
     }
 
@@ -60,7 +68,7 @@ Item {
             anchors.right: icon_close.left
             anchors.rightMargin: (parent.height - height) / 2
             onClicked: {
-                Qt.openUrlExternally(launcher.selectedApp.helpUrl)
+                Qt.openUrlExternally(launcher.selectedApp.helpUrl.arg(Utils.uiLanguage))
             }
         }
 
@@ -126,6 +134,7 @@ Item {
                             height: parent.height
                             id: scrollview
                             clip: true
+                            contentWidth: description_text.width + 10
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                             Text {
                                  width: scrollview.width - 10
@@ -164,7 +173,7 @@ Item {
             anchors.topMargin: Style.window_margin
 
             Item {
-                visible: Utils.isZeroconfRunning
+                visible: Utils.isZeroconfRunning && Utils.isPlaygroundAvailable
                 id: selection_title
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -181,6 +190,29 @@ Item {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
                     onLinkActivated: Utils.launchPlayground()
+                    wrapMode: Text.WordWrap
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+            Item {
+                visible: Utils.isZeroconfRunning && Utils.platformIsIos() && device_view.count == 0
+                id: selection_warning
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 30
+                anchors.top: parent.top
+                anchors.leftMargin: 30
+                anchors.rightMargin: 30
+                anchors.topMargin: 12
+                Text {
+                    anchors.centerIn: parent
+                    text: qsTr("Make Sure Thymio Suite is launched on a relay computer. <a href='https://www.thymio.org/news/thymio-suite/'>More Informations</a>")
+                    color: "white"
+                    linkColor: "#0a9eeb"
+                    font.family: "Roboto Bold"
+                    font.pointSize: 12
+                    onLinkActivated: Qt.openUrlExternally(link)
                     wrapMode: Text.WordWrap
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
@@ -210,7 +242,7 @@ Item {
                     hoverEnabled: true
                     id: mouse_area
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: launchSelectedAppWithSeleectedDevice()
+                    onClicked: launchSelectedAppWithSelectedDevice()
                 }
                 anchors.bottomMargin: 30
             }
@@ -245,7 +277,11 @@ Item {
                     boundsBehavior: Flickable.StopAtBounds
                     clip:true
 
-                    ScrollBar.vertical: ScrollBar { }
+                    ScrollBar.vertical: ScrollBar {
+                        policy: device_view.contentHeight > 0.9 * device_view.height ?
+                                    ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+
+                    }
 
                     model: thymios
 
@@ -260,7 +296,7 @@ Item {
                     if(Utils.platformIsLinux()) {
                         return qsTr("No robot found because the Avahi Daemon is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
                     }
-                    return qsTr("No robot found because the Bonjour service is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
+                    return qsTr("No robot found because the Bonjour service is missing or not running. <a href='https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/'>Troubleshooting</a>")
                 }
                 color: "#DE7459"
                 linkColor: "#F9F871"

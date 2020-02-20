@@ -16,6 +16,7 @@ TDMSupervisor::TDMSupervisor(const Launcher& launcher, QObject* parent)
 TDMSupervisor::~TDMSupervisor() {}
 
 void TDMSupervisor::startLocalTDM() {
+#ifndef Q_OS_IOS
     if(m_tdm_process != nullptr)
         return;
 
@@ -65,6 +66,7 @@ void TDMSupervisor::startLocalTDM() {
     // The empty argument list QStringList{} is necessary to make sure Qt will not try
     // to split the path if it contains space
     m_tdm_process->start(path, QStringList{});
+#endif
 }
 
 }  // namespace mobsya

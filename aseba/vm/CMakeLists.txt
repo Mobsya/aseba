@@ -1,6 +1,3 @@
-#if (APPLE)
-
-#endif (APPLE)
 set (ASEBAVM_SRC
 	vm.c
 	natives.c

@@ -4,27 +4,8 @@ Rectangle {
     color: "#535353"
     id:pane
     width: 350
-    ListModel {
-        id: entries
-        ListElement {
-            name: qsTr("Launch a Simulator")
-            action: "playground"
-        }
-        ListElement {
-            name: qsTr("Download maps for the simulator")
-            action: "playground-faq"
-        }
 
-        ListElement {
-            name: qsTr("Pair a Thymio Wireless to a Dongle")
-            action: "thymio2-pairing"
-        }
-
-        ListElement {
-            name: qsTr("Pair a case of thymios")
-            action: "thymio2-valise-pairing"
-        }
-    }
+    property ListModel entries: ListModel {}
 
     function thymio2PairingWizard(valiseMode) {
         var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessWizardWarningDialog.qml");
@@ -61,6 +42,22 @@ Rectangle {
         }
         else if(action === "thymio2-valise-pairing") {
             thymio2PairingWizard(true)
+        }
+    }
+
+    function anchorToParent() {
+        x =  launcher.width - (visible ? 350 : 0)
+    }
+
+    Component.onCompleted: {
+        parent.onWidthChanged.connect(anchorToParent)
+        if(Utils.isPlaygroundAvailable) {
+            entries.append( { "name": qsTr("Launch a Simulator"), action: "playground"})
+            entries.append( { "name": qsTr("Download maps for the simulator"), action: "playground-faq"})
+        }
+        if(Utils.platformHasSerialPorts()) {
+            entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
+            entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
         }
     }
 
@@ -126,13 +123,13 @@ Rectangle {
             id: showAnimation
             property: "x"
             target: pane
-            from: pane.parent.width
-            to: pane.parent.width - 350
+            from: launcher.width
+            to: launcher.width - 350
             duration: 200
             easing.type: Easing.InOutQuad
         }
         onVisibleChanged: {
-            x = pane.parent.width
+            x = launcher.width
             showAnimation.running = true
         }
     }

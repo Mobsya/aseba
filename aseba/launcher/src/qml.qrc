@@ -76,6 +76,10 @@
         <file>apps/scratch/desc.de.html</file>
         <file>apps/blockly/desc.de.html</file>
         <file>apps/studio/desc.de.html</file>
+		<file>apps/vpl/desc.pl.html</file>
+        <file>apps/scratch/desc.pl.html</file>
+        <file>apps/blockly/desc.pl.html</file>
+        <file>apps/studio/desc.pl.html</file>
         <file>qml/wirelessconfigurator/WirelessConfigurator.qml</file>
         <file>qml/wirelessconfigurator/TitleBar.qml</file>
         <file>assets/multiple-thymio-one-dongle.svg</file>

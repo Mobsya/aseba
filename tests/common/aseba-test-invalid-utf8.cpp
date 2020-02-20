@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) {
+int main() {
     const array<string, 3> invalidUTF8s = {string{static_cast<char>(192)}, string{static_cast<char>(224)},
                                            string{static_cast<char>(224), 'a'}};
     const string longString("long string to avoid small string optimisation");

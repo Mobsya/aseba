@@ -4,10 +4,10 @@ Building Aseba
 Requierements & Dependencies
 ----------------------------
 
-Aseba requires a C++14 compatible compiler. We recommend ``GCC 6``,
-``Clang 5`` or ``MSVC 19`` (Visual Studio 17).
+Aseba requires a C++17 compatible compiler. We recommend ``GCC 8``,
+``Clang 8`` or ``MSVC 19`` (Visual Studio 2019).
 
-Aseba depends on Qt5.9 or greater. You will also need ``cmake`` 3.1 or
+Aseba depends on Qt5.12 or greater. You will also need ``cmake`` 3.14 or
 greater, we recommend you use the latest version available.
 
 Getting the source code
@@ -42,14 +42,12 @@ Download and install the following components:
 .. csv-table::
    :header: "Dep", "Dowload", "Notes"
 
-   "Visual Studio 2017 (15.9.4+)", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload
-   "Cmake 3.12+", `Website <https://cmake.org/download/>`__, Make sure the version of boost you choose is compatible with the cmake version
-   "Boost 1.67+", `Website <https://www.boost.org/>`_ `x64 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe/download>`_ `x86 <https://sourceforge.net/projects/boost/files/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-32.exe/download>`_
-   "Qt 5.11.2+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt Charts`` component. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
-   Bonjour, You will find the installer in ``third_party/bonjour/bonjoursdksetup.exe``
+   "Visual Studio 2019 (16.2+)", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload
+   "Cmake 3.14+", `Website <https://cmake.org/download/>`__, Make sure the version of boost you choose is compatible with the cmake version
+   "Qt 5.12+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt WebEngine`` and ``Qt Charts`` components. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
    Node & Npm, "`Download <https://nodejs.org/en/download/>`_", ``npm.exe`` must be in the path
    7Zip, "`Download <https://www.7-zip.org/download.html>`_"
-   NSIS 2, "`Download <https://sourceforge.net/projects/nsis/files/NSIS%202/>`_", For building the installer; ``nsis.exe`` must be in the path;
+   NSIS 2, "`Download <https://nsis.sourceforge.io/Download>`_", For building the installer; ``nsis.exe`` must be in the path;
    Python, "`Download <https://www.python.org/downloads/windows/>`_", For signing the installer; ``python.exe`` must be in the path;
 
 
@@ -57,33 +55,37 @@ To build Aseba, you first need to generate a Visual Studio Solution.
 
 To do so:
 
-1. Launch ``Developer Command Prompt for VS 2017``
+1. Launch ``Developer Command Prompt for VS 2019``
 
    Navigate to the directory in which you want to build aseba. It is recommended not to build in the source directory
 
-2. Run ``set "CMAKE_PREFIX_PATH=C:`<BOOST_INSTALLATION_PATH>\boost\_1_67_0;C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017_64;"``
+2. `Clone VCPKG <https://github.com/Mobsya/vcpkg>`_ from the Mobsya repository and install it runing ``.\bootstrap-vcpkg.bat`` and navigate to VCPKG directory
 
-   where ``<BOOST_INSTALLATION_PATH>`` and ``<QT_INSTALLATION_PATH>`` are the paths where Boost and Qt are installed, respectively.
-
-   ``<QT_VERTION>`` is the version of Qt you installed. A folder of that name exists in the Qt installation directory.
-
-3. ``set "BOOST_ROOT=<BOOST_INSTALLATION_PATH>"``
+3. Install the required packages ``vcpkg install @<ASEBA_SOURCE_DIRECTORY>\vcpkg-list.txt --triplet x64-windows-static``.
+Or run ``vcpkg install openssl zlib boost-signals2 boost-program-options boost-filesystem boost-scope-exit boost-asio boost-uuid boost-asio boost-date-time boost-thread boost-beast boost-interprocess --triplet x64-windows-static`` if previous is not working.
+This might take a while. Replace `x64` by `x86` if you target a 32 buits build.
 
 4. To build for x64:
 
 ::
 
-   cmake -G"Visual Studio 15 2017 Win64" -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_ROOT%/lib64-msvc-14.1" "-DCMAKE_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" <ASEBA_SOURCE_DIRECTORY>
+   cmake -G"Visual Studio 16 2019" -A x64 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017_64;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x64-windows-static" <ASEBA_SOURCE_DIRECTORY>
+
+where
+
+- ``<QT_INSTALLATION_PATH>`` is the path where Qt is installed.
+- ``<QT_VERTION>`` is the version of Qt you installed. A folder of that name exists in the Qt installation directory.
+- ``<ASEBA_SOURCE_DIRECTORY>`` is the directory containing the aseba repository.
+- ``<VCPKG_INSTALLATION_PATH>`` is the path where Qt is cloned.
 
 To build for x86:
 
 ::
 
-   cmake -G"Visual Studio 15 2017" -DBoost_DEBUG=ON -DBUILD_SHARED_LIBS=OFF "-DBOOST_ROOT=%BOOST_ROOT%" "-DBOOST_INCLUDEDIR=%BOOST_ROOT%/boost" "-DBOOST_LIBRARYDIR=%BOOST_ROOT%/lib32-msvc-14.1" "-DCMAKE_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" <ASEBA_SOURCE_DIRECTORY>
+   cmake -G"Visual Studio 16 2019" -A Win32 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x86-windows-static" <ASEBA_SOURCE_DIRECTORY>
 
-where ``<ASEBA_SOURCE_DIRECTORY>`` is the directory containing the aseba repository.
 
-Then, to build the project, you can either run ``msbuild aseba.sln`` or open ``aseba.sln`` with Visual Studio 2017.
+Then, to build the project, you can either run ``msbuild ThymioSuite.sln`` or open ``ThymioSuite.sln`` with Visual Studio 2019.
 Refer to the documentation of msbuild and Visual Studio for more informations.
 
 Getting Started on OSX
@@ -206,8 +208,65 @@ Then you can build vpl2 with cmake. An APK will be generated in ``build/bin``
     make
 
 
-Advanced Setup
---------------
+Getting Started on iOS
+--------------------------
+
+Require a recent version of Xcode and QT. Building the output require xcode to sign the binary.
+You'll also need to be able to build part of the project for macOS. installing the brew bundle is also advised.
+
+::
+
+    brew update brew tap homebrew/bundle brew bundle
+
+Generic commands
+
+::
+
+    mkdir build
+    cd build
+    export QTDIR=<YOUR_BASE_QT_DIR>
+
+Building Thymio Suite lanncher. This require to generate the xcode project, and use it via xcodebuild command line.
+
+::
+
+    cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=./ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="${QTDIR}/ios" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+
+Building and archiving the build
+
+::
+
+    xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries   -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0
+
+Generation the IPA
+
+::
+
+    xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath ./bin/storebuild -allowProvisioningUpdates
+
+
+Note that to generate the IPA without error you'll need to have the Provisioning profile  and the related certificate installed.
+
+
+Provisioning profile
+You must have at least one valid provisioning profile installed in `~/Library/MobileDevice/Provisioning Profiles`. The codesign process will look in this folder for a valid one.
+
+::
+
+    mv <valid_provisioining_profile> ~/Library/MobileDevice/Provisioning\ Profiles
+
+
+Installing the certificate :
+
+if `error: exportArchive: No valid Apple Distribution certificate found.`
+Allows the code sign process to access a certificate and import the new certificate
+
+::
+
+    security unlock-keychain -p <user_keychain_access_password>
+    security import <Certificate_p12_path> -k ~/Library/Keychains/login.keychain -P <certificate_p12_password> -T /usr/bin/codesign
+
+
 
 Running tests
 ~~~~~~~~~~~~~

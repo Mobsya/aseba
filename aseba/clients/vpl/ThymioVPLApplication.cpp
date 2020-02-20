@@ -36,15 +36,7 @@
 namespace Aseba {
 
 ThymioVPLApplication::ThymioVPLApplication(const QUuid& thymioId)
-    :  // options
-       // useAnyTarget(useAnyTarget)
-       //, debugLog(debugLog)
-       //, execFeedback(execFeedback)
-       //,
-       // setup initial values
-    vpl(nullptr)
-    , allocatedVariablesCount(0)
-    , m_thymioId(thymioId) {
+    : m_thymioId(thymioId), vpl(nullptr), allocatedVariablesCount(0) {
 
     m_client = new mobsya::ThymioDeviceManagerClient(this);
     connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLApplication::onNodeChanged);
@@ -235,6 +227,23 @@ bool ThymioVPLApplication::saveFile(bool as) {
         element.setAttribute("nodeId", m_thymio->uuid().toString());
     }
     element.appendChild(document.createTextNode(editor->toPlainText()));
+
+    if(m_thymio && m_thymio->group()) {
+        for(auto&& e : m_thymio->group()->eventsDescriptions()) {
+            QDomElement element = document.createElement("event");
+            element.setAttribute("name", e.name());
+            element.setAttribute("size", e.size());
+            root.appendChild(element);
+        }
+
+        for(auto&& v : m_thymio->group()->sharedVariables().toStdMap()) {
+            QDomElement element = document.createElement("constant");
+            element.setAttribute("name",  v.first);
+            element.setAttribute("value", v.second.value().toInt());
+            root.appendChild(element);
+        }
+    }
+
     QDomDocument vplDocument(vpl->saveToDom());
     if(!vplDocument.isNull()) {
         QDomElement plugins = document.createElement("toolsPlugins");
@@ -411,10 +420,7 @@ void ThymioVPLApplication::teardownConnection() {
 }
 
 //! The execution state logic thinks variables might need a refresh
-void ThymioVPLApplication::variablesMemoryEstimatedDirty(unsigned node) {
-    // if(node == id)
-    //    target->getVariables(id, 0, allocatedVariablesCount);
-}
+void ThymioVPLApplication::variablesMemoryEstimatedDirty(unsigned) {}
 
 //! Update the window title with filename and modification status
 void ThymioVPLApplication::updateWindowTitle(bool modified) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store</string>
+    <key>teamID</key>
+    <string>P97H86YL8K</string>
+    <key>uploadBitcode</key>
+    <false/>
+    <key>compileBitcode</key>
+    <false/>
+    <key>uploadSymbols</key>
+    <false/>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>org.mobsya.thymio.launcher.ios</key>
+        <string>Ios-2019-dist</string>
+    </dict>
+</dict>
+</plist>

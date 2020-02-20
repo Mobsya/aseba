@@ -992,8 +992,10 @@ static void _AsebaNative_deqget(AsebaVMState* vm, uint16_t dest, uint16_t deque,
     uint16_t dq_capacity = deque_length - 2;
 
     // Check for deque size exception
-    if(dest_length > dq_size - index_val)
-        return deque_throw_exception(vm);
+    if(dest_length > dq_size - index_val) {
+       deque_throw_exception(vm);
+       return;
+    }
 
     // copy elements from deque
     uint16_t i;
@@ -1015,8 +1017,10 @@ void AsebaNative_deqget(AsebaVMState* vm) {
     uint16_t dest_length = AsebaNativePopArg(vm);
 
     // Check for parameter range exception
-    if(vm->variables[index] < 0 || vm->variables[index] > deque_length - 2 - 1)
-        return deque_throw_exception(vm);
+    if(vm->variables[index] < 0 || vm->variables[index] > deque_length - 2 - 1) {
+        deque_throw_exception(vm);
+        return;
+    }
 
     // Do it
     _AsebaNative_deqget(vm, dest, deque, index_val, dest_length, deque_length);
@@ -1045,7 +1049,8 @@ void AsebaNative_deqset(AsebaVMState* vm) {
 
     // Check for deque size and parameter range exception
     if(vm->variables[index] < 0 || vm->variables[index] > deque_length - 2 - 1 || src_length > dq_size - index_val) {
-        return deque_throw_exception(vm);
+        deque_throw_exception(vm);
+        return;
     }
 
     // Copy elements into deque
@@ -1069,8 +1074,10 @@ static void _AsebaNative_deqinsert(AsebaVMState* vm, uint16_t deque, uint16_t sr
     uint16_t dq_capacity = deque_length - 2;
 
     // Check for deque size exception
-    if(src_length > dq_capacity - dq_size)
-        return deque_throw_exception(vm);
+    if(src_length > dq_capacity - dq_size) {
+        deque_throw_exception(vm);
+        return;
+    }
 
     // Insert src elements as a block
     // if in left half, shift prefix elements left
@@ -1106,8 +1113,10 @@ void AsebaNative_deqinsert(AsebaVMState* vm) {
     uint16_t src_length = AsebaNativePopArg(vm);
 
     // Check for parameter range exception
-    if(vm->variables[index] < 0 || index_val > deque_length - 2 - 1)
-        return deque_throw_exception(vm);
+    if(vm->variables[index] < 0 || index_val > deque_length - 2 - 1) {
+        deque_throw_exception(vm);
+        return;
+    }
 
     // Do it
     _AsebaNative_deqinsert(vm, deque, src, index_val, deque_length, src_length);
@@ -1126,8 +1135,10 @@ static void _AsebaNative_deqerase(AsebaVMState* vm, uint16_t deque, uint16_t ind
     uint16_t dq_capacity = deque_length - 2;
 
     // Check for deque size exception
-    if(len_val > dq_size - index_val)
-        return deque_throw_exception(vm);
+    if(len_val > dq_size - index_val) {
+        deque_throw_exception(vm);
+        return;
+    }
 
     // Erase elements as a block
     // if in left half, shift prefix elements right
@@ -1158,8 +1169,10 @@ void AsebaNative_deqerase(AsebaVMState* vm) {
     uint16_t deque_length = AsebaNativePopArg(vm);
 
     // Check for parameter range exception
-    if(vm->variables[index] < 0 || index_val > deque_length - 2 - 1)
-        return deque_throw_exception(vm);
+    if(vm->variables[index] < 0 || index_val > deque_length - 2 - 1) {
+        deque_throw_exception(vm);
+        return;
+    }
 
     // Do it
     _AsebaNative_deqerase(vm, deque, index_val, len_val, deque_length);

@@ -72,7 +72,7 @@ namespace {
                 std::transform(l.begin(), l.end(), std::back_inserter(values),
                                [](const QVariant& v) { return QString::number(v.toLongLong()); });
                 QString s = "[" + values.join(", ") + "]";
-                if(s.size() < max_size)
+                if(size_t(s.size()) < max_size)
                     return s;
             }
         }

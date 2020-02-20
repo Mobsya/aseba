@@ -8,8 +8,9 @@ function(compile_flatbuffers_schema_to_cpp SRC_FBS HEADER)
             --gen-object-api -o "${CMAKE_CURRENT_BINARY_DIR}"
             --cpp-ptr-type std::unique_ptr
             "${SRC_FBS_ABS}"
-    DEPENDS flatc ${SRC_FBS_ABS}
-    )
+             DEPENDS flatc ${SRC_FBS_ABS} USES_TERMINAL
+     )
+
     set(${HEADER} "${${HEADER}}" PARENT_SCOPE)
 endfunction()
 
@@ -22,7 +23,8 @@ function(compile_flatbuffers_schema_to_js SRC_FBS HEADER)
     COMMAND flatc --js --gen-mutable --es6-js-export
             --gen-object-api -o "${CMAKE_BINARY_DIR}/js"
             "${SRC_FBS_ABS}"
-    DEPENDS flatc ${SRC_FBS_ABS}
+            DEPENDS flatc ${SRC_FBS_ABS}
+            USES_TERMINAL
     )
     set(${HEADER} "${${HEADER}}" PARENT_SCOPE)
 endfunction()

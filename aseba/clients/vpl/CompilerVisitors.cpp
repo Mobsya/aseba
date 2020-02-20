@@ -164,7 +164,7 @@ namespace ThymioVPL {
         for(int i = 0; i <= maxRow; ++i) {
             map<unsigned, size_t>::const_iterator codeIndex(rowIdToCode.find(i));
             if(codeIndex != rowIdToCode.end())
-                setToCodeIdMap[i] = codeIndex->second;
+                setToCodeIdMap[i] = int(codeIndex->second);
             else
                 setToCodeIdMap[i] = -1;
         }
@@ -278,7 +278,7 @@ namespace ThymioVPL {
             }
         }
         eventHandler->code.insert(codeEntryIndex, EventHandler::PairCodeAndIndex(L"", eventActionsSet.getRow()));
-        wstring& currentCode(eventHandler->code[codeEntryIndex].first);
+        wstring& currentCode(eventHandler->code[int(codeEntryIndex)].first);
 
         // add event and actions details
         visitEventAndStateFilter(eventActionsSet.getEventBlock(), eventActionsSet.getStateFilterBlock(), currentCode);

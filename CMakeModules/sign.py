@@ -6,7 +6,7 @@ import os
 import shutil
 
 timestamp_server = "http://timestamp.digicert.com"
-url = "http://http://www.mobsya.org/"
+url = "http://www.mobsya.org/"
 
 binary = sys.argv[1] if len(sys.argv) > 1 else None
 exists = binary != None and os.path.isfile(binary)
@@ -50,6 +50,9 @@ if ext[1:] not in ['exe', 'dll']:
 	print("Not a signable file, ignoring")
 	exit(0)
 
+if pfx.startswith("$"):
+    print("Probably a Pull request")
+    exit(0)
 
 #signtool ( native windows)
 if pss and pfx:

@@ -188,22 +188,11 @@ private:
     NodeTabsManager* nodes;
     ScriptTab* currentScriptTab;
 
-#ifdef HAVE_QWT
-
-    // events viewers. only one event per viewer
-    friend class EventViewer;
-    typedef QMultiMap<unsigned, EventViewer*> EventViewers;
-    EventViewers eventsViewers;
-
-#endif  // HAVE_QWT
-
     // events
     QPushButton* addEventNameButton;
     QPushButton* removeEventNameButton;
     QPushButton* sendEventButton;
-#ifdef HAVE_QWT
-    QPushButton* plotEventButton;
-#endif  // HAVE_QWT
+
     QListWidget* logger;
     QPushButton* clearLogger;
     QLabel* statusText;  // Jiwon

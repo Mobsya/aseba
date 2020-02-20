@@ -9,12 +9,6 @@ add_library(asebacommon STATIC
 	${CMAKE_CURRENT_BINARY_DIR}/version.cpp
 )
 
-if(NOT ANDROID)
-    target_sources(asebacommon PRIVATE
-        msg/NodesManager.cpp
-    )
-endif()
-
 set_target_properties(asebacommon PROPERTIES VERSION ${LIB_VERSION_STRING})
 target_link_libraries(asebacommon PUBLIC aseba_conf)
 

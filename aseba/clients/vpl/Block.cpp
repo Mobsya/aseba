@@ -355,7 +355,7 @@ namespace ThymioVPL {
 
         Q_ASSERT(scene());
         Q_ASSERT(scene()->views().size() > 0);
-        auto* view(polymorphic_downcast<ResizingView*>(scene()->views()[0]));
+        auto* view(dynamic_cast<ResizingView*>(scene()->views()[0]));
         const QRectF sceneRect(mapRectToScene(boundingRect()));
         const QRect viewRect(view->mapFromScene(sceneRect).boundingRect());
         const QPoint hotspot(view->mapFromScene(event->scenePos()) - viewRect.topLeft());

@@ -67,6 +67,7 @@ private:
     std::queue<request> m_requests;
     boost::asio::strand<boost::asio::io_context::executor_type> m_strand;
     std::vector<std::string> m_known_devices;
+    std::vector<std::string> m_connected_devices;
     bool m_paused = false;
 #ifdef MOBSYA_TDM_ENABLE_UDEV
     struct udev* m_udev;
@@ -79,6 +80,14 @@ private:
     boost::asio::deadline_timer m_active_timer;
     void handle_request_by_active_enumeration();
     void on_active_timer(const boost::system::error_code&);
+
+
+    void remove_connected_device(const std::string& d) {
+        auto it = std::find(m_connected_devices.begin(), m_connected_devices.end(), d);
+        if(it != m_connected_devices.end()) {
+            m_connected_devices.erase(it);
+        }
+    }
 };
 
 class serial_acceptor : public boost::asio::basic_io_object<serial_acceptor_service> {

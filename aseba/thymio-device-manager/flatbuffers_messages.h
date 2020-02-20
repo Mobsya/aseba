@@ -12,26 +12,26 @@ namespace mobsya {
 
 using vm_language = fb::ProgrammingLanguage;
 
-tagged_detached_flatbuffer create_nodes_list_request() {
+inline tagged_detached_flatbuffer create_nodes_list_request() {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateRequestListOfNodes(fb);
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer create_error_response(uint32_t request_id, fb::ErrorType error) {
+inline tagged_detached_flatbuffer create_error_response(uint32_t request_id, fb::ErrorType error) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateError(fb, request_id, error);
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer create_ack_response(uint32_t request_id) {
+inline tagged_detached_flatbuffer create_ack_response(uint32_t request_id) {
     flatbuffers::FlatBufferBuilder fb;
     auto offset = mobsya::fb::CreateRequestCompleted(fb, request_id);
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer create_set_breakpoint_response(uint32_t request_id, fb::ErrorType error,
-                                                          const aseba_node::breakpoints& fbs) {
+inline tagged_detached_flatbuffer create_set_breakpoint_response(uint32_t request_id, fb::ErrorType error,
+                                                                 const aseba_node::breakpoints& fbs) {
     flatbuffers::FlatBufferBuilder fb;
     std::vector<flatbuffers::Offset<fb::Breakpoint>> offsets;
     std::transform(fbs.begin(), fbs.end(), std::back_inserter(offsets),
@@ -41,8 +41,8 @@ tagged_detached_flatbuffer create_set_breakpoint_response(uint32_t request_id, f
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer create_compilation_result_response(uint32_t request_id,
-                                                              const aseba_node::compilation_result& result) {
+inline tagged_detached_flatbuffer create_compilation_result_response(uint32_t request_id,
+                                                                     const aseba_node::compilation_result& result) {
     flatbuffers::FlatBufferBuilder fb;
     if(result.error) {
         auto msgOffset = fb.CreateString(result.error->msg);
@@ -51,13 +51,13 @@ tagged_detached_flatbuffer create_compilation_result_response(uint32_t request_i
         return wrap_fb(fb, offset);
     }
     auto offset = mobsya::fb::CreateCompilationResultSuccess(
-        fb, request_id, result.result->bytecode_size, result.result->bytecode_total_size, result.result->variables_size,
-        result.result->variables_total_size);
+        fb, request_id, uint32_t(result.result->bytecode_size), uint32_t(result.result->bytecode_total_size), uint32_t(result.result->variables_size),
+        uint32_t(result.result->variables_total_size));
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
-                                                          const aseba_node_registery::node_id& id) {
+inline tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, const mobsya::aseba_node& n,
+                                                                 const aseba_node_registery::node_id& id) {
 
     Aseba::TargetDescription desc = n.vm_description();
     flatbuffers::FlatBufferBuilder fb;
@@ -96,7 +96,7 @@ tagged_detached_flatbuffer serialize_aseba_vm_description(uint32_t request_id, c
 }
 
 namespace detail {
-    auto serialize_variables(flatbuffers::FlatBufferBuilder& fb, const mobsya::variables_map& vars) {
+    inline auto serialize_variables(flatbuffers::FlatBufferBuilder& fb, const mobsya::variables_map& vars) {
         flexbuffers::Builder flexbuilder;
         std::vector<flatbuffers::Offset<fb::NodeVariable>> varsOffsets;
         varsOffsets.reserve(vars.size());
@@ -110,7 +110,7 @@ namespace detail {
         }
         return fb.CreateVectorOfSortedTables(&varsOffsets);
     }
-    auto serialize_events(flatbuffers::FlatBufferBuilder& fb, const mobsya::group::properties_map& events) {
+    inline auto serialize_events(flatbuffers::FlatBufferBuilder& fb, const mobsya::group::properties_map& events) {
         flexbuffers::Builder flexbuilder;
         std::vector<flatbuffers::Offset<fb::NamedValue>> eventsOffsets;
         eventsOffsets.reserve(events.size());
@@ -126,8 +126,9 @@ namespace detail {
     }
 }  // namespace detail
 
-tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
-                                                       const std::chrono::system_clock::time_point& timestamp) {
+inline tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node& n,
+                                                              const mobsya::variables_map& vars,
+                                                              const std::chrono::system_clock::time_point& timestamp) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto varsOffset = detail::serialize_variables(fb, vars);
@@ -136,7 +137,8 @@ tagged_detached_flatbuffer serialize_changed_variables(const mobsya::aseba_node&
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_changed_variables(const mobsya::group& n, const mobsya::variables_map& vars) {
+inline tagged_detached_flatbuffer serialize_changed_variables(const mobsya::group& n,
+                                                              const mobsya::variables_map& vars) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto varsOffset = detail::serialize_variables(fb, vars);
@@ -144,8 +146,8 @@ tagged_detached_flatbuffer serialize_changed_variables(const mobsya::group& n, c
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
-                                            const std::chrono::system_clock::time_point& timestamp) {
+inline tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n, const mobsya::variables_map& vars,
+                                                   const std::chrono::system_clock::time_point& timestamp) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto eventsOffset = detail::serialize_events(fb, vars);
@@ -154,7 +156,8 @@ tagged_detached_flatbuffer serialize_events(const mobsya::aseba_node& n, const m
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::group& n, const mobsya::events_table& descs) {
+inline tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::group& n,
+                                                                const mobsya::events_table& descs) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     std::vector<flatbuffers::Offset<fb::EventDescription>> descOffsets;
@@ -162,15 +165,15 @@ tagged_detached_flatbuffer serialize_events_descriptions(const mobsya::group& n,
     int i = 0;
     for(auto&& desc : descs) {
         auto str_offset = fb.CreateString(desc.name);
-        auto descTable = fb::CreateEventDescription(fb, str_offset, desc.size, i++);
+        auto descTable = fb::CreateEventDescription(fb, str_offset, uint32_t(desc.size), i++);
         descOffsets.push_back(descTable);
     }
     auto offset = fb::CreateEventsDescriptionsChanged(fb, idOffset, fb.CreateVector(descOffsets));
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_execution_state(const mobsya::aseba_node& n,
-                                                     const mobsya::aseba_node::vm_execution_state& state) {
+inline tagged_detached_flatbuffer serialize_execution_state(const mobsya::aseba_node& n,
+                                                            const mobsya::aseba_node::vm_execution_state& state) {
     flatbuffers::FlatBufferBuilder fb;
     auto idOffset = n.uuid().fb(fb);
     auto error_msg_offset = state.error_message ? fb.CreateString(*state.error_message) : 0;
@@ -179,7 +182,8 @@ tagged_detached_flatbuffer serialize_execution_state(const mobsya::aseba_node& n
     return wrap_fb(fb, offset);
 }
 
-tagged_detached_flatbuffer serialize_scratchpad(const mobsya::group& g, const mobsya::group::scratchpad& scratchpad) {
+inline tagged_detached_flatbuffer serialize_scratchpad(const mobsya::group& g,
+                                                       const mobsya::group::scratchpad& scratchpad) {
 
     flatbuffers::FlatBufferBuilder fb;
     auto scratchpadIdOffset = scratchpad.scratchpad_id.fb(fb);
@@ -194,7 +198,7 @@ tagged_detached_flatbuffer serialize_scratchpad(const mobsya::group& g, const mo
 }
 
 namespace detail {
-    mobsya::variables_map variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {
+    inline mobsya::variables_map variables(const flatbuffers::Vector<flatbuffers::Offset<fb::NodeVariable>>& buff) {
         mobsya::variables_map vars;
         vars.reserve(buff.size());
         for(const auto& offset : buff) {
@@ -210,7 +214,7 @@ namespace detail {
         return vars;
     }
 
-    mobsya::group::properties_map events(const flatbuffers::Vector<flatbuffers::Offset<fb::NamedValue>>& buff) {
+    inline mobsya::group::properties_map events(const flatbuffers::Vector<flatbuffers::Offset<fb::NamedValue>>& buff) {
         mobsya::group::properties_map vars;
         vars.reserve(buff.size());
         for(const auto& offset : buff) {
@@ -226,7 +230,7 @@ namespace detail {
         return vars;
     }
 
-    mobsya::events_table
+    inline mobsya::events_table
     events_description(const flatbuffers::Vector<flatbuffers::Offset<fb::EventDescription>>& buff) {
         mobsya::events_table events;
         events.reserve(buff.size());
@@ -241,26 +245,26 @@ namespace detail {
     }
 }  // namespace detail
 
-mobsya::variables_map variables(const fb::SetVariables& msg) {
+inline mobsya::variables_map variables(const fb::SetVariables& msg) {
     if(!msg.vars())
         return {};
     return detail::variables(*msg.vars());
 }
 
-mobsya::group::properties_map events(const fb::SendEvents& msg) {
+inline mobsya::group::properties_map events(const fb::SendEvents& msg) {
     if(!msg.events())
         return {};
     return detail::events(*msg.events());
 }
 
-mobsya::events_table events_description(const fb::RegisterEvents& msg) {
+inline mobsya::events_table events_description(const fb::RegisterEvents& msg) {
     if(!msg.events())
         return {};
     return detail::events_description(*msg.events());
 }
 
 
-std::vector<mobsya::breakpoint> breakpoints(const fb::SetBreakpoints& msg) {
+inline std::vector<mobsya::breakpoint> breakpoints(const fb::SetBreakpoints& msg) {
     if(!msg.breakpoints())
         return {};
     std::vector<mobsya::breakpoint> bps;

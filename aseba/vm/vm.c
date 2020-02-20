@@ -518,6 +518,11 @@ uint16_t AsebaVMCheckBreakpoint(AsebaVMState* vm) {
     return 0;
 }
 
+static void killSlowEvent(AsebaVMState* vm) {
+    AsebaMaskClear(vm->flags, ASEBA_VM_EVENT_ACTIVE_MASK);
+    AsebaSendMessageWords(vm, ASEBA_MESSAGE_EVENT_EXECUTION_KILLED, &vm->pc, 1);
+}
+
 /*! Run without support of breakpoints.
     Check ASEBA_VM_EVENT_RUNNING_MASK to exit on interrupts or stepsLimit if > 0. */
 void AsebaDebugBareRun(AsebaVMState* vm, uint16_t stepsLimit) {
@@ -528,8 +533,10 @@ void AsebaDebugBareRun(AsebaVMState* vm, uint16_t stepsLimit) {
         while(AsebaMaskIsSet(vm->flags, ASEBA_VM_EVENT_ACTIVE_MASK) &&
               AsebaMaskIsSet(vm->flags, ASEBA_VM_EVENT_RUNNING_MASK) && stepsLimit) {
             AsebaVMStep(vm);
-            stepsLimit--;
-            // TODO : send exception event on step limits overflow
+            if(--stepsLimit == 0) {
+                killSlowEvent(vm);
+                break;
+            }
         }
     } else {
         // no breakpoint, only poll the mask
@@ -556,8 +563,10 @@ void AsebaDebugBreakpointRun(AsebaVMState* vm, uint16_t stepsLimit) {
                 return;
             }
             AsebaVMStep(vm);
-            stepsLimit--;
-            // TODO : send exception event on step limits overflow
+            if(--stepsLimit == 0) {
+                killSlowEvent(vm);
+                break;
+            }
         }
     } else {
         // breakpoints, check before each step and poll the mask

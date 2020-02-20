@@ -127,24 +127,6 @@ namespace details {
             return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
         }
 
-        boost::system::error_code set_rts(boost::asio::serial_port::native_handle_type handle, bool rts) {
-            int flag = TIOCM_RTS;
-            auto r = ioctl(handle, rts ? TIOCMBIS : TIOCMBIC, &flag);
-            if(r == 0)
-                return {};
-            return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
-        }
-
-        boost::system::error_code reset_usb(boost::asio::serial_port::native_handle_type handle) {
-#        ifdef __APPLE__
-#            define USBDEVFS_RESET _IO('U', 20)
-#        endif
-            auto r = ioctl(handle, USBDEVFS_RESET, 0);
-            if(r == 0)
-                return {};
-            return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
-        }
-
         boost::system::error_code flush(boost::asio::serial_port::native_handle_type handle) {
             std::this_thread::sleep_for(std::chrono::microseconds(50));
             auto r = 0;
@@ -337,7 +319,7 @@ namespace details {
 
         boost::system::error_code write(boost::asio::serial_port::native_handle_type h,
                                         ranges::span<unsigned char> data, native_size_type& written) {
-            auto r = WriteFile(h, data.data(), data.size(), &written, nullptr);
+            auto r = WriteFile(h, data.data(), int(data.size()), &written, nullptr);
             if(!r) {
                 return boost::system::error_code{static_cast<int>(errno), boost::system::system_category()};
             }
@@ -347,7 +329,7 @@ namespace details {
         boost::system::error_code read(boost::asio::serial_port::native_handle_type h, ranges::span<unsigned char> data,
                                        native_size_type& read, int timeout_ms = 100) {
 
-            if(!ReadFile(h, data.data(), data.size(), &read, nullptr)) {
+            if(!ReadFile(h, data.data(), int(data.size()), &read, nullptr)) {
                 return boost::system::error_code{static_cast<int>(GetLastError()), boost::system::system_category()};
             }
             return {};
@@ -429,7 +411,7 @@ namespace details {
             Aseba::BootloaderWritePage m(dest);
             m.pageNumber = page;
             write(handle, m);
-            auto total = 0;
+            size_t total = 0;
             while(total < data.size()) {
                 auto s = std::min(int(data.size()), 64);
                 native_size_type res_size = 0;
@@ -454,7 +436,7 @@ namespace details {
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
     void upgrade_thymio2_serial_endpoint(std::string path, const thymio2_firmware_data& data, uint16_t id,
                                          firmware_upgrade_callback cb, firmware_update_options options) {
-        int page = 0;
+        std::size_t page = 0;
 
         // On OSX it is important to wait between close and open
         // And this function might have been called right after

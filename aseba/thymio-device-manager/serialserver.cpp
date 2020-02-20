@@ -8,16 +8,27 @@ serial_server::serial_server(boost::asio::io_context& io_service, std::initializ
     : m_io_ctx(io_service), m_acceptor(io_service, devices) {}
 
 
-void create_endpoint(aseba_endpoint::pointer session, usb_serial_port& d) {
+bool create_endpoint(aseba_endpoint::pointer session, usb_serial_port& d) {
     boost::system::error_code ec;
-    d.open();
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    if(!d.is_open())
+        d.open(ec);
+    if(ec)
+        return false;
     d.set_option(boost::asio::serial_port::baud_rate(115200), ec);
+    if(ec)
+        return false;
     d.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none), ec);
+    if(ec)
+        return false;
     d.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one), ec);
+    if(ec)
+        return false;
     d.set_data_terminal_ready(true);
     session->set_endpoint_type(aseba_endpoint::endpoint_type::thymio);
     session->set_endpoint_name(d.device_name());
     session->start();
+    return true;
 }
 
 bool serial_server::should_open_for_configuration(const usb_serial_port& d) const {

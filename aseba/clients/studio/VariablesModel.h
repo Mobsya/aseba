@@ -74,6 +74,8 @@ protected:
         QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
         auto name = sourceModel()->data(index, Qt::DisplayRole).toString();
         auto hidden = sourceModel()->data(index, VariablesModel::HiddenRole).toBool();
+        if(sourceParent.isValid())
+            return filterAcceptsRow(sourceParent.row(), sourceParent.parent());
         if(!m_show_hidden && hidden)
             return false;
         auto r = filterRegExp();

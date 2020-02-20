@@ -62,7 +62,7 @@ public:
 protected:
     // from AbstractNodeGlue
 
-    void externalInputStep(double dt) override {
+    void externalInputStep(double) override {
         while(!inQueue.empty()) {
             // serialize message into reception buffer
             const auto message(inQueue.front().get());

@@ -71,16 +71,6 @@ std::string remove_host_from_name(const std::string& str) {
 void aseba_tcp_acceptor::do_accept() {
     std::unique_lock<std::mutex> queue_mutex_lock(m_queue_mutex);
     if(m_pending_contacts.empty()) {
-        if(!m_disconnected_contacts.empty()) {
-            m_active_timer.expires_from_now(boost::posix_time::seconds(1));
-            m_active_timer.async_wait([this](auto ec) {
-                std::copy(m_disconnected_contacts.begin(), m_disconnected_contacts.end(),
-                          std::back_inserter(m_pending_contacts));
-                boost::asio::post(m_iocontext, boost::bind(&aseba_tcp_acceptor::do_accept, this));
-            });
-        }
-    }
-    if(m_pending_contacts.empty()) {
         return;
     }
     aware::contact contact = m_pending_contacts.front();

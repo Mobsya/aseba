@@ -22,7 +22,6 @@
 #include "TargetModels.h"
 #include "NamedValuesVectorModel.h"
 #include "StudioAeslEditor.h"
-#include "EventViewer.h"
 #include "FindDialog.h"
 #include "ModelAggregator.h"
 #include "translations/CompilerTranslator.h"
@@ -73,7 +72,7 @@ CompilationLogDialog::CompilationLogDialog(QWidget* parent) : QDialog(parent), t
     resize(600, 560);
 }
 
-void CompilationLogDialog::hideEvent(QHideEvent* event) {
+void CompilationLogDialog::hideEvent(QHideEvent*) {
     if(!isVisible())
         emit hidden();
 }
@@ -442,21 +441,7 @@ void MainWindow::clearAllExecutionError() {
     logger->setStyleSheet(QLatin1String(""));
 }
 
-void MainWindow::eventContextMenuRequested(const QPoint& pos) {
-#ifdef HAVE_QWT
-    const QModelIndex index(eventsDescriptionsView->indexAt(pos));
-    if(index.isValid() && (index.column() == 0)) {
-        const QString eventName(eventsDescriptionsModel->data(index).toString());
-        QMenu menu;
-        menu.addAction(tr("Plot event %1").arg(eventName));
-        const QAction* ret = menu.exec(eventsDescriptionsView->mapToGlobal(pos));
-        if(ret) {
-            const unsigned eventId = index.row();
-            plotEvent(eventId);
-        }
-    }
-#endif  // HAVE_QWT
-}
+void MainWindow::eventContextMenuRequested(const QPoint&) {}
 
 void MainWindow::tabChanged(int index) {
     findDialog->close();
@@ -969,7 +954,7 @@ void MainWindow::applySettings() {
     showLineNumbers->setChecked(ConfigDialog::getShowLineNumbers());
 }
 
-void MainWindow::clearOpenedFileName(bool isModified) {
+void MainWindow::clearOpenedFileName(bool) {
     actualFileName.clear();
     updateWindowTitle();
 }

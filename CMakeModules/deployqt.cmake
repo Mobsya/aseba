@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 find_package(Qt5Core REQUIRED)
-#cmake_policy(SET CMP0087 NEW)
 
 # Retrieve the absolute path to qmake and then use that path to find
 # the windeployqt binary
@@ -45,55 +44,30 @@ function(macdeployqt target directory)
     )
 endfunction()
 
+
 # Add commands that copy the Qt runtime to the target's output directory after
 # build and install the Qt runtime to the specified directory
 function(windeployqt target directory)
-
-#     # Run windeployqt immediately after build
-#     execute_process(TARGET ${target} POST_BUILD
-#         COMMAND "${CMAKE_COMMAND}" -E
-#             env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
-#                 --no-compiler-runtime
-#                 --plugindir plugins
-#                 \"$<TARGET_FILE:${target}>\"
-#         COMMENT "Deploying Qt..."
-#     )
-
-    # install(CODE ...) doesn't support generator expressions, but
-    # file(GENERATE ...) does - store the path in a file
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${target}"
-        CONTENT "$<TARGET_FILE:${target}>"
-    )
-    get_target_property(_TARGET_SOURCE_DIR ${target} SOURCE_DIR)
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${target}.src"
-        CONTENT "${_TARGET_SOURCE_DIR}"
-    )
-
-
-    file (GLOB DIRECTORIES LIST_DIRECTORIES true ${_TARGET_SOURCE_DIR}*/qml)
-
+    cmake_policy(SET CMP0087 NEW)
     # Before installation, run a series of commands that copy each of the Qt
     # runtime files to the appropriate directory for installation
-    install(CODE
-        "
+    install(CODE "
         function(clean_win_deployqt_path path var)
             if(${CMAKE_HOST_SYSTEM} MATCHES \"Linux\")
                 execute_process(COMMAND winepath -u \${path} OUTPUT_VARIABLE path_cleaned OUTPUT_STRIP_TRAILING_WHITESPACE)
                 set (\${var} \${path_cleaned} PARENT_SCOPE)
             endif()
         endfunction()
-
-        file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}.src\" _src_dir)
-        file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}\" _file)
+        message(\"$<TARGET_PROPERTY:${target},SOURCE_DIR> -- $<TARGET_FILE:${target}>\")
         execute_process(
             COMMAND \"${CMAKE_COMMAND}\" -E
                 env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
                     --dry-run
                     --list mapping
                     --plugindir bin/plugins
-                    --qmldir \${_src_dir}
                     --no-compiler-runtime
-                    \${_file}
+                    --qmldir $<TARGET_PROPERTY:${target},SOURCE_DIR>
+                    $<TARGET_FILE:${target}>
             OUTPUT_VARIABLE _output
             OUTPUT_STRIP_TRAILING_WHITESPACE
         )
@@ -111,8 +85,7 @@ function(windeployqt target directory)
             endif()
             list(REMOVE_AT _files 0 1)
         endwhile()
-        "
-    )
+        ")
 endfunction()
 
 mark_as_advanced(WINDEPLOYQT_EXECUTABLE)

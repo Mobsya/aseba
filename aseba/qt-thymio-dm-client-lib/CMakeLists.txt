@@ -22,12 +22,17 @@ add_library(qt-thymio-dm-client-lib STATIC
     request.cpp
 )
 
-add_library(qt-thymio-dm-client-lib-qml OBJECT
-    qml/quickrequest.h
-    qml/quickrequest.cpp
-)
-
-
+if(IOS)
+    add_library(qt-thymio-dm-client-lib-qml STATIC
+        qml/quickrequest.h
+        qml/quickrequest.cpp
+    )
+else()
+    add_library(qt-thymio-dm-client-lib-qml OBJECT
+        qml/quickrequest.h
+        qml/quickrequest.cpp
+    )
+endif()
 target_link_libraries(qt-thymio-dm-client-lib  PUBLIC
     Qt5::Core
     Qt5::Network
@@ -43,3 +48,5 @@ target_link_libraries(qt-thymio-dm-client-lib-qml  PUBLIC
 )
 
 target_include_directories(qt-thymio-dm-client-lib PUBLIC .)
+
+

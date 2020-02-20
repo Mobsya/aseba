@@ -60,50 +60,75 @@ ListModel {
         return launch_functions[appId]
     }
 
-    ListElement {
-        appId:"vplClassic"
-        name: "VPL"
-        animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp"
-        icon: "qrc:/apps/vpl/launcher-icon-vpl.svg"
-        descriptionImage: "qrc:/apps/vpl/description.jpg"
-        descriptionTextFile: "qrc:/apps/vpl/desc.%1.html"
-        supportsGroups: false
-        supportsWatchMode: false
-        helpUrl: "https://www.thymio.org/program/vpl/"
-    }
-    ListElement {
-        appId: "scratch"
-        name: "Scratch"
-        animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp"
-        icon: "qrc:/apps/scratch/launcher-icon-scratch.svg"
-        descriptionImage: "qrc:/apps/scratch/description.jpg"
-        descriptionTextFile: "qrc:/apps/scratch/desc.%1.html"
-        supportsGroups: false
-        supportsWatchMode: false
-        helpUrl: "https://www.thymio.org/program/scratch/"
+    Component.onCompleted: {
+        create_application_list()
     }
 
-    ListElement {
-        appId: "blockly"
-        name: "Blockly"
-        animatedIcon: "qrc:/apps/blockly/blockly-animated-icon.webp"
-        icon: "qrc:/apps/blockly/blockly-icon.svg"
-        descriptionImage: "qrc:/apps/blockly/description.jpg"
-        descriptionTextFile: "qrc:/apps/blockly/desc.%1.html"
-        supportsGroups: false
-        supportsWatchMode: false
-        helpUrl: "https://www.thymio.org/program/blockly/"
-    }
+    function create_application_list() {
 
-     ListElement {
-         appId:"studio"
-         name: "Aseba Studio"
-         animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp"
-         icon: "qrc:/apps/studio/launcher-icon-studio.svg"
-         descriptionImage: "qrc:/apps/studio/description.jpg"
-         descriptionTextFile: "qrc:/apps/studio/desc.%1.html"
-         supportsGroups: true
-         supportsWatchMode: true
-         helpUrl: "https://www.thymio.org/program/aseba/"
-     }
+        var applicationList = [
+               {
+                   appId:"vplClassic",
+                   name: "VPL",
+                   animatedIcon:"qrc:/apps/vpl/vpl-animated-icon.webp",
+                   icon: "qrc:/apps/vpl/launcher-icon-vpl.svg",
+                   descriptionImage: "qrc:/apps/vpl/description.jpg",
+                   descriptionTextFile: "qrc:/apps/vpl/desc.%1.html",
+                   supportsGroups: false,
+                   supportsWatchMode: false,
+                   supportsNonThymioDevices: false,
+                   helpUrl: "https://www.thymio.org/%1/program/vpl/",
+                   isIosSupported:false
+                },
+                {
+                    appId: "scratch",
+                    name: "Scratch",
+                    animatedIcon:"qrc:/apps/scratch/scratch-animated-icon.webp",
+                    icon: "qrc:/apps/scratch/launcher-icon-scratch.svg",
+                    descriptionImage: "qrc:/apps/scratch/description.jpg",
+                    descriptionTextFile: "qrc:/apps/scratch/desc.%1.html",
+                    supportsGroups: false,
+                    supportsWatchMode: false,
+                    supportsNonThymioDevices: false,
+                    helpUrl: "https://www.thymio.org/%1/program/scratch/",
+                    isIosSupported:true
+                 },
+
+                {
+                    appId: "blockly",
+                    name: "Blockly",
+                    animatedIcon: "qrc:/apps/blockly/blockly-animated-icon.webp",
+                    icon: "qrc:/apps/blockly/blockly-icon.svg",
+                    descriptionImage: "qrc:/apps/blockly/description.jpg",
+                    descriptionTextFile: "qrc:/apps/blockly/desc.%1.html",
+                    supportsGroups: false,
+                    supportsWatchMode: false,
+                    supportsNonThymioDevices: false,
+                    helpUrl: "https://www.thymio.org/%1/program/blockly/",
+                    isIosSupported:false
+                 },
+
+                {
+                    appId:"studio",
+                    name: "Aseba Studio",
+                    animatedIcon:"qrc:/apps/studio/studio-animated-icon.webp",
+                    icon: "qrc:/apps/studio/launcher-icon-studio.svg",
+                    descriptionImage: "qrc:/apps/studio/description.jpg",
+                    descriptionTextFile: "qrc:/apps/studio/desc.%1.html",
+                    supportsGroups: true,
+                    supportsWatchMode: true,
+                    supportsNonThymioDevices: true,
+                    helpUrl: "https://www.thymio.org/%1/program/aseba/",
+                    isIosSupported:false
+                 }
+                ]
+
+        if(Utils.platformIsIos())
+        {
+            applicationList =  applicationList.filter(function(app) {
+                      return app.isIosSupported;});
+
+        }
+        append(applicationList)
+    }
 }
