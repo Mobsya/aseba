@@ -10,4 +10,4 @@ GenericName[pt]=Ambiente de desenvolvimento integrado
 Exec=thymio-launcher
 TryExec=thymio-launcher
 Categories=Education;Science;
-Icon=thymio-launcher
+Icon=org.mobsya.ThymioSuite
