@@ -230,7 +230,61 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'ThymioSuite.dmg'
+      artifactName: 'ThymioSuite13.dmg'
+
+
+- job: BuildOnOsX2
+  pool:
+    vmImage: 'macOS-10.14'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '9.x'
+
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+
+  - script: |
+      curl -sL $(blockly_url) | tar xzf - -C .
+      curl -sL $(scratch_url) | tar xzf - -C .
+    displayName: 'Extract scratch and blockly'
+
+  - script: |
+      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
+      brew switch qt 5.13.2 
+    displayName: 'Forcing Qt version to 5.13.2'
+
+  - script: |
+      brew update
+      brew bundle
+    displayName: 'Install dependencies with HomeBrew'
+
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
+
+  - script: |
+      sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=ON -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF && ninja)
+    displayName: 'Build with cmake'
+
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+    displayName: 'Signing and create dmg'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin
+    displayName: 'Create Unsigned DMG'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite14.dmg'
 
 
 - job: BuildForIOs
