@@ -16,7 +16,10 @@ Window {
         text: appUrl
     }
     WebEngineView {
-        anchors.fill: parent
+        anchors.top:urlField.bottom
+        anchors.right:parent.right
+        anchors.bottom:parent.bottom
+        anchors.left:parent.left
         url: appUrl
         onTitleChanged: {
             window.title = title
