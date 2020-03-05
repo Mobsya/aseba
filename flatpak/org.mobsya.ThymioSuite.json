@@ -14,7 +14,6 @@
         "--env=TMPDIR=/var/tmp"
     ],
     "command": "thymio-launcher",
-    "rename-desktop-file": "thymio-launcher.desktop",
     "modules": [
         {
             "name": "avahi",
