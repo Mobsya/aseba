@@ -29,6 +29,11 @@ Item {
             device_view.selectedDevice = null
     }
 
+    function isLocalBrowserCheckboxEnabled(name){
+        const localBrowserEnabledApps = [ "blockly", "scratch" ];
+        return localBrowserEnabledApps.includes(name.toLowerCase());
+    }
+
     Rectangle  {
         id: app_titlebar
         anchors.top: parent.top
@@ -82,6 +87,7 @@ Item {
             anchors.rightMargin: (parent.height - height) / 2
             id: icon_close
             onClicked: {
+                Utils.setUseLocalBrowser(false)
                 launcher.goToAppSelectionScreen()
             }
         }
@@ -216,6 +222,54 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
+                }
+            }
+            Item {
+                visible: isLocalBrowserCheckboxEnabled(launcher.selectedApp.name)
+                id: local_browser_switch
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: selection_title.bottom
+                height: 30
+                anchors.leftMargin: 30
+                anchors.rightMargin: 30
+                
+                CheckBox {
+                    id: control
+                    text: qsTr("Use your local default browser")
+                    font.family: "Roboto Bold"
+                    font.pointSize: 12
+                    anchors.centerIn: parent
+                    anchors.fill: parent
+                    onClicked: {
+                        Utils.setUseLocalBrowser(checked )
+                    }
+                    indicator: Rectangle {
+                        implicitWidth: 18
+                        implicitHeight: 18
+                        y: parent.height / 2 - height / 2
+                        radius: 3
+                        border.color: control.down ? "#276fa5" : "#389EEC"
+
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            x: 4
+                            y: 4
+                            radius: 2
+                            color: control.down ? "#276fa5" : "#389EEC"
+                            visible: control.checked
+                        }
+                    }
+
+                    contentItem: Text {
+                        text: control.text
+                        font: control.font
+                        opacity: enabled ? 1.0 : 0.3
+                        color: control.down ? "#ededed" : "#fff"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: control.indicator.width + control.spacing
+                    }
                 }
             }
 
