@@ -5,21 +5,8 @@ Window {
     id: window
     minimumHeight: 700
     minimumWidth: 1024
-
-    TextField {
-        id: urlField
-        anchors.right:parent.right
-        anchors.left:parent.left
-        anchors.margin: 4
-        height: font.pixelSize * 2.5
-        readOnly: true
-        text: appUrl
-    }
     WebEngineView {
-        anchors.top:urlField.bottom
-        anchors.right:parent.right
-        anchors.bottom:parent.bottom
-        anchors.left:parent.left
+        anchors.fill: parent
         url: appUrl
         onTitleChanged: {
             window.title = title
