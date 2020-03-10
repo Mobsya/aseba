@@ -15,7 +15,7 @@ trigger:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20200131.1"
+  value: "v20200213.1"
 - name: scratch_version
   value: "v20190923.2"
 - name: blockly_url
@@ -196,6 +196,11 @@ jobs:
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
+
+  - script: |
+      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
+      brew switch qt 5.13.2 
+    displayName: 'Forcing Qt version to 5.13.2'
 
   - script: |
       brew update

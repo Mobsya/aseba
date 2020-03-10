@@ -121,6 +121,7 @@ namespace ThymioVPL {
         Scene* scene;
         bool loading;  //!< true during load, to prevent recursion of changes triggered by VPL
                        //!< itself
+        bool connectionActive; // track the connection status of the node
 
         QStack<QString> undoStack;  //!< keep string version of QDomDocument
         int undoPos;                //!< current position of undo in the stack, -1 if invalid
