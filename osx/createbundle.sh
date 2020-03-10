@@ -69,7 +69,7 @@ for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
     cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"
     defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSPrincipalClass -string NSApplication
-    defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSHighResolutionCapable -string True
+    defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSHighResolutionCapable -string False
     add_to_group $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 
     plutil -replace CFBundleURLTypes -xml "
