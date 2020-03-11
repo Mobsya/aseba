@@ -188,6 +188,7 @@ Item {
                 anchors.leftMargin: 30
                 anchors.rightMargin: 30
                 anchors.topMargin: 12
+                anchors.bottomMargin: 12
                 Text {
                     anchors.centerIn: parent
                     text: qsTr("Connect a Thymio or <a href='#'>launch a simulator</a>")
