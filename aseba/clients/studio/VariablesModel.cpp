@@ -378,6 +378,14 @@ QMimeData* VariablesModel::mimeData(const QModelIndexList& indexes) const {
     foreach(QModelIndex index, indexes) {
         if(index.isValid() && (index.column() == 0)) {
             QString text = data(index, Qt::DisplayRole).toString();
+            // if the current item is a leaf ( i.e. an array element ) includes
+            // in the mime also the parent key value
+            auto item = getItem(index);
+            const auto& k = item->key;
+            if(k.type() == QVariant::UInt || k.type() == QVariant::Int){
+                auto parent = getItem(index.parent());
+                text = parent->key.toString() + text;
+            }
             texts += text;
         }
     }
