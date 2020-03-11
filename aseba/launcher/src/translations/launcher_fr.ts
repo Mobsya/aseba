@@ -10,8 +10,12 @@
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
+        <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
+        <translation type="unfinished">&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1  {1?}</translation>
+    </message>
+    <message>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </source>
-        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </translation>
+        <translation type="vanished">&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </translation>
     </message>
 </context>
 <context>
@@ -37,7 +41,7 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="100"/>
+        <location filename="../main.cpp" line="98"/>
         <source>Thymio Suite</source>
         <translation>Thymio Suite</translation>
     </message>
@@ -45,32 +49,32 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="10"/>
+        <location filename="../qml/SettingsMenu.qml" line="55"/>
         <source>Launch a Simulator</source>
         <translation>Lancer un simulateur</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="14"/>
+        <location filename="../qml/SettingsMenu.qml" line="56"/>
         <source>Download maps for the simulator</source>
         <translation>Télécharger les terrains</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="19"/>
+        <location filename="../qml/SettingsMenu.qml" line="59"/>
         <source>Pair a Wireless Thymio to a Wireless dongle</source>
         <translation>Appairer un Wireless Thymio à son dongle Wireless</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="24"/>
+        <location filename="../qml/SettingsMenu.qml" line="60"/>
         <source>Pair a case of Wireless Thymio</source>
         <translation>Appairer une valise de Wireless Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="57"/>
+        <location filename="../qml/SettingsMenu.qml" line="38"/>
         <source>https://www.thymio.org/thymio-simulator</source>
         <translation>https://www.thymio.org/fr/simulateur-thymio/</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="88"/>
+        <location filename="../qml/SettingsMenu.qml" line="85"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
@@ -78,34 +82,39 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
 <context>
     <name>ThymioSelectionDeviceDelegate</name>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="134"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="141"/>
         <source>%1 on this computer</source>
         <translation>%1 sur cet ordinateur</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="136"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
         <source>%1 on %2</source>
         <translation>%1 sur %2</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="140"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="147"/>
         <source>This device cannot be selected because it is in a group</source>
         <translation>Ce robot ne peut pas être sélectionné car il se trouve dans un groupe</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="150"/>
+        <source>This device is not compatible with %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="153"/>
         <source>This device cannot be selected because it is already being used</source>
         <translation>Cet robot ne peut pas être sélectionné car il est déjà en cours d&apos;utilisation</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="225"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="235"/>
         <source>A new firmware is available!
 Click to install it</source>
         <translation>Un nouveau firmware est disponible !
 Cliquez ici pour l&apos;installer</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="226"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="236"/>
         <source>A new firmware is available!
 Connect the robot with a usb cable to install it</source>
         <translation>Un nouveau firmware est disponible ! 
@@ -129,22 +138,32 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
         <translation type="vanished">Choisir un Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="178"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="193"/>
         <source>Connect a Thymio or &lt;a href=&apos;#&apos;&gt;launch a simulator&lt;/a&gt;</source>
         <translation>Connectez un Thymio ou &lt;a href=&apos;#&apos;&gt;lancez un simulateur&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="204"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="216"/>
+        <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="239"/>
+        <source>Launch on your system default browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="290"/>
         <source>Launch %1</source>
         <translation>Lancer %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="261"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le Avahi Daemon est manquant ou n&apos;est pas lancé. &lt;a href=&apos;http://google.com&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="263"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="353"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le service Bonjour est manquant ou n&apos;est pas lancé. &lt;a href=&apos;https://www.thymio.org/fr/faq/mon-robot-thymio-n-apparait-pas-dans-la-liste-de-selection-du-robot/&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
@@ -311,7 +330,7 @@ Continuer ?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="153"/>
+        <location filename="../launcher.cpp" line="201"/>
         <source>Save %1</source>
         <translation>Sauvegarder %1</translation>
     </message>

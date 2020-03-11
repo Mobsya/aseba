@@ -236,7 +236,7 @@ Item {
                 
                 CheckBox {
                     id: control
-                    text: qsTr("Use your local default browser")
+                    text: qsTr("Launch on your system default browser")
                     font.family: "Roboto Bold"
                     font.pointSize: 12
                     anchors.centerIn: parent
