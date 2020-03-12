@@ -14,23 +14,7 @@ Item {
                 || device.type === ThymioNode.SimulatedThymio2
     }
 
-    function launchSelectedAppWithSelectedDevice() {
-        const device   = selection_view.selectedDevice
-        const selectedAppLauncher = launcher.selectedAppLauncher;
-        if(!selectedAppLauncher) {
-            console.error("No launch function")
-        }
-        else if(!selectedAppLauncher(device)) {
-            console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
-        }
-        if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
-                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups)
-                &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
-            device_view.selectedDevice = null
-    }
-
-
-
+    
     /* ****************************
      *   Given access to the local current view, the function retrieves the one or several devices selected by the user.
      *   return: boolean
@@ -43,9 +27,32 @@ Item {
         var the_device = selection_view.selectedDevice
         if (the_device == null)
             return false;
-        if(the_device.status === ThymioNode.Available )
+        if(the_device.status === ThymioNode.Available ||  the_device.status === ThymioNode.Ready ||  the_device.status === ThymioNode.Busy  )
             return true
         return false;
+    }
+
+    function launchSelectedAppWithSelectedDevice() {
+        const device   = selection_view.selectedDevice
+        const selectedAppLauncher = launcher.selectedAppLauncher;
+        if(!selectedAppLauncher) {
+            console.error("No launch function")
+            return
+        }
+        
+        if(launcher.selectedApp.appId == "studio" ){ 
+            if( isSelectedDeviceReady())
+                if(!selectedAppLauncher(device)) 
+                    console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
+        }
+        else{
+             if(!selectedAppLauncher(device)) 
+                console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
+        }
+        if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
+                &&  (!device.isInGroup || selectedAppLauncher.supportsGroups)
+                &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
+            device_view.selectedDevice = null
     }
 
     /* ****************************
@@ -71,15 +78,19 @@ Item {
     /* ****************************
      *   The function set the content for the id:button button depending on launched app and the the device availability -
      *   return: translatable string   
-     *      "Connect and Program" we are in the studio and the device is not ready as defined in isSelectedDeviceReady()
-     *      "Watch" we are in the studio and the device is not ready 
+     *      "Connect and Program"  or "Watch"we are in the studio and the device is not ready as defined in isSelectedDeviceReady()
+     *      "Wait" we are in the studio and the device is not ready 
      *      qsTr("Launch %1").arg(launcher.selectedApp.name) otherwise 
     ******************************* */
     function launchButtonText(){
        if(launcher.selectedApp.appId == "studio"){
-           if(isSelectedDeviceReady())
-                return qsTr("Connect and Program")
-            return qsTr("Watch")
+           if(isSelectedDeviceReady()){
+               if(selection_view.selectedDevice.status === ThymioNode.Available || selection_view.selectedDevice.status === ThymioNode.Ready)
+                       return qsTr("Connect and Program")
+                else 
+                    return qsTr("Watch")
+           }
+           return qsTr("Wait")
        }       
         return qsTr("Launch %1").arg(launcher.selectedApp.name)
     }
