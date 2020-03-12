@@ -1,3 +1,5 @@
+import QtQuick.Controls 2.3
+
 import QtQuick 2.11
 
 Rectangle {
@@ -91,11 +93,12 @@ Rectangle {
         }
 
         ListView {
+            id: settings_list_view
             anchors.topMargin: 20
             orientation: ListView.Vertical
             anchors.top: top.bottom
-            anchors.bottom: parent.bottom
             anchors.right: parent.right
+            anchors.bottom: parent.bottom
             width: 350
             model: entries
             delegate: Item {
@@ -114,6 +117,56 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         pane.onMenuEntryClicked(action)
+                    }
+                }
+            }
+
+            footer: Item {
+                id: local_browser_switch
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 30
+                anchors.leftMargin: 30
+                anchors.rightMargin: 30
+                //anchors.bottom: parent.bottom
+                
+                CheckBox {
+                    id: local_browser_checkbox
+                    text: qsTr("Use your system default browser for the web based clients")
+                    font.family: "Roboto Bold"
+                    font.pointSize: 12
+                    anchors.right: local_browser_checkbox_text.left
+                    onClicked: {
+                        Utils.setUseLocalBrowser(checked )
+                    }
+                    checked: Utils.getUseLocalBrowser()
+                    indicator: Rectangle {
+                        implicitWidth: 18
+                        implicitHeight: 18
+                        y: parent.height / 2 - height / 2
+                        radius: 3
+                        border.color: local_browser_checkbox.down ? "#276fa5" : "#389EEC"
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            x: 4
+                            y: 4
+                            radius: 2
+                            color: local_browser_checkbox.down ? "#276fa5" : "#389EEC"
+                            visible: local_browser_checkbox.checked
+                        }
+                    }
+                    contentItem: Text {
+                        id: local_browser_checkbox_text
+                        text: local_browser_checkbox.text
+                        anchors.right: local_browser_switch.right
+                        width: contentWidth
+                        wrapMode: Text.WordWrap
+                        font: local_browser_checkbox.font
+                        opacity: enabled ? 1.0 : 0.3
+                        color: local_browser_checkbox.down ? "#ededed" : "#fff"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: local_browser_checkbox.indicator.width + local_browser_checkbox.spacing
                     }
                 }
             }
@@ -141,3 +194,10 @@ Rectangle {
         anchors.fill: parent
     }
 }
+
+
+
+
+
+
+        

@@ -49,32 +49,37 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="55"/>
+        <location filename="../qml/SettingsMenu.qml" line="57"/>
         <source>Launch a Simulator</source>
         <translation>Lancer un simulateur</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="56"/>
+        <location filename="../qml/SettingsMenu.qml" line="58"/>
         <source>Download maps for the simulator</source>
         <translation>Télécharger les terrains</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="59"/>
+        <location filename="../qml/SettingsMenu.qml" line="61"/>
         <source>Pair a Wireless Thymio to a Wireless dongle</source>
         <translation>Appairer un Wireless Thymio à son dongle Wireless</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="60"/>
+        <location filename="../qml/SettingsMenu.qml" line="62"/>
         <source>Pair a case of Wireless Thymio</source>
         <translation>Appairer une valise de Wireless Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="38"/>
+        <location filename="../qml/SettingsMenu.qml" line="135"/>
+        <source>Use your system default browser for the web based clients</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsMenu.qml" line="40"/>
         <source>https://www.thymio.org/thymio-simulator</source>
         <translation>https://www.thymio.org/fr/simulateur-thymio/</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="85"/>
+        <location filename="../qml/SettingsMenu.qml" line="87"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
@@ -138,32 +143,27 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
         <translation type="vanished">Choisir un Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="193"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="187"/>
         <source>Connect a Thymio or &lt;a href=&apos;#&apos;&gt;launch a simulator&lt;/a&gt;</source>
         <translation>Connectez un Thymio ou &lt;a href=&apos;#&apos;&gt;lancez un simulateur&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="216"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="210"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="239"/>
-        <source>Launch on your system default browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="290"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="236"/>
         <source>Launch %1</source>
         <translation>Lancer %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="297"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le Avahi Daemon est manquant ou n&apos;est pas lancé. &lt;a href=&apos;http://google.com&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="353"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="299"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le service Bonjour est manquant ou n&apos;est pas lancé. &lt;a href=&apos;https://www.thymio.org/fr/faq/mon-robot-thymio-n-apparait-pas-dans-la-liste-de-selection-du-robot/&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
@@ -330,7 +330,7 @@ Continuer ?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="201"/>
+        <location filename="../launcher.cpp" line="217"/>
         <source>Save %1</source>
         <translation>Sauvegarder %1</translation>
     </message>
