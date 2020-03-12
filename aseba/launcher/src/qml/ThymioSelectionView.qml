@@ -29,6 +29,61 @@ Item {
             device_view.selectedDevice = null
     }
 
+
+
+    /* ****************************
+     *   Given access to the local current view, the function retrieves the one or several devices selected by the user.
+     *   return: boolean
+     *      true if 
+     *          the device is ready and fully binded
+     *          the device is in group and the app support the group 
+     *      false  otherwise 
+     **************************** */
+    function isSelectedDeviceReady() {
+        var the_device = selection_view.selectedDevice
+        if (the_device == null)
+            return false;
+        if(the_device.status === ThymioNode.Available )
+            return true
+        return false;
+    }
+
+    /* ****************************
+     *   The function set the colour of the id:button button depending on the device availability - it also manage mouseover on the button color desaturating the root color by the 20% in case of mouse overing
+     *   return: string of HEX encoding of the base colors  
+     *      #57c6ff the device is ready as defined in isSelectedDeviceReady()
+     *      #78ff57s otherwise 
+    ******************************* */
+    function launchButtonColour() {
+        if(launcher.selectedApp.appId == "studio" && isSelectedDeviceReady()){
+            if(mouse_area.containsMouse )
+                return "#78ff57"
+            return "#37eb0a"
+        }
+        
+        if(mouse_area.containsMouse ){
+            return "#57c6ff"
+        }
+
+        return "#0a9eeb"
+    }
+
+    /* ****************************
+     *   The function set the content for the id:button button depending on launched app and the the device availability -
+     *   return: translatable string   
+     *      "Connect and Program" we are in the studio and the device is not ready as defined in isSelectedDeviceReady()
+     *      "Watch" we are in the studio and the device is not ready 
+     *      qsTr("Launch %1").arg(launcher.selectedApp.name) otherwise 
+    ******************************* */
+    function launchButtonText(){
+       if(launcher.selectedApp.appId == "studio"){
+           if(isSelectedDeviceReady())
+                return qsTr("Connect and Program")
+            return qsTr("Watch")
+       }       
+        return qsTr("Launch %1").arg(launcher.selectedApp.name)
+    }
+
     Rectangle  {
         id: app_titlebar
         anchors.top: parent.top
@@ -227,17 +282,16 @@ Item {
                 radius: 20
                 anchors.bottom: parent.bottom
                 anchors.topMargin: Style.window_margin
-                color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
+                color: launchButtonColour()
                 Text {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
                     color : "white"
                     anchors.centerIn: parent
-                    text : qsTr("Launch %1").arg(launcher.selectedApp.name)
-
+                    text : launchButtonText()
                 }
                 MouseArea {
-                    enabled: !!(launcher.selectedApp && selection_view.selectedDevice)
+                    enabled: true
                     anchors.fill: parent
                     hoverEnabled: true
                     id: mouse_area
