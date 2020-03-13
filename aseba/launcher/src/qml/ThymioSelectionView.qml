@@ -14,19 +14,61 @@ Item {
                 || device.type === ThymioNode.SimulatedThymio2
     }
 
+    
+    /* ****************************
+     *   Given access to the local current view, the function retrieves the one or several devices selected by the user. If the selected app supports watch functionalities and the device is Busy, is considered to be Ready
+     *   return: boolean
+     *      true if 
+     *          the device is ready and fully binded
+     *      false  otherwise 
+     *  2do: add group management - add non thymio devices support
+     **************************** */
+    function isSelectedDeviceReady() {
+        var the_device = selection_view.selectedDevice
+        if (the_device == null)
+            return false
+        if( launcher.selectedApp.supportsWatchMode && the_device.status === ThymioNode.Busy  )
+            return true
+        if(the_device.status === ThymioNode.Available ||  the_device.status === ThymioNode.Ready )
+            return true
+        return false
+    }
+
     function launchSelectedAppWithSelectedDevice() {
         const device   = selection_view.selectedDevice
         const selectedAppLauncher = launcher.selectedAppLauncher;
         if(!selectedAppLauncher) {
             console.error("No launch function")
+            return
         }
-        else if(!selectedAppLauncher(device)) {
-            console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
+        
+        if(launcher.selectedApp.appId == "studio" ){ 
+            if( isSelectedDeviceReady())
+                if(!selectedAppLauncher(device)) 
+                    console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
+        }
+        else{
+             if(!selectedAppLauncher(device)) 
+                console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
         }
         if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
                 &&  (!device.isInGroup || selectedAppLauncher.supportsGroups)
                 &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
             device_view.selectedDevice = null
+    }
+  
+    /* ****************************
+     *   The function set the content for the id:button button depending on if the launched app supports watch functionality - in this case and if is there a watchable device available the string would differs 
+     *   return: translatable string   
+     *      "Watch with APPNAME" if we support watchable and the device is ready as defined in isSelectedDeviceReady()
+     *      "Program with APPNAME" otherwise 
+    ******************************* */
+    function launchButtonText(){
+        if(launcher.selectedApp.supportsWatchMode && selection_view.selectedDevice 
+                && selection_view.selectedDevice.status === ThymioNode.Busy){
+            return qsTr("Watch with %1").arg(launcher.selectedApp.name)
+        }
+        return qsTr("Program with %1").arg(launcher.selectedApp.name)
     }
 
     Rectangle  {
@@ -217,36 +259,40 @@ Item {
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
                 }
-            }
+            }        
+
 
             Rectangle {
                 id:button
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: 40;
-                width : 220;
+                
+                height: 40
+                width : 250
                 radius: 20
+
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.topMargin: Style.window_margin
+                anchors.bottomMargin: 30
+
                 color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
+                opacity: isSelectedDeviceReady() ? 1.0 : 0.3 
                 Text {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
                     color : "white"
                     anchors.centerIn: parent
-                    text : qsTr("Launch %1").arg(launcher.selectedApp.name)
-
+                    text : launchButtonText()
                 }
                 MouseArea {
-                    enabled: !!(launcher.selectedApp && selection_view.selectedDevice)
+                    enabled: isSelectedDeviceReady()
                     anchors.fill: parent
                     hoverEnabled: true
                     id: mouse_area
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: isSelectedDeviceReady() ?  Qt.PointingHandCursor : Qt.ForbiddenCursor
                     onClicked: launchSelectedAppWithSelectedDevice()
                 }
-                anchors.bottomMargin: 30
+                
             }
-
 
             Item {
                 id:grid_container
