@@ -26,10 +26,12 @@ Item {
     function isSelectedDeviceReady() {
         var the_device = selection_view.selectedDevice
         if (the_device == null)
-            return false;
-        if(the_device.status === ThymioNode.Available ||  the_device.status === ThymioNode.Ready ||  the_device.status === ThymioNode.Busy  )
+            return false
+        if( launcher.selectedApp.supportsWatchMode && the_device.status === ThymioNode.Busy  )
             return true
-        return false;
+        if(the_device.status === ThymioNode.Available ||  the_device.status === ThymioNode.Ready )
+            return true
+        return false
     }
 
     function launchSelectedAppWithSelectedDevice() {
@@ -54,45 +56,21 @@ Item {
                 &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
             device_view.selectedDevice = null
     }
+  
 
     /* ****************************
-     *   The function set the colour of the id:button button depending on the device availability - it also manage mouseover on the button color desaturating the root color by the 20% in case of mouse overing
-     *   return: string of HEX encoding of the base colors  
-     *      #57c6ff the device is ready as defined in isSelectedDeviceReady()
-     *      #78ff57s otherwise 
-    ******************************* */
-    function launchButtonColour() {
-        if(launcher.selectedApp.appId == "studio" && isSelectedDeviceReady()){
-            if(mouse_area.containsMouse )
-                return "#78ff57"
-            return "#37eb0a"
-        }
-        
-        if(mouse_area.containsMouse ){
-            return "#57c6ff"
-        }
-
-        return "#0a9eeb"
-    }
-
-    /* ****************************
-     *   The function set the content for the id:button button depending on launched app and the the device availability -
+     *   The function set the content for the id:button button depending on if the launched app supports watch functionality - in this case and if is there a watchable device available the string would differs 
      *   return: translatable string   
      *      "Connect and Program"  or "Watch"we are in the studio and the device is not ready as defined in isSelectedDeviceReady()
-     *      "Wait" we are in the studio and the device is not ready 
+     *      "Watch" we are in the studio and the device is not ready 
      *      qsTr("Launch %1").arg(launcher.selectedApp.name) otherwise 
     ******************************* */
     function launchButtonText(){
-       if(launcher.selectedApp.appId == "studio"){
-           if(isSelectedDeviceReady()){
-               if(selection_view.selectedDevice.status === ThymioNode.Available || selection_view.selectedDevice.status === ThymioNode.Ready)
-                       return qsTr("Connect and Program")
-                else 
-                    return qsTr("Watch")
-           }
-           return qsTr("Wait")
-       }       
-        return qsTr("Launch %1").arg(launcher.selectedApp.name)
+        if(launcher.selectedApp.supportsWatchMode && selection_view.selectedDevice 
+                && selection_view.selectedDevice.status === ThymioNode.Busy){
+            return qsTr("Watch")
+        }
+        return qsTr("Program with %1").arg(launcher.selectedApp.name)
     }
 
     Rectangle  {
@@ -285,15 +263,48 @@ Item {
                 }
             }
 
+             /*
+
+           Button {
+                id : button
+                
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 30
+                anchors.bottom: parent.bottom
+
+                hoverEnabled : true
+                enabled: isSelectedDeviceReady()
+
+                background: Rectangle {
+                    color: button.hovered ? "#57c6ff" : "#0a9eeb"
+                    anchors.fill: parent
+                }
+
+                text: launchButtonText()
+                font.family: "Roboto Bold" 
+
+                onClicked: {
+                    launchSelectedAppWithSelectedDevice()
+                }
+            }
+
+                */            
+
+
             Rectangle {
                 id:button
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: 40;
-                width : 220;
+                
+                height: 40
+                width : 250
                 radius: 20
+
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.topMargin: Style.window_margin
-                color: launchButtonColour()
+                anchors.bottomMargin: 30
+
+                color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
+                opacity: isSelectedDeviceReady() ? 1.0 : 0.3 
                 Text {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
@@ -302,16 +313,15 @@ Item {
                     text : launchButtonText()
                 }
                 MouseArea {
-                    enabled: true
+                    enabled: isSelectedDeviceReady()
                     anchors.fill: parent
                     hoverEnabled: true
                     id: mouse_area
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: isSelectedDeviceReady() ?  Qt.PointingHandCursor : Qt.ForbiddenCursor
                     onClicked: launchSelectedAppWithSelectedDevice()
                 }
-                anchors.bottomMargin: 30
+                
             }
-
 
             Item {
                 id:grid_container
