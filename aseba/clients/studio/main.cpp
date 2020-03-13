@@ -36,8 +36,8 @@ int main(int argc, char* argv[]) {
     Q_INIT_RESOURCE(asebaqtabout);
     Q_INIT_RESOURCE(asebastudio);
 
+	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     mobsya::MobsyaApplication app(argc, argv);
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 
     // Information used by QSettings with default constructor

@@ -118,14 +118,7 @@ Item {
         onDoubleClicked: {
             if(!selectable)
                 return
-            const selectedAppLauncher = launcher.selectedAppLauncher;
-            if(!selectedAppLauncher) {
-                console.error("No launch function")
-            }
-            else if(!selectedAppLauncher(device)) {
-                console.error("could not launch app with device %2".arg(device))
-            }
-            updateSelectable()
+            selection_view.launchSelectedAppWithSelectedDevice()
         }
 
         onPressAndHold: {
