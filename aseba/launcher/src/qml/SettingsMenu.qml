@@ -5,9 +5,13 @@ import QtQuick 2.11
 Rectangle {
     color: "#535353"
     id:pane
-    width: 350
+    width: getBackPanelWidth()
 
     property ListModel entries: ListModel {}
+
+    function getBackPanelWidth(){
+        return 680
+    }
 
     function thymio2PairingWizard(valiseMode) {
         var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessWizardWarningDialog.qml");
@@ -48,7 +52,7 @@ Rectangle {
     }
 
     function anchorToParent() {
-        x =  launcher.width - (visible ? 350 : 0)
+        x =  launcher.width - (visible ? getBackPanelWidth() : 0)
     }
 
     Component.onCompleted: {
@@ -64,6 +68,7 @@ Rectangle {
     }
 
     Item {
+        id: settings_wrapper
         anchors.fill: parent
         anchors.margins: 10
         Item {
@@ -98,12 +103,18 @@ Rectangle {
             orientation: ListView.Vertical
             anchors.top: top.bottom
             anchors.right: parent.right
+            anchors.left: parent.left
             anchors.bottom: parent.bottom
-            width: 350
+            width: getBackPanelWidth()
             model: entries
             delegate: Item {
                 height: 30
-                width: 350
+                width: getBackPanelWidth()
+                anchors.rightMargin: 100
+                Rectangle {
+                    color: "#f00"
+                    anchors.fill: parent
+                }
                 Text {
                     anchors.right: parent.right
                     width: contentWidth
@@ -123,19 +134,15 @@ Rectangle {
 
             footer: Item {
                 id: local_browser_switch
-                anchors.left: parent.left
-                anchors.right: parent.right
                 height: 30
-                anchors.leftMargin: 30
-                anchors.rightMargin: 30
-                //anchors.bottom: parent.bottom
-                
+                width: getBackPanelWidth()
+                anchors.right: settings_list_view.right
+                anchors.left: settings_list_view.left
+                anchors.bottom: settings_list_view.bottom
                 CheckBox {
                     id: local_browser_checkbox
                     text: qsTr("Use your system default browser for the web based clients")
-                    font.family: "Roboto Bold"
-                    font.pointSize: 12
-                    anchors.right: local_browser_checkbox_text.left
+                    anchors.right: local_browser_switch.right
                     onClicked: {
                         Utils.setUseLocalBrowser(checked )
                     }
@@ -159,10 +166,10 @@ Rectangle {
                     contentItem: Text {
                         id: local_browser_checkbox_text
                         text: local_browser_checkbox.text
-                        anchors.right: local_browser_switch.right
                         width: contentWidth
                         wrapMode: Text.WordWrap
                         font: local_browser_checkbox.font
+                        anchors.left: settings_list_view.left
                         opacity: enabled ? 1.0 : 0.3
                         color: local_browser_checkbox.down ? "#ededed" : "#fff"
                         verticalAlignment: Text.AlignVCenter
@@ -177,7 +184,7 @@ Rectangle {
             property: "x"
             target: pane
             from: launcher.width
-            to: launcher.width - 350
+            to: launcher.width - getBackPanelWidth()
             duration: 200
             easing.type: Easing.InOutQuad
         }
