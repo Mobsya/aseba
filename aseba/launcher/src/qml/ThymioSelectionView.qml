@@ -16,12 +16,12 @@ Item {
 
     
     /* ****************************
-     *   Given access to the local current view, the function retrieves the one or several devices selected by the user.
+     *   Given access to the local current view, the function retrieves the one or several devices selected by the user. If the selected app supports watch functionalities and the device is Busy, is considered to be Ready
      *   return: boolean
      *      true if 
      *          the device is ready and fully binded
-     *          the device is in group and the app support the group 
      *      false  otherwise 
+     *  2do: add group management - add non thymio devices support
      **************************** */
     function isSelectedDeviceReady() {
         var the_device = selection_view.selectedDevice
@@ -57,18 +57,16 @@ Item {
             device_view.selectedDevice = null
     }
   
-
     /* ****************************
      *   The function set the content for the id:button button depending on if the launched app supports watch functionality - in this case and if is there a watchable device available the string would differs 
      *   return: translatable string   
-     *      "Connect and Program"  or "Watch"we are in the studio and the device is not ready as defined in isSelectedDeviceReady()
-     *      "Watch" we are in the studio and the device is not ready 
-     *      qsTr("Launch %1").arg(launcher.selectedApp.name) otherwise 
+     *      "Watch with APPNAME" if we support watchable and the device is ready as defined in isSelectedDeviceReady()
+     *      "Program with APPNAME" otherwise 
     ******************************* */
     function launchButtonText(){
         if(launcher.selectedApp.supportsWatchMode && selection_view.selectedDevice 
                 && selection_view.selectedDevice.status === ThymioNode.Busy){
-            return qsTr("Watch")
+            return qsTr("Watch with %1").arg(launcher.selectedApp.name)
         }
         return qsTr("Program with %1").arg(launcher.selectedApp.name)
     }
@@ -261,34 +259,7 @@ Item {
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
                 }
-            }
-
-             /*
-
-           Button {
-                id : button
-                
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottomMargin: 30
-                anchors.bottom: parent.bottom
-
-                hoverEnabled : true
-                enabled: isSelectedDeviceReady()
-
-                background: Rectangle {
-                    color: button.hovered ? "#57c6ff" : "#0a9eeb"
-                    anchors.fill: parent
-                }
-
-                text: launchButtonText()
-                font.family: "Roboto Bold" 
-
-                onClicked: {
-                    launchSelectedAppWithSelectedDevice()
-                }
-            }
-
-                */            
+            }        
 
 
             Rectangle {
