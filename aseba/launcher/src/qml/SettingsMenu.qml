@@ -10,7 +10,7 @@ Rectangle {
     property ListModel entries: ListModel {}
 
     function getBackPanelWidth(){
-        return 680
+        return 350
     }
 
     function thymio2PairingWizard(valiseMode) {
@@ -110,11 +110,8 @@ Rectangle {
             delegate: Item {
                 height: 30
                 width: getBackPanelWidth()
-                anchors.rightMargin: 100
-                Rectangle {
-                    color: "#f00"
-                    anchors.fill: parent
-                }
+                anchors.right:parent.right
+                anchors.left:parent.left
                 Text {
                     anchors.right: parent.right
                     width: contentWidth
@@ -134,14 +131,16 @@ Rectangle {
 
             footer: Item {
                 id: local_browser_switch
+                visible: !Utils.platformIsLinux()
                 height: 30
                 width: getBackPanelWidth()
-                anchors.right: settings_list_view.right
-                anchors.left: settings_list_view.left
-                anchors.bottom: settings_list_view.bottom
+                anchors.right:parent.right
+                anchors.left:parent.left
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: 10
                 CheckBox {
                     id: local_browser_checkbox
-                    text: qsTr("Use your system default browser for the web based clients")
+                    text: qsTr("Use your system default browser")
                     anchors.right: local_browser_switch.right
                     onClicked: {
                         Utils.setUseLocalBrowser(checked )
@@ -152,6 +151,7 @@ Rectangle {
                         implicitHeight: 18
                         y: parent.height / 2 - height / 2
                         radius: 3
+                        anchors.right: local_browser_checkbox_text.left
                         border.color: local_browser_checkbox.down ? "#276fa5" : "#389EEC"
                         Rectangle {
                             width: 10
@@ -167,13 +167,13 @@ Rectangle {
                         id: local_browser_checkbox_text
                         text: local_browser_checkbox.text
                         width: contentWidth
-                        wrapMode: Text.WordWrap
                         font: local_browser_checkbox.font
-                        anchors.left: settings_list_view.left
+                        anchors.right: parent.right
                         opacity: enabled ? 1.0 : 0.3
                         color: local_browser_checkbox.down ? "#ededed" : "#fff"
                         verticalAlignment: Text.AlignVCenter
-                        leftPadding: local_browser_checkbox.indicator.width + local_browser_checkbox.spacing
+                        leftPadding: 10
+                        horizontalAlignment: Text.AlignRight
                     }
                 }
             }
