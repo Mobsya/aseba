@@ -1482,7 +1482,7 @@ event %0 : </source>
         <translation type="vanished">Resetter</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>Exécuter</translation>
     </message>
@@ -1642,7 +1642,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation>%1 sur %2</translation>
     </message>
@@ -1650,7 +1650,13 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Values</source>
         <translation>Valeurs</translation>
     </message>
@@ -2034,7 +2040,7 @@ event %0 : </source>
         <translation>Arrêter</translation>
     </message>
     <message>
-        <location line="+394"/>
+        <location line="+395"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
         <translation>Le retour au mode simple supprimera tous les blocs avancés et les cartes d&apos;états.&lt;p&gt;Êtes-vous sûr de vouloir continuer ?</translation>
     </message>
@@ -2043,7 +2049,7 @@ event %0 : </source>
         <translation type="obsolete">Schéma des couleurs</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-385"/>
         <source>Advanced mode</source>
         <translation>Mode avancé</translation>
     </message>
@@ -2104,7 +2110,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;b&gt;Actions&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Le langage de programmation visuel (VPL) pour le robot Thymio permet de programmer en associant des blocs d&apos;événements et d&apos;actions.</translation>
     </message>
@@ -2153,7 +2159,7 @@ event %0 : </source>
         <translation>Ce fichier est incomatible avec cette version de ThymioVPL. Il se peut qu&apos;il ne fonctionne pas correctement.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>Veuillez ajouter un événement</translation>
     </message>
@@ -2202,7 +2208,7 @@ event %0 : </source>
         <translation>Sauvegarder le scripte</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation>Ouvrir le scripte</translation>
     </message>

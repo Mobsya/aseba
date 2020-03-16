@@ -10,7 +10,7 @@
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
-        <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </source>
+        <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -36,7 +36,7 @@ Do not unplug the device while the update is in progress.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="100"/>
+        <location filename="../main.cpp" line="98"/>
         <source>Thymio Suite</source>
         <translation type="unfinished"></translation>
     </message>
@@ -44,32 +44,37 @@ Do not unplug the device while the update is in progress.</source>
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="10"/>
+        <location filename="../qml/SettingsMenu.qml" line="61"/>
         <source>Launch a Simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="14"/>
+        <location filename="../qml/SettingsMenu.qml" line="62"/>
         <source>Download maps for the simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="19"/>
+        <location filename="../qml/SettingsMenu.qml" line="65"/>
         <source>Pair a Wireless Thymio to a Wireless dongle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="24"/>
+        <location filename="../qml/SettingsMenu.qml" line="66"/>
         <source>Pair a case of Wireless Thymio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="57"/>
+        <location filename="../qml/SettingsMenu.qml" line="143"/>
+        <source>Use your system default browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsMenu.qml" line="44"/>
         <source>https://www.thymio.org/thymio-simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="88"/>
+        <location filename="../qml/SettingsMenu.qml" line="92"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93,17 +98,22 @@ Do not unplug the device while the update is in progress.</source>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
+        <source>This device is not compatible with %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="146"/>
         <source>This device cannot be selected because it is already being used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="225"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="228"/>
         <source>A new firmware is available!
 Click to install it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="226"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="229"/>
         <source>A new firmware is available!
 Connect the robot with a usb cable to install it</source>
         <translation type="unfinished"></translation>
@@ -112,22 +122,32 @@ Connect the robot with a usb cable to install it</source>
 <context>
     <name>ThymioSelectionView</name>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="204"/>
-        <source>Launch %1</source>
+        <location filename="../qml/ThymioSelectionView.qml" line="69"/>
+        <source>Watch with %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="178"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="71"/>
+        <source>Program with %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="229"/>
         <source>Connect a Thymio or &lt;a href=&apos;#&apos;&gt;launch a simulator&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="261"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="252"/>
+        <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="343"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="263"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="345"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -285,7 +305,7 @@ Continue?</source>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="153"/>
+        <location filename="../launcher.cpp" line="215"/>
         <source>Save %1</source>
         <translation type="unfinished"></translation>
     </message>
