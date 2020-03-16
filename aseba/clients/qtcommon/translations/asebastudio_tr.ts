@@ -1285,7 +1285,7 @@ event %0 : </source>
         <translation type="vanished">Sıfırla</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
@@ -1436,7 +1436,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1444,7 +1444,13 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Values</source>
         <translation type="unfinished">Değerler</translation>
     </message>
@@ -1726,7 +1732,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Eylemler</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Thymio robotunun Görsel Programlama Dili (VPL), olay ve eylem bloklarını ilişkilendirerek programlamaya izin verir.</translation>
     </message>
@@ -1780,7 +1786,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Bu dosya, ThymioVPL sürümü ile uyumlu değil. Düzgün çalışmayabilir.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>Lütfen bir etkinlik ekleyin</translation>
     </message>
@@ -1821,7 +1827,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished"></translation>
     </message>
