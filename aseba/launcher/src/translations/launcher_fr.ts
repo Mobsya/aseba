@@ -10,8 +10,12 @@
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
+        <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
+        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</translation>
+    </message>
+    <message>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </source>
-        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </translation>
+        <translation type="vanished">&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </translation>
     </message>
 </context>
 <context>
@@ -37,7 +41,7 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="100"/>
+        <location filename="../main.cpp" line="98"/>
         <source>Thymio Suite</source>
         <translation>Thymio Suite</translation>
     </message>
@@ -45,32 +49,37 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="10"/>
+        <location filename="../qml/SettingsMenu.qml" line="61"/>
         <source>Launch a Simulator</source>
         <translation>Lancer un simulateur</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="14"/>
+        <location filename="../qml/SettingsMenu.qml" line="62"/>
         <source>Download maps for the simulator</source>
         <translation>Télécharger les terrains</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="19"/>
+        <location filename="../qml/SettingsMenu.qml" line="65"/>
         <source>Pair a Wireless Thymio to a Wireless dongle</source>
         <translation>Appairer un Wireless Thymio à son dongle Wireless</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="24"/>
+        <location filename="../qml/SettingsMenu.qml" line="66"/>
         <source>Pair a case of Wireless Thymio</source>
         <translation>Appairer une valise de Wireless Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="57"/>
+        <location filename="../qml/SettingsMenu.qml" line="143"/>
+        <source>Use your system default browser</source>
+        <translation>Utilisez le navigateur par défaut de votre système</translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsMenu.qml" line="44"/>
         <source>https://www.thymio.org/thymio-simulator</source>
         <translation>https://www.thymio.org/fr/simulateur-thymio/</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="88"/>
+        <location filename="../qml/SettingsMenu.qml" line="92"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
@@ -94,18 +103,23 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
+        <source>This device is not compatible with %1</source>
+        <translation>Ce robot n&apos;est pas compatible avec %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="146"/>
         <source>This device cannot be selected because it is already being used</source>
         <translation>Cet robot ne peut pas être sélectionné car il est déjà en cours d&apos;utilisation</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="225"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="228"/>
         <source>A new firmware is available!
 Click to install it</source>
         <translation>Un nouveau firmware est disponible !
 Cliquez ici pour l&apos;installer</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="226"/>
+        <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="229"/>
         <source>A new firmware is available!
 Connect the robot with a usb cable to install it</source>
         <translation>Un nouveau firmware est disponible ! 
@@ -129,22 +143,36 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
         <translation type="vanished">Choisir un Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="178"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="229"/>
         <source>Connect a Thymio or &lt;a href=&apos;#&apos;&gt;launch a simulator&lt;/a&gt;</source>
         <translation>Connectez un Thymio ou &lt;a href=&apos;#&apos;&gt;lancez un simulateur&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="204"/>
         <source>Launch %1</source>
-        <translation>Lancer %1</translation>
+        <translation type="vanished">Lancer %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="261"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="69"/>
+        <source>Watch with %1</source>
+        <translation>Observer avec %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="71"/>
+        <source>Program with %1</source>
+        <translation>Programmer avec %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="252"/>
+        <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
+        <translation>Assurez-vous que Thymio Suite est lancé sur un ordinateur relais. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;Plus d&apos;informations&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="343"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le Avahi Daemon est manquant ou n&apos;est pas lancé. &lt;a href=&apos;http://google.com&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="263"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="345"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le service Bonjour est manquant ou n&apos;est pas lancé. &lt;a href=&apos;https://www.thymio.org/fr/faq/mon-robot-thymio-n-apparait-pas-dans-la-liste-de-selection-du-robot/&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
@@ -311,7 +339,7 @@ Continuer ?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="153"/>
+        <location filename="../launcher.cpp" line="215"/>
         <source>Save %1</source>
         <translation>Sauvegarder %1</translation>
     </message>

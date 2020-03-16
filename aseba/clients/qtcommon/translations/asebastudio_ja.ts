@@ -1237,7 +1237,7 @@ event %0 : </source>
         <translation type="vanished">リセット</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>実行</translation>
     </message>
@@ -1389,7 +1389,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1397,7 +1397,13 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Values</source>
         <translation type="unfinished">値</translation>
     </message>
@@ -1650,7 +1656,7 @@ event %0 : </source>
         <translation>アクション</translation>
     </message>
     <message>
-        <location line="+258"/>
+        <location line="+259"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1659,7 +1665,7 @@ event %0 : </source>
         <translation type="vanished">http://aseba.wikidot.com/en:thymiovpl</translation>
     </message>
     <message>
-        <location line="+315"/>
+        <location line="+325"/>
         <source>Please add an event</source>
         <translation>イベントを追加してください</translation>
     </message>
@@ -1669,7 +1675,7 @@ event %0 : </source>
         <translation>アクションを追加してください</translation>
     </message>
     <message>
-        <location line="-749"/>
+        <location line="-760"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
@@ -1694,7 +1700,7 @@ event %0 : </source>
         <translation>行を表示</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1778,7 +1784,7 @@ event %0 : </source>
         <translation type="unfinished">スクリプト保存</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished">スクリプト開ける</translation>
     </message>
