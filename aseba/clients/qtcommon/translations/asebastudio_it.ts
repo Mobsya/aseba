@@ -1531,7 +1531,7 @@ event %0 : </source>
         <location filename="../../studio/PlotTab.cpp" line="+15"/>
         <location line="+1"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricarica</translation>
     </message>
     <message>
         <location line="+22"/>
