@@ -1012,7 +1012,7 @@ Znalezione</translation>
         <location filename="../../studio/PlotTab.cpp" line="15"/>
         <location filename="../../studio/PlotTab.cpp" line="16"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Przeładunek</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="38"/>
