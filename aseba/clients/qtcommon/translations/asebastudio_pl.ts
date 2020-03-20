@@ -898,102 +898,102 @@ Znalezione</translation>
 <context>
     <name>Aseba::NodeTab</name>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="295"/>
+        <location filename="../../studio/NodeTab.cpp" line="301"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>zmienne: %1/%2 (%3 %)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="300"/>
+        <location filename="../../studio/NodeTab.cpp" line="306"/>
         <source>bytecode: %1/%2 (%3 %)</source>
         <translation>kod bajtowy: %1/%2 (%3 %)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="304"/>
+        <location filename="../../studio/NodeTab.cpp" line="310"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Używana pamięć&lt;/b&gt; : %1, %2</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="315"/>
+        <location filename="../../studio/NodeTab.cpp" line="321"/>
         <source>Compilation Success</source>
         <translation>Kompilacja poprawna</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="445"/>
+        <location filename="../../studio/NodeTab.cpp" line="451"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation>&lt;b styl=&apos;kolor:#CA3433&apos;&gt;Niepodłączony&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="452"/>
+        <location filename="../../studio/NodeTab.cpp" line="458"/>
         <source>Stopped</source>
         <translation>Zatrzymany</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="453"/>
+        <location filename="../../studio/NodeTab.cpp" line="459"/>
         <source>Paused</source>
         <translation>Wstrzymany</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="454"/>
+        <location filename="../../studio/NodeTab.cpp" line="460"/>
         <source>Running</source>
         <translation>Uruchomiony</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="462"/>
+        <location filename="../../studio/NodeTab.cpp" line="468"/>
         <source>(Not Locked)</source>
         <translation>(Niezamknięty)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="466"/>
+        <location filename="../../studio/NodeTab.cpp" line="472"/>
         <source>(Controlled by another application or user)</source>
         <translation>(Sterowany przez inną aplikację lub użytkownika)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="846"/>
+        <location filename="../../studio/NodeTab.cpp" line="852"/>
         <source>Stop</source>
         <translation>Zatrzymaj</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="849"/>
+        <location filename="../../studio/NodeTab.cpp" line="855"/>
         <source>Run</source>
         <translation>Uruchom</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="851"/>
+        <location filename="../../studio/NodeTab.cpp" line="857"/>
         <source>Pause</source>
         <translation>Wstrzymaj</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="853"/>
+        <location filename="../../studio/NodeTab.cpp" line="859"/>
         <source>Next</source>
         <translation>Następny</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="856"/>
+        <location filename="../../studio/NodeTab.cpp" line="862"/>
         <source>Synchronize</source>
         <translation>Synchronizuj</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="890"/>
+        <location filename="../../studio/NodeTab.cpp" line="896"/>
         <source>Plot this variable</source>
         <translation>Wykreśl tę zmienną</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="900"/>
+        <location filename="../../studio/NodeTab.cpp" line="906"/>
         <source>&lt;b&gt;Variables&lt;/b&gt;</source>
         <translation>&lt;/b&gt;Zmienne&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="906"/>
+        <location filename="../../studio/NodeTab.cpp" line="912"/>
         <source>F&amp;ilter:</source>
         <translation>F&amp;iltr:</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="935"/>
+        <location filename="../../studio/NodeTab.cpp" line="941"/>
         <source>Native Functions</source>
         <translation>Funkcje Rodzime</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="936"/>
+        <location filename="../../studio/NodeTab.cpp" line="942"/>
         <source>Local Events</source>
         <translation>Zdarzenia Lokalne</translation>
     </message>
@@ -1001,7 +1001,7 @@ Znalezione</translation>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="105"/>
         <source>%1 on %2</source>
         <translation>%1 na %2</translation>
     </message>
@@ -1009,7 +1009,13 @@ Znalezione</translation>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="24"/>
+        <location filename="../../studio/PlotTab.cpp" line="15"/>
+        <location filename="../../studio/PlotTab.cpp" line="16"/>
+        <source>Reload</source>
+        <translation type="unfinished">Przeładunek</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="38"/>
         <source>Values</source>
         <translation>Wartości</translation>
     </message>
@@ -1220,62 +1226,62 @@ Znalezione</translation>
         <translation>Działania</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="336"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="337"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Język Programowania Wizualnego (VPL) dla robota Thymio umożliwia programowanie poprzez kojarzenie bloków zdarzeń i działań.</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="338"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="339"/>
         <source>https://www.thymio.org/en:thymiovpl</source>
         <translation>https://www.thymio.org/en:thymiovpl</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="362"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="363"/>
         <source>Export program as image</source>
         <translation>Wyeksportuj kod jako obraz</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="427"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="428"/>
         <source>Launch VPL</source>
         <translation>Uruchom VPL</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="550"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="551"/>
         <source>Returning to simple mode</source>
         <translation>Powrót do trybu podstawowego</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="551"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="552"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
         <translation>Powrót do trybu podstawowego spowoduje odrzucenie wszystkich zaawansowanych bloków i kart warunków.&lt;p&gt;Czy na pewno chcesz kontynuować?</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="588"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="589"/>
         <source>Warning</source>
         <translation>Ostrzeżenie</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="589"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="590"/>
         <source>The VPL document has been modified.&lt;p&gt;Do you want to save the changes?</source>
         <translation>Dokument VPL został zmodyfikowany.&lt;p&gt;Czy chcesz zapisać zmiany?</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="654"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="655"/>
         <source>Incompatible Version</source>
         <translation>Niezgodna wersja</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="655"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="656"/>
         <source>This file is incompatible with this version of ThymioVPL. It might not work correctly.</source>
         <translation>Ten plik jest niekompatybilny z tą wersją ThymioVPL. Może nie działać poprawnie.</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="866"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="877"/>
         <source>Please add an event</source>
         <translation>Proszę dodać zdarzenie</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="875"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="886"/>
         <source>Please add an action</source>
         <translation>Proszę dodać działanie</translation>
     </message>
@@ -1311,53 +1317,53 @@ Znalezione</translation>
         <translation>Zapisz kod programu</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="269"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="286"/>
         <source>Open Script</source>
         <translation>Otwórz kod programu</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="313"/>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="318"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="330"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="335"/>
         <source>Loading</source>
         <translation>Wczytywanie</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="314"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="331"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
         <translation>Żadne dane Thymio VPL nie zostały znalezione w pliku programu, plik został zignorowany.</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="319"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="336"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
         <translation>Błąd w pliku źródłowym XML: %0 wiersz %1, kolumna %2</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="335"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="352"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
         <translation>Połączenie z Thymio utracone... upewnij się, że Thymio jest włączony i połączony kabelem/odbiornikiem RF USB</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="412"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="429"/>
         <source>[modified] </source>
         <translation>[zmodyfikowany] </translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="414"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="431"/>
         <source>Untitled</source>
         <translation>Bez tytułu</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="420"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="437"/>
         <source>on %1</source>
         <translation>w %1</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="422"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="439"/>
         <source>[not connected]</source>
         <translation>[nie podłączony]</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="424"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="441"/>
         <source>%0 %1 %2 - Thymio Visual Programming Language</source>
         <translation>%0 %1 %2 - Język programowania wizualnego Thymio</translation>
     </message>

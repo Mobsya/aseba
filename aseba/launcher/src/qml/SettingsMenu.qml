@@ -1,11 +1,17 @@
+import QtQuick.Controls 2.3
+
 import QtQuick 2.11
 
 Rectangle {
     color: "#535353"
     id:pane
-    width: 350
+    width: getBackPanelWidth()
 
     property ListModel entries: ListModel {}
+
+    function getBackPanelWidth(){
+        return 350
+    }
 
     function thymio2PairingWizard(valiseMode) {
         var component = Qt.createComponent("qrc:/qml/wirelessconfigurator/WirelessWizardWarningDialog.qml");
@@ -62,7 +68,7 @@ Rectangle {
     }
 
     function anchorToParent() {
-        x =  launcher.width - (visible ? 350 : 0)
+        x =  launcher.width - (visible ? getBackPanelWidth() : 0)
     }
 
     Component.onCompleted: {
@@ -79,6 +85,7 @@ Rectangle {
     }
 
     Item {
+        id: settings_wrapper
         anchors.fill: parent
         anchors.margins: 10
         Item {
@@ -108,16 +115,20 @@ Rectangle {
         }
 
         ListView {
+            id: settings_list_view
             anchors.topMargin: 20
             orientation: ListView.Vertical
             anchors.top: top.bottom
-            anchors.bottom: parent.bottom
             anchors.right: parent.right
-            width: 350
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            width: getBackPanelWidth()
             model: entries
             delegate: Item {
                 height: 30
-                width: 350
+                width: getBackPanelWidth()
+                anchors.right:parent.right
+                anchors.left:parent.left
                 Text {
                     anchors.right: parent.right
                     width: contentWidth
@@ -134,6 +145,55 @@ Rectangle {
                     }
                 }
             }
+
+            footer: Item {
+                id: local_browser_switch
+                visible: !Utils.platformIsLinux()
+                height: 30
+                width: getBackPanelWidth()
+                anchors.right:parent.right
+                anchors.left:parent.left
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: 10
+                CheckBox {
+                    id: local_browser_checkbox
+                    text: qsTr("Use your system default browser")
+                    anchors.right: local_browser_switch.right
+                    onClicked: {
+                        Utils.setUseLocalBrowser(checked )
+                    }
+                    checked: Utils.getUseLocalBrowser()
+                    indicator: Rectangle {
+                        implicitWidth: 18
+                        implicitHeight: 18
+                        y: parent.height / 2 - height / 2
+                        radius: 3
+                        anchors.right: local_browser_checkbox_text.left
+                        border.color: local_browser_checkbox.down ? "#276fa5" : "#389EEC"
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            x: 4
+                            y: 4
+                            radius: 2
+                            color: local_browser_checkbox.down ? "#276fa5" : "#389EEC"
+                            visible: local_browser_checkbox.checked
+                        }
+                    }
+                    contentItem: Text {
+                        id: local_browser_checkbox_text
+                        text: local_browser_checkbox.text
+                        width: contentWidth
+                        font: local_browser_checkbox.font
+                        anchors.right: parent.right
+                        opacity: enabled ? 1.0 : 0.3
+                        color: local_browser_checkbox.down ? "#ededed" : "#fff"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: 10
+                        horizontalAlignment: Text.AlignRight
+                    }
+                }
+            }
         }
 
         PropertyAnimation {
@@ -141,7 +201,7 @@ Rectangle {
             property: "x"
             target: pane
             from: launcher.width
-            to: launcher.width - 350
+            to: launcher.width - getBackPanelWidth()
             duration: 200
             easing.type: Easing.InOutQuad
         }
@@ -158,3 +218,10 @@ Rectangle {
         anchors.fill: parent
     }
 }
+
+
+
+
+
+
+        

@@ -1349,7 +1349,7 @@ event %0 : </source>
         <translation type="vanished">Επαναφορά</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
     </message>
@@ -1500,7 +1500,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1508,7 +1508,13 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Values</source>
         <translation type="unfinished">Τιμές</translation>
     </message>
@@ -1791,7 +1797,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Ενέργειες</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Η Visual Γλώσσα Προγραμματισμού (VPL) για το ρομπότ Thymio επιτρέπει τον προγραμματισμό συνδυάζοντας μπλοκ συμβάντων και ενεργειών.</translation>
     </message>
@@ -1849,7 +1855,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Αυτό το αρχείο δεν είναι συμβατό με αυτήν την έκδοση του ThymioVPL. Μπορεί να μη λειτουργεί σωστά.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>Παρακαλώ προσθέστε ένα συμβάν</translation>
     </message>
@@ -1890,7 +1896,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation type="unfinished">Αποθήκευση Σεναρίου (Script)</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished">Άνοιγμα Σεναρίου (Script)</translation>
     </message>

@@ -1258,7 +1258,7 @@ event %0 : </source>
         <translation type="vanished">重置</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
@@ -1409,7 +1409,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1417,7 +1417,13 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Values</source>
         <translation type="unfinished">值</translation>
     </message>
@@ -1694,7 +1700,7 @@ event %0 : </source>
         <translation>行动</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>使用Thymio可视化程序设计语言(VPL)可以通过关联事件和机器人行为进行编程</translation>
     </message>
@@ -1752,7 +1758,7 @@ event %0 : </source>
         <translation>该文件版本与ThymioVPL版本不匹配.可能不能正常运行.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>请添加一个事件</translation>
     </message>
@@ -1793,7 +1799,7 @@ event %0 : </source>
         <translation type="unfinished">保存脚本</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished">打开脚本</translation>
     </message>

@@ -21,6 +21,17 @@ namespace mobsya {
 
 Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject(parent), m_client(client) {
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
+
+    useLocalBrowser = false;
+    // On mac we use the native web view since chromium is not app-store compatible.
+    // But on versions prior to High Sierra, the WebKit version shipped with
+    // the OS cannot handle webassembly, which we require to run all of our web apps
+    // So, instead, defer to the system browser - which is more likely to work
+    // because the version of safari shipped with an up-to-date Sierra is more current
+    // than the system's webkit
+#ifdef Q_OS_OSX
+    useLocalBrowser = true;
+#endif
 }
 
 
@@ -157,16 +168,9 @@ bool Launcher::openUrl(const QUrl& url) {
 
     qDebug() << url;
 
-    // On mac we use the native web view since chromium is not app-store compatible.
-    // But on versions prior to High Sierra, the WebKit version shipped with
-    // the OS cannot handle webassembly, which we require to run all of our web apps
-    // So, instead, defer to the system browser - which is more likely to work
-    // because the version of safari shipped with an up-to-date Sierra is more current
-    // than the system's webkit
-#ifdef Q_OS_OSX
-    return openUrlWithParameters(url);
-#endif
-
+    if ( useLocalBrowser ){
+        return openUrlWithParameters(url);
+    }
 #ifdef Q_OS_IOS
     OpenUrlInNativeWebView(url);
     return true;
@@ -177,6 +181,8 @@ bool Launcher::openUrl(const QUrl& url) {
 #else
     QUrl source("qrc:/qml/webview_native.qml");
 #endif
+
+ 
 
 
     auto e = new QQmlApplicationEngine(qobject_cast<QObject*>(this));
@@ -192,6 +198,14 @@ bool Launcher::openUrl(const QUrl& url) {
     connect(e, &QQmlApplicationEngine::quit, &QQmlApplicationEngine::deleteLater);
 #endif
     return true;
+}
+
+void Launcher::setUseLocalBrowser(bool checked){
+    useLocalBrowser = checked;
+}
+
+bool Launcher::getUseLocalBrowser(){
+    return useLocalBrowser;
 }
 
 QString Launcher::getDownloadPath(const QUrl& url) {
