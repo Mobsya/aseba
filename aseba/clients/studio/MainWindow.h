@@ -114,7 +114,7 @@ private Q_SLOTS:
 
     void about();
     bool newFile();
-    void openFile(const QString& path = QString());
+    int openFile(const QString& path = QString());
     void openRecentFile();
     bool save();
     bool saveFile(const QString& previousFileName = QString());
