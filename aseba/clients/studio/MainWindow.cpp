@@ -146,13 +146,25 @@ bool MainWindow::newFile() {
     return false;
 }
 
-void MainWindow::openFile(const QString& path) {
-    // make sure we do not loose changes
-    if(askUserBeforeDiscarding() == false)
-        return;
 
-    for(auto&& tab : nodes->devicesTabs()) {
-        tab->clearEverything();
+/* ************************************************
+*
+* The function opens .aesl files for the studio project
+* input: the path strin is optional: 
+*     if not given a dialog for selecting and retrieving a file would be opened 
+*     if given, the filepath must be comprehensive of its own full absoulute path 
+* the function will manage file non presents nor accesible in the file system. 
+If everything goes fine the aesl file would be loaded onto the studio interface
+* return code:
+*    -1 : failed due to file unavailability
+*    -2 : aborted by user due to discard changes
+*    -3 : ??? case
+************************************************ */
+int MainWindow::openFile(const QString& path) {
+
+    // make sure we do not loose changes
+    if(askUserBeforeDiscarding() == false){
+        return -2;
     }
 
     // open the file
@@ -181,24 +193,67 @@ void MainWindow::openFile(const QString& path) {
         qDebug() << fileName;
     }
 
+
     QFile file(fileName);
-    if(!file.open(QFile::ReadOnly))
-        return;
+    if(!file.open(QFile::ReadOnly)){
+        return -1;
+    }
+
+    auto groups = nodes->groups();
+    if(groups.size() != 1){
+        return -3;
+    }
+
+    // --- from here on we assume everything went fine --- 
+    // [2do] this on should be in the calling methods or in a separate function
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->clearEverything();
+    }
 
     actualFileName = fileName;
     updateRecentFiles(actualFileName);
     updateWindowTitle();
 
-    auto groups = nodes->groups();
-    if(groups.size() != 1)
-        return;
-
     groups.front()->loadAesl(file.readAll());
+    return 0;
 }
+
+/* ************************************************
+*
+* The function called asycronously by the recent file menu 
+* it will eventually open a recent file if available 
+* if the file is not available would ask to the user to remove it from the list
+*
+************************************************ */
 
 void MainWindow::openRecentFile() {
     auto* entry = dynamic_cast<QAction*>(sender());
-    openFile(entry->text());
+
+    if(openFile(entry->text()) == -1){
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Aseba Studio - File Exception"));
+        msgBox.setText(tr("The file \"%0\" is not present anymore in the location.").arg(entry->text()));
+        msgBox.setInformativeText(tr("Do you want to delete it from the list?"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+
+        int ret = msgBox.exec();
+        switch(ret) {
+            case QMessageBox::Ok:
+                updateRecentFiles(entry->text());
+                regenerateOpenRecentMenu();
+                break ;
+            case QMessageBox::Ignore:
+                // Cancel was clicked
+                break ;
+            default:
+                // should never be reached
+                assert(false);
+                break;
+        }
+    }
+    return;
 }
 
 bool MainWindow::save() {
@@ -567,6 +622,9 @@ void MainWindow::regenerateOpenRecentMenu() {
     }
 }
 
+/* ************************
+
+************************ */
 void MainWindow::updateRecentFiles(const QString& fileName) {
     QSettings settings;
     QStringList recentFiles = settings.value(QStringLiteral("recent files")).toStringList();
