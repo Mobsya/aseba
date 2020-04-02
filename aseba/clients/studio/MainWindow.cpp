@@ -155,7 +155,7 @@ bool MainWindow::newFile() {
 *     if given, the filepath must be comprehensive of its own full absoulute path 
 * the function will manage file non presents nor accesible in the file system. 
 If everything goes fine the aesl file would be loaded onto the studio interface
-* return code:
+* \return code:
 *    -1 : failed due to file unavailability
 *    -2 : aborted by user due to discard changes
 *    -3 : ??? case
@@ -165,7 +165,7 @@ int MainWindow::openFile(const QString& path) {
     // make sure we do not loose changes
     if(askUserBeforeDiscarding() == false){
         return -2;
-    }
+    } 
 
     // open the file
     QString fileName = path;
@@ -191,6 +191,7 @@ int MainWindow::openFile(const QString& path) {
 
         fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), dir, QStringLiteral("Aseba scripts (*.aesl)"));
         qDebug() << fileName;
+
     }
 
 
@@ -212,9 +213,11 @@ int MainWindow::openFile(const QString& path) {
 
     actualFileName = fileName;
     updateRecentFiles(actualFileName);
+    regenerateOpenRecentMenu();
     updateWindowTitle();
 
     groups.front()->loadAesl(file.readAll());
+
     return 0;
 }
 
@@ -241,7 +244,7 @@ void MainWindow::openRecentFile() {
         int ret = msgBox.exec();
         switch(ret) {
             case QMessageBox::Ok:
-                updateRecentFiles(entry->text());
+                updateRecentFiles(entry->text(), true);
                 regenerateOpenRecentMenu();
                 break ;
             case QMessageBox::Ignore:
@@ -286,6 +289,7 @@ bool MainWindow::saveFile(const QString& previousFileName) {
 
     actualFileName = fileName;
     updateRecentFiles(fileName);
+    regenerateOpenRecentMenu();
 
     // initiate DOM tree
     QDomDocument document("aesl-source");
@@ -610,6 +614,12 @@ void MainWindow::setupConnections() {
     connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
 }
 
+/* ************************
+* The function generate the interface OpenRecent menu starting from the system stored value  
+* \warning: this function must be called by the dev all times the system updates the 
+recentFiles data structure otherways interface and system would be in detached state   
+* [2do] this can improved in several ways to avoid detached interface 
+************************ */
 void MainWindow::regenerateOpenRecentMenu() {
     openRecentMenu->clear();
 
@@ -623,17 +633,27 @@ void MainWindow::regenerateOpenRecentMenu() {
 }
 
 /* ************************
-
+* The function updates system data structure related to recent files implementing the following: 
+* - add of a new entry
+* - del of a single entry already present in the list
+* - avoid duplicated entries
 ************************ */
-void MainWindow::updateRecentFiles(const QString& fileName) {
+void MainWindow::updateRecentFiles(const QString& fileName, bool to_delete ) {
     QSettings settings;
     QStringList recentFiles = settings.value(QStringLiteral("recent files")).toStringList();
-    if(recentFiles.contains(fileName))
-        recentFiles.removeAt(recentFiles.indexOf(fileName));
-    recentFiles.push_front(fileName);
     const int maxRecentFiles = 8;
+    
+    if(recentFiles.contains(fileName) ){
+        recentFiles.removeAt(recentFiles.indexOf(fileName));
+    } 
+    
+    if(!to_delete){
+        recentFiles.push_front(fileName);   
+    }
+
     if(recentFiles.size() > maxRecentFiles)
         recentFiles.pop_back();
+
     settings.setValue(QStringLiteral("recent files"), recentFiles);
 }
 
@@ -921,6 +941,7 @@ void MainWindow::setupMenu() {
     // Load the state from the settings (thus from hard drive)
     applySettings();
 }
+
 //! Ask the user to save or discard or ignore the operation that would destroy the unmodified data.
 /*!
     \return true if it is ok to discard, false if operation must abort
