@@ -170,7 +170,7 @@ private:
 
     // gui initialisation code
     void regenerateOpenRecentMenu();
-    void updateRecentFiles(const QString& fileName);
+    void updateRecentFiles(const QString& fileName, bool to_delete = false);
     void regenerateToolsMenus();
     void generateHelpMenu();
     void regenerateHelpMenu();
