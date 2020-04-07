@@ -11,7 +11,7 @@
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
-        <translation type="unfinished">&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1  {1?}</translation>
+        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</translation>
     </message>
     <message>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 </source>
@@ -71,7 +71,7 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
     <message>
         <location filename="../qml/SettingsMenu.qml" line="143"/>
         <source>Use your system default browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisez le navigateur par défaut de votre système</translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="44"/>
@@ -104,7 +104,7 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
         <source>This device is not compatible with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce robot n&apos;est pas compatible avec %1</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="146"/>
@@ -154,17 +154,17 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="69"/>
         <source>Watch with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Observer avec %1</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="71"/>
         <source>Program with %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Programmer avec %1</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="252"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Assurez-vous que Thymio Suite est lancé sur un ordinateur relais. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;Plus d&apos;informations&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="343"/>
