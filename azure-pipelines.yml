@@ -44,6 +44,7 @@ jobs:
       artifactName: 'thymio-suite.flatpak'
 
 - job: 'MSVC'
+  timeoutInMinutes: 90
   pool:
       vmImage: windows-2019
   strategy:
