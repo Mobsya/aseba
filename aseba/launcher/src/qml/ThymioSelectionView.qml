@@ -249,7 +249,7 @@ Item {
                 anchors.topMargin: 12
                 Text {
                     anchors.centerIn: parent
-                    text: qsTr("Make Sure Thymio Suite is launched on a relay computer. <a href='https://www.thymio.org/news/thymio-suite/'>More Informations</a>")
+                    text: qsTr("Make Sure Thymio Suite is launched on a relay computer. <a href='https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/'>More Informations</a>")
                     color: "white"
                     linkColor: "#0a9eeb"
                     font.family: "Roboto Bold"
