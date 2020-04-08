@@ -105,11 +105,15 @@ void PlotTab::exportData() {
     //we each of the several events
     for(auto it = m_events.begin(); it != m_events.end(); ++it) {
         fprintf(flog, "- %s - ",it.key().toStdString().c_str());
-        QVector<QtCharts::QXYSeries*> serie = it.value();
+        QVector<QtCharts::QXYSeries*> series = it.value();
         // for each element in the serie 
-        for(int i = 0; i < serie.count(); i++){
-                QPointF p = serie->at(i);
-                fprintf(flog, "* %f * ",p.ry());
+        for(int i = 0; i < series.count(); i++){
+
+                QtCharts::QXYSeries* serie = series.at(i);
+                for(int i = 0; i < serie->count(); i++){
+                    auto p = serie->at(i);
+                   fprintf(flog, "* %f * ",p.ry());
+            }
 
         }
     }
