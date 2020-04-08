@@ -1621,7 +1621,7 @@ Ereignis %0: </translation>
         <location filename="../../studio/PlotTab.cpp" line="+15"/>
         <location line="+1"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu laden</translation>
     </message>
     <message>
         <location line="+22"/>
