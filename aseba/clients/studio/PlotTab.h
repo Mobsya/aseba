@@ -35,6 +35,10 @@ private Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp);
     void onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp);
     void clearData();
+    void exportData();
+    void toggleTimeWindow(bool);
+    void togglePause(bool);
+
 
 private:
     void plot(const QString& name, const QVariant& value, QVector<QtCharts::QXYSeries*>& series,
@@ -47,11 +51,20 @@ private:
     QtCharts::QChart* m_chart;
     QtCharts::QValueAxis* m_xAxis;
     QtCharts::QValueAxis* m_yAxis;
+    
     QPushButton* reloadButton; 
+    QPushButton* exportButton;
+    QCheckBox *timewindowCb;
+    QCheckBox *pauseCb;
+
+
     QAction* reloadAct;
     QSpacerItem* spacer;
 
     bool m_range_init = false;
+    bool time_window_enabled = false;
+    bool pause = false;
+
     QDateTime m_start = QDateTime::currentDateTime();
 };
 

@@ -5,6 +5,10 @@
 
 namespace Aseba {
 
+/* The function contains the widget for showing the control panel for the GraphPlot
+* 
+* \return: 
+*/
 PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 
     auto layout = new QVBoxLayout;
@@ -15,10 +19,19 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     reloadButton->setToolTip(tr("Reload"));
     reloadButton->setText(tr("Reload"));
 
-    spacer = new QSpacerItem(1, 1, QSizePolicy::Expanding);
-
     topButtonsLayout->addWidget(reloadButton);
-    topButtonsLayout->addSpacerItem(spacer);
+    
+    exportButton = new QPushButton();
+    exportButton->setIcon(QIcon(":/images/export.png"));
+    exportButton->setToolTip(tr("Export Data to CSV file"));
+    exportButton->setText(tr("Export Data"));
+    topButtonsLayout->addWidget(exportButton);
+
+    QCheckBox *timewindowCb = new QCheckBox("time window", this);;
+    topButtonsLayout->addWidget(timewindowCb);
+
+    QCheckBox *pauseCb = new QCheckBox("Pause", this);;
+    topButtonsLayout->addWidget(pauseCb);
     
     m_chart = new QtCharts::QChart();
     QChartView* chartView = new QChartView(m_chart, this);
@@ -38,7 +51,10 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     m_yAxis->setTitleText(tr("Values"));
     m_chart->addAxis(m_yAxis, Qt::AlignLeft);
 
-    connect(reloadButton, SIGNAL(clicked()), this, SLOT(clearData()));
+    connect(reloadButton,   SIGNAL(clicked()), this, SLOT(clearData()));
+    connect(exportButton,   SIGNAL(clicked()), this, SLOT(exportData()));
+    connect(timewindowCb,   SIGNAL(toggled(bool)), this, SLOT(toggleTimeWindow(bool)));
+    connect(pauseCb,        SIGNAL(toggled(bool)), this, SLOT(togglePause(bool)));
 
     /*QTimer* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, [this]() { m_chart->scroll(-5, 0); });
@@ -46,6 +62,70 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     */
 }
 
+void PlotTab::togglePause(bool selected){
+
+    if(selected){
+        pause = true;
+    }
+
+    else{
+        pause = false;
+    }
+}
+
+void PlotTab::toggleTimeWindow(bool selected){
+    FILE* flog = fopen("/Users/vale/Projects/aseba/LOGGER", "a+");
+    // fprintf(flog, "#!/bin/bash\ngdb --args %s ", cpg);
+    // fprintf(flog, "TOGGLE \n");
+    // fflush(flog);
+    if(selected){
+        time_window_enabled = true;
+        fprintf(flog, "yes \n");
+        fflush(flog);
+    }
+    else{
+        time_window_enabled = false;
+        fprintf(flog, "no \n");
+        fflush(flog);
+    }
+
+    fclose(flog);
+
+}
+
+void PlotTab::exportData() {
+    FILE* flog = fopen("/Users/vale/Projects/aseba/export.csv", "w+");
+//    fprintf(flog, "#!/bin/bash\ngdb --args %s ", cpg);
+    fprintf(flog, "EXPORT \n");
+    fflush(flog);
+    
+    std::vector<int> events_val;
+    std::vector<int> variables_val;
+
+    //we each of the several events
+    for(auto it = m_events.begin(); it != m_events.end(); ++it) {
+        fprintf(flog, "- %s - ",it.key().toStdString().c_str());
+        QVector<QtCharts::QXYSeries*> serie = it.value();
+        // for each element in the serie 
+        for(int i = 0; i < serie.count(); i++){
+                QPointF p = serie->at(i);
+                fprintf(flog, "* %f * ",p.ry());
+
+        }
+    }
+
+    for(auto it = m_variables.begin(); it != m_variables.end(); ++it) {
+        fprintf(flog, " | %s | ",it.key().toStdString().c_str());
+    //     auto series = it.value();
+    //     for(auto it_s = series.begin(); it_s != series.end(); ++it_s) {
+    //         auto serie = *it_s;
+    //         serie->clear();
+    //     }
+    }
+
+    fprintf(flog, "\n ");
+    fclose(flog);
+}
 
 void PlotTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
     m_thymio = node;
@@ -82,6 +162,9 @@ QStringList PlotTab::plottedVariables() const {
 }
 
 void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp) {
+    // if the system is on pause the event is not recorded - is not showed - the plot does not proceed
+    if(pause)
+        return;
     for(auto it = events.begin(); it != events.end(); ++it) {
         auto event = m_events.find(it.key());
         if(event == m_events.end())
@@ -90,10 +173,15 @@ void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTi
         plot(event.key(), v, event.value(), timestamp);
     }
 
+    //[2do] this 10 is wrong since we don t know if 10ms were passed
+    // from the previous rendering cycle
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
 }
 
 void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp) {
+    // if the system is on pause the variable is not recorded - is not showed - the plot does not proceed
+    if(pause)
+        return;
     for(auto it = vars.begin(); it != vars.end(); ++it) {
         auto event = m_variables.find(it.key());
         if(event == m_variables.end())
@@ -101,7 +189,9 @@ void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, co
         const QVariant& v = it.value().value();
         plot(event.key(), v, event.value(), timestamp);
     }
-    
+
+    //[2do] this 10 is wrong since we don t know if 10ms were passed
+    // from the previous rendering cycle
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
 }
 
@@ -163,6 +253,10 @@ void PlotTab::plot(const QString& name, const QVariant& v, QVector<QtCharts::QXY
     }
 }
 
+
+// we might pass trought this two functions for 
+// properly enabling the pause function but since the effect of there async callbacks are 
+// unknown we would not take this risk
 void PlotTab::hideEvent(QHideEvent*) {
     if(m_thymio) {
         m_thymio->setWatchVariablesEnabled(false);
