@@ -225,7 +225,7 @@ jobs:
   - script: |
       sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
       export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
-      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF  -DOPENSSL_ROOT_DIR="/usr/local/Cellar/openssl/1.0.2j/" -DOPENSSL_LIBRARIES="/usr/local/Cellar/openssl/1.0.2j/lib" -DOPENSSL_INCLUDE_DIR="/usr/local/Cellar/openssl/1.0.2j/include" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF && ninja)
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF  -DOPENSSL_ROOT_DIR=/usr/local/Cellar/openssl/1.0.2j/ -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl/1.0.2j/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl/1.0.2j/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF && ninja)
     displayName: 'Build with cmake'
 
   - script: |
