@@ -211,6 +211,7 @@ jobs:
 
   - script: |
       brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
+      brew info openssl
     displayName: 'Setting openssl version to 1.0.0'
 
   - script: |
