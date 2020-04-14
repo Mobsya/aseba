@@ -33,14 +33,15 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     QCheckBox *pauseCb = new QCheckBox("Pause", this);;
     topButtonsLayout->addWidget(pauseCb);
     
+    layout->addLayout(topButtonsLayout);
+
     m_chart = new QtCharts::QChart();
     QChartView* chartView = new QChartView(m_chart, this);
     chartView->setRubberBand(QChartView::VerticalRubberBand);
     chartView->setRenderHint(QPainter::Antialiasing);
-    layout->addLayout(topButtonsLayout);
     layout->addWidget(chartView);
-    this->setLayout(layout);
 
+    this->setLayout(layout);
 
     m_xAxis = new QValueAxis;
     // m_xAxis->setFormat("hh::mm:ss.z");
@@ -93,29 +94,66 @@ void PlotTab::toggleTimeWindow(bool selected){
 
 }
 
+// for each of the events and variable logged we export a different data file
+// related to the plotting session
+
 void PlotTab::exportData() {
     FILE* flog = fopen("/Users/vale/Projects/aseba/export.csv", "w+");
 //    fprintf(flog, "#!/bin/bash\ngdb --args %s ", cpg);
-    fprintf(flog, "EXPORT \n");
-    fflush(flog);
+    // fprintf(flog, "EXPORT \n");
+    // fflush(flog);
     
+    // for each of the events and variable logged we export a different data file
+    // related to the plotting
     std::vector<int> events_val;
     std::vector<int> variables_val;
 
-    //we each of the several events
+    //we iterate on each of the several events plotted
     for(auto it = m_events.begin(); it != m_events.end(); ++it) {
-        fprintf(flog, "- %s - ",it.key().toStdString().c_str());
-        QVector<QtCharts::QXYSeries*> series = it.value();
-        // for each element in the serie 
-        for(int i = 0; i < series.count(); i++){
 
-                QtCharts::QXYSeries* serie = series.at(i);
-                for(int i = 0; i < serie->count(); i++){
-                    auto p = serie->at(i);
-                   fprintf(flog, "* %f * ",p.ry());
+        QVector<QtCharts::QXYSeries*> series = it.value();
+        
+        // we first print the table heading with all the values        
+        for(int i = 0; i < series.count(); i++){
+                //the event name and index if there are several
+                fprintf(flog, " \" %s[%d] \" ,",it.key().toStdString().c_str(),i);
+        }
+        //the last contained value would be the timenstamp
+        fprintf(flog, " \"timestamp\"\n ");
+
+
+        // we now save a row containing a value for each element in the serie 
+        // all the value has the same timestamp since all the elements are emitted 
+        // by the same emitter
+
+        int val = 0;
+        int max_val = series.at(0)->count();
+
+        while(val < max_val ){
+
+            for(int i = 0; i < series.count() ; i++){
+                auto p_val =  series.at(i)->at(val);
+                fprintf(flog, "%f,",p_val.ry());
             }
 
+            auto timestamp_val = series.at(0)->at(val);
+            // adding the time taken from the first element - we know is the same for all
+            fprintf(flog, "%f\n",timestamp_val.rx());
+            val++;
         }
+
+
+        // for(int i = 0; i < series.count(); i++){
+
+
+        //     QtCharts::QXYSeries* serie = series.at(i);
+
+        //     for(int j = 0; j < serie->count(); j++){
+        //         auto p = serie->at(j);
+        //         fprintf(flog, "* %f - %f* ",p.ry(),p.rx());
+        //     }
+        // }
+        // // fprintf(flog, " \n ",it.key().toStdString().c_str());
     }
 
     for(auto it = m_variables.begin(); it != m_variables.end(); ++it) {
@@ -165,6 +203,10 @@ QStringList PlotTab::plottedVariables() const {
     return m_variables.keys();
 }
 
+/* The function updates the local data structures containing all events data
+* is called by the event callback system raised by ????
+* \return : none
+*/ 
 void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp) {
     // if the system is on pause the event is not recorded - is not showed - the plot does not proceed
     if(pause)
@@ -182,6 +224,10 @@ void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTi
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
 }
 
+/* The function updates the local data structures containing all events data
+* is called by the event callback system raised by ????
+* \return : none
+*/ 
 void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp) {
     // if the system is on pause the variable is not recorded - is not showed - the plot does not proceed
     if(pause)
