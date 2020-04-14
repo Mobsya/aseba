@@ -22,18 +22,30 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     topButtonsLayout->addWidget(reloadButton);
     
     exportButton = new QPushButton();
-    exportButton->setIcon(QIcon(":/images/export.png"));
+    exportButton->setIcon(QIcon(":/images/filenew.png"));
     exportButton->setToolTip(tr("Export Data to CSV file"));
     exportButton->setText(tr("Export Data"));
     topButtonsLayout->addWidget(exportButton);
 
-    QCheckBox *timewindowCb = new QCheckBox("time window", this);;
+    // --- time window ---
+    timewindowCb = new QCheckBox(tr("time window"), this);
     topButtonsLayout->addWidget(timewindowCb);
+    
+    timewindowInput = new QLineEdit("5000", this);
+    timewindowInput->setValidator( new QIntValidator(0, 100000, this));
 
-    QCheckBox *pauseCb = new QCheckBox("Pause", this);;
+    QPalette *palette = new QPalette();
+    palette->setColor(QPalette::Base,Qt::gray);
+    palette->setColor(QPalette::Text,Qt::darkGray);
+    timewindowInput->setPalette(*palette);
+
+    topButtonsLayout->addWidget(timewindowInput);
+
+    pauseCb = new QCheckBox(tr("Pause"), this);;
     topButtonsLayout->addWidget(pauseCb);
     
     layout->addLayout(topButtonsLayout);
+    // --- END time window ---
 
     m_chart = new QtCharts::QChart();
     QChartView* chartView = new QChartView(m_chart, this);
@@ -55,7 +67,7 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     connect(reloadButton,   SIGNAL(clicked()), this, SLOT(clearData()));
     connect(exportButton,   SIGNAL(clicked()), this, SLOT(exportData()));
     connect(timewindowCb,   SIGNAL(toggled(bool)), this, SLOT(toggleTimeWindow(bool)));
-    connect(pauseCb,        SIGNAL(toggled(bool)), this, SLOT(togglePause(bool)));
+    connect(timewindowInput,SIGNAL(editingFinished()), this, SLOT(changeTimewindow()));
 
     /*QTimer* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, [this]() { m_chart->scroll(-5, 0); });
@@ -63,42 +75,48 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     */
 }
 
-void PlotTab::togglePause(bool selected){
-
-    if(selected){
-        pause = true;
-    }
-
-    else{
-        pause = false;
-    }
+/* the function is called by a signal all times the text field of the timewindow is edited
+* and the user press enter or the tab loose focus
+* \return: none */
+void PlotTab::changeTimewindow( ){
+    m_xAxis->setMin(m_xAxis->max() - timewindowInput->text().toDouble() );
 }
 
+/* the function is called by a signal all times the checkbox is selected and deselected
+* enabling and disabling the timewindow functionality with the following
+*  changing the pallette - setting the min x-axis - setting the timewindow input enabled or not
+* \return: none */
 void PlotTab::toggleTimeWindow(bool selected){
-    FILE* flog = fopen("/Users/vale/Projects/aseba/LOGGER", "a+");
-    // fprintf(flog, "#!/bin/bash\ngdb --args %s ", cpg);
-    // fprintf(flog, "TOGGLE \n");
-    // fflush(flog);
+
+    //enabling the time window
     if(selected){
-        time_window_enabled = true;
-        fprintf(flog, "yes \n");
-        fflush(flog);
-    }
-    else{
-        time_window_enabled = false;
-        fprintf(flog, "no \n");
-        fflush(flog);
+        // palette of enabled text input
+        QPalette *palette = new QPalette();
+        palette->setColor(QPalette::Base,QColor(41,41,41));
+        palette->setColor(QPalette::Text,Qt::white);
+        timewindowInput->setPalette(*palette);
+
+        m_xAxis->setMin( qMax(m_xAxis->max() - timewindowInput->text().toDouble(),0.0) );
     }
 
-    fclose(flog);
+    // otherwise disabling
+    else{    
+        // palette of disabled text input
+        QPalette *palette = new QPalette();
+        palette->setColor(QPalette::Base,Qt::gray);
+        palette->setColor(QPalette::Text,Qt::darkGray);
+        timewindowInput->setPalette(*palette);
 
+        m_xAxis->setMin(0.0);
+    }
+
+    timewindowInput->setReadOnly(!selected);
 }
 
 
-/* the function is internal 
-* it prints to a file a CSV formatted header 
-* for the data contained in the time serie
-* \return: 1 if everything went fine, 0 otherwise 
+/* _internal_ : the function prints to a given file a formatted header 
+* for the data contained in the time serie 
+* \return: 1 if everything was fine, 0 otherwise 
 */
 int print_header( QString name, int how_many,  FILE* flog){
     if (flog == nullptr)
@@ -119,7 +137,7 @@ int print_header( QString name, int how_many,  FILE* flog){
 * several CSV formatted rows, one for each data entry for time serie 
 * for a n values data the format of the row at time t_i is the following: 
 *  data_val_1_i, data_val_2_i, ... , data_val_n_i, time_i
-* \return: 1 if everything went fine, 0 otherwise 
+* \return: 1 if everything was fine, 0 otherwise 
 */
 int print_rows( QVector<QtCharts::QXYSeries*> series, FILE* flog){
     
@@ -136,8 +154,8 @@ int print_rows( QVector<QtCharts::QXYSeries*> series, FILE* flog){
             fprintf(flog, "%f,",p_val.ry());
         }
 
-        auto timestamp_val = series.at(0)->at(val);
-        // adding the time taken from the first element - we know is the same for all
+        // adding the timestamp taken from the serie - we know is the same for all
+        auto timestamp_val = series.at(0)->at(val);    
         fprintf(flog, "%f\n",timestamp_val.rx());
         val++;
     }
@@ -145,11 +163,10 @@ int print_rows( QVector<QtCharts::QXYSeries*> series, FILE* flog){
     return 1;
 }
 
-
 /* for each of the events and variable logged we might export a data file related to 
 * the plotting session time series. 
 * the function wold ask to the user to choose a filename and a location for the file to be saved
-*/
+* \return: none */
 void PlotTab::exportData() {
 
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -232,7 +249,7 @@ QStringList PlotTab::plottedVariables() const {
 */ 
 void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTime& timestamp) {
     // if the system is on pause the event is not recorded - is not showed - the plot does not proceed
-    if(pause)
+    if(pauseCb->isChecked())
         return;
     for(auto it = events.begin(); it != events.end(); ++it) {
         auto event = m_events.find(it.key());
@@ -242,18 +259,18 @@ void PlotTab::onEvents(const mobsya::ThymioNode::EventMap& events, const QDateTi
         plot(event.key(), v, event.value(), timestamp);
     }
 
-    //[2do] this 10 is wrong since we don t know if 10ms were passed
-    // from the previous rendering cycle
+    //[2do] this 10 is wrong since we don t know if 10ms were passed from the previous rendering cycle
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
+    if(timewindowCb->isChecked())
+        m_xAxis->setMin(qMax(m_xAxis->max() - timewindowInput->text().toDouble(),0.0));
 }
 
 /* The function updates the local data structures containing all events data
 * is called by the event callback system raised by ????
-* \return : none
-*/ 
+* \return: none */
 void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, const QDateTime& timestamp) {
     // if the system is on pause the variable is not recorded - is not showed - the plot does not proceed
-    if(pause)
+    if(pauseCb->isChecked())
         return;
     for(auto it = vars.begin(); it != vars.end(); ++it) {
         auto event = m_variables.find(it.key());
@@ -266,6 +283,8 @@ void PlotTab::onVariablesChanged(const mobsya::ThymioNode::VariableMap& vars, co
     //[2do] this 10 is wrong since we don t know if 10ms were passed
     // from the previous rendering cycle
     m_xAxis->setMax(m_start.msecsTo(timestamp) + 10);
+    if(timewindowCb->isChecked())
+        m_xAxis->setMin(qMax(m_xAxis->max() - timewindowInput->text().toDouble(),0.0));
 }
 
 void PlotTab::clearData( ){
@@ -285,7 +304,7 @@ void PlotTab::clearData( ){
     }
 
     m_start = QDateTime::currentDateTime();
-    m_xAxis->setMin(0);
+    m_xAxis->setMin(0.0);
 }
 
 

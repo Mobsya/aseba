@@ -37,8 +37,7 @@ private Q_SLOTS:
     void clearData();
     void exportData();
     void toggleTimeWindow(bool);
-    void togglePause(bool);
-
+    void changeTimewindow();
 
 private:
     void plot(const QString& name, const QVariant& value, QVector<QtCharts::QXYSeries*>& series,
@@ -48,22 +47,23 @@ private:
     QMap<QString, QVector<QtCharts::QXYSeries*>> m_variables;
 
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
+
+    //the chart element 
     QtCharts::QChart* m_chart;
     QtCharts::QValueAxis* m_xAxis;
     QtCharts::QValueAxis* m_yAxis;
     
+    // the interface panel
     QPushButton* reloadButton; 
     QPushButton* exportButton;
     QCheckBox *timewindowCb;
     QCheckBox *pauseCb;
-
+    QLineEdit *timewindowInput;
 
     QAction* reloadAct;
     QSpacerItem* spacer;
 
     bool m_range_init = false;
-    bool time_window_enabled = false;
-    bool pause = false;
 
     QDateTime m_start = QDateTime::currentDateTime();
 };
