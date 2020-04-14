@@ -94,78 +94,88 @@ void PlotTab::toggleTimeWindow(bool selected){
 
 }
 
-// for each of the events and variable logged we export a different data file
-// related to the plotting session
 
-void PlotTab::exportData() {
-    FILE* flog = fopen("/Users/vale/Projects/aseba/export.csv", "w+");
-//    fprintf(flog, "#!/bin/bash\ngdb --args %s ", cpg);
-    // fprintf(flog, "EXPORT \n");
-    // fflush(flog);
+/* the function is internal 
+* it prints to a file a CSV formatted header 
+* for the data contained in the time serie
+* \return: 1 if everything went fine, 0 otherwise 
+*/
+int print_header( QString name, int how_many,  FILE* flog){
+    if (flog == nullptr)
+        return 0;
+
+    // we first print the table heading with all the values        
+    for(int i = 0; i < how_many; i++){
+            //the event name and index if there are several
+            fprintf(flog, "\" %s[%d]\" ,",name.toStdString().c_str(),i);
+    }
+    //the last contained value would be the timenstamp
+    fprintf(flog, " \"timestamp\"\n ");
+    fflush(flog);
+    return 1;
+}
+
+/* _internal_ : the function prints to a given file 
+* several CSV formatted rows, one for each data entry for time serie 
+* for a n values data the format of the row at time t_i is the following: 
+*  data_val_1_i, data_val_2_i, ... , data_val_n_i, time_i
+* \return: 1 if everything went fine, 0 otherwise 
+*/
+int print_rows( QVector<QtCharts::QXYSeries*> series, FILE* flog){
     
-    // for each of the events and variable logged we export a different data file
-    // related to the plotting
-    std::vector<int> events_val;
-    std::vector<int> variables_val;
+    // we now save many row containing a value for each element in the serie 
+    // all the value has the same timestamp since all the elements are emitted 
+    // by the same emitter 
+    int val = 0;
+    int max_val = series.at(0)->count();
 
-    //we iterate on each of the several events plotted
+    while(val < max_val ){
+
+        for(int i = 0; i < series.count() ; i++){
+            auto p_val =  series.at(i)->at(val);
+            fprintf(flog, "%f,",p_val.ry());
+        }
+
+        auto timestamp_val = series.at(0)->at(val);
+        // adding the time taken from the first element - we know is the same for all
+        fprintf(flog, "%f\n",timestamp_val.rx());
+        val++;
+    }
+    fflush(flog);
+    return 1;
+}
+
+
+// for each of the events and variable logged we export a data file
+// related to the plotting session
+void PlotTab::exportData() {
+
+    FILE* flog = fopen("/Users/vale/Projects/aseba/export.csv", "w+");
+
+
+
+    //we iterate on each of the several events plotted if async
     for(auto it = m_events.begin(); it != m_events.end(); ++it) {
-
+        QString name = it.key();
         QVector<QtCharts::QXYSeries*> series = it.value();
         
-        // we first print the table heading with all the values        
-        for(int i = 0; i < series.count(); i++){
-                //the event name and index if there are several
-                fprintf(flog, " \" %s[%d] \" ,",it.key().toStdString().c_str(),i);
-        }
-        //the last contained value would be the timenstamp
-        fprintf(flog, " \"timestamp\"\n ");
-
-
-        // we now save a row containing a value for each element in the serie 
-        // all the value has the same timestamp since all the elements are emitted 
-        // by the same emitter
-
-        int val = 0;
-        int max_val = series.at(0)->count();
-
-        while(val < max_val ){
-
-            for(int i = 0; i < series.count() ; i++){
-                auto p_val =  series.at(i)->at(val);
-                fprintf(flog, "%f,",p_val.ry());
-            }
-
-            auto timestamp_val = series.at(0)->at(val);
-            // adding the time taken from the first element - we know is the same for all
-            fprintf(flog, "%f\n",timestamp_val.rx());
-            val++;
-        }
-
-
-        // for(int i = 0; i < series.count(); i++){
-
-
-        //     QtCharts::QXYSeries* serie = series.at(i);
-
-        //     for(int j = 0; j < serie->count(); j++){
-        //         auto p = serie->at(j);
-        //         fprintf(flog, "* %f - %f* ",p.ry(),p.rx());
-        //     }
-        // }
-        // // fprintf(flog, " \n ",it.key().toStdString().c_str());
+        if( print_header (name, series.count(), flog) <= 0 )
+            return ;
+        if( print_rows   (series, flog) <= 0 )
+            return ;
     }
 
+    //we iterate on each of the several variables plotted if any
     for(auto it = m_variables.begin(); it != m_variables.end(); ++it) {
-        fprintf(flog, " | %s | ",it.key().toStdString().c_str());
-    //     auto series = it.value();
-    //     for(auto it_s = series.begin(); it_s != series.end(); ++it_s) {
-    //         auto serie = *it_s;
-    //         serie->clear();
-    //     }
+        QString name = it.key();
+        QVector<QtCharts::QXYSeries*> series = it.value();
+        
+        if( print_header (name, series.count(), flog) <= 0 )
+            return ;
+        if( print_rows   (series, flog) <= 0 )
+            return ;
     }
 
-    fprintf(flog, "\n ");
     fclose(flog);
 }
 
