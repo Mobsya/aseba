@@ -146,13 +146,25 @@ int print_rows( QVector<QtCharts::QXYSeries*> series, FILE* flog){
 }
 
 
-// for each of the events and variable logged we export a data file
-// related to the plotting session
+/* for each of the events and variable logged we might export a data file related to 
+* the plotting session time series. 
+* the function wold ask to the user to choose a filename and a location for the file to be saved
+*/
 void PlotTab::exportData() {
 
-    FILE* flog = fopen("/Users/vale/Projects/aseba/export.csv", "w+");
-
-
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("Export to CSV file"), "",
+        tr("CSV Coma Separated Values (*.csv);;All Files (*)"));
+    
+    // if the user inserted no filename we would not save anything
+    if(fileName.isEmpty())
+        return;
+    
+    FILE* flog = fopen(fileName.toStdString().c_str(), "w+");    
+    
+    // if we didnt had enough permission to write this file or somehow the file write failed 
+    if(flog == NULL | flog == nullptr)
+        return;
 
     //we iterate on each of the several events plotted if async
     for(auto it = m_events.begin(); it != m_events.end(); ++it) {
@@ -177,6 +189,7 @@ void PlotTab::exportData() {
     }
 
     fclose(flog);
+    return;
 }
 
 void PlotTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
