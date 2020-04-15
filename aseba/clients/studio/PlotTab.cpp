@@ -11,9 +11,9 @@ namespace Aseba {
 */
 PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
 
-    auto layout = new QVBoxLayout;
-    auto topButtonsLayout = new QHBoxLayout;
-
+    QVBoxLayout* layout = new QVBoxLayout;
+    QHBoxLayout* topButtonsLayout = new QHBoxLayout;
+    
     reloadButton = new QPushButton();
     reloadButton->setIcon(QIcon(":/images/rescan.png"));
     reloadButton->setToolTip(tr("Reload"));
@@ -28,18 +28,23 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     topButtonsLayout->addWidget(exportButton);
 
     // --- time window ---
-    timewindowCb = new QCheckBox(tr("time window"), this);
+    timewindowCb = new QCheckBox(tr("time window (milliseconds)"), this);
     topButtonsLayout->addWidget(timewindowCb);
     
     timewindowInput = new QLineEdit("5000", this);
+    timewindowInput->setMaximumWidth(80);
+    timewindowInput->setFixedWidth(80);
     timewindowInput->setValidator( new QIntValidator(0, 100000, this));
 
-    QPalette *palette = new QPalette();
-    palette->setColor(QPalette::Base,Qt::gray);
-    palette->setColor(QPalette::Text,Qt::darkGray);
-    timewindowInput->setPalette(*palette);
+    defaultPalette= new QPalette(QApplication::palette( timewindowInput ));
+
+    darkpalette = new QPalette();
+    darkpalette->setColor(QPalette::Base,Qt::gray);
+    darkpalette->setColor(QPalette::Text,Qt::darkGray);
+    timewindowInput->setPalette(*darkpalette);
 
     topButtonsLayout->addWidget(timewindowInput);
+    topButtonsLayout->addStretch();
 
     pauseCb = new QCheckBox(tr("Pause"), this);;
     topButtonsLayout->addWidget(pauseCb);
@@ -56,6 +61,9 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     this->setLayout(layout);
 
     m_xAxis = new QValueAxis;
+    m_xAxis->applyNiceNumbers();
+    m_xAxis->setLabelFormat("%.0f");
+    m_xAxis->setTitleText("Timestamp (milliseconds)");    
     // m_xAxis->setFormat("hh::mm:ss.z");
     m_chart->addAxis(m_xAxis, Qt::AlignBottom);
 
@@ -91,22 +99,14 @@ void PlotTab::toggleTimeWindow(bool selected){
     //enabling the time window
     if(selected){
         // palette of enabled text input
-        QPalette *palette = new QPalette();
-        palette->setColor(QPalette::Base,QColor(41,41,41));
-        palette->setColor(QPalette::Text,Qt::white);
-        timewindowInput->setPalette(*palette);
-
+        timewindowInput->setPalette(*defaultPalette);
         m_xAxis->setMin( qMax(m_xAxis->max() - timewindowInput->text().toDouble(),0.0) );
     }
 
     // otherwise disabling
     else{    
         // palette of disabled text input
-        QPalette *palette = new QPalette();
-        palette->setColor(QPalette::Base,Qt::gray);
-        palette->setColor(QPalette::Text,Qt::darkGray);
-        timewindowInput->setPalette(*palette);
-
+        timewindowInput->setPalette(*darkpalette);
         m_xAxis->setMin(0.0);
     }
 

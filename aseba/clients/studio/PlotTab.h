@@ -59,6 +59,8 @@ private:
     QCheckBox *timewindowCb;
     QCheckBox *pauseCb;
     QLineEdit *timewindowInput;
+    QPalette *defaultPalette;
+    QPalette *darkpalette;
 
     QAction* reloadAct;
     QSpacerItem* spacer;
