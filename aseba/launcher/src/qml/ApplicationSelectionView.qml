@@ -16,12 +16,25 @@ Item {
         Column {
             anchors.fill: parent
             anchors.horizontalCenter: parent.horizontalCenter
+
+            SvgButton {
+                id:thymio_logo
+                anchors.horizontalCenter: parent.horizontalCenter
+                hoverEnabled: false
+                height: 55
+                width : 55
+                source: "qrc:/assets/logo.svg"
+            }
+
             Text {
                 id: titleText
                 anchors.horizontalCenter: parent.horizontalCenter
                 textFormat: Text.RichText
-                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to learn with Thymio</div>")
+                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to 
+                learn with Thymio</div>")
             }
+
+
 
             ListView {
                 width:parent.width
