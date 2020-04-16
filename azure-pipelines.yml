@@ -22,6 +22,8 @@ variables:
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
+- name: vpl3_url
+  value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
   value: "c4f0372c638831d8d524feb1039611852eca6512"
 
@@ -116,6 +118,7 @@ jobs:
             tar.close()
         extract('$(blockly_url)', 'thymio-blockly.tar.gz')
         extract('$(scratch_url)', 'scratch-gui.tar.gz')
+        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
@@ -165,6 +168,7 @@ jobs:
   - script: |
       wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
+      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
@@ -197,6 +201,7 @@ jobs:
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
+      curl -sL $(vpl3_url) | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
   - script: |
@@ -267,6 +272,7 @@ jobs:
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
+      curl -sL $(vpl3_url) | tar xzf - -C .
     displayName: 'Extract scratch and blockly'
 
     #we need 7z to extract qt so brew needs to run first

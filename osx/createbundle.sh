@@ -27,6 +27,9 @@ fi
 if [ -d "$BUILD_DIR/thymio_blockly" ]; then
     cp -R "$BUILD_DIR/thymio_blockly" "$DEST/Contents/Resources"
 fi
+if [ -d "$BUILD_DIR/vpl3-thymio-suite" ]; then
+    cp -R "$BUILD_DIR/vpl3-thymio-suite" "$DEST/Contents/Resources"
+fi
 
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"

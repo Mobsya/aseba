@@ -21,6 +21,8 @@
         <file>apps/blockly/blockly-animated-icon.webp</file>
         <file>apps/studio/studio-animated-icon.webp</file>
         <file>apps/vpl/vpl-animated-icon.webp</file>
+        <!-- replace in the future with animated one -->
+        <file>apps/vpl3/vpl_img.png</file>
         <file>main.cpp</file>
         <file>apps/scratch/scratch-animated-icon.webp</file>
         <file>qml/WindowButtons.qml</file>
@@ -49,6 +51,7 @@
         <file>apps/scratch/launcher-icon-scratch.svg</file>
         <file>apps/studio/launcher-icon-studio.svg</file>
         <file>apps/vpl/launcher-icon-vpl.svg</file>
+        <file>apps/vpl3/vpl_img.png</file>
         <file>apps/blockly/description.jpg</file>
         <file>apps/scratch/description.jpg</file>
         <file>apps/vpl/description.jpg</file>
