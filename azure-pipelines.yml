@@ -104,7 +104,7 @@ jobs:
     condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
     displayName: Fetch Qt
   - task: PythonScript@0
-    displayName: Fetch scratch and blockly
+    displayName: Fetch scratch, blockly and vpl3
     inputs:
       scriptSource: 'inline'
       script: |
@@ -169,7 +169,7 @@ jobs:
       wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
       wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
-    displayName: 'Extract scratch and blockly'
+    displayName: 'Extract scratch, blockly and vpl3'
 
   - script: |
       git submodule update --init --recursive
@@ -202,7 +202,7 @@ jobs:
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
       curl -sL $(vpl3_url) | tar xzf - -C .
-    displayName: 'Extract scratch and blockly'
+    displayName: 'Extract scratch, blockly and vpl3' 
 
   - script: |
       brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
@@ -273,7 +273,7 @@ jobs:
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
       curl -sL $(vpl3_url) | tar xzf - -C .
-    displayName: 'Extract scratch and blockly'
+    displayName: 'Extract scratch, blockly and vpl3'
 
     #we need 7z to extract qt so brew needs to run first
   - script: |

@@ -56,6 +56,8 @@
         <file>apps/scratch/description.jpg</file>
         <file>apps/vpl/description.jpg</file>
         <file>apps/vpl/desc.en.html</file>
+        <file>apps/vpl3/description.jpg</file>
+        <file>apps/vpl3/desc.en.html</file>
         <file>apps/blockly/desc.en.html</file>
         <file>apps/studio/desc.en.html</file>
         <file>apps/scratch/desc.en.html</file>
@@ -69,6 +71,8 @@
         <file>assets/launcher-icon-help-blue.svg</file>
         <file>apps/vpl/desc.fr.html</file>
         <file>apps/vpl/desc.it.html</file>
+        <file>apps/vpl3/desc.fr.html</file>
+        <file>apps/vpl3/desc.it.html</file>
         <file>apps/studio/desc.fr.html</file>
         <file>apps/studio/desc.it.html</file>
         <file>apps/scratch/desc.fr.html</file>
@@ -76,10 +80,12 @@
         <file>apps/blockly/desc.fr.html</file>
         <file>apps/blockly/desc.it.html</file>
         <file>apps/vpl/desc.de.html</file>
+        <file>apps/vpl3/desc.de.html</file>
         <file>apps/scratch/desc.de.html</file>
         <file>apps/blockly/desc.de.html</file>
         <file>apps/studio/desc.de.html</file>
 		<file>apps/vpl/desc.pl.html</file>
+        <file>apps/vpl3/desc.pl.html</file>
         <file>apps/scratch/desc.pl.html</file>
         <file>apps/blockly/desc.pl.html</file>
         <file>apps/studio/desc.pl.html</file>
