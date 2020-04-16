@@ -291,6 +291,7 @@ bool MainWindow::saveFile(const QString& previousFileName) {
     updateRecentFiles(fileName);
     regenerateOpenRecentMenu();
 
+    // --> from here on creation of the document  <--- 
     // initiate DOM tree
     QDomDocument document("aesl-source");
     QDomElement root = document.createElement("network");
@@ -347,6 +348,7 @@ bool MainWindow::saveFile(const QString& previousFileName) {
 
     QTextStream out(&file);
     document.save(out, 0);
+    // --> END creation of the document  <--- 
 
     updateWindowTitle();
 
