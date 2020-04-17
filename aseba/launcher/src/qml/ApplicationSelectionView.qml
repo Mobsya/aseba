@@ -17,13 +17,15 @@ Item {
             anchors.fill: parent
             anchors.horizontalCenter: parent.horizontalCenter
 
-            SvgButton {
+            Image {
                 id:thymio_logo
+                source: "qrc:/assets/logo.svg"
                 anchors.horizontalCenter: parent.horizontalCenter
-                hoverEnabled: false
                 height: 55
                 width : 55
-                source: "qrc:/assets/logo.svg"
+                antialiasing: true
+                smooth:true
+                
             }
 
             Text {

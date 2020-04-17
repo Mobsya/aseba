@@ -7,7 +7,7 @@ Item {
     property bool selectable: updateSelectable()
     property double progress
 
-     Component.onCompleted: {
+    Component.onCompleted: {
         device.groupChanged.connect(updateSelectable);
         device.statusChanged.connect(updateSelectable);
 
@@ -16,7 +16,8 @@ Item {
         })
 
         launcher.selectedAppChanged.connect(updateSelectable);
-     }
+    }
+
 
     function isThymio(device) {
         return device.type === ThymioNode.Thymio2
@@ -264,10 +265,15 @@ Item {
                 width: parent.width
                 height: 40
                 deviceName: name
+                wrapMode: Text.WordWrap
+                
                 onAccepted: {
+                    
                     device.name = text
                     text = deviceName
+
                 }
+
             }
 
             Item {
