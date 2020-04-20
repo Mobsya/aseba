@@ -22,7 +22,7 @@
         <file>apps/studio/studio-animated-icon.webp</file>
         <file>apps/vpl/vpl-animated-icon.webp</file>
         <!-- replace in the future with animated one -->
-        <file>apps/vpl3/vpl_img.png</file>
+        <file>apps/vpl3/vpl3-animated-icon.webp</file>
         <file>main.cpp</file>
         <file>apps/scratch/scratch-animated-icon.webp</file>
         <file>qml/WindowButtons.qml</file>

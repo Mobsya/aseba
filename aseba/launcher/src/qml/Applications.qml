@@ -51,7 +51,7 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        const url = "%1/index.html?robot=thymio-tdm&role=student#uuid=%2&ws=%3"
+        const url = "%1/index.html?robot=thymio-tdm&role=teacher#uuid=%2&ws=%3"
             .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
@@ -94,7 +94,7 @@ ListModel {
                 {
                     appId:"vpl3",
                     name: "VPL 3",
-                    animatedIcon:"qrc:/apps/vpl3/vpl_img.png",
+                    animatedIcon:"qrc:/apps/vpl3/vpl3-animated-icon.webp",
                     icon: "qrc:/apps/vpl3/vpl_img.png",
                     descriptionImage: "qrc:/apps/vpl3/description.jpg",
                     descriptionTextFile: "qrc:/apps/vpl3/desc.%1.html",
