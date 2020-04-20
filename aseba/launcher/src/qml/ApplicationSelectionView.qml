@@ -19,7 +19,7 @@ Item {
 
             Image {
                 id:thymio_logo
-                source: "qrc:/assets/logo.svg"
+                source: "qrc:/assets/logo-thymio.svg"
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 55
                 width : 55
