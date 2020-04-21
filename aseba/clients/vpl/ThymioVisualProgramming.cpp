@@ -1070,6 +1070,11 @@ namespace ThymioVPL {
         qreal testScale(computeScale(event, desiredIconSize));
         desiredIconSize = qMin(desiredIconSize, int(256. * testScale));
         desiredIconSize = qMin(desiredIconSize, event->size().height() / 14);
+        // setting a min width (and height) while resizing the buttons in the editor toolbox
+        int min_width = 20;
+        desiredIconSize = qMax(desiredIconSize, min_width);
+
+      
         const qreal scale(computeScale(event, desiredIconSize));
 
         // set toolbar
