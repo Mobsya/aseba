@@ -19,7 +19,6 @@ Item {
 
             Image {
                 id:thymio_logo
-
                 source: "qrc:/assets/logo-thymio.svg"
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 73
