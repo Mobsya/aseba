@@ -30,6 +30,7 @@
         <file>qml/SvgButton.qml</file>
         <file>assets/info-icon.svg</file>
         <file>assets/thymio.svg</file>
+        <file>assets/logo.svg</file>
         <file>assets/simulated_thymio.svg</file>
         <file>assets/battery_full.svg</file>
         <file>assets/battery_mid.svg</file>
