@@ -11,7 +11,7 @@
         <location filename="../qml/ApplicationSelectionView.qml" line="35"/>
         <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
                 learn with Thymio&lt;/div&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="108"/>
@@ -166,7 +166,7 @@ Connect the robot with an usb cable to install it</source>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="252"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Assicuratevi che la Thymio Suite sia lanciata su un computer a relè. &lt;a href=&apos;https://www.thymio.org/it/faq/come-programmare-un-thymio-con-una-tablet/&apos;&gt;Altre informazioni&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>

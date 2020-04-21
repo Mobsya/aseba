@@ -1330,17 +1330,17 @@ Ereignis %0: </translation>
     <message>
         <location line="-447"/>
         <source>Aseba Studio - File Exception</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseba Studio - Datei-Ausnahme</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file &quot;%0&quot; is not present anymore in the location.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Datei &quot;%0&quot; ist am Speicherort nicht mehr vorhanden.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to delete it from the list?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wollen Sie sie von der Liste streichen?</translation>
     </message>
     <message>
         <location line="+454"/>
@@ -1641,22 +1641,22 @@ Ereignis %0: </translation>
     <message>
         <location line="+6"/>
         <source>Export Data to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten in eine CSV-Datei exportieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten exportieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>time window (milliseconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitfenster (Millisekunden)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pause</source>
-        <translation type="unfinished">Pause</translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1666,12 +1666,12 @@ Ereignis %0: </translation>
     <message>
         <location line="+101"/>
         <source>Export to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>In CSV-Datei exportieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">CSV Koma-getrennte Daten (*.csv);;Alle Dateien (*)</translation>
     </message>
 </context>
 <context>
