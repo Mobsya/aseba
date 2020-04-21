@@ -20,27 +20,21 @@ TextField {
     selectionColor: "#0a9eeb"
     readOnly: true
     maximumLength: 20
-    wrapMode: Text.WordWrap
 
     FontMetrics {
         id: fontMetrics
         font: parent.font
     }
 
-    TextMetrics {
-        id: textMetrics
-        font: parent.font
-        text: deviceName
-    }
-
     onTextChanged: {
         font.pointSize = 12
-        FontMetrics.font = font
+        fontMetrics.font = font
         while(fontMetrics.boundingRect(text).width >= width - 10) {
             font.pointSize = font.pointSize - 0.1
             fontMetrics.font = font
             if(font.pointSize < 5)
                 break
+
         }
     }
 
