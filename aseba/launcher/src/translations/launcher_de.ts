@@ -4,12 +4,17 @@
 <context>
     <name>ApplicationSelectionView</name>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="23"/>
         <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to learn with Thymio&lt;/div&gt;</source>
-        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Willkommen bei Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Wählen Sie Ihre Programmiersprache, um mit Thymio zu lernen&lt;/div&gt;</translation>
+        <translation type="vanished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Willkommen bei Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Wählen Sie Ihre Programmiersprache, um mit Thymio zu lernen&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
+        <location filename="../qml/ApplicationSelectionView.qml" line="35"/>
+        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
+                learn with Thymio&lt;/div&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ApplicationSelectionView.qml" line="108"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
         <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</translation>
     </message>
@@ -163,8 +168,12 @@ Verbinden Sie den Roboter mit einem USB-Kabel, um diese zu installieren</transla
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="252"/>
+        <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
-        <translation>Stellen Sie sicher, dass Thymio Suite auf einem Relais-Computer gestartet wird. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;Weitere Informationen&lt;/a&gt;</translation>
+        <translation type="vanished">Stellen Sie sicher, dass Thymio Suite auf einem Relais-Computer gestartet wird. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;Weitere Informationen&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="343"/>

@@ -649,7 +649,7 @@ Occurrences</source>
         <translation type="vanished">Über Aseba Studio</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+110"/>
+        <location filename="../../studio/MainWindow.cpp" line="+122"/>
         <source>Open Script</source>
         <translation>Skript öffnen</translation>
     </message>
@@ -670,7 +670,7 @@ Occurrences</source>
         <translation type="vanished">Fehler in XML-Dokument: %0 in Zeile %1, Spalte %2</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Skript speichern</translation>
     </message>
@@ -701,7 +701,7 @@ Occurrences</source>
         <translation type="vanished">Inhalt wurde nicht importiert</translation>
     </message>
     <message>
-        <location line="+161"/>
+        <location line="+164"/>
         <source>Go To Line</source>
         <translation>Gehe zu Zeile</translation>
     </message>
@@ -866,7 +866,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Löschen</translation>
     </message>
     <message>
-        <location line="+289"/>
+        <location line="+308"/>
         <source>...inside %0</source>
         <translation>...in %0</translation>
     </message>
@@ -1291,7 +1291,7 @@ Ereignis %0: </translation>
         <translation>&amp;Versteckte Variabeln und Funktionen anzeigen</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-722"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren.</translation>
     </message>
@@ -1306,7 +1306,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Schlüssel&amp;wörter zeigen</translation>
     </message>
     <message>
-        <location line="+726"/>
+        <location line="+806"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
@@ -1328,7 +1328,22 @@ Ereignis %0: </translation>
         <translation type="obsolete">&amp;Studio...</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-447"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+454"/>
         <source>&amp;About...</source>
         <translation>Ü&amp;ber...</translation>
     </message>
@@ -1361,7 +1376,7 @@ Ereignis %0: </translation>
         <translation>F8</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Unbenannt</translation>
@@ -1618,15 +1633,45 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
         <location line="+1"/>
         <source>Reload</source>
         <translation>Neu laden</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation type="unfinished">Pause</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Values</source>
         <translation>Werte</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
