@@ -1569,7 +1569,12 @@ event %0 : </source>
         <translation>Pausa</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation>Timestamp (millisecondi)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation>Valori</translation>
     </message>

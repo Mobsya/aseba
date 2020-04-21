@@ -1659,7 +1659,12 @@ Ereignis %0: </translation>
         <translation>Pause</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation>Zeitstempel (Millisekunden)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation>Werte</translation>
     </message>

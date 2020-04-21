@@ -1458,7 +1458,12 @@ event %0 : </source>
         <translation type="unfinished">暂停</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">值</translation>
     </message>

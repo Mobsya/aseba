@@ -1438,7 +1438,12 @@ event %0 : </source>
         <translation type="unfinished">一時停止</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">値</translation>
     </message>

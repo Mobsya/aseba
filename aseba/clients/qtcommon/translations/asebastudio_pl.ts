@@ -1050,6 +1050,11 @@ Znalezione</translation>
         <translation type="unfinished">Wstrzymaj</translation>
     </message>
     <message>
+        <location filename="../../studio/PlotTab.cpp" line="66"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../studio/PlotTab.cpp" line="72"/>
         <source>Values</source>
         <translation>Wartości</translation>
