@@ -80,14 +80,14 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20200213.1/thymio-blockly.tar.gz",
-                    "sha256": "c9b0b31c16134064c86ef8227d99d6a8ee548729d0d8487853c7afadf68aea23",
+                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20200416.2/thymio-blockly.tar.gz",
+                    "sha256": "2bf1f110c421ba4fb66c8eab60126d5b87acb06e042234735dc4c38deaf037cf",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200326.1/scratch-gui.tar.gz",
-                    "sha256": "2c323ef44a60be7a99637d9266696dfcb1ab2474a3baa37d83155bcae55ebe9b",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200420.1/scratch-gui.tar.gz",
+                    "sha256": "ff20c92ab428bf4860f0e21eec8300e2a6e2b3797ea537f75ce26a1445d213ac",
                     "strip-components": 0
                 }
             ],
