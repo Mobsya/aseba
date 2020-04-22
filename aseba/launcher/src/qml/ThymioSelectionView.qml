@@ -232,6 +232,7 @@ Item {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
                     onLinkActivated: Utils.launchPlayground()
+					cursorShape: Qt.PointingHandCursor
                     wrapMode: Text.WordWrap
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
