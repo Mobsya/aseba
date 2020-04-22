@@ -18,7 +18,6 @@ Item {
         launcher.selectedAppChanged.connect(updateSelectable);
     }
 
-
     function isThymio(device) {
         return device.type === ThymioNode.Thymio2
                 || device.type === ThymioNode.Thymio2Wireless
@@ -271,9 +270,7 @@ Item {
                     
                     device.name = text
                     text = deviceName
-
                 }
-
             }
 
             Item {
