@@ -232,6 +232,11 @@ Item {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
                     onLinkActivated: Utils.launchPlayground()
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    }
                     wrapMode: Text.WordWrap
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
