@@ -623,7 +623,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Informazioni sulla versione:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Versione %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(tipi di flusso supportati: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2013 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; e altri collaboratori.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba è open-source con licenza LGPL versione 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+535"/>
+        <location filename="../../studio/MainWindow.cpp" line="+615"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/it:start</translation>
     </message>
@@ -632,7 +632,7 @@ Occurrences</source>
         <translation type="vanished">Riguardo Aseba Studio</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-493"/>
         <source>Open Script</source>
         <translation>Apri Script</translation>
     </message>
@@ -653,12 +653,12 @@ Occurrences</source>
         <translation type="vanished">Errore nel file sorgente XML %0 alla linea %1, colonna %2</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Salva script</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Export memory content</source>
         <translation>Esporta contenuto memoria</translation>
     </message>
@@ -831,7 +831,7 @@ event %0 : </source>
         <translation type="vanished">Pulisci</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+229"/>
         <source>...inside %0</source>
         <translation>...dentro %0</translation>
     </message>
@@ -1128,7 +1128,7 @@ event %0 : </source>
         <translation type="obsolete">F11</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-722"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio è un ambiente per la programmazione interattiva di robot utilizzando un linguaggio di testo.</translation>
     </message>
@@ -1138,7 +1138,22 @@ event %0 : </source>
         <translation>https://www.thymio.org/it:asebastudio</translation>
     </message>
     <message>
-        <location line="+603"/>
+        <location line="+109"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation>Aseba Studio - Eccezione di file</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation>Il file &quot;%0&quot; non è più presente nella cartella.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation>Volete cancellarlo dalla lista?</translation>
+    </message>
+    <message>
+        <location line="+572"/>
         <source>&amp;Go To Line...</source>
         <translation>Vai alla &amp;linea...</translation>
     </message>
@@ -1280,7 +1295,7 @@ event %0 : </source>
         <translation>&amp;Aiuto</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Senza titolo</translation>
@@ -1528,15 +1543,50 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
         <location line="+1"/>
         <source>Reload</source>
         <translation>Ricarica</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation>Esportazione dei dati in un file CSV</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation>Esportare i dati</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation>finestra temporale (millisecondi)</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation>Pausa</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation>Timestamp (millisecondi)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation>Valori</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation>Esportazione in file CSV</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished">Valori CSV Coma Separati (*.csv);;Tutti i file (*)</translation>
     </message>
 </context>
 <context>
