@@ -32,7 +32,7 @@ TextField {
     onTextChanged: {
         font.pointSize = 12
         fontMetrics.font = font
-        while(fontMetrics.boundingRect(text).width >= width - 12) {
+        while(fontMetrics.boundingRect(text).width >= width - 10) {
             font.pointSize = font.pointSize - 0.1
             fontMetrics.font = font
             if(font.pointSize < 5)

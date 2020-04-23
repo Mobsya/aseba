@@ -255,7 +255,7 @@ Item {
             }
             Item {
                 width: parent.width
-                height: 10
+                height: 15
             }
             EditableDeviceNameInput {
                 opacity: preferredOpacity
