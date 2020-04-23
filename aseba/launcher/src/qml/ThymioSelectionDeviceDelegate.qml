@@ -255,16 +255,16 @@ Item {
             }
             Item {
                 width: parent.width
-                height: 15
+                height: 10
             }
             EditableDeviceNameInput {
                 opacity: preferredOpacity
                 id: textfield
                 editable: capabilities & ThymioNode.Rename
                 width: parent.width
-                height: 45
+                height: 48
                 deviceName: name
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAnywhere
                 
                 onAccepted: {
                     
