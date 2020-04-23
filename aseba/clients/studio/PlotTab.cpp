@@ -64,7 +64,6 @@ PlotTab::PlotTab(QWidget* parent) : QWidget(parent) {
     m_xAxis->applyNiceNumbers();
     m_xAxis->setLabelFormat("%.0f");
     m_xAxis->setTitleText(tr("Timestamp (milliseconds)"));    
-
     // m_xAxis->setFormat("hh::mm:ss.z");
     m_chart->addAxis(m_xAxis, Qt::AlignBottom);
 
