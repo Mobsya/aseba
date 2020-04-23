@@ -28,11 +28,6 @@ TextField {
         font: parent.font
     }
 
-    TextMetrics {
-        id: textMetrics
-        font: parent.font
-        text: deviceName
-    }
 
     onTextChanged: {
         font.pointSize = 12
