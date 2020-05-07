@@ -15,9 +15,9 @@ trigger:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20200416.2"
+  value: "v20200506.1"
 - name: scratch_version
-  value: "v20200420.1"
+  value: "v20200505.1"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
