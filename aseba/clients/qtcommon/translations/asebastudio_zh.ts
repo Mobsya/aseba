@@ -598,7 +598,7 @@ Occurrences</source>
         <translation type="vanished">&lt;h1&gt;关于Aseba&lt;/h1&gt;版本信息&lt;ul&gt;&lt;li&gt;Aseba版本: %0&lt;br/&gt;(build版本. %1/协议版本. %2)&lt;/li&gt;&lt;li&gt;Dashel版本. %3&lt;br/&gt;(支持的数据流类型: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;更多资料 &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; 以及其他参与者 (click &quot;Show details&quot; for full list)&lt;/p&gt;&lt;p&gt;Aseb为开源项目,许可证 &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL版本 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+535"/>
+        <location filename="../../studio/MainWindow.cpp" line="+615"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -607,7 +607,7 @@ Occurrences</source>
         <translation type="vanished">关于Aseba Studio</translation>
     </message>
     <message>
-        <location line="-478"/>
+        <location line="-558"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境</translation>
     </message>
@@ -617,7 +617,7 @@ Occurrences</source>
         <translation>https://www.thymio.org/zh:asebastudio</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+63"/>
         <source>Open Script</source>
         <translation>打开脚本</translation>
     </message>
@@ -638,12 +638,12 @@ Occurrences</source>
         <translation type="vanished">XML源代码错误:%0在第%1行,第%2列</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>保存脚本</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Export memory content</source>
         <translation>输出变量</translation>
     </message>
@@ -803,7 +803,7 @@ event %0 : </source>
         <translation type="vanished">清除</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+229"/>
         <source>...inside %0</source>
         <translation>...在节点%0内</translation>
     </message>
@@ -831,7 +831,22 @@ event %0 : </source>
         <translation type="vanished">用户手册(&amp;U)...</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-440"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+444"/>
         <source>Web site Aseba...</source>
         <translation>Aseba网站...</translation>
     </message>
@@ -1169,7 +1184,7 @@ event %0 : </source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>未命名</translation>
@@ -1417,15 +1432,50 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
         <location line="+1"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation type="unfinished">暂停</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">值</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

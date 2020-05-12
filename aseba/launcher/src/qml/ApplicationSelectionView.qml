@@ -16,12 +16,27 @@ Item {
         Column {
             anchors.fill: parent
             anchors.horizontalCenter: parent.horizontalCenter
+
+            Image {
+                id:thymio_logo
+                source: "qrc:/assets/logo-thymio.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: 73
+                width : 206
+                antialiasing: true
+                smooth:true
+                
+            }
+
             Text {
                 id: titleText
                 anchors.horizontalCenter: parent.horizontalCenter
                 textFormat: Text.RichText
-                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to learn with Thymio</div>")
+                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to 
+                learn with Thymio</div>")
             }
+
+
 
             ListView {
                 width:parent.width
