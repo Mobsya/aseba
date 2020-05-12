@@ -644,7 +644,7 @@ les occ&amp;urences</translation>
         <translation type="vanished">A propos d&apos;Aseba Studio</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+110"/>
+        <location filename="../../studio/MainWindow.cpp" line="+122"/>
         <source>Open Script</source>
         <translation>Ouvrir le scripte</translation>
     </message>
@@ -657,7 +657,7 @@ les occ&amp;urences</translation>
         <translation type="vanished">%0 scriptes n&apos;ont pas de noeuds correspondants dans le réseau actuel et n&apos;ont donc pas été chargés.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Sauvegarder le scripte</translation>
     </message>
@@ -680,7 +680,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;b&gt;Événements&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+460"/>
+        <location line="+482"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -747,7 +747,7 @@ event %0 : </source>
         <translation type="vanished">Une partie du contenu n&apos;a pas été importé</translation>
     </message>
     <message>
-        <location line="-308"/>
+        <location line="-327"/>
         <source>Go To Line</source>
         <translation>Aller à la ligne</translation>
     </message>
@@ -769,7 +769,7 @@ event %0 : </source>
         <translation type="obsolete">Aide d&apos;Aseba Studio: Studio</translation>
     </message>
     <message>
-        <location line="+259"/>
+        <location line="+278"/>
         <source>Thymio programming tutorial...</source>
         <translation>Didacticiel de programmation Thymio...</translation>
     </message>
@@ -804,7 +804,7 @@ event %0 : </source>
         <translation>Site web d&apos;Aseba...</translation>
     </message>
     <message>
-        <location line="-477"/>
+        <location line="-557"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio est un environnement pour programmer des robots interactivement avec un langage texte.</translation>
     </message>
@@ -814,7 +814,22 @@ event %0 : </source>
         <translation>https://www.thymio.org/fr:asebastudio</translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+109"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation>Aseba Studio - Exception de fichier</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation>Le fichier &quot;%0&quot; n&apos;est plus présent dans le dossier.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation>Souhaitez-vous le supprimer de la liste ?</translation>
+    </message>
+    <message>
+        <location line="+445"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/fr:start</translation>
     </message>
@@ -1287,7 +1302,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;p&gt;Aseba pre-version:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba SVN rev. %0 / protocole ver. %1&lt;/li&gt;&lt;li&gt;Dashel ver. </translation>
     </message>
     <message>
-        <location line="-499"/>
+        <location line="-518"/>
         <source>Export memory content</source>
         <translation>Exporter le contenu de la mémoire</translation>
     </message>
@@ -1316,7 +1331,7 @@ event %0 : </source>
         <translation type="obsolete">Ne peut pas ouvrir le fichier d&apos;aide.</translation>
     </message>
     <message>
-        <location line="+289"/>
+        <location line="+308"/>
         <source>...inside %0</source>
         <translation>...dans %0</translation>
     </message>
@@ -1389,7 +1404,7 @@ event %0 : </source>
         <translation type="obsolete">&amp;Langage</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+26"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Sans nom</translation>
@@ -1650,15 +1665,50 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
         <location line="+1"/>
         <source>Reload</source>
         <translation>Recharger</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation>Exporter les données vers un fichier CSV</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation>Exporter les données</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation>fenêtre temporelle (millisecondes)</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation>Temps (millisecondes)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation>Valeurs</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation>Exportation en fichier CSV</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished">CSV Coma Separated Values (*.csv);;All Files (*)</translation>
     </message>
 </context>
 <context>

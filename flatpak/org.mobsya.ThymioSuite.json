@@ -11,7 +11,8 @@
         "--share=ipc",
         "--system-talk-name=org.freedesktop.Avahi",
         "--talk-name=org.kde.StatusNotifierWatcher",
-        "--env=TMPDIR=/var/tmp"
+        "--env=TMPDIR=/var/tmp",
+		"--filesystem=home"
     ],
     "command": "thymio-launcher",
     "modules": [
@@ -80,14 +81,14 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20200416.2/thymio-blockly.tar.gz",
-                    "sha256": "2bf1f110c421ba4fb66c8eab60126d5b87acb06e042234735dc4c38deaf037cf",
+                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20200506.1/thymio-blockly.tar.gz",
+                    "sha256": "5db96b19e40b2e771c96aff9fb10b6d41106f889a3e0f78ea63fd58340b6068b",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200326.1/scratch-gui.tar.gz",
-                    "sha256": "2c323ef44a60be7a99637d9266696dfcb1ab2474a3baa37d83155bcae55ebe9b",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200505.1/scratch-gui.tar.gz",
+                    "sha256": "3a08716ef8d05c25b9997f719c56e107ec9a39f75067bb4f385040b597d564fe",
                     "strip-components": 0
                 }
             ],

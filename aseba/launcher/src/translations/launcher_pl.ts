@@ -4,12 +4,17 @@
 <context>
     <name>ApplicationSelectionView</name>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="23"/>
         <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to learn with Thymio&lt;/div&gt;</source>
-        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Witamy w pakiecie Thymio&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Wybierz Twój język programowania aby rozpocząć naukę z Thymio&lt;/div&gt;</translation>
+        <translation type="vanished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Witamy w pakiecie Thymio&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Wybierz Twój język programowania aby rozpocząć naukę z Thymio&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="93"/>
+        <location filename="../qml/ApplicationSelectionView.qml" line="35"/>
+        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
+                learn with Thymio&lt;/div&gt;</source>
+        <translation type="unfinished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Witamy w Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Wybierz język programowania aby rozpocząć naukę z Thymio&lt;/div&gt;</translation>
+    </message>
+    <message>
+        <location filename="../qml/ApplicationSelectionView.qml" line="108"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
         <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</translation>
     </message>
@@ -103,7 +108,7 @@ Do not unplug the device while the update is in progress.</source>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="143"/>
         <source>This device is not compatible with %1</source>
-        <translation type="unfinished">Tego urządzenia nie jest kompatybilne z %1</translation>
+        <translation type="unfinished">To urządzenie nie jest kompatybilne z %1</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="146"/>
@@ -154,8 +159,12 @@ Connect the robot with a usb cable to install it</source>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="252"/>
+        <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
+        <translation type="unfinished">Upewnij się że Thymio Suite jest uruchomione na komputerze z nadajnikiem. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</translation>
+    </message>
+    <message>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
-        <translation type="unfinished">Upewnij się, że pakiet Thymio Suite jest uruchamiany na komputerze przekaźnikowym. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt; Więcej informacji&lt;/a&gt;</translation>
+        <translation type="obsolete">Upewnij się, że pakiet Thymio Suite jest uruchamiany na komputerze przekaźnikowym. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt; Więcej informacji&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="343"/>

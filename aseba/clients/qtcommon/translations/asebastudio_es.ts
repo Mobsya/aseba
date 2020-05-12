@@ -634,7 +634,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Información de la versión Aseba:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2012 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;StÃ©phane Magnenat&lt;/a&gt; and other contributors.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba is open-source licensed under the LGPL version 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+535"/>
+        <location filename="../../studio/MainWindow.cpp" line="+615"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -643,7 +643,7 @@ Occurrences</source>
         <translation type="vanished">Acerca de Aseba Studio</translation>
     </message>
     <message>
-        <location line="-478"/>
+        <location line="-558"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio es un entorno para la programación interactiva de robots con un lenguaje de texto.</translation>
     </message>
@@ -653,7 +653,7 @@ Occurrences</source>
         <translation>https://www.thymio.org/es:asebastudio</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+63"/>
         <source>Open Script</source>
         <translation>Abrir script</translation>
     </message>
@@ -674,12 +674,12 @@ Occurrences</source>
         <translation type="vanished">Error en archivo fuente XML: %0, línea %1, columna %2</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Guardar Script</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Export memory content</source>
         <translation>Exportar el contenido de la memoria</translation>
     </message>
@@ -852,7 +852,7 @@ evento %0 : </translation>
         <translation type="vanished">Limpiar</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+229"/>
         <source>...inside %0</source>
         <translation>...dentro de %0</translation>
     </message>
@@ -885,7 +885,22 @@ evento %0 : </translation>
         <translation type="obsolete">F1</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-440"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+444"/>
         <source>Web site Aseba...</source>
         <translation>Sitio web Aseba...</translation>
     </message>
@@ -1303,7 +1318,7 @@ evento %0 : </translation>
         <translation>Ay&amp;uda</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Sin nombre</translation>
@@ -1557,15 +1572,50 @@ evento %0 : </translation>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+15"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
         <location line="+1"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation type="unfinished">Pausa</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">Valores</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
