@@ -227,4 +227,8 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_blockly/index.html)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/thymio_blockly/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}thymio_blockly")
 endif()
+if(EXISTS ${PROJECT_SOURCE_DIR}/vpl3-thymio-suite/index.html)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/vpl3-thymio-suite/ DESTINATION "${MOBSYA_WEBAPPS_ROOT_DIR}vpl3-thymio-suite")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/vpl3-thymio-suite/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${MOBSYA_WEBAPPS_ROOT_DIR}vpl3-thymio-suite")
+endif()
 endif() #NOT IOS

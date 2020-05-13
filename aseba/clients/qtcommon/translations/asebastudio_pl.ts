@@ -467,17 +467,17 @@ Znalezione</translation>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="238"/>
         <source>Aseba Studio - File Exception</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aseba Studio - wyjątek pliku</translation>
     </message>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="239"/>
         <source>The file &quot;%0&quot; is not present anymore in the location.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plik &quot;%0&quot; nie jest już dostępny w lokalizacji.</translation>
     </message>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="240"/>
         <source>Do you want to delete it from the list?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Czy chcesz usunąć to z tej listy?</translation>
     </message>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="275"/>
@@ -1027,22 +1027,22 @@ Znalezione</translation>
         <location filename="../../studio/PlotTab.cpp" line="19"/>
         <location filename="../../studio/PlotTab.cpp" line="20"/>
         <source>Reload</source>
-        <translation type="unfinished">Przeładunek</translation>
+        <translation type="unfinished">Przeładuj</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="26"/>
         <source>Export Data to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eksportuj dane do pliku CSV</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="27"/>
         <source>Export Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eksportuj dane</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="31"/>
         <source>time window (milliseconds)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">okno zegara (millisekundy)</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="49"/>
@@ -1052,7 +1052,7 @@ Znalezione</translation>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="66"/>
         <source>Timestamp (milliseconds)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Znacznik czasu (milisekundy)</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="72"/>
@@ -1062,12 +1062,12 @@ Znalezione</translation>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="173"/>
         <source>Export to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eksport do CSV</translation>
     </message>
     <message>
         <location filename="../../studio/PlotTab.cpp" line="174"/>
         <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wartości CSV oddzielone separatorami(*.csv);;Wszystkie pliki (*)</translation>
     </message>
 </context>
 <context>
