@@ -578,7 +578,7 @@ Occurrences</source>
         <translation>https://www.thymio.org/en:asebastudio</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+63"/>
         <source>Open Script</source>
         <translation>Açık Komut Dosyası</translation>
     </message>
@@ -599,12 +599,12 @@ Occurrences</source>
         <translation type="vanished">XML kaynak dosyasındaki hata: %0 %1 satırda, %2 sütunda</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Kaynak Dosyasını Kaydet</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Export memory content</source>
         <translation>Bellek içeriğini dışa aktar</translation>
     </message>
@@ -774,7 +774,7 @@ event %0 : </source>
         <translation type="vanished">Temizle</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+229"/>
         <source>...inside %0</source>
         <translation>...içinde %0</translation>
     </message>
@@ -802,7 +802,22 @@ event %0 : </source>
         <translation type="vanished">&amp;Kullanıcı El Kitabı</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-440"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+444"/>
         <source>Web site Aseba...</source>
         <translation>İnternet sitesi Aseba...</translation>
     </message>
@@ -1190,7 +1205,7 @@ event %0 : </source>
         <translation>&amp;Kaydet</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Adsız</translation>
@@ -1285,7 +1300,7 @@ event %0 : </source>
         <translation type="vanished">Sıfırla</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
@@ -1436,7 +1451,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1444,9 +1459,50 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation type="unfinished">Durdur</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">Değerler</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1726,7 +1782,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Eylemler</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Thymio robotunun Görsel Programlama Dili (VPL), olay ve eylem bloklarını ilişkilendirerek programlamaya izin verir.</translation>
     </message>
@@ -1780,7 +1836,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Bu dosya, ThymioVPL sürümü ile uyumlu değil. Düzgün çalışmayabilir.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>Lütfen bir etkinlik ekleyin</translation>
     </message>
@@ -1821,7 +1877,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished"></translation>
     </message>

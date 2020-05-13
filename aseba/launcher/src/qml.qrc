@@ -21,6 +21,8 @@
         <file>apps/blockly/blockly-animated-icon.webp</file>
         <file>apps/studio/studio-animated-icon.webp</file>
         <file>apps/vpl/vpl-animated-icon.webp</file>
+        <!-- replace in the future with animated one -->
+        <file>apps/vpl3/vpl3-animated-icon.webp</file>
         <file>main.cpp</file>
         <file>apps/scratch/scratch-animated-icon.webp</file>
         <file>qml/WindowButtons.qml</file>
@@ -30,6 +32,7 @@
         <file>qml/SvgButton.qml</file>
         <file>assets/info-icon.svg</file>
         <file>assets/thymio.svg</file>
+        <file>assets/logo-thymio.svg</file>
         <file>assets/simulated_thymio.svg</file>
         <file>assets/battery_full.svg</file>
         <file>assets/battery_mid.svg</file>
@@ -49,10 +52,13 @@
         <file>apps/scratch/launcher-icon-scratch.svg</file>
         <file>apps/studio/launcher-icon-studio.svg</file>
         <file>apps/vpl/launcher-icon-vpl.svg</file>
+        <file>apps/vpl3/vpl_img.png</file>
         <file>apps/blockly/description.jpg</file>
         <file>apps/scratch/description.jpg</file>
         <file>apps/vpl/description.jpg</file>
         <file>apps/vpl/desc.en.html</file>
+        <file>apps/vpl3/description.jpg</file>
+        <file>apps/vpl3/desc.en.html</file>
         <file>apps/blockly/desc.en.html</file>
         <file>apps/studio/desc.en.html</file>
         <file>apps/scratch/desc.en.html</file>
@@ -66,6 +72,8 @@
         <file>assets/launcher-icon-help-blue.svg</file>
         <file>apps/vpl/desc.fr.html</file>
         <file>apps/vpl/desc.it.html</file>
+        <file>apps/vpl3/desc.fr.html</file>
+        <file>apps/vpl3/desc.it.html</file>
         <file>apps/studio/desc.fr.html</file>
         <file>apps/studio/desc.it.html</file>
         <file>apps/scratch/desc.fr.html</file>
@@ -73,10 +81,12 @@
         <file>apps/blockly/desc.fr.html</file>
         <file>apps/blockly/desc.it.html</file>
         <file>apps/vpl/desc.de.html</file>
+        <file>apps/vpl3/desc.de.html</file>
         <file>apps/scratch/desc.de.html</file>
         <file>apps/blockly/desc.de.html</file>
         <file>apps/studio/desc.de.html</file>
 		<file>apps/vpl/desc.pl.html</file>
+        <file>apps/vpl3/desc.pl.html</file>
         <file>apps/scratch/desc.pl.html</file>
         <file>apps/blockly/desc.pl.html</file>
         <file>apps/studio/desc.pl.html</file>

@@ -46,11 +46,23 @@ ListModel {
         }
     }
 
+    function launch_vpl3(device) {
+        const baseurl = Utils.webapp_base_url("vpl3");
+        const language = Utils.uiLanguage
+        if(!baseurl) {
+            return false;
+        }
+        const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4"
+            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
+        return Utils.openUrl(url)
+    }
+
     property var launch_functions : {
         "blockly" : launch_blockly,
         "scratch" : launch_scratch,
         "vplClassic" : launch_vplClassic,
-        "studio" : launch_studio
+        "studio" : launch_studio,
+        "vpl3" : launch_vpl3
     }
 
 
@@ -79,6 +91,18 @@ ListModel {
                    supportsNonThymioDevices: false,
                    helpUrl: "https://www.thymio.org/%1/program/vpl/",
                    isIosSupported:false
+                },
+                {
+                    appId:"vpl3",
+                    name: "VPL 3",
+                    animatedIcon:"qrc:/apps/vpl3/vpl3-animated-icon.webp",
+                    icon: "qrc:/apps/vpl3/vpl_img.png",
+                    descriptionImage: "qrc:/apps/vpl3/description.jpg",
+                    descriptionTextFile: "qrc:/apps/vpl3/desc.%1.html",
+                    supportsGroups: false,
+                    supportsWatchMode: false,
+                    helpUrl: "https://www.thymio.org/program/vpl/",
+                    isIosSupported: false
                 },
                 {
                     appId: "scratch",

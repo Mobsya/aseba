@@ -146,14 +146,26 @@ bool MainWindow::newFile() {
     return false;
 }
 
-void MainWindow::openFile(const QString& path) {
-    // make sure we do not loose changes
-    if(askUserBeforeDiscarding() == false)
-        return;
 
-    for(auto&& tab : nodes->devicesTabs()) {
-        tab->clearEverything();
-    }
+/* ************************************************
+*
+* The function opens .aesl files for the studio project
+* input: the path strin is optional: 
+*     if not given a dialog for selecting and retrieving a file would be opened 
+*     if given, the filepath must be comprehensive of its own full absoulute path 
+* the function will manage file non presents nor accesible in the file system. 
+If everything goes fine the aesl file would be loaded onto the studio interface
+* \return code:
+*    -1 : failed due to file unavailability
+*    -2 : aborted by user due to discard changes
+*    -3 : ??? case
+************************************************ */
+int MainWindow::openFile(const QString& path) {
+
+    // make sure we do not loose changes
+    if(askUserBeforeDiscarding() == false){
+        return -2;
+    } 
 
     // open the file
     QString fileName = path;
@@ -179,26 +191,72 @@ void MainWindow::openFile(const QString& path) {
 
         fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), dir, QStringLiteral("Aseba scripts (*.aesl)"));
         qDebug() << fileName;
+
     }
 
+
     QFile file(fileName);
-    if(!file.open(QFile::ReadOnly))
-        return;
+    if(!file.open(QFile::ReadOnly)){
+        return -1;
+    }
+
+    auto groups = nodes->groups();
+    if(groups.size() != 1){
+        return -3;
+    }
+
+    // --- from here on we assume everything went fine --- 
+    // [2do] this on should be in the calling methods or in a separate function
+    for(auto&& tab : nodes->devicesTabs()) {
+        tab->clearEverything();
+    }
 
     actualFileName = fileName;
     updateRecentFiles(actualFileName);
+    regenerateOpenRecentMenu();
     updateWindowTitle();
 
-    auto groups = nodes->groups();
-    if(groups.size() != 1)
-        return;
-
     groups.front()->loadAesl(file.readAll());
+
+    return 0;
 }
+
+/* ************************************************
+*
+* The function called asycronously by the recent file menu 
+* it will eventually open a recent file if available 
+* if the file is not available would ask to the user to remove it from the list
+*
+************************************************ */
 
 void MainWindow::openRecentFile() {
     auto* entry = dynamic_cast<QAction*>(sender());
-    openFile(entry->text());
+
+    if(openFile(entry->text()) == -1){
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Aseba Studio - File Exception"));
+        msgBox.setText(tr("The file \"%0\" is not present anymore in the location.").arg(entry->text()));
+        msgBox.setInformativeText(tr("Do you want to delete it from the list?"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+
+        int ret = msgBox.exec();
+        switch(ret) {
+            case QMessageBox::Ok:
+                updateRecentFiles(entry->text(), true);
+                regenerateOpenRecentMenu();
+                break ;
+            case QMessageBox::Ignore:
+                // Cancel was clicked
+                break ;
+            default:
+                // should never be reached
+                assert(false);
+                break;
+        }
+    }
+    return;
 }
 
 bool MainWindow::save() {
@@ -231,7 +289,9 @@ bool MainWindow::saveFile(const QString& previousFileName) {
 
     actualFileName = fileName;
     updateRecentFiles(fileName);
+    regenerateOpenRecentMenu();
 
+    // --> from here on creation of the document  <--- 
     // initiate DOM tree
     QDomDocument document("aesl-source");
     QDomElement root = document.createElement("network");
@@ -288,6 +348,7 @@ bool MainWindow::saveFile(const QString& previousFileName) {
 
     QTextStream out(&file);
     document.save(out, 0);
+    // --> END creation of the document  <--- 
 
     updateWindowTitle();
 
@@ -555,6 +616,12 @@ void MainWindow::setupConnections() {
     connect(pauseAllAct, &QAction::triggered, this, &MainWindow::pauseAll);
 }
 
+/* ************************
+* The function generate the interface OpenRecent menu starting from the system stored value  
+* \warning: this function must be called by the dev all times the system updates the 
+recentFiles data structure otherways interface and system would be in detached state   
+* [2do] this can improved in several ways to avoid detached interface 
+************************ */
 void MainWindow::regenerateOpenRecentMenu() {
     openRecentMenu->clear();
 
@@ -567,15 +634,28 @@ void MainWindow::regenerateOpenRecentMenu() {
     }
 }
 
-void MainWindow::updateRecentFiles(const QString& fileName) {
+/* ************************
+* The function updates system data structure related to recent files implementing the following: 
+* - add of a new entry
+* - del of a single entry already present in the list
+* - avoid duplicated entries
+************************ */
+void MainWindow::updateRecentFiles(const QString& fileName, bool to_delete ) {
     QSettings settings;
     QStringList recentFiles = settings.value(QStringLiteral("recent files")).toStringList();
-    if(recentFiles.contains(fileName))
-        recentFiles.removeAt(recentFiles.indexOf(fileName));
-    recentFiles.push_front(fileName);
     const int maxRecentFiles = 8;
+    
+    if(recentFiles.contains(fileName) ){
+        recentFiles.removeAt(recentFiles.indexOf(fileName));
+    } 
+    
+    if(!to_delete){
+        recentFiles.push_front(fileName);   
+    }
+
     if(recentFiles.size() > maxRecentFiles)
         recentFiles.pop_back();
+
     settings.setValue(QStringLiteral("recent files"), recentFiles);
 }
 
@@ -863,6 +943,7 @@ void MainWindow::setupMenu() {
     // Load the state from the settings (thus from hard drive)
     applySettings();
 }
+
 //! Ask the user to save or discard or ignore the operation that would destroy the unmodified data.
 /*!
     \return true if it is ok to discard, false if operation must abort

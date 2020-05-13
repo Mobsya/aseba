@@ -559,7 +559,22 @@ Occurrences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+109"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+445"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation></translation>
     </message>
@@ -568,7 +583,7 @@ Occurrences</source>
         <translation type="vanished">Aseba Studio について</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-493"/>
         <source>Open Script</source>
         <translation>スクリプト開ける</translation>
     </message>
@@ -589,12 +604,12 @@ Occurrences</source>
         <translation type="vanished">XMLソースファイルのエラー:%1行、%2列の%0</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>スクリプト保存</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Export memory content</source>
         <translation>メモリ内容を出力</translation>
     </message>
@@ -767,7 +782,7 @@ event %0 : </source>
         <translation type="vanished">すべてクリア</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+229"/>
         <source>...inside %0</source>
         <translation>...%0の中</translation>
     </message>
@@ -1148,7 +1163,7 @@ event %0 : </source>
         <translation>ヘルプ</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>タイトルなし</translation>
@@ -1237,7 +1252,7 @@ event %0 : </source>
         <translation type="vanished">リセット</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>実行</translation>
     </message>
@@ -1389,7 +1404,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1397,9 +1412,50 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation type="unfinished">一時停止</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">値</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1650,7 +1706,7 @@ event %0 : </source>
         <translation>アクション</translation>
     </message>
     <message>
-        <location line="+258"/>
+        <location line="+259"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1659,7 +1715,7 @@ event %0 : </source>
         <translation type="vanished">http://aseba.wikidot.com/en:thymiovpl</translation>
     </message>
     <message>
-        <location line="+315"/>
+        <location line="+325"/>
         <source>Please add an event</source>
         <translation>イベントを追加してください</translation>
     </message>
@@ -1669,7 +1725,7 @@ event %0 : </source>
         <translation>アクションを追加してください</translation>
     </message>
     <message>
-        <location line="-749"/>
+        <location line="-760"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
@@ -1694,7 +1750,7 @@ event %0 : </source>
         <translation>行を表示</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1778,7 +1834,7 @@ event %0 : </source>
         <translation type="unfinished">スクリプト保存</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished">スクリプト開ける</translation>
     </message>
