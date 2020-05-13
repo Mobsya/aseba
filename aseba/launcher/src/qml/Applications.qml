@@ -48,11 +48,12 @@ ListModel {
 
     function launch_vpl3(device) {
         const baseurl = Utils.webapp_base_url("vpl3");
+        const language = Utils.uiLanguage
         if(!baseurl) {
             return false;
         }
-        const url = "%1/index.html?robot=thymio-tdm&role=teacher#uuid=%2&ws=%3"
-            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&ws=%4"
+            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
 
