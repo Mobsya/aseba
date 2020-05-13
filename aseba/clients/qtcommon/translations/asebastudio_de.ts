@@ -649,7 +649,7 @@ Occurrences</source>
         <translation type="vanished">Über Aseba Studio</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+110"/>
+        <location filename="../../studio/MainWindow.cpp" line="+122"/>
         <source>Open Script</source>
         <translation>Skript öffnen</translation>
     </message>
@@ -670,7 +670,7 @@ Occurrences</source>
         <translation type="vanished">Fehler in XML-Dokument: %0 in Zeile %1, Spalte %2</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Skript speichern</translation>
     </message>
@@ -701,7 +701,7 @@ Occurrences</source>
         <translation type="vanished">Inhalt wurde nicht importiert</translation>
     </message>
     <message>
-        <location line="+161"/>
+        <location line="+164"/>
         <source>Go To Line</source>
         <translation>Gehe zu Zeile</translation>
     </message>
@@ -866,7 +866,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Löschen</translation>
     </message>
     <message>
-        <location line="+289"/>
+        <location line="+308"/>
         <source>...inside %0</source>
         <translation>...in %0</translation>
     </message>
@@ -1291,7 +1291,7 @@ Ereignis %0: </translation>
         <translation>&amp;Versteckte Variabeln und Funktionen anzeigen</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-722"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren.</translation>
     </message>
@@ -1306,7 +1306,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Schlüssel&amp;wörter zeigen</translation>
     </message>
     <message>
-        <location line="+726"/>
+        <location line="+806"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
@@ -1328,7 +1328,22 @@ Ereignis %0: </translation>
         <translation type="obsolete">&amp;Studio...</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-447"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation>Aseba Studio - Datei-Ausnahme</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation>Die Datei &quot;%0&quot; ist am Speicherort nicht mehr vorhanden.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation>Wollen Sie sie von der Liste streichen?</translation>
+    </message>
+    <message>
+        <location line="+454"/>
         <source>&amp;About...</source>
         <translation>Ü&amp;ber...</translation>
     </message>
@@ -1361,7 +1376,7 @@ Ereignis %0: </translation>
         <translation>F8</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Unbenannt</translation>
@@ -1459,7 +1474,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+295"/>
+        <location filename="../../studio/NodeTab.cpp" line="+301"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>variablen: %1 %2 (%3 %)</translation>
     </message>
@@ -1610,7 +1625,7 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation>%1 auf %2</translation>
     </message>
@@ -1618,9 +1633,50 @@ Ereignis %0: </translation>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation>Neu laden</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation>Daten in eine CSV-Datei exportieren</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation>Daten exportieren</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation>Zeitfenster (Millisekunden)</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation>Zeitstempel (Millisekunden)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation>Werte</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation>In CSV-Datei exportieren</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished">CSV Koma-getrennte Daten (*.csv);;Alle Dateien (*)</translation>
     </message>
 </context>
 <context>
@@ -1993,7 +2049,7 @@ Ereignis %0: </translation>
         <translation>Stopp</translation>
     </message>
     <message>
-        <location line="+394"/>
+        <location line="+395"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
         <translation>Wenn Sie in den einfachen Modus zurückkehren, werden alle erweiterten Blöcke und Statuskarten verworfen.&lt;p&gt;Möchten Sie wirklich fortfahren?</translation>
     </message>
@@ -2002,7 +2058,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Farbschema</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-385"/>
         <source>Advanced mode</source>
         <translation>Fortgeschrittener Modus</translation>
     </message>
@@ -2063,7 +2119,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">&lt;b&gt;Aktionen&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Die Visuelle Prundogrammiersprache (VPL) für den Thymio Roboter ermöglicht es durch die Verbindung von Ereignis- und Aktionsblöcken zu programmieren.</translation>
     </message>
@@ -2112,7 +2168,7 @@ Ereignis %0: </translation>
         <translation>Diese Datei ist inkompatibel mit dieser Version von ThymioVPL. Es können Probleme auftreten.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>Bitte fügen Sie ein Ereignis hinzu</translation>
     </message>
@@ -2161,7 +2217,7 @@ Ereignis %0: </translation>
         <translation>Skript speichern</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation>Skript öffnen</translation>
     </message>

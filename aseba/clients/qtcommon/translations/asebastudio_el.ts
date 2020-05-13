@@ -596,7 +596,7 @@ Occurrences</oldsource>
         <translation type="vanished">&lt;h1&gt;Σχετικά με το Aseba&lt;/h1&gt;Πληροφορίες Έκδοσης&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(υποστηριζόμενοι τύποι ροής δεδομένων: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Διαβάστε περισσότερα στο &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; και λοιποί συνεργάτες (κάντε κλικ στο &quot;Εμφάνιση λεπτομερειών&quot; για πλήρη λίστα)&lt;/p&gt;&lt;p&gt;Το Aseba είναι ανοικτού κώδικα με άδεια από &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL έκδοση 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+535"/>
+        <location filename="../../studio/MainWindow.cpp" line="+615"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -605,7 +605,7 @@ Occurrences</oldsource>
         <translation type="vanished">Σχετικά με το Aseba Studio</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-493"/>
         <source>Open Script</source>
         <translation>Άνοιγμα Σεναρίου (Script)</translation>
     </message>
@@ -626,12 +626,12 @@ Occurrences</oldsource>
         <translation type="vanished">Σφάλμα στο XML πηγαίο αρχείο: %0 στη γραμμή %1, στήλη %2</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+83"/>
         <source>Save Script</source>
         <translation>Αποθήκευση Σεναρίου (Script)</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Export memory content</source>
         <translation>Εξαγωγή περιεχομένου μνήμης</translation>
     </message>
@@ -748,7 +748,7 @@ Occurrences</oldsource>
         <translation type="vanished">συμβάν %0 : </translation>
     </message>
     <message>
-        <location line="-251"/>
+        <location line="-312"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Το Aseba Studio είναι ένα περιβάλλον για διαλογικό προγραμματισμό ρομπότ με μια γλώσσα κειμένου.</translation>
     </message>
@@ -820,7 +820,7 @@ event %0 : </source>
         <translation type="vanished">Καθαρισμός</translation>
     </message>
     <message>
-        <location line="+459"/>
+        <location line="+539"/>
         <source>...inside %0</source>
         <translation>...εντός %0</translation>
     </message>
@@ -848,7 +848,22 @@ event %0 : </source>
         <translation type="vanished">&amp;Εγχειρίδιο Οδηγιών Χρήστη...</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-440"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+444"/>
         <source>Web site Aseba...</source>
         <translation>Ιστότοπος Aseba...</translation>
     </message>
@@ -1248,7 +1263,7 @@ event %0 : </source>
         <translation>&amp;Βοήθεια</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <location line="+68"/>
         <source>Untitled</source>
         <translation>Χωρίς τίτλο</translation>
@@ -1349,7 +1364,7 @@ event %0 : </source>
         <translation type="vanished">Επαναφορά</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+849"/>
+        <location filename="../../studio/NodeTab.cpp" line="+855"/>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
     </message>
@@ -1500,7 +1515,7 @@ event %0 : </source>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="+106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1508,9 +1523,50 @@ event %0 : </source>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="+24"/>
+        <location filename="../../studio/PlotTab.cpp" line="+19"/>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pause</source>
+        <translation type="unfinished">Παύση</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Values</source>
         <translation type="unfinished">Τιμές</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1791,7 +1847,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Ενέργειες</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Η Visual Γλώσσα Προγραμματισμού (VPL) για το ρομπότ Thymio επιτρέπει τον προγραμματισμό συνδυάζοντας μπλοκ συμβάντων και ενεργειών.</translation>
     </message>
@@ -1849,7 +1905,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation>Αυτό το αρχείο δεν είναι συμβατό με αυτήν την έκδοση του ThymioVPL. Μπορεί να μη λειτουργεί σωστά.</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+221"/>
         <source>Please add an event</source>
         <translation>Παρακαλώ προσθέστε ένα συμβάν</translation>
     </message>
@@ -1890,7 +1946,7 @@ Blockly is a &lt;a href=&quot;https://developers.google.com/blockly/&quot;&gt;th
         <translation type="unfinished">Αποθήκευση Σεναρίου (Script)</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Open Script</source>
         <translation type="unfinished">Άνοιγμα Σεναρίου (Script)</translation>
     </message>

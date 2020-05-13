@@ -460,27 +460,42 @@ Znalezione</translation>
         <translation>https://www.thymio.org/en:asebastudio</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="180"/>
+        <location filename="../../studio/MainWindow.cpp" line="192"/>
         <source>Open Script</source>
         <translation>Otwórz kod programu</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="217"/>
+        <location filename="../../studio/MainWindow.cpp" line="238"/>
+        <source>Aseba Studio - File Exception</source>
+        <translation type="unfinished">Aseba Studio - wyjątek pliku</translation>
+    </message>
+    <message>
+        <location filename="../../studio/MainWindow.cpp" line="239"/>
+        <source>The file &quot;%0&quot; is not present anymore in the location.</source>
+        <translation type="unfinished">Plik &quot;%0&quot; nie jest już dostępny w lokalizacji.</translation>
+    </message>
+    <message>
+        <location filename="../../studio/MainWindow.cpp" line="240"/>
+        <source>Do you want to delete it from the list?</source>
+        <translation type="unfinished">Czy chcesz usunąć to z tej listy?</translation>
+    </message>
+    <message>
+        <location filename="../../studio/MainWindow.cpp" line="275"/>
         <source>Save Script</source>
         <translation>Zapisz kod programu</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="299"/>
+        <location filename="../../studio/MainWindow.cpp" line="360"/>
         <source>Export memory content</source>
         <translation>Eksportuj zawartość pamięci</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="378"/>
+        <location filename="../../studio/MainWindow.cpp" line="439"/>
         <source>Go To Line</source>
         <translation>Idź do linii</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="378"/>
+        <location filename="../../studio/MainWindow.cpp" line="439"/>
         <source>Line:</source>
         <translation>Linia:</translation>
     </message>
@@ -493,374 +508,374 @@ Znalezione</translation>
         <translation type="vanished">Pokaż wykres zdarzenia</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="588"/>
+        <location filename="../../studio/MainWindow.cpp" line="668"/>
         <source>...inside %0</source>
         <translation>...wewnątrz %0</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="591"/>
+        <location filename="../../studio/MainWindow.cpp" line="671"/>
         <source>...%0</source>
         <translation>...%0</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="596"/>
+        <location filename="../../studio/MainWindow.cpp" line="676"/>
         <source>...inside all nodes</source>
         <translation>...wewnątrz wszystkich węzłów</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="598"/>
+        <location filename="../../studio/MainWindow.cpp" line="678"/>
         <source>...all nodes</source>
         <translation>...wszystkie węzły</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="604"/>
+        <location filename="../../studio/MainWindow.cpp" line="684"/>
         <source>Web site Aseba...</source>
         <translation>Strona internetowa Aseba....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="605"/>
+        <location filename="../../studio/MainWindow.cpp" line="685"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="606"/>
+        <location filename="../../studio/MainWindow.cpp" line="686"/>
         <source>Report bug...</source>
         <translation>Zgłoś błąd....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="607"/>
+        <location filename="../../studio/MainWindow.cpp" line="687"/>
         <source>http://github.com/mobsya/aseba/issues/new</source>
         <translation>http://github.com/mobsya/aseba/issues/new</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="614"/>
+        <location filename="../../studio/MainWindow.cpp" line="694"/>
         <source>&amp;About...</source>
         <translation>&amp;O programie...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="615"/>
+        <location filename="../../studio/MainWindow.cpp" line="695"/>
         <source>About &amp;Qt...</source>
         <translation>Na temat &amp;Qt...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="637"/>
+        <location filename="../../studio/MainWindow.cpp" line="717"/>
         <source>Thymio programming tutorial...</source>
         <translation>Samouczek programowania Thymio....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="639"/>
+        <location filename="../../studio/MainWindow.cpp" line="719"/>
         <source>http://aseba.wikidot.com/en:thymiotutoriel</source>
         <translation>http://aseba.wikidot.com/en:thymiotutoriel</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="642"/>
+        <location filename="../../studio/MainWindow.cpp" line="722"/>
         <source>Thymio programming interface...</source>
         <translation>Interfejs programowania Thymio...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="644"/>
+        <location filename="../../studio/MainWindow.cpp" line="724"/>
         <source>http://aseba.wikidot.com/en:thymioapi</source>
         <translation>http://aseba.wikidot.com/en:thymioapi</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="650"/>
+        <location filename="../../studio/MainWindow.cpp" line="730"/>
         <source>Challenge tutorial...</source>
         <translation>Samouczek wyzwań....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="652"/>
+        <location filename="../../studio/MainWindow.cpp" line="732"/>
         <source>http://aseba.wikidot.com/en:gettingstarted</source>
         <translation>http://aseba.wikidot.com/en:gettingstarted</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="658"/>
+        <location filename="../../studio/MainWindow.cpp" line="738"/>
         <source>MarXbot user manual...</source>
         <translation>Instrukcja obsługi MarXbota....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="660"/>
+        <location filename="../../studio/MainWindow.cpp" line="740"/>
         <source>http://mobots.epfl.ch/data/robots/marxbot-user-manual.pdf</source>
         <translation>http://mobots.epfl.ch/data/robots/marxbot-user-manual.pdf</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="677"/>
+        <location filename="../../studio/MainWindow.cpp" line="757"/>
         <source>&amp;File</source>
         <translation>&amp;Plik</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="680"/>
+        <location filename="../../studio/MainWindow.cpp" line="760"/>
         <source>&amp;New</source>
         <translation>&amp;Nowy</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="681"/>
+        <location filename="../../studio/MainWindow.cpp" line="761"/>
         <source>&amp;Open...</source>
         <translation>&amp;Otwórz...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="682"/>
+        <location filename="../../studio/MainWindow.cpp" line="762"/>
         <source>Open &amp;Recent</source>
         <translation>Ostatnio &amp;Otwarte</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="686"/>
+        <location filename="../../studio/MainWindow.cpp" line="766"/>
         <source>&amp;Save...</source>
         <translation>&amp;Zapisz...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="687"/>
+        <location filename="../../studio/MainWindow.cpp" line="767"/>
         <source>Save &amp;As...</source>
         <translation>Zapisz &amp;Jako...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="691"/>
+        <location filename="../../studio/MainWindow.cpp" line="771"/>
         <source>Export &amp;memories content...</source>
         <translation>Eksport &amp;zawartości pamięci....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="698"/>
+        <location filename="../../studio/MainWindow.cpp" line="778"/>
         <source>&amp;Quit</source>
         <translation>&amp;Zakończ</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="702"/>
+        <location filename="../../studio/MainWindow.cpp" line="782"/>
         <source>Cu&amp;t</source>
         <translation>Wy&amp;tnij</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="706"/>
+        <location filename="../../studio/MainWindow.cpp" line="786"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopiuj</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="710"/>
+        <location filename="../../studio/MainWindow.cpp" line="790"/>
         <source>&amp;Paste</source>
         <translation>&amp;Wklej</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="714"/>
+        <location filename="../../studio/MainWindow.cpp" line="794"/>
         <source>&amp;Undo</source>
         <translation>&amp;Cofnij</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="718"/>
+        <location filename="../../studio/MainWindow.cpp" line="798"/>
         <source>Re&amp;do</source>
         <translation>Po&amp;wtórz</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="722"/>
+        <location filename="../../studio/MainWindow.cpp" line="802"/>
         <source>&amp;Find...</source>
         <translation>&amp;Znajdź...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="727"/>
+        <location filename="../../studio/MainWindow.cpp" line="807"/>
         <source>&amp;Replace...</source>
         <translation>&amp;Zastąp...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="732"/>
+        <location filename="../../studio/MainWindow.cpp" line="812"/>
         <source>&amp;Go To Line...</source>
         <translation>&amp;Idź Do Wiersza...</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="733"/>
+        <location filename="../../studio/MainWindow.cpp" line="813"/>
         <source>Ctrl+G</source>
         <comment>Edit|Go To Line</comment>
         <translatorcomment>Edycja|Idź Do Wiersza</translatorcomment>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="737"/>
+        <location filename="../../studio/MainWindow.cpp" line="817"/>
         <source>Comment the selection</source>
         <translation>Zaznazcenie do komentarza</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="738"/>
+        <location filename="../../studio/MainWindow.cpp" line="818"/>
         <source>Ctrl+D</source>
         <comment>Edit|Comment the selection</comment>
         <translatorcomment>Edycja|Zaznaczenie do komentarza</translatorcomment>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="741"/>
+        <location filename="../../studio/MainWindow.cpp" line="821"/>
         <source>Uncomment the selection</source>
         <translation>Usuń zaznaczenie do komentarza</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="742"/>
+        <location filename="../../studio/MainWindow.cpp" line="822"/>
         <source>Shift+Ctrl+D</source>
         <comment>Edit|Uncomment the selection</comment>
         <translatorcomment>Edycja|Usuń zaznaczenie do komentarza</translatorcomment>
         <translation>Shift+Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="745"/>
+        <location filename="../../studio/MainWindow.cpp" line="825"/>
         <source>&amp;Edit</source>
         <translation>&amp;Edytuj</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="751"/>
+        <location filename="../../studio/MainWindow.cpp" line="831"/>
         <source>Copy &amp;all</source>
         <translation>Kopiuj &amp;wszystko</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="765"/>
+        <location filename="../../studio/MainWindow.cpp" line="845"/>
         <source>Show &amp;memory usage</source>
         <translation>Pokaż &amp;wykorzystanie pamięci</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="769"/>
+        <location filename="../../studio/MainWindow.cpp" line="849"/>
         <source>S&amp;how hidden variables and functions</source>
         <translation>P&amp;okaż ukryte zmienne i funkcje</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="772"/>
+        <location filename="../../studio/MainWindow.cpp" line="852"/>
         <source>Show &amp;Line Numbers</source>
         <translation>Pokaż &amp;Numery Wierszy</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="773"/>
+        <location filename="../../studio/MainWindow.cpp" line="853"/>
         <source>F11</source>
         <comment>View|Show Line Numbers</comment>
         <translatorcomment>Widok|Pokaż numery wierszy</translatorcomment>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="777"/>
+        <location filename="../../studio/MainWindow.cpp" line="857"/>
         <source>&amp;Increase font size</source>
         <translation>&amp;Zwiększenie rozmiaru czcionki</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="782"/>
+        <location filename="../../studio/MainWindow.cpp" line="862"/>
         <source>&amp;Decrease font size</source>
         <translation>&amp;Zmniejszenie  rozmiaru czcionki</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="787"/>
+        <location filename="../../studio/MainWindow.cpp" line="867"/>
         <source>&amp;View</source>
         <translation>&amp;Widok</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="798"/>
+        <location filename="../../studio/MainWindow.cpp" line="878"/>
         <source>&amp;Settings</source>
         <translation>&amp;Ustawienia</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="802"/>
+        <location filename="../../studio/MainWindow.cpp" line="882"/>
         <source>&amp;Stop all</source>
         <translation>&amp;Zatrzymaj wszystko</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="803"/>
+        <location filename="../../studio/MainWindow.cpp" line="883"/>
         <source>F8</source>
         <comment>Debug|Stop all</comment>
         <translatorcomment>Analiza|Zatrzymaj wszystko</translatorcomment>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="805"/>
+        <location filename="../../studio/MainWindow.cpp" line="885"/>
         <source>Ru&amp;n all</source>
         <translation>Ur&amp;uchom wszystko</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="806"/>
+        <location filename="../../studio/MainWindow.cpp" line="886"/>
         <source>F9</source>
         <comment>Debug|Run all</comment>
         <translatorcomment>Analiza|Uruchom wszystko</translatorcomment>
         <translation>F9</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="808"/>
+        <location filename="../../studio/MainWindow.cpp" line="888"/>
         <source>&amp;Pause all</source>
         <translation>&amp;Zatrzymaj wszystko</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="809"/>
+        <location filename="../../studio/MainWindow.cpp" line="889"/>
         <source>F10</source>
         <comment>Debug|Pause all</comment>
         <translatorcomment>Analiza|Zatrzymaj wszystko</translatorcomment>
         <translation>F10</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="812"/>
+        <location filename="../../studio/MainWindow.cpp" line="892"/>
         <source>Debug</source>
         <translation>Analiza</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="820"/>
+        <location filename="../../studio/MainWindow.cpp" line="900"/>
         <source>Toggle breakpoint</source>
         <translation>Przełącznik punktu kontrolnego</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="821"/>
+        <location filename="../../studio/MainWindow.cpp" line="901"/>
         <source>Ctrl+B</source>
         <comment>Debug|Toggle breakpoint</comment>
         <translatorcomment>Analiza|Przełącznik punktu kontrolnego</translatorcomment>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="824"/>
+        <location filename="../../studio/MainWindow.cpp" line="904"/>
         <source>Clear all breakpoints</source>
         <translation>Usuń wszystkie punkty kontrolne</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="828"/>
+        <location filename="../../studio/MainWindow.cpp" line="908"/>
         <source>&amp;Debug</source>
         <translation>&amp;Analiza</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="838"/>
+        <location filename="../../studio/MainWindow.cpp" line="918"/>
         <source>&amp;Tools</source>
         <translation>&amp;Narzędzia</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="843"/>
+        <location filename="../../studio/MainWindow.cpp" line="923"/>
         <source>&amp;Show last compilation messages</source>
         <translation>&amp;Pokaż ostatnie komunikaty kompilacji</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="849"/>
+        <location filename="../../studio/MainWindow.cpp" line="929"/>
         <source>Write the program(s)...</source>
         <translation>Napisz program(y)....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="851"/>
+        <location filename="../../studio/MainWindow.cpp" line="931"/>
         <source>Reboot...</source>
         <translation>Ponowne uruchomienie....</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="855"/>
+        <location filename="../../studio/MainWindow.cpp" line="935"/>
         <source>&amp;Help</source>
         <translation>&amp;Pomoc</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="876"/>
-        <location filename="../../studio/MainWindow.cpp" line="944"/>
+        <location filename="../../studio/MainWindow.cpp" line="957"/>
+        <location filename="../../studio/MainWindow.cpp" line="1025"/>
         <source>Untitled</source>
         <translation>Niezatytułowane</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="881"/>
+        <location filename="../../studio/MainWindow.cpp" line="962"/>
         <source>Aseba Studio - Confirmation Dialog</source>
         <translation>Aseba Studio -  Potwierdzenie Dialogu</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="882"/>
+        <location filename="../../studio/MainWindow.cpp" line="963"/>
         <source>The document &quot;%0&quot; has been modified.</source>
         <translation>Dokument &quot;%0&quot; został zmieniony.</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="883"/>
+        <location filename="../../studio/MainWindow.cpp" line="964"/>
         <source>Do you want to save your changes or discard them?</source>
         <translation>Chcesz zapisać zmiany czy je odrzucić?</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="942"/>
+        <location filename="../../studio/MainWindow.cpp" line="1023"/>
         <source>[modified] </source>
         <translation>[zmodyfikowany] </translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="948"/>
+        <location filename="../../studio/MainWindow.cpp" line="1029"/>
         <source>%0 %1- Aseba Studio</source>
         <translation>%0 %1- Aseba Studio</translation>
     </message>
@@ -898,102 +913,102 @@ Znalezione</translation>
 <context>
     <name>Aseba::NodeTab</name>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="295"/>
+        <location filename="../../studio/NodeTab.cpp" line="301"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>zmienne: %1/%2 (%3 %)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="300"/>
+        <location filename="../../studio/NodeTab.cpp" line="306"/>
         <source>bytecode: %1/%2 (%3 %)</source>
         <translation>kod bajtowy: %1/%2 (%3 %)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="304"/>
+        <location filename="../../studio/NodeTab.cpp" line="310"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Używana pamięć&lt;/b&gt; : %1, %2</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="315"/>
+        <location filename="../../studio/NodeTab.cpp" line="321"/>
         <source>Compilation Success</source>
         <translation>Kompilacja poprawna</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="445"/>
+        <location filename="../../studio/NodeTab.cpp" line="451"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation>&lt;b styl=&apos;kolor:#CA3433&apos;&gt;Niepodłączony&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="452"/>
+        <location filename="../../studio/NodeTab.cpp" line="458"/>
         <source>Stopped</source>
         <translation>Zatrzymany</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="453"/>
+        <location filename="../../studio/NodeTab.cpp" line="459"/>
         <source>Paused</source>
         <translation>Wstrzymany</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="454"/>
+        <location filename="../../studio/NodeTab.cpp" line="460"/>
         <source>Running</source>
         <translation>Uruchomiony</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="462"/>
+        <location filename="../../studio/NodeTab.cpp" line="468"/>
         <source>(Not Locked)</source>
         <translation>(Niezamknięty)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="466"/>
+        <location filename="../../studio/NodeTab.cpp" line="472"/>
         <source>(Controlled by another application or user)</source>
         <translation>(Sterowany przez inną aplikację lub użytkownika)</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="846"/>
+        <location filename="../../studio/NodeTab.cpp" line="852"/>
         <source>Stop</source>
         <translation>Zatrzymaj</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="849"/>
+        <location filename="../../studio/NodeTab.cpp" line="855"/>
         <source>Run</source>
         <translation>Uruchom</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="851"/>
+        <location filename="../../studio/NodeTab.cpp" line="857"/>
         <source>Pause</source>
         <translation>Wstrzymaj</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="853"/>
+        <location filename="../../studio/NodeTab.cpp" line="859"/>
         <source>Next</source>
         <translation>Następny</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="856"/>
+        <location filename="../../studio/NodeTab.cpp" line="862"/>
         <source>Synchronize</source>
         <translation>Synchronizuj</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="890"/>
+        <location filename="../../studio/NodeTab.cpp" line="896"/>
         <source>Plot this variable</source>
         <translation>Wykreśl tę zmienną</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="900"/>
+        <location filename="../../studio/NodeTab.cpp" line="906"/>
         <source>&lt;b&gt;Variables&lt;/b&gt;</source>
         <translation>&lt;/b&gt;Zmienne&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="906"/>
+        <location filename="../../studio/NodeTab.cpp" line="912"/>
         <source>F&amp;ilter:</source>
         <translation>F&amp;iltr:</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="935"/>
+        <location filename="../../studio/NodeTab.cpp" line="941"/>
         <source>Native Functions</source>
         <translation>Funkcje Rodzime</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="936"/>
+        <location filename="../../studio/NodeTab.cpp" line="942"/>
         <source>Local Events</source>
         <translation>Zdarzenia Lokalne</translation>
     </message>
@@ -1001,7 +1016,7 @@ Znalezione</translation>
 <context>
     <name>Aseba::NodeTabsManager</name>
     <message>
-        <location filename="../../studio/NodeTabsManager.cpp" line="106"/>
+        <location filename="../../studio/NodeTabsManager.cpp" line="105"/>
         <source>%1 on %2</source>
         <translation>%1 na %2</translation>
     </message>
@@ -1009,9 +1024,50 @@ Znalezione</translation>
 <context>
     <name>Aseba::PlotTab</name>
     <message>
-        <location filename="../../studio/PlotTab.cpp" line="24"/>
+        <location filename="../../studio/PlotTab.cpp" line="19"/>
+        <location filename="../../studio/PlotTab.cpp" line="20"/>
+        <source>Reload</source>
+        <translation type="unfinished">Przeładuj</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="26"/>
+        <source>Export Data to CSV file</source>
+        <translation type="unfinished">Eksportuj dane do pliku CSV</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="27"/>
+        <source>Export Data</source>
+        <translation type="unfinished">Eksportuj dane</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="31"/>
+        <source>time window (milliseconds)</source>
+        <translation type="unfinished">okno zegara (millisekundy)</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="49"/>
+        <source>Pause</source>
+        <translation type="unfinished">Wstrzymaj</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="66"/>
+        <source>Timestamp (milliseconds)</source>
+        <translation type="unfinished">Znacznik czasu (milisekundy)</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="72"/>
         <source>Values</source>
         <translation>Wartości</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="173"/>
+        <source>Export to CSV file</source>
+        <translation type="unfinished">Eksport do CSV</translation>
+    </message>
+    <message>
+        <location filename="../../studio/PlotTab.cpp" line="174"/>
+        <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
+        <translation type="unfinished">Wartości CSV oddzielone separatorami(*.csv);;Wszystkie pliki (*)</translation>
     </message>
 </context>
 <context>
@@ -1220,62 +1276,62 @@ Znalezione</translation>
         <translation>Działania</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="336"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="337"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
         <translation>Język Programowania Wizualnego (VPL) dla robota Thymio umożliwia programowanie poprzez kojarzenie bloków zdarzeń i działań.</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="338"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="339"/>
         <source>https://www.thymio.org/en:thymiovpl</source>
         <translation>https://www.thymio.org/en:thymiovpl</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="362"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="363"/>
         <source>Export program as image</source>
         <translation>Wyeksportuj kod jako obraz</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="427"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="428"/>
         <source>Launch VPL</source>
         <translation>Uruchom VPL</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="550"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="551"/>
         <source>Returning to simple mode</source>
         <translation>Powrót do trybu podstawowego</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="551"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="552"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
         <translation>Powrót do trybu podstawowego spowoduje odrzucenie wszystkich zaawansowanych bloków i kart warunków.&lt;p&gt;Czy na pewno chcesz kontynuować?</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="588"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="589"/>
         <source>Warning</source>
         <translation>Ostrzeżenie</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="589"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="590"/>
         <source>The VPL document has been modified.&lt;p&gt;Do you want to save the changes?</source>
         <translation>Dokument VPL został zmodyfikowany.&lt;p&gt;Czy chcesz zapisać zmiany?</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="654"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="655"/>
         <source>Incompatible Version</source>
         <translation>Niezgodna wersja</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="655"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="656"/>
         <source>This file is incompatible with this version of ThymioVPL. It might not work correctly.</source>
         <translation>Ten plik jest niekompatybilny z tą wersją ThymioVPL. Może nie działać poprawnie.</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="866"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="877"/>
         <source>Please add an event</source>
         <translation>Proszę dodać zdarzenie</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="875"/>
+        <location filename="../../vpl/ThymioVisualProgramming.cpp" line="886"/>
         <source>Please add an action</source>
         <translation>Proszę dodać działanie</translation>
     </message>
@@ -1311,53 +1367,53 @@ Znalezione</translation>
         <translation>Zapisz kod programu</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="269"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="286"/>
         <source>Open Script</source>
         <translation>Otwórz kod programu</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="313"/>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="318"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="330"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="335"/>
         <source>Loading</source>
         <translation>Wczytywanie</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="314"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="331"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
         <translation>Żadne dane Thymio VPL nie zostały znalezione w pliku programu, plik został zignorowany.</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="319"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="336"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
         <translation>Błąd w pliku źródłowym XML: %0 wiersz %1, kolumna %2</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="335"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="352"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
         <translation>Połączenie z Thymio utracone... upewnij się, że Thymio jest włączony i połączony kabelem/odbiornikiem RF USB</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="412"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="429"/>
         <source>[modified] </source>
         <translation>[zmodyfikowany] </translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="414"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="431"/>
         <source>Untitled</source>
         <translation>Bez tytułu</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="420"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="437"/>
         <source>on %1</source>
         <translation>w %1</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="422"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="439"/>
         <source>[not connected]</source>
         <translation>[nie podłączony]</translation>
     </message>
     <message>
-        <location filename="../../vpl/ThymioVPLApplication.cpp" line="424"/>
+        <location filename="../../vpl/ThymioVPLApplication.cpp" line="441"/>
         <source>%0 %1 %2 - Thymio Visual Programming Language</source>
         <translation>%0 %1 %2 - Język programowania wizualnego Thymio</translation>
     </message>
