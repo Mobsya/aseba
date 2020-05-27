@@ -197,6 +197,12 @@ endif()
 
 
 if(ANDROID)
+	FetchContent_Declare(
+		QtAndroidCMake
+		GIT_REPOSITORY https://github.com/Mobsya/qt-android-cmake
+		GIT_TAG        master
+	)
+	FetchContent_MakeAvailable(QtAndroidCMake)
     add_qt_android_apk(thymio-launcher-apk thymio-launcher
         PACKAGE_NAME org.mobsya.ThymioSuite
         QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
