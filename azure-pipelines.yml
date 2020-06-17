@@ -49,6 +49,7 @@ jobs:
   timeoutInMinutes: 90
   pool:
       vmImage: windows-2019
+      vsVersion: 'latest' # Optional. Options: latest, 16.0, 15.0, 14.0, 12.0, 11.0
   strategy:
     matrix:
       x64:
@@ -130,7 +131,7 @@ jobs:
         cpack.exe --version
         cmake.exe --version
 
-        cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
+        cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_VS_PLATFORM_TOOLSET_VERSION=14.25 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
         cmake --build . --config Release --parallel
         cpack.exe -G NSIS --verbose --debug
 
