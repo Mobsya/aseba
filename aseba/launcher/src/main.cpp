@@ -6,6 +6,7 @@
 #include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
 #include <QtQuickWidgets/QQuickWidget>
+
 #ifdef QT_QML_DEBUG
 #    include <QQmlDebuggingEnabler>
 #endif
@@ -97,7 +98,8 @@ int main(int argc, char** argv) {
 
     QApplication::setApplicationName(QObject::tr("Thymio Suite"));
     QApplication::setApplicationVersion(QStringLiteral("%1-%2").arg(ASEBA_VERSION).arg(ASEBA_REVISION));
-
+    
+    
     mobsya::LauncherWindow w;
     w.rootContext()->setContextProperty("Utils", &launcher);
     w.rootContext()->setContextProperty("thymios", &model);
@@ -110,7 +112,9 @@ int main(int argc, char** argv) {
     w.setMinimumSize(1024, 640);
     w.showNormal();
 #endif
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&client]() {
+
+// defining the callback to be called on Application quit
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&]() {
         auto windows = qApp->allWindows();
         for(auto w : windows) {
             if(w->isVisible() && qobject_cast<QQuickWindow*>(w))
@@ -118,10 +122,12 @@ int main(int argc, char** argv) {
         }
         client.requestDeviceManagersShutdown();
         QTimer::singleShot(1000, qApp, &QCoreApplication::quit);
+        launcher.writeSettings();
     });
 
     app.setActivationWindow(&w, true);
     app.setQuitOnLastWindowClosed(false);
+    
     
 #ifdef Q_OS_IOS
     QObject::connect(&app, &QGuiApplication::applicationStateChanged, &launcher, &mobsya::Launcher::applicationStateChanged);

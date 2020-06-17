@@ -17,12 +17,12 @@
 #include <QPointer>
 #include <QOperatingSystemVersion>
 
+
 namespace mobsya {
 
 Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject(parent), m_client(client) {
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
 
-    useLocalBrowser = false;
     // On mac we use the native web view since chromium is not app-store compatible.
     // But on versions prior to High Sierra, the WebKit version shipped with
     // the OS cannot handle webassembly, which we require to run all of our web apps
@@ -32,6 +32,8 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
 #ifdef Q_OS_OSX
     useLocalBrowser = true;
 #endif
+    
+    readSettings();
 }
 
 
@@ -198,6 +200,25 @@ bool Launcher::openUrl(const QUrl& url) {
     connect(e, &QQmlApplicationEngine::quit, &QQmlApplicationEngine::deleteLater);
 #endif
     return true;
+}
+
+/* **************
+* it writes local application information to application settings 
+* for being available in next execution - 
+* the function must be called in the program exit and not all times  
+************** */
+void Launcher::writeSettings(){
+   // the use of local browser available
+    settings.setValue("mainwindow/useLocalBrowser",QVariant(useLocalBrowser) );
+
+}
+
+/* **************
+* it reads the application settings to set the application information 
+* the function must be called after the program load a
+************** */
+void Launcher::readSettings(){
+    useLocalBrowser = settings.value("mainwindow/useLocalBrowser").toBool();
 }
 
 void Launcher::setUseLocalBrowser(bool checked){
