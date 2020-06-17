@@ -15,13 +15,15 @@ trigger:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20200416.2"
+  value: "v20200506.1"
 - name: scratch_version
-  value: "v20200420.1"
+  value: "v20200505.1"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
+- name: vpl3_url
+  value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
   value: "c4f0372c638831d8d524feb1039611852eca6512"
 
@@ -102,7 +104,7 @@ jobs:
     condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
     displayName: Fetch Qt
   - task: PythonScript@0
-    displayName: Fetch scratch and blockly
+    displayName: Fetch scratch, blockly and vpl3
     inputs:
       scriptSource: 'inline'
       script: |
@@ -116,6 +118,7 @@ jobs:
             tar.close()
         extract('$(blockly_url)', 'thymio-blockly.tar.gz')
         extract('$(scratch_url)', 'scratch-gui.tar.gz')
+        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
@@ -165,7 +168,8 @@ jobs:
   - script: |
       wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
-    displayName: 'Extract scratch and blockly'
+      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
+    displayName: 'Extract scratch, blockly and vpl3'
 
   - script: |
       git submodule update --init --recursive
@@ -197,7 +201,8 @@ jobs:
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
-    displayName: 'Extract scratch and blockly'
+      curl -sL $(vpl3_url) | tar xzf - -C .
+    displayName: 'Extract scratch, blockly and vpl3' 
 
   - script: |
       brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
@@ -267,7 +272,8 @@ jobs:
   - script: |
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
-    displayName: 'Extract scratch and blockly'
+      curl -sL $(vpl3_url) | tar xzf - -C .
+    displayName: 'Extract scratch, blockly and vpl3'
 
     #we need 7z to extract qt so brew needs to run first
   - script: |

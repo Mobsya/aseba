@@ -249,7 +249,8 @@ QString Launcher::getDownloadPath(const QUrl& url) {
 
 QUrl Launcher::webapp_base_url(const QString& name) const {
     static const std::map<QString, QString> default_folder_name = {{"blockly", "thymio_blockly"},
-                                                                   {"scratch", "scratch"}};
+                                                                   {"scratch", "scratch"},
+                                                                   {"vpl3", "vpl3-thymio-suite"}};
     auto it = default_folder_name.find(name);
     if(it == default_folder_name.end())
         return {};

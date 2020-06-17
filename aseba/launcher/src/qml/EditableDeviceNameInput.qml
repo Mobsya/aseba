@@ -15,12 +15,14 @@ TextField {
     //anchors.horizontalCenter: parent.horizontalCenter
     font.family: "Roboto"
     font.bold: readOnly
-    font.pointSize: 9
+    font.pointSize: 12
     color : "white"
     selectionColor: "#0a9eeb"
     readOnly: true
     maximumLength: 30
-    wrapMode: Text.WordWrap
+
+    wrapMode: Text.WrapAnywhere
+
 
     FontMetrics {
         id: fontMetrics
@@ -31,10 +33,10 @@ TextField {
     onTextChanged: {
         font.pointSize = 12
         fontMetrics.font = font
-        while(fontMetrics.boundingRect(text).width >= width - 10) {
+        while(fontMetrics.boundingRect(text).width >= width - 9) {
             font.pointSize = font.pointSize - 0.1
             fontMetrics.font = font
-            if(font.pointSize < 5)
+            if(font.pointSize < 9.1)
                 break
         }
     }

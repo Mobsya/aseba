@@ -263,9 +263,11 @@ Item {
                 id: textfield
                 editable: capabilities & ThymioNode.Rename
                 width: parent.width
-                height: 45
+
+                height: 48
                 deviceName: name
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAnywhere
+
                 
                 onAccepted: {
                     
