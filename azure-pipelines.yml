@@ -27,7 +27,7 @@ variables:
 - name: vcpkg_commit
   value: "c4f0372c638831d8d524feb1039611852eca6512"
 - name: visual_bootstrapper
-  value: "https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=enterprise&rel=16&utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=link+cta&utm_content=download+commandline+parameters+vs2019+rc"
+  value: "https://visualstudio.microsoft.com/fr/thank-you-downloading-visual-studio/?sku=enterprise&rel=16&utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=link+cta&utm_content=download+commandline+parameters+vs2019+rc#"
 
 jobs:
 - job: 'BuildFlatpak'
@@ -69,7 +69,7 @@ jobs:
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
-  steps:^
+  steps:
   - script: |
        git submodule update --init --recursive
     displayName: Update submodules
@@ -77,7 +77,7 @@ jobs:
        makensis  -VERSION
     displayName: Install NSIS
   - powershell: |
-        (new-object System.Net.WebClient).DownloadFile('$(visual_bootstrapper)','C:\tmp\vs_enterprise.exe)
+        (new-object System.Net.WebClient).DownloadFile('$(visual_bootstrapper)','C:\tmp\vs_enterprise.exe')
         $exitCode = Start-Process -FilePath vs_enterprise.exe -ArgumentList "--add Microsoft.VisualStudio.Component.VC.14.25.x86.x64"      
     displayName: Install MSVC 14.25
   - task: Cache@2
@@ -124,7 +124,7 @@ jobs:
             tar.close()
         extract('$(blockly_url)', 'thymio-blockly.tar.gz')
         extract('$(scratch_url)', 'scratch-gui.tar.gz')
-        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz'
+        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
