@@ -26,6 +26,8 @@ variables:
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
   value: "c4f0372c638831d8d524feb1039611852eca6512"
+- name: visual_bootstrapper
+  value: "https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=enterprise&rel=16&utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=link+cta&utm_content=download+commandline+parameters+vs2019+rc"
 
 jobs:
 - job: 'BuildFlatpak'
@@ -68,6 +70,23 @@ jobs:
         ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
   steps:
+  - task: PythonScript@0
+    displayName: Fetch scratch, blockly and vpl3
+    inputs:
+      scriptSource: 'inline'
+      script: |
+        from urllib.request import urlretrieve
+        import tarfile
+        def extract(url, file):
+            print("{} -> {}".format(url, file))
+            urlretrieve(url, file)
+            tar = tarfile.open(file, "r:gz")
+            tar.extractall()
+            tar.close()
+        extract('$(blockly_url)', 'thymio-blockly.tar.gz')
+        extract('$(scratch_url)', 'scratch-gui.tar.gz')
+        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
+        extract('$(visual_bootstrapper)', 'vs_enterprise.exe')
   - script: |
        vs_enterprise.exe modify ^
        --add Microsoft.VisualStudio.Component.VC.14.25.x86.x64
@@ -107,22 +126,6 @@ jobs:
         7z -bb -y x  $output -o$(Build.BinariesDirectory)
     condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
     displayName: Fetch Qt
-  - task: PythonScript@0
-    displayName: Fetch scratch, blockly and vpl3
-    inputs:
-      scriptSource: 'inline'
-      script: |
-        from urllib.request import urlretrieve
-        import tarfile
-        def extract(url, file):
-            print("{} -> {}".format(url, file))
-            urlretrieve(url, file)
-            tar = tarfile.open(file, "r:gz")
-            tar.extractall()
-            tar.close()
-        extract('$(blockly_url)', 'thymio-blockly.tar.gz')
-        extract('$(scratch_url)', 'scratch-gui.tar.gz')
-        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
