@@ -69,34 +69,17 @@ jobs:
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
-  steps:
-  - task: PythonScript@0
-    displayName: Fetch scratch, blockly and vpl3
-    inputs:
-      scriptSource: 'inline'
-      script: |
-        from urllib.request import urlretrieve
-        import tarfile
-        def extract(url, file):
-            print("{} -> {}".format(url, file))
-            urlretrieve(url, file)
-            tar = tarfile.open(file, "r:gz")
-            tar.extractall()
-            tar.close()
-        extract('$(blockly_url)', 'thymio-blockly.tar.gz')
-        extract('$(scratch_url)', 'scratch-gui.tar.gz')
-        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
-        extract('$(visual_bootstrapper)', 'vs_enterprise.exe')
-  - script: |
-       vs_enterprise.exe modify ^
-       --add Microsoft.VisualStudio.Component.VC.14.25.x86.x64
-    displayName: Install MSVC 14.25
+  steps:^
   - script: |
        git submodule update --init --recursive
     displayName: Update submodules
   - script: |
        makensis  -VERSION
     displayName: Install NSIS
+  - powershell: |
+        (new-object System.Net.WebClient).DownloadFile('$(visual_bootstrapper)','C:\tmp\vs_enterprise.exe)
+        $exitCode = Start-Process -FilePath vs_enterprise.exe -ArgumentList "--add Microsoft.VisualStudio.Component.VC.14.25.x86.x64"      
+    displayName: Install MSVC 14.25
   - task: Cache@2
     displayName: Cache vcpkg
     inputs:
@@ -126,6 +109,22 @@ jobs:
         7z -bb -y x  $output -o$(Build.BinariesDirectory)
     condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
     displayName: Fetch Qt
+  - task: PythonScript@0
+    displayName: Fetch scratch, blockly and vpl3
+    inputs:
+      scriptSource: 'inline'
+      script: |
+        from urllib.request import urlretrieve
+        import tarfile
+        def extract(url, file):
+            print("{} -> {}".format(url, file))
+            urlretrieve(url, file)
+            tar = tarfile.open(file, "r:gz")
+            tar.extractall()
+            tar.close()
+        extract('$(blockly_url)', 'thymio-blockly.tar.gz')
+        extract('$(scratch_url)', 'scratch-gui.tar.gz')
+        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz'
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
