@@ -49,7 +49,6 @@ jobs:
   timeoutInMinutes: 90
   pool:
       vmImage: windows-2019
-      vsVersion: 'latest' # Optional. Options: latest, 16.0, 15.0, 14.0, 12.0, 11.0
   strategy:
     matrix:
       x64:
