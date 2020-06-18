@@ -27,7 +27,7 @@ variables:
 - name: vcpkg_commit
   value: "c4f0372c638831d8d524feb1039611852eca6512"
 - name: visual_bootstrapper
-  value: "https://visualstudio.microsoft.com/fr/thank-you-downloading-visual-studio/?sku=enterprise&rel=16&utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=link+cta&utm_content=download+commandline+parameters+vs2019+rc#"
+  value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
 jobs:
 - job: 'BuildFlatpak'
@@ -77,8 +77,10 @@ jobs:
        makensis  -VERSION
     displayName: Install NSIS
   - powershell: |
-        (new-object System.Net.WebClient).DownloadFile('$(visual_bootstrapper)','C:\tmp\vs_enterprise.exe')
-        $exitCode = Start-Process -FilePath vs_enterprise.exe -ArgumentList "--add Microsoft.VisualStudio.Component.VC.14.25.x86.x64"      
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $client = new-object System.Net.WebClient
+        $client.DownloadFile("$(visual_bootstrapper)","vs_enterprise.exe")
+        .\vs_enterprise.exe modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --add Microsoft.VisualStudio.Component.VC.14.25.x86.x64 --passive --wait
     displayName: Install MSVC 14.25
   - task: Cache@2
     displayName: Cache vcpkg
