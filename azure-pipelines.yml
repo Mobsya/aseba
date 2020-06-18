@@ -26,6 +26,8 @@ variables:
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
   value: "c4f0372c638831d8d524feb1039611852eca6512"
+- name: visual_bootstrapper
+  value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
 jobs:
 - job: 'BuildFlatpak'
@@ -57,7 +59,7 @@ jobs:
         QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z"
         CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
         cmake_generator: "Visual Studio 16 2019"
-        ARCH_CMAKE: "-A x64"
+        ARCH_CMAKE: "-A x64 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
       x86:
         ARCH: 'x86'
@@ -65,7 +67,7 @@ jobs:
         QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x86.7z"
         CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017
         cmake_generator: "Visual Studio 16 2019"
-        ARCH_CMAKE: "-A Win32"
+        ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
   steps:
   - script: |
@@ -74,6 +76,12 @@ jobs:
   - script: |
        makensis  -VERSION
     displayName: Install NSIS
+  - powershell: |
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $client = new-object System.Net.WebClient
+        $client.DownloadFile("$(visual_bootstrapper)","vs_enterprise.exe")
+        .\vs_enterprise.exe modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --add Microsoft.VisualStudio.Component.VC.14.25.x86.x64 --passive --wait
+    displayName: Install MSVC 14.25
   - task: Cache@2
     displayName: Cache vcpkg
     inputs:
