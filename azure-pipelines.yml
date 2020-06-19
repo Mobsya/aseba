@@ -74,14 +74,11 @@ jobs:
        git submodule update --init --recursive
     displayName: Update submodules
   - script: |
-       makensis  -VERSION
+        makensis  -VERSION
     displayName: Install NSIS
-  - powershell: |
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        $client = new-object System.Net.WebClient
-        $client.DownloadFile("$(visual_bootstrapper)","vs_enterprise.exe")
-        .\vs_enterprise.exe modify --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" --add Microsoft.VisualStudio.Component.VC.14.25.x86.x64 --passive --wait
-    displayName: Install MSVC 14.25
+  - script: |
+        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --includeRecommended --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
+    displayName: Add MSVC Component
   - task: Cache@2
     displayName: Cache vcpkg
     inputs:
