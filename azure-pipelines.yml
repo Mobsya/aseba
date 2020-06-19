@@ -77,7 +77,7 @@ jobs:
         makensis  -VERSION
     displayName: Install NSIS
   - script: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --includeRecommended --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
+        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
     displayName: Add MSVC Component
   - task: Cache@2
     displayName: Cache vcpkg
