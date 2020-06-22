@@ -79,7 +79,8 @@
         
         [b setTranslatesAutoresizingMaskIntoConstraints:NO];
         [[self shareInstance].mwebview addSubview:b];
-		if (isScratch(NSURL fileURLWithPath:s.toNSString())){
+        NSString *urlNSStr = url.absoluteString;
+		if (isScratch(urlNSStr)){
 			[[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:5] setActive:YES];
         } else {
 			[[b.bottomAnchor constraintEqualToAnchor: [self shareInstance].mwebview.bottomAnchor constant:-5] setActive:YES];	
@@ -96,8 +97,9 @@
     
 }
 
-bool isScratch(std::string URL){
-   return URL.find("scratch") != std::string::npos;
+bool isScratch(NSString URL){
+   std::string urlStr = std::string([URL UTF8String]);
+   return urlStr.find("scratch") != std::string::npos;
 }
 
 //File Saving, via the 'blobReady' handler
