@@ -97,7 +97,7 @@
     
 }
 
-bool isScratch(NSString URL){
+bool isScratch(NSString *URL){
    std::string urlStr = std::string([URL UTF8String]);
    return urlStr.find("scratch") != std::string::npos;
 }
