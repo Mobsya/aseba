@@ -189,7 +189,7 @@ Item {
             Item {
                 width :  90
                 anchors.horizontalCenter: parent.horizontalCenter
-                height: 12
+                height: 10
 
 
                 /*BatteryIndicator {
@@ -206,7 +206,7 @@ Item {
                      source : "qrc:/assets/update-icon.svg"
                      fillMode: Image.PreserveAspectFit
                      anchors.verticalCenter: parent.verticalCenter
-                     height: 12
+                     height: 20
                      anchors.right: parent.right
                      anchors.leftMargin: 2
                      smooth: true
@@ -233,7 +233,7 @@ Item {
 
             Item {
                 width: parent.width
-                height: 8
+                height: 10
             }
 
             Image {
