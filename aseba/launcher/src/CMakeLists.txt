@@ -88,7 +88,7 @@ if(IOS)
 
     #create app reference
     add_qt_ios_app(thymio-launcher
-        NAME "Thymio Suite"
+        NAME "Thymio Suite Mobile"
         BUNDLE_IDENTIFIER "org.mobsya.thymio.launcher.ios"
         VERSION ${CUR_TIME}
         SHORT_VERSION ${ASEBA_VERSION}
