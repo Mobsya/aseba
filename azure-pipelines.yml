@@ -76,8 +76,13 @@ jobs:
   - script: |
         makensis  -VERSION
     displayName: Install NSIS
+  - task: Cache@2
+    displayName: Cache MSVC
+    inputs:
+      key: VC_14_25_x86_x64|"1"
+      path: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build'
   - script: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
+        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --includeRecommended --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
     displayName: Add MSVC Component
   - task: Cache@2
     displayName: Cache vcpkg
