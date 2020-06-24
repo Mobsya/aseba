@@ -79,7 +79,12 @@
         
         [b setTranslatesAutoresizingMaskIntoConstraints:NO];
         [[self shareInstance].mwebview addSubview:b];
-        [[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:5] setActive:YES];
+        NSString *urlNSStr = url.absoluteString;
+		if (isScratch(urlNSStr)){
+			[[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:5] setActive:YES];
+        } else {
+			[[b.bottomAnchor constraintEqualToAnchor: [self shareInstance].mwebview.bottomAnchor constant:-5] setActive:YES];	
+        }
         [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-15] setActive:YES];
         [b addTarget:self  action:@selector(closeCurrentWebView) forControlEvents:UIControlEventTouchUpInside];
       
@@ -90,6 +95,11 @@
     [[self shareInstance].mwebview loadFileURL:url allowingReadAccessToURL:pathURL];
     return [self shareInstance].mwebview;
     
+}
+
+bool isScratch(NSString *URL){
+   std::string urlStr = std::string([URL UTF8String]);
+   return urlStr.find("scratch") != std::string::npos;
 }
 
 //File Saving, via the 'blobReady' handler

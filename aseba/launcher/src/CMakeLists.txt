@@ -47,6 +47,9 @@ if(IOS)
 
   target_sources(thymio-launcher PUBLIC "${PROJECT_SOURCE_DIR}/thymio_blockly")
   SET_SOURCE_FILES_PROPERTIES("${PROJECT_SOURCE_DIR}/thymio_blockly" PROPERTIES MACOSX_PACKAGE_LOCATION "webapps")
+
+  target_sources(thymio-launcher PUBLIC "${PROJECT_SOURCE_DIR}/vpl3-thymio-suite")
+  SET_SOURCE_FILES_PROPERTIES("${PROJECT_SOURCE_DIR}/vpl3-thymio-suite" PROPERTIES MACOSX_PACKAGE_LOCATION "webapps")
 endif()
 
 if(APPLE)
