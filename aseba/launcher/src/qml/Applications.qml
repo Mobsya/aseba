@@ -52,8 +52,9 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4"
-            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2".arg(baseurl).arg(language)
+        //const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4"
+            //.arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
 
