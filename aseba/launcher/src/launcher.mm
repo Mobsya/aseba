@@ -117,7 +117,7 @@ bool isScratch(NSString *URL){
         // create url
         NSURL *url;
         if([name containsString:@".vpl3"] || [name containsString:@".html"] ){
-            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() name]];
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name]]];
         } else {
             url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
         }
