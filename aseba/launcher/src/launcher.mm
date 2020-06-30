@@ -116,7 +116,9 @@ bool isScratch(NSString *URL){
         //First save it in the app with a real name
         // create url
         NSURL *url;
-        if([name containsString:@".vpl3"] || [name containsString:@".html"] ){
+        if([name containsString:@".vpl3"]){
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".json"]]];
+        } else if([name containsString:@".html"] ){
             url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
         } else {
             url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
