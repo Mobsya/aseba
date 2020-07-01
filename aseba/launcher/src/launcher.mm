@@ -118,10 +118,10 @@ bool isScratch(NSString *URL){
         NSURL *url;
         if([name containsString:@".vpl3"]){
             url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByReplacingOccurrencesOfString:@".vpl3" withString:@".json"]]];
-        } else if([name containsString:@".html"] ){
-            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
-        } else {
+        } else if([name containsString:@".sb3"]){
             url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
+        } else {
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
         }
         [datas writeToURL:url atomically:NO];
         
