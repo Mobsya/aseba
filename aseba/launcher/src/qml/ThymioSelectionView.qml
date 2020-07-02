@@ -289,7 +289,7 @@ Item {
                     text : launchButtonText()
                 }
                 MouseArea {
-                    enabled: true//isSelectedDeviceReady()
+                    enabled: isSelectedDeviceReady()
                     anchors.fill: parent
                     hoverEnabled: true
                     id: mouse_area
