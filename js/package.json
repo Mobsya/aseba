@@ -1,5 +1,5 @@
 {
-  "name": "@mobsya/thymio-api",
+  "name": "@mobsya-association/thymio-api",
   "version": "0.10.3",
   "description": "A JS api to communicate with Thymio from node and browsers",
   "dependencies": {
