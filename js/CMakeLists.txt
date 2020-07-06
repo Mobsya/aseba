@@ -6,7 +6,7 @@ if (NPM_EXECUTABLE)
     set(timestamp_file ${CMAKE_CURRENT_BINARY_DIR}/timestamp.cmake)
     set(timestamp_file2 ${CMAKE_CURRENT_BINARY_DIR}/timestamp2.cmake)
     set(timestamp_file3 ${CMAKE_CURRENT_BINARY_DIR}/timestamp3.cmake)
-    set(tarball_file  ${CMAKE_CURRENT_BINARY_DIR}/mobsya-thymio-api.tar.gz)
+    set(tarball_file  ${CMAKE_CURRENT_BINARY_DIR}/mobsya-association-thymio-api.tar.gz)
 
     add_custom_target(thymio-js-api ALL
         DEPENDS package-lock.json package.json src/thymio.ts ${timestamp_file2} ${timestamp_file3} ${tarball_file}
