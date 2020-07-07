@@ -3,6 +3,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <errno.h>
+#include <QThread>
 
 namespace mobsya {
 
@@ -33,6 +34,7 @@ void TDMSupervisor::startLocalTDM() {
     }
 
     m_tdm_process = new QProcess(this);
+	QThread::msleep(1000);
     connect(m_tdm_process, &QProcess::stateChanged, [this](QProcess::ProcessState state) {
         switch(state) {
             case QProcess::NotRunning: {
@@ -65,6 +67,7 @@ void TDMSupervisor::startLocalTDM() {
             });
     // The empty argument list QStringList{} is necessary to make sure Qt will not try
     // to split the path if it contains space
+	QThread::msleep(1000);
     m_tdm_process->start(path, QStringList{});
 #endif
 }
