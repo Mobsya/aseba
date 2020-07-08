@@ -32,6 +32,7 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
 #ifdef Q_OS_OSX
     useLocalBrowser = true;
 #endif
+    readSettings();
 }
 
 
@@ -199,6 +200,28 @@ bool Launcher::openUrl(const QUrl& url) {
 #endif
     return true;
 }
+
+/* **************
+* it writes local application information to application settings 
+* for being available in next execution - 
+* the function must be called in the program exit and not all times  
+************** */
+void Launcher::writeSettings(){
+    QSettings settings("ThymioSuite", "Mobsya");
+   // the use of local browser available
+    settings.setValue("mainwindowuseLocalBrowser",QVariant(useLocalBrowser) );
+
+}
+
+/* **************
+* it reads the application settings to set the application information 
+* the function must be called after the program load a
+************** */
+void Launcher::readSettings(){
+    QSettings settings("ThymioSuite", "Mobsya");
+    useLocalBrowser = settings.value("mainwindowuseLocalBrowser").toBool();
+}
+
 
 void Launcher::setUseLocalBrowser(bool checked){
     useLocalBrowser = checked;
