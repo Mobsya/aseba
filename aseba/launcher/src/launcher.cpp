@@ -207,8 +207,9 @@ bool Launcher::openUrl(const QUrl& url) {
 * the function must be called in the program exit and not all times  
 ************** */
 void Launcher::writeSettings(){
+    QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
-    settings.setValue("mainwindow/useLocalBrowser",QVariant(useLocalBrowser) );
+    settings.setValue("mainwindowuseLocalBrowser",QVariant(useLocalBrowser) );
 
 }
 
@@ -217,7 +218,8 @@ void Launcher::writeSettings(){
 * the function must be called after the program load a
 ************** */
 void Launcher::readSettings(){
-    useLocalBrowser = settings.value("mainwindow/useLocalBrowser").toBool();
+    QSettings settings("ThymioSuite", "Mobsya");
+    useLocalBrowser = settings.value("mainwindowuseLocalBrowser").toBool();
 }
 
 

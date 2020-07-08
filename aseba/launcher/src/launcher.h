@@ -58,7 +58,6 @@ public:
 /* ************* 
 * Launcher Application Settings -  
 ************** */
-    QSettings settings;
     void writeSettings();
     void readSettings();
 
