@@ -17,8 +17,21 @@
 +(WKWebView*)createWebViewWithBaseURL:(NSURL*)url;
 @end
 
+
 @implementation LauncherDelegate
+
 +(void)closeCurrentWebView {
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"My Alert"
+                                   message:@"This is an alert."
+                                   preferredStyle:UIAlertControllerStyleAlert];
+     
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+       handler:^(UIAlertAction * action) {}];
+     
+    [alert addAction:defaultAction];
+    printf("hello");
+
     if([self shareInstance].mwebview !=nil)
     {
         [[self shareInstance].mwebview removeFromSuperview];
@@ -86,6 +99,7 @@
 			[[b.bottomAnchor constraintEqualToAnchor: [self shareInstance].mwebview.bottomAnchor constant:-5] setActive:YES];	
         }
         [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-15] setActive:YES];
+        
         [b addTarget:self  action:@selector(closeCurrentWebView) forControlEvents:UIControlEventTouchUpInside];
       
     }
