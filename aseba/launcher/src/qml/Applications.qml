@@ -102,7 +102,7 @@ ListModel {
                     supportsGroups: false,
                     supportsWatchMode: false,
                     helpUrl: "https://www.thymio.org/program/vpl/",
-                    isIosSupported: false
+                    isIosSupported: true
                 },
                 {
                     appId: "scratch",

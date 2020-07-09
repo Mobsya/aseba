@@ -18,7 +18,22 @@
 @end
 
 @implementation LauncherDelegate
+
+//- (void)presentViewController:(UIViewController *)viewControllerToPresent
+//  animated:(BOOL)flag
+//completion:(void (^)(void))completion;
+
 +(void)closeCurrentWebView {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"My Alert"
+                                       message:@"This is an alert."
+                                       preferredStyle:UIAlertControllerStyleAlert];
+         
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+           handler:^(UIAlertAction * action) {}];
+         
+        [alert addAction:defaultAction];
+    //    [self presentViewController:alert animated:YES completion:nil];
+    
     if([self shareInstance].mwebview !=nil)
     {
         [[self shareInstance].mwebview removeFromSuperview];
