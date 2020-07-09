@@ -46,6 +46,9 @@ public:
     void requestDeviceManagersShutdown();
     void restartBrowser();
     bool isZeroconfBrowserConnected() const;
+    bool hasEndpoint(QUuid) const;
+    bool registerEndpoint(QUuid, std::shared_ptr<ThymioDeviceManagerClientEndpoint>);
+
 
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);
@@ -66,6 +69,7 @@ Q_SIGNALS:
 private:
     friend class ThymioDevicesModel;
     void onEndpointDisconnected();
+    void doRegisterEndpoint(std::shared_ptr<ThymioDeviceManagerClientEndpoint>& endpoint);
     ThymioDeviceManagerClientEndpoint* qml_localEndpoint() const;
 
     QVector<QZeroConfService> m_services;

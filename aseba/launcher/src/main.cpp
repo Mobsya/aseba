@@ -75,6 +75,10 @@ int main(int argc, char** argv) {
     mobsya::Launcher launcher(&client);
     mobsya::TDMSupervisor supervisor(launcher);
     supervisor.startLocalTDM();
+    client.requestDeviceManagersShutdown();
+    supervisor.startLocalTDM();
+    launcher.connectToServer(QString("127.0.0.1"),quint16(8596));
+
     mobsya::ThymioDevicesModel model(client);
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));

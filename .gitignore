@@ -37,3 +37,4 @@ third_party/spdlog/cmake_install.cmake
 thymio_blockly/
 vpl3-thymio-suite.tar.gz
 vpl3-thymio-suite/
+build_osx/

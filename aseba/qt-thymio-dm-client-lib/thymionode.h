@@ -124,7 +124,8 @@ public:
     bool isInGroup() const;
 
     Q_INVOKABLE QUrl websocketEndpoint() const;
-
+    Q_INVOKABLE QUrl tcpEndpoint() const;
+    
     void setGroup(std::shared_ptr<ThymioGroup> group);
     void setName(const QString& name);
     void setStatus(const Status& status);
