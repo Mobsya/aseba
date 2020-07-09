@@ -141,7 +141,14 @@ bool isScratch(NSString *URL){
         NSData* datas = [[NSData alloc] initWithBase64EncodedString:[[b64 componentsSeparatedByString:@","] lastObject] options:0];
         //First save it in the app with a real name
         // create url
-        NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
+        NSURL *url;
+        if([name containsString:@".vpl3"]){
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByReplacingOccurrencesOfString:@".vpl3" withString:@".json"]]];
+        } else if([name containsString:@".sb3"]){
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
+        } else {
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
+        }
         [datas writeToURL:url atomically:NO];
         
         //Transfer it to the save dialog
