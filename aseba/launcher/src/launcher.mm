@@ -17,8 +17,14 @@
 +(WKWebView*)createWebViewWithBaseURL:(NSURL*)url;
 @end
 
+
 @implementation LauncherDelegate
+
+
+
+
 +(void)closeCurrentWebView {
+
     if([self shareInstance].mwebview !=nil)
     {
         [[self shareInstance].mwebview removeFromSuperview];
@@ -26,6 +32,25 @@
     }
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }
+
++(void)askBeforeQuit{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Are you sure to quit?"
+                                                                                message:nil
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+       [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+               if([self shareInstance].mwebview !=nil){
+               [[self shareInstance].mwebview removeFromSuperview];
+               [self shareInstance].mwebview = nil;
+           }
+           [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+       }]];
+       [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+           return;
+       }]];
+       
+       [[[[UIApplication sharedApplication] keyWindow]rootViewController] presentViewController:alertController animated:YES completion:^{}];
+}
+
 + (LauncherDelegate*)shareInstance {
     static LauncherDelegate *webviewmanager = nil;
     static dispatch_once_t onceToken;
@@ -86,7 +111,8 @@
 			[[b.bottomAnchor constraintEqualToAnchor: [self shareInstance].mwebview.bottomAnchor constant:-5] setActive:YES];	
         }
         [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-15] setActive:YES];
-        [b addTarget:self  action:@selector(closeCurrentWebView) forControlEvents:UIControlEventTouchUpInside];
+        
+        [b addTarget:self  action:@selector(askBeforeQuit) forControlEvents:UIControlEventTouchUpInside];
       
     }
 
