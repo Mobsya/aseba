@@ -17,14 +17,9 @@
 +(WKWebView*)createWebViewWithBaseURL:(NSURL*)url;
 @end
 
-
 @implementation LauncherDelegate
 
-
-
-
 +(void)closeCurrentWebView {
-
     if([self shareInstance].mwebview !=nil)
     {
         [[self shareInstance].mwebview removeFromSuperview];
