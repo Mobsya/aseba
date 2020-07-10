@@ -52,6 +52,7 @@ ListModel {
         if(!baseurl) {
             return false;
         }
+        
         const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4"
             .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
@@ -102,7 +103,7 @@ ListModel {
                     supportsGroups: false,
                     supportsWatchMode: false,
                     helpUrl: "https://www.thymio.org/program/vpl/",
-                    isIosSupported: false
+                    isIosSupported: true
                 },
                 {
                     appId: "scratch",
