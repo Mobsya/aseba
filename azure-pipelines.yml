@@ -30,234 +30,229 @@ variables:
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
 jobs:
-# - job: 'BuildFlatpak'
-  # pool:
-    # vmImage: 'Ubuntu-16.04'
-  # container: fpkde
-  # steps:
-  # - script: |
-      # git submodule update --init --recursive
-      # flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-      # flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
-      # flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
-    # displayName: 'Build flatpak bundle'
+- job: 'BuildFlatpak'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  container: fpkde
+  steps:
+  - script: |
+      git submodule update --init --recursive
+      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
+    displayName: 'Build flatpak bundle'
 
-  # - task: PublishBuildArtifacts@1
-    # inputs:
-      # pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      # artifactName: 'thymio-suite.flatpak'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite.flatpak'
 
-# - job: 'MSVC'
-  # timeoutInMinutes: 90
-  # pool:
-      # vmImage: windows-2019
-  # strategy:
-    # matrix:
-      # x64:
-        # ARCH: 'x64'
-        # vcpkgTriplet: 'x64-windows-static'
-        # QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z"
-        # CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
-        # cmake_generator: "Visual Studio 16 2019"
-        # ARCH_CMAKE: "-A x64 -T version=14.25"
-        # VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
-      # x86:
-        # ARCH: 'x86'
-        # vcpkgTriplet: 'x86-windows-static'
-        # QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x86.7z"
-        # CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017
-        # cmake_generator: "Visual Studio 16 2019"
-        # ARCH_CMAKE: "-A Win32 -T version=14.25"
-        # VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
-  # steps:
-  # - script: |
-       # git submodule update --init --recursive
-    # displayName: Update submodules
-  # - script: |
-        # makensis  -VERSION
-    # displayName: Install NSIS
-  # - task: Cache@2
-    # displayName: Cache MSVC
-    # inputs:
-      # key: VC_14_25_x86_x64|"1"
-      # path: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build'
-  # - script: |
-        # "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --includeRecommended --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
-    # displayName: Add MSVC Component
-  # - task: Cache@2
-    # displayName: Cache vcpkg
-    # inputs:
-      # key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "6" | $(vcpkgTriplet)
-      # path: '$(Build.BinariesDirectory)/vcpkg'
-  # - task: Cache@2
-    # displayName: 'Qt Cache'
-    # inputs:
-      # key:  Qt_5_12_3 | "$(QT_URL)" | "2"
-      # path: $(Build.BinariesDirectory)/Qt/
-      # cacheHitVar: QT_LIB_CACHE_RESTORED
-  # - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
-    # displayName: 'Run vcpkg'
-    # inputs:
-      # vcpkgTriplet: '$(vcpkgTriplet)'
-      # vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
-      # vcpkgGitCommitId: "$(vcpkg_commit)"
-      # vcpkgGitURL: https://github.com/mobsya/vcpkg.git
-  # - powershell: |
-        # Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
-        # Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore
-        # Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/downloads -ErrorAction Ignore
-    # displayName: 'Remove vcpkg object files'
-  # - powershell: |
-        # $output = [System.IO.Path]::GetTempFileName()
-        # Invoke-WebRequest -Verbose  -UseBasicParsing -Uri "$(QT_URL)" -OutFile $output
-        # 7z -bb -y x  $output -o$(Build.BinariesDirectory)
-    # condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
-    # displayName: Fetch Qt
-  # - task: PythonScript@0
-    # displayName: Fetch scratch, blockly and vpl3
-    # inputs:
-      # scriptSource: 'inline'
-      # script: |
-        # from urllib.request import urlretrieve
-        # import tarfile
-        # def extract(url, file):
-            # print("{} -> {}".format(url, file))
-            # urlretrieve(url, file)
-            # tar = tarfile.open(file, "r:gz")
-            # tar.extractall()
-            # tar.close()
-        # extract('$(blockly_url)', 'thymio-blockly.tar.gz')
-        # extract('$(scratch_url)', 'scratch-gui.tar.gz')
-        # extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
-  # - task: DownloadSecureFile@1
-    # name: wincert
-    # inputs:
-      # secureFile: "mobsya-windows.pfx"
-  # - script: |
-        # if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
-        # set "PATH=%PATH%;C:\Program Files (x86)\Windows Kits\10\App Certification Kit\\"
+- job: 'MSVC'
+  timeoutInMinutes: 90
+  pool:
+      vmImage: windows-2019
+  strategy:
+    matrix:
+      x64:
+        ARCH: 'x64'
+        vcpkgTriplet: 'x64-windows-static'
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+        cmake_generator: "Visual Studio 16 2019"
+        ARCH_CMAKE: "-A x64 -T version=14.25"
+        VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
+      x86:
+        ARCH: 'x86'
+        vcpkgTriplet: 'x86-windows-static'
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x86.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017
+        cmake_generator: "Visual Studio 16 2019"
+        ARCH_CMAKE: "-A Win32 -T version=14.25"
+        VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
+  steps:
+  - script: |
+       git submodule update --init --recursive
+    displayName: Update submodules
+  - script: |
+        makensis  -VERSION
+    displayName: Install NSIS
+  - script: |
+        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --includeRecommended --add "Microsoft.VisualStudio.Component.VC.14.25.x86.x64"
+    displayName: Add MSVC Component
+  - task: Cache@2
+    displayName: Cache vcpkg
+    inputs:
+      key: $(Build.SourcesDirectory)/vcpkg-list.txt| "$(vcpkg_commit)" | "windows-2019" | "6" | $(vcpkgTriplet)
+      path: '$(Build.BinariesDirectory)/vcpkg'
+  - task: Cache@2
+    displayName: 'Qt Cache'
+    inputs:
+      key:  Qt_5_12_3 | "$(QT_URL)" | "2"
+      path: $(Build.BinariesDirectory)/Qt/
+      cacheHitVar: QT_LIB_CACHE_RESTORED
+  - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
+    displayName: 'Run vcpkg'
+    inputs:
+      vcpkgTriplet: '$(vcpkgTriplet)'
+      vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
+      vcpkgGitCommitId: "$(vcpkg_commit)"
+      vcpkgGitURL: https://github.com/mobsya/vcpkg.git
+  - powershell: |
+        Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
+        Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore
+        Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/downloads -ErrorAction Ignore
+    displayName: 'Remove vcpkg object files'
+  - powershell: |
+        $output = [System.IO.Path]::GetTempFileName()
+        Invoke-WebRequest -Verbose  -UseBasicParsing -Uri "$(QT_URL)" -OutFile $output
+        7z -bb -y x  $output -o$(Build.BinariesDirectory)
+    condition: ne(variables.QT_LIB_CACHE_RESTORED, 'true')
+    displayName: Fetch Qt
+  - task: PythonScript@0
+    displayName: Fetch scratch, blockly and vpl3
+    inputs:
+      scriptSource: 'inline'
+      script: |
+        from urllib.request import urlretrieve
+        import tarfile
+        def extract(url, file):
+            print("{} -> {}".format(url, file))
+            urlretrieve(url, file)
+            tar = tarfile.open(file, "r:gz")
+            tar.extractall()
+            tar.close()
+        extract('$(blockly_url)', 'thymio-blockly.tar.gz')
+        extract('$(scratch_url)', 'scratch-gui.tar.gz')
+        extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
+  - task: DownloadSecureFile@1
+    name: wincert
+    inputs:
+      secureFile: "mobsya-windows.pfx"
+  - script: |
+        if exist "C:\Program Files\CMake\bin" set PATH=C:\Program Files\CMake\bin;%PATH%
+        set "PATH=%PATH%;C:\Program Files (x86)\Windows Kits\10\App Certification Kit\\"
 
-        # cpack.exe --version
-        # cmake.exe --version
+        cpack.exe --version
+        cmake.exe --version
 
-        # cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
-        # cmake --build . --config Release --parallel
-        # cpack.exe -G NSIS --verbose --debug
+        cmake -G "$(cmake_generator)" $(ARCH_CMAKE) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(Build.BinariesDirectory)/vcpkg/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$(Build.SourcesDirectory)/windows/cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=$(vcpkgTriplet)" -DFLATBUFFERS_BUILD_TESTS=OFF -DCREATE_QT_CONF_FILE=ON $(Build.SourcesDirectory)
+        cmake --build . --config Release --parallel
+        cpack.exe -G NSIS --verbose --debug
 
-    # workingDirectory: '$(Build.BinariesDirectory)'
-    # displayName: 'Run CMake and CPack'
-    # env:
-      # SIGNTOOL_PFX: $(wincert.secureFilePath)
-      # SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
+    workingDirectory: '$(Build.BinariesDirectory)'
+    displayName: 'Run CMake and CPack'
+    env:
+      SIGNTOOL_PFX: $(wincert.secureFilePath)
+      SIGNTOOL_PASSPHRASE: $(mobsya-win-p12)
 
-  # - task: CopyFiles@2
-    # inputs:
-      # sourceFolder: '$(Build.BinariesDirectory)'
-      # targetFolder: '$(Build.ArtifactStagingDirectory)'
-      # contents: 'ThymioSuite-*.exe'
-  # - task: PublishBuildArtifacts@1
-    # inputs:
-      # pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      # artifactName: 'ThymioSuite.exe'
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Build.BinariesDirectory)'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+      contents: 'ThymioSuite-*.exe'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite.exe'
 
 
-# - job: 'BuildAndroid_armeabi'
-  # pool:
-    # vmImage: 'Ubuntu-16.04'
-  # strategy:
-    # matrix:
-      # armeabi:
-        # TARGET_ARCH: 'armeabi-v7a'
-      # aarch64:
-        # TARGET_ARCH: 'arm64-v8a'
-      # x86_64:
-        # TARGET_ARCH: 'x86_64'
-  # steps:
-  # - script: |
-      # docker pull mobsya/android-dev-env:$TARGET_ARCH
-  # - script: |
-      # wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
-      # wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
-      # wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
-    # displayName: 'Extract scratch, blockly and vpl3'
+- job: 'BuildAndroid_armeabi'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  strategy:
+    matrix:
+      armeabi:
+        TARGET_ARCH: 'armeabi-v7a'
+      aarch64:
+        TARGET_ARCH: 'arm64-v8a'
+      x86_64:
+        TARGET_ARCH: 'x86_64'
+  steps:
+  - script: |
+      docker pull mobsya/android-dev-env:$TARGET_ARCH
+  - script: |
+      wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
+      wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
+      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
+    displayName: 'Extract scratch, blockly and vpl3'
 
-  # - script: |
-      # git submodule update --init --recursive
-    # displayName: 'Clone submodules'
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
 
-  # - script: |
-      # sudo docker run --rm -e TARGET_ARCH=${TARGET_ARCH} -v $(pwd):/src:rw -v $(Build.ArtifactStagingDirectory):/build:rw mobsya/android-dev-env:$TARGET_ARCH /bin/bash -c 'cd /src && mkdir build && cd build && export CMAKE_PREFIX_PATH="/Qt/android_${TARGET_ARCH}" && cmake -DANDROID_PLATFORM=android-22 -DANDROID_ABI=${TARGET_ARCH}  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/Qt/android_${TARGET_ARCH} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ../ -GNinja && ninja && cp bin/*.apk /build/thymio-suite-${TARGET_ARCH}.apk'
-    # displayName: 'Build Thymio Suite'
+  - script: |
+      sudo docker run --rm -e TARGET_ARCH=${TARGET_ARCH} -v $(pwd):/src:rw -v $(Build.ArtifactStagingDirectory):/build:rw mobsya/android-dev-env:$TARGET_ARCH /bin/bash -c 'cd /src && mkdir build && cd build && export CMAKE_PREFIX_PATH="/Qt/android_${TARGET_ARCH}" && cmake -DANDROID_PLATFORM=android-22 -DANDROID_ABI=${TARGET_ARCH}  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/Qt/android_${TARGET_ARCH} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ../ -GNinja && ninja && cp bin/*.apk /build/thymio-suite-${TARGET_ARCH}.apk'
+    displayName: 'Build Thymio Suite'
 
-  # - task: PublishBuildArtifacts@1
-    # inputs:
-      # pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      # artifactName: 'thymio-suite-android'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite-android'
 
 
-# - job: BuildOnOsX
-  # pool:
-    # vmImage: 'macOS-10.14'
-  # steps:
-  # - task: NodeTool@0
-    # inputs:
-      # versionSpec: '9.x'
+- job: BuildOnOsX
+  pool:
+    vmImage: 'macOS-10.14'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '9.x'
 
-  # - task: InstallAppleCertificate@2
-    # inputs:
-      # certSecureFile: 'Mobsya.p12'
-      # certPwd: $(mobsya-mac-p12)
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
 
-  # - script: |
-      # curl -sL $(blockly_url) | tar xzf - -C .
-      # curl -sL $(scratch_url) | tar xzf - -C .
-      # curl -sL $(vpl3_url) | tar xzf - -C .
-    # displayName: 'Extract scratch, blockly and vpl3' 
+  - script: |
+      curl -sL $(blockly_url) | tar xzf - -C .
+      curl -sL $(scratch_url) | tar xzf - -C .
+      curl -sL $(vpl3_url) | tar xzf - -C .
+    displayName: 'Extract scratch, blockly and vpl3' 
 
-  # - script: |
-      # brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
-      # brew switch qt 5.13.2 
-    # displayName: 'Setting Qt version to 5.13.2'
+  - script: |
+      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
+      brew switch qt 5.13.2 
+    displayName: 'Setting Qt version to 5.13.2'
 
-  # - script: |
-      # brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/ae73ba09216a7f8b2c0503e57221db020bcd3471/Formula/boost.rb
-      # brew switch boost 1.72.0
-    # displayName: 'Setting Boost version to 1.72.0'
+  - script: |
+      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/ae73ba09216a7f8b2c0503e57221db020bcd3471/Formula/boost.rb
+      brew switch boost 1.72.0
+    displayName: 'Setting Boost version to 1.72.0'
 
-  # - script: |
-      # brew uninstall openssl; brew uninstall openssl; brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
-      # brew info openssl
-    # displayName: 'Setting openssl version to 1.0.0'
+  - script: |
+      brew uninstall openssl; brew uninstall openssl; brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
+      brew info openssl
+    displayName: 'Setting openssl version to 1.0.0'
 
-  # - script: |
-      # brew update
-      # brew bundle
-    # displayName: 'Install dependencies with HomeBrew'
+  - script: |
+      brew update
+      brew bundle
+    displayName: 'Install dependencies with HomeBrew'
 
-  # - script: |
-      # git submodule update --init --recursive
-    # displayName: 'Clone submodules'
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
 
-  # - script: |
-      # sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
-      # export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
-      # (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF && ninja)
-    # displayName: 'Build with cmake'
+  - script: |
+      sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
+      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF && ninja)
+    displayName: 'Build with cmake'
 
-  # - script: |
-      # osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-    # displayName: 'Signing and create dmg'
-    # condition: ne(variables['Build.Reason'], 'PullRequest')
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+    displayName: 'Signing and create dmg'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  # - script: |
-      # osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin
-    # displayName: 'Create Unsigned DMG'
-    # condition: eq(variables['Build.Reason'], 'PullRequest')
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin
+    displayName: 'Create Unsigned DMG'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
 
-  # - task: PublishBuildArtifacts@1
-    # inputs:
-      # pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      # artifactName: 'ThymioSuite.dmg'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite.dmg'
 
 
 - job: BuildForIOs
