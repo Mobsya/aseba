@@ -600,6 +600,14 @@ export interface INode extends IBasicNode {
      */
     runProgram() : Promise<any> ;
 
+    /** Flash the code currently loaded on the vm to the flash memory
+     * The device must be locked & ready before calling this function
+     *
+     * @throws [[mobsya.fb.Error]]
+     * @see [[lock]]
+     */
+    flashProgram() : Promise<any> ;
+
     /**
      * Set the values of the specified variables.
      * Unlike [[setSharedVariables]], existing variables
@@ -772,6 +780,11 @@ export class Node extends BasicNode implements INode {
 
     runProgram() {
         return this._client._set_vm_execution_state(this._id, mobsya.fb.VMExecutionStateCommand.Run);
+    }
+
+    flashProgram() {
+        return this._client._set_vm_execution_state(this._id,
+			mobsya.fb.VMExecutionStateCommand.WriteProgramToDeviceMemory);
     }
 
     setVariables(map) {
