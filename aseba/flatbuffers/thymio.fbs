@@ -262,6 +262,19 @@ table CompilationResultFailure {
     column:uint;
 }
 
+table CompileAndSave{
+    request_id:uint;
+    node_id:NodeId;
+    language:ProgrammingLanguage = Aseba;
+    program:string (required);
+    options:CompilationOptions = 0;
+}
+
+table SaveBytecode{
+    request_id:uint;
+}
+
+
 table CompilationResultSuccess {
     request_id:uint;
     bytecode_size:uint;
@@ -444,7 +457,9 @@ union AnyMessage {
     EnableThymio2PairingMode,
     Thymio2WirelessDonglesChanged,
     Thymio2WirelessDonglePairingRequest,
-    Thymio2WirelessDonglePairingResponse
+    Thymio2WirelessDonglePairingResponse,
+    CompileAndSave,
+    SaveBytecode
 }
 
 table Message {

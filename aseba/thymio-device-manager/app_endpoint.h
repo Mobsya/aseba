@@ -241,6 +241,14 @@ public:
                                                req->program()->str(), req->options());
                 break;
             }
+
+            case mobsya::fb::AnyMessage::CompileAndSave: {
+                auto req = msg.as<fb::CompileAndSave>();
+                this->compile_and_save(req->request_id(), req->node_id(), vm_language(req->language()),
+                                               req->program()->str(), req->options());
+                break;
+            }
+
             case mobsya::fb::AnyMessage::SetVMExecutionState: {
                 auto req = msg.as<fb::SetVMExecutionState>();
                 this->set_vm_execution_state(req->request_id(), req->node_id(), req->command());
@@ -625,6 +633,52 @@ private:
         }
         g->emit_events(m, create_device_write_completion_cb(request_id));
     }
+
+        void compile_and_save(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
+                                  std::string program, fb::CompilationOptions opts) {
+        auto n = get_locked_node(id);
+        if(!n) {
+            auto g = get_group(id);
+            if(g) {
+                auto ec = g->load_code(program, language);
+                if(ec) {
+                    write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
+                    return;
+                }
+                for(auto&& s : g->scratchpads()) {
+                    do_scratchpad_changed(g, s);
+                }
+
+                write_message(create_ack_response(request_id));
+                return;
+            }
+        }
+        if(!n) {
+            mLogWarn("send_aseba_code: node {} not locked", id);
+            write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+            return;
+        }
+        auto callback = [request_id, strand = this->m_strand,
+                         ptr = weak_from_this()](boost::system::error_code ec, aseba_node::compilation_result result) {
+            boost::asio::post(strand, [ec, result, request_id, ptr]() {
+                auto that = ptr.lock();
+                if(!that)
+                    return;
+                if(ec) {
+                    that->write_message(create_error_response(request_id, fb::ErrorType::unknown_node));
+                    return;
+                }
+                that->write_message(create_compilation_result_response(request_id, result));
+            });
+        };
+        // maybe distinguish between real and simulated robot
+        if((int32_t(opts) & int32_t(fb::CompilationOptions::LoadOnTarget))) {
+            n->compile_and_save(language, program, callback);
+        } else {
+            n->compile_and_save(language, program, callback);
+        }
+    }
+
 
     void compile_and_send_program(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
                                   std::string program, fb::CompilationOptions opts) {

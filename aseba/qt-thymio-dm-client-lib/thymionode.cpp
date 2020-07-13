@@ -176,6 +176,10 @@ CompilationRequest ThymioNode::load_aseba_code(const QByteArray& code) {
     return m_endpoint->send_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions::LoadOnTarget);
 }
 
+CompilationRequest ThymioNode::save_aseba_code(const QByteArray& code) {
+    return m_endpoint->save_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions::LoadOnTarget);
+}
+
 Request ThymioNode::setWatchVariablesEnabled(bool enabled) {
     m_watched_infos.setFlag(WatchableInfo::Variables, enabled);
     return updateWatchedInfos();

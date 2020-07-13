@@ -169,6 +169,10 @@ void NodeTab::clearEverything() {
     reset();
 }
 
+/* ************* 
+ * It triggers the execution of the code on a node 
+ * is binded to the "Run" button 
+************* */
 void NodeTab::run() {
 
     if(!m_thymio) {
@@ -261,6 +265,33 @@ void NodeTab::writeProgramToDeviceMemory() {
         w->deleteLater();
     });
 }
+
+void NodeTab::saveCodeOnTarget() {
+    if(!m_thymio)
+        return;
+
+    auto code = editor->toPlainText();
+    m_compilation_watcher->setRequest(m_thymio->save_aseba_code(code.toUtf8()));
+
+    // auto req = m_thymio->load_aseba_code(code.toUtf8());
+    // auto w = new mobsya::CompilationRequestWatcher(req, this);
+    // connect(w, &mobsya::CompilationRequestWatcher::finished, this, [w, this]() {
+    //     if(w->success() && m_thymio)
+    //         m_thymio->writeProgramToDeviceMemory();
+    //     w->deleteLater();
+    // });
+
+    // const auto txt = editor->toPlainText();
+    // // only recompile if source code has actually changed
+    // if(txt == lastCompiledSource)
+    //     return;
+    // lastCompiledSource = editor->toPlainText();
+    // // recompile
+    // compileCodeOnTarget();
+
+    
+}
+
 
 void NodeTab::compilationCompleted() {
     if(m_compilation_watcher->isCanceled()) {

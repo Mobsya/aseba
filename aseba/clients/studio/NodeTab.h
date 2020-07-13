@@ -105,6 +105,7 @@ protected Q_SLOTS:
     void onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage language);
     void editorContentChanged();
     void compileCodeOnTarget();
+    void saveCodeOnTarget();
 
     void showMemoryUsage(bool show);
 
@@ -142,6 +143,7 @@ private:
     bool clearEditorProperty(const QString& property, unsigned line);
     bool clearEditorProperty(const QString& property);
     void switchEditorProperty(const QString& oldProperty, const QString& newProperty);
+    //unactive - commented
     void saveBytecode() const;
 
 private:

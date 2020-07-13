@@ -554,6 +554,18 @@ void MainWindow::showCompilationMessages(bool doShow) {
         dynamic_cast<NodeTab*>(nodes->currentWidget())->compileCodeOnTarget();
 }
 
+/* ********** 
+ * The function trigger a request of exporting the code to the TDM 
+ * the code in the editor is passed to the TDM and saved 
+ * 
+ * **********/
+void MainWindow::ExportCode() {
+
+    if(nodes->currentWidget())
+        dynamic_cast<NodeTab*>(nodes->currentWidget())->saveCodeOnTarget();
+}
+
+
 void MainWindow::compilationMessagesWasHidden() {
     showCompilationMsg->setChecked(false);
 }
@@ -770,7 +782,7 @@ void MainWindow::setupMenu() {
     fileMenu->addSeparator();
     fileMenu->addAction(QIcon(":/images/filesaveas.png"), tr("Export &memories content..."), this,
                         SLOT(exportMemoriesContent()));
-
+    fileMenu->addAction(QIcon(":/images/filesaveas.png"), tr("Export current program to binary"), this, SLOT(ExportCode())),
     fileMenu->addSeparator();
 #ifdef Q_WS_MAC
     fileMenu->addAction(QIcon(":/images/exit.png"), "quit", this, SLOT(close()), QKeySequence::Quit);

@@ -144,6 +144,7 @@ public:
 
     Q_INVOKABLE CompilationRequest compile_aseba_code(const QByteArray& code);
     Q_INVOKABLE CompilationRequest load_aseba_code(const QByteArray& code);
+    Q_INVOKABLE CompilationRequest save_aseba_code(const QByteArray& code);
 
     Q_INVOKABLE Request stop();
     Q_INVOKABLE Request run();
