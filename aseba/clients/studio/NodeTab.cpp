@@ -125,9 +125,11 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
 
+        
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
         connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
-
+    
+        
         onStatusChanged();
         updateAsebaVMDescription();
     }
@@ -289,6 +291,7 @@ void NodeTab::saveCodeOnTarget() {
     // // recompile
     // compileCodeOnTarget();
 
+    
     
 }
 
@@ -657,6 +660,7 @@ void NodeTab::saveBytecode() const {
      write16(file, crc);
      */
 }
+
 
 void NodeTab::onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage) {
     if(editor->isReadOnly() || editor->toPlainText().simplified().isEmpty())

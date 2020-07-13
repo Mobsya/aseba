@@ -634,7 +634,8 @@ private:
         g->emit_events(m, create_device_write_completion_cb(request_id));
     }
 
-        void compile_and_save(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
+    
+    void compile_and_save(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
                                   std::string program, fb::CompilationOptions opts) {
         auto n = get_locked_node(id);
         if(!n) {
@@ -677,6 +678,8 @@ private:
         } else {
             n->compile_and_save(language, program, callback);
         }
+
+        write_message(create_save_response(request_id));
     }
 
 

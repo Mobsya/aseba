@@ -103,6 +103,7 @@ protected Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::EventMap& events);
 
     void onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage language);
+    
     void editorContentChanged();
     void compileCodeOnTarget();
     void saveCodeOnTarget();

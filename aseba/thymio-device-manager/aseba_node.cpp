@@ -201,18 +201,18 @@ void aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::s
     fwrite(data_buff.data(),sizeof(uint16_t),data_buff.size(),fp);
     fclose(fp);
 
-    std::vector<std::shared_ptr<Aseba::Message>> messages;
-    Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
-    reset_known_variables(*compiler.getVariablesMap());
-    write_messages(std::move(messages),
-                   [that = shared_from_this(), cb = std::move(cb), result](boost::system::error_code ec) {
-                       if(ec)
-                           cb(ec, result.value());
-                       else
-                           that->m_callbacks_pending_execution_state_change.push(std::bind(cb, ec, result.value()));
-                   });
+    // std::vector<std::shared_ptr<Aseba::Message>> messages;
+    // Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
+    // reset_known_variables(*compiler.getVariablesMap());
+    // write_messages(std::move(messages),
+    //                [that = shared_from_this(), cb = std::move(cb), result](boost::system::error_code ec) {
+    //                    if(ec)
+    //                        cb(ec, result.value());
+    //                    else
+    //                        that->m_callbacks_pending_execution_state_change.push(std::bind(cb, ec, result.value()));
+    //                });
 
-    m_variables_changed_signal(shared_from_this(), this->variables(), std::chrono::system_clock::now());
+    // m_variables_changed_signal(shared_from_this(), this->variables(), std::chrono::system_clock::now());
 }
 
 
