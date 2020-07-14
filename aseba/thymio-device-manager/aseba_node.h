@@ -140,7 +140,7 @@ public:
     void compile_program(fb::ProgrammingLanguage language, const std::string& program, compilation_callback&& cb = {});
     void compile_and_send_program(fb::ProgrammingLanguage language, const std::string& program,
                                   compilation_callback&& cb = {});
-    void compile_and_save(fb::ProgrammingLanguage language, const std::string& program,compilation_callback&& cb = {});
+    std::vector<uint16_t> compile_and_save(fb::ProgrammingLanguage language, const std::string& program,compilation_callback&& cb = {});
 
     void set_vm_execution_state(vm_execution_state_command state, write_callback&& cb = {});
     void set_breakpoints(std::vector<breakpoint> breakpoints, breakpoints_callback&& cb = {});

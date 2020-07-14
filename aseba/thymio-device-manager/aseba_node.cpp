@@ -179,7 +179,7 @@ void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::st
                           std::bind(std::move(cb), boost::system::error_code{}, result.value()));
 }
 
-void aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::string& program,
+std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::string& program,
                                           compilation_callback&& cb) {
     m_breakpoints.clear();
     cancel_pending_step_request();
@@ -193,23 +193,16 @@ void aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::s
     if(!result) {
         cb(result.error(), {});
         return;
-    }        
+    }
 
-    // std::vector<std::shared_ptr<Aseba::Message>> messages;
-    // Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
-    // reset_known_variables(*compiler.getVariablesMap());
-    // write_messages(std::move(messages),
-    //                [that = shared_from_this(), cb = std::move(cb), result](boost::system::error_code ec) {
-    //                    if(ec)
-    //                        cb(ec, result.value());
-    //                    else
-    //                        that->m_callbacks_pending_execution_state_change.push(std::bind(cb, ec, result.value()));
-    //                });
+        
+    FILE* fp = fopen("/Users/vale/Desktop/compile_save","w+");
+    std::vector<uint16_t> data_buff = std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end());
+    fwrite(data_buff.data(),sizeof(uint16_t),data_buff.size(),fp);
+    fclose(fp);
 
-    // m_variables_changed_signal(shared_from_this(), this->variables(), std::chrono::system_clock::now());
+    return data_buff
 
-
-    // aseba_node_registery::node_id& id
 }
 
 

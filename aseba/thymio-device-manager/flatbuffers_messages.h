@@ -12,11 +12,11 @@ namespace mobsya {
 
 using vm_language = fb::ProgrammingLanguage;
 
-inline tagged_detached_flatbuffer create_save_response(uint32_t request_id,const aseba_node_registery::node_id& id ) {
+inline tagged_detached_flatbuffer create_save_response(uint32_t request_id,const aseba_node_registery::node_id& id, std::vector<uint16_t> bytecode ) {
     flatbuffers::FlatBufferBuilder fb;
     
     //auto idOffset = n.uuid().fb(fb); 
-    auto offset = mobsya::fb::CreateSaveBytecode(fb, request_id, id.fb(fb),fb.CreateString("GIANNA"));
+    auto offset = mobsya::fb::CreateSaveBytecode(fb, request_id, id.fb(fb),fb.CreateString(data_buff.data()));
     
     
     return wrap_fb(fb, offset);

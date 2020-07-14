@@ -672,14 +672,15 @@ private:
                 that->write_message(create_compilation_result_response(request_id, result));
             });
         };
+        std::vector<uint16_t> result;
         // maybe distinguish between real and simulated robot
         if((int32_t(opts) & int32_t(fb::CompilationOptions::LoadOnTarget))) {
-            n->compile_and_save(language, program, callback);
+            result =  n->compile_and_save(language, program, callback);
         } else {
-            n->compile_and_save(language, program, callback);
+            result = n->compile_and_save(language, program, callback);
         }
 
-        write_message(create_save_response(request_id,id));
+        write_message(create_save_response(request_id,id,result));
     }
 
 

@@ -131,8 +131,6 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             break;
         }
         case mobsya::fb::AnyMessage::SaveBytecode: {
-            // auto message = msg.as<mobsya::fb::SaveBytecode>()->UnPack();
-            // auto basic_req = get_request(message->request_id());
             auto message = msg.as<mobsya::fb::SaveBytecode>();
             auto basic_req = get_request(message->request_id());
             
@@ -141,32 +139,8 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
 
             auto id = qfb::uuid(message->node_id()->UnPack());
             if(auto node = m_nodes.value(id)) {
-                node->ReadyBytecode("CARLOTTS");
+                node->ReadyBytecode(message->program()->c_str());
             }
-
-            FILE* fp = fopen("/Users/vale/Desktop/SaveBytecode","w+");
-            fwrite("buffer",1,strlen("buffer"),fp);
-            fclose(fp);
-
-            // if(auto req = basic_req->as<Request::internal_ptr_type>()) {
-            //     req->setResult();
-            // }
-            
-           // auto id = qfb::uuid(message->node_id->id);
-            // if(auto node = m_nodes.value(id)) {
-            //     //node->onReadyBytecode(*message);
-
-            // }
-
-            // auto message = msg.as<mobsya::fb::VMExecutionStateChanged>()->UnPack();
-            // if(!message)
-            //     break;
-            // auto id = qfb::uuid(message->node_id->id);
-            // if(auto node = m_nodes.value(id)) {
-            //     node->onExecutionStateChanged(*message);
-            // }
-            
-
             break;
         }
         case mobsya::fb::AnyMessage::RequestCompleted: {
