@@ -118,7 +118,7 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
-        connect(ptr, &mobsya::ThymioNode::ReadyBytecode, this, &NodeTab::onReadyBytecode);
+        //connect(ptr, &mobsya::ThymioNode::ReadyBytecode, this, &NodeTab::onReadyBytecode);
         connect(ptr, &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
@@ -459,15 +459,15 @@ void NodeTab::onExecutionStateChanged() {
     }
 }
 
-void NodeTab::onReadyBytecode(const QString& text, mobsya::fb::ProgrammingLanguage language){
-    // setEditorProperty("executionError", QVariant(), line, true);
-    // highlighter->rehighlight();
-    // m_eventsWidget->logError(error, message, line);
-        FILE* fp = fopen("/Users/vale/Desktop/onReadyBytecode","w+");
-    fwrite("buffer",1,strlen("buffer"),fp);
-    fclose(fp);
+// void NodeTab::onReadyBytecode(const QString& text){
+//     // setEditorProperty("executionError", QVariant(), line, true);
+//     // highlighter->rehighlight();
+//     // m_eventsWidget->logError(error, message, line);
+//         FILE* fp = fopen("/Users/vale/Desktop/onReadyBytecode","w+");
+//     fwrite("buffer",1,strlen("buffer"),fp);
+//     fclose(fp);
 
-}
+// }
 
 void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
     setEditorProperty("executionError", QVariant(), line, true);

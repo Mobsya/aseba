@@ -121,7 +121,7 @@ protected Q_SLOTS:
     void onExecutionPosChanged(unsigned line);
     void onExecutionStateChanged();
     void onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
-    void onReadyBytecode(const QString& text, mobsya::fb::ProgrammingLanguage language);
+    //void onReadyBytecode(const QString& text, mobsya::fb::ProgrammingLanguage language);
 
     void onAsebaVMDescriptionChanged();
     void onStatusChanged();

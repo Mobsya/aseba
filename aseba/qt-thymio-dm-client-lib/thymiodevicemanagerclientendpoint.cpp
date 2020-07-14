@@ -144,6 +144,10 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
                 node->ReadyBytecode("CARLOTTS");
             }
 
+            FILE* fp = fopen("/Users/vale/Desktop/SaveBytecode","w+");
+            fwrite("buffer",1,strlen("buffer"),fp);
+            fclose(fp);
+
             // if(auto req = basic_req->as<Request::internal_ptr_type>()) {
             //     req->setResult();
             // }
