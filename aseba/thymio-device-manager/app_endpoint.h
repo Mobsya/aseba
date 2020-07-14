@@ -672,15 +672,15 @@ private:
                 that->write_message(create_compilation_result_response(request_id, result));
             });
         };
-        std::vector<uint16_t> result;
+        std::vector<uint16_t> bytecode_result;
         // maybe distinguish between real and simulated robot
         if((int32_t(opts) & int32_t(fb::CompilationOptions::LoadOnTarget))) {
-            result =  n->compile_and_save(language, program, callback);
+            bytecode_result =  n->compile_and_save(language, program, callback);
         } else {
-            result = n->compile_and_save(language, program, callback);
+            bytecode_result = n->compile_and_save(language, program, callback);
         }
 
-        write_message(create_save_response(request_id,id,result));
+        write_message(create_save_response(request_id,id,bytecode_result));
     }
 
 

@@ -190,19 +190,26 @@ std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage langu
     compiler.setTargetDescription(&m_description);
     compiler.setCommonDefinitions(&defs);
     auto result = do_compile_program(compiler, defs, language, program, m_bytecode);
+
+    std::vector<uint16_t> data_buff = std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end());
+
     if(!result) {
         cb(result.error(), {});
-        return;
+        return data_buff;
     }
 
-        
-    FILE* fp = fopen("/Users/vale/Desktop/compile_save","w+");
-    std::vector<uint16_t> data_buff = std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end());
-    fwrite(data_buff.data(),sizeof(uint16_t),data_buff.size(),fp);
-    fclose(fp);
+    FILE* fp1 = fopen("/Users/vale/Desktop/compile_save_CHECK1","w+");
 
-    return data_buff
+    std::deque<Aseba::BytecodeElement>::iterator it = m_bytecode.begin();
+    while (it != m_bytecode.end()){
+        unsigned short gino = (*it).bytecode;
+        fprintf(fp1, "%x",gino);        
+        *it++;
+    }
 
+    fclose(fp1);
+
+    return data_buff;
 }
 
 

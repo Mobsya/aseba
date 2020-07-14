@@ -14,11 +14,20 @@ using vm_language = fb::ProgrammingLanguage;
 
 inline tagged_detached_flatbuffer create_save_response(uint32_t request_id,const aseba_node_registery::node_id& id, std::vector<uint16_t> bytecode ) {
     flatbuffers::FlatBufferBuilder fb;
-    
-    //auto idOffset = n.uuid().fb(fb); 
-    auto offset = mobsya::fb::CreateSaveBytecode(fb, request_id, id.fb(fb),fb.CreateString(data_buff.data()));
-    
-    
+   
+    std::string result_string;
+    for(auto i = 0 ; i < bytecode.size() ; i++){
+        char interm[4] = {0x0000};
+        sprintf(interm,"%x",bytecode[i]);
+        result_string.append(interm);
+    }
+
+    FILE* fp2 = fopen("/Users/vale/Desktop/create_save_response","w+");
+    fprintf(fp2, "%s",result_string.c_str());
+    fclose(fp2);
+
+    auto offset = mobsya::fb::CreateSaveBytecode(fb, request_id, id.fb(fb),fb.CreateString(result_string));
+        
     return wrap_fb(fb, offset);
 }
 
