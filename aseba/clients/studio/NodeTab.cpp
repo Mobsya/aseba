@@ -118,9 +118,11 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
+        connect(ptr, &mobsya::ThymioNode::ReadyBytecode, this, &NodeTab::onReadyBytecode);
         connect(ptr, &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
+        connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
@@ -457,6 +459,16 @@ void NodeTab::onExecutionStateChanged() {
     }
 }
 
+void NodeTab::onReadyBytecode(const QString& text, mobsya::fb::ProgrammingLanguage language){
+    // setEditorProperty("executionError", QVariant(), line, true);
+    // highlighter->rehighlight();
+    // m_eventsWidget->logError(error, message, line);
+        FILE* fp = fopen("/Users/vale/Desktop/onReadyBytecode","w+");
+    fwrite("buffer",1,strlen("buffer"),fp);
+    fclose(fp);
+
+}
+
 void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
     setEditorProperty("executionError", QVariant(), line, true);
     highlighter->rehighlight();
@@ -626,6 +638,7 @@ void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
 
 
 void NodeTab::saveBytecode() const {
+    
     /* const QString& nodeName(target->getName(id));
      QString bytecodeFileName =
          QFileDialog::getSaveFileName(mainWindow, tr("Save the binary code of %0").arg(nodeName),

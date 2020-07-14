@@ -272,6 +272,7 @@ table CompileAndSave{
 
 table SaveBytecode{
     request_id:uint;
+    node_id:NodeId;
     program:string;
 }
 

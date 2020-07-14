@@ -109,6 +109,7 @@ Q_SIGNALS:
     void events(const EventMap& variables, const QDateTime& timestamp);
     void eventsTableChanged(const QVector<EventDescription>& events);
     void vmExecutionError(VMExecutionError error, const QString& message, uint32_t line);
+    void ReadyBytecode(const QString& text);
     void scratchpadChanged(const QString& test, fb::ProgrammingLanguage language);
     
     
@@ -188,7 +189,7 @@ private:
     void onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp);
     void onEventsTableChanged(const QVector<EventDescription>& events);
     void onScratchpadChanged(const QString& text, fb::ProgrammingLanguage language);
-    
+    void onSendBytecode(const QString& text, fb::ProgrammingLanguage language);
     
     void onFirmwareUpgradeProgress(double);
 

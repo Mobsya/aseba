@@ -193,13 +193,7 @@ void aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::s
     if(!result) {
         cb(result.error(), {});
         return;
-    }
-
-        
-    FILE* fp = fopen("/Users/vale/Desktop/compile_save","w+");
-    auto data_buff = std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end());
-    fwrite(data_buff.data(),sizeof(uint16_t),data_buff.size(),fp);
-    fclose(fp);
+    }        
 
     // std::vector<std::shared_ptr<Aseba::Message>> messages;
     // Aseba::sendBytecode(messages, native_id(), std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end()));
@@ -213,6 +207,9 @@ void aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::s
     //                });
 
     // m_variables_changed_signal(shared_from_this(), this->variables(), std::chrono::system_clock::now());
+
+
+    // aseba_node_registery::node_id& id
 }
 
 
