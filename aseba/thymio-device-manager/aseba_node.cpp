@@ -245,7 +245,6 @@ std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage langu
     fin_data_buff.push_back((uint16_t)m_description->name);
 
     //  write16(file, target->getDescription(id)->crc());
-    // change this since might be longer than UINT_16
     fin_data_buff.push_back((uint16_t)m_description->crc());
 
     //  // bytecode
