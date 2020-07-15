@@ -103,6 +103,7 @@ protected Q_SLOTS:
     void onEvents(const mobsya::ThymioNode::EventMap& events);
 
     void onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage language);
+    void onReadyBytecode(const QString& text);
 
     void editorContentChanged();
     void compileCodeOnTarget();
@@ -121,7 +122,7 @@ protected Q_SLOTS:
     void onExecutionPosChanged(unsigned line);
     void onExecutionStateChanged();
     void onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
-    //void onReadyBytecode(const QString& text, mobsya::fb::ProgrammingLanguage language);
+    //
 
     void onAsebaVMDescriptionChanged();
     void onStatusChanged();
@@ -137,6 +138,7 @@ private:
     void updateBreakpoints();
     void updateMemoryUsage(const mobsya::CompilationResult& res);
     void handleCompilationError(const mobsya::CompilationResult& res);
+    void handleBytecodeReturn(const QString& bytecode);
 
 
     void rehighlight();
@@ -210,6 +212,7 @@ private:
 
     QString lastCompiledSource;  //!< content of last source considered for compilation following
     QString lastLoadedSource;
+    QString lastFileLocation;
 
     //!< a textChanged signal
     int errorPos;   //!< position of last error, -1 if compilation was success

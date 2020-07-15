@@ -111,8 +111,6 @@ Q_SIGNALS:
     void vmExecutionError(VMExecutionError error, const QString& message, uint32_t line);
     void ReadyBytecode(const QString& text);
     void scratchpadChanged(const QString& test, fb::ProgrammingLanguage language);
-    
-    
     void firmwareUpdateProgress(double);
 
 public:
@@ -189,8 +187,8 @@ private:
     void onGroupVariablesChanged(VariableMap variables, const QDateTime& timestamp);
     void onEventsTableChanged(const QVector<EventDescription>& events);
     void onScratchpadChanged(const QString& text, fb::ProgrammingLanguage language);
-    void onSendBytecode(const QString& text, fb::ProgrammingLanguage language);
-    
+    void onReadyBytecode(const QString& text);
+    void onSendBytecode(const QString& text, fb::ProgrammingLanguage language);    
     void onFirmwareUpgradeProgress(double);
 
     Request updateWatchedInfos();

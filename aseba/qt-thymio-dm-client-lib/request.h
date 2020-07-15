@@ -508,7 +508,6 @@ private:
 using Request = BasicRequest<SimpleRequestResult>;
 using RequestWatcher = BasicRequestWatcher<SimpleRequestResult>;
 
-
 using Thymio2WirelessDonglePairingRequest = BasicRequest<Thymio2WirelessDonglePairingResult>;
 using Thymio2WirelessDonglePairingRequestWatcher = BasicRequestWatcher<Thymio2WirelessDonglePairingResult>;
 
@@ -520,5 +519,6 @@ using BreakpointsRequestWatcher = BasicRequestWatcher<SetBreakpointRequestResult
 
 using AsebaVMDescriptionRequest = BasicRequest<AsebaVMDescriptionRequestResult>;
 using AsebaVMDescriptionRequestWatcher = BasicRequestWatcher<AsebaVMDescriptionRequestResult>;
+
 
 }  // namespace mobsya

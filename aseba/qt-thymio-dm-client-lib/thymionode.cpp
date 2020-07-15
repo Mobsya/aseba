@@ -270,7 +270,9 @@ void ThymioNode::onGroupVariablesChanged(VariableMap variables, const QDateTime&
 void ThymioNode::onScratchpadChanged(const QString& text, fb::ProgrammingLanguage language) {
     Q_EMIT scratchpadChanged(text, language);
 }
-
+void ThymioNode::onReadyBytecode(const QString& text) {
+    Q_EMIT ReadyBytecode(text);
+}
 void ThymioNode::onFirmwareUpgradeProgress(double d) {
     Q_EMIT firmwareUpdateProgress(d);
 }

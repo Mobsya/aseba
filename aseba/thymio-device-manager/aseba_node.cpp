@@ -198,17 +198,6 @@ std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage langu
         return data_buff;
     }
 
-    FILE* fp1 = fopen("/Users/vale/Desktop/compile_save_CHECK1","w+");
-
-    std::deque<Aseba::BytecodeElement>::iterator it = m_bytecode.begin();
-    while (it != m_bytecode.end()){
-        unsigned short gino = (*it).bytecode;
-        fprintf(fp1, "%x",gino);        
-        *it++;
-    }
-
-    fclose(fp1);
-
     return data_buff;
 }
 

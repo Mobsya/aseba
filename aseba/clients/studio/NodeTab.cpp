@@ -118,11 +118,10 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
-        //connect(ptr, &mobsya::ThymioNode::ReadyBytecode, this, &NodeTab::onReadyBytecode);
+        connect(ptr, &mobsya::ThymioNode::ReadyBytecode, this, &NodeTab::onReadyBytecode);
         connect(ptr, &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
-        connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
         connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
@@ -157,6 +156,7 @@ void NodeTab::reset() {
         m_thymio->stop();
     }
     lastLoadedSource.clear();
+    lastFileLocation.clear();
     editor->debugging = false;
     currentPC = -1;
 }
@@ -291,9 +291,7 @@ void NodeTab::saveCodeOnTarget() {
     //     return;
     // lastCompiledSource = editor->toPlainText();
     // // recompile
-    // compileCodeOnTarget();
-
-    
+    // compileCodeOnTarget();    
     
 }
 
@@ -459,15 +457,67 @@ void NodeTab::onExecutionStateChanged() {
     }
 }
 
-// void NodeTab::onReadyBytecode(const QString& text){
-//     // setEditorProperty("executionError", QVariant(), line, true);
-//     // highlighter->rehighlight();
-//     // m_eventsWidget->logError(error, message, line);
-//         FILE* fp = fopen("/Users/vale/Desktop/onReadyBytecode","w+");
-//     fwrite("buffer",1,strlen("buffer"),fp);
-//     fclose(fp);
+static void write16(QIODevice& dev, const uint16_t v)
+	{
+		dev.write((const char*)&v, 2);
+	}
 
-// }
+	static void write16(QIODevice& dev, const VariablesDataVector& data, const char *varName)
+	{
+		if (data.empty())
+		{
+			std::cerr << "Warning, cannot find " << varName << " required to save bytecode, using 0" << std::endl;
+			write16(dev, 0);
+		}
+		else
+			dev.write((const char *)&data[0], 2);
+	}
+
+	static uint16_t crcXModem(const uint16_t oldCrc, const QString& s)
+	{
+		return crcXModem(oldCrc, s.toStdWString());
+	}
+
+void NodeTab::onReadyBytecode(const QString& bytecode){
+        
+    FILE* fp = fopen(this->lastFileLocation.toStdString().c_str(),"w+");
+    fprintf(fp, "%s",bytecode.toStdString().c_str());
+    fclose(fp);
+    
+    // //const QString& nodeName(target->getName(id));
+    //  QString bytecodeFileName =
+    //      QFileDialog::getSaveFileName(mainWindow, tr("Save the binary code of %0").arg(nodeName),
+    //                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+    //                                   "Aseba Binary Object (*.abo);;All Files (*)");
+
+    //  QFile file(this->lastFileLocation);
+    //  if(!file.open(QFile::WriteOnly | QFile::Truncate))
+    //      return;
+
+    //  // See AS001 at https://aseba.wikidot.com/asebaspecifications
+
+     // header
+    //  const char* magic = "ABO";
+    //  file.write(magic, 4);
+    //  write16(file, 0);  // binary format version
+    //  write16(file, target->getDescription(id)->protocolVersion);
+    //  write16(file, vmMemoryModel->getVariableValue("_productId"), "product identifier (_productId)");
+    //  write16(file, vmMemoryModel->getVariableValue("_fwversion"), "firmware version (_fwversion)");
+    //  write16(file, id);
+    //  write16(file, crcXModem(0, nodeName));
+    //  write16(file, target->getDescription(id)->crc());
+
+    //  // bytecode
+    //  write16(file, bytecode.size());
+    //  uint16_t crc(0);
+    //  for(size_t i = 0; i < bytecode.size(); ++i) {
+    //      const uint16_t bc(bytecode[i]);
+    //      write16(file, bc);
+    //      crc = crcXModem(crc, bc);
+    //  }
+    //  write16(file, crc);
+
+}
 
 void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
     setEditorProperty("executionError", QVariant(), line, true);

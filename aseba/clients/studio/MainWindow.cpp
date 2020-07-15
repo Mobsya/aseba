@@ -555,16 +555,35 @@ void MainWindow::showCompilationMessages(bool doShow) {
 }
 
 /* ********** 
- * The function trigger a request of exporting the code to the TDM 
- * the code in the editor is passed to the TDM and saved 
+  * The function triggers a request to the TDM to compile the code in the editor 
+ * after the compilation the compiledcode is sent back to the client who asked 
+ * and saved locally to the file location requested from the user 
  * 
+ * .abo extension is assigned to the file - the format is described here http://wiki.thymio.org/asebaspecifications001
  * **********/
+
 void MainWindow::ExportCode() {
 
-    if(nodes->currentWidget())
-        dynamic_cast<NodeTab*>(nodes->currentWidget())->saveCodeOnTarget();
-}
+    QString exportFileName = QFileDialog::getSaveFileName(
+    
+    this, tr("Export current program to binary"), 
 
+        dynamic_cast<NodeTab*>(nodes->currentWidget())->lastFileLocation.isEmpty() ? 
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) : 
+        dynamic_cast<NodeTab*>(nodes->currentWidget())->lastFileLocation,
+        
+        "Thymio Bytecode (*.abo);;All Files (*)");
+
+    QFile file(exportFileName);
+    if(!file.open(QFile::WriteOnly | QFile::Truncate))
+        return;
+
+    if(nodes->currentWidget()){
+        dynamic_cast<NodeTab*>(nodes->currentWidget())->lastFileLocation = exportFileName;
+        dynamic_cast<NodeTab*>(nodes->currentWidget())->saveCodeOnTarget();
+    }
+
+}
 
 void MainWindow::compilationMessagesWasHidden() {
     showCompilationMsg->setChecked(false);
