@@ -457,32 +457,40 @@ void NodeTab::onExecutionStateChanged() {
     }
 }
 
-static void write16(QIODevice& dev, const uint16_t v)
-	{
-		dev.write((const char*)&v, 2);
-	}
-
-	static void write16(QIODevice& dev, const VariablesDataVector& data, const char *varName)
-	{
-		if (data.empty())
-		{
-			std::cerr << "Warning, cannot find " << varName << " required to save bytecode, using 0" << std::endl;
-			write16(dev, 0);
-		}
-		else
-			dev.write((const char *)&data[0], 2);
-	}
-
-	static uint16_t crcXModem(const uint16_t oldCrc, const QString& s)
-	{
-		return crcXModem(oldCrc, s.toStdWString());
-	}
-
-void NodeTab::onReadyBytecode(const QString& bytecode){
+void NodeTab::onReadyBytecode(const QString& bytecode_string){
         
     FILE* fp = fopen(this->lastFileLocation.toStdString().c_str(),"w+");
-    fprintf(fp, "%s",bytecode.toStdString().c_str());
+    fprintf(fp, "%s",bytecode_string.toStdString().c_str());
     fclose(fp);
+
+    std::vector<uint16_t> bytecode;
+    // PUT HERE The string pour into the std vector
+
+    // void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
+    //               const std::vector<uint16_t>& bytecode) {
+
+    // const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
+    // unsigned bytecodeStart = 0;
+    // unsigned bytecodeCount = unsigned(bytecode.size());
+
+    // while(bytecodeCount > bytecodePayloadSize) {
+    //     auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
+    //     setBytecodeMessage->bytecode.resize(bytecodePayloadSize);
+    //     copy(bytecode.begin() + bytecodeStart, bytecode.begin() + bytecodeStart + bytecodePayloadSize,
+    //          setBytecodeMessage->bytecode.begin());
+    //     messagesVector.push_back(move(setBytecodeMessage));
+
+    //     bytecodeStart += bytecodePayloadSize;
+    //     bytecodeCount -= bytecodePayloadSize;
+    // }
+
+    // {
+    //     auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
+    //     setBytecodeMessage->bytecode.resize(bytecodeCount);
+    //     copy(bytecode.begin() + bytecodeStart, bytecode.end(), setBytecodeMessage->bytecode.begin());
+    //     messagesVector.push_back(move(setBytecodeMessage));
+    // }
+
     
     // //const QString& nodeName(target->getName(id));
     //  QString bytecodeFileName =
@@ -490,16 +498,16 @@ void NodeTab::onReadyBytecode(const QString& bytecode){
     //                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
     //                                   "Aseba Binary Object (*.abo);;All Files (*)");
 
-    //  QFile file(this->lastFileLocation);
-    //  if(!file.open(QFile::WriteOnly | QFile::Truncate))
-    //      return;
+    QFile file(this->lastFileLocation);
+    if(!file.open(QFile::WriteOnly | QFile::Truncate))
+        return;
 
-    //  // See AS001 at https://aseba.wikidot.com/asebaspecifications
+    // See AS001 at https://aseba.wikidot.com/asebaspecifications
 
      // header
-    //  const char* magic = "ABO";
-    //  file.write(magic, 4);
-    //  write16(file, 0);  // binary format version
+    const char* magic = "ABO";
+    file.write(magic, 4);
+    write16(file, 0);  // binary format version
     //  write16(file, target->getDescription(id)->protocolVersion);
     //  write16(file, vmMemoryModel->getVariableValue("_productId"), "product identifier (_productId)");
     //  write16(file, vmMemoryModel->getVariableValue("_fwversion"), "firmware version (_fwversion)");

@@ -179,6 +179,29 @@ void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::st
                           std::bind(std::move(cb), boost::system::error_code{}, result.value()));
 }
 
+
+static void write16(QIODevice& dev, const uint16_t v)
+	{
+		dev.write((const char*)&v, 2);
+	}
+
+	static void write16(QIODevice& dev, const VariablesDataVector& data, const char *varName)
+	{
+		if (data.empty())
+		{
+			std::cerr << "Warning, cannot find " << varName << " required to save bytecode, using 0" << std::endl;
+			write16(dev, 0);
+		}
+		else
+			dev.write((const char *)&data[0], 2);
+	}
+
+	static uint16_t crcXModem(const uint16_t oldCrc, const QString& s)
+	{
+		return crcXModem(oldCrc, s.toStdWString());
+	}
+
+
 std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::string& program,
                                           compilation_callback&& cb) {
     m_breakpoints.clear();
@@ -197,8 +220,47 @@ std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage langu
         cb(result.error(), {});
         return data_buff;
     }
+    std::vector<uint16_t> fin_data_buff;
 
-    return data_buff;
+    fin_data_buff.push_back((uint16_t)"ABO\0");
+    //fin_data_buff.push_back((uint16_t)"ABO\n");
+    fin_data_buff.push_back((uint16_t)0x0000);
+    fin_data_buff.push_back((uint16_t)m_description.protocolVersion);
+
+    //** OLD VERSION ->  write16(file, vmMemoryModel->getVariableValue("_productId"), "product identifier (_productId)");
+    fin_data_buff.push_back((uint16_t)8);
+
+    //** OLD VERSION ->  write16(file, vmMemoryModel->getVariableValue("_fwversion"), "firmware version (_fwversion)");
+    auto it = std::find_if(m_variables.begin(), m_variables.end(),
+                           [](const aseba_vm_variable& var) { return var.name == "_fwversion"; });
+    if(it != m_variables.end()) {
+        fin_data_buff.push_back((uint16_t)*it);
+    }
+
+    //** OLD VERSION ->  write16(file, id);
+    // not use anymore - here just for padding 
+    fin_data_buff.push_back((uint16_t)0x0001);    
+
+    //  ** OLD VERSION -> write16(file, crcXModem(0, nodeName));
+    fin_data_buff.push_back((uint16_t)m_description->name);
+
+    //  write16(file, target->getDescription(id)->crc());
+    // change this since might be longer than UINT_16
+    fin_data_buff.push_back((uint16_t)m_description->crc());
+
+    //  // bytecode
+    //  write16(file, bytecode.size());
+    fin_data_buff.push_back((uint16_t)bytecode.size());
+
+    uint16_t overall_crc(0);
+    for(int k = 0; k < data_buff.size(); k++){
+        fin_data_buff.push_back(data_buff[k]);
+        overall_crc = crcXModem(overall_crc, data_buff[k]);
+    }
+
+    fin_data_buff.push_back(overall_crc);
+
+    return fin_data_buff;
 }
 
 
