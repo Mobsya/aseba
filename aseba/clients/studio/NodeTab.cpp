@@ -458,72 +458,9 @@ void NodeTab::onExecutionStateChanged() {
 }
 
 void NodeTab::onReadyBytecode(const QString& bytecode_string){
-        
     FILE* fp = fopen(this->lastFileLocation.toStdString().c_str(),"w+");
     fprintf(fp, "%s",bytecode_string.toStdString().c_str());
     fclose(fp);
-
-    std::vector<uint16_t> bytecode;
-    // PUT HERE The string pour into the std vector
-
-    // void sendBytecode(std::vector<std::unique_ptr<Message> >& messagesVector, uint16_t dest,
-    //               const std::vector<uint16_t>& bytecode) {
-
-    // const unsigned bytecodePayloadSize = ASEBA_MAX_EVENT_ARG_COUNT - 2;
-    // unsigned bytecodeStart = 0;
-    // unsigned bytecodeCount = unsigned(bytecode.size());
-
-    // while(bytecodeCount > bytecodePayloadSize) {
-    //     auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
-    //     setBytecodeMessage->bytecode.resize(bytecodePayloadSize);
-    //     copy(bytecode.begin() + bytecodeStart, bytecode.begin() + bytecodeStart + bytecodePayloadSize,
-    //          setBytecodeMessage->bytecode.begin());
-    //     messagesVector.push_back(move(setBytecodeMessage));
-
-    //     bytecodeStart += bytecodePayloadSize;
-    //     bytecodeCount -= bytecodePayloadSize;
-    // }
-
-    // {
-    //     auto setBytecodeMessage = make_unique<SetBytecode>(dest, bytecodeStart);
-    //     setBytecodeMessage->bytecode.resize(bytecodeCount);
-    //     copy(bytecode.begin() + bytecodeStart, bytecode.end(), setBytecodeMessage->bytecode.begin());
-    //     messagesVector.push_back(move(setBytecodeMessage));
-    // }
-
-    
-    // //const QString& nodeName(target->getName(id));
-    //  QString bytecodeFileName =
-    //      QFileDialog::getSaveFileName(mainWindow, tr("Save the binary code of %0").arg(nodeName),
-    //                                   QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-    //                                   "Aseba Binary Object (*.abo);;All Files (*)");
-
-    QFile file(this->lastFileLocation);
-    if(!file.open(QFile::WriteOnly | QFile::Truncate))
-        return;
-
-    // See AS001 at https://aseba.wikidot.com/asebaspecifications
-
-     // header
-    const char* magic = "ABO";
-    file.write(magic, 4);
-    write16(file, 0);  // binary format version
-    //  write16(file, target->getDescription(id)->protocolVersion);
-    //  write16(file, vmMemoryModel->getVariableValue("_productId"), "product identifier (_productId)");
-    //  write16(file, vmMemoryModel->getVariableValue("_fwversion"), "firmware version (_fwversion)");
-    //  write16(file, id);
-    //  write16(file, crcXModem(0, nodeName));
-    //  write16(file, target->getDescription(id)->crc());
-
-    //  // bytecode
-    //  write16(file, bytecode.size());
-    //  uint16_t crc(0);
-    //  for(size_t i = 0; i < bytecode.size(); ++i) {
-    //      const uint16_t bc(bytecode[i]);
-    //      write16(file, bc);
-    //      crc = crcXModem(crc, bc);
-    //  }
-    //  write16(file, crc);
 
 }
 
