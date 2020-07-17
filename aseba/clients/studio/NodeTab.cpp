@@ -458,8 +458,18 @@ void NodeTab::onExecutionStateChanged() {
 }
 
 void NodeTab::onReadyBytecode(const QString& bytecode_string){
+    
+    static const char hex_digits[] = "0123456789ABCDEF";
+    std::string output;
+    output.reserve(bytecode_string.toStdString().length() * 2);
+    for (unsigned char c : input){
+        output.push_back(hex_digits[c >> 4]);
+        output.push_back(hex_digits[c & 15]);
+    }
+
     FILE* fp = fopen(this->lastFileLocation.toStdString().c_str(),"w+");
-    fprintf(fp, "%s",bytecode_string.toStdString().c_str());
+    fprintf(fp, "%s",output.c_str());
+
     fclose(fp);
 }
 

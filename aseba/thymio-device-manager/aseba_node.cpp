@@ -214,7 +214,6 @@ std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage langu
 
     std::vector<uint16_t> fin_data_buff;
 
-
     fin_data_buff.push_back((uint16_t)'A');
     fin_data_buff.push_back((uint16_t)'B');
     fin_data_buff.push_back((uint16_t)'O');
