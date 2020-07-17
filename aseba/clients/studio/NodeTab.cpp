@@ -15,7 +15,7 @@
 #include "CustomWidgets.h"
 #include "ModelAggregator.h"
 #include "ConfigDialog.h"
-
+#include <fstream>
 
 namespace Aseba {
 
@@ -457,20 +457,20 @@ void NodeTab::onExecutionStateChanged() {
     }
 }
 
+
 void NodeTab::onReadyBytecode(const QString& bytecode_string){
-    
-    static const char hex_digits[] = "0123456789ABCDEF";
-    std::string output;
-    output.reserve(bytecode_string.toStdString().length() * 2);
-    for (unsigned char c : input){
-        output.push_back(hex_digits[c >> 4]);
-        output.push_back(hex_digits[c & 15]);
+    std::ofstream datafile(this->lastFileLocation.toStdString().c_str(), std::ios_base::binary | std::ios_base::out);
+    char buf[3];
+    buf[2] = 0;
+
+    std::stringstream input(bytecode_string.toStdString());
+    input.flags(std::ios_base::hex);
+    while (input)
+    {
+        input >> buf[0] >> buf[1];
+        long val = strtol(buf, nullptr, 16);
+        datafile << static_cast<unsigned char>(val & 0xff);
     }
-
-    FILE* fp = fopen(this->lastFileLocation.toStdString().c_str(),"w+");
-    fprintf(fp, "%s",output.c_str());
-
-    fclose(fp);
 }
 
 void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {
