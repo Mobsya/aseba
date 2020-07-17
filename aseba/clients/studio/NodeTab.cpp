@@ -461,7 +461,6 @@ void NodeTab::onReadyBytecode(const QString& bytecode_string){
     FILE* fp = fopen(this->lastFileLocation.toStdString().c_str(),"w+");
     fprintf(fp, "%s",bytecode_string.toStdString().c_str());
     fclose(fp);
-
 }
 
 void NodeTab::onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line) {

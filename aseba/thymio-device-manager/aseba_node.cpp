@@ -179,7 +179,14 @@ void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::st
                           std::bind(std::move(cb), boost::system::error_code{}, result.value()));
 }
 
-
+/*
+Non inplace Byte swap for being compliant with Endianess
+* optimization can arise using pointer and inplace memory
+*/
+uint16_t swapByteOrder(uint16_t us) { 
+    uint16_t new_us = (us >> 8) | (us << 8); 
+    return new_us;
+}
 
 /* **********
 * The function compiles the code and create the proper header for the .abo file 
@@ -207,34 +214,34 @@ std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage langu
 
     std::vector<uint16_t> fin_data_buff;
 
+
     fin_data_buff.push_back((uint16_t)'A');
     fin_data_buff.push_back((uint16_t)'B');
     fin_data_buff.push_back((uint16_t)'O');
     fin_data_buff.push_back((uint16_t)'\0');
 
     fin_data_buff.push_back((uint16_t)0);
-    fin_data_buff.push_back((uint16_t)0);
-    fin_data_buff.push_back((uint16_t)m_description.protocolVersion);
-    fin_data_buff.push_back((uint16_t)(m_description.protocolVersion>>16));
-    fin_data_buff.push_back((uint16_t)8);
-    fin_data_buff.push_back((uint16_t)0);
-
+    fin_data_buff.push_back((uint16_t)swapByteOrder(m_description.protocolVersion));
+    fin_data_buff.push_back((uint16_t)swapByteOrder(8));
 
     auto it = std::find_if(m_variables.begin(), m_variables.end(),
                         [](const aseba_vm_variable& var) { return var.name == "_fwversion"; });
     if(it != m_variables.end()) {
-        fin_data_buff.push_back((uint16_t)((*it).value[0]));
-        fin_data_buff.push_back((uint16_t)0);
+        fin_data_buff.push_back((uint16_t)swapByteOrder(((*it).value[0])));
     }
 
-    // as in private conversation with Michael B. this value is hardcoded to 1 since is never used
-    fin_data_buff.push_back((uint16_t)0);
-    fin_data_buff.push_back((uint16_t)1);
-    fin_data_buff.push_back((uint16_t)Aseba::crcXModem(0,m_description.name));    
+    fin_data_buff.push_back((uint16_t)swapByteOrder(1));
+    fin_data_buff.push_back((uint16_t)swapByteOrder(Aseba::crcXModem(0,m_description.name)));            
+    fin_data_buff.push_back((uint16_t)swapByteOrder(m_description.crc()));
+    fin_data_buff.push_back((uint16_t)swapByteOrder(data_buff.size()));
 
-    //uint16_t interm;
-    // (std::wstring_convert<std::codecvt_utf8<wchar_t>> m_description.name).to_bytes(interm);
-    // fin_data_buff.push_back((uint16_t)(std::wstring_convert<std::codecvt_utf8<wchar_t>> m_description.name).to_bytes(interm));
+    uint16_t overall_crc(0);
+    for(int k = 0; k < data_buff.size(); k++){
+        fin_data_buff.push_back(swapByteOrder(data_buff[k]));
+        overall_crc = Aseba::crcXModem(overall_crc, data_buff[k]);
+    }
+
+    fin_data_buff.push_back((uint16_t)swapByteOrder(overall_crc));
 
     return fin_data_buff;
 }
