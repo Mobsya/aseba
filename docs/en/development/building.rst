@@ -34,9 +34,9 @@ All the commands given in the rest of this document assume the current path is t
 Getting all web base software
 ----------------------------
 
- 1. Download `https://github.com/Mobsya/scratch-gui/releases/` latest release and extract it into the main directory with the name ``scratch``
- 2. Download `https://github.com/Mobsya/thymio-blockly-standalone/releases` latest release and extract it into the main directory with the name ``thymio_blockly``
- 3. Download `https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz` and extract it into the main directory with the name ``tvpl3-thymio-suite``.
+- Download `https://github.com/Mobsya/scratch-gui/releases/` latest release and extract it into the main directory with the name ``scratch``
+- Download `https://github.com/Mobsya/thymio-blockly-standalone/releases` latest release and extract it into the main directory with the name ``thymio_blockly``
+- Download `https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz` and extract it into the main directory with the name ``tvpl3-thymio-suite``.
  
 Getting Started on Windows with MSVC
 ------------------------------------
