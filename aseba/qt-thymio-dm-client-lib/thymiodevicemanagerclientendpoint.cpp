@@ -146,7 +146,6 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
         case mobsya::fb::AnyMessage::RequestCompleted: {
             auto message = msg.as<mobsya::fb::RequestCompleted>();
             auto basic_req = get_request(message->request_id());
-
             if(!basic_req)
                 break;
             if(auto req = basic_req->as<Request::internal_ptr_type>()) {

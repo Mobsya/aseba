@@ -286,7 +286,6 @@ void ThymioNode::onEventsTableChanged(const QVector<EventDescription>& events) {
     Q_EMIT eventsTableChanged(events);
 }
 
-
 ThymioGroup::ThymioGroup(std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint, const QUuid& id)
     : m_group_id(id), m_endpoint(endpoint) {}
 

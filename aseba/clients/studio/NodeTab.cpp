@@ -124,13 +124,9 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
         connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
-        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
-
-        
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);       
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
-        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
-    
-        
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);       
         onStatusChanged();
         updateAsebaVMDescription();
     }
@@ -294,7 +290,6 @@ void NodeTab::saveCodeOnTarget() {
     // compileCodeOnTarget();    
     
 }
-
 
 void NodeTab::compilationCompleted() {
     if(m_compilation_watcher->isCanceled()) {
@@ -641,8 +636,7 @@ void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
 }
 
 
-void NodeTab::saveBytecode() const {
-    
+void NodeTab::saveBytecode() const { 
     /* const QString& nodeName(target->getName(id));
      QString bytecodeFileName =
          QFileDialog::getSaveFileName(mainWindow, tr("Save the binary code of %0").arg(nodeName),

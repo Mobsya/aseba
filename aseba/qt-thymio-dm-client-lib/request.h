@@ -520,5 +520,4 @@ using BreakpointsRequestWatcher = BasicRequestWatcher<SetBreakpointRequestResult
 using AsebaVMDescriptionRequest = BasicRequest<AsebaVMDescriptionRequestResult>;
 using AsebaVMDescriptionRequestWatcher = BasicRequestWatcher<AsebaVMDescriptionRequestResult>;
 
-
 }  // namespace mobsya

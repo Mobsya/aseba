@@ -122,8 +122,6 @@ protected Q_SLOTS:
     void onExecutionPosChanged(unsigned line);
     void onExecutionStateChanged();
     void onVmExecutionError(mobsya::ThymioNode::VMExecutionError error, const QString& message, uint32_t line);
-    //
-
     void onAsebaVMDescriptionChanged();
     void onStatusChanged();
 
