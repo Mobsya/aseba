@@ -73,8 +73,7 @@ private:
     void setupButtons(NodeTab* tab);
     void deleteTab(NodeTab*);
     void addThymiosFromGroups();
-    NodeTab* tabForNode(std::shared_ptr<const mobsya::ThymioNode>) const;
-
+    NodeTab* tabForNode(std::shared_ptr<const mobsya::ThymioNode>) const;   
 
     auto nodes_for_groups() const {
         std::vector<std::shared_ptr<mobsya::ThymioNode>> nodes;
