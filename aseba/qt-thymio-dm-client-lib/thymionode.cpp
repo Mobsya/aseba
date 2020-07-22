@@ -180,6 +180,10 @@ CompilationRequest ThymioNode::load_aseba_code(const QByteArray& code) {
     return m_endpoint->send_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions::LoadOnTarget);
 }
 
+CompilationRequest ThymioNode::save_aseba_code(const QByteArray& code) {
+    return m_endpoint->save_code(*this, code, fb::ProgrammingLanguage::Aseba, fb::CompilationOptions::LoadOnTarget);
+}
+
 Request ThymioNode::setWatchVariablesEnabled(bool enabled) {
     m_watched_infos.setFlag(WatchableInfo::Variables, enabled);
     return updateWatchedInfos();
@@ -270,7 +274,9 @@ void ThymioNode::onGroupVariablesChanged(VariableMap variables, const QDateTime&
 void ThymioNode::onScratchpadChanged(const QString& text, fb::ProgrammingLanguage language) {
     Q_EMIT scratchpadChanged(text, language);
 }
-
+void ThymioNode::onReadyBytecode(const QString& text) {
+    Q_EMIT ReadyBytecode(text);
+}
 void ThymioNode::onFirmwareUpgradeProgress(double d) {
     Q_EMIT firmwareUpdateProgress(d);
 }
