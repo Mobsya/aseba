@@ -32,10 +32,15 @@ void run_service(boost::asio::io_context& ctx) {
     // Gather a list of local ips so that we can detect connections from
     // the same machine.
     std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
+    
+    boost::asio::ip::address localhost = *std::next(local_ips.begin(), 0);
+    local_ips.clear();
+    local_ips.insert(localhost);
+    
     for(auto&& ip : local_ips) {
         mLogTrace("Local Ip : {}", ip.to_string());
     }
-
+    
     [[maybe_unused]] mobsya::uuid_generator& _ = boost::asio::make_service<mobsya::uuid_generator>(ctx);
     mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
     [[maybe_unused]] mobsya::app_token_manager& token_manager =
