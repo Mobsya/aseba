@@ -774,7 +774,7 @@ event %0 : </source>
         <translation type="vanished">Temizle</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+260"/>
         <source>...inside %0</source>
         <translation>...içinde %0</translation>
     </message>
@@ -802,7 +802,7 @@ event %0 : </source>
         <translation type="vanished">&amp;Kullanıcı El Kitabı</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-471"/>
         <source>Aseba Studio - File Exception</source>
         <translation type="unfinished"></translation>
     </message>
@@ -817,7 +817,13 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-89"/>
         <source>Web site Aseba...</source>
         <translation>İnternet sitesi Aseba...</translation>
     </message>
@@ -1300,7 +1306,7 @@ event %0 : </source>
         <translation type="vanished">Sıfırla</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>Çalıştır</translation>
     </message>
@@ -1322,7 +1328,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Uygulama&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1337,7 +1343,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1367,7 +1373,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1426,7 +1432,7 @@ event %0 : </source>
         <translation type="vanished">bytecodeu: %1 - %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Hafıza kullanımı&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1435,7 +1441,7 @@ event %0 : </source>
         <translation type="vanished">çalışıyor</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>Durdur</translation>
     </message>

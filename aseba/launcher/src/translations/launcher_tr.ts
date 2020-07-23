@@ -138,17 +138,17 @@ Connect the robot with a usb cable to install it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="252"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="257"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="343"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="348"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="345"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="350"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -306,7 +306,7 @@ Continue?</source>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="215"/>
+        <location filename="../launcher.cpp" line="238"/>
         <source>Save %1</source>
         <translation type="unfinished"></translation>
     </message>

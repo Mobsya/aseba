@@ -866,7 +866,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Löschen</translation>
     </message>
     <message>
-        <location line="+308"/>
+        <location line="+339"/>
         <source>...inside %0</source>
         <translation>...in %0</translation>
     </message>
@@ -1291,7 +1291,7 @@ Ereignis %0: </translation>
         <translation>&amp;Versteckte Variabeln und Funktionen anzeigen</translation>
     </message>
     <message>
-        <location line="-722"/>
+        <location line="-753"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio ist eine Umgebung um Roboter interaktiv mit Text zu programmieren.</translation>
     </message>
@@ -1306,7 +1306,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Schlüssel&amp;wörter zeigen</translation>
     </message>
     <message>
-        <location line="+806"/>
+        <location line="+837"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
@@ -1328,7 +1328,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">&amp;Studio...</translation>
     </message>
     <message>
-        <location line="-447"/>
+        <location line="-478"/>
         <source>Aseba Studio - File Exception</source>
         <translation>Aseba Studio - Datei-Ausnahme</translation>
     </message>
@@ -1343,7 +1343,13 @@ Ereignis %0: </translation>
         <translation>Wollen Sie sie von der Liste streichen?</translation>
     </message>
     <message>
-        <location line="+454"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-79"/>
         <source>&amp;About...</source>
         <translation>Ü&amp;ber...</translation>
     </message>
@@ -1474,7 +1480,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+301"/>
+        <location filename="../../studio/NodeTab.cpp" line="+330"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>variablen: %1 %2 (%3 %)</translation>
     </message>
@@ -1489,7 +1495,7 @@ Ereignis %0: </translation>
         <translation>Erfolgreiche Kompilierung</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Nicht verbunden&lt;/b&gt;</translation>
     </message>
@@ -1519,7 +1525,7 @@ Ereignis %0: </translation>
         <translation>(Wird von eineranderer Applikation oder einem anderen Benutzer gesteuert)</translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation>Stopp</translation>
     </message>
@@ -1600,7 +1606,7 @@ Ereignis %0: </translation>
         <translation type="vanished">Byte-Code: %1 von %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Speichernutzung&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1609,7 +1615,7 @@ Ereignis %0: </translation>
         <translation type="vanished">wird ausgeführt</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
