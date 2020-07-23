@@ -832,7 +832,7 @@ event %0 : </source>
         <location line="+329"/>
         <location line="+235"/>
         <source>Export current program to binary</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter le programme actuel en code binaire</translation>
     </message>
     <message>
         <location line="-88"/>
@@ -1714,7 +1714,7 @@ event %0 : </source>
     <message>
         <location line="+1"/>
         <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
-        <translation type="unfinished">CSV Coma Separated Values (*.csv);;All Files (*)</translation>
+        <translation>CSV Coma Separated Values (*.csv);;All Files (*)</translation>
     </message>
 </context>
 <context>
