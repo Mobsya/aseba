@@ -74,9 +74,9 @@ int main(int argc, char** argv) {
     mobsya::ThymioDeviceManagerClient client;
     mobsya::Launcher launcher(&client);
     mobsya::TDMSupervisor supervisor(launcher);
-    supervisor.startLocalTDM();
-    supervisor.stopLocalTDM();
-    client.requestDeviceManagersShutdown();
+//    supervisor.startLocalTDM();
+//    supervisor.stopLocalTDM();
+//    client.requestDeviceManagersShutdown();
 //     supervisor.startLocalTDM();
 //     launcher.connectToServer(QString("127.0.0.1"),quint16(8596));
 

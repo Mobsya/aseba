@@ -124,6 +124,9 @@ std::shared_ptr<ThymioNode> ThymioDeviceManagerClientEndpoint::node(const QUuid&
 
 void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_ptr& msg) {
     qDebug() << "ThymioDeviceManagerClientEndpoint::handleIncommingMessage" << EnumNameAnyMessage(msg.message_type());
+    
+     qDebug() << "GARGAMELLONA GARGAMELLA" << EnumNameAnyMessage(msg.message_type());
+    
     m_last_message_reception_date = QDateTime::currentDateTime();
     switch(msg.message_type()) {
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
