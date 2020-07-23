@@ -31,11 +31,14 @@ void run_service(boost::asio::io_context& ctx) {
 
     // Gather a list of local ips so that we can detect connections from
     // the same machine.
-    std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
+    std::set<boost::asio::ip::address> local_ips;
+//    = mobsya::network_interfaces_addresses();
     
-    boost::asio::ip::address localhost = *std::next(local_ips.begin(), 0);
-    local_ips.clear();
+    boost::asio::ip::address localhost = boost::asio::ip::address::from_string("::1");
+//    local_ips.clear();
     local_ips.insert(localhost);
+//     const boost::asio::ip::address_v4 & ipv4_address);
+//    tcp::endpoint(,port);
     
     for(auto&& ip : local_ips) {
         mLogTrace("Local Ip : {}", ip.to_string());

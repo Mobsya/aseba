@@ -11,7 +11,11 @@ template <typename socket_type>
 class application_server {
 public:
     application_server(boost::asio::io_context& io_context, uint16_t port = 0)
-        : m_io_context(io_context), m_acceptor(io_context, tcp::endpoint(tcp::v6(), port)) {
+        : m_io_context(io_context), m_acceptor(io_context, tcp::endpoint(boost::asio::ip::address::from_string("::1"), port)) {
+            
+            //     const boost::asio::ip::address_v4 & ipv4_address);
+            //    tcp::endpoint(,port);
+            
         // Make sure we accept both ipv4 + ipv6
         boost::asio::ip::v6_only opt(false);
         boost::system::error_code ec;
