@@ -144,6 +144,19 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             onNodesChanged(*(message->UnPack()));
             break;
         }
+        case mobsya::fb::AnyMessage::SaveBytecode: {
+            auto message = msg.as<mobsya::fb::SaveBytecode>();
+            auto basic_req = get_request(message->request_id());
+            
+            if(!basic_req)
+                break;
+
+            auto id = qfb::uuid(message->node_id()->UnPack());
+            if(auto node = m_nodes.value(id)) {
+                node->ReadyBytecode(message->program()->c_str());
+            }
+            break;
+        }
         case mobsya::fb::AnyMessage::RequestCompleted: {
             auto message = msg.as<mobsya::fb::RequestCompleted>();
             auto basic_req = get_request(message->request_id());
@@ -530,6 +543,19 @@ auto ThymioDeviceManagerClientEndpoint::send_code(const ThymioNode& node, const 
     write(wrap_fb(builder, fb::CreateCompileAndLoadCodeOnVM(builder, r.id(), uuidOffset, language, codedOffset, opts)));
     return r;
 }
+auto ThymioDeviceManagerClientEndpoint::save_code(const ThymioNode& node, const QByteArray& code,
+                                                  fb::ProgrammingLanguage language, fb::CompilationOptions opts)
+    -> CompilationRequest {
+
+    CompilationRequest r = prepare_request<CompilationRequest>();
+    flatbuffers::FlatBufferBuilder builder;
+    auto uuidOffset = serialize_uuid(builder, node.uuid());
+    auto codedOffset = builder.CreateString(code.data(), code.size());
+    write(wrap_fb(builder, fb::CreateCompileAndSave(builder, r.id(), uuidOffset, language, codedOffset, opts)));
+    
+    return r;
+}
+
 
 Request ThymioDeviceManagerClientEndpoint::send_aesl(const ThymioGroup& group, const QByteArray& code) {
     auto r = prepare_request<Request>();
