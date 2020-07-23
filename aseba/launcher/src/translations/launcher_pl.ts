@@ -158,7 +158,7 @@ Connect the robot with a usb cable to install it</source>
         <translation type="unfinished">Program z %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="252"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="257"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
         <translation type="unfinished">Upewnij się że Thymio Suite jest uruchomione na komputerze z nadajnikiem. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</translation>
     </message>
@@ -167,12 +167,12 @@ Connect the robot with a usb cable to install it</source>
         <translation type="obsolete">Upewnij się, że pakiet Thymio Suite jest uruchamiany na komputerze przekaźnikowym. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt; Więcej informacji&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="343"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="348"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;http://google.com&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Robot nie znaleziony ponieważ brakuje lub nie jest uruchomiony Avahi Daemon. &lt;a href=&apos;http://google.com&apos;&gt;Rozwiązywanie problemów&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="345"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="350"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Robot nie znaleziony ponieważ brakuje lub nie jest uruchomiona usługa Bonjour. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Rozwiązywanie problemów&lt;/a&gt;</translation>
     </message>
@@ -339,7 +339,7 @@ Kontynuować?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="215"/>
+        <location filename="../launcher.cpp" line="238"/>
         <source>Save %1</source>
         <translation>Zapisz %1</translation>
     </message>

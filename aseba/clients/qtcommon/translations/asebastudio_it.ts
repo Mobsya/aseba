@@ -623,7 +623,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Informazioni sulla versione:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Versione %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(tipi di flusso supportati: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2013 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; e altri collaboratori.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba è open-source con licenza LGPL versione 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+615"/>
+        <location filename="../../studio/MainWindow.cpp" line="+646"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/it:start</translation>
     </message>
@@ -632,7 +632,7 @@ Occurrences</source>
         <translation type="vanished">Riguardo Aseba Studio</translation>
     </message>
     <message>
-        <location line="-493"/>
+        <location line="-524"/>
         <source>Open Script</source>
         <translation>Apri Script</translation>
     </message>
@@ -831,7 +831,7 @@ event %0 : </source>
         <translation type="vanished">Pulisci</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+260"/>
         <source>...inside %0</source>
         <translation>...dentro %0</translation>
     </message>
@@ -1128,7 +1128,7 @@ event %0 : </source>
         <translation type="obsolete">F11</translation>
     </message>
     <message>
-        <location line="-722"/>
+        <location line="-753"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio è un ambiente per la programmazione interattiva di robot utilizzando un linguaggio di testo.</translation>
     </message>
@@ -1153,7 +1153,13 @@ event %0 : </source>
         <translation>Volete cancellarlo dalla lista?</translation>
     </message>
     <message>
-        <location line="+572"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>&amp;Go To Line...</source>
         <translation>Vai alla &amp;linea...</translation>
     </message>
@@ -1384,7 +1390,7 @@ event %0 : </source>
         <translation type="vanished">Ripristina</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>Esegui</translation>
     </message>
@@ -1406,7 +1412,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Esecuzione&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>variabili: %1 %2 (%3 %)</translation>
     </message>
@@ -1421,7 +1427,7 @@ event %0 : </source>
         <translation>Compilazione riuscita con successo</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Non collegato&lt;/b&gt;</translation>
     </message>
@@ -1451,7 +1457,7 @@ event %0 : </source>
         <translation>(Controllato da un&apos;altra applicazione o utente)</translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
@@ -1510,7 +1516,7 @@ event %0 : </source>
         <translation type="vanished">bytecode: %1 su %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Utilizzo della memoria&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1519,7 +1525,7 @@ event %0 : </source>
         <translation type="vanished">in esecuzione</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>

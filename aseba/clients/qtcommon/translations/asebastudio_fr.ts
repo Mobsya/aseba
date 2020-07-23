@@ -680,7 +680,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;b&gt;Événements&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+482"/>
+        <location line="+513"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -747,7 +747,7 @@ event %0 : </source>
         <translation type="vanished">Une partie du contenu n&apos;a pas été importé</translation>
     </message>
     <message>
-        <location line="-327"/>
+        <location line="-358"/>
         <source>Go To Line</source>
         <translation>Aller à la ligne</translation>
     </message>
@@ -769,7 +769,7 @@ event %0 : </source>
         <translation type="obsolete">Aide d&apos;Aseba Studio: Studio</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+309"/>
         <source>Thymio programming tutorial...</source>
         <translation>Didacticiel de programmation Thymio...</translation>
     </message>
@@ -804,7 +804,7 @@ event %0 : </source>
         <translation>Site web d&apos;Aseba...</translation>
     </message>
     <message>
-        <location line="-557"/>
+        <location line="-588"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio est un environnement pour programmer des robots interactivement avec un langage texte.</translation>
     </message>
@@ -829,7 +829,13 @@ event %0 : </source>
         <translation>Souhaitez-vous le supprimer de la liste ?</translation>
     </message>
     <message>
-        <location line="+445"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-88"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/fr:start</translation>
     </message>
@@ -1302,7 +1308,7 @@ event %0 : </source>
         <translation type="obsolete">&lt;p&gt;Aseba pre-version:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba SVN rev. %0 / protocole ver. %1&lt;/li&gt;&lt;li&gt;Dashel ver. </translation>
     </message>
     <message>
-        <location line="-518"/>
+        <location line="-549"/>
         <source>Export memory content</source>
         <translation>Exporter le contenu de la mémoire</translation>
     </message>
@@ -1331,7 +1337,7 @@ event %0 : </source>
         <translation type="obsolete">Ne peut pas ouvrir le fichier d&apos;aide.</translation>
     </message>
     <message>
-        <location line="+308"/>
+        <location line="+339"/>
         <source>...inside %0</source>
         <translation>...dans %0</translation>
     </message>
@@ -1497,7 +1503,7 @@ event %0 : </source>
         <translation type="vanished">Resetter</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>Exécuter</translation>
     </message>
@@ -1535,7 +1541,7 @@ event %0 : </source>
         <translation type="vanished">bytecode: %1 sur %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-549"/>
+        <location line="-566"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Utilisation de la mémoire&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1544,7 +1550,7 @@ event %0 : </source>
         <translation type="vanished">exécution</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
@@ -1570,7 +1576,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Mots clés&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-556"/>
+        <location line="-573"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation>variables: %1 %2 (%3 %)</translation>
     </message>
@@ -1585,7 +1591,7 @@ event %0 : </source>
         <translation>Compilation réussie</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;Non connecté&lt;/b&gt;</translation>
     </message>
@@ -1615,7 +1621,7 @@ event %0 : </source>
         <translation>(contrôlé par une autre application ou un autre utilisateur)</translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation>Arrêter</translation>
     </message>

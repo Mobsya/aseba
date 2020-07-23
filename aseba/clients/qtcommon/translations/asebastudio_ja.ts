@@ -574,7 +574,13 @@ Occurrences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+445"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-88"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation></translation>
     </message>
@@ -583,7 +589,7 @@ Occurrences</source>
         <translation type="vanished">Aseba Studio について</translation>
     </message>
     <message>
-        <location line="-493"/>
+        <location line="-524"/>
         <source>Open Script</source>
         <translation>スクリプト開ける</translation>
     </message>
@@ -782,7 +788,7 @@ event %0 : </source>
         <translation type="vanished">すべてクリア</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+260"/>
         <source>...inside %0</source>
         <translation>...%0の中</translation>
     </message>
@@ -1252,7 +1258,7 @@ event %0 : </source>
         <translation type="vanished">リセット</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>実行</translation>
     </message>
@@ -1274,7 +1280,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;実行&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1289,7 +1295,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1319,7 +1325,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation type="unfinished">停止</translation>
     </message>
@@ -1378,7 +1384,7 @@ event %0 : </source>
         <translation type="vanished">バイトコード; %2 (%3%)の%1</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>
 &lt;b&gt;メモリ使用量&lt;/b&gt; : %1、%2</translation>
@@ -1388,7 +1394,7 @@ event %0 : </source>
         <translation type="vanished">実行中</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>一時停止</translation>
     </message>

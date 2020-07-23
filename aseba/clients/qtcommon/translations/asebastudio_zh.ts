@@ -598,7 +598,7 @@ Occurrences</source>
         <translation type="vanished">&lt;h1&gt;关于Aseba&lt;/h1&gt;版本信息&lt;ul&gt;&lt;li&gt;Aseba版本: %0&lt;br/&gt;(build版本. %1/协议版本. %2)&lt;/li&gt;&lt;li&gt;Dashel版本. %3&lt;br/&gt;(支持的数据流类型: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;更多资料 &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; 以及其他参与者 (click &quot;Show details&quot; for full list)&lt;/p&gt;&lt;p&gt;Aseb为开源项目,许可证 &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL版本 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+615"/>
+        <location filename="../../studio/MainWindow.cpp" line="+646"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -607,7 +607,7 @@ Occurrences</source>
         <translation type="vanished">关于Aseba Studio</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-589"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境</translation>
     </message>
@@ -803,7 +803,7 @@ event %0 : </source>
         <translation type="vanished">清除</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+260"/>
         <source>...inside %0</source>
         <translation>...在节点%0内</translation>
     </message>
@@ -831,7 +831,7 @@ event %0 : </source>
         <translation type="vanished">用户手册(&amp;U)...</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-471"/>
         <source>Aseba Studio - File Exception</source>
         <translation type="unfinished"></translation>
     </message>
@@ -846,7 +846,13 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-89"/>
         <source>Web site Aseba...</source>
         <translation>Aseba网站...</translation>
     </message>
@@ -1273,7 +1279,7 @@ event %0 : </source>
         <translation type="vanished">重置</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
@@ -1295,7 +1301,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;执行&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1310,7 +1316,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1340,7 +1346,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation type="unfinished">停止</translation>
     </message>
@@ -1399,7 +1405,7 @@ event %0 : </source>
         <translation type="vanished">字节码: %1 on %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;内存用量&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1408,7 +1414,7 @@ event %0 : </source>
         <translation type="vanished">运行中</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
