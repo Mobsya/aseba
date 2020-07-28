@@ -49,6 +49,9 @@ public:
     Request unlock(const ThymioNode& node);
     CompilationRequest send_code(const ThymioNode& node, const QByteArray& code, fb::ProgrammingLanguage language,
                                  fb::CompilationOptions opts);
+    CompilationRequest save_code(const ThymioNode& node, const QByteArray& code, fb::ProgrammingLanguage language,
+                                 fb::CompilationOptions opts);
+
     Request send_aesl(const ThymioGroup& group, const QByteArray& code);
     Request set_watch_flags(const QUuid& node, int flags);
     AsebaVMDescriptionRequest fetchAsebaVMDescription(const ThymioNode& node);

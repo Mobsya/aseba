@@ -6,7 +6,7 @@
 #include <qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 #include <QDir>
 #include <QCoreApplication>
-
+#include <QSettings>
 
 namespace mobsya {
 
@@ -59,6 +59,12 @@ public:
 #endif
 
     bool isZeroconfRunning() const;
+
+/* ************* 
+* Launcher Application Settings -  
+************** */
+    void writeSettings();
+    void readSettings();
 
 Q_SIGNALS:
     void zeroconfStatusChanged() const;

@@ -5,7 +5,7 @@ const dest = process.argv[2]
 const exec = require('child_process').exec;
 
 
-let files = require("glob").glob.sync("mobsya-thymio-api-*.tgz");
+let files = require("glob").glob.sync("mobsya-association-thymio-api-*.tgz");
 files.forEach((file) => {
     console.log(`Deleting ${file}`);
     fs.unlinkSync(file)
@@ -19,7 +19,7 @@ exec('npm pack', function callback(error, stdout, stderr){
     console.log(`stdout: ${stdout}`);
     console.log(`stderr: ${stderr}`);
 
-    const src = `mobsya-thymio-api-${version}.tgz`
+    const src = `mobsya-association-thymio-api-${version}.tgz`
 
     console.log(`${src} => ${dest}`)
 

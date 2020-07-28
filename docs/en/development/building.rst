@@ -31,7 +31,13 @@ Alternatively, git can do that for you if you configure it with ``git config --g
 
 All the commands given in the rest of this document assume the current path is the root folder of the cloned repository.
 
+Getting all web base software
+----------------------------
 
+- Download `https://github.com/Mobsya/scratch-gui/releases/` latest release and extract it into the main directory with the name ``scratch``
+- Download `https://github.com/Mobsya/thymio-blockly-standalone/releases` latest release and extract it into the main directory with the name ``thymio_blockly``
+- Download `https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz` and extract it into the main directory with the name ``tvpl3-thymio-suite``.
+ 
 Getting Started on Windows with MSVC
 ------------------------------------
 
@@ -160,7 +166,7 @@ Building Aseba
 ::
 
     mkdir build && cd build
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ..
+    cmake  -DMOBSYA_WEBAPPS_ROOT_DIR=share/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ..
     make
 
 A note about permissions
