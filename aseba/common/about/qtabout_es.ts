@@ -25,8 +25,9 @@
     </message>
     <message>
         <location line="+4"/>
-        <source>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL version 3&lt;/a&gt;.</source>
-        <translation>Aseba tiene licencia de código abierto bajo la &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL versión 3&lt;/a&gt;.</translation>
+        <source>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL version 3&lt;/a&gt;.</source>
+        <oldsource>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL version 3&lt;/a&gt;.</oldsource>
+        <translation type="unfinished">Aseba tiene licencia de código abierto bajo la &lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL versión 3&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+10"/>
