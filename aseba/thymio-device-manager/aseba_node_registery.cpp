@@ -116,6 +116,14 @@ void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint&
     update_discovery();
 }
 
+void aseba_node_registery::set_tcp_endpoint_ul(const boost::asio::ip::tcp::endpoint& endpoint) {
+    m_nodes_service_desc.endpoint(endpoint);
+}
+
+void aseba_node_registery::set_ws_endpoint_ul(const boost::asio::ip::tcp::endpoint& endpoint) {
+    m_ws_endpoint = endpoint;
+}
+
 void aseba_node_registery::update_discovery() {
 
     if(m_updating_discovery) {

@@ -31,6 +31,10 @@ public:
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
     void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
 
+    void set_tcp_endpoint_ul(const boost::asio::ip::tcp::endpoint& endpoint);
+    void set_ws_endpoint_ul(const boost::asio::ip::tcp::endpoint& endpoint);
+
+    
     uint16_t ws_port() const {
         return m_ws_endpoint.port();
     }
