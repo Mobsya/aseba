@@ -31,7 +31,7 @@ ListModel {
             var program = Utils.search_program("asebastudio")
             if(!program)
                 return false;
-            return Utils.launch_process(program, ["--uuid", device.id])
+            return Utils.launch_process(program, ["--uuid", device.id, "--endpoint", device.tcpEndpoint()])
         }
     }
 
@@ -42,7 +42,7 @@ ListModel {
             var program = Utils.search_program("thymiovplclassic")
             if(!program)
                 return false;
-            return Utils.launch_process(program, ["--uuid", device.id])
+            return Utils.launch_process(program, ["--uuid", device.id, "--endpoint", device.tcpEndpoint()])
         }
     }
 
@@ -73,8 +73,16 @@ ListModel {
         return launch_functions[appId]
     }
 
+    function connect() {
+        var host = "127.0.0.1"
+        var port = "8596"
+        var monitor = Utils.connectToServer(host, port)
+        monitor.start()
+    }
+
     Component.onCompleted: {
         create_application_list()
+        connect()
     }
 
     function create_application_list() {
@@ -102,7 +110,6 @@ ListModel {
                     descriptionTextFile: "qrc:/apps/vpl3/desc.%1.html",
                     supportsGroups: false,
                     supportsWatchMode: false,
-
                     helpUrl: "https://www.thymio.org/%1/program/vpl3/",
                     isIosSupported: true
                 },

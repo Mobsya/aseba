@@ -2,6 +2,7 @@
 
 namespace mobsya.fb;
 
+///A node id
 table NodeId {
     id:[ubyte];
 }
@@ -37,7 +38,6 @@ table ConnectionHandshake {
 
     //In the server -> client direction, server guid
     uuid: NodeId;
-
 }
 
 // The server sends ping at short intervals

@@ -30,7 +30,6 @@ bool ThymioDeviceManagerClient::isZeroconfBrowserConnected() const {
     return m_register->browserExists();
 }
 
-
 bool ThymioDeviceManagerClient::hasEndpoint(QUuid uuid) const {
     auto it = m_endpoints.find(uuid);
     if(it == m_endpoints.end()) {
@@ -61,8 +60,6 @@ bool ThymioDeviceManagerClient::registerEndpoint(QUuid id,
     return true;
 }
 
-
-
 void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     qCDebug(zeroconf) << "ThymioDeviceManagerClient::onServiceAdded: " << service;
     QUuid id = service_id(service);
@@ -79,7 +76,6 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
             [](ThymioDeviceManagerClientEndpoint* ep) { ep->deleteLater(); });
         socket->connectToHost(service.ip(), service.port());
         doRegisterEndpoint(endpoint);
-
         m_endpoints.insert(id, endpoint);
 
     } else if(endpoint->peerAddress() != service.ip()) {

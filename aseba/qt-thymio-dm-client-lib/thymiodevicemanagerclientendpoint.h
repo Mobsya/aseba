@@ -31,7 +31,6 @@ public:
     const QTcpSocket* socket() const {
         return m_socket;
     }
-
     QHostAddress peerAddress() const;
     QString hostName() const;
 

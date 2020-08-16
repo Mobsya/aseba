@@ -35,6 +35,19 @@ Rectangle {
        dialog.visible = true
     }
 
+
+    function remoteConnectionDialog() {
+        var component = Qt.createComponent("qrc:/qml/RemoteConnectionDialog.qml");
+        var dialog = component.createObject(launcher);
+
+       if (dialog === null) {
+           console.log("Error creating dialog");
+           return
+       }
+       dialog.visible = true
+    }
+
+
     function onMenuEntryClicked(action) {
         pane.visible = false
         if(action === "playground") {
@@ -48,6 +61,9 @@ Rectangle {
         }
         else if(action === "thymio2-valise-pairing") {
             thymio2PairingWizard(true)
+        }
+        else if(action === "remote") {
+            remoteConnectionDialog()
         }
     }
 
@@ -65,6 +81,7 @@ Rectangle {
             entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
             entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
         }
+        entries.append( { "name": qsTr("Connect to a remote host"), action: "remote"})
     }
 
     Item {

@@ -69,8 +69,4 @@ void TDMSupervisor::startLocalTDM() {
 #endif
 }
 
-void TDMSupervisor::stopLocalTDM() {
-    m_tdm_process->terminate();
-}
-
 }  // namespace mobsya

@@ -308,7 +308,6 @@ bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
 
-
 RemoteConnectionRequest* Launcher::connectToServer(const QString& host, quint16 port) const {
     auto c = new RemoteConnectionRequest(m_client, host, port);
     QQmlEngine::setObjectOwnership(c, QQmlEngine::JavaScriptOwnership);

@@ -31,17 +31,11 @@ void run_service(boost::asio::io_context& ctx) {
 
     // Gather a list of local ips so that we can detect connections from
     // the same machine.
-    std::set<boost::asio::ip::address> local_ips;
-    
-    //= mobsya::network_interfaces_addresses();
-    
-    boost::asio::ip::address localhost = boost::asio::ip::make_address("127.0.0.1");
-    local_ips.insert(localhost);
-    
+    std::set<boost::asio::ip::address> local_ips = mobsya::network_interfaces_addresses();
     for(auto&& ip : local_ips) {
         mLogTrace("Local Ip : {}", ip.to_string());
     }
-    
+
     [[maybe_unused]] mobsya::uuid_generator& _ = boost::asio::make_service<mobsya::uuid_generator>(ctx);
     mobsya::aseba_node_registery& node_registery = boost::asio::make_service<mobsya::aseba_node_registery>(ctx);
     [[maybe_unused]] mobsya::app_token_manager& token_manager =
@@ -62,13 +56,8 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 8596);
     node_registery.set_tcp_endpoint_ul(tcp_server.endpoint());
     tcp_server.accept();
-    auto carlo = tcp_server.endpoint().address();
+
     mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
-//    FILE* fp = fopen("C:\Users\w4049497.lehrer\Desktop\thymio-tryout\TDM-log", 'w+');
-//
-//    FILE* fp = fopen("/Users/vale/Desktop/TDM-log", 'w+');
-//    fprintf(fp, <#const char *, ...#>);
-//    fclose(fp);
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 
     // Create a server for websocket

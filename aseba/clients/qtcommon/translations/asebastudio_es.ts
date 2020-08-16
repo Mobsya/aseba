@@ -634,7 +634,7 @@ Occurrences</source>
         <translation type="obsolete">&lt;p&gt;Información de la versión Aseba:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;(c) 2006-2012 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;StÃ©phane Magnenat&lt;/a&gt; and other contributors.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;%5&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aseba is open-source licensed under the LGPL version 3.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+615"/>
+        <location filename="../../studio/MainWindow.cpp" line="+646"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -643,7 +643,7 @@ Occurrences</source>
         <translation type="vanished">Acerca de Aseba Studio</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-589"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
         <translation>Aseba Studio es un entorno para la programación interactiva de robots con un lenguaje de texto.</translation>
     </message>
@@ -852,7 +852,7 @@ evento %0 : </translation>
         <translation type="vanished">Limpiar</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+260"/>
         <source>...inside %0</source>
         <translation>...dentro de %0</translation>
     </message>
@@ -885,7 +885,7 @@ evento %0 : </translation>
         <translation type="obsolete">F1</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-471"/>
         <source>Aseba Studio - File Exception</source>
         <translation type="unfinished"></translation>
     </message>
@@ -900,7 +900,13 @@ evento %0 : </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-89"/>
         <source>Web site Aseba...</source>
         <translation>Sitio web Aseba...</translation>
     </message>
@@ -1417,7 +1423,7 @@ evento %0 : </translation>
         <translation type="vanished">Restablecer</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>Ejecutar</translation>
     </message>
@@ -1439,7 +1445,7 @@ evento %0 : </translation>
         <translation type="vanished">&lt;b&gt;Ejecución&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1454,7 +1460,7 @@ evento %0 : </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1484,7 +1490,7 @@ evento %0 : </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation type="unfinished">Detener</translation>
     </message>
@@ -1539,7 +1545,7 @@ evento %0 : </translation>
         <translation type="vanished">bytecode: %1 en %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Uso de memoria&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1548,7 +1554,7 @@ evento %0 : </translation>
         <translation type="vanished">ejecutando</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
