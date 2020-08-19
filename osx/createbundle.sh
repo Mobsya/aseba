@@ -51,6 +51,7 @@ sign() {
 defaults write $(realpath "$DEST/Contents/Info.plist") NSPrincipalClass -string NSApplication
 defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string True
 add_to_group $(realpath "$DEST/Contents/Info.plist")
+chmod 644 $(realpath "$DEST/Contents/Info.plist")
 
 APPS_DIR="$DEST/Contents/Applications"
 BINUTILS_DIR="$DEST/Contents/MacOs"
@@ -93,6 +94,7 @@ do
 
 
     defaults read $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+	chmod 644 $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 
 done
 
