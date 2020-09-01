@@ -87,14 +87,14 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200505.1/scratch-gui.tar.gz",
-                    "sha256": "3a08716ef8d05c25b9997f719c56e107ec9a39f75067bb4f385040b597d564fe",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200827.1/scratch-gui.tar.gz",
+                    "sha256": "7fe3599c9c166b72fd46aadea20ff909f3cd01bd548eb1db6ddfebda942a83d3",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
                     "url": "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz",
-                    "sha256": "a76c91a241ab31e2761b6339b98932cd37cbafe8b768b71d64f22017648d04c0",
+                    "sha256": "d16f7d72038041b7873bc14de0bbe059946a272bb2e1ae8cdf938ec5a1eabbce",
                     "strip-components": 0
                 }
             ],
