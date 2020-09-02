@@ -1,8 +1,14 @@
 resources:
    containers:
-   - container: fpkde
+   - container: flatpak-container-x86_64
      options: '--privileged'
      image: mobsya/flatpak-builders:kde-latest
+   - container: flatpak-container-aarch64
+     options: '--privileged'
+     image: mobsya/flatpak-builders:kde-latest-arm64
+   - container: flatpak-container-arm
+     options: '--privileged'
+     image: mobsya/flatpak-builders:kde-latest-arm64
 
 trigger:
   tags:
@@ -32,13 +38,50 @@ variables:
 jobs:
 - job: 'BuildFlatpak'
   pool:
-    vmImage: 'Ubuntu-16.04'
-  container: fpkde
+    vmImage: 'Ubuntu-18.04'
+  strategy:
+    matrix:
+      aarch64:
+        ARCH: 'aarch64'
+        SUFFIX: '-arm64'
+      arm:
+        ARCH: 'arm'
+        SUFFIX: '-arm64'
+      x86_64:
+        ARCH: 'x86_64'
+        SUFFIX: ''
   steps:
   - script: |
-      git submodule update --init --recursive
+      git submodule init
+      git submodule update --recursive --remote
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
+      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
+      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
+    displayName: 'Clone submodules'
+  - script: sudo docker pull mobsya/flatpak-builders:kde-latest
+    displayName: 'Pulling flatpak-builder'
+  - script: sudo docker pull multiarch/qemu-user-static:register
+    displayName: 'Pulling docker QEMU Image'
+  - script: sudo docker run --rm --privileged multiarch/qemu-user-static:register --reset
+    displayName: 'Register Docker QEMU'
+  - script: |
+      sudo add-apt-repository ppa:alexlarsson/flatpak
+      sudo apt-get update
+      sudo apt-get install -y --no-install-recommends \
+        qemu-user-static \
+        binfmt-support \
+        flatpak-builder \
+        flatpak
+      sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+      sudo update-binfmts --enable qemu-arm
+      sudo update-binfmts --enable qemu-aarch64
+      git submodule init
+      git submodule update --recursive --remote
+      (cd third_party/spdlog/spdlog/ && git checkout v1.2.1)
+      (cd third_party/range-v3/ && git checkout 1af081d86f74af83026e111d4463803637f75e58)
+      (cd third_party/flatbuffers/ && git checkout bff7ffbc5130cd46caf33b76b4bb0593fcd15066)
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
+      flatpak-builder  --disable-rofiles-fuse  --user --arch=$ARCH --install-deps-from=flathub --ccache --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
