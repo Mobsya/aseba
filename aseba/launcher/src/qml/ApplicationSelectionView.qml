@@ -105,7 +105,7 @@ Item {
 
     Text {
         id: version
-        text: qsTr("<a href=\"https://thymio.org\">Thymio Suite</a> - %1").arg(Qt.application.version)
+        text: qsTr("<a href=\"https://thymio.org\">Thymio Suite</a> - %1 - Localhost").arg(Qt.application.version)
         onLinkActivated: Qt.openUrlExternally(link)
         font.family: "Roboto Light"
         anchors.bottom: parent.bottom
