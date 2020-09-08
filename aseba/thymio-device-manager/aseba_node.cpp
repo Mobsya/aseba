@@ -179,6 +179,73 @@ void aseba_node::compile_program(fb::ProgrammingLanguage language, const std::st
                           std::bind(std::move(cb), boost::system::error_code{}, result.value()));
 }
 
+/*
+Non inplace Byte swap for being compliant with Endianess
+* optimization can arise using pointer and inplace memory
+*/
+uint16_t swapByteOrder(uint16_t us) { 
+    uint16_t new_us = (us >> 8) | (us << 8); 
+    return new_us;
+}
+
+/* **********
+* The function compiles the code and create the proper header for the .abo file 
+* such that the Thymio firmware can de-serialize it correctly 
+* fileformat is described here http://wiki.thymio.org/asebaspecifications001 
+********** */ 
+std::vector<uint16_t> aseba_node::compile_and_save(fb::ProgrammingLanguage language, const std::string& program,
+                                          compilation_callback&& cb) {
+    m_breakpoints.clear();
+    cancel_pending_step_request();
+    cancel_pending_breakpoint_request();
+    Aseba::Compiler compiler;
+    Aseba::CommonDefinitions defs = endpoint()->aseba_compiler_definitions();
+
+    compiler.setTargetDescription(&m_description);
+    compiler.setCommonDefinitions(&defs);
+    auto result = do_compile_program(compiler, defs, language, program, m_bytecode);
+
+    std::vector<uint16_t> data_buff = std::vector<uint16_t>(m_bytecode.begin(), m_bytecode.end());
+
+    if(!result) {
+        cb(result.error(), {});
+        return data_buff;
+    }
+
+    std::vector<uint16_t> fin_data_buff;
+
+    fin_data_buff.push_back((uint16_t)'A');
+    fin_data_buff.push_back((uint16_t)'B');
+    fin_data_buff.push_back((uint16_t)'O');
+    fin_data_buff.push_back((uint16_t)'\0');
+
+    fin_data_buff.push_back((uint16_t)0);
+    fin_data_buff.push_back((uint16_t)swapByteOrder(m_description.protocolVersion));
+    fin_data_buff.push_back((uint16_t)swapByteOrder(8));
+
+    auto it = std::find_if(m_variables.begin(), m_variables.end(),
+                        [](const aseba_vm_variable& var) { return var.name == "_fwversion"; });
+    if(it != m_variables.end()) {
+        fin_data_buff.push_back((uint16_t)swapByteOrder(((*it).value[0])));
+    }
+
+    fin_data_buff.push_back((uint16_t)swapByteOrder(1));
+    fin_data_buff.push_back((uint16_t)swapByteOrder(Aseba::crcXModem(0,m_description.name)));            
+    fin_data_buff.push_back((uint16_t)swapByteOrder(m_description.crc()));
+    fin_data_buff.push_back((uint16_t)swapByteOrder(data_buff.size()));
+
+    uint16_t overall_crc(0);
+    for(int k = 0; k < data_buff.size(); k++){
+        fin_data_buff.push_back(swapByteOrder(data_buff[k]));
+        overall_crc = Aseba::crcXModem(overall_crc, data_buff[k]);
+    }
+
+    fin_data_buff.push_back((uint16_t)swapByteOrder(overall_crc));
+
+    return fin_data_buff;
+}
+
+
 void aseba_node::compile_and_send_program(fb::ProgrammingLanguage language, const std::string& program,
                                           compilation_callback&& cb) {
     m_breakpoints.clear();

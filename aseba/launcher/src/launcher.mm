@@ -18,6 +18,7 @@
 @end
 
 @implementation LauncherDelegate
+
 +(void)closeCurrentWebView {
     if([self shareInstance].mwebview !=nil)
     {
@@ -26,6 +27,25 @@
     }
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }
+
++(void)askBeforeQuit{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Are you sure to quit?"
+                                                                                message:nil
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+       [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+               if([self shareInstance].mwebview !=nil){
+               [[self shareInstance].mwebview removeFromSuperview];
+               [self shareInstance].mwebview = nil;
+           }
+           [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+       }]];
+       [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+           return;
+       }]];
+       
+       [[[[UIApplication sharedApplication] keyWindow]rootViewController] presentViewController:alertController animated:YES completion:^{}];
+}
+
 + (LauncherDelegate*)shareInstance {
     static LauncherDelegate *webviewmanager = nil;
     static dispatch_once_t onceToken;
@@ -79,9 +99,15 @@
         
         [b setTranslatesAutoresizingMaskIntoConstraints:NO];
         [[self shareInstance].mwebview addSubview:b];
-        [[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:5] setActive:YES];
+        NSString *urlNSStr = url.absoluteString;
+		if (isScratch(urlNSStr)){
+			[[b.topAnchor constraintEqualToAnchor: [self shareInstance].mwebview.topAnchor constant:5] setActive:YES];
+        } else {
+			[[b.bottomAnchor constraintEqualToAnchor: [self shareInstance].mwebview.bottomAnchor constant:-5] setActive:YES];	
+        }
         [[b.rightAnchor constraintEqualToAnchor: [self shareInstance].mwebview.rightAnchor constant:-15] setActive:YES];
-        [b addTarget:self  action:@selector(closeCurrentWebView) forControlEvents:UIControlEventTouchUpInside];
+        
+        [b addTarget:self  action:@selector(askBeforeQuit) forControlEvents:UIControlEventTouchUpInside];
       
     }
 
@@ -90,6 +116,11 @@
     [[self shareInstance].mwebview loadFileURL:url allowingReadAccessToURL:pathURL];
     return [self shareInstance].mwebview;
     
+}
+
+bool isScratch(NSString *URL){
+   std::string urlStr = std::string([URL UTF8String]);
+   return urlStr.find("scratch") != std::string::npos;
 }
 
 //File Saving, via the 'blobReady' handler
@@ -105,7 +136,14 @@
         NSData* datas = [[NSData alloc] initWithBase64EncodedString:[[b64 componentsSeparatedByString:@","] lastObject] options:0];
         //First save it in the app with a real name
         // create url
-        NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
+        NSURL *url;
+        if([name containsString:@".vpl3"]){
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByReplacingOccurrencesOfString:@".vpl3" withString:@".json"]]];
+        } else if([name containsString:@".sb3"]){
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:[name stringByAppendingString:@".zip"]]];
+        } else {
+            url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:name]];
+        }
         [datas writeToURL:url atomically:NO];
         
         //Transfer it to the save dialog
