@@ -1,3 +1,4 @@
+brew 'qt'
 brew 'ninja'
 brew 'cmake'
 brew 'ccache'
