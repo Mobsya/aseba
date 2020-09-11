@@ -37,6 +37,7 @@ jobs:
   steps:
   - script: |
       git submodule update --init --recursive
+      apt-get install -y libqt5webengine5
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
