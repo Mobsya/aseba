@@ -15,7 +15,7 @@
 #include "CustomWidgets.h"
 #include "ModelAggregator.h"
 #include "ConfigDialog.h"
-
+#include <fstream>
 
 namespace Aseba {
 
@@ -118,16 +118,15 @@ void NodeTab::setThymio(std::shared_ptr<mobsya::ThymioNode> node) {
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::executionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::onExecutionStateChanged);
         connect(ptr, &mobsya::ThymioNode::vmExecutionError, this, &NodeTab::onVmExecutionError);
+        connect(ptr, &mobsya::ThymioNode::ReadyBytecode, this, &NodeTab::onReadyBytecode);
         connect(ptr, &mobsya::ThymioNode::variablesChanged, this, &NodeTab::onVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::groupVariablesChanged, this, &NodeTab::onGroupVariablesChanged);
         connect(ptr, &mobsya::ThymioNode::eventsTableChanged, this, &NodeTab::onGlobalEventsTableChanged);
         connect(ptr, &mobsya::ThymioNode::scratchpadChanged, this, &NodeTab::onScratchpadChanged);
         connect(ptr, &mobsya::ThymioNode::events, this, &NodeTab::onEvents);
-        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);
-
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::onStatusChanged);       
         connect(ptr, &mobsya::ThymioNode::vmExecutionStateChanged, this, &NodeTab::updateStatusLabel);
-        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);
-
+        connect(ptr, &mobsya::ThymioNode::statusChanged, this, &NodeTab::updateStatusLabel);       
         onStatusChanged();
         updateAsebaVMDescription();
     }
@@ -153,6 +152,7 @@ void NodeTab::reset() {
         m_thymio->stop();
     }
     lastLoadedSource.clear();
+    lastFileLocation.clear();
     editor->debugging = false;
     currentPC = -1;
 }
@@ -169,6 +169,10 @@ void NodeTab::clearEverything() {
     reset();
 }
 
+/* ************* 
+ * It triggers the execution of the code on a node 
+ * is binded to the "Run" button 
+************* */
 void NodeTab::run() {
 
     if(!m_thymio) {
@@ -260,6 +264,31 @@ void NodeTab::writeProgramToDeviceMemory() {
             m_thymio->writeProgramToDeviceMemory();
         w->deleteLater();
     });
+}
+
+void NodeTab::saveCodeOnTarget() {
+    if(!m_thymio)
+        return;
+
+    auto code = editor->toPlainText();
+    m_compilation_watcher->setRequest(m_thymio->save_aseba_code(code.toUtf8()));
+
+    // auto req = m_thymio->load_aseba_code(code.toUtf8());
+    // auto w = new mobsya::CompilationRequestWatcher(req, this);
+    // connect(w, &mobsya::CompilationRequestWatcher::finished, this, [w, this]() {
+    //     if(w->success() && m_thymio)
+    //         m_thymio->writeProgramToDeviceMemory();
+    //     w->deleteLater();
+    // });
+
+    // const auto txt = editor->toPlainText();
+    // // only recompile if source code has actually changed
+    // if(txt == lastCompiledSource)
+    //     return;
+    // lastCompiledSource = editor->toPlainText();
+    // // recompile
+    // compileCodeOnTarget();    
+    
 }
 
 void NodeTab::compilationCompleted() {
@@ -420,6 +449,22 @@ void NodeTab::onExecutionStateChanged() {
 
         if(clearEditorProperty(QStringLiteral("active")))
             rehighlight();
+    }
+}
+
+
+void NodeTab::onReadyBytecode(const QString& bytecode_string){
+    std::ofstream datafile(this->lastFileLocation.toStdString().c_str(), std::ios_base::binary | std::ios_base::out);
+    char buf[3];
+    buf[2] = 0;
+
+    std::stringstream input(bytecode_string.toStdString());
+    input.flags(std::ios_base::hex);
+    while (input)
+    {
+        input >> buf[0] >> buf[1];
+        long val = strtol(buf, nullptr, 16);
+        datafile << static_cast<unsigned char>(val & 0xff);
     }
 }
 
@@ -591,7 +636,7 @@ void NodeTab::onEvents(const mobsya::ThymioNode::EventMap& events) {
 }
 
 
-void NodeTab::saveBytecode() const {
+void NodeTab::saveBytecode() const { 
     /* const QString& nodeName(target->getName(id));
      QString bytecodeFileName =
          QFileDialog::getSaveFileName(mainWindow, tr("Save the binary code of %0").arg(nodeName),
@@ -626,6 +671,7 @@ void NodeTab::saveBytecode() const {
      write16(file, crc);
      */
 }
+
 
 void NodeTab::onScratchpadChanged(const QString& text, mobsya::fb::ProgrammingLanguage) {
     if(editor->isReadOnly() || editor->toPlainText().simplified().isEmpty())

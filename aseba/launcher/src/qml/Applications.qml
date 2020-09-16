@@ -102,7 +102,7 @@ ListModel {
                     descriptionTextFile: "qrc:/apps/vpl3/desc.%1.html",
                     supportsGroups: false,
                     supportsWatchMode: false,
-                    helpUrl: "https://www.thymio.org/program/vpl/",
+                    helpUrl: "https://www.thymio.org/%1/program/vpl3/",
                     isIosSupported: true
                 },
                 {
