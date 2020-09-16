@@ -17,5 +17,6 @@
         <key>org.mobsya.thymio.launcher.ios</key>
         <string>Ios-2019-dist</string>
     </dict>
+	<key>ITSAppUsesNonExemptEncryption</key><false/>
 </dict>
 </plist>
