@@ -219,7 +219,7 @@ void Launcher::writeSettings(){
 ************** */
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
-    useLocalBrowser = settings.value("mainwindowuseLocalBrowser").toBool();
+    useLocalBrowser = settings.value("mainwindowuseLocalBrowser",QVariant(useLocalBrowser)).toBool();
 }
 
 
