@@ -25,8 +25,9 @@
     </message>
     <message>
         <location filename="AboutDialog.cpp" line="98"/>
-        <source>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL version 3&lt;/a&gt;.</source>
-        <translation>Aseba posiada licencję open-source na podstawie &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL wersja 3&lt;/a&gt;.</translation>
+        <source>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL version 3&lt;/a&gt;.</source>
+        <oldsource>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL version 3&lt;/a&gt;.</oldsource>
+        <translation>Aseba posiada licencję open-source na podstawie &lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL wersja 3&lt;/a&gt;.</translation>
     </message>
     <message>
         <location filename="AboutDialog.cpp" line="108"/>
