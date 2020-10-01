@@ -146,7 +146,7 @@ endif()
 #      ${QT_ADDITIONAL_PLUGINS}
 #    )
 
-if(APPLE OR ANDROID)
+if(ANDROID)
     target_link_libraries(thymio-launcher Qt5::WebView)
 else()
     target_link_libraries(thymio-launcher Qt5::WebEngine)
