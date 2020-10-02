@@ -146,7 +146,7 @@ endif()
 #      ${QT_ADDITIONAL_PLUGINS}
 #    )
 
-if(ANDROID)
+if(IOS OR ANDROID)
     target_link_libraries(thymio-launcher Qt5::WebView)
 else()
     target_link_libraries(thymio-launcher Qt5::WebEngine)
@@ -174,16 +174,17 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Release)
 endif()
 
 if(APPLE)
-    find_library(FOUNDATION_FRAMEWORK Foundation)
+    
     if(IOS)
-          find_library(UIKit_FRAMEWORK UIKit)
+		find_library(FOUNDATION_FRAMEWORK Foundation)
+        find_library(UIKit_FRAMEWORK UIKit)
     else()
-          find_library(AppKit_FRAMEWORK AppKit)
+        query_qmake(QWEBENGINE_PATH QT_INSTALL_LIBEXECS) 
     endif()
 
     if(NOT IOS)
         #IOS part should already be handled via the dedicated cmake
-        target_link_libraries(thymio-launcher ${FOUNDATION_FRAMEWORK} ${AppKit_FRAMEWORK})
+        #target_link_libraries(thymio-launcher ${FOUNDATION_FRAMEWORK} ${AppKit_FRAMEWORK})
         set(MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/osx/Launcher.plist)
         set(MACOSX_BUNDLE_BUNDLE_NAME "Thymio Suite")
         set(MACOSX_BUNDLE_BUNDLE_VERSION ${ASEBA_VERSION})
