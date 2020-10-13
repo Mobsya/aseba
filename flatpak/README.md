@@ -89,7 +89,7 @@ Please refer to the installation instructions on [Flathub](https://flatpak.org/s
 
 In the `flatpack` repository, run :
 ```
-flatpak-builder <build-dir> org.mobsya.ThymioSuite.json --ccache --force-clean --keep-build-dirs \
+flatpak-builder <build-dir> org.mobsya.ThymioSuite.json --force-clean --keep-build-dirs \
 -v --install-deps-from=flathub --user --repo=mobsya-repo
 ```
 

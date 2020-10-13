@@ -17,7 +17,7 @@ variables:
 - name: blockly_version
   value: "v20200506.1"
 - name: scratch_version
-  value: "v20200505.1"
+  value: "v20200827.1"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
@@ -25,7 +25,7 @@ variables:
 - name: vpl3_url
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
-  value: "c4f0372c638831d8d524feb1039611852eca6512"
+  value: "cccef600decd1091a20a0b4d8a2e61f7041eb686"
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
@@ -56,16 +56,16 @@ jobs:
       x64:
         ARCH: 'x64'
         vcpkgTriplet: 'x64-windows-static'
-        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x64.7z"
-        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017_64/
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12.8-msvc-x64.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.8/msvc2017_64/
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A x64 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
       x86:
         ARCH: 'x86'
         vcpkgTriplet: 'x86-windows-static'
-        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12-msvc-x86.7z"
-        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.3/msvc2017
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12.8-msvc-x86.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.8/msvc2017
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
@@ -212,11 +212,6 @@ jobs:
     displayName: 'Setting Qt version to 5.13.2'
 
   - script: |
-      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/ae73ba09216a7f8b2c0503e57221db020bcd3471/Formula/boost.rb
-      brew switch boost 1.72.0
-    displayName: 'Setting Boost version to 1.72.0'
-
-  - script: |
       brew uninstall openssl; brew uninstall openssl; brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
       brew info openssl
     displayName: 'Setting openssl version to 1.0.0'
@@ -357,7 +352,7 @@ jobs:
     displayName: 'Clone submodules'
 
   - script: |
-      sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
       cmake ../../third_party/flatbuffers -GXcode

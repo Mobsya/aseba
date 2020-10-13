@@ -596,7 +596,7 @@ Occurrences</oldsource>
         <translation type="vanished">&lt;h1&gt;Σχετικά με το Aseba&lt;/h1&gt;Πληροφορίες Έκδοσης&lt;ul&gt;&lt;li&gt;Aseba ver. %0&lt;br/&gt;(build ver. %1/protocol ver. %2)&lt;/li&gt;&lt;li&gt;Dashel ver. %3&lt;br/&gt;(υποστηριζόμενοι τύποι ροής δεδομένων: %4)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Διαβάστε περισσότερα στο &lt;a href=&quot;%5&quot;&gt;aseba.wikidot.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(c) 2006-2015 &lt;a href=&quot;http://stephane.magnenat.net&quot;&gt;Stéphane Magnenat&lt;/a&gt; και λοιποί συνεργάτες (κάντε κλικ στο &quot;Εμφάνιση λεπτομερειών&quot; για πλήρη λίστα)&lt;/p&gt;&lt;p&gt;Το Aseba είναι ανοικτού κώδικα με άδεια από &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL έκδοση 3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="+615"/>
+        <location filename="../../studio/MainWindow.cpp" line="+646"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/en:start</translation>
     </message>
@@ -605,7 +605,7 @@ Occurrences</oldsource>
         <translation type="vanished">Σχετικά με το Aseba Studio</translation>
     </message>
     <message>
-        <location line="-493"/>
+        <location line="-524"/>
         <source>Open Script</source>
         <translation>Άνοιγμα Σεναρίου (Script)</translation>
     </message>
@@ -820,7 +820,7 @@ event %0 : </source>
         <translation type="vanished">Καθαρισμός</translation>
     </message>
     <message>
-        <location line="+539"/>
+        <location line="+570"/>
         <source>...inside %0</source>
         <translation>...εντός %0</translation>
     </message>
@@ -848,7 +848,7 @@ event %0 : </source>
         <translation type="vanished">&amp;Εγχειρίδιο Οδηγιών Χρήστη...</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-471"/>
         <source>Aseba Studio - File Exception</source>
         <translation type="unfinished"></translation>
     </message>
@@ -863,7 +863,13 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+329"/>
+        <location line="+235"/>
+        <source>Export current program to binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-89"/>
         <source>Web site Aseba...</source>
         <translation>Ιστότοπος Aseba...</translation>
     </message>
@@ -1364,7 +1370,7 @@ event %0 : </source>
         <translation type="vanished">Επαναφορά</translation>
     </message>
     <message>
-        <location filename="../../studio/NodeTab.cpp" line="+855"/>
+        <location filename="../../studio/NodeTab.cpp" line="+901"/>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
     </message>
@@ -1386,7 +1392,7 @@ event %0 : </source>
         <translation type="vanished">&lt;b&gt;Εκτέλεση&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="-558"/>
+        <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1401,7 +1407,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1431,7 +1437,7 @@ event %0 : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>Stop</source>
         <translation type="unfinished">Σταμάτημα</translation>
     </message>
@@ -1490,7 +1496,7 @@ event %0 : </source>
         <translation type="vanished">ενδιάμεσος κώδικας: %1 σε %2 (%3%)</translation>
     </message>
     <message>
-        <location line="-632"/>
+        <location line="-649"/>
         <source>&lt;b&gt;Memory usage&lt;/b&gt; : %1, %2</source>
         <translation>&lt;b&gt;Χρήση μνήμης&lt;/b&gt; : %1, %2</translation>
     </message>
@@ -1499,7 +1505,7 @@ event %0 : </source>
         <translation type="vanished">σε εκτέλεση</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+564"/>
         <source>Pause</source>
         <translation>Παύση</translation>
     </message>

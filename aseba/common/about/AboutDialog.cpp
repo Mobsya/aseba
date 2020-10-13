@@ -96,7 +96,7 @@ AboutBox::AboutBox(QWidget* parent, const Parameters& parameters) : QDialog(pare
            "contributors</a>. See tabs \"Authors\" and \"Thanks To\" for more information.") +
         " " +
         tr("Aseba is open-source licensed under the <a "
-           "href=\"https://www.gnu.org/licenses/lgpl.html\">LGPL version 3</a>.") +
+           "href=\"https://www.gnu.org/licenses/lgpl-3.0.txt\">LGPL version 3</a>.") +
         "</p>";
     auto aboutTextLabel = new QLabel(aboutText);
     aboutTextLabel->setWordWrap(true);
