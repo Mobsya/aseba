@@ -61,7 +61,8 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 
     // Create a server for websocket
-    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
+    uint16_t port = 8597;
+    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, port);
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
     websocket_server.accept();
 	
