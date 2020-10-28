@@ -1,7 +1,7 @@
 brew 'ninja'
 brew 'cmake'
 brew 'ccache'
-brew 'python3'
+brew 'python@3.9'
 brew 'imagemagick'
 brew 'p7zip'
 brew 'boost'
