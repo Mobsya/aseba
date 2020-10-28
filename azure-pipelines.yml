@@ -208,6 +208,7 @@ jobs:
 
   - script: |
       brew tap mobsya/brewqt https://github.com/mobsya/brewqt
+      brew extract --version=5.13.2 qt mobsya/brewqt
       brew install mobsya/brewqt/qt@5.13.2
       brew switch qt 5.13.2 
     displayName: 'Setting Qt version to 5.13.2'
