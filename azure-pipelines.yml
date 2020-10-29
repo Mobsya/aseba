@@ -272,7 +272,12 @@ jobs:
     displayName: 'Extract scratch, blockly and vpl3'
 
     #we need 7z to extract qt so brew needs to run first
+    #workaround until devops deploy
   - script: |
+      brew uninstall openssl@1.0.2t
+      brew uninstall python@2.7.17
+      brew untap local/openssl
+      brew untap local/python2
       brew update
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
