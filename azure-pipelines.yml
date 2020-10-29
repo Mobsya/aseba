@@ -222,6 +222,7 @@ jobs:
       brew untap local/openssl
       brew untap local/python2
       brew update
+      brew unlink python@3.8
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
@@ -284,6 +285,7 @@ jobs:
       brew untap local/openssl
       brew untap local/python2
       brew update
+      brew unlink python@3.8
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
