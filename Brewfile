@@ -1,4 +1,3 @@
-brew 'python3'
 brew 'ninja'
 brew 'cmake'
 brew 'ccache'
