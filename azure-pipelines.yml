@@ -204,7 +204,8 @@ jobs:
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
       curl -sL $(vpl3_url) | tar xzf - -C .
-    displayName: 'Extract scratch, blockly and vpl3' 
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/boost_1_73_0.tar.gz | tar xzf - -C .
+    displayName: 'Extract scratch, blockly and vpl3 Boost' 
 
   - script: |
       curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
