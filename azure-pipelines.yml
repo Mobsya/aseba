@@ -230,6 +230,12 @@ jobs:
     displayName: 'Setting openssl version to 1.0.0'
     
   - script: |
+      brew tap mobsya/brewqt https://github.com/mobsya/brewqt
+      brew extract --version=2.7.17 python mobsya/brewqt
+      brew install mobsya/brewqt/python@2.7.17
+    displayName: 'Setting openssl version to 1.0.0'
+    
+  - script: |
       git submodule update --init --recursive
     displayName: 'Clone submodules'
     
