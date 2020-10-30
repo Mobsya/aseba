@@ -10,7 +10,9 @@ cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0020 NEW)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0003 NEW)
-
+cmake_policy(SET CMP0011 NEW)
+cmake_policy(SET CMP0007 NEW)
+cmake_policy(SET CMP0023 NEW)
 
 project(ThymioSuite)
 set (CMAKE_PROJECT_VERSION 2.0)
