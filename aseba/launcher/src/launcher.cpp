@@ -209,7 +209,7 @@ bool Launcher::openUrl(const QUrl& url) {
 void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
-    settings.setValue("mainwindowuseLocalBrowser",QVariant(useLocalBrowser) );
+    settings.setValue("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser) );
 
 }
 
@@ -219,7 +219,7 @@ void Launcher::writeSettings(){
 ************** */
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
-    useLocalBrowser = settings.value("mainwindowuseLocalBrowser").toBool();
+    useLocalBrowser = settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool();
 }
 
 
