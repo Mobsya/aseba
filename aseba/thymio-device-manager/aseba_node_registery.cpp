@@ -108,11 +108,13 @@ aseba_node_registery::node_map aseba_node_registery::nodes() const {
 
 void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_nodes_service_desc.endpoint(endpoint);
-    update_discovery();
 }
 
 void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_ws_endpoint = endpoint;
+}
+
+void aseba_node_registery::set_discovery() {
     update_discovery();
 }
 
@@ -142,10 +144,12 @@ void aseba_node_registery::update_discovery() {
 void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
     if(ec) {
         mLogError("Discovery : {}", ec.message());
+		m_discovery_needs_update = true;
     } else {
         mLogTrace("Discovery : update complete");
+		m_updating_discovery = false;
     }
-    m_updating_discovery = false;
+	
     if(m_discovery_needs_update) {
         boost::asio::post(boost::asio::get_associated_executor(this),
                           boost::bind(&aseba_node_registery::update_discovery, this));

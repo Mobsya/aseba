@@ -48,7 +48,7 @@ Download and install the following components:
 .. csv-table::
    :header: "Dep", "Dowload", "Notes"
 
-   "Visual Studio 2019 (16.2+)", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload
+   "Visual Studio 2019 (16.2+)", "`Download <https://visualstudio.microsoft.com/downloads/>`_", Install the "Desktop development with C++" workload and the MSVC v142 - VS 2019 C++ x64/x86 Build Tools (v14.25)
    "Cmake 3.14+", `Website <https://cmake.org/download/>`__, Make sure the version of boost you choose is compatible with the cmake version
    "Qt 5.12+",   `Installer <https://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe>`_, Install the MSVC 2017 binaries as well as the ``Qt WebEngine`` and ``Qt Charts`` components. For ``x86`` you can choose the ``MSVC 2015 32 bits`` binaries instead in the Qt installer components screen.
    Node & Npm, "`Download <https://nodejs.org/en/download/>`_", ``npm.exe`` must be in the path
@@ -75,7 +75,7 @@ This might take a while. Replace `x64` by `x86` if you target a 32 buits build.
 
 ::
 
-   cmake -G"Visual Studio 16 2019" -A x64 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017_64;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x64-windows-static" <ASEBA_SOURCE_DIRECTORY>
+   cmake -G"Visual Studio 16 2019" -A x64 -T version=14.25 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017_64;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x64-windows-static" <ASEBA_SOURCE_DIRECTORY>
 
 where
 
@@ -88,7 +88,7 @@ To build for x86:
 
 ::
 
-   cmake -G"Visual Studio 16 2019" -A Win32 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x86-windows-static" <ASEBA_SOURCE_DIRECTORY>
+   cmake -G"Visual Studio 16 2019" -A Win32 -T version=14.25 -DBUILD_SHARED_LIBS=OFF "-DCMAKE_PREFIX_PATH=C:\<QT_INSTALLATION_PATH>\<QT_VERTION>\msvc2017;" -DCMAKE_TOOLCHAIN_FILE=<VCPKG_INSTALLATION_PATH>/scripts/buildsystems/vcpkg.cmake "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=<ASEBA_SOURCE_DIRECTORY>\windows\cl-toolchain.cmake" "-DVCPKG_TARGET_TRIPLET=x86-windows-static" <ASEBA_SOURCE_DIRECTORY>
 
 
 Then, to build the project, you can either run ``msbuild ThymioSuite.sln`` or open ``ThymioSuite.sln`` with Visual Studio 2019.

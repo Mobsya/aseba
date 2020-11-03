@@ -50,8 +50,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url":  "http://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz",
-                    "sha256": "c66e88d5786f2ca4dbebb14e06b566fb642a1a6947ad8cc9091f9f445134143f"
+                    "url":  "http://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.gz",
+                    "sha256": "9995e192e68528793755692917f9eb6422f3052a53c5e13ba278a228af6c7acf"
                 }
             ],
             "buildsystem": "simple",
@@ -94,7 +94,7 @@
                 {
                     "type": "archive",
                     "url": "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz",
-                    "sha256": "d16f7d72038041b7873bc14de0bbe059946a272bb2e1ae8cdf938ec5a1eabbce",
+                    "sha256": "aa00de26b873c604eeb077ff492dfc3a8a6cfe3eb6b9f26e785fa09fae4bda04",
                     "strip-components": 0
                 }
             ],
