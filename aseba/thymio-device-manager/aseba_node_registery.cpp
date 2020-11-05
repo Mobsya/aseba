@@ -154,7 +154,7 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
     if(m_ws_endpoint.port())
-        map["ws-port"] = std::to_string(m_ws_endpoint.port());
+        map["ws-port"] = std::to_string(8597);
     return map;
 }
 
