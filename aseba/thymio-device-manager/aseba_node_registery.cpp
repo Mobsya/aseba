@@ -150,12 +150,12 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
 
 
 aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
-
     aware::contact::property_map_type map;
-	map["ws-port"]="0";
     map["uuid"] = boost::uuids::to_string(m_service_uid);
+	mLogTrace("=> WS Server discovery on {}", m_ws_endpoint.port());
     if(m_ws_endpoint.port())
-        map["ws-port"] = "8598";
+        map["ws-port"] = std::to_string(m_ws_endpoint.port());
+    mLogTrace("=> WS map discovery on {}", map["ws-port"]);
     return map;
 }
 

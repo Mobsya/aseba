@@ -67,6 +67,7 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, port);
 	websocket_server.accept();
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
+    mLogTrace("=> WS Server connected on {}", websocket_server.endpoint().port());
     
 	
 	// Enable Bonjour, Zeroconf 
