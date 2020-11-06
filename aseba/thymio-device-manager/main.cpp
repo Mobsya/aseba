@@ -69,9 +69,6 @@ void run_service(boost::asio::io_context& ctx) {
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
     mLogTrace("=> WS Server connected on {}", websocket_server.endpoint().port());
     
-	
-	// Enable Bonjour, Zeroconf 
-	node_registery.set_discovery();
     
 
 #ifdef MOBSYA_TDM_ENABLE_USB
@@ -83,6 +80,9 @@ void run_service(boost::asio::io_context& ctx) {
     serial_server.accept();
 #endif
     aseba_tcp_acceptor.accept();
+    
+    // Enable Bonjour, Zeroconf
+    node_registery.set_discovery();
 
     ctx.run();
 }
