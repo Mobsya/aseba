@@ -157,6 +157,7 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
     mLogTrace("=> WS map discovery on {}", map["ws-port"]);
+    map["mapfill2"] = "9999";
     return map;
 }
 
