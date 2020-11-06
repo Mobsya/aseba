@@ -54,16 +54,15 @@ void run_service(boost::asio::io_context& ctx) {
 
     // Create a server for regular tcp connection
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
-	tcp_server.accept();
     node_registery.set_tcp_endpoint(tcp_server.endpoint());
+    tcp_server.accept();
    
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 
     // Create a server for websocket
-    uint16_t port = 8597;
-    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, port);
-	websocket_server.accept();
+    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
+    websocket_server.accept();
 
     // Enable Bonjour, Zeroconf 
 	node_registery.set_discovery();
