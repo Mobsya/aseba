@@ -56,18 +56,19 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
     node_registery.set_tcp_endpoint(tcp_server.endpoint());
     tcp_server.accept();
-
-    mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
+   
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 
     // Create a server for websocket
     mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
     websocket_server.accept();
-	
-	// Enable Bonjour, Zeroconf 
+
+    // Enable Bonjour, Zeroconf 
 	node_registery.set_discovery();
     
+    mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
+    mLogTrace("=> WS Server connected on {}", websocket_server.endpoint().port());
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
