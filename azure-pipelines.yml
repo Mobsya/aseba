@@ -270,7 +270,7 @@ jobs:
   - task: InstallAppleProvisioningProfile@1
     inputs:
       provisioningProfileLocation: 'secureFiles'
-      provProfileSecureFile: 'Ios2019dist.mobileprovision'
+      provProfileSecureFile: 'Ios2020dist.mobileprovision'
       removeProfile: true
 
   - script: |
