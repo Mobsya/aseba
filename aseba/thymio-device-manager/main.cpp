@@ -56,8 +56,7 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 8596);
     node_registery.set_tcp_endpoint_ul(tcp_server.endpoint());
     tcp_server.accept();
-
-    mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
+   
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 
     // Create a server for websocket
@@ -65,6 +64,8 @@ void run_service(boost::asio::io_context& ctx) {
 	node_registery.set_ws_endpoint_ul(websocket_server.endpoint());
     websocket_server.accept();
     
+    mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
+    mLogTrace("=> WS Server connected on {}", websocket_server.endpoint().port());
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
