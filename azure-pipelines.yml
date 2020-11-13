@@ -17,7 +17,7 @@ variables:
 - name: blockly_version
   value: "v20200506.1"
 - name: scratch_version
-  value: "v20200827.1"
+  value: "v20201113.1"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
