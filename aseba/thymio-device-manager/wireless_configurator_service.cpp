@@ -24,12 +24,12 @@ void wireless_configurator_service::enable() {
 
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
     auto& service = boost::asio::use_service<serial_acceptor_service>(this->m_ctx);
-    service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, _1));
+    service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, boost::placeholders::_1));
 #endif
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     auto& service = boost::asio::use_service<usb_acceptor_service>(this->m_ctx);
-    service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, _1));
+    service.device_unplugged.connect(boost::bind(&wireless_configurator_service::device_unplugged, this, boost::placeholders::_1));
 #endif
 }
 

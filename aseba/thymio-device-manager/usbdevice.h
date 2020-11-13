@@ -7,7 +7,7 @@
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/beast/core/detail/type_traits.hpp>
 #include <boost/beast/core.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <map>
 
 // Include asio before libusb !
