@@ -17,7 +17,7 @@ variables:
 - name: blockly_version
   value: "v20200506.1"
 - name: scratch_version
-  value: "v20200827.1"
+  value: "v20201116.1"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
@@ -207,28 +207,35 @@ jobs:
     displayName: 'Extract scratch, blockly and vpl3' 
 
   - script: |
-      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/224d82c09d0bbeda99b4ee9b5ccdf56773e5d513/Formula/qt.rb 
-      brew switch qt 5.13.2 
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
+      7z x mac.7z
     displayName: 'Setting Qt version to 5.13.2'
-
+    
+  #workaround until devops deploy
   - script: |
-      brew uninstall openssl; brew uninstall openssl; brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
-      brew info openssl
-    displayName: 'Setting openssl version to 1.0.0'
-
-  - script: |
+      brew uninstall openssl@1.0.2t
+      brew uninstall python@2.7.17
+      brew untap local/openssl
+      brew untap local/python2
       brew update
+      brew unlink python@3.8
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
-
+    
+  - script: |
+      brew tap mobsya/brewqt https://github.com/mobsya/brewqt
+      brew extract --version=1.0.2t openssl mobsya/brewqt
+      brew install mobsya/brewqt/openssl@1.0.2t
+      brew info openssl
+    displayName: 'Setting openssl version to 1.0.0'
+    
   - script: |
       git submodule update --init --recursive
     displayName: 'Clone submodules'
-
+    
   - script: |
       sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
-      export CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}:$(brew --prefix qt)"
-      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF && ninja)
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
     displayName: 'Build with cmake'
 
   - script: |
@@ -327,7 +334,7 @@ jobs:
   - task: InstallAppleProvisioningProfile@1
     inputs:
       provisioningProfileLocation: 'secureFiles'
-      provProfileSecureFile: 'Ios2019dist.mobileprovision'
+      provProfileSecureFile: 'Ios2020dist.mobileprovision'
       removeProfile: true
 
   - script: |
@@ -337,8 +344,14 @@ jobs:
     displayName: 'Extract scratch, blockly and vpl3'
 
     #we need 7z to extract qt so brew needs to run first
+    #workaround until devops deploy
   - script: |
+      brew uninstall openssl@1.0.2t
+      brew uninstall python@2.7.17
+      brew untap local/openssl
+      brew untap local/python2
       brew update
+      brew unlink python@3.8
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
@@ -372,7 +385,7 @@ jobs:
   - script:  |
       cd build;
       cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0
-      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 PROVISIONING_PROFILE_SPECIFIER="Ios-2019-dist" CODE_SIGN_IDENTITY="iPhone Distribution" CODE_SIGN_STYLE="Manual"
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 PROVISIONING_PROFILE_SPECIFIER="Ios-2020-dist" CODE_SIGN_IDENTITY="iPhone Distribution" CODE_SIGN_STYLE="Manual"
       xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath $(Build.ArtifactStagingDirectory)
     displayName: 'Build with cmake - SIGNED'
     condition: ne(variables['Build.Reason'], 'PullRequest')
