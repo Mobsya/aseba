@@ -272,12 +272,12 @@ jobs:
       curl -sL $(vpl3_url) | tar xzf - -C .
     displayName: 'Extract scratch, blockly and vpl3' 
 
- - script: |
+  - script: |
       curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
       7z x mac.7z
     displayName: 'Setting Qt version to 5.13.2'
     
- #workaround until devops deploy
+  #workaround until devops deploy
   - script: |
       brew uninstall openssl@1.0.2t
       brew uninstall python@2.7.17
