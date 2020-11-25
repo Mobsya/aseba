@@ -43,7 +43,7 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --verbose -f -s "$IDENTITY" "$@"
+        codesign --verify --options=runtime --verbose -f -s "$IDENTITY" "$@"
     fi
 }
 
