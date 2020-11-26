@@ -37,7 +37,7 @@ Unicode true
   !include "..\..\..\resources\NSIS.definitions.nsh"
   !include "FileFunc.nsh"
   !AddIncludeDir "${INSTALLER_SOURCE_DIRECTORY}"
-
+  !AddPluginDir "${INSTALLER_SOURCE_DIRECTORY}\nsis-plugin\x86-unicode"
   ; Compression
   SetCompressor /SOLID lzma
 
