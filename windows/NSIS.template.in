@@ -208,7 +208,8 @@ SectionGroup /e "-Thymio" GroupThymio
 		SetShellVarContext all		; current / all. Install program for all users
 		; Launcher
 			CreateShortCut "$SMPROGRAMS\Thymio Suite.lnk" "$INSTDIR\bin\thymio-launcher.exe" "$INSTDIR\thymio-launcher.ico"
-
+			ApplicationID::Set "$SMPROGRAMS\Thymio Suite.lnk" "org.mobsya.ThymioSuite"
+			
 		@CPACK_NSIS_EXTRA_INSTALL_COMMANDS@
 	SectionEnd
 
