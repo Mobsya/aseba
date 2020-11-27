@@ -207,9 +207,9 @@ jobs:
     displayName: 'Extract scratch, blockly and vpl3' 
 
   - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.11.3-mac.7z --output mac.7z
       7z x mac.7z
-    displayName: 'Setting Qt version to 5.13.2'
+    displayName: 'Setting Qt version to 5.11.3'
     
   #workaround until devops deploy
   - script: |
@@ -235,16 +235,16 @@ jobs:
     
   - script: |
       sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
-      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.11.3/clang_64/" && ninja)
     displayName: 'Build with cmake'
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuiteOsX-13-14.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuiteOsX-11.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuiteOsX-13-14.dmg build/bin
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuiteOsX-11.dmg build/bin
     displayName: 'Create Unsigned DMG'
     condition: eq(variables['Build.Reason'], 'PullRequest')
 
