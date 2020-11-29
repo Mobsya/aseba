@@ -119,7 +119,7 @@ ListModel {
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/scratch/",
                     isIosSupported:true,
-                    isAndroidSupported:false
+                    isAndroidSupported:true
                  },
 
                 {
@@ -149,7 +149,7 @@ ListModel {
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
                     isIosSupported:false,
-                    isAndroidSupported:true
+                    isAndroidSupported:false
                  }
                 ]
 
