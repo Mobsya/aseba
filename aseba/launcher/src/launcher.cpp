@@ -57,6 +57,13 @@ bool Launcher::platformIsLinux() const {
     return false;
 #endif
 }
+bool Launcher::platformIsAndroid() const {
+#ifdef Q_OS_ANDROID
+    return true;
+#else
+    return false;
+#endif
+}
 
 Q_INVOKABLE bool Launcher::platformHasSerialPorts() const {
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)

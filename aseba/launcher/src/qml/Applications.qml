@@ -91,7 +91,8 @@ ListModel {
                    supportsWatchMode: false,
                    supportsNonThymioDevices: false,
                    helpUrl: "https://www.thymio.org/%1/program/vpl/",
-                   isIosSupported:false
+                   isIosSupported:false,
+                   isAndroidSupported:false
                 },
                 {
                     appId:"vpl3",
@@ -103,7 +104,8 @@ ListModel {
                     supportsGroups: false,
                     supportsWatchMode: false,
                     helpUrl: "https://www.thymio.org/%1/program/vpl3/",
-                    isIosSupported: true
+                    isIosSupported: true,
+                    isAndroidSupported:true
                 },
                 {
                     appId: "scratch",
@@ -116,7 +118,8 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/scratch/",
-                    isIosSupported:true
+                    isIosSupported:true,
+                    isAndroidSupported:false
                  },
 
                 {
@@ -130,7 +133,8 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/blockly/",
-                    isIosSupported:false
+                    isIosSupported:false,
+                    isAndroidSupported:false
                  },
 
                 {
@@ -144,7 +148,8 @@ ListModel {
                     supportsWatchMode: true,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
-                    isIosSupported:false
+                    isIosSupported:false,
+                    isAndroidSupported:true
                  }
                 ]
 
@@ -153,6 +158,9 @@ ListModel {
             applicationList =  applicationList.filter(function(app) {
                       return app.isIosSupported;});
 
+        } else if(Utils.platformIsAndroid()) {
+            applicationList =  applicationList.filter(function(app) {
+                      return app.isAndroidSupported;});
         }
         append(applicationList)
     }

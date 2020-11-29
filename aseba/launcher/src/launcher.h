@@ -21,6 +21,7 @@ public:
     bool isPlaygroundAvailable() const;
     Q_INVOKABLE bool platformIsOsX() const;
     Q_INVOKABLE bool platformIsIos() const;
+    Q_INVOKABLE bool platformIsAndroid() const;
     Q_INVOKABLE bool platformIsLinux() const;
     Q_INVOKABLE bool platformHasSerialPorts() const;
     Q_INVOKABLE void setUseLocalBrowser(bool checked);
