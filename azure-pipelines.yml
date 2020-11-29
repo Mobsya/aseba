@@ -41,9 +41,13 @@ jobs:
         TARGET_ARCH: 'arm64-v8a'
       x86_64:
         TARGET_ARCH: 'x86_64'
-      API_LEVEL: '23'
-      NDK_VERSION: '21'
-      QT_VERSION: '5.15.2'
+    variables:
+      - name: API_LEVEL
+        value: '23'
+      - name: NDK_VERSION
+        value: '21'
+      - name: QT_VERSION
+        value: '5.15.2'
   steps:
   - script: |
       docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION
