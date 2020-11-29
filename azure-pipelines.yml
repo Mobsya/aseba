@@ -58,7 +58,7 @@ jobs:
     displayName: 'Clone submodules'
 
   - script: |
-      mkdir $(pwd)/build/$TARGET_ARCH
+      mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
       sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw -v  mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-rNDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
     displayName: 'Build Thymio Suite'
 
