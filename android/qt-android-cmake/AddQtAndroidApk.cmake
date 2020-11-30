@@ -307,6 +307,6 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         ${INSTALL_OPTIONS}
         ${SIGN_OPTIONS}
     )
-    add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/build/outputs/apk/**/*.apk" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SOURCE_TARGET}.apk)
+    add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/**/build/outputs/apk/**/*.apk" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SOURCE_TARGET}.apk)
 
 endmacro()
