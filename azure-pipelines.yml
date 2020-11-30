@@ -64,5 +64,5 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: 'build/bin/thymio-launcher.apk'
+      pathtoPublish: 'build/$TARGET_ARCH/bin/thymio-launcher.apk'
       artifactName: 'thymio-suite-android'
