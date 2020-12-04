@@ -18,6 +18,8 @@ variables:
   value: "v20200506.1"
 - name: scratch_version
   value: "v20201116.1"
+- name: packet_version
+  value: "2.2.0"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
@@ -39,7 +41,7 @@ jobs:
       git submodule update --init --recursive
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
-      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version).flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
   - task: PublishBuildArtifacts@1
@@ -56,16 +58,16 @@ jobs:
       x64:
         ARCH: 'x64'
         vcpkgTriplet: 'x64-windows-static'
-        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12.8-msvc-x64.7z"
-        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.8/msvc2017_64/
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-msvc-x64.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.15.2/msvc2019_64/
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A x64 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
       x86:
         ARCH: 'x86'
         vcpkgTriplet: 'x86-windows-static'
-        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12.8-msvc-x86.7z"
-        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.8/msvc2017
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-msvc-x86.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.15.2/msvc2019
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
@@ -239,15 +241,75 @@ jobs:
     displayName: 'Build with cmake'
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-14.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite.dmg build/bin
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-14.dmg build/bin
     displayName: 'Create Unsigned DMG'
     condition: eq(variables['Build.Reason'], 'PullRequest')
 
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'ThymioSuite.dmg'
+
+- job: BuildOnOsX2
+  pool:
+    vmImage: 'macOS-10.14'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '9.x'
+
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+
+  - script: |
+      curl -sL $(blockly_url) | tar xzf - -C .
+      curl -sL $(scratch_url) | tar xzf - -C .
+      curl -sL $(vpl3_url) | tar xzf - -C .
+    displayName: 'Extract scratch, blockly and vpl3' 
+  - script: |
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
+      7z x mac.7z
+    displayName: 'Setting Qt version to 5.13.2'
+    
+  #workaround until devops deploy
+  - script: |
+      brew uninstall openssl@1.0.2t
+      brew uninstall python@2.7.17
+      brew untap local/openssl
+      brew untap local/python2
+      brew update
+      brew unlink python@3.8
+      brew bundle
+    displayName: 'Install dependencies with HomeBrew'
+    
+  - script: |
+      brew tap mobsya/brewqt https://github.com/mobsya/brewqt
+      brew extract --version=1.0.2t openssl mobsya/brewqt
+      brew install mobsya/brewqt/openssl@1.0.2t
+      brew info openssl
+    displayName: 'Setting openssl version to 1.0.0'
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
+  - script: |
+      sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
+    displayName: 'Build with cmake'
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-15+.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+    displayName: 'Signing and create dmg'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+  - script: |
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-15+.dmg build/bin
+    displayName: 'Create Unsigned DMG'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -292,9 +354,9 @@ jobs:
     displayName: 'Install dependencies with HomeBrew'
 
   - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.0-ios.7z --output ios.7z
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-ios.7z --output ios.7z
       7z x ios.7z
-    displayName: 'Download Qt 5.13 for ios'
+    displayName: 'Download Qt 5.15.2 for ios'
 
   - script: |
       git submodule update --init --recursive
@@ -308,7 +370,7 @@ jobs:
       cmake --build . --config Release --target flatc
       export FLATC=`pwd`/Release/flatc
       cd ..
-      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.0/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
     displayName: 'CONFIGURE with cmake'
 
   - script: |
