@@ -359,7 +359,7 @@ jobs:
   - script: |
       sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
       sudo ln -s /usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib/libcrypto.1.0.0.dylib /usr/local/lib/libcrypto.dylib
-      sudo ln -s /usr/local/Cellar/openssl@@1.0.2t/1.0.2t/lib/libssl.1.0.0.dylib /usr/local/lib/libssl.dylib
+      sudo ln -s /usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib/libssl.1.0.0.dylib /usr/local/lib/libssl.dylib
       (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
     displayName: 'Build with cmake'
   - script: |
