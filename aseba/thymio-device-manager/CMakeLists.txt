@@ -131,7 +131,8 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
 if(APPLE)
     find_library(CoreFoundation CoreFoundation)
     find_library(IOKit IOKit)
-    target_link_libraries(thymio-device-manager-lib PUBLIC ${CoreFoundation} ${IOKit})
+	find_library(OpenSSL OpenSSL)
+    target_link_libraries(thymio-device-manager-lib PUBLIC ${CoreFoundation} ${IOKit} ${OpenSSL})
 endif()
 
 if(WIN32)
