@@ -1,4 +1,7 @@
 set(CMAKE_CXX_STANDARD 17)
+if(APPLE)
+	set(OPENSSL_USE_STATIC_LIBS TRUE)
+endif()
 find_package(OpenSSL REQUIRED)
 
 add_library(thymio-device-manager-lib STATIC
