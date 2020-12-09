@@ -18,6 +18,8 @@ variables:
   value: "v20200506.1"
 - name: scratch_version
   value: "v20201116.1"
+- name: packet_version
+  value: "2.1.4"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
@@ -39,7 +41,7 @@ jobs:
       git submodule update --init --recursive
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
-      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/thymio-suite.flatpak org.mobsya.ThymioSuite
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version).flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
   - task: PublishBuildArtifacts@1
@@ -253,9 +255,9 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.dmg'
 
-- job: BuildOnOsX2
+- job: BuildOnOs11
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-10.15'
   steps:
   - task: NodeTool@0
     inputs:
@@ -297,22 +299,23 @@ jobs:
       git submodule update --init --recursive
     displayName: 'Clone submodules'
   - script: |
-      sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_12.2.app/Contents/Developer
+      sudo ln -s /usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib/libcrypto.1.0.0.dylib /usr/local/lib/libcrypto.dylib
+      sudo ln -s /usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib/libssl.1.0.0.dylib /usr/local/lib/libssl.dylib
       (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
     displayName: 'Build with cmake'
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuiteOsX-15+.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-Os11.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
     condition: ne(variables['Build.Reason'], 'PullRequest')
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuiteOsX-15+.dmg build/bin
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-Os11.dmg build/bin
     displayName: 'Create Unsigned DMG'
     condition: eq(variables['Build.Reason'], 'PullRequest')
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.dmg'
-
 
 - job: BuildForIOs
   pool:
