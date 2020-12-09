@@ -3,7 +3,7 @@
 # vim: ts=4:sw=4:noexpandtab
 
 if(APPLE AND NOT IOS)
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum osx version")
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11" CACHE STRING "Minimum osx version")
 endif()
 
 cmake_policy(SET CMP0071 NEW)
