@@ -43,7 +43,7 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --options=runtime --verbose -f -s "$IDENTITY" "$@"
+        codesign --verify --verbose -f -s "$IDENTITY" "$@"
     fi
 }
 
@@ -123,7 +123,7 @@ do
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign $(realpath "$BINUTILS_DIR/thymio-launcher") --entitlements "$DIR/launcher.entitlements"
+sign --options=runtime $(realpath "$BINUTILS_DIR/thymio-launcher") --entitlements "$DIR/launcher.entitlements"
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"
@@ -140,5 +140,5 @@ if [ -n "$DMG" ]; then
     "$DMG" \
     "$DMG_DIR/ThymioSuite.app"
 
-    sign -f "$1"
+    sign --options=runtime -f "$1"
 fi
