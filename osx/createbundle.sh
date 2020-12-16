@@ -119,7 +119,7 @@ done
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/inherited.entitlements"
+    sign --deep $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/device-manager.entitlements"
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
