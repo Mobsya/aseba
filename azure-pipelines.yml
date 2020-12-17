@@ -65,7 +65,7 @@ jobs:
     
   - script: |
       curl -sL https://firebase.tools | bash
-      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN)
+      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Version of Thymio suite under $TARGET_ARCH architecture"
     displayName: 'Deploy to firebase'
 
 
