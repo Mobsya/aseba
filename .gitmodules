@@ -8,7 +8,7 @@
 	path = third_party/libusb/libusb
 	url = https://github.com/Mobsya/libusb.git
 [submodule "android/qt-android-cmake"]
-	path = android/qt-android-cmake
+	path = third_party/qt-android-cmake
 	url = https://github.com/Mobsya/qt-android-cmake.git
 [submodule "third_party/spdlog/spdlog"]
 	path = third_party/spdlog/spdlog
