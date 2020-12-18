@@ -1,7 +1,4 @@
 set(CMAKE_CXX_STANDARD 17)
-if(APPLE)
-	set(OPENSSL_USE_STATIC_LIBS TRUE)
-endif()
 find_package(OpenSSL REQUIRED)
 
 add_library(thymio-device-manager-lib STATIC
@@ -134,7 +131,7 @@ target_link_libraries(thymio-device-manager-lib PUBLIC
 if(APPLE)
     find_library(CoreFoundation CoreFoundation)
     find_library(IOKit IOKit)
-    target_link_libraries(thymio-device-manager-lib PUBLIC ${CoreFoundation} ${IOKit} ${OpenSSL})
+    target_link_libraries(thymio-device-manager-lib PUBLIC ${CoreFoundation} ${IOKit})
 endif()
 
 if(WIN32)
