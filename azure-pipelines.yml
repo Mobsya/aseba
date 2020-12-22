@@ -60,7 +60,6 @@ jobs:
   - script: |
       brew uninstall openssl@1.0.2t
       brew untap local/openssl
-      brew update
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
     
@@ -122,7 +121,6 @@ jobs:
   - script: |
       brew uninstall openssl@1.0.2t
       brew untap local/openssl
-      brew update
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
     
@@ -184,7 +182,6 @@ jobs:
   - script: |
       brew uninstall openssl@1.0.2t
       brew untap local/openssl
-      brew update
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
