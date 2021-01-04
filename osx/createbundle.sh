@@ -101,7 +101,7 @@ done
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
     echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$APPS_DIR/$app.app/") --entitlements "$DIR/$app.entitlements"
+    sign --deep $(realpath "$APPS_DIR/$app.app/")
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
@@ -119,11 +119,11 @@ done
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/inherited.entitlements"
+    sign --deep $(realpath "$BINUTILS_DIR/$binary")
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign $(realpath "$BINUTILS_DIR/thymio-launcher") --entitlements "$DIR/launcher.entitlements"
+sign $(realpath "$BINUTILS_DIR/thymio-launcher")
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"
