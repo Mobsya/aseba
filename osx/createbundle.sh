@@ -47,16 +47,17 @@ sign() {
     fi
 }
 
-#Make sure the launcher is retina ready
 defaults write $(realpath "$DEST/Contents/Info.plist") NSPrincipalClass -string NSApplication
-defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string True
+defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string False
 add_to_group $(realpath "$DEST/Contents/Info.plist")
 chmod 644 $(realpath "$DEST/Contents/Info.plist")
 
 APPS_DIR="$DEST/Contents/Applications"
-BINUTILS_DIR="$DEST/Contents/MacOs"
+BINUTILS_DIR="$DEST/Contents/Helpers"
+MAIN_DIR="$DEST/Contents/MacOS"
 
 #Copy the binaries we need
+mkdir -p "$MAIN_DIR"
 mkdir -p "$BINUTILS_DIR"
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
@@ -123,7 +124,7 @@ do
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign $(realpath "$BINUTILS_DIR/thymio-launcher")
+sign $(realpath "$MAIN_DIR/thymio-launcher")
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"
