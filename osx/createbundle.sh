@@ -43,7 +43,7 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --options=runtime --verbose -f -s "$IDENTITY" "$@"
+        codesign --verify --options=runtime --verbose --timestamp -f -s "$IDENTITY" "$@"
     fi
 }
 
@@ -108,19 +108,19 @@ done
 for fw in $(ls "$DEST/Contents/Frameworks")
 do
     echo "Signing $DEST/Contents/Frameworks/$fw"
-    sign --deep $(realpath "$DEST/Contents/Frameworks/$fw")
+    sign $(realpath "$DEST/Contents/Frameworks/$fw")
 done
 
 for plugin in $(find $DEST/Contents/PlugIns -name '*.dylib')
 do
     echo "Signing $plugin"
-    sign --deep $(realpath "$plugin")
+    sign $(realpath "$plugin")
 done
 
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$BINUTILS_DIR/$binary")
+    sign -i org.mobsya.ThymioLauncher.$binary $(realpath "$BINUTILS_DIR/$binary")
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
