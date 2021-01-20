@@ -70,7 +70,36 @@ cp -R "${BUILD_DIR}/AsebaStudio.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/AsebaPlayground.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/ThymioVPLClassic.app" "$APPS_DIR/"
 
-for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
+for app in "AsebaStudio" "ThymioVPLClassic"
+do
+    cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"
+    defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSPrincipalClass -string NSApplication
+    defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSHighResolutionCapable -string True
+    add_to_group $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+    plutil -replace CFBundleURLTypes -xml "
+        <array>
+            <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Viewer</string>
+                <key>CFBundleURLName</key>
+                <string>org.mobsy.CustomURLScheme</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>mobsya</string>
+                    </array>
+            </dict>
+        </array>
+    " $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+
+
+    defaults read $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+	chmod 644 $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+done
+
+for app in "AsebaPlayground"
 do
     cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"
     defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSPrincipalClass -string NSApplication
