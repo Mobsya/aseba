@@ -44,9 +44,11 @@ jobs:
       value: '21'
     - name: QT_VERSION
       value: '5.15.2'
+    - name: CMAKE_VERSION
+      value: '3.19.3'
   steps:
   - script: |
-      docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION
+      docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
     displayName: 'Pull docker image'
 
   - script: |
@@ -60,7 +62,7 @@ jobs:
 
   - script: |
       mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
-      sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake3.19.3 "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+      sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
       cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
     displayName: 'Build Thymio Suite'
     
