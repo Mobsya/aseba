@@ -131,7 +131,20 @@ done
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
     echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$APPS_DIR/$app.app/")
+	
+	for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
+		do
+			echo "Signing $DEST/Contents/Frameworks/$fw"
+			sign $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
+		done
+
+	for plugin in $(find $APPS_DIR/$app.app/Contents/PlugIns -name '*.dylib')
+		do
+			echo "Signing $plugin"
+			sign $(realpath "$plugin")
+		done
+	
+    sign $(realpath "$APPS_DIR/$app.app/")
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
