@@ -14,12 +14,8 @@ trigger:
 
 variables:
 - group: passwords
-- name: blockly_version
-  value: "v20200506.1"
 - name: scratch_version
   value: "v20201116.1"
-- name: blockly_url
-  value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
 - name: vpl3_url
@@ -43,7 +39,7 @@ jobs:
         TARGET_ARCH: 'x86_64'
   variables:
     - name: API_LEVEL
-      value: '28'
+      value: '21'
     - name: NDK_VERSION
       value: '21'
     - name: QT_VERSION
@@ -64,7 +60,7 @@ jobs:
 
   - script: |
       mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
-      sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+      sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake3.19.3 "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
       cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
     displayName: 'Build Thymio Suite'
     
