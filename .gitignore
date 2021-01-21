@@ -12,3 +12,4 @@ enki/
 build/
 *.qmlc
 *.jsc
+CMakeLists.txt.user
