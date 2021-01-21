@@ -43,7 +43,7 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --options=runtime --verbose --timestamp -f -s "$IDENTITY" "$@"
+        codesign --verify --verbose --timestamp -f -s "$IDENTITY" "$@"
     fi
 }
 
@@ -144,7 +144,7 @@ do
 			sign $(realpath "$plugin")
 		done
 	
-    sign $(realpath "$APPS_DIR/$app.app/")
+    sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
@@ -166,7 +166,7 @@ do
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign $(realpath "$MAIN_DIR/thymio-launcher")
+sign --options=runtime $(realpath "$MAIN_DIR/thymio-launcher")
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"
