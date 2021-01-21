@@ -48,7 +48,7 @@ sign() {
 }
 
 defaults write $(realpath "$DEST/Contents/Info.plist") NSPrincipalClass -string NSApplication
-defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string False
+defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string True
 add_to_group $(realpath "$DEST/Contents/Info.plist")
 chmod 644 $(realpath "$DEST/Contents/Info.plist")
 
