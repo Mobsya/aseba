@@ -162,7 +162,7 @@ done
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign -i org.mobsya.ThymioLauncher.$binary $(realpath "$BINUTILS_DIR/$binary")
+    sign -i org.mobsya.ThymioLauncher.$binary --options=runtime $(realpath "$BINUTILS_DIR/$binary")
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
