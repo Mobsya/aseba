@@ -92,8 +92,6 @@ do
         </array>
     " $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 
-
-
     defaults read $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 	chmod 644 $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 
@@ -121,30 +119,26 @@ do
         </array>
     " $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 
-
-
     defaults read $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 	chmod 644 $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
 
 done
 
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
-do
-    echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
-	
+do	
 	for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
-		do
-			echo "Signing $DEST/Contents/Frameworks/$fw"
+	do
+		echo "Signing $DEST/Contents/Frameworks/$fw"
 			sign $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
-		done
+	done
 
 	for plugin in $(find $APPS_DIR/$app.app/Contents/PlugIns -name '*.dylib')
-		do
-			echo "Signing $plugin"
-			sign $(realpath "$plugin")
-		done
-	
-    sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
+	do
+		echo "Signing $plugin"
+		sign $(realpath "$plugin")
+	done
+	echo "Signing $APPS_DIR/$app.app/ with $DIR/$app.entitlements"
+    sign --options=runtime $(realpath "$APPS_DIR/$app.app/") --entitlements "$DIR/$app.entitlements"
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
@@ -162,11 +156,11 @@ done
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign -i org.mobsya.ThymioLauncher.$binary --options=runtime $(realpath "$BINUTILS_DIR/$binary")
+    sign -i org.mobsya.ThymioLauncher.$binary --options=runtime $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/inherited.entitlements"
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign --options=runtime $(realpath "$MAIN_DIR/thymio-launcher")
+sign --options=runtime $(realpath "$MAIN_DIR/thymio-launcher") --entitlements "$DIR/launcher.entitlements"
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"
