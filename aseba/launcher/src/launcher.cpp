@@ -22,7 +22,7 @@ namespace mobsya {
 Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject(parent), m_client(client) {
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
 
-    useLocalBrowser = false;
+    setUseLocalBrowser(false);
     // On mac we use the native web view since chromium is not app-store compatible.
     // But on versions prior to High Sierra, the WebKit version shipped with
     // the OS cannot handle webassembly, which we require to run all of our web apps
@@ -30,7 +30,7 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
     // because the version of safari shipped with an up-to-date Sierra is more current
     // than the system's webkit
 #ifdef Q_OS_OSX
-    useLocalBrowser = true;
+    setUseLocalBrowser(true);
 #endif
     readSettings();
 }
@@ -135,6 +135,9 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 #ifdef Q_OS_IOS
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath());
 #endif
+#ifdef Q_OS_ANDROID
+    files.append("assets:/");
+#endif
     return files;
 }
 
@@ -176,7 +179,7 @@ bool Launcher::openUrl(const QUrl& url) {
 
     qDebug() << url;
 
-    if ( useLocalBrowser ){
+    if ( getUseLocalBrowser() ){
         return openUrlWithParameters(url);
     }
 #ifdef Q_OS_IOS
@@ -189,14 +192,16 @@ bool Launcher::openUrl(const QUrl& url) {
 #else
     QUrl source("qrc:/qml/webview_native.qml");
 #endif
-
- 
-
-
+    QUrl targetUrl = url;
+#ifdef Q_OS_ANDROID
+    QDir appDataDir = QDir(QStandardPaths::standardLocations(QStandardPaths::StandardLocation::AppLocalDataLocation).at(0));
+    targetUrl = QUrl::fromLocalFile(url.path().replace(0, QString("assets:").length(), appDataDir.path()));
+    qDebug() << QString("Url path transformed from '%1' to '%2'").arg(url.path(), targetUrl.path());
+#endif
     auto e = new QQmlApplicationEngine(qobject_cast<QObject*>(this));
     disconnect(e, &QQmlApplicationEngine::quit, nullptr, nullptr);
     e->rootContext()->setContextProperty("Utils", qobject_cast<QObject*>(this));
-    e->rootContext()->setContextProperty("appUrl", url);
+    e->rootContext()->setContextProperty("appUrl", targetUrl);
     e->load(source);
 
     // FIXME: On OSX, let the engine leak, otherwise the application
@@ -216,7 +221,7 @@ bool Launcher::openUrl(const QUrl& url) {
 void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
-    settings.setValue("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser) );
+    settings.setValue("mainwindowuseLocalBrowser2",QVariant(getUseLocalBrowser()) );
 
 }
 
@@ -226,7 +231,7 @@ void Launcher::writeSettings(){
 ************** */
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
-    useLocalBrowser = settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool();
+    setUseLocalBrowser(settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool());
 }
 
 
@@ -267,10 +272,12 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
         QFileInfo d(dirpath + "/" + it->second);
         if(d.exists()) {
             auto q = QUrl::fromLocalFile(d.absoluteFilePath());
+            qDebug() << QString("Web app %1 found in: %2 (%3)").arg(name, d.absoluteFilePath(), q.toString());
             return q;
         }
     }
-    return {};
+    qDebug() << QString("Web app %1 not found!").arg(name);
+    return QUrl();
 }
 
 QByteArray Launcher::readFileContent(QString path) {
