@@ -110,6 +110,7 @@ int main(int argc, char** argv) {
     QQmlDebuggingEnabler enabler;
 #endif
 
+	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     // Ensure a single instance
     QtSingleApplication app(argc, argv);
 
@@ -145,7 +146,6 @@ int main(int argc, char** argv) {
     mobsya::ThymioDevicesModel model(client);
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     auto load_trads = [](const QString& name, const QString& dir) {
         QTranslator* translator = new QTranslator(qApp);
