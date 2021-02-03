@@ -197,7 +197,8 @@ if(APPLE)
     endif() #NOT IOS
 endif()
 
-message( $ENV{KEYSTORE_PASSWORD} )
+message(NOTICE $ENV{KEYSTORE_PASSWORD} )
+message(NOTICE ${PROJECT_SOURCE_DIR} )
 
 if(ANDROID)
     add_qt_android_apk(thymio-launcher-apk thymio-launcher
