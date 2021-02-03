@@ -197,12 +197,14 @@ if(APPLE)
     endif() #NOT IOS
 endif()
 
-
+message( $ENV{KEYSTORE_PASSWORD} )
 
 if(ANDROID)
     add_qt_android_apk(thymio-launcher-apk thymio-launcher
         PACKAGE_NAME org.mobsya.ThymioSuite
         QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
+        KEYSTORE ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12
+        KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
     )
 endif()
 
