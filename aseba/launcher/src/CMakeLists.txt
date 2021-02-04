@@ -197,20 +197,18 @@ if(APPLE)
     endif() #NOT IOS
 endif()
 
-message(NOTICE $ENV{KEYSTORE_PASSWORD} )
-message(NOTICE ${PROJECT_SOURCE_DIR} )
+message(NOTICE "Keystore pass $ENV{KEYSTORE_PASSWORD} ")
+message(NOTICE 'Project source ' + ${PROJECT_SOURCE_DIR} )
+
+if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12)
+    message(NOTICE "Found Keystore")
+endif()
 
 if(ANDROID)
     add_qt_android_apk(thymio-launcher-apk thymio-launcher
         PACKAGE_NAME org.mobsya.ThymioSuite
         QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
-        KEYSTORE ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12
+        KEYSTORE ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
         KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
     )
 endif()
-
-
-
-
-
-
