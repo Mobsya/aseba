@@ -202,10 +202,13 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12)
 endif()
 
 if(ANDROID)
+    math(EXPR app_version_code "1000000 * ${ASEBA_VERSION_MAJOR} + 1000 * ${ASEBA_VERSION_MINOR} + ${ASEBA_VERSION_PATCH}")
+    set(PROJECT_VERSION ${ASEBA_VERSION})
     add_qt_android_apk(thymio-launcher-apk thymio-launcher
         PACKAGE_NAME org.mobsya.ThymioSuite
         QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
         KEYSTORE ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
         KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
+        VERSION_CODE ${app_version_code}
     )
 endif()
