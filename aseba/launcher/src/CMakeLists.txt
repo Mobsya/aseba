@@ -197,9 +197,6 @@ if(APPLE)
     endif() #NOT IOS
 endif()
 
-message(NOTICE "Keystore pass $ENV{KEYSTORE_PASSWORD} ")
-message(NOTICE 'Project source ' + ${PROJECT_SOURCE_DIR} )
-
 if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12)
     message(NOTICE "Found Keystore")
 endif()
