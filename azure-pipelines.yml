@@ -56,6 +56,9 @@ jobs:
       secureFile: 'thymio_suite_mobile.p12'
 
   - script: |
+      mv $(keystore.secureFilePath) .
+
+  - script: |
       docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
     displayName: 'Pull docker image'
 
