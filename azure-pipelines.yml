@@ -49,7 +49,7 @@ jobs:
     - name: CMAKE_VERSION
       value: '3.19.3'
   steps:
-  - task: DownloadKeystore@1
+  - task: DownloadSecureFile@1
     name: keystore
     displayName: 'Download android keystore'
     inputs:
