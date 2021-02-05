@@ -136,7 +136,9 @@ QStringList Launcher::webappsFolderSearchPaths() const {
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath());
 #endif
 #ifdef Q_OS_ANDROID
-    files.append("assets:/");
+    // See copyAndroidAssetsIntoAppDataIfRequired() in main.cpp.
+    // files.append("assets:/");
+    files.append(QStandardPaths::standardLocations(QStandardPaths::StandardLocation::AppLocalDataLocation).at(0));
 #endif
     return files;
 }
@@ -192,16 +194,13 @@ bool Launcher::openUrl(const QUrl& url) {
 #else
     QUrl source("qrc:/qml/webview_native.qml");
 #endif
-    QUrl targetUrl = url;
 #ifdef Q_OS_ANDROID
-    QDir appDataDir = QDir(QStandardPaths::standardLocations(QStandardPaths::StandardLocation::AppLocalDataLocation).at(0));
-    targetUrl = QUrl::fromLocalFile(url.path().replace(0, QString("assets:").length(), appDataDir.path()));
-    qDebug() << QString("Url path transformed from '%1' to '%2'").arg(url.path(), targetUrl.path());
+    qDebug() << url.toString(QUrl::None);
 #endif
     auto e = new QQmlApplicationEngine(qobject_cast<QObject*>(this));
     disconnect(e, &QQmlApplicationEngine::quit, nullptr, nullptr);
     e->rootContext()->setContextProperty("Utils", qobject_cast<QObject*>(this));
-    e->rootContext()->setContextProperty("appUrl", targetUrl);
+    e->rootContext()->setContextProperty("appUrl", url);
     e->load(source);
 
     // FIXME: On OSX, let the engine leak, otherwise the application
@@ -214,9 +213,9 @@ bool Launcher::openUrl(const QUrl& url) {
 }
 
 /* **************
-* it writes local application information to application settings 
-* for being available in next execution - 
-* the function must be called in the program exit and not all times  
+* it writes local application information to application settings
+* for being available in next execution -
+* the function must be called in the program exit and not all times
 ************** */
 void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
@@ -226,7 +225,7 @@ void Launcher::writeSettings(){
 }
 
 /* **************
-* it reads the application settings to set the application information 
+* it reads the application settings to set the application information
 * the function must be called after the program load a
 ************** */
 void Launcher::readSettings(){
