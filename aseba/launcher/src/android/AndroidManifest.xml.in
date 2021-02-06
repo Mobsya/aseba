@@ -8,11 +8,12 @@
     <application
         android:label="@QT_ANDROID_APP_NAME@"
         android:name="org.qtproject.qt5.android.bindings.QtApplication"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:icon="@mipmap/thymio_suite_icon">
         <activity
             android:label="@QT_ANDROID_APP_NAME@"
             android:name="org.qtproject.qt5.android.bindings.QtActivity"
-            android:screenOrientation="unspecified"
+            android:screenOrientation="landscape"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation">
 
             <intent-filter>

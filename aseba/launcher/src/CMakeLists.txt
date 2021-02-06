@@ -207,6 +207,7 @@ if(ANDROID)
     add_qt_android_apk(thymio-launcher-apk thymio-launcher
         NAME "Thymio Suite"
         PACKAGE_NAME org.mobsya.ThymioSuite
+        PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
         QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
         KEYSTORE ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
         KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
