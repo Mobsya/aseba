@@ -37,7 +37,7 @@ Getting all web base software
 - Download `https://github.com/Mobsya/scratch-gui/releases/` latest release and extract it into the main directory with the name ``scratch``
 - Download `https://github.com/Mobsya/thymio-blockly-standalone/releases` latest release and extract it into the main directory with the name ``thymio_blockly``
 - Download `https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz` and extract it into the main directory with the name ``tvpl3-thymio-suite``.
- 
+
 Getting Started on Windows with MSVC
 ------------------------------------
 
@@ -186,6 +186,12 @@ following commands:
 
 Getting Started on Android
 --------------------------
+
+Please refer to the dedicated in `documentation in android-build.md <https://github.com/Mobsya/aseba/blob/master/docs/en/development/android-build.md>`_.
+
+VPL 2 - Deprecated
+~~~~~~~~~~~~~~~~~~
+
 VPL 2 can be built for Android. Other tools such as studio, playground, and the old VPL
 are not compatible with Android.
 
@@ -196,7 +202,8 @@ To build the Android version you will need:
  * CMake 3.7 or greater
 
 Building VPL 2
-~~~~~~~~~~~~~~
+""""""""""""""
+
 First, you need to prepare some environment variables
 
 ::
