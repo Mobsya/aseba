@@ -6,7 +6,7 @@
 
 ### Prerequisites
 
-Install Docker. On recent version of Ubuntu or other Debian derivatives, type `sudo apt install docker.io`.
+Install Docker. On recent versions of Ubuntu or other Debian derivatives, type `sudo apt install docker.io`.
 
 ### Building within Containerized Environment
 
