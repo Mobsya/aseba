@@ -167,8 +167,6 @@ if(NOT ANDROID AND NOT IOS)
     install_qt_app(thymio-launcher)
 endif()
 
-
-
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
 endif()
@@ -200,7 +198,7 @@ endif()
 if(ANDROID)
     math(EXPR app_version_code "1000000 * ${ASEBA_VERSION_MAJOR} + 1000 * ${ASEBA_VERSION_MINOR} + ${ASEBA_VERSION_PATCH}")
     set(PROJECT_VERSION ${ASEBA_VERSION})
-    set(KEYSTORE_FILE_PATH, "${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12")
+    set(KEYSTORE_FILE_PATH, "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12")
     if(EXISTS "${KEYSTORE_FILE_PATH}")
         message(NOTICE "Keystore found. The APK will be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
