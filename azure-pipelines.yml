@@ -73,15 +73,20 @@ jobs:
 
   - script: |
       mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
-      sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} "export KEYSTORE_PASSWORD=$(mobsya-android-p12) && cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+      sudo docker run --rm -v $(pwd):/src:rw -v $(pwd)/build/$TARGET_ARCH:/build:rw mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} "export KEYSTORE_PASSWORD=$(env:MOBSYA_P12) && cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
       cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
     displayName: 'Build Thymio Suite'
+    env:
+      MOBSYA_P12: $(mobsya-android-p12)
+
     
   - script: |
       curl -sL https://firebase.tools | bash
-      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite under $TARGET_ARCH architecture"
+      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(env:FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite under $TARGET_ARCH architecture"
     displayName: 'Deploy to firebase'
     condition: ne(variables['Build.Reason'], 'PullRequest')
+    env:
+      FIREBASE_TOKEN: $(FIREBASE_TOKEN)
 
   - task: PublishBuildArtifacts@1
     inputs:
