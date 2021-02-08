@@ -197,20 +197,29 @@ if(APPLE)
     endif() #NOT IOS
 endif()
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12)
-    message(NOTICE "Found Keystore")
-endif()
-
 if(ANDROID)
     math(EXPR app_version_code "1000000 * ${ASEBA_VERSION_MAJOR} + 1000 * ${ASEBA_VERSION_MINOR} + ${ASEBA_VERSION_PATCH}")
     set(PROJECT_VERSION ${ASEBA_VERSION})
-    add_qt_android_apk(thymio-launcher-apk thymio-launcher
-        NAME "Thymio Suite"
-        PACKAGE_NAME org.mobsya.ThymioSuite
-        PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
-        QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
-#         KEYSTORE ${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
-#         KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
-        VERSION_CODE ${app_version_code}
-    )
+    set(KEYSTORE_FILE_PATH, "${PROJECT_SOURCE_DIR}/thymio_suite_mobile.p12")
+    if(EXISTS "${KEYSTORE_FILE_PATH}")
+        message(NOTICE "Keystore found. The APK will be signed.")
+        add_qt_android_apk(thymio-launcher-apk thymio-launcher
+            NAME "Thymio Suite"
+            PACKAGE_NAME org.mobsya.ThymioSuite
+            PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
+            QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
+            KEYSTORE ${KEYSTORE_FILE_PATH} thymio_suite_mobile
+            KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
+            VERSION_CODE ${app_version_code}
+        )
+    else()
+        message(NOTICE "Keystore not found. The APK will not be signed.")
+        add_qt_android_apk(thymio-launcher-apk thymio-launcher
+                    NAME "Thymio Suite"
+                    PACKAGE_NAME org.mobsya.ThymioSuite
+                    PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
+                    QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
+                    VERSION_CODE ${app_version_code}
+                )
+    endif()
 endif()
