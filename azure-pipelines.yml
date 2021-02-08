@@ -57,6 +57,7 @@ jobs:
 
   - script: |
       mv $(keystore.secureFilePath) .
+      keytool -list -keystore thymio_suite_mobile.p12 -storepass $(mobsya-android-p12) | grep -q 'Your keystore contains 1 entry' && echo 'The keystore password is correct'
 
   - script: |
       docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
