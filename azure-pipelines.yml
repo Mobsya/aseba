@@ -41,7 +41,7 @@ jobs:
         TARGET_ARCH: 'x86_64'
   variables:
     - name: API_LEVEL
-      value: '21'
+      value: '24'
     - name: NDK_VERSION
       value: '21'
     - name: QT_VERSION
