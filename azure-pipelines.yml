@@ -40,9 +40,7 @@ jobs:
       x86_64:
         TARGET_ARCH: 'x86_64'
   variables:
-    - group: passwords
-    - name: keypass
-      value: $[variables.mobsya-android-p12]
+    - group: passport
     - name: API_LEVEL
       value: '24'
     - name: NDK_VERSION
@@ -77,11 +75,11 @@ jobs:
   - script: |
       mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
       sudo docker run --rm \
-            -e KEYSTORE_PASSWORD=$keypass \
+            -e KEYSTORE_PASSWORD=$(keystore_pass) \
             -v $(pwd):/src:rw \
             -v $(pwd)/build/$TARGET_ARCH:/build:rw \
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
-            "keytool -list -keystore thymio_suite_mobile.p12 -storepass $keypass | grep -q 'Your keystore contains 1 entry' && echo 'The keystore password is correct' && cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+            "keytool -list -keystore thymio_suite_mobile.p12 -storepass $(keystore_pass) | grep -q 'Your keystore contains 1 entry' && echo 'The keystore password is correct' && cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
       cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
     displayName: 'Build Thymio Suite'
 
