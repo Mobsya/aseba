@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("client", &client);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);    
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     w.showFullScreen();
 #else
     w.setMinimumSize(1024, 640);
