@@ -198,7 +198,7 @@ endif()
 if(ANDROID)
     math(EXPR app_version_code "1000000 * ${ASEBA_VERSION_MAJOR} + 1000 * ${ASEBA_VERSION_MINOR} + ${ASEBA_VERSION_PATCH}")
     set(PROJECT_VERSION ${ASEBA_VERSION})
-    if(EXISTS "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12" AND DEFINED ENV{KEYSTORE_PASSWORD})
+    if(EXISTS "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12" AND NOT "$ENV{KEYSTORE_PASSWORD}" STREQUAL "")
         message(NOTICE "Keystore found and password defined. The APK will be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
             NAME "Thymio Suite"
