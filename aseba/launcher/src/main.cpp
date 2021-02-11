@@ -110,7 +110,9 @@ int main(int argc, char** argv) {
     QQmlDebuggingEnabler enabler;
 #endif
 
+#if not defined(Q_OS_ANDROID)
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif	
     // Ensure a single instance
     QtSingleApplication app(argc, argv);
 
@@ -174,7 +176,7 @@ int main(int argc, char** argv) {
 #if defined(Q_OS_IOS)
     w.showFullScreen();
 #elif defined(Q_OS_ANDROID)
-	w.showMaximized();
+	w.showFullScreen();
 #else
     w.setMinimumSize(1024, 640);
     w.showNormal();
