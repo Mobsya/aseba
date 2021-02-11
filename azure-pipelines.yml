@@ -83,9 +83,20 @@ jobs:
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
             "keytool -list -keystore thymio_suite_mobile.p12 -storepass $(keystore_pass) | grep -q 'Your keystore contains 1 entry' && echo 'The keystore password is correct' && cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
       cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
-    displayName: 'Build Thymio Suite'
-
+    displayName: 'Build Thymio Suite and sign'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
     
+  - script: |
+      mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
+      sudo docker run --rm \
+            -v $(pwd):/src:rw \
+            -v $(pwd)/build/$TARGET_ARCH:/build:rw \
+            mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
+            "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+      cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
+    displayName: 'Build Thymio Suite without signing'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+   
   - script: |
       curl -sL https://firebase.tools | bash
       firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite under $TARGET_ARCH architecture"
