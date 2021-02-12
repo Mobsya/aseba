@@ -13,7 +13,7 @@
         <activity
             android:label="@QT_ANDROID_APP_NAME@"
             android:name="org.qtproject.qt5.android.bindings.QtActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="sensor"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation">
 
             <intent-filter>
