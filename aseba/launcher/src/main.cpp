@@ -176,7 +176,8 @@ int main(int argc, char** argv) {
 #if defined(Q_OS_IOS)
     w.showFullScreen();
 #elif defined(Q_OS_ANDROID)
-	w.showFullScreen();
+	w.setMinimumSize(1024, 640);
+	w.show();
 #else
     w.setMinimumSize(1024, 640);
     w.showNormal();
