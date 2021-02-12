@@ -13,7 +13,7 @@
         <activity
             android:label="@QT_ANDROID_APP_NAME@"
             android:name="org.qtproject.qt5.android.bindings.QtActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="sensor"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation">
 
             <intent-filter>
@@ -62,7 +62,7 @@
             <!-- Background running -->
 
             <!-- auto screen scale factor -->
-            <meta-data android:name="android.app.auto_screen_scale_factor" android:value="false"/>
+            <meta-data android:name="android.app.auto_screen_scale_factor" android:value="true"/>
             <!-- auto screen scale factor -->
 
             <!-- extract android style -->
