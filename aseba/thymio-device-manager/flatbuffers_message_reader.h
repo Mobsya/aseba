@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
-#include <boost/beast/core/handler_ptr.hpp>
+#include <boost/beast/core/bind_handler.hpp>
 #include <aseba/flatbuffers/thymio_generated.h>
 #include <aseba/flatbuffers/fb_message_ptr.h>
 #include "log.h"
