@@ -94,7 +94,7 @@
                 {
                     "type": "archive",
                     "url": "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz",
-                    "sha256": "7307134c1bc8739ca6e907634c25ae3b156d1df435ed102a16c34d1ac4e680fb",
+                    "sha256": "637cae9895875642a7d1d6cd7b80427410a41d568ac8ede5dbb1e0e09a916a63",
                     "strip-components": 0
                 }
             ],
