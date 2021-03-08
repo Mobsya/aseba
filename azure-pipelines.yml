@@ -285,9 +285,9 @@ jobs:
     displayName: 'Install dependencies with HomeBrew'
 
   - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.0-ios.7z --output ios.7z
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-ios.7z --output ios.7z
       7z x ios.7z
-    displayName: 'Download Qt 5.13 for ios'
+    displayName: 'Download Qt 5.15.2 for ios'
 
   - script: |
       git submodule update --init --recursive
@@ -301,7 +301,7 @@ jobs:
       cmake --build . --config Release --target flatc
       export FLATC=`pwd`/Release/flatc
       cd ..
-      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.0/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
     displayName: 'CONFIGURE with cmake'
 
   - script: |
