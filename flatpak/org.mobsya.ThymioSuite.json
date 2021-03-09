@@ -50,8 +50,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url":  "http://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz",
-                    "sha256": "c66e88d5786f2ca4dbebb14e06b566fb642a1a6947ad8cc9091f9f445134143f"
+                    "url":  "http://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.gz",
+                    "sha256": "9995e192e68528793755692917f9eb6422f3052a53c5e13ba278a228af6c7acf"
                 }
             ],
             "buildsystem": "simple",
@@ -87,14 +87,14 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20200827.1/scratch-gui.tar.gz",
-                    "sha256": "7fe3599c9c166b72fd46aadea20ff909f3cd01bd548eb1db6ddfebda942a83d3",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20201116.1/scratch-gui.tar.gz",
+                    "sha256": "adbacade68ef08f9a1ddd0be784f98a97593c37fe825023d4da3af131dea4fea",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
                     "url": "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz",
-                    "sha256": "a5a94759bac794dfa4a9da8d977a031e7f2173b5120074dfe51590b68901d6bf",
+                    "sha256": "54acd026b480152f6a7d64494d976e365511329b8a0389447d19ee9b8c85705e",
                     "strip-components": 0
                 }
             ],

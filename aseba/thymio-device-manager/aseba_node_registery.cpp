@@ -108,11 +108,13 @@ aseba_node_registery::node_map aseba_node_registery::nodes() const {
 
 void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_nodes_service_desc.endpoint(endpoint);
-    update_discovery();
 }
 
 void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_ws_endpoint = endpoint;
+}
+
+void aseba_node_registery::set_discovery() {
     update_discovery();
 }
 
@@ -134,10 +136,11 @@ void aseba_node_registery::update_discovery() {
 void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
     if(ec) {
         mLogError("Discovery : {}", ec.message());
+		m_discovery_needs_update = true;
     } else {
-        mLogTrace("Discovery : update complete");
+        mLogTrace("Discovery : update complete");		
     }
-    m_updating_discovery = false;
+	m_updating_discovery = false;
     if(m_discovery_needs_update) {
         boost::asio::post(boost::asio::get_associated_executor(this),
                           boost::bind(&aseba_node_registery::update_discovery, this));
@@ -146,11 +149,13 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
 
 
 aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
-
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
+    map["_ws-port"] = "8597"; //HACK adding some unused description to correct bug in avahi
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
+    mLogTrace("=> WS port discovery on {}", map["ws-port"]);
+    map["_ws-port2"] = "8597"; //HACK adding some unused description to correct bug in avahi
     return map;
 }
 
