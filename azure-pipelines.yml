@@ -251,7 +251,6 @@ jobs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.dmg'
 
-
 - job: BuildForIOs
   pool:
     vmImage: 'macOS-10.14'
