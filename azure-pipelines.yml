@@ -21,7 +21,7 @@ variables:
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
 - name: vpl3_url
-  value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
+  value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite-android.tar.gz"
 - name: vcpkg_commit
   value: "cccef600decd1091a20a0b4d8a2e61f7041eb686"
 - name: visual_bootstrapper
@@ -71,7 +71,7 @@ jobs:
     
   - script: |
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
-      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
+      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite-android.tar.gz -C .
     displayName: 'Fetch VPL3 & Scratch'
 
   - script: |
