@@ -243,7 +243,7 @@ Item {
                 }
             }
             Item {
-                visible: Utils.isZeroconfRunning && Utils.platformIsIos() && device_view.count == 0
+                visible: Utils.isZeroconfRunning && (Utils.platformIsIos()||Utils.platformIsAndroid()) && device_view.count == 0
                 id: selection_warning
                 anchors.left: parent.left
                 anchors.right: parent.right
