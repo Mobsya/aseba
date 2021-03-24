@@ -15,7 +15,7 @@ trigger:
 variables:
 - group: passwords
 - name: scratch_version
-  value: "v20201116.1"
+  value: "v20210324.3"
 - name: packet_version
   value: "2.2.0"
 - name: scratch_url
