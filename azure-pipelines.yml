@@ -19,7 +19,7 @@ variables:
 - name: scratch_version
   value: "v20201116.1"
 - name: packet_version
-  value: "2.1.5"
+  value: "2.2.0"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url

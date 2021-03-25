@@ -1,2 +1,2 @@
 #Version of aseba. Must be of the form <MAJOR>.<MINOR>.<PATCH>
-2.1.5
+2.2.0

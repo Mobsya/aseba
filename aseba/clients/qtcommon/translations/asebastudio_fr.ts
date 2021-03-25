@@ -1578,7 +1578,7 @@ event %0 : </source>
     <message>
         <location line="-573"/>
         <source>variables: %1/%2 (%3 %)</source>
-        <translation>variables: %1 %2 (%3 %)</translation>
+        <translation>variables: %1/%2 (%3 %)</translation>
     </message>
     <message>
         <location line="+5"/>
