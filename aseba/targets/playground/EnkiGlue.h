@@ -54,7 +54,7 @@ struct SimulatorEnvironment {
     //! Return the current world
     virtual World* getWorld() const = 0;
 
-    virtual void sendIRMessage(std::string robotId, int16_t message, Point position1) = 0;
+    virtual void sendIRMessage(std::string robotId, int16_t message, Point position1, double orint) = 0;
 };
 
 //! A global pointer to the environment

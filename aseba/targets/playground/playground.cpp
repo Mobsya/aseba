@@ -207,7 +207,7 @@ public:
         return viewer.getWorld();
     }
 
-    void sendIRMessage(std::string robotName, int16_t message, Point position1 ) override{
+void sendIRMessage(std::string robotName, int16_t message, Point position1, double orint1) override{
         World* world = viewer.getWorld();
         for( World::ObjectsIterator i = world->objects.begin(); i != world->objects.end(); ++i) {
 			PhysicalObject* o = *i;
@@ -220,14 +220,30 @@ public:
                     continue;
                 }
 
-                Vector distance(position1.x-position2.x , position1.y-position2.y);
-                double distance_final= distance.norm();
+                Enki::Vector distance(position1.x-position2.x , position1.y-position2.y);
+               	double distance_final= distance.norm();
+                double vector_angle1 = distance.angle();
+
+                double vector_angle = vector_angle1*(180/M_PI);
+
+                double anglee1 = (thymio2->angle)*(180/M_PI);
+                double orient_deg = orint1 * (180/M_PI);
+              
+	//	if (vector_angle<0){ vector_angle=vector_angle+180; }
+
+//std::cerr << " Retta " << vector_angle << " Orientamento rispetto robot RX " << vector_angle - anglee1 << " Orientamento rispetto robot TX " << vector_angle - orient_deg << " robot name " << robotName << " \n";
 
                 if (distance_final<=25.0 )
-                {
-                    thymio2->setIRMessageReceived( message );
-                }
+                {   
 
+                    if((vector_angle <= anglee1+70.0 && vector_angle >= anglee1-70.0) || (vector_angle >= anglee1+130.0 && vector_angle <= anglee1+230.0))   
+                {     
+                    if((vector_angle <= orient_deg+70.0 && vector_angle>= orient_deg-70.0) || (vector_angle>= orient_deg+130.0 && vector_angle<= orient_deg+230.0)){ 
+
+
+                    thymio2->setIRMessageReceived(message);                    
+                }   }  
+                } 
             }
 		}
     
@@ -602,4 +618,3 @@ int main(int argc, char* argv[]) {
 
     return exitValue;
 }
-
