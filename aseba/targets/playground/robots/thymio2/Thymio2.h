@@ -1,4 +1,3 @@
-
 /*
     Aseba - an event-based framework for distributed robot control
     Copyright (C) 2007--2013:
@@ -172,4 +171,3 @@ protected:
 }  // namespace Enki
 
 #endif  // __PLAYGROUND_THYMIO2_H
-

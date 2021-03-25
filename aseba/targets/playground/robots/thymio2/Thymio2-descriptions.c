@@ -4,16 +4,13 @@
         Stephane Magnenat <stephane at magnenat dot net>
         (http://stephane.magnenat.net)
         and other contributors, see authors.txt for details
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
     by the Free Software Foundation, version 3 of the License.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -39,6 +36,7 @@ AsebaVMDescription PlaygroundThymio2VMDescription = {"thymio-II",
                                                       {7, "prox.horizontal"},
 
                                                       {1, "prox.comm.rx"},
+                                                    
                                                       {1, "prox.comm.tx"},
 
                                                       {2, "prox.ground.ambiant"},
@@ -65,8 +63,10 @@ AsebaVMDescription PlaygroundThymio2VMDescription = {"thymio-II",
                                                       {2, "timer.period"},
 
                                                       {1, "sd.present"},
+                                                      {7, "prox.comm.rx._intensities"},
 
-                                                      {0, NULL}}};
+                                                      {0, NULL}
+                                                      }};
 
 // native functions
 

@@ -1,4 +1,3 @@
-
 /*
     Aseba - an event-based framework for distributed robot control
     Copyright (C) 2007--2013:
@@ -74,8 +73,8 @@ void AsebaThymio2::proxcommEnable(int16_t enable){
     proxcommEnableFlag= (enable>0);
     newIrMessage = false;
     irMessage = 0;
-    irSenderDelayer = 0;
-};
+    irSenderDelayer = 0;  
+}
 
 void AsebaThymio2::setIRMessageReceived(int16_t message){
     newIrMessage = true;
@@ -154,16 +153,15 @@ void AsebaThymio2::controlStep(double dt) {
     variables.proxCommRxIntensities[6] = getProxIntensity(6);
     
     if (proxcommEnableFlag){
-         
-        //double ornt= sensor ->getAbsoluteOrientation();
 
         if ( irSenderDelayer < 5 ){
             irSenderDelayer++;
         } else {
             irSenderDelayer = 0;
             Point pos1(pos.x, pos.y);
-            Enki::simulatorEnvironment->sendIRMessage(robotName, variables.proxCommTx, pos1 ); 
-        }
+            double anglee1 = angle; 
+            Enki::simulatorEnvironment->sendIRMessage(robotName, variables.proxCommTx, pos1, anglee1); 
+        }   
 
         if ( newIrMessage ){
             newIrMessage = false;
