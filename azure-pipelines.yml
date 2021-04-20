@@ -42,7 +42,7 @@ jobs:
   variables:
     - group: passport
     - name: API_LEVEL
-      value: '24'
+      value: '29'
     - name: NDK_VERSION
       value: '21'
     - name: QT_VERSION
