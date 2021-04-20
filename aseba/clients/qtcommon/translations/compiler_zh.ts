@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>Aseba::CompilerTranslator</name>
     <message>
@@ -16,7 +16,7 @@
     <message>
         <location line="+3"/>
         <source>Script too big for target bytecode size</source>
-        <translation>脚本对于目标字节码容量过大</translation>
+        <translation>脚本代码对于目标容量过大</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -76,12 +76,12 @@
     <message>
         <location line="+3"/>
         <source>Line: </source>
-        <translation>行:</translation>
+        <translation>行: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source> Col: </source>
-        <translation>列:</translation>
+        <translation> 列: </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -111,7 +111,7 @@
     <message>
         <location line="+3"/>
         <source>Error in number, invalid base</source>
-        <translation>数字错误,该数底数无效</translation>
+        <translation>数字错误，基数无效</translation>
     </message>
     <message>
         <location line="+3"/>
