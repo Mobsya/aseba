@@ -48,7 +48,7 @@ jobs:
     - name: QT_VERSION
       value: '5.15.2'
     - name: CMAKE_VERSION
-      value: '3.19.4'
+      value: '3.19.7'
   steps:
   - task: DownloadSecureFile@1
     name: keystore
