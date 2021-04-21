@@ -43,10 +43,14 @@ This is the way Thymio Suite is built on the CI.
       1. Command: cp
       2. Arguments: android-build/libs/armeabi-v7a/libthymio-launcher_armeabi-v7a.so android-build/libs/armeabi-v7a/libThymioSuite_armeabi-v7a.so
       3. Use the chevron icons on the top left corner of your custom build step container to move your step after the build and before the APK build 
-   6. Add a custom build step to copy web apps into the *android-build/assets* folder:
+   6. Add a custom build step to copy web app *vpl3-thymio-suite* into the *android-build/assets* folder:
       1. Command: cp
-      2. Arguments: -R "path to web apps parent folder/*" android-build/assets
+      2. Arguments: -R "<path to web apps parent folder>/vpl3-thymio-suite" android-build/assets
       3. Use the chevron icons on the top left corner of your custom build step container to move your step right before the APK build 
+   7. Add a custom build step to copy web app *scratch* into the *android-build/assets* folder:
+      1. Command: cp
+      2. Arguments: -R "<path to web apps parent folder>/scratch" android-build/assets
+      3. Use the chevron icons on the top left corner of your custom build step container to move your step right before the APK build
 6. Select the *Run* settings of your active Android Kit (i.e. *Android 5.15.x Clang Multi ABI*)
    1. In *Deployment* section, make sure that the option `Uninstall the existing app first` is no checked; otherwise, you may not be able to deploy the app to the device
    2. In *Execute* section, make sure that you select *thymio-launcher* as *Execution configuration*.
