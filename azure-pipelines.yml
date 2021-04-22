@@ -37,7 +37,7 @@ parameters:
   - x86_64
 
 jobs:
-- job: 'BuildAndroid_armeabi'
+- job: 'BuildAndroid'
   pool:
     vmImage: 'Ubuntu-18.04'
   # strategy:
@@ -95,7 +95,7 @@ jobs:
     - script: |
         build_dir=$(pwd)/build/Release/${{ arch }}/android-${API_LEVEL}
         mkdir -p ${build_dir}
-        docker run --rm \
+        sudo docker run --rm \
             -v $(pwd):/src:rw \
             -v ${build_dir}:/build:rw \
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
