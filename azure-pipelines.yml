@@ -26,7 +26,14 @@ variables:
   value: "cccef600decd1091a20a0b4d8a2e61f7041eb686"
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
-
+parameters:
+  - name: 'architectures'
+    type: object
+    default: 
+    - armeabi-v7a
+    - arm64-v8a
+    - x86
+    - x86_64
 jobs:
 - job: 'BuildAndroid_armeabi'
   pool:
@@ -49,14 +56,6 @@ jobs:
       value: '5.15.2'
     - name: CMAKE_VERSION
       value: '3.19.7'
-  parameters:
-  - name: 'architectures'
-    type: object
-    default: 
-    - armeabi-v7a
-    - arm64-v8a
-    - x86
-    - x86_64
   steps:
   - task: DownloadSecureFile@1
     name: keystore
