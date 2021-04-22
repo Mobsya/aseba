@@ -89,7 +89,7 @@ jobs:
       build_type_option="--release"
       sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)";
 
-  - ${{ each arch in $architectures}}:
+  - ${{ each arch in parameters.architectures}}:
     - script: |
         build_dir=$(pwd)/build/${build_type}/${arch}/android-${API_LEVEL}
         mkdir -p ${build_dir}
