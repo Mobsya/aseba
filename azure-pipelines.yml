@@ -58,6 +58,7 @@ jobs:
       value: '5.15.2'
     - name: CMAKE_VERSION
       value: '3.19.7'
+    - name: BUILD_MULTI_DIR
   steps:
   - task: DownloadSecureFile@1
     name: keystore
@@ -84,12 +85,9 @@ jobs:
     displayName: 'Fetch VPL3 & Scratch'
 
   - script: |
-      android_platform="--android-platform android-${API_LEVEL}";
-      build_multi=$(pwd)/build/Release/multi/android-${API_LEVEL}
-      mkdir -p ${build_multi}/android-build/assets ${build_multi}/android-build/libs ${build_multi}/aseba
-      cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${build_multi}/android-build/assets
-      build_type_option="--release"
-      sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)";
+      BUILD_MULTI_DIR=$(pwd)/build/Release/multi/android-${API_LEVEL}
+      mkdir -p ${BUILD_MULTI_DIR}/android-build/assets ${BUILD_MULTI_DIR}/android-build/libs ${BUILD_MULTI_DIR}/aseba
+      cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${BUILD_MULTI_DIR}/android-build/assets
     displayName: 'Prepare CI environment'
 
   - ${{ each arch in parameters.architectures}}:
@@ -101,14 +99,15 @@ jobs:
             -v ${build_dir}:/build:rw \
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
             "cmake -DANDROID_PLATFORM=android-${API_LEVEL} -DANDROID_ABI=${{ arch }} -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
-        
-        ls ${build_multi}
 
-        # sudo cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
-        # sudo cp -r ${build_dir}/aseba/* ${build_multi}/aseba/
+        sudo cp -r ${BUILD_MULTI_DIR}/android-build/* ${BUILD_MULTI_DIR}/android-build/
+        sudo cp -r ${BUILD_MULTI_DIR}/aseba/* ${build_multi}/aseba/
       displayName: 'Build ${{ arch }}'
 
   - script: |
+      android_platform="--android-platform android-${API_LEVEL}"
+      build_type_option="--release"
+      sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)"
       docker run --rm \
         -v $(pwd):/src:rw \
         -v ${build_multi}:/build:rw \
