@@ -59,29 +59,29 @@ jobs:
     - name: CMAKE_VERSION
       value: '3.19.7'
   steps:
-  # - task: DownloadSecureFile@1
-  #   name: keystore
-  #   displayName: 'Download android keystore'
-  #   inputs:
-  #     secureFile: 'thymio_suite_mobile.p12'
+  - task: DownloadSecureFile@1
+    name: keystore
+    displayName: 'Download android keystore'
+    inputs:
+      secureFile: 'thymio_suite_mobile.p12'
 
-  # - script: |
-  #     mv $(keystore.secureFilePath) .
-  #   displayName: 'Move secure file'
-  #   condition: ne(variables['Build.Reason'], 'PullRequest')
+  - script: |
+      mv $(keystore.secureFilePath) .
+    displayName: 'Move secure file'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  # - script: |
-  #     docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
-  #   displayName: 'Pull docker image'
+  - script: |
+      docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
+    displayName: 'Pull docker image'
 
-  # - script: |
-  #     git submodule update --init --recursive
-  #   displayName: 'Clone submodules'
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
     
-  # - script: |
-  #     wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
-  #     wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite-android.tar.gz -C .
-  #   displayName: 'Fetch VPL3 & Scratch'
+  - script: |
+      wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
+      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite-android.tar.gz -C .
+    displayName: 'Fetch VPL3 & Scratch'
 
   - script: |
       android_platform="--android-platform android-${API_LEVEL}";
