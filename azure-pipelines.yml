@@ -90,17 +90,19 @@ jobs:
       cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${build_multi}/android-build/assets
       build_type_option="--release"
       sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)";
+    displayName: 'Prepare CI environment'
 
   - ${{ each arch in parameters.architectures}}:
     - script: |
         build_dir=$(pwd)/build/Release/${{ arch }}/android-${API_LEVEL}
         mkdir -p ${build_dir}
         docker run --rm \ 
-            mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
-            "echo 'bousin'"
+            mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
+            "cmake -DANDROID_PLATFORM=android-${API_LEVEL} -DANDROID_ABI=${{ arch }} -DCMAKE_TOOLCHAIN_FILE=\$ANDROID_NDK_PATH/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
         
         cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
         cp -r ${build_dir}/aseba/* ${build_dir}/aseba/
+      displayName: 'Build ${{ arch }}'
 
   - script: |
       docker run --rm \
@@ -109,7 +111,8 @@ jobs:
         mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
         "apt update && apt install -y jq && jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json >> /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --gradle --aab ${build_type_option} ${android_platform} ${sign_options}"
       cp ${build_multi}/android_build/build/outputs $(Build.ArtifactStagingDirectory)
-
+    displayName: 'Package app'
+    
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
