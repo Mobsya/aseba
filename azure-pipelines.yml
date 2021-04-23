@@ -97,7 +97,7 @@ jobs:
         mkdir -p ${build_dir}
         docker run --rm \ 
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
-            "ls -al /build/* && ls -al /android/ndk/*"
+            "echo 'bousin'"
         
         cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
         cp -r ${build_dir}/aseba/* ${build_dir}/aseba/
