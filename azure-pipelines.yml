@@ -27,18 +27,27 @@ variables:
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
+parameters:
+- name: 'architectures'
+  type: object
+  default: 
+  - armeabi-v7a
+  - arm64-v8a
+  - x86
+  - x86_64
+
 jobs:
-- job: 'BuildAndroid_armeabi'
+- job: 'BuildAndroid'
   pool:
     vmImage: 'Ubuntu-18.04'
-  strategy:
-    matrix:
-      armeabi:
-        TARGET_ARCH: 'armeabi-v7a'
-      aarch64:
-        TARGET_ARCH: 'arm64-v8a'
-      x86_64:
-        TARGET_ARCH: 'x86_64'
+  # strategy:
+  #   matrix:
+  #     armeabi:
+  #       TARGET_ARCH: 'armeabi-v7a'
+  #     aarch64:
+  #       TARGET_ARCH: 'arm64-v8a'
+  #     x86_64:
+  #       TARGET_ARCH: 'x86_64'
   variables:
     - group: passport
     - name: API_LEVEL
@@ -61,13 +70,13 @@ jobs:
     displayName: 'Move secure file'
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  - script: |
-      docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
-    displayName: 'Pull docker image'
+  # - script: |
+  #     docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
+  #   displayName: 'Pull docker image'
 
-  - script: |
-      git submodule update --init --recursive
-    displayName: 'Clone submodules'
+  # - script: |
+  #     git submodule update --init --recursive
+  #   displayName: 'Clone submodules'
     
   - script: |
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
@@ -75,33 +84,27 @@ jobs:
     displayName: 'Fetch VPL3 & Scratch'
 
   - script: |
-      mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
-      sudo docker run --rm \
-            -e KEYSTORE_PASSWORD=$(keystore_pass) \
-            -v $(pwd):/src:rw \
-            -v $(pwd)/build/$TARGET_ARCH:/build:rw \
-            mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
-            "keytool -list -keystore thymio_suite_mobile.p12 -storepass $(keystore_pass) | grep -q 'Your keystore contains 1 entry' && echo 'The keystore password is correct' && cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
-      cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
-    displayName: 'Build Thymio Suite and sign'
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    
+      android_platform="--android-platform android-${API_LEVEL}";
+      build_multi=$(pwd)/build/Release/multi/android-${API_LEVEL}
+      mkdir -p ${build_multi}/android-build/assets ${build_multi}/android-build/libs ${build_multi}/aseba
+      cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${build_multi}/android-build/assets
+      build_type_option="--release"
+      sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)";
+
+  - ${{ each arch in parameters.architectures}}:
+    - script: |
+        build_dir=$(pwd)/build/Release/${{ arch }}/android-${API_LEVEL}
+        mkdir -p ${build_dir}
+        ls -al $(pwd)/build/Release
+
+
   - script: |
-      mkdir $(pwd)/build $(pwd)/build/$TARGET_ARCH
-      sudo docker run --rm \
-            -v $(pwd):/src:rw \
-            -v $(pwd)/build/$TARGET_ARCH:/build:rw \
-            mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
-            "cmake -DANDROID_NATIVE_API_LEVEL=$API_LEVEL -DANDROID_ABI=$TARGET_ARCH -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
-      cp "build/$TARGET_ARCH/bin/thymio-launcher.apk" "$(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk"
-    displayName: 'Build Thymio Suite without signing'
-    condition: eq(variables['Build.Reason'], 'PullRequest')
-   
-  - script: |
-      curl -sL https://firebase.tools | bash
-      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/thymio-launcher_$TARGET_ARCH.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite under $TARGET_ARCH architecture"
-    displayName: 'Deploy to firebase'
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+      docker run --rm \
+        -v $(pwd):/src:rw \
+        -v ${build_multi}:/build:rw \
+        mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
+        "apt update && apt install -y jq && jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json >> /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --gradle --aab ${build_type_option} ${android_platform} ${sign_options}"
+      cp ${build_multi}/android_build/build/outputs $(Build.ArtifactStagingDirectory)
 
   - task: PublishBuildArtifacts@1
     inputs:
