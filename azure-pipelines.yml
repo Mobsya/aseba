@@ -97,7 +97,7 @@ jobs:
         build_dir=$(pwd)/build/Release/${{ arch }}/android-${API_LEVEL}
         mkdir -p ${build_dir}
         docker run --rm \
-            -u 1000:1000
+            -u 1000:1000 \
             -v $(pwd):/src:rw \
             -v ${build_dir}:/build:rw \
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
