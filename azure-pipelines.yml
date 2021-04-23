@@ -97,7 +97,7 @@ jobs:
         mkdir -p ${build_dir}
         docker run --rm \ 
             mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
-            "cmake -DANDROID_PLATFORM=android-${API_LEVEL} -DANDROID_ABI=${{ arch }} -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+            "ls -al /build/* && ls -al /android/ndk/*"
         
         cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
         cp -r ${build_dir}/aseba/* ${build_dir}/aseba/
