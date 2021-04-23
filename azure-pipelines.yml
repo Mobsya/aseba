@@ -115,7 +115,7 @@ jobs:
         -v ${build_multi}:/build:rw \
         mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
         "apt update && apt install -y jq && jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json >> /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --gradle --aab ${build_type_option} ${android_platform} ${sign_options}"
-      cp -r ${build_multi}/android-build/build/outputs $(Build.ArtifactStagingDirectory)
+      sudo cp -r ${build_multi}/android-build/build/outputs $(Build.ArtifactStagingDirectory)
     displayName: 'Package app'
 
   - task: PublishBuildArtifacts@1
