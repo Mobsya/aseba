@@ -201,22 +201,22 @@ if(ANDROID)
     if(EXISTS "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12" AND NOT "$ENV{KEYSTORE_PASSWORD}" STREQUAL "")
         message(NOTICE "Keystore found and password defined. The APK will be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
-            NAME "Thymio Suite"
+            NAME "Thymio Suite Mobile"
             PACKAGE_NAME org.mobsya.ThymioSuite
             PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
             QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
             KEYSTORE ${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
             KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
-            VERSION_CODE ${GIT_REVISION}
+            VERSION_CODE ${Build.BuildNumber}
         )
     else()
         message(NOTICE "Keystore not found or password undefined. The APK will not be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
-                    NAME "Thymio Suite"
+                    NAME "Thymio Suite Mobile"
                     PACKAGE_NAME org.mobsya.ThymioSuite
                     PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
                     QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
-                    VERSION_CODE ${GIT_REVISION}
+                    VERSION_CODE ${Build.BuildNumber}
                 )
     endif()
 endif()
