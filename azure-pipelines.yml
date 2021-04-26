@@ -121,9 +121,10 @@ jobs:
 
   - script: |
       curl -sL https://firebase.tools | bash
-      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/android-build-release-signed.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite"
+      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/release/android-build-release-signed.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite"
     displayName: 'Deploy to firebase'
     condition: ne(variables['Build.Reason'], 'PullRequest')
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
