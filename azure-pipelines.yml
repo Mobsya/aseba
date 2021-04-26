@@ -58,6 +58,7 @@ jobs:
       value: '5.15.2'
     - name: CMAKE_VERSION
       value: '3.19.7'
+    - name: BUILD_MULTI_DIR
   steps:
   - task: DownloadSecureFile@1
     name: keystore
@@ -70,13 +71,13 @@ jobs:
     displayName: 'Move secure file'
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  # - script: |
-  #     docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
-  #   displayName: 'Pull docker image'
+  - script: |
+      docker pull mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
+    displayName: 'Pull docker image'
 
-  # - script: |
-  #     git submodule update --init --recursive
-  #   displayName: 'Clone submodules'
+  - script: |
+      git submodule update --init --recursive
+    displayName: 'Clone submodules'
     
   - script: |
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
@@ -84,27 +85,45 @@ jobs:
     displayName: 'Fetch VPL3 & Scratch'
 
   - script: |
-      android_platform="--android-platform android-${API_LEVEL}";
-      build_multi=$(pwd)/build/Release/multi/android-${API_LEVEL}
-      mkdir -p ${build_multi}/android-build/assets ${build_multi}/android-build/libs ${build_multi}/aseba
-      cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${build_multi}/android-build/assets
-      build_type_option="--release"
-      sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)";
+      BUILD_MULTI_DIR=$(pwd)/build/Release/multi/android-${API_LEVEL}
+      mkdir -p ${BUILD_MULTI_DIR}/android-build/assets ${BUILD_MULTI_DIR}/android-build/libs ${BUILD_MULTI_DIR}/aseba
+      cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${BUILD_MULTI_DIR}/android-build/assets
+    displayName: 'Prepare CI environment'
 
   - ${{ each arch in parameters.architectures}}:
     - script: |
+        build_multi=$(pwd)/build/Release/multi/android-${API_LEVEL}
         build_dir=$(pwd)/build/Release/${{ arch }}/android-${API_LEVEL}
         mkdir -p ${build_dir}
-        ls -al $(pwd)/build/Release
+        docker run --rm \
+            -v $(pwd):/src:rw \
+            -v ${build_dir}:/build:rw \
+            mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
+            "cmake -DANDROID_PLATFORM=android-${API_LEVEL} -DANDROID_ABI=${{ arch }} -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
 
+        sudo cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
+        sudo cp -r ${build_dir}/aseba/* ${build_multi}/aseba/
+      displayName: 'Build ${{ arch }}'
 
   - script: |
+      build_multi=$(pwd)/build/Release/multi/android-${API_LEVEL}
+      android_platform="--android-platform android-${API_LEVEL}"
+      build_type_option="--release"
+      sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)"
       docker run --rm \
         -v $(pwd):/src:rw \
         -v ${build_multi}:/build:rw \
-        mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
+        mobsya/thymio-dev-env:android$API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
         "apt update && apt install -y jq && jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json >> /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --gradle --aab ${build_type_option} ${android_platform} ${sign_options}"
-      cp ${build_multi}/android_build/build/outputs $(Build.ArtifactStagingDirectory)
+      
+      sudo cp -r ${build_multi}/android-build/build/outputs/bundle/release ${build_multi}/android-build/build/outputs/apk/release $(Build.ArtifactStagingDirectory)
+    displayName: 'Package app'
+
+  - script: |
+      curl -sL https://firebase.tools | bash
+      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/release/android-build-release-signed.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite"
+    displayName: 'Deploy to firebase'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - task: PublishBuildArtifacts@1
     inputs:

@@ -4,7 +4,7 @@
     android:installLocation="auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:versionCode="@QT_ANDROID_APP_VERSION_CODE@">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+    <uses-sdk android:targetSdkVersion="30"/>
     <application
         android:label="@QT_ANDROID_APP_NAME@"
         android:name="org.qtproject.qt5.android.bindings.QtApplication"
