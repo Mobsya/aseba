@@ -196,7 +196,7 @@ if(APPLE)
 endif()
 
 if(ANDROID)
-    math(EXPR app_version_code "1000000 * ${ASEBA_VERSION_MAJOR} + 1000 * ${ASEBA_VERSION_MINOR} + ${ASEBA_VERSION_PATCH}")
+    string(TIMESTAMP CUR_TIME %s)
     set(PROJECT_VERSION ${ASEBA_VERSION})
     if(EXISTS "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12" AND NOT "$ENV{KEYSTORE_PASSWORD}" STREQUAL "")
         message(NOTICE "Keystore found and password defined. The APK will be signed.")
@@ -207,7 +207,7 @@ if(ANDROID)
             QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
             KEYSTORE ${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
             KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
-            VERSION_CODE ${Build.BuildNumber}
+            VERSION_CODE ${CUR_TIME}
         )
     else()
         message(NOTICE "Keystore not found or password undefined. The APK will not be signed.")
@@ -216,7 +216,7 @@ if(ANDROID)
                     PACKAGE_NAME org.mobsya.ThymioSuite
                     PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
                     QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
-                    VERSION_CODE ${Build.BuildNumber}
+                    VERSION_CODE ${CUR_TIME}
                 )
     endif()
 endif()
