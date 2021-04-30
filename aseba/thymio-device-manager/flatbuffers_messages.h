@@ -17,7 +17,7 @@ inline tagged_detached_flatbuffer create_save_response(uint32_t request_id,const
    
     std::string result_string;
     for(auto i = 0 ; i < bytecode.size() ; i++){
-        char interm[4] = {0x0000};
+        char interm[5] = {0x00000};
         if(i<4)
             sprintf(interm,"%02x",bytecode[i]);
         else
