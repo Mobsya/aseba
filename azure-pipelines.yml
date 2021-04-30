@@ -113,6 +113,7 @@ jobs:
       build_type_option="--release"
       sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)"
       docker run --rm \
+        -v $(pwd):/src:r \
         -v ${build_multi}:/build:rw \
         -e ANDROID_TARGET_SDK_VERSION=${THYMIO_DEPLOYMENT_TARGET_API_LEVEL} \
         mobsya/thymio-dev-env:android$THYMIO_BUILD_API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
