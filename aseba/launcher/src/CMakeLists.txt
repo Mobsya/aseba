@@ -198,6 +198,7 @@ endif()
 if(ANDROID)
     string(TIMESTAMP CUR_TIME %s)
     set(PROJECT_VERSION ${ASEBA_VERSION})
+    set(ANDROID_PLATFORM_LEVEL ${THYMIO_DEPLOYMENT_TARGET_API_LEVEL})
     if(EXISTS "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12" AND NOT "$ENV{KEYSTORE_PASSWORD}" STREQUAL "")
         message(NOTICE "Keystore found and password defined. The APK will be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
