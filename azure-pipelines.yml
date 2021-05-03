@@ -61,6 +61,8 @@ jobs:
     - name: CMAKE_VERSION
       value: '3.19.7'
     - name: BUILD_MULTI_DIR
+    - name: DEV_ENVIRONMENT_TAG
+      value: "android$(THYMIO_BUILD_API_LEVEL)and$(THYMIO_DEPLOYMENT_TARGET_API_LEVEL)-ndk$(NDK_VERSION)-qt$(QT_VERSION)-cmake$(CMAKE_VERSION)"
   steps:
   - task: DownloadSecureFile@1
     name: keystore
@@ -74,7 +76,7 @@ jobs:
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - script: |
-      docker pull mobsya/thymio-dev-env:android$THYMIO_BUILD_API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION}
+      docker pull mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG}
     displayName: 'Pull docker image'
 
   - script: |
@@ -100,7 +102,7 @@ jobs:
         docker run --rm \
             -v $(pwd):/src:rw \
             -v ${build_dir}:/build:rw \
-            mobsya/thymio-dev-env:android$THYMIO_BUILD_API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
+            mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
             "cmake -DANDROID_PLATFORM=android-${THYMIO_BUILD_API_LEVEL} -DANDROID_ABI=${{ arch }} -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
 
         sudo cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
@@ -116,7 +118,7 @@ jobs:
         -v $(pwd):/src:ro \
         -v ${build_multi}:/build:rw \
         -e ANDROID_TARGET_SDK_VERSION=${THYMIO_DEPLOYMENT_TARGET_API_LEVEL} \
-        mobsya/thymio-dev-env:android$THYMIO_BUILD_API_LEVEL-ndk$NDK_VERSION-qt$QT_VERSION-cmake${CMAKE_VERSION} \
+        mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
         "jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json > /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --verbose --gradle --aab ${build_type_option} ${android_target_platform} ${sign_options}"
       
       sudo cp -r ${build_multi}/android-build/build/outputs/bundle/release ${build_multi}/android-build/build/outputs/apk/release $(Build.ArtifactStagingDirectory)
