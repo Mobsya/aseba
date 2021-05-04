@@ -135,8 +135,10 @@ void aseba_node_registery::update_discovery() {
 
 void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
     if(ec) {
+        static int count = 0;
         mLogError("Discovery : {}", ec.message());
-		m_discovery_needs_update = true;
+        if (count++<10)
+            m_discovery_needs_update = true;
     } else {
         mLogTrace("Discovery : update complete");		
     }
