@@ -153,6 +153,7 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
 aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
+    mLogTrace("=> UUID discovery on {}", map["uuid"]);
     map["_ws-port"] = "8597"; //HACK adding some unused description to correct bug in avahi
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
