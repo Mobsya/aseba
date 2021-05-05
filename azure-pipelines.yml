@@ -114,7 +114,7 @@ jobs:
       android_target_platform="--android-platform android-${THYMIO_DEPLOYMENT_TARGET_API_LEVEL}"
       build_type_option="--release"
       sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)"
-      sudo cp ${multi_arch_build_folder}/aseba/launcher/src/AndroidManifest.xml ${build_multi}/android-build/
+      sudo cp ${build_multi}/aseba/launcher/src/AndroidManifest.xml ${build_multi}/android-build/
       sudo cp $(pwd)/android/qt-android-cmake/build.gradle.in ${build_multi}/android-build/build.gradle
       sed -i "s/@ANDROID_PLATFORM_LEVEL@/${THYMIO_DEPLOYMENT_TARGET_API_LEVEL}/" ${build_multi}/android-build/build.gradle
       docker run --rm \
