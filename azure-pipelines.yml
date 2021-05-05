@@ -53,7 +53,7 @@ jobs:
     - name: THYMIO_BUILD_API_LEVEL
       value: '24'
     - name: THYMIO_DEPLOYMENT_TARGET_API_LEVEL
-      value: '30'
+      value: '29'
     - name: NDK_VERSION
       value: '21'
     - name: QT_VERSION
