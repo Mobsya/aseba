@@ -84,7 +84,7 @@
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 
     </application>
-    <supports-screens android:anyDensity="true" android:normalScreens="true" android:smallScreens="true" android:largeScreens="true"/>
+    <supports-screens android:anyDensity="true" android:normalScreens="false" android:smallScreens="false" android:largeScreens="true"/>
 
     <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
          Remove the comment if you do not require these default permissions. -->
