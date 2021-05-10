@@ -177,8 +177,9 @@ static bool openUrlWithParameters(const QUrl& url) {
                 .arg(url.toString())
                 .toUtf8());
     QTimer::singleShot(10000, [f = t.fileName()] { QFile::remove(f); });
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
+    return Qt.openUrlExternally(QUrl::fromLocalFile(t.fileName()));
 }
+
 
 bool Launcher::openUrl(const QUrl& url) {
 
