@@ -126,6 +126,7 @@ jobs:
       
       sudo cp -r ${build_multi}/android-build/build/outputs/bundle/release ${build_multi}/android-build/build/outputs/apk/release $(Build.ArtifactStagingDirectory)
     displayName: 'Package app'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - script: |
       curl -sL https://firebase.tools | bash
