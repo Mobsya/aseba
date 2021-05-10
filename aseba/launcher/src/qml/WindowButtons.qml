@@ -27,7 +27,7 @@ Item {
                 settingsMenu.visible = true
             }
             Component.onCompleted: {
-               if(!(Utils.platformIsIos()||Utils.platformIsAndroid()))
+               if(!(Utils.platformIsIos()))
                 {
                      visible = true
                 }
