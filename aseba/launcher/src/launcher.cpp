@@ -32,6 +32,9 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
 #ifdef Q_OS_OSX
     setUseLocalBrowser(true);
 #endif
+#ifdef Q_OS_ANDROID
+    setUseLocalBrowser(true);
+#endif
     readSettings();
 }
 
