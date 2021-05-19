@@ -86,8 +86,8 @@ static void run_service(boost::asio::io_context& ctx) {
 	node_registery.set_discovery();
 #endif
 
-    mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
-    mLogTrace("=> WS Server connected on {}", websocket_server.endpoint().port());
+    mLogInfo("=> TCP Server connected on {}", tcp_server.endpoint().port());
+    mLogInfo("=> WS Server connected on {}", websocket_server.endpoint().port());
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
@@ -150,10 +150,31 @@ int main(int argc, char **argv) {
             tcp_port = atoi(argv[++i]);
         else if (i + 1 < argc && std::string(argv[i]) == "--wsport")
             ws_port = atoi(argv[++i]);
-        else {
+        else if (i + 1 < argc && std::string(argv[i]) == "--log") {
+            auto logLevel = std::string(argv[++i]);
+            if (logLevel == "trace")
+                mobsya::setLogLevel(spdlog::level::trace);
+            else if (logLevel == "debug")
+                mobsya::setLogLevel(spdlog::level::debug);
+            else if (logLevel == "info")
+                mobsya::setLogLevel(spdlog::level::info);
+            else if (logLevel == "warn")
+                mobsya::setLogLevel(spdlog::level::warn);
+            else if (logLevel == "error")
+                mobsya::setLogLevel(spdlog::level::err);
+            else if (logLevel == "critical")
+                mobsya::setLogLevel(spdlog::level::critical);
+            else {
+                std::cerr << "Unknown log level" << std::endl;
+                std::cerr << "(should be trace, debug, info, warn, error, or critical)" << std::endl;
+                return 1;
+            }
+        } else {
             std::cerr << "Usage: " << argv[0] << " [options]" << std::endl;
             std::cerr << std::endl;
             std::cerr << "Options: " << std::endl;
+            std::cerr << "  --log level   log level (trace, debug, info, warn, error, or critical)" << std::endl;
+            std::cerr << "                (default: trace)" << std::endl;
             std::cerr << "  --tcpport n   TCP port opened for listening" << std::endl;
             std::cerr << "                (default: ephemeral)" << std::endl;
             std::cerr << "  --wsport n    WebSocket port opened for listening" << std::endl;

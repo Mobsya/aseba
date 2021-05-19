@@ -73,7 +73,7 @@ Unless you specify it with `--tcpport` (see next section), the TCP port changes 
 ```
 [2021-05-19 11:17:20.781] [console] [trace]             main.cpp@L85:	=> TCP Server connected on 44125
 ```
-Many lines follow quickly; maybe it's easier to clear the terminal with `clear`, type `tdm` and scroll up as soon as you get the first lines displayed. In the line above, the TCP port is 44125. The WebSocket port (WS Server) is always 8597.
+Many lines follow quickly; maybe it's easier to clear the terminal with `clear`, type `tdm` and scroll up as soon as you get the first lines displayed. Or even better, reduce the amount of information displayed with `--log info`. In the line above, the TCP port is 44125. The WebSocket port (WS Server) is always 8597, unless changed with `--wsport`.
 
 On Linux with Avahi, you can advertise the TDM service as follows (replace 44125 with the value you found):
 ```
@@ -100,6 +100,7 @@ Then Thymio Suite, or the Python package `tdmclient`, should find your TDM.
 ## Command-line options
 
 The following command-line options are supported:
+- `--log L`: specifies the log level (trace, debug, info, warn, error, or critical). All messages associated with this importance and above are displayed. The default is `--log trace`, i.e. display all log messages. A more sensible value is `--log info`, which displays important information such as the TCP port number or connections of robots or client applications but not every minor update.
 - `--tcpport N`: specifies the TCP port the TDM will accept plain TCP connections on, typically from Thymio Suite, VPL, Studio, or the Python package `tdmclient`. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is to use an ephemeral port, i.e. to let the system find an unused port.
 - `--wsport N`: specifies the TCP port the TDM will accept WebSocket connections on, typically from VPL 3, Blockly, or Scratch. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is 8597.
 
@@ -111,3 +112,7 @@ By default, firmware upgrade and OpenSSL are not included; OpenSSL is not a requ
 ```
 HAS_FIRMWARE_UPGRADE=TRUE make -f aseba/newbuild/Makefile -j
 ```
+
+## Log level
+
+A command-line option `--level` has been added to specify the log level.

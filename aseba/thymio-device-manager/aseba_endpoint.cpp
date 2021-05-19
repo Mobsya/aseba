@@ -263,7 +263,7 @@ void aseba_endpoint::schedule_send_ping(boost::posix_time::time_duration delay) 
         auto that = ptr.lock();
         if(!that || ec)
             return;
-        mLogInfo("Requesting list nodes( ec : {} )", ec.message());
+        mLogTrace("Requesting list nodes( ec : {} )", ec.message());
         if(that->m_upgrading_firmware)
             return;
 

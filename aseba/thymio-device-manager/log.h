@@ -18,6 +18,8 @@ void log(spdlog::level::level_enum level, const char* file, int line, const char
         level, fmt::format("{}@L{}:\t{}", mobsya::log_filename(file), line, fmt::format(message, args...)).c_str());
 }
 
+void setLogLevel(spdlog::level::level_enum level);
+
 }  // namespace mobsya
 #define _mobsya_CONCAT2(A, B) A##B
 #define _mobsya_CONCAT(A, B) _mobsya_CONCAT2(A, B)
