@@ -65,7 +65,7 @@ Currently, the TDM without zeroconf is invisible to Thymio Suite which relies on
 
 ## Zeroconf advertisement with command-line tools
 
-The TCP port changes every time the TDM is launched. It's displayed by the TDM shortly after it's launched, on a line like this:
+Unless you specify it with `--tcpport` (see next section), the TCP port changes every time the TDM is launched. It's displayed by the TDM shortly after it's launched, on a line like this:
 ```
 [2021-05-19 11:17:20.781] [console] [trace]             main.cpp@L85:	=> TCP Server connected on 44125
 ```
@@ -92,3 +92,9 @@ dns-sd -Z _mobsya._tcp local
 ```
 
 Then Thymio Suite, or the Python package `tdmclient`, should find your TDM.
+
+## Command-line options
+
+The following command-line options are supported:
+- `--tcpport N`: specifies the TCP port the TDM will accept plain TCP connections on, typically from Thymio Suite, VPL, Studio, or the Python package `tdmclient`. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is to use an ephemeral port, i.e. to let the system find an unused port.
+- `--wsport N`: specifies the TCP port the TDM will accept WebSocket connections on, typically from VPL 3, Blockly, or Scratch. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is 8597.

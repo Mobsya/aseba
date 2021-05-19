@@ -14,7 +14,9 @@
 #include "fw_update_service.h"
 #include "wireless_configurator_service.h"
 #include "aseba_endpoint.h"
-#include "aseba_tcpacceptor.h"
+#ifdef HAS_ZEROCONF
+#   include "aseba_tcpacceptor.h"
+#endif
 #include "uuid_provider.h"
 #include <boost/filesystem.hpp>
 
@@ -27,7 +29,12 @@
 
 static const auto lock_file_path = boost::filesystem::temp_directory_path() / "mobsya-tdm-0accdcbf-eeb2";
 
-void run_service(boost::asio::io_context& ctx) {
+#define DEFAULT_WS_PORT 8597
+
+static int tcp_port = 0;    // default: ephemeral port
+static int ws_port = DEFAULT_WS_PORT;  // default: 8597
+
+static void run_service(boost::asio::io_context& ctx) {
 
     // Gather a list of local ips so that we can detect connections from
     // the same machine.
@@ -53,7 +60,7 @@ void run_service(boost::asio::io_context& ctx) {
     // ws.enable();
 
     // Create a server for regular tcp connection
-    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
+    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, tcp_port);
 #ifdef HAS_ZEROCONF
     node_registery.set_tcp_endpoint(tcp_server.endpoint());
 #endif
@@ -64,7 +71,7 @@ void run_service(boost::asio::io_context& ctx) {
 #endif
 
     // Create a server for websocket
-    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
+    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, ws_port);
 #ifdef HAS_ZEROCONF
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
 #endif
@@ -94,7 +101,7 @@ void run_service(boost::asio::io_context& ctx) {
 }
 
 
-int start() {
+static int start() {
     mLogInfo("Starting...");
     boost::asio::io_context ctx;
     boost::asio::signal_set sig(ctx);
@@ -132,7 +139,24 @@ int start() {
     return 0;
 }
 
-int main() {
+int main(int argc, char **argv) {
+
+    for (int i = 1; i < argc; i++) {
+        if (i + 1 < argc && std::string(argv[i]) == "--tcpport")
+            tcp_port = atoi(argv[++i]);
+        else if (i + 1 < argc && std::string(argv[i]) == "--wsport")
+            ws_port = atoi(argv[++i]);
+        else {
+            std::cerr << "Usage: " << argv[0] << " [options]" << std::endl;
+            std::cerr << std::endl;
+            std::cerr << "Options: " << std::endl;
+            std::cerr << "  --tcpport n   TCP port opened for listening" << std::endl;
+            std::cerr << "                (default: ephemeral)" << std::endl;
+            std::cerr << "  --wsport n    WebSocket port opened for listening" << std::endl;
+            std::cerr << "                (default: " << DEFAULT_WS_PORT << ")" << std::endl;
+            return 1;
+        }
+    }
 
     try {
         return start();
