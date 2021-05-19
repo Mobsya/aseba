@@ -68,6 +68,7 @@ public:
     static pointer create_for_serial(boost::asio::io_context& io);
 #endif
 
+#ifdef HAS_ZEROCONF
     const tcp_socket& tcp() const {
         return m_endpoint.tcp();
     }
@@ -75,6 +76,7 @@ public:
     tcp_socket& tcp() {
         return m_endpoint.tcp();
     }
+#endif
 
     static pointer create_for_tcp(boost::asio::io_context& io);
 

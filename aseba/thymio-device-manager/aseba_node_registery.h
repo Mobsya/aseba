@@ -3,7 +3,9 @@
 #include <unordered_map>
 #include <random>
 #include <chrono>
-#include <aware/aware.hpp>
+#ifdef HAS_ZEROCONF
+#   include <aware/aware.hpp>
+#endif
 #include <boost/signals2.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
@@ -28,9 +30,11 @@ public:
     void set_node_status(const std::shared_ptr<aseba_node>& node, aseba_node::status);
     void handle_node_uuid_change(const std::shared_ptr<aseba_node>& node);
 
+#ifdef HAS_ZEROCONF
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
     void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
 	void set_discovery();
+#endif
 
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
@@ -48,9 +52,12 @@ private:
     void save_group_affiliation(const aseba_node& node);
     void restore_group_affiliation(const aseba_node& node);
 
+#ifdef HAS_ZEROCONF
     void update_discovery();
     void on_update_discovery_complete(const boost::system::error_code&);
+
     aware::contact::property_map_type build_discovery_properties() const;
+#endif
 
     node_map::const_iterator find(const std::shared_ptr<aseba_node>& node) const;
     node_map::const_iterator find_from_native_id(aseba_node::node_id_t id) const;
@@ -68,10 +75,12 @@ private:
     };
     std::map<node_id, last_known_node_group> m_ghost_groups;
 
+#ifdef HAS_ZEROCONF
     aware::announce_socket m_discovery_socket;
     aware::contact m_nodes_service_desc;
     // Endpoint of the WebSocket - So we can expose the port on zeroconf
     boost::asio::ip::tcp::endpoint m_ws_endpoint;
+#endif
 
     bool m_updating_discovery = false;
     bool m_discovery_needs_update = false;

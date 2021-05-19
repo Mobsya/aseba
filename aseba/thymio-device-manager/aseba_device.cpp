@@ -5,7 +5,9 @@
 #ifdef MOBSYA_TDM_ENABLE_USB
 #    include "usbacceptor.h"
 #endif
-#include "aseba_tcpacceptor.h"
+#ifdef HAS_ZEROCONF
+#   include "aseba_tcpacceptor.h"
+#endif
 
 namespace mobsya {
 
@@ -30,12 +32,15 @@ aseba_device::aseba_device(aseba_device&& o) {
 
 void aseba_device::free_endpoint() {
     variant_ns::visit(
-        overloaded{[](variant_ns::monostate&) {},
+        overloaded{[](variant_ns::monostate&) {}
+#ifdef HAS_ZEROCONF
+                    ,
                    [this](tcp_socket&) {
                        boost::asio::post(get_executor(), [this, &ctx = get_executor().context()] {
                            boost::asio::use_service<aseba_tcp_acceptor>(ctx).free_endpoint(this);
                        });
                    }
+#endif
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
                    ,
                    [this](mobsya::usb_serial_port& d) {

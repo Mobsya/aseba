@@ -117,11 +117,17 @@ OBJ = \
 MISC = \
 	expected/include/tl/expected.hpp
 
-# zeroconf
+ifdef HAS_ZEROCONF
+
+CXXFLAGS += \
+	-DHAS_ZEROCONF
+
 OBJ += \
 	aseba_tcpacceptor.o \
 	\
 	$(OBJ_AWARE)
+
+endif
 
 ifeq ($(TARGET), darwin)
 CXXFLAGS += \
@@ -148,9 +154,13 @@ CXXFLAGS += \
 
 LIB += -ldl -lpthread -ludev
 
-# zeroconf
+ifdef HAS_ZEROCONF
+
 vpath %.c aseba/third_party/avahi-compat-libdns_sd:aseba/third_party/qtzeroconf/bonjour-sdk
+
 OBJ += compat.o # dnssd_clientstub.o
+
+endif
 
 endif
 

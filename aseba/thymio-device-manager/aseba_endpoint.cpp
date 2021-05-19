@@ -10,7 +10,9 @@
 #ifdef MOBSYA_TDM_ENABLE_USB
 #    include "usbacceptor.h"
 #endif
-#include "aseba_tcpacceptor.h"
+#ifdef HAS_ZEROCONF
+#   include "aseba_tcpacceptor.h"
+#endif
 
 namespace mobsya {
 
@@ -57,12 +59,13 @@ aseba_endpoint::pointer aseba_endpoint::create_for_serial(boost::asio::io_contex
     return ptr;
 }
 #endif
+#ifdef HAS_ZEROCONF
 aseba_endpoint::pointer aseba_endpoint::create_for_tcp(boost::asio::io_context& io) {
     auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, aseba_device(tcp_socket(io))));
     ptr->m_group = group::make_group_for_endpoint(io, ptr);
     return ptr;
 }
-
+#endif
 
 void aseba_endpoint::start() {
 

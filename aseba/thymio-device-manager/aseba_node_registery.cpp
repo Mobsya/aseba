@@ -13,9 +13,14 @@ namespace mobsya {
 aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_context)
     : boost::asio::detail::service_base<aseba_node_registery>(static_cast<boost::asio::io_context&>(io_context))
     , m_service_uid(boost::asio::use_service<uuid_generator>(io_context).generate())
+#ifdef HAS_ZEROCONF
     , m_discovery_socket(static_cast<boost::asio::io_context&>(io_context))
-    , m_nodes_service_desc("mobsya") {
+    , m_nodes_service_desc("mobsya")
+#endif
+{
+#ifdef HAS_ZEROCONF
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
+#endif
 
     //  update_discovery();
 }
@@ -106,6 +111,8 @@ aseba_node_registery::node_map aseba_node_registery::nodes() const {
     return m_aseba_nodes;
 }
 
+#ifdef HAS_ZEROCONF
+
 void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_nodes_service_desc.endpoint(endpoint);
 }
@@ -147,7 +154,6 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
     }
 }
 
-
 aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
@@ -158,6 +164,8 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
     map["_ws-port2"] = "8597"; //HACK adding some unused description to correct bug in avahi
     return map;
 }
+
+#endif
 
 auto aseba_node_registery::find(const std::shared_ptr<aseba_node>& node) const -> node_map::const_iterator {
     for(auto it = std::begin(m_aseba_nodes); it != std::end(m_aseba_nodes); ++it) {

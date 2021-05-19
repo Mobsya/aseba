@@ -24,7 +24,11 @@ public:
     ~aseba_device();
 
     using tcp_socket = boost::asio::ip::tcp::socket;
-    using endpoint_t = variant_ns::variant<variant_ns::monostate, tcp_socket
+    using endpoint_t = variant_ns::variant<variant_ns::monostate
+#ifdef HAS_ZEROCONF
+                                            ,
+                                            tcp_socket
+#endif
 #ifdef MOBSYA_TDM_ENABLE_USB
                                            ,
                                            usb_device
@@ -55,6 +59,7 @@ public:
 
 #endif
 
+#ifdef HAS_ZEROCONF
     const tcp_socket& tcp() const {
         return variant_ns::get<tcp_socket>(m_endpoint);
     }
@@ -62,6 +67,7 @@ public:
     tcp_socket& tcp() {
         return variant_ns::get<tcp_socket>(m_endpoint);
     }
+#endif
 
     bool is_usb() const {
 #ifdef MOBSYA_TDM_ENABLE_USB
@@ -82,7 +88,11 @@ public:
     }
 
     bool is_tcp() const {
+#ifdef HAS_ZEROCONF
         return variant_ns::holds_alternative<tcp_socket>(m_endpoint);
+#else
+        return false;
+#endif
     }
 
     bool is_wireless() const {
@@ -114,7 +124,12 @@ public:
             return variant_ns::get<usb_device>(m_endpoint).get_executor();
         }
 #endif
-        return variant_ns::get<tcp_socket>(m_endpoint).get_executor();
+#ifdef HAS_ZEROCONF
+        if (is_tcp()) {
+            return variant_ns::get<tcp_socket>(m_endpoint).get_executor();
+        }
+#endif
+        return boost::asio::executor();
     }
 
     void close();

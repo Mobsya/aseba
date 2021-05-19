@@ -54,19 +54,27 @@ void run_service(boost::asio::io_context& ctx) {
 
     // Create a server for regular tcp connection
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, 0);
+#ifdef HAS_ZEROCONF
     node_registery.set_tcp_endpoint(tcp_server.endpoint());
+#endif
     tcp_server.accept();
-   
+
+#ifdef HAS_ZEROCONF
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
+#endif
 
     // Create a server for websocket
     mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
+#ifdef HAS_ZEROCONF
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
+#endif
     websocket_server.accept();
 
-    // Enable Bonjour, Zeroconf 
+#ifdef HAS_ZEROCONF
+    // Enable Bonjour, Zeroconf
 	node_registery.set_discovery();
-    
+#endif
+
     mLogTrace("=> TCP Server connected on {}", tcp_server.endpoint().port());
     mLogTrace("=> WS Server connected on {}", websocket_server.endpoint().port());
 
@@ -78,7 +86,9 @@ void run_service(boost::asio::io_context& ctx) {
     mobsya::serial_server serial_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
     serial_server.accept();
 #endif
+#ifdef HAS_ZEROCONF
     aseba_tcp_acceptor.accept();
+#endif
 
     ctx.run();
 }
