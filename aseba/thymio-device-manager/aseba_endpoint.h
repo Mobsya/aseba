@@ -107,8 +107,10 @@ public:
     }
 
 
+#ifdef HAS_FIRMWARE_UPDATE
     bool upgrade_firmware(uint16_t id, std::function<void(boost::system::error_code, double, bool)> cb,
                           firmware_update_options options = firmware_update_options::no_option);
+#endif
 
     std::vector<std::shared_ptr<aseba_node>> nodes() const {
         std::vector<std::shared_ptr<aseba_node>> nodes;

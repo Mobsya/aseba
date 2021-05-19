@@ -280,7 +280,11 @@ public:
                     write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_node));
                     break;
                 }
+#ifdef HAS_FIRMWARE_UPDATE
                 this->upgrade_node_firmware(req->request_id(), req->node_id());
+#else
+                write_message(create_error_response(req->request_id(), fb::ErrorType::unknown_error));
+#endif
                 break;
             }
 
@@ -781,6 +785,7 @@ private:
         write_message(create_ack_response(request_id));
     }
 
+#ifdef HAS_FIRMWARE_UPDATE
     void upgrade_node_firmware(uint32_t request_id, node_id id) {
         const std::shared_ptr<aseba_node> n = registery().node_from_id(id);
         if(!n || n->get_status() != aseba_node::status::available ||
@@ -809,6 +814,7 @@ private:
             write_message(create_error_response(request_id, fb::ErrorType::unknown_error));
         }
     }
+#endif
 
     void pair_thymio2_and_dongle(uint32_t request_id, node_id dongle_id, node_id robot_id, uint16_t network_id,
                                  uint8_t channel) {

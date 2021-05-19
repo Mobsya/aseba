@@ -1,7 +1,9 @@
 #include "aseba_endpoint.h"
 #include <aseba/common/utils/utils.h>
 #include "aseba_property.h"
-#include "fw_update_service.h"
+#ifdef HAS_FIRMWARE_UPDATE
+#   include "fw_update_service.h"
+#endif
 #include "aseba_node_registery.h"
 
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
@@ -312,7 +314,7 @@ void aseba_endpoint::schedule_nodes_health_check(boost::posix_time::time_duratio
     timer->async_wait(std::move(cb));
 }
 
-
+#ifdef HAS_FIRMWARE_UPDATE
 bool aseba_endpoint::upgrade_firmware(
     uint16_t id, std::function<void(boost::system::error_code ec, double progress, bool complete)> cb,
     firmware_update_options options) {
@@ -380,6 +382,7 @@ bool aseba_endpoint::upgrade_firmware(
 
     return true;
 }
+#endif
 
 void aseba_endpoint::restore_firmware() {
     if(!is_usb())
@@ -387,8 +390,10 @@ void aseba_endpoint::restore_firmware() {
     auto cb = [ptr = shared_from_this()](auto err, auto progress, bool completed) {
         mLogTrace("{} - {} - {}", progress, completed, err);
     };
+#ifdef HAS_FIRMWARE_UPDATE
     mLogInfo("Device unresponsive - Attempting to restore firmare");
     upgrade_firmware(0, cb, firmware_update_options::no_reboot);
+#endif
 }
 
 

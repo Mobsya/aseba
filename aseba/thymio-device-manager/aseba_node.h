@@ -171,7 +171,9 @@ public:
     int firwmware_version() const;
     int available_firwmware_version() const;
     void set_available_firmware_version(int version);
+#ifdef HAS_FIRMWARE_UPDATE
     bool upgrade_firmware(std::function<void(boost::system::error_code ec, double progress, bool complete)> cb);
+#endif
     bool set_rf_settings(uint16_t network, uint16_t node, uint8_t channel);
 
 private:

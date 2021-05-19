@@ -11,7 +11,9 @@
 #include "app_server.h"
 #include "app_token_manager.h"
 #include "system_sleep_manager.h"
-#include "fw_update_service.h"
+#ifdef HAS_FIRMWARE_UPDATE
+#   include "fw_update_service.h"
+#endif
 #include "wireless_configurator_service.h"
 #include "aseba_endpoint.h"
 #ifdef HAS_ZEROCONF
@@ -51,9 +53,11 @@ static void run_service(boost::asio::io_context& ctx) {
     [[maybe_unused]] mobsya::system_sleep_manager& system_sleep_manager =
         boost::asio::make_service<mobsya::system_sleep_manager>(ctx);
 
+#ifdef HAS_FIRMWARE_UPDATE
     // mobsya::firmware_update_service needs to be initialized after mobsya::aseba_node_registery
     [[maybe_unused]] mobsya::firmware_update_service& us =
         boost::asio::make_service<mobsya::firmware_update_service>(ctx);
+#endif
 
     [[maybe_unused]] mobsya::wireless_configurator_service& ws =
         boost::asio::make_service<mobsya::wireless_configurator_service>(ctx);

@@ -46,9 +46,13 @@ This repository contains experiments with the TDM (Thymio Device Manager).
     sudo apt install libudev-dev
     ```
 
-- Build the TDM:
+- Build the TDM. By default, neither zeroconf nor firmware upgrade support are included; read below to know why.
     ```
     make -f aseba/newbuild/Makefile -j
+    ```
+    To include zeroconf and firmware upgrade support:
+    ```
+    HAS_ZEROCONF=YES HAS_FIRMWARE_UPGRADE=YES make -f aseba/newbuild/Makefile -j
     ```
 
 ## Build without zeroconf
@@ -98,3 +102,12 @@ Then Thymio Suite, or the Python package `tdmclient`, should find your TDM.
 The following command-line options are supported:
 - `--tcpport N`: specifies the TCP port the TDM will accept plain TCP connections on, typically from Thymio Suite, VPL, Studio, or the Python package `tdmclient`. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is to use an ephemeral port, i.e. to let the system find an unused port.
 - `--wsport N`: specifies the TCP port the TDM will accept WebSocket connections on, typically from VPL 3, Blockly, or Scratch. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is 8597.
+
+## Build without firmware upgrade
+
+The TDM relies on OpenSSL to retrieve firmware upgrades via https (it connects to [https://www.mobsya.org/update/Thymio2-firmware-meta.xml](https://www.mobsya.org/update/Thymio2-firmware-meta.xml) to find the https url of the latest firmware release). OpenSSL is huge, more than half of the TDM. In case the firmware upgrade capability is not desired, an optional constant `HAS_FIRMWARE_UPGRADE` has been added added: it should be defined only _to include_ firmware upgrade support.
+
+By default, firmware upgrade and OpenSSL are not included; OpenSSL is not a required dependency anymore. To build the TDM with firmware upgrade support, you can type
+```
+HAS_FIRMWARE_UPGRADE=TRUE make -f aseba/newbuild/Makefile -j
+```
