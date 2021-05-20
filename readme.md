@@ -127,3 +127,26 @@ Flatbuffer TCP and WebSocket server functionality has been bracketed by `#ifdef`
 A command-line option `--log` has been added to reduce the amount of information displayed. Some log output has been changed between `trace` and `info`.
 
 The TDM service uid is displayed with level `info`.
+
+## Build with docker
+
+# TDM build with docker
+
+A basic Dockerfile is provided to build `tdm` in [docker](https://docs.docker.com/get-started/) with the latest Ubuntu image. For the moment, it just downloads and builds everything.
+
+Here are the steps you could follow:
+- Install docker (you can find it on [hub.docker.com](https://hub.docker.com/search/?offering=community&type=edition)).
+- In a terminal, cd to `aseba/newbuild`
+- Build the image:
+    ```
+    docker build -t "tdm:Dockerfile" .
+    ```
+- Once everything has been run, you can find the tdm in the image. Either open an interactive shell:
+    ```
+    docker run -it tdm:Dockerfile /bin/bash
+    cd /home/tdm
+    ```
+    or copy the file from the container (`docker ps -l --format '{{.ID}}'` get the id of the last container):
+    ```
+    docker cp `docker ps -l --format '{{.ID}}'`:/home/tdm/tdm .
+    ```

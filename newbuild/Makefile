@@ -22,7 +22,7 @@
 # (cd aseba/third_party; rm -Rf flatbuffers; git clone https://github.com/google/flatbuffers.git; cd flatbuffers; cmake .; make)
 
 TARGET ?= $(shell uname | tr '[:upper:]' '[:lower:]')
-OPTIM = FALSE
+OPTIM = TRUE
 
 
 # BOOST = boost_1_67_0
@@ -55,6 +55,10 @@ CXXFLAGS = \
 	-DBOOST_ALLOW_DEPRECATED_HEADERS \
 	-DBOOST_CHRONO_HEADER_ONLY \
 	-isystem expected/include
+
+CXXFLAGS += \
+	-DHAS_FB_TCP \
+	-DHAS_FB_WS
 
 OBJ_FMT = format.o  posix.o
 
