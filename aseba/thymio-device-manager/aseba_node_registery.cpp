@@ -22,6 +22,8 @@ aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_co
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
 #endif
 
+    mLogInfo("Service uid: {}", boost::uuids::to_string(m_service_uid));
+
     //  update_discovery();
 }
 

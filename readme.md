@@ -115,6 +115,8 @@ By default, firmware upgrade and OpenSSL are not included; OpenSSL is not a requ
 HAS_FIRMWARE_UPGRADE=TRUE make -f aseba/newbuild/Makefile -j
 ```
 
-## Log level
+## Log
 
-A command-line option `--log` has been added to reduce the amount of information displayed.
+A command-line option `--log` has been added to reduce the amount of information displayed. Some log output has been changed between `trace` and `info`.
+
+The TDM service uid is displayed with level `info`.
