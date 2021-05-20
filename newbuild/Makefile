@@ -22,7 +22,7 @@
 # (cd aseba/third_party; rm -Rf flatbuffers; git clone https://github.com/google/flatbuffers.git; cd flatbuffers; cmake .; make)
 
 TARGET ?= $(shell uname | tr '[:upper:]' '[:lower:]')
-OPTIM = TRUE
+OPTIM = FALSE
 
 
 # BOOST = boost_1_67_0
@@ -86,7 +86,6 @@ OBJ = \
 	app_endpoint.o \
 	thymio2_fwupgrade.o \
 	thymio2_fwupgrade_impl.o \
-	fw_update_service.o \
 	wireless_configurator_service.o \
 	group.o \
 	interfaces.o \
@@ -111,8 +110,7 @@ OBJ = \
 	\
 	$(OBJ_FMT) \
 	$(OBJ_PUGI) \
-	$(OBJ_BOOST) \
-	$(OPENSSL)
+	$(OBJ_BOOST)
 
 MISC = \
 	expected/include/tl/expected.hpp
@@ -126,6 +124,18 @@ OBJ += \
 	aseba_tcpacceptor.o \
 	\
 	$(OBJ_AWARE)
+
+endif
+
+ifdef HAS_FIRMWARE_UPDATE
+
+CXXFLAGS += \
+	fw_update_service.o \
+	\
+	-DHAS_FIRMWARE_UPDATE
+
+OBJ += \
+	$(OPENSSL)
 
 endif
 

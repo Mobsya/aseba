@@ -4,6 +4,15 @@
 
 This repository contains experiments with the TDM (Thymio Device Manager).
 
+## Command-line options
+
+The following command-line options are supported:
+- `--log L`: specifies the log level (trace, debug, info, warn, error, or critical). All messages associated with this importance and above are displayed. The default is `--log trace`, i.e. display all log messages. A more sensible value is `--log info`, which displays important information such as the TCP port number or connections of robots or client applications but not every minor update.
+- `--tcpport N`: specifies the TCP port the TDM will accept plain TCP connections on, typically from Thymio Suite, VPL, Studio, or the Python package `tdmclient`. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is to use an ephemeral port, i.e. to let the system find an unused port.
+- `--tcpport no`: no TCP port opened for plain TCP connections.
+- `--wsport N`: specifies the TCP port the TDM will accept WebSocket connections on, typically from VPL 3, Blockly, or Scratch. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is 8597.
+- `--wsport no`: no TCP port opened for WebSockets connections.
+
 ## Static build with make
 
 - Make a new directory to download all that's required and build the tdm:
@@ -65,19 +74,19 @@ HAS_ZEROCONF=TRUE make -f aseba/newbuild/Makefile -j
 ```
 To compile the TDM without zeroconf, just do it as explained in the previous section.
 
-Currently, the TDM without zeroconf is invisible to Thymio Suite which relies on zeroconf to discover the TDM TCP port number. But you can do it using command-line tools, as explained below.
+Currently, the TDM without zeroconf is invisible to Thymio Suite which relies on zeroconf to discover the TDM TCP port number. But you can do it using command-line tools, as explained above in section _Command-line options_.
 
 ## Zeroconf advertisement with command-line tools
 
-Unless you specify it with `--tcpport` (see next section), the TCP port changes every time the TDM is launched. It's displayed by the TDM shortly after it's launched, on a line like this:
+Unless you specify it with `--tcpport`, the TCP port changes every time the TDM is launched. It's displayed by the TDM shortly after it's launched, on a line like this:
 ```
-[2021-05-19 11:17:20.781] [console] [trace]             main.cpp@L85:	=> TCP Server connected on 44125
+[2021-05-19 11:17:20.781] [console] [trace]    main.cpp@L85:  => TCP Server connected on 44125
 ```
 Many lines follow quickly; maybe it's easier to clear the terminal with `clear`, type `tdm` and scroll up as soon as you get the first lines displayed. Or even better, reduce the amount of information displayed with `--log info`. In the line above, the TCP port is 44125. The WebSocket port (WS Server) is always 8597, unless changed with `--wsport`.
 
 On Linux with Avahi, you can advertise the TDM service as follows (replace 44125 with the value you found):
 ```
-avahi-publish -s "TDM" _mobsya._tcp 44125 ws-port=8597 uuid=`uuidgen`
+avahi-publish -s TDM _mobsya._tcp 44125 ws-port=8597 uuid=`uuidgen`
 ```
 
 To check:
@@ -87,7 +96,7 @@ avahi-browse _mobsya._tcp
 
 With bonjour on Mac:
 ```
-dns-sd -R "Thymio Device Manager" _mobsya._tcp local 44125 ws-port=8597 uuid=`uuidgen`
+dns-sd -R TDM _mobsya._tcp local 44125 ws-port=8597 uuid=`uuidgen`
 ```
 
 To check:
@@ -96,13 +105,6 @@ dns-sd -Z _mobsya._tcp local
 ```
 
 Then Thymio Suite, or the Python package `tdmclient`, should find your TDM.
-
-## Command-line options
-
-The following command-line options are supported:
-- `--log L`: specifies the log level (trace, debug, info, warn, error, or critical). All messages associated with this importance and above are displayed. The default is `--log trace`, i.e. display all log messages. A more sensible value is `--log info`, which displays important information such as the TCP port number or connections of robots or client applications but not every minor update.
-- `--tcpport N`: specifies the TCP port the TDM will accept plain TCP connections on, typically from Thymio Suite, VPL, Studio, or the Python package `tdmclient`. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is to use an ephemeral port, i.e. to let the system find an unused port.
-- `--wsport N`: specifies the TCP port the TDM will accept WebSocket connections on, typically from VPL 3, Blockly, or Scratch. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is 8597.
 
 ## Build without firmware upgrade
 
@@ -115,4 +117,4 @@ HAS_FIRMWARE_UPGRADE=TRUE make -f aseba/newbuild/Makefile -j
 
 ## Log level
 
-A command-line option `--level` has been added to specify the log level.
+A command-line option `--log` has been added to reduce the amount of information displayed.

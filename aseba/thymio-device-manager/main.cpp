@@ -64,30 +64,33 @@ static void run_service(boost::asio::io_context& ctx) {
     // ws.enable();
 
     // Create a server for regular tcp connection
-    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, tcp_port);
+    mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, tcp_port >= 0 ? tcp_port : 0);
+    if (tcp_port >= 0) {
 #ifdef HAS_ZEROCONF
-    node_registery.set_tcp_endpoint(tcp_server.endpoint());
+        node_registery.set_tcp_endpoint(tcp_server.endpoint());
 #endif
-    tcp_server.accept();
+        tcp_server.accept();
+        mLogInfo("=> TCP Server connected on {}", tcp_server.endpoint().port());
+    }
 
 #ifdef HAS_ZEROCONF
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 #endif
 
     // Create a server for websocket
-    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, ws_port);
+    mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, ws_port >= 0 ? ws_port : 0);
+    if (ws_port >= 0) {
 #ifdef HAS_ZEROCONF
-	node_registery.set_ws_endpoint(websocket_server.endpoint());
+	   node_registery.set_ws_endpoint(websocket_server.endpoint());
 #endif
-    websocket_server.accept();
+        websocket_server.accept();
+        mLogInfo("=> WS Server connected on {}", websocket_server.endpoint().port());
+    }
 
 #ifdef HAS_ZEROCONF
     // Enable Bonjour, Zeroconf
 	node_registery.set_discovery();
 #endif
-
-    mLogInfo("=> TCP Server connected on {}", tcp_server.endpoint().port());
-    mLogInfo("=> WS Server connected on {}", websocket_server.endpoint().port());
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
@@ -146,23 +149,41 @@ static int start() {
 int main(int argc, char **argv) {
 
     for (int i = 1; i < argc; i++) {
-        if (i + 1 < argc && std::string(argv[i]) == "--tcpport")
-            tcp_port = atoi(argv[++i]);
-        else if (i + 1 < argc && std::string(argv[i]) == "--wsport")
-            ws_port = atoi(argv[++i]);
-        else if (i + 1 < argc && std::string(argv[i]) == "--log") {
-            auto logLevel = std::string(argv[++i]);
-            if (logLevel == "trace")
+        if (i + 1 < argc && std::string(argv[i]) == "--tcpport") {
+            std::string opt(argv[++i]);
+            if (opt == "no")
+                tcp_port = -1;
+            else
+                try {
+                    tcp_port = stoi(opt);
+                } catch (...) {
+                    std::cerr << "Invalid --tcpport" << std::endl;
+                    return 1;
+                }
+        } else if (i + 1 < argc && std::string(argv[i]) == "--wsport") {
+            std::string opt(argv[++i]);
+            if (opt == "no")
+                ws_port = -1;
+            else
+                try {
+                    ws_port = stoi(opt);
+                } catch (...) {
+                    std::cerr << "Invalid --wsport" << std::endl;
+                    return 1;
+                }
+        } else if (i + 1 < argc && std::string(argv[i]) == "--log") {
+            std::string opt(argv[++i]);
+            if (opt == "trace")
                 mobsya::setLogLevel(spdlog::level::trace);
-            else if (logLevel == "debug")
+            else if (opt == "debug")
                 mobsya::setLogLevel(spdlog::level::debug);
-            else if (logLevel == "info")
+            else if (opt == "info")
                 mobsya::setLogLevel(spdlog::level::info);
-            else if (logLevel == "warn")
+            else if (opt == "warn")
                 mobsya::setLogLevel(spdlog::level::warn);
-            else if (logLevel == "error")
+            else if (opt == "error")
                 mobsya::setLogLevel(spdlog::level::err);
-            else if (logLevel == "critical")
+            else if (opt == "critical")
                 mobsya::setLogLevel(spdlog::level::critical);
             else {
                 std::cerr << "Unknown log level" << std::endl;
@@ -175,9 +196,9 @@ int main(int argc, char **argv) {
             std::cerr << "Options: " << std::endl;
             std::cerr << "  --log level   log level (trace, debug, info, warn, error, or critical)" << std::endl;
             std::cerr << "                (default: trace)" << std::endl;
-            std::cerr << "  --tcpport n   TCP port opened for listening" << std::endl;
+            std::cerr << "  --tcpport n   TCP port opened for listening, or \"no\" for no TCP client" << std::endl;
             std::cerr << "                (default: ephemeral)" << std::endl;
-            std::cerr << "  --wsport n    WebSocket port opened for listening" << std::endl;
+            std::cerr << "  --wsport n    WebSocket port opened for listening, or \"no\" for no WebSocket client" << std::endl;
             std::cerr << "                (default: " << DEFAULT_WS_PORT << ")" << std::endl;
             return 1;
         }
