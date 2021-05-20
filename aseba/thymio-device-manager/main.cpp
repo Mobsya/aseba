@@ -36,6 +36,10 @@ static const auto lock_file_path = boost::filesystem::temp_directory_path() / "m
 static int tcp_port = 0;    // default: ephemeral port
 static int ws_port = DEFAULT_WS_PORT;  // default: 8597
 
+#ifdef HAS_ZEROCONF
+static bool zeroconfPublish = true;
+#endif
+
 static void run_service(boost::asio::io_context& ctx) {
 
     // Gather a list of local ips so that we can detect connections from
@@ -89,7 +93,8 @@ static void run_service(boost::asio::io_context& ctx) {
 
 #ifdef HAS_ZEROCONF
     // Enable Bonjour, Zeroconf
-	node_registery.set_discovery();
+    if (zeroconfPublish)
+	   node_registery.set_discovery();
 #endif
 
 #ifdef MOBSYA_TDM_ENABLE_USB
@@ -190,12 +195,19 @@ int main(int argc, char **argv) {
                 std::cerr << "(should be trace, debug, info, warn, error, or critical)" << std::endl;
                 return 1;
             }
+#ifdef HAS_ZEROCONF
+        } else if (std::string(argv[i]) == "--nozcpublish") {
+            zeroconfPublish = false;
+#endif
         } else {
             std::cerr << "Usage: " << argv[0] << " [options]" << std::endl;
             std::cerr << std::endl;
             std::cerr << "Options: " << std::endl;
             std::cerr << "  --log level   log level (trace, debug, info, warn, error, or critical)" << std::endl;
             std::cerr << "                (default: trace)" << std::endl;
+#ifdef HAS_ZEROCONF
+            std::cerr << "  --nozcpublish don't publish service with zeroconf" << std::endl;
+#endif
             std::cerr << "  --tcpport n   TCP port opened for listening, or \"no\" for no TCP client" << std::endl;
             std::cerr << "                (default: ephemeral)" << std::endl;
             std::cerr << "  --wsport n    WebSocket port opened for listening, or \"no\" for no WebSocket client" << std::endl;

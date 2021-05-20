@@ -8,6 +8,7 @@ This repository contains experiments with the TDM (Thymio Device Manager).
 
 The following command-line options are supported:
 - `--log L`: specifies the log level (trace, debug, info, warn, error, or critical). All messages associated with this importance and above are displayed. The default is `--log trace`, i.e. display all log messages. A more sensible value is `--log info`, which displays important information such as the TCP port number or connections of robots or client applications but not every minor update.
+- `--nozcpublish`: disables service publishing with zeroconf
 - `--tcpport N`: specifies the TCP port the TDM will accept plain TCP connections on, typically from Thymio Suite, VPL, Studio, or the Python package `tdmclient`. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is to use an ephemeral port, i.e. to let the system find an unused port.
 - `--tcpport no`: no TCP port opened for plain TCP connections.
 - `--wsport N`: specifies the TCP port the TDM will accept WebSocket connections on, typically from VPL 3, Blockly, or Scratch. `N` should be an integer number between 1024 and 65535 corresponding to an unused TCP port. The default is 8597.
@@ -75,6 +76,8 @@ HAS_ZEROCONF=TRUE make -f aseba/newbuild/Makefile -j
 To compile the TDM without zeroconf, just do it as explained in the previous section.
 
 Currently, the TDM without zeroconf is invisible to Thymio Suite which relies on zeroconf to discover the TDM TCP port number. But you can do it using command-line tools, as explained above in section _Command-line options_.
+
+When zeroconf is available, command-line option `--nozcpublish` disables zeroconf service publishing.
 
 ## Zeroconf advertisement with command-line tools
 
