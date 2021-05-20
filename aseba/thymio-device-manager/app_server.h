@@ -41,7 +41,12 @@ private:
     tcp::acceptor m_acceptor;
 };
 
+#ifdef HAS_FB_WS
 extern template class application_server<websocket_t>;
+#endif
+
+#ifdef HAS_FB_TCP
 extern template class application_server<mobsya::tcp::socket>;
+#endif
 
 }  // namespace mobsya

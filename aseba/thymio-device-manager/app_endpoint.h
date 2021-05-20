@@ -33,6 +33,8 @@ public:
     tcp::socket& tcp_socket() = delete;
 };
 
+#ifdef HAS_FB_WS
+
 template <typename Self>
 class application_endpoint_base<Self, websocket_t>
     : public std::enable_shared_from_this<application_endpoint_base<Self, websocket_t>> {
@@ -89,6 +91,9 @@ private:
     websocket_t m_socket;
 };
 
+#endif
+
+#ifdef HAS_FB_TCP
 
 template <typename Self>
 class application_endpoint_base<Self, tcp::socket>
@@ -128,6 +133,8 @@ protected:
 private:
     tcp::socket m_socket;
 };
+
+#endif
 
 template <typename Socket>
 class application_endpoint : public application_endpoint_base<application_endpoint<Socket>, Socket>,

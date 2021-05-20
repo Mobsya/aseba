@@ -118,6 +118,10 @@ By default, firmware upgrade and OpenSSL are not included; OpenSSL is not a requ
 HAS_FIRMWARE_UPGRADE=TRUE make -f aseba/newbuild/Makefile -j
 ```
 
+## Build without TCP or WebSocket services
+
+Flatbuffer TCP and WebSocket server functionality has been bracketed by `#ifdef`/`#endif` with constants `HAS_FB_TCP` and `HAS_FB_WS`, respectively. These constants are defined in the Makefile, so these services _are enabled_. The main purpose is to highlight which part of the code is relevant to these services.
+
 ## Log
 
 A command-line option `--log` has been added to reduce the amount of information displayed. Some log output has been changed between `trace` and `info`.

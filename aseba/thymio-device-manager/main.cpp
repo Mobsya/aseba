@@ -33,8 +33,13 @@ static const auto lock_file_path = boost::filesystem::temp_directory_path() / "m
 
 #define DEFAULT_WS_PORT 8597
 
+#ifdef HAS_FB_TCP
 static int tcp_port = 0;    // default: ephemeral port
+#endif
+
+#ifdef HAS_FB_WS
 static int ws_port = DEFAULT_WS_PORT;  // default: 8597
+#endif
 
 #ifdef HAS_ZEROCONF
 static bool zeroconfPublish = true;
@@ -67,6 +72,7 @@ static void run_service(boost::asio::io_context& ctx) {
         boost::asio::make_service<mobsya::wireless_configurator_service>(ctx);
     // ws.enable();
 
+#ifdef HAS_FB_TCP
     // Create a server for regular tcp connection
     mobsya::application_server<mobsya::tcp::socket> tcp_server(ctx, tcp_port >= 0 ? tcp_port : 0);
     if (tcp_port >= 0) {
@@ -76,11 +82,13 @@ static void run_service(boost::asio::io_context& ctx) {
         tcp_server.accept();
         mLogInfo("=> TCP Server connected on {}", tcp_server.endpoint().port());
     }
+#endif
 
 #ifdef HAS_ZEROCONF
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 #endif
 
+#ifdef HAS_FB_WS
     // Create a server for websocket
     mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, ws_port >= 0 ? ws_port : 0);
     if (ws_port >= 0) {
@@ -90,6 +98,7 @@ static void run_service(boost::asio::io_context& ctx) {
         websocket_server.accept();
         mLogInfo("=> WS Server connected on {}", websocket_server.endpoint().port());
     }
+#endif
 
 #ifdef HAS_ZEROCONF
     // Enable Bonjour, Zeroconf
@@ -154,6 +163,7 @@ static int start() {
 int main(int argc, char **argv) {
 
     for (int i = 1; i < argc; i++) {
+#ifdef HAS_FB_TCP
         if (i + 1 < argc && std::string(argv[i]) == "--tcpport") {
             std::string opt(argv[++i]);
             if (opt == "no")
@@ -165,7 +175,10 @@ int main(int argc, char **argv) {
                     std::cerr << "Invalid --tcpport" << std::endl;
                     return 1;
                 }
-        } else if (i + 1 < argc && std::string(argv[i]) == "--wsport") {
+        } else
+#endif
+#ifdef HAS_FB_WS
+        if (i + 1 < argc && std::string(argv[i]) == "--wsport") {
             std::string opt(argv[++i]);
             if (opt == "no")
                 ws_port = -1;
@@ -176,7 +189,9 @@ int main(int argc, char **argv) {
                     std::cerr << "Invalid --wsport" << std::endl;
                     return 1;
                 }
-        } else if (i + 1 < argc && std::string(argv[i]) == "--log") {
+        } else
+#endif
+        if (i + 1 < argc && std::string(argv[i]) == "--log") {
             std::string opt(argv[++i]);
             if (opt == "trace")
                 mobsya::setLogLevel(spdlog::level::trace);
@@ -195,11 +210,13 @@ int main(int argc, char **argv) {
                 std::cerr << "(should be trace, debug, info, warn, error, or critical)" << std::endl;
                 return 1;
             }
+        } else
 #ifdef HAS_ZEROCONF
-        } else if (std::string(argv[i]) == "--nozcpublish") {
+        if (std::string(argv[i]) == "--nozcpublish") {
             zeroconfPublish = false;
+        } else
 #endif
-        } else {
+        {
             std::cerr << "Usage: " << argv[0] << " [options]" << std::endl;
             std::cerr << std::endl;
             std::cerr << "Options: " << std::endl;
@@ -208,10 +225,14 @@ int main(int argc, char **argv) {
 #ifdef HAS_ZEROCONF
             std::cerr << "  --nozcpublish don't publish service with zeroconf" << std::endl;
 #endif
+#ifdef HAS_FB_TCP
             std::cerr << "  --tcpport n   TCP port opened for listening, or \"no\" for no TCP client" << std::endl;
             std::cerr << "                (default: ephemeral)" << std::endl;
+#endif
+#ifdef HAS_FB_WS
             std::cerr << "  --wsport n    WebSocket port opened for listening, or \"no\" for no WebSocket client" << std::endl;
             std::cerr << "                (default: " << DEFAULT_WS_PORT << ")" << std::endl;
+#endif
             return 1;
         }
     }
