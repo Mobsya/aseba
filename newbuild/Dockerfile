@@ -15,8 +15,7 @@ RUN cd /home/tdm; wget -q https://boostorg.jfrog.io/artifactory/main/release/1.7
 RUN cd /home/tdm; tar xfz boost_1_73_0.tar.gz
 RUN cd /home/tdm; git clone https://github.com/TartanLlama/expected
 RUN cd /home/tdm/aseba/third_party; rm -Rf flatbuffers; git clone https://github.com/google/flatbuffers.git
-RUN cd /home/tdm/aseba/third_party/flatbuffers/; cmake .; make
+RUN cd /home/tdm/aseba/third_party/flatbuffers/; cmake .; make -j
 RUN cd /home/tdm; make -f aseba/newbuild/Makefile -j
 
 WORKDIR /home/tdm
-
