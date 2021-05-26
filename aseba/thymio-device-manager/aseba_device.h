@@ -25,7 +25,7 @@ public:
 
     using tcp_socket = boost::asio::ip::tcp::socket;
     using endpoint_t = variant_ns::variant<variant_ns::monostate
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
                                             ,
                                             tcp_socket
 #endif
@@ -59,7 +59,7 @@ public:
 
 #endif
 
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
     const tcp_socket& tcp() const {
         return variant_ns::get<tcp_socket>(m_endpoint);
     }
@@ -88,7 +88,7 @@ public:
     }
 
     bool is_tcp() const {
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
         return variant_ns::holds_alternative<tcp_socket>(m_endpoint);
 #else
         return false;
@@ -124,7 +124,7 @@ public:
             return variant_ns::get<usb_device>(m_endpoint).get_executor();
         }
 #endif
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
         if (is_tcp()) {
             return variant_ns::get<tcp_socket>(m_endpoint).get_executor();
         }

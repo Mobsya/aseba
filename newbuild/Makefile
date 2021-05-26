@@ -21,8 +21,22 @@
 # If you get errors, try with the current version of flatc:
 # (cd aseba/third_party; rm -Rf flatbuffers; git clone https://github.com/google/flatbuffers.git; cd flatbuffers; cmake .; make)
 
+# environment variables:
+# HAS_ZEROCONF=anything:
+#  include zeroconf to advertise tcp and ws ports (_mobsya._tcp) and (if MOBSYA_TDM_ENABLE_TCP) browse tcp devices (_aseba._tcp)
+#  requires bonjour or avahi
+# HAS_FIRMWARE_UPDATE=anything:
+#  include firmware update
+#  requires openssl
+# MOBSYA_TDM_ENABLE_TCP=anything:
+#  include tcp devices
+# OPTIM=TRUE (default):
+#  optimize for size with -Os
+# OPTIM=FALSE:
+#  no optimization, build for debugging with -g
+
 TARGET ?= $(shell uname | tr '[:upper:]' '[:lower:]')
-OPTIM = TRUE
+OPTIM ?= TRUE
 
 
 # BOOST = boost_1_67_0
@@ -88,13 +102,11 @@ OBJ = \
 	aseba_node.o \
 	app_server.o \
 	app_endpoint.o \
-	thymio2_fwupgrade.o \
-	thymio2_fwupgrade_impl.o \
 	wireless_configurator_service.o \
 	group.o \
 	interfaces.o \
 	property_flexbuffer.o \
-	\
+	utils_aseba.o \
 	msg.o \
 	TargetDescription.o \
 	compiler.o \
@@ -125,20 +137,30 @@ CXXFLAGS += \
 	-DHAS_ZEROCONF
 
 OBJ += \
-	aseba_tcpacceptor.o \
-	\
 	$(OBJ_AWARE)
+
+ifdef MOBSYA_TDM_ENABLE_TCP
+
+CXXFLAGS += \
+	-DMOBSYA_TDM_ENABLE_TCP
+
+OBJ += \
+	aseba_tcpacceptor.o
+
+endif
 
 endif
 
 ifdef HAS_FIRMWARE_UPDATE
 
 CXXFLAGS += \
-	fw_update_service.o \
-	\
 	-DHAS_FIRMWARE_UPDATE
 
 OBJ += \
+	fw_update_service.o \
+        thymio2_fwupgrade.o \
+        thymio2_fwupgrade_impl.o \
+	\
 	$(OPENSSL)
 
 endif
@@ -155,8 +177,7 @@ endif
 
 ifeq ($(TARGET), linux)
 
-OBJ += serialacceptor_udev.o serialserver.o \
-	utils_aseba.o
+OBJ += serialacceptor_udev.o serialserver.o
 
 CFLAGS += \
 	-DNOT_HAVE_SA_LEN
@@ -223,3 +244,18 @@ openssl/libssl.a openssl/libcrypto.a:
 
 expected/include/tl/expected.hpp:
 	git clone https://github.com/TartanLlama/expected
+
+# some dependencies for tdm source code
+
+tdmpth = aseba/aseba/thymio-device-manager
+aesl_parser.o: $(tdmpth)/aesl_parser.h
+app_endpoint.o: $(tdmpth)/app_endpoint.h
+app_server.o: $(tdmpth)/app_server.h
+aseba_device.o: $(tdmpth)/aseba_device.h
+aseba_endpoint.o: $(tdmpth)/aseba_endpoint.h $(tdmpth)/aseba_node_registery.h
+aseba_node_registery.o: $(tdmpth)/aseba_node_registery.h $(tdmpth)/aseba_endpoint.h
+aseba_node.o: $(tdmpth)/aseba_node.h $(tdmpth)/aseba_endpoint.h $(tdmpth)/aseba_node_registery.h
+aseba_tcpacceptor.o: $(tdmpth)/aseba_tcpacceptor.h $(tdmpth)/aseba_endpoint.h
+error.o: $(tdmpth)/error.h
+
+

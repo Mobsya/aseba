@@ -84,7 +84,7 @@ static void run_service(boost::asio::io_context& ctx) {
     }
 #endif
 
-#ifdef HAS_ZEROCONF
+#if defined(HAS_ZEROCONF) && defined(MOBSYA_TDM_ENABLE_TCP)
     mobsya::aseba_tcp_acceptor aseba_tcp_acceptor(ctx);
 #endif
 
@@ -114,7 +114,7 @@ static void run_service(boost::asio::io_context& ctx) {
     mobsya::serial_server serial_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
     serial_server.accept();
 #endif
-#ifdef HAS_ZEROCONF
+#if defined(HAS_ZEROCONF) && defined(MOBSYA_TDM_ENABLE_TCP)
     aseba_tcp_acceptor.accept();
 #endif
 

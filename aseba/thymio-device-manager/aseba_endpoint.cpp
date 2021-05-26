@@ -61,7 +61,7 @@ aseba_endpoint::pointer aseba_endpoint::create_for_serial(boost::asio::io_contex
     return ptr;
 }
 #endif
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
 aseba_endpoint::pointer aseba_endpoint::create_for_tcp(boost::asio::io_context& io) {
     auto ptr = std::shared_ptr<aseba_endpoint>(new aseba_endpoint(io, aseba_device(tcp_socket(io))));
     ptr->m_group = group::make_group_for_endpoint(io, ptr);

@@ -68,7 +68,7 @@ public:
     static pointer create_for_serial(boost::asio::io_context& io);
 #endif
 
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
     const tcp_socket& tcp() const {
         return m_endpoint.tcp();
     }

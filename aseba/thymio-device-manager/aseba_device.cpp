@@ -33,7 +33,7 @@ aseba_device::aseba_device(aseba_device&& o) {
 void aseba_device::free_endpoint() {
     variant_ns::visit(
         overloaded{[](variant_ns::monostate&) {}
-#ifdef HAS_ZEROCONF
+#ifdef MOBSYA_TDM_ENABLE_TCP
                     ,
                    [this](tcp_socket&) {
                        boost::asio::post(get_executor(), [this, &ctx = get_executor().context()] {
@@ -94,7 +94,11 @@ void aseba_device::stop() {
 }
 
 void aseba_device::close() {
-    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}, [](tcp_socket&) {}
+    variant_ns::visit(overloaded{[](variant_ns::monostate&) {}
+#ifdef MOBSYA_TDM_ENABLE_TCP
+                                 ,
+                                 [](tcp_socket&) {}
+#endif
 #ifdef MOBSYA_TDM_ENABLE_SERIAL
                                  ,
                                  [](mobsya::usb_serial_port& d) { d.close(); }

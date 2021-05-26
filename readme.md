@@ -64,14 +64,14 @@ The following command-line options are supported:
     ```
     To include zeroconf and firmware upgrade support:
     ```
-    HAS_ZEROCONF=YES HAS_FIRMWARE_UPGRADE=YES make -f aseba/newbuild/Makefile -j
+    HAS_ZEROCONF=YES MOBSYA_TDM_ENABLE_TCP=YES HAS_FIRMWARE_UPGRADE=YES make -f aseba/newbuild/Makefile -j
     ```
 
 ## Build without zeroconf
 
 On Linux, the TDM relies on the Avahi implementation of zeroconf, with `aware` and possibly other code to provide compatibility with Bonjour, the Apple zeroconf implementation. The exact details aren't fully understood yet. That's the reason why the zeroconf functionality in the TDM has been made optional with `#ifdef HAS_ZEROCONF`.
 
-If `HAS_ZEROCONF` is undefined, the TDM is compiled without zeroconf. The Makefile checks if the envisonment variable `HAS_ZEROCONF`is defined and compiles everything accordingly, including the files `aseba_tcpacceptor.cpp` and `aseba_tcpacceptor.h` only with zeroconf (they support connections to the simulator Aseba Playground whose TCP port is also advertised by zeroconf). So to include zeroconf (especially on macOS), you can type
+If `HAS_ZEROCONF` is undefined, the TDM is compiled without zeroconf. The Makefile checks if the environment variable `HAS_ZEROCONF` is defined and compiles everything accordingly, including the files `aseba_tcpacceptor.cpp` and `aseba_tcpacceptor.h` only with zeroconf (they support connections to the simulator Aseba Playground whose TCP port is also advertised by zeroconf). Note that `aseba_tcpacceptor.cpp` also requires `MOBSYA_TDM_ENABLE_TCP` (see next section). So to include zeroconf (especially on macOS), you can type
 ```
 HAS_ZEROCONF=TRUE make -f aseba/newbuild/Makefile -j
 ```
@@ -80,6 +80,10 @@ To compile the TDM without zeroconf, just do it as explained in the previous sec
 Currently, the TDM without zeroconf is invisible to Thymio Suite which relies on zeroconf to discover the TDM TCP port number. But you can do it using command-line tools, as explained above in section _Command-line options_.
 
 When zeroconf is available, command-line option `--nozcpublish` disables zeroconf service publishing.
+
+## Build without Aseba over TCP
+
+If `MOBSYA_TDM_ENABLE_TCP` is undefined, the TDM is compiled without support for connection to robots via TCP (usually the Aseba Playground simulator).
 
 ## Zeroconf advertisement with command-line tools
 
@@ -131,8 +135,6 @@ A command-line option `--log` has been added to reduce the amount of information
 The TDM service uid is displayed with level `info`.
 
 ## Build with docker
-
-# TDM build with docker
 
 A basic Dockerfile is provided to build `tdm` in [docker](https://docs.docker.com/get-started/) with the latest Ubuntu image. For the moment, it just downloads and builds everything.
 
