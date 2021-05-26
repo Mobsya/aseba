@@ -83,6 +83,16 @@
 
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="thymio.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
     </application>
     <supports-screens android:anyDensity="true" android:normalScreens="true" android:smallScreens="true" android:largeScreens="true"/>
 

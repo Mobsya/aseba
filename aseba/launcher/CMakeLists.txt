@@ -1,4 +1,7 @@
 find_package(Qt5 COMPONENTS Widgets Qml Quick QuickWidgets REQUIRED)
+if(ANDROID)
+    find_package(Qt5 COMPONENTS AndroidExtras REQUIRED)
+endif()
 if(APPLE OR ANDROID)
     find_package(Qt5 COMPONENTS WebView REQUIRED)
 else()

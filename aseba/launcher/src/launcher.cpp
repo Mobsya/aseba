@@ -1,4 +1,5 @@
 #include "launcher.h"
+#include "launcher.h"
 #include <QStandardPaths>
 #include <QGuiApplication>
 #include <QDebug>
@@ -16,6 +17,10 @@
 #include <QFileDialog>
 #include <QPointer>
 #include <QOperatingSystemVersion>
+#ifdef Q_OS_ANDROID
+   include <QtAndroidExtras/QAndroidJniObject>
+   include <QtAndroidExtras/QtAndroid>
+#endif
 
 namespace mobsya {
 
@@ -162,6 +167,7 @@ bool Launcher::launchPlayground() const {
 
 
 static bool openUrlWithParameters(const QUrl& url) {
+    qDebug() << "openUrlWithParameters: " << url.toString();
     QTemporaryFile t(QDir::tempPath() + "/XXXXXX.html");
     t.setAutoRemove(false);
     if(!t.open())
@@ -177,21 +183,45 @@ static bool openUrlWithParameters(const QUrl& url) {
     return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
+bool Launcher::openUrlInLocalBrowser(const QUrl& url) const {
+    ////    QAndroidJniObject path = QAndroidJniObject::fromString("content://thymio.fileprovider/webapps/" + url.url(QUrl::None));
+    //    QAndroidJniObject path = QAndroidJniObject::fromString(url.url(QUrl::None));
+    //    QAndroidJniObject jniUri = QAndroidJniObject::callStaticObjectMethod("android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", path.object<jstring>());
+    //    QAndroidJniObject jniParam = QAndroidJniObject::getStaticObjectField<jstring>("android/content/Intent", "ACTION_VIEW");
+    //    QAndroidJniObject intent("android/content/Intent","()V");
+    //                      intent.callObjectMethod("setAction","(Ljava/lang/String;)Landroid/content/Intent;", jniParam.object<jstring>());
+    //    QAndroidJniObject jniType = QAndroidJniObject::fromString("text/html");
+    //    jint jniPermissions =  QAndroidJniObject::getStaticField<jint>("android/content/Intent","FLAG_GRANT_READ_URI_PERMISSION");
+    //                      intent.callObjectMethod("setFlags", "(I)Landroid/content/Intent;",jniPermissions);
+    //                      intent.callObjectMethod("setDataAndType", "(Landroid/net/Uri;Ljava/lang/String;)Landroid/content/Intent;", jniUri.object<jobject>(), jniType.object<jstring>());
+    //    QAndroidJniObject activity = QtAndroid::androidActivity();
+    //    QAndroidJniObject packageManager = activity.callObjectMethod("getPackageManager","()Landroid/content/pm/PackageManager;");
+    //                       intent.callObjectMethod("resolveActivity","(Landroid/content/pm/PackageManager;)Landroid/content/ComponentName;", packageManager.object());
+    ////    QtAndroid::startActivity(intent, 0);
+
+    QString urlPath = url.path();
+    const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
+    int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
+    urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
+    QString urlAsString = QString("https://static.digital-solutions.io/projects/5f2d1be0-bd36-11eb-841e-af95cf15ea11/%1").arg(urlPath);
+    return QDesktopServices::openUrl(QUrl(urlAsString));
+}
+
 bool Launcher::openUrl(const QUrl& url) {
 
-    qDebug() << url;
-
-    if ( getUseLocalBrowser() ){
-        return openUrlWithParameters(url);
-    }
+    qDebug() << "openUrl" << url;
 #ifdef Q_OS_IOS
     OpenUrlInNativeWebView(url);
     return true;
 #endif
-
+#ifdef Q_OS_ANDROID
+    return openUrlInLocalBrowser(url);
+#endif
 #ifdef MOBSYA_USE_WEBENGINE
+    qDebug() << "MOBSYA_USE_WEBENGINE";
     QUrl source("qrc:/qml/webview.qml");
 #else
+    qDebug() << "NOT MOBSYA_USE_WEBENGINE";
     QUrl source("qrc:/qml/webview_native.qml");
 #endif
 #ifdef Q_OS_ANDROID
@@ -245,6 +275,7 @@ bool Launcher::getUseLocalBrowser(){
 QString Launcher::getDownloadPath(const QUrl& url) {
     QFileDialog d;
     const auto name = url.fileName();
+    qDebug() << "getDownloadPath: " << name <<"url:" << url;
     const auto extension = QFileInfo(name).suffix();
     d.setWindowTitle(tr("Save %1").arg(name));
     d.setNameFilter(QString("%1 (*.%1)").arg(extension));

@@ -74,6 +74,7 @@ endif()
 
 
 
+
 if(IOS)
     #Getting the timestamp to use it as a version. (Apple Store require numbers, and check that the next version is higher than the current one)
     string(TIMESTAMP CUR_TIME %s)
@@ -146,6 +147,9 @@ endif()
 #      ${QT_ADDITIONAL_PLUGINS}
 #    )
 
+if(ANDROID)
+    target_link_libraries(thymio-launcher Qt5::AndroidExtras)
+endif()
 if(APPLE OR ANDROID)
     target_link_libraries(thymio-launcher Qt5::WebView)
 else()
@@ -203,7 +207,7 @@ if(ANDROID)
         message(NOTICE "Keystore found and password defined. The APK will be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
             NAME "Thymio Suite Mobile"
-            PACKAGE_NAME org.mobsya.ThymioSuite
+            PACKAGE_NAME org.qtproject.example.ThymioSuite
             PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
             QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
             KEYSTORE ${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
@@ -214,7 +218,7 @@ if(ANDROID)
         message(NOTICE "Keystore not found or password undefined. The APK will not be signed.")
         add_qt_android_apk(thymio-launcher-apk thymio-launcher
                     NAME "Thymio Suite Mobile"
-                    PACKAGE_NAME org.mobsya.ThymioSuite
+                    PACKAGE_NAME org.qtproject.example.ThymioSuite
                     PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
                     QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
                     VERSION_CODE ${CUR_TIME}
