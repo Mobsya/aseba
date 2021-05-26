@@ -17,10 +17,10 @@
 #include <QFileDialog>
 #include <QPointer>
 #include <QOperatingSystemVersion>
-#ifdef Q_OS_ANDROID
-   include <QtAndroidExtras/QAndroidJniObject>
-   include <QtAndroidExtras/QtAndroid>
-#endif
+//#ifdef Q_OS_ANDROID
+//   include <QtAndroidExtras/QAndroidJniObject>
+//   include <QtAndroidExtras/QtAndroid>
+//#endif
 
 namespace mobsya {
 
@@ -184,8 +184,16 @@ static bool openUrlWithParameters(const QUrl& url) {
 }
 
 bool Launcher::openUrlInLocalBrowser(const QUrl& url) const {
-    ////    QAndroidJniObject path = QAndroidJniObject::fromString("content://thymio.fileprovider/webapps/" + url.url(QUrl::None));
-    //    QAndroidJniObject path = QAndroidJniObject::fromString(url.url(QUrl::None));
+    QString urlPath = url.path();
+    const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
+    int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
+    urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
+
+    // For testing purpose.
+    QString urlAsString = QString("https://static.digital-solutions.io/projects/5f2d1be0-bd36-11eb-841e-af95cf15ea11/%1").arg(urlPath);
+    return QDesktopServices::openUrl(QUrl(urlAsString));
+
+    //    QAndroidJniObject path = QAndroidJniObject::fromString("content://thymio.fileprovider/webapps/" + urlPath);
     //    QAndroidJniObject jniUri = QAndroidJniObject::callStaticObjectMethod("android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", path.object<jstring>());
     //    QAndroidJniObject jniParam = QAndroidJniObject::getStaticObjectField<jstring>("android/content/Intent", "ACTION_VIEW");
     //    QAndroidJniObject intent("android/content/Intent","()V");
@@ -197,14 +205,7 @@ bool Launcher::openUrlInLocalBrowser(const QUrl& url) const {
     //    QAndroidJniObject activity = QtAndroid::androidActivity();
     //    QAndroidJniObject packageManager = activity.callObjectMethod("getPackageManager","()Landroid/content/pm/PackageManager;");
     //                       intent.callObjectMethod("resolveActivity","(Landroid/content/pm/PackageManager;)Landroid/content/ComponentName;", packageManager.object());
-    ////    QtAndroid::startActivity(intent, 0);
-
-    QString urlPath = url.path();
-    const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
-    int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
-    urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
-    QString urlAsString = QString("https://static.digital-solutions.io/projects/5f2d1be0-bd36-11eb-841e-af95cf15ea11/%1").arg(urlPath);
-    return QDesktopServices::openUrl(QUrl(urlAsString));
+    //    QtAndroid::startActivity(intent, 0);
 }
 
 bool Launcher::openUrl(const QUrl& url) {
