@@ -90,11 +90,11 @@
         <file>apps/scratch/desc.pl.html</file>
         <file>apps/blockly/desc.pl.html</file>
         <file>apps/studio/desc.pl.html</file>
-        <file>apps/vpl/desc.zh_cn.html</file>
-        <file>apps/vpl3/desc.zh_cn.html</file>
-        <file>apps/scratch/desc.zh_cn.html</file>
-        <file>apps/blockly/desc.zh_cn.html</file>
-        <file>apps/studio/desc.zh_cn.html</file>
+        <file>apps/vpl/desc.zh-CN.html</file>
+        <file>apps/vpl3/desc.zh-CN.html</file>
+        <file>apps/scratch/desc.zh-CN.html</file>
+        <file>apps/blockly/desc.zh-CN.html</file>
+        <file>apps/studio/desc.zh-CN.html</file>
         <file>qml/wirelessconfigurator/WirelessConfigurator.qml</file>
         <file>qml/wirelessconfigurator/TitleBar.qml</file>
         <file>assets/multiple-thymio-one-dongle.svg</file>
