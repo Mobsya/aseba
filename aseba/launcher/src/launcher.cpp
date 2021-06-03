@@ -287,7 +287,7 @@ QString get_ui_language() {
 }
 
 QString Launcher::uiLanguage() const {
-    return get_ui_language().mid(0, 5);
+    return get_ui_language().mid(0, 5).toLower();
 }
 
 Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
