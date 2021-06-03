@@ -81,8 +81,8 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20210503.1/thymio-blockly.tar.gz",
-                    "sha256": "75ef6f4773f2621ed8a75ade85a5850a66a9937ae9055ce30911e3a64cc0c9c1",
+                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20210603.1/thymio-blockly.tar.gz",
+                    "sha256": "7e43790c5b0401ea7f691beb7e634c8c8b228369e84ed8fd4b75db25604db5e9",
                     "strip-components": 0
                 },
                 {
