@@ -184,13 +184,13 @@ static bool openUrlWithParameters(const QUrl& url) {
 }
 
 bool Launcher::openUrlInLocalBrowser(const QUrl& url) const {
-    QString urlPath = url.path();
+    QString urlPath = url.toString();
     const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
     int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
     urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
 
     // For testing purpose.
-    QString urlAsString = QString("http://software.mobsya.org/%1").arg(url.toString());
+    QString urlAsString = QString("http://software.mobsya.org/%1").arg(urlPath);
     return QDesktopServices::openUrl(QUrl(urlAsString));
 
     //    QAndroidJniObject path = QAndroidJniObject::fromString("content://thymio.fileprovider/webapps/" + urlPath);
