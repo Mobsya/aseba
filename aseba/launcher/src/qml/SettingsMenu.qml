@@ -59,8 +59,8 @@ Rectangle {
         parent.onWidthChanged.connect(anchorToParent)
         if(Utils.isPlaygroundAvailable) {
             entries.append( { "name": qsTr("Launch a Simulator"), action: "playground"})
-            entries.append( { "name": qsTr("Download maps for the simulator"), action: "playground-faq"})
         }
+		entries.append( { "name": qsTr("Download maps for the simulator"), action: "playground-faq"})
         if(Utils.platformHasSerialPorts()) {
             entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
             entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
@@ -131,7 +131,7 @@ Rectangle {
 
             footer: Item {
                 id: local_browser_switch
-                visible: !Utils.platformIsLinux()
+                visible: true
                 height: 30
                 width: getBackPanelWidth()
                 anchors.right:parent.right
