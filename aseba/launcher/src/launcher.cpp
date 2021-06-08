@@ -180,12 +180,27 @@ static bool openUrlWithParameters(const QUrl& url) {
     return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
+bool Launcher::openUrlInLocalBrowser(const QUrl& url) const {
+    QString urlPath = url.toString();
+    const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
+    int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
+    urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
+
+    // Use external web site
+    QString urlAsString = QString("http://software.mobsya.org/%1").arg(urlPath);
+    return QDesktopServices::openUrl(QUrl(urlAsString));
+}
+
 bool Launcher::openUrl(const QUrl& url) {
 
     qDebug() << url;
 
     if ( getUseLocalBrowser() ){
+#ifdef Q_OS_ANDROID
+		return openUrlInLocalBrowser(url);
+#else
         return openUrlWithParameters(url);
+#endif
     }
 #ifdef Q_OS_IOS
     OpenUrlInNativeWebView(url);

@@ -41,6 +41,7 @@ public:
 
     Q_INVOKABLE QString search_program(const QString& name) const;
     Q_INVOKABLE QUrl webapp_base_url(const QString& name) const;
+	bool openUrlInLocalBrowser(const QUrl& url) const;
     Q_INVOKABLE bool openUrl(const QUrl& url);
     Q_INVOKABLE bool launch_process(const QString& program, const QStringList& args = {}) const;
     Q_INVOKABLE QByteArray readFileContent(QString path);
