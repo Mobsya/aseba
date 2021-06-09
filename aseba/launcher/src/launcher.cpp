@@ -54,7 +54,7 @@ bool Launcher::platformIsIos() const {
 #endif
 }
 bool Launcher::platformIsLinux() const {
-#ifdef Q_OS_LINUX
+#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
     return true;
 #else
     return false;
@@ -180,7 +180,7 @@ static bool openUrlWithParameters(const QUrl& url) {
     return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
-bool Launcher::openUrlInLocalBrowser(const QUrl& url) const {
+bool Launcher::openUrlWithExternal(const QUrl& url) const {
     QString urlPath = url.toString();
     const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
     int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
@@ -197,7 +197,7 @@ bool Launcher::openUrl(const QUrl& url) {
 
     if ( getUseLocalBrowser() ){
 #ifdef Q_OS_ANDROID
-		return openUrlInLocalBrowser(url);
+		return openUrlWithExternal(url);
 #else
         return openUrlWithParameters(url);
 #endif
