@@ -334,7 +334,7 @@ void NodeTab::updateMemoryUsage(const mobsya::CompilationResult& res) {
         const QString bytecodeText =
             tr("bytecode: %1/%2 (%3 %)")
                 .arg(res.bytecode_size())
-                .arg(res.variables_total_size())
+                .arg(res.bytecode_total_size())
                 .arg((double)res.bytecode_size() * 100. / res.bytecode_total_size(), 0, 'f', 1);
         memoryUsageText->setText(trUtf8("<b>Memory usage</b> : %1, %2").arg(variableText).arg(bytecodeText));
     }

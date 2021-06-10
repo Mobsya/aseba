@@ -241,10 +241,10 @@ Section "-Install the driver" InstDriver	; Hidden section -> always executed
 
 	${If} ${RunningX64}
 		DetailPrint $(STR_Drv_64bits)
-		ExecWait '"$INSTDIR\drivers\dpinst64.exe" /c /sa /lm /sw /PATH "$INSTDIR\drivers"' $0
+		ExecWait '"$INSTDIR\drivers\dpinst64.exe" /c /sa /lm /s /PATH "$INSTDIR\drivers"' $0
 	${Else}
 		DetailPrint $(STR_Drv_32bits)
-		ExecWait '"$INSTDIR\drivers\dpinst32.exe" /c /sa /lm /sw /PATH "$INSTDIR\drivers"' $0
+		ExecWait '"$INSTDIR\drivers\dpinst32.exe" /c /sa /lm /s /PATH "$INSTDIR\drivers"' $0
 	${EndIf}
 	DetailPrint "$(STR_Drv_Return_Code) $0"
 	IntCmpU $0 0x80000000 drv_error no_error drv_error
