@@ -34,14 +34,13 @@ Item {
                 textFormat: Text.RichText
                 text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to 
                 learn with Thymio</div>")
-				anchors.bottomMargin: 12
             }
 
 
 
             ListView {
                 width:parent.width
-                height:parent.height - titleText.height - thymio_logo.height
+                height:parent.height - titleText.height - thymio_logo.height + 12
                 model: Applications {}
                 orientation: Qt.Horizontal
                 id : app_view
