@@ -10,7 +10,7 @@ Rectangle {
     property ListModel entries: ListModel {}
 
     function getBackPanelWidth(){
-        return 400
+        return 450
     }
 
     function thymio2PairingWizard(valiseMode) {

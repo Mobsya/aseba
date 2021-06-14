@@ -47,6 +47,7 @@ Item {
                 spacing: 0
                 currentIndex: -1
                 delegate: Item {
+					anchors.topMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
                     height: icon.height + label.height + 12
                     width:  (app_view.width) / app_view.count
