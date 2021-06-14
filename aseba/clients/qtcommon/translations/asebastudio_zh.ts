@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh">
+<TS version="2.1" language="zh_CN" sourcelanguage="en">
 <context>
     <name>Aseba::AeslEditor</name>
     <message>
@@ -21,7 +21,7 @@
     <message>
         <location line="+2"/>
         <source>Insert keyword...</source>
-        <translation type="unfinished"></translation>
+        <translation>插入关键词...</translation>
     </message>
 </context>
 <context>
@@ -92,28 +92,28 @@
         <location filename="../../studio/ConstantsWidget.cpp" line="+19"/>
         <location line="+47"/>
         <source>Add a new constant</source>
-        <translation type="unfinished">添加新常量</translation>
+        <translation>添加新常量</translation>
     </message>
     <message>
         <location line="-46"/>
         <source>Remove this constant</source>
-        <translation type="unfinished">取消该常量</translation>
+        <translation>取消该常量</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;b&gt;Constants&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;常量&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;常量&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Name:</source>
-        <translation type="unfinished">名称:</translation>
+        <translation>名称:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Value</source>
         <comment>Value assigned to the constant</comment>
-        <translation type="unfinished">值</translation>
+        <translation>值</translation>
     </message>
 </context>
 <context>
@@ -284,91 +284,93 @@
     <message>
         <location filename="../../studio/EventsWidget.cpp" line="+44"/>
         <source>&lt;b&gt;Events&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;事件&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+20"/>
         <location line="+39"/>
         <source>Add a new event</source>
-        <translation type="unfinished">添加新事件</translation>
+        <translation>添加新事件</translation>
     </message>
     <message>
         <location line="-38"/>
         <source>Remove this event</source>
-        <translation type="unfinished">取消该事件</translation>
+        <translation>取消该事件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Send this event</source>
-        <translation type="unfinished">发送该事件</translation>
+        <translation>发送该事件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Plot this Event</source>
-        <translation type="unfinished"></translation>
+        <translation>绘制该事件</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Clear</source>
-        <translation type="unfinished">清除</translation>
+        <translation>清除</translation>
     </message>
     <message>
         <location line="+28"/>
         <location line="+113"/>
         <source>Name:</source>
-        <translation type="unfinished">名称:</translation>
+        <translation>名称:</translation>
     </message>
     <message>
         <location line="-112"/>
         <source>Number of arguments</source>
         <comment>For the newly created event</comment>
-        <translation type="unfinished">参数数量</translation>
+        <translatorcomment>对于新创建的事件</translatorcomment>
+        <translation>参数数量</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Specify event arguments</source>
-        <translation type="unfinished">指定时间参数</translation>
+        <translation>指定事件参数</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Please specify the %0 arguments of event %1</source>
-        <translation type="unfinished">请指定事件%1的%0参数</translation>
+        <translation>请指定事件%1的%0参数</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Wrong number of arguments</source>
-        <translation type="unfinished">错误的参数数量</translation>
+        <translation>错误的参数数量</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You gave %0 arguments where event %1 requires %2</source>
-        <translation type="unfinished">事件%1需要%2个参数,你给了%0个参数</translation>
+        <translation>事件%1需要%2个参数,你给定了%0个参数</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid value</source>
-        <translation type="unfinished">无效值</translation>
+        <translation>无效值</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Invalid value for argument %0 of event %1</source>
-        <translation type="unfinished">事件%1的参数%0为无效值</translation>
+        <translation>事件%1的参数%0为无效值</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Line %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>行%1: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Modify an existing event</source>
-        <translation type="unfinished"></translation>
+        <translation>修改现有事件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Number of arguments</source>
         <comment>For the event</comment>
-        <translation type="unfinished">参数数量</translation>
+        <translatorcomment>当前事件</translatorcomment>
+        <translation>参数数量</translation>
     </message>
 </context>
 <context>
@@ -584,7 +586,7 @@ Occurrences</source>
     <message>
         <location filename="../../studio/LockButton.cpp" line="+8"/>
         <source>Lock Thymio</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定Thymio</translation>
     </message>
 </context>
 <context>
@@ -609,7 +611,7 @@ Occurrences</source>
     <message>
         <location line="-589"/>
         <source>Aseba Studio is an environment for interactively programming robots with a text language.</source>
-        <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境</translation>
+        <translation>Aseba Studio是应用文字编程语言对机器人进行编程的编程环境.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -645,7 +647,7 @@ Occurrences</source>
     <message>
         <location line="+85"/>
         <source>Export memory content</source>
-        <translation>输出变量</translation>
+        <translation>导出变量</translation>
     </message>
     <message>
         <source>Import memory content</source>
@@ -833,23 +835,23 @@ event %0 : </source>
     <message>
         <location line="-471"/>
         <source>Aseba Studio - File Exception</source>
-        <translation type="unfinished"></translation>
+        <translation>文件异常</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file &quot;%0&quot; is not present anymore in the location.</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前位置无法找到文件&quot;%0&quot;。</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to delete it from the list?</source>
-        <translation type="unfinished"></translation>
+        <translation>你想把它从列表中删除吗?</translation>
     </message>
     <message>
         <location line="+329"/>
         <location line="+235"/>
         <source>Export current program to binary</source>
-        <translation type="unfinished"></translation>
+        <translation>导出当前程序为二进制</translation>
     </message>
     <message>
         <location line="-89"/>
@@ -899,7 +901,7 @@ event %0 : </source>
     <message>
         <location line="+6"/>
         <source>Challenge tutorial...</source>
-        <translation>挑战教程...</translation>
+        <translation>挑战活动教程...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -954,13 +956,13 @@ event %0 : </source>
     <message>
         <location line="+111"/>
         <source>&amp;Stop all</source>
-        <translation type="unfinished"></translation>
+        <translation>全部停止(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>F8</source>
         <comment>Debug|Stop all</comment>
-        <translation type="unfinished">F8</translation>
+        <translation>F8</translation>
     </message>
     <message>
         <source>&amp;Import memories content...</source>
@@ -1020,7 +1022,7 @@ event %0 : </source>
     <message>
         <location line="+4"/>
         <source>Comment the selection</source>
-        <translation>将已选部分注释</translation>
+        <translation>注释所选部分</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1031,7 +1033,7 @@ event %0 : </source>
     <message>
         <location line="+3"/>
         <source>Uncomment the selection</source>
-        <translation>将已选部分取消注释</translation>
+        <translation>取消所选部分注释</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1198,7 +1200,7 @@ event %0 : </source>
     <message>
         <location line="-63"/>
         <source>Aseba Studio - Confirmation Dialog</source>
-        <translation>Aseba Studio -确认对话</translation>
+        <translation>Aseba Studio -确认窗口</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1213,7 +1215,7 @@ event %0 : </source>
     <message>
         <location line="+59"/>
         <source>[modified] </source>
-        <translation>[已修改]</translation>
+        <translation>[已修改] </translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1237,12 +1239,12 @@ event %0 : </source>
     <message>
         <location filename="../../studio/NamedValuesVectorModel.cpp" line="+173"/>
         <source>Hide</source>
-        <translation type="unfinished">隐藏</translation>
+        <translation>隐藏</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>View</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
 </context>
 <context>
@@ -1303,62 +1305,62 @@ event %0 : </source>
     <message>
         <location line="-575"/>
         <source>variables: %1/%2 (%3 %)</source>
-        <translation type="unfinished"></translation>
+        <translation>变量:%1  %2 (%3%)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>bytecode: %1/%2 (%3 %)</source>
-        <translation type="unfinished"></translation>
+        <translation>代码: %1/%2 (%3 %)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Compilation Success</source>
-        <translation type="unfinished"></translation>
+        <translation>编译成功</translation>
     </message>
     <message>
         <location line="+146"/>
         <source>&lt;b style=&apos;color:#CA3433&apos;&gt;Not connected&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b style=&apos;color:#CA3433&apos;&gt;未连接&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>已停止</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paused</source>
-        <translation type="unfinished"></translation>
+        <translation>已暂停</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Running</source>
-        <translation type="unfinished"></translation>
+        <translation>运行中</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>(Not Locked)</source>
-        <translation type="unfinished"></translation>
+        <translation>(未锁定)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>(Controlled by another application or user)</source>
-        <translation type="unfinished"></translation>
+        <translation>(由其他应用程序或用户控制)</translation>
     </message>
     <message>
         <location line="+381"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Synchronize</source>
-        <translation type="unfinished"></translation>
+        <translation>同步</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Plot this variable</source>
-        <translation type="unfinished"></translation>
+        <translation>绘制该变量</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1373,7 +1375,7 @@ event %0 : </source>
     <message>
         <location line="+29"/>
         <source>Native Functions</source>
-        <translation>本地函数</translation>
+        <translation>基本函数</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1432,7 +1434,7 @@ event %0 : </source>
     <message>
         <location filename="../../studio/NodeTabsManager.cpp" line="+105"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%2上的%1</translation>
     </message>
 </context>
 <context>
@@ -1441,47 +1443,47 @@ event %0 : </source>
         <location filename="../../studio/PlotTab.cpp" line="+19"/>
         <location line="+1"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>重新加载</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Export Data to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>导出数据为 CSV 文件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Data</source>
-        <translation type="unfinished"></translation>
+        <translation>导出数据</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>time window (milliseconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>时间窗口(毫秒)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pause</source>
-        <translation type="unfinished">暂停</translation>
+        <translation>暂停</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Timestamp (milliseconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>时间戳(毫秒)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Values</source>
-        <translation type="unfinished">值</translation>
+        <translation>值</translation>
     </message>
     <message>
         <location line="+101"/>
         <source>Export to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 CSV 文件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>CSV Coma Separated Values (*.csv);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>逗号分隔值(*.csv);;所有文件(*)</translation>
     </message>
 </context>
 <context>
@@ -1758,7 +1760,7 @@ event %0 : </source>
     <message>
         <location line="+44"/>
         <source>The Visual Programming Language (VPL) for the Thymio robot allows to program by associating event and actions blocks.</source>
-        <translation>使用Thymio可视化程序设计语言(VPL)可以通过关联事件和机器人行为进行编程</translation>
+        <translation>使用Thymio可视化程序设计语言(VPL)可以通过关联事件和机器人行为进行编程.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1768,7 +1770,7 @@ event %0 : </source>
     <message>
         <location line="+213"/>
         <source>Returning to simple mode will discard all advanced blocks and state cards.&lt;p&gt;Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>回到简单模式将丢弃所有高级方块和状态卡。&lt;p&gt;您确定要继续吗?</translation>
     </message>
     <message>
         <source>http://aseba.wikidot.com/en:thymiovpl</source>
@@ -1777,7 +1779,7 @@ event %0 : </source>
     <message>
         <location line="-189"/>
         <source>Export program as image</source>
-        <translation>将程序数出为图像</translation>
+        <translation>将程序输出为图像</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -1834,7 +1836,7 @@ event %0 : </source>
     <message>
         <location line="+0"/>
         <source>Please enter your user or group name:</source>
-        <translation>请输入用户名:</translation>
+        <translation>请输入用户或群组名:</translation>
     </message>
 </context>
 <context>
@@ -1842,68 +1844,68 @@ event %0 : </source>
     <message>
         <location filename="../../vpl/ThymioVPLApplication.cpp" line="+99"/>
         <source>Connecting to Thymio...</source>
-        <translation type="unfinished">与Thymio连接中...</translation>
+        <translation>与Thymio连接中...</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Aseba ver. %0 (build %1/protocol %2);</source>
-        <translation type="unfinished"></translation>
+        <translation>Aseba ver. %0 (版本 %1/协议 %2);</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Save Script</source>
-        <translation type="unfinished">保存脚本</translation>
+        <translation>保存脚本</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Open Script</source>
-        <translation type="unfinished">打开脚本</translation>
+        <translation>打开脚本</translation>
     </message>
     <message>
         <location line="+44"/>
         <location line="+5"/>
         <source>Loading</source>
-        <translation type="unfinished">加载中</translation>
+        <translation>加载中</translation>
     </message>
     <message>
         <location line="-4"/>
         <source>No Thymio VPL data were found in the script file, file ignored.</source>
-        <translation type="unfinished">在此脚本文件中找不到Thymio VPL相关数据,该文件被忽略.</translation>
+        <translation>在此脚本文件中找不到Thymio VPL相关数据,该文件被忽略.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error in XML source file: %0 at line %1, column %2</source>
-        <translation type="unfinished">XML源代码错误:%0在第%1行,第%2列</translation>
+        <translation>XML源代码错误:%0在第%1行,第%2列</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Connection to Thymio lost... make sure Thymio is on and connect the USB cable/dongle</source>
-        <translation type="unfinished">与Thymio的连接中断...请确认Thymio为开机状态并且连接在USB端口</translation>
+        <translation>与Thymio的连接中断...请确认Thymio为开机状态并且通过USB端口或无线适配器链接</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>[modified] </source>
-        <translation type="unfinished">[已修改]</translation>
+        <translation>[已修改] </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untitled</source>
-        <translation type="unfinished">未命名</translation>
+        <translation>未命名</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>在 %1上</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>[not connected]</source>
-        <translation type="unfinished"></translation>
+        <translation>[未连接]</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%0 %1 %2 - Thymio Visual Programming Language</source>
-        <translation type="unfinished"></translation>
+        <translation>%0 %1 %2 - Thymio可视化程序设计语言</translation>
     </message>
 </context>
 <context>
@@ -2014,17 +2016,17 @@ event %0 : </source>
     <message>
         <location line="+5"/>
         <source>Unknown VPL error</source>
-        <translation>位置的VPL错误</translation>
+        <translation>未知的VPL错误</translation>
     </message>
     <message>
         <location filename="../../studio/CustomDelegate.cpp" line="+80"/>
         <source>list &lt;%1 elements&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>列出 &lt;%1 个元素&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>map &lt;%1 elements&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>映射&lt;%1 个元素&gt;</translation>
     </message>
 </context>
 </TS>
