@@ -40,7 +40,7 @@ Item {
 
             ListView {
                 width:parent.width
-                height:parent.height - titleText.height
+                height:parent.height - titleText.height - thymio_logo.height
                 model: Applications {}
                 orientation: Qt.Horizontal
                 id : app_view
