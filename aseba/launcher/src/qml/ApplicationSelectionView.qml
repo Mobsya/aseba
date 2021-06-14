@@ -34,6 +34,7 @@ Item {
                 textFormat: Text.RichText
                 text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to 
                 learn with Thymio</div>")
+				anchors.bottomMargin: 12
             }
 
 
@@ -47,7 +48,6 @@ Item {
                 spacing: 0
                 currentIndex: -1
                 delegate: Item {
-					anchors.topMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
                     height: icon.height + label.height + 12
                     width:  (app_view.width) / app_view.count
