@@ -40,17 +40,16 @@ Item {
 
             ListView {
                 width:parent.width
-                height:parent.height - titleText.height - thymio_logo.height + 12
+                height:parent.height - titleText.height - thymio_logo.height
                 model: Applications {}
                 orientation: Qt.Horizontal
                 id : app_view
                 spacing: 0
                 currentIndex: -1
                 delegate: Item {
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenter: parent.bottom
                     height: icon.height + label.height + 12
                     width:  (app_view.width) / app_view.count
-
                     Column {
                         anchors.fill: parent
                         AnimatedImage {
@@ -60,7 +59,7 @@ Item {
 
 
                             height: width
-                            width : Math.max(48, Math.min(256, parent.width - 2 * 30))
+                            width : Math.max(48, Math.min(192, parent.width - 1 * 30))
 
                             MouseArea {
                                 anchors.fill: parent
