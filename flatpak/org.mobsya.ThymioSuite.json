@@ -50,7 +50,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url":  "http://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.gz",
+                    "url":  "https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.tar.gz",
                     "sha256": "9995e192e68528793755692917f9eb6422f3052a53c5e13ba278a228af6c7acf"
                 }
             ],
@@ -81,20 +81,20 @@
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20200506.1/thymio-blockly.tar.gz",
-                    "sha256": "5db96b19e40b2e771c96aff9fb10b6d41106f889a3e0f78ea63fd58340b6068b",
+                    "url": "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/v20210604.4/thymio-blockly.tar.gz",
+                    "sha256": "79605d203f933f4767178ed53c537aa21938e20f90d7dd0b1a0b84dda09419c8",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20201116.1/scratch-gui.tar.gz",
-                    "sha256": "adbacade68ef08f9a1ddd0be784f98a97593c37fe825023d4da3af131dea4fea",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20210602.1/scratch-gui.tar.gz",
+                    "sha256": "dc3a5705081c63d8ad0d617fcaf713c66d1f8076e187e88436c6c1752e5e260c",
                     "strip-components": 0
                 },
                 {
                     "type": "archive",
                     "url": "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz",
-                    "sha256": "aa00de26b873c604eeb077ff492dfc3a8a6cfe3eb6b9f26e785fa09fae4bda04",
+                    "sha256": "70792d0ceb023e721d580955d73e7b5348a62fdaa042badf94c09cff4efc3210",
                     "strip-components": 0
                 }
             ],

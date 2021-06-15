@@ -43,20 +43,21 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --verbose -f -s "$IDENTITY" "$@"
+        codesign --verify --verbose --timestamp -f -s "$IDENTITY" "$@"
     fi
 }
 
-#Make sure the launcher is retina ready
 defaults write $(realpath "$DEST/Contents/Info.plist") NSPrincipalClass -string NSApplication
 defaults write $(realpath "$DEST/Contents/Info.plist") NSHighResolutionCapable -string True
 add_to_group $(realpath "$DEST/Contents/Info.plist")
 chmod 644 $(realpath "$DEST/Contents/Info.plist")
 
 APPS_DIR="$DEST/Contents/Applications"
-BINUTILS_DIR="$DEST/Contents/MacOs"
+BINUTILS_DIR="$DEST/Contents/Helpers"
+MAIN_DIR="$DEST/Contents/MacOS"
 
 #Copy the binaries we need
+mkdir -p "$MAIN_DIR"
 mkdir -p "$BINUTILS_DIR"
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
@@ -69,7 +70,36 @@ cp -R "${BUILD_DIR}/AsebaStudio.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/AsebaPlayground.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/ThymioVPLClassic.app" "$APPS_DIR/"
 
-for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
+for app in "AsebaStudio" "ThymioVPLClassic"
+do
+    cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"
+    defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSPrincipalClass -string NSApplication
+    defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSHighResolutionCapable -string True
+    add_to_group $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+    plutil -replace CFBundleURLTypes -xml "
+        <array>
+            <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Viewer</string>
+                <key>CFBundleURLName</key>
+                <string>org.mobsy.CustomURLScheme</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>mobsya</string>
+                    </array>
+            </dict>
+        </array>
+    " $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+
+
+    defaults read $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+	chmod 644 $(realpath "$APPS_DIR/$app.app/Contents/Info.plist")
+
+done
+
+for app in "AsebaPlayground"
 do
     cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"
     defaults write $(realpath "$APPS_DIR/$app.app/Contents/Info.plist") NSPrincipalClass -string NSApplication
@@ -101,29 +131,42 @@ done
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
     echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$APPS_DIR/$app.app/") --entitlements "$DIR/$app.entitlements"
+	
+	for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
+		do
+			echo "Signing $DEST/Contents/Frameworks/$fw"
+			sign $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
+		done
+
+	for plugin in $(find $APPS_DIR/$app.app/Contents/PlugIns -name '*.dylib')
+		do
+			echo "Signing $plugin"
+			sign $(realpath "$plugin")
+		done
+	
+    sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
 done
 
 for fw in $(ls "$DEST/Contents/Frameworks")
 do
     echo "Signing $DEST/Contents/Frameworks/$fw"
-    sign --deep $(realpath "$DEST/Contents/Frameworks/$fw")
+    sign $(realpath "$DEST/Contents/Frameworks/$fw")
 done
 
 for plugin in $(find $DEST/Contents/PlugIns -name '*.dylib')
 do
     echo "Signing $plugin"
-    sign --deep $(realpath "$plugin")
+    sign $(realpath "$plugin")
 done
 
 for binary in "thymio-device-manager" "thymio2-firmware-upgrader"
 do
     echo "Signing $BINUTILS_DIR/$binary with $DIR/inherited.entitlements"
-    sign --deep $(realpath "$BINUTILS_DIR/$binary") --entitlements "$DIR/inherited.entitlements"
+    sign -i org.mobsya.ThymioLauncher.$binary --options=runtime $(realpath "$BINUTILS_DIR/$binary")
 done
 
 echo "Signing $DEST with $DIR/launcher.entitlements"
-sign $(realpath "$BINUTILS_DIR/thymio-launcher") --entitlements "$DIR/launcher.entitlements"
+sign --options=runtime $(realpath "$MAIN_DIR/thymio-launcher")
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"

@@ -138,10 +138,9 @@ void aseba_node_registery::on_update_discovery_complete(const boost::system::err
         mLogError("Discovery : {}", ec.message());
 		m_discovery_needs_update = true;
     } else {
-        mLogTrace("Discovery : update complete");
-		m_updating_discovery = false;
+        mLogTrace("Discovery : update complete");		
     }
-	
+	m_updating_discovery = false;
     if(m_discovery_needs_update) {
         boost::asio::post(boost::asio::get_associated_executor(this),
                           boost::bind(&aseba_node_registery::update_discovery, this));
