@@ -6,7 +6,11 @@
 
 namespace mobsya {
 
+#ifdef Q_OS_OSX
+static const auto tdm_program_name = QByteArrayLiteral("../Helpers/thymio-device-manager");
+#else
 static const auto tdm_program_name = QByteArrayLiteral("thymio-device-manager");
+#endif
 static const auto max_launch_count = 10;
 
 TDMSupervisor::TDMSupervisor(const Launcher& launcher, QObject* parent)

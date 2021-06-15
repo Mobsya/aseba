@@ -287,7 +287,10 @@ QString get_ui_language() {
 }
 
 QString Launcher::uiLanguage() const {
-    return get_ui_language().mid(0, 2);
+    if (get_ui_language().mid(0, 2) == "zh")
+        return get_ui_language().mid(0, 5).toLower();
+    else
+        return get_ui_language().mid(0, 2);
 }
 
 Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
@@ -295,7 +298,10 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
     QString full = pattern.arg(lang);
     if(exists(full))
         return full;
-    lang = pattern.arg(lang.mid(0, 2));
+    if(lang.mid(0,2) == "zh" )
+        lang = pattern.arg(lang.mid(0, 5));
+    else
+        lang = pattern.arg(lang.mid(0, 2));
     if(exists(lang))
         return lang;
     QString en = pattern.arg("en");

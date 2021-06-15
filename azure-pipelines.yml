@@ -15,9 +15,9 @@ trigger:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20200506.1"
+  value: "v20210604.4"
 - name: scratch_version
-  value: "v20201116.1"
+  value: "v20210602.1"
 - name: packet_version
   value: "2.2.0"
 - name: blockly_url
@@ -34,7 +34,7 @@ variables:
 jobs:
 - job: 'BuildFlatpak'
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'Ubuntu-18.04'
   container: fpkde
   steps:
   - script: |
@@ -157,7 +157,7 @@ jobs:
 
 - job: 'BuildAndroid_armeabi'
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'Ubuntu-18.04'
   strategy:
     matrix:
       armeabi:
@@ -216,11 +216,7 @@ jobs:
   #workaround until devops deploy
   - script: |
       brew uninstall openssl@1.0.2t
-      brew uninstall python@2.7.17
       brew untap local/openssl
-      brew untap local/python2
-      brew update
-      brew unlink python@3.8
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
     
@@ -235,86 +231,25 @@ jobs:
       git submodule update --init --recursive
     displayName: 'Clone submodules'
     
-  - script: |
-      sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer
-      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/clang_64/" && ninja)
-    displayName: 'Build with cmake'
-
-  - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-14.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-    displayName: 'Signing and create dmg'
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-
-  - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-14.dmg build/bin
-    displayName: 'Create Unsigned DMG'
-    condition: eq(variables['Build.Reason'], 'PullRequest')
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'ThymioSuite.dmg'
-
-- job: BuildOnOsX2
-  pool:
-    vmImage: 'macOS-10.14'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '9.x'
-
-  - task: InstallAppleCertificate@2
-    inputs:
-      certSecureFile: 'Mobsya.p12'
-      certPwd: $(mobsya-mac-p12)
-
-  - script: |
-      curl -sL $(blockly_url) | tar xzf - -C .
-      curl -sL $(scratch_url) | tar xzf - -C .
-      curl -sL $(vpl3_url) | tar xzf - -C .
-    displayName: 'Extract scratch, blockly and vpl3' 
-  - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
-      7z x mac.7z
-    displayName: 'Setting Qt version to 5.13.2'
-    
-  #workaround until devops deploy
-  - script: |
-      brew uninstall openssl@1.0.2t
-      brew uninstall python@2.7.17
-      brew untap local/openssl
-      brew untap local/python2
-      brew update
-      brew unlink python@3.8
-      brew bundle
-    displayName: 'Install dependencies with HomeBrew'
-    
-  - script: |
-      brew tap mobsya/brewqt https://github.com/mobsya/brewqt
-      brew extract --version=1.0.2t openssl mobsya/brewqt
-      brew install mobsya/brewqt/openssl@1.0.2t
-      brew info openssl
-    displayName: 'Setting openssl version to 1.0.0'
-  - script: |
-      git submodule update --init --recursive
-    displayName: 'Clone submodules'
   - script: |
       sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
       (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
     displayName: 'Build with cmake'
+
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-15+.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-12-15.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
     condition: ne(variables['Build.Reason'], 'PullRequest')
+
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-15+.dmg build/bin
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-12-15.dmg build/bin
     displayName: 'Create Unsigned DMG'
     condition: eq(variables['Build.Reason'], 'PullRequest')
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.dmg'
-
 
 - job: BuildForIOs
   pool:
@@ -345,11 +280,7 @@ jobs:
     #workaround until devops deploy
   - script: |
       brew uninstall openssl@1.0.2t
-      brew uninstall python@2.7.17
       brew untap local/openssl
-      brew untap local/python2
-      brew update
-      brew unlink python@3.8
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 

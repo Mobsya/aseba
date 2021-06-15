@@ -6,11 +6,12 @@ ListModel {
 
     function launch_blockly(device) {
         const baseurl = Utils.webapp_base_url("blockly");
+		const language = Utils.uiLanguage;
         if(!baseurl) {
             return false;
         }
-        const url = "%1/thymio_blockly.en.html#device=%2&ws=%3"
-            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/thymio_blockly.%2.html#device=%3&ws=%4"
+            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
 
