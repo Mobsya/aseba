@@ -237,12 +237,12 @@ jobs:
     displayName: 'Build with cmake'
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-12-15.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-15.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-12-15.dmg build/bin
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-15.dmg build/bin
     displayName: 'Create Unsigned DMG'
     condition: eq(variables['Build.Reason'], 'PullRequest')
 
