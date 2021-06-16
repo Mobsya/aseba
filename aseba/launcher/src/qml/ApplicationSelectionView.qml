@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 Item {
+    id:item1
     property var selectedApp
     property var selectedAppLauncher
 
@@ -58,7 +59,7 @@ Item {
                 delegate: Item {
                     height: icon.height + label.height + 12
                     width:  (app_view.width) / app_view.count
-                    anchors.top:titleText.bottom
+                    anchors.verticalCenter: parent.verticalCenter
                     Column {
                         anchors.fill: parent
                         AnimatedImage {
@@ -78,12 +79,12 @@ Item {
                                     //Make sure the index changed signal is always emitted on click
                                     app_view.currentIndex = -1
                                     app_view.currentIndex = index
-                                    item.selectedApp = app_view.model.get(app_view.currentIndex)
-                                    item.selectedAppLauncher = app_view.model.launch_function(item.selectedApp)
+                                    item1.selectedApp = app_view.model.get(app_view.currentIndex)
+                                    item1.selectedAppLauncher = app_view.model.launch_function(item.selectedApp)
                                 }
                                 cursorShape: Qt.PointingHandCursor
                             }
-
+                            anchors.horizontalCenter: parent.horizontalCente
 
                         }
 
