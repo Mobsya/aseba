@@ -1,7 +1,6 @@
 import QtQuick 2.0
 
 Item {
-    id:item
     property var selectedApp
     property var selectedAppLauncher
 
@@ -11,7 +10,7 @@ Item {
         color: Style.main_bg_color
     }
     Item {
-        anchors.margins: Style.window_margin + Style.column_margin + Style.column_width
+        anchors.margins: 3 * Style.window_margin
         anchors.fill: parent
         Column {
             anchors.fill: parent
@@ -21,6 +20,7 @@ Item {
                 id:thymio_logo
                 source: "qrc:/assets/logo-thymio.svg"
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top:parent.top
                 height: 73
                 width : 206
                 antialiasing: true
@@ -30,36 +30,43 @@ Item {
 
             Text {
                 id: titleText
+                width:parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.margins: Style.window_margin
+                anchors.top: thymio_logo.bottom
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
                 textFormat: Text.RichText
-                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to 
+                text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to
                 learn with Thymio</div>")
+
             }
 
 
 
             ListView {
+                id : app_view
                 width:parent.width
-                height:parent.height - titleText.height - thymio_logo.height
+                height:parent.height - titleText.height - thymio_logo.height - 2*Style.window_margin
                 model: Applications {}
                 orientation: Qt.Horizontal
-                id : app_view
                 spacing: 0
                 currentIndex: -1
+                anchors.top:titleText.bottom
+                anchors.margins: Style.window_margin
                 delegate: Item {
-                    anchors.verticalCenter: parent.bottom
                     height: icon.height + label.height + 12
                     width:  (app_view.width) / app_view.count
+                    anchors.top:titleText.bottom
                     Column {
                         anchors.fill: parent
                         AnimatedImage {
                             id: icon
                             source: animatedIcon
                             playing: false
-
-
                             height: width
-                            width : Math.max(48, Math.min(192, parent.width - 1 * 30))
+                            width : Math.max(48, Math.min(app_view.height, parent.width - 2 * 30))
 
                             MouseArea {
                                 anchors.fill: parent
@@ -76,7 +83,8 @@ Item {
                                 }
                                 cursorShape: Qt.PointingHandCursor
                             }
-                            anchors.horizontalCenter: parent.horizontalCenter
+
+
                         }
 
                         Item {

@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
 	w.setMinimumSize(1024, 640);
 	w.show();
 #else
-    w.setMinimumSize(1024, 640);
+    w.setMinimumSize(1024, 640);//960,530 for testing Android
     w.showNormal();
 #endif
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&]() {
