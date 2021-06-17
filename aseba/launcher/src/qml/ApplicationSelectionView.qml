@@ -72,7 +72,7 @@ Item {
                                 app_view.currentIndex = -1
                                 app_view.currentIndex = index
                                 item1.selectedApp = app_view.model.get(app_view.currentIndex)
-                                item1.selectedAppLauncher = app_view.model.launch_function(item.selectedApp)
+                                item1.selectedAppLauncher = app_view.model.launch_function(item1.selectedApp)
                             }
                             cursorShape: Qt.PointingHandCursor
                         }
