@@ -12,6 +12,9 @@ Window {
         onTitleChanged: {
             window.title = title
         }
+        onNewViewRequested: {
+            Qt.openUrlExternally(request.requestedUrl)
+        }
         Component.onCompleted: {
             profile.downloadRequested.connect(download)
             featurePermissionRequested.connect(onPermissionPequested)
