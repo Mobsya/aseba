@@ -12,6 +12,19 @@ Window {
         onTitleChanged: {
             window.title = title
         }
+        Component.onCompleted: {
+            profile.downloadRequested.connect(download)
+            featurePermissionRequested.connect(onPermissionPequested)
+        }
+        function download(request) {
+            request.path = Utils.getDownloadPath(request.path);
+            if(request.path !== "")
+                request.accept()
+        }
+        function onPermissionPequested(url, request) {
+           if(url.toString().startsWith("file://"))
+               grantFeaturePermission(url, request, true)
+        }
     }
     Component.onCompleted: {
         window.show();
