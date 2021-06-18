@@ -196,7 +196,7 @@ bool Launcher::openUrl(const QUrl& url) {
     qDebug() << url;
 
     if ( getUseLocalBrowser() ){
-#ifdef Q_OS_ANDROID
+#ifdef Q_OS_LINUX
 		return openUrlWithExternal(url);
 #else
         return openUrlWithParameters(url);
