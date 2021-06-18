@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtWebView 1.15
-import QtQuick.Window 2.15
+import QtQuick 2.0
+import QtWebView 1.1
+import QtQuick.Window 2.12
 Window {
     id: window
     minimumHeight: 700
