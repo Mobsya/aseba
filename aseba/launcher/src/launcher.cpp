@@ -182,7 +182,11 @@ static bool openUrlWithParameters(const QUrl& url) {
 
 bool Launcher::openUrlWithExternal(const QUrl& url) const {
     QString urlPath = url.toString();
+#ifdef Q_OS_ANDROID
     const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
+#else
+    const QString LOCAL_FILES_PATH_SEPARATOR = "/share/";
+#endif
     int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
     urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
 
