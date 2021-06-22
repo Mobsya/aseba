@@ -34,8 +34,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
             textFormat: Text.RichText
-            text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to
-            learn with Thymio</div>")
+            text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to learn with Thymio</div>")
         }
         ListView {
             id : app_view
