@@ -329,7 +329,7 @@ jobs:
 
 - job: BuildForIOs
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-10.15'
   steps:
   - task: NodeTool@0
     inputs:
@@ -370,7 +370,7 @@ jobs:
     displayName: 'Clone submodules'
 
   - script: |
-      sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_12.1.1.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
       cmake ../../third_party/flatbuffers -GXcode
