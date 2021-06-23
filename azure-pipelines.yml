@@ -377,7 +377,9 @@ jobs:
       cmake --build . --config Release --target flatc
       export FLATC=`pwd`/Release/flatc
       cd ..
+
       cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=12.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/ios/" -G Xcode -T buildsystem=1 -DIOS_ARCHIVE_BUILD=1 ..
+
     displayName: 'CONFIGURE with cmake'
 
   - script: |
