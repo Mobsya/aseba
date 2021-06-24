@@ -49,10 +49,10 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Looking for local tcp Bonjour service</string>
+	<string>Thymio Suite is looking for local Thymio devices</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_mobsya._tcp</string>
+		<string>_mobsya._tcp.</string>
 	</array>
 </dict>
 </plist>
