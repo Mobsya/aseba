@@ -6,11 +6,12 @@ ListModel {
 
     function launch_blockly(device) {
         const baseurl = Utils.webapp_base_url("blockly");
+		const language = Utils.uiLanguage;
         if(!baseurl) {
             return false;
         }
-        const url = "%1/thymio_blockly.en.html#device=%2&ws=%3"
-            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/thymio_blockly.%2.html#device=%3&ws=%4"
+            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
         return Utils.openUrl(url)
     }
 
@@ -91,7 +92,8 @@ ListModel {
                    supportsWatchMode: false,
                    supportsNonThymioDevices: false,
                    helpUrl: "https://www.thymio.org/%1/program/vpl/",
-                   isIosSupported:false
+                   isIosSupported:false,
+                   isAndroidSupported:false
                 },
                 {
                     appId:"vpl3",
@@ -103,7 +105,8 @@ ListModel {
                     supportsGroups: false,
                     supportsWatchMode: false,
                     helpUrl: "https://www.thymio.org/%1/program/vpl3/",
-                    isIosSupported: true
+                    isIosSupported: true,
+                    isAndroidSupported:true
                 },
                 {
                     appId: "scratch",
@@ -116,7 +119,8 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/scratch/",
-                    isIosSupported:true
+                    isIosSupported:true,
+                    isAndroidSupported:true
                  },
 
                 {
@@ -130,7 +134,8 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/blockly/",
-                    isIosSupported:false
+                    isIosSupported:false,
+                    isAndroidSupported:false
                  },
 
                 {
@@ -144,7 +149,8 @@ ListModel {
                     supportsWatchMode: true,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
-                    isIosSupported:false
+                    isIosSupported:false,
+                    isAndroidSupported:false
                  }
                 ]
 
@@ -153,6 +159,9 @@ ListModel {
             applicationList =  applicationList.filter(function(app) {
                       return app.isIosSupported;});
 
+        } else if(Utils.platformIsAndroid()) {
+            applicationList =  applicationList.filter(function(app) {
+                      return app.isAndroidSupported;});
         }
         append(applicationList)
     }

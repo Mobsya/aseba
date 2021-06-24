@@ -1608,7 +1608,7 @@ event %0 : </source>
     <message>
         <location line="+1"/>
         <source>Running</source>
-        <translation>En cours d&apos;exécution</translation>
+        <translation>En exécution</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1618,7 +1618,7 @@ event %0 : </source>
     <message>
         <location line="+4"/>
         <source>(Controlled by another application or user)</source>
-        <translation>(contrôlé par une autre application ou un autre utilisateur)</translation>
+        <translation>(contrôlé par une autre application ou utilisateur)</translation>
     </message>
     <message>
         <location line="+381"/>

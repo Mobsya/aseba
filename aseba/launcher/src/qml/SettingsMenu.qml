@@ -10,7 +10,7 @@ Rectangle {
     property ListModel entries: ListModel {}
 
     function getBackPanelWidth(){
-        return 350
+        return 450
     }
 
     function thymio2PairingWizard(valiseMode) {
@@ -131,7 +131,7 @@ Rectangle {
 
             footer: Item {
                 id: local_browser_switch
-                visible: !Utils.platformIsLinux()
+                visible: true
                 height: 30
                 width: getBackPanelWidth()
                 anchors.right:parent.right

@@ -11,12 +11,12 @@
     <message>
         <location line="+11"/>
         <source>You can find more information online at &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;.</source>
-        <translation>更多信息请查看&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;</translation>
+        <translation>更多信息请查看&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This program is part of Aseba, a set of tools which allow beginners to program robots easily and efficiently. For more information about Aseba, visit %1.</source>
-        <translation>该程序为Aseba的一部分. Aseba是一组允许初学者对机器人进行简单编程的工具. 了解更多请访问%1</translation>
+        <translation>该程序为Aseba的一部分. Aseba是一组允许初学者对机器人进行简单编程的工具. 了解更多请访问%1。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -27,7 +27,7 @@
         <location line="+4"/>
         <source>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL version 3&lt;/a&gt;.</source>
         <oldsource>Aseba is open-source licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/lgpl.html&quot;&gt;LGPL version 3&lt;/a&gt;.</oldsource>
-        <translation type="unfinished">Aseba是在&lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL版本3&lt;/a&gt;开源许可证下的软件</translation>
+        <translation>Aseba是在&lt;a href=&quot;https://www.gnu.org/licenses/lgpl-3.0.txt&quot;&gt;LGPL版本3&lt;/a&gt;开源许可证下的软件。</translation>
     </message>
     <message>
         <location line="+10"/>

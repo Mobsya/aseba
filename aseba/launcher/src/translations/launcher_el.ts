@@ -4,13 +4,12 @@
 <context>
     <name>ApplicationSelectionView</name>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="35"/>
-        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
-                learn with Thymio&lt;/div&gt;</source>
+        <location filename="../qml/ApplicationSelectionView.qml" line="37"/>
+        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to learn with Thymio&lt;/div&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="108"/>
+        <location filename="../qml/ApplicationSelectionView.qml" line="104"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -37,7 +36,7 @@ Do not unplug the device while the update is in progress.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="98"/>
+        <location filename="../main.cpp" line="167"/>
         <source>Thymio Suite</source>
         <translation type="unfinished"></translation>
     </message>
@@ -306,7 +305,7 @@ Continue?</source>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="238"/>
+        <location filename="../launcher.cpp" line="271"/>
         <source>Save %1</source>
         <translation type="unfinished"></translation>
     </message>

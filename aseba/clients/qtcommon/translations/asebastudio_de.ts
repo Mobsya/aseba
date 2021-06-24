@@ -1522,7 +1522,7 @@ Ereignis %0: </translation>
     <message>
         <location line="+4"/>
         <source>(Controlled by another application or user)</source>
-        <translation>(Wird von eineranderer Applikation oder einem anderen Benutzer gesteuert)</translation>
+        <translation type="unfinished">(Von anderen Applikation oder Benutzer gesteuert)</translation>
     </message>
     <message>
         <location line="+381"/>
