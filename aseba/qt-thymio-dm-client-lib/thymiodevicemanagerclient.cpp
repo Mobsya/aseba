@@ -30,6 +30,36 @@ bool ThymioDeviceManagerClient::isZeroconfBrowserConnected() const {
     return m_register->browserExists();
 }
 
+bool ThymioDeviceManagerClient::hasEndpoint(QUuid uuid) const {
+    auto it = m_endpoints.find(uuid);
+    if(it == m_endpoints.end()) {
+        return false;
+    }
+    return it->operator bool();
+}
+
+void ThymioDeviceManagerClient::doRegisterEndpoint(std::shared_ptr<ThymioDeviceManagerClientEndpoint>& endpoint) {
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
+            &ThymioDeviceManagerClient::onEndpointDisconnected);
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::localPeerChanged, this,
+            &ThymioDeviceManagerClient::onLocalPeerChanged);
+
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
+            &ThymioDeviceManagerClient::onNodeAdded);
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeModified, this,
+            &ThymioDeviceManagerClient::nodeModified);
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
+            &ThymioDeviceManagerClient::onNodeRemoved);
+}
+bool ThymioDeviceManagerClient::registerEndpoint(QUuid id,
+                                                 std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint) {
+    if(hasEndpoint(id))
+        return false;
+    doRegisterEndpoint(endpoint);
+    m_endpoints.insert(id, endpoint);
+    return true;
+}
+
 void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     qCDebug(zeroconf) << "ThymioDeviceManagerClient::onServiceAdded: " << service;
     QUuid id = service_id(service);
@@ -45,18 +75,7 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
             new ThymioDeviceManagerClientEndpoint(socket, service.host()),
             [](ThymioDeviceManagerClientEndpoint* ep) { ep->deleteLater(); });
         socket->connectToHost(service.ip(), service.port());
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
-                &ThymioDeviceManagerClient::onEndpointDisconnected);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::localPeerChanged, this,
-                &ThymioDeviceManagerClient::onLocalPeerChanged);
-
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
-                &ThymioDeviceManagerClient::onNodeAdded);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeModified, this,
-                &ThymioDeviceManagerClient::nodeModified);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
-                &ThymioDeviceManagerClient::onNodeRemoved);
-
+        doRegisterEndpoint(endpoint);
         m_endpoints.insert(id, endpoint);
 
     } else if(endpoint->peerAddress() != service.ip()) {

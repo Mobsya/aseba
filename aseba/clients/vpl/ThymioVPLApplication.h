@@ -40,7 +40,7 @@ class ThymioVPLApplication : public QSplitter {
     Q_OBJECT
 
 public:
-    ThymioVPLApplication(const QUuid& node);
+    ThymioVPLApplication(mobsya::ThymioDeviceManagerClient* client, const QUuid& node);
     ~ThymioVPLApplication() override;
     void displayCode(const QList<QString>& code, int line);
     void loadAndRun();
@@ -74,9 +74,9 @@ protected Q_SLOTS:
     void toggleFullScreen();
 
 protected:
+    mobsya::ThymioDeviceManagerClient* m_client;
     QUuid m_thymioId;
     std::shared_ptr<mobsya::ThymioNode> m_thymio;
-    mobsya::ThymioDeviceManagerClient* m_client;
     mobsya::CompilationRequestWatcher m_compilation_watcher;
 
     bool useAnyTarget;  //!< if true, allow to connect to non-Thymoi II targets

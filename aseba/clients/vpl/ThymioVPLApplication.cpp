@@ -35,10 +35,9 @@
 
 namespace Aseba {
 
-ThymioVPLApplication::ThymioVPLApplication(const QUuid& thymioId)
-    : m_thymioId(thymioId), vpl(nullptr), allocatedVariablesCount(0) {
+ThymioVPLApplication::ThymioVPLApplication(mobsya::ThymioDeviceManagerClient* client, const QUuid& thymioId)
+    : m_client(client), m_thymioId(thymioId), vpl(nullptr), allocatedVariablesCount(0) {
 
-    m_client = new mobsya::ThymioDeviceManagerClient(this);
     connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeAdded, this, &ThymioVPLApplication::onNodeChanged);
     connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeRemoved, this, &ThymioVPLApplication::onNodeChanged);
     connect(m_client, &mobsya::ThymioDeviceManagerClient::nodeModified, this, &ThymioVPLApplication::onNodeChanged);
@@ -69,8 +68,9 @@ void ThymioVPLApplication::loadAndRun() {
         return;
     auto code = editor->toPlainText();
     m_compilation_watcher.setRequest(m_thymio->load_aseba_code(code.toUtf8()));
-    connect(&m_compilation_watcher, &mobsya::CompilationRequestWatcher::finished, this, [this]() { m_thymio->run(); },
-            Qt::UniqueConnection);
+    connect(
+        &m_compilation_watcher, &mobsya::CompilationRequestWatcher::finished, this, [this]() { m_thymio->run(); },
+        Qt::UniqueConnection);
 }
 
 void ThymioVPLApplication::stop() {

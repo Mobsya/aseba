@@ -25,10 +25,12 @@
 #include <QLocale>
 #include <QLibraryInfo>
 #include <QDebug>
+#include <QTimer>
 #include <iostream>
 #include <QCommandLineParser>
 #include <QUuid>
 #include <aseba/common/consts.h>
+#include <qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 #include "ThymioVPLApplication.h"
 #include "UsageLogger.h"
 
@@ -50,7 +52,10 @@ int main(int argc, char* argv[]) {
     QCommandLineOption uuid(QStringLiteral("uuid"),
                             QStringLiteral("Uuid of the target to connect to - can be specified multiple times"),
                             QStringLiteral("uuid"));
+    QCommandLineOption ep(QStringLiteral("endpoint"), QStringLiteral("Endpoint to connect to"),
+                          QStringLiteral("endpoint"));
     parser.addOption(uuid);
+    parser.addOption(ep);
     parser.addHelpOption();
     parser.process(qApp->arguments());
 
@@ -71,7 +76,28 @@ int main(int argc, char* argv[]) {
     load_trads("qtabout_", ":/");
     load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
-    Aseba::ThymioVPLApplication vpl(id);
+    QVector<QUuid> targetUuids;
+    for(auto&& id : parser.values(uuid)) {
+        auto uuid = QUuid::fromString(id);
+        if(!uuid.isNull())
+            targetUuids.append(uuid);
+    }
+
+    mobsya::ThymioDeviceManagerClient thymioClient;
+
+
+    QString s = parser.value(ep);
+    if(!s.isEmpty()) {
+        QUrl url(s);
+        QString host = url.host();
+        quint16 port = url.port();
+        auto c = new mobsya::RemoteConnectionRequest(&thymioClient, host, port, qApp);
+        QObject::connect(c, &mobsya::RemoteConnectionRequest::done, &mobsya::RemoteConnectionRequest::deleteLater);
+        QObject::connect(c, &mobsya::RemoteConnectionRequest::error, &mobsya::RemoteConnectionRequest::deleteLater);
+        QTimer::singleShot(0, c, &mobsya::RemoteConnectionRequest::start);
+    }
+
+    Aseba::ThymioVPLApplication vpl(&thymioClient, id);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &vpl,
                      &Aseba::ThymioVPLApplication::connectToDevice);
     vpl.show();
