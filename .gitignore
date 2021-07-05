@@ -13,7 +13,10 @@ build/
 *.qmlc
 *.jsc
 CMakeLists.txt.user
-
+Qt/
 scratch/
 vpl3-thymio-suite/
 *.jks
+thymio_blockly/
+ios.7z
+Brewfile.lock.json
