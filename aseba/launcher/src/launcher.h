@@ -35,6 +35,7 @@ public:
 #endif
 #ifdef Q_OS_IOS
     void OpenUrlInNativeWebView(const QUrl& url);
+    void triggerLocalNetworkPrivacyAlertObjC() const;
     // dummy implementation
     Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
 #endif

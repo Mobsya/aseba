@@ -346,6 +346,7 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 }
 
 bool Launcher::isZeroconfRunning() const {
+    triggerLocalNetworkPrivacyAlertObjC();
     return m_client->isZeroconfBrowserConnected();
 }
 #ifdef Q_OS_IOS
