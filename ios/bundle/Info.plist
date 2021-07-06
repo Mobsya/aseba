@@ -52,7 +52,7 @@
 	<string>Thymio Suite is looking for local Thymio devices</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_mobsya._tcp.</string>
+		<string>_mobosya._tcp.</string>
 	</array>
 </dict>
 </plist>
