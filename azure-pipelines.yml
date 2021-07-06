@@ -382,15 +382,15 @@ jobs:
 
   - script: |
       cd build;
-      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=13.0 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO;
-      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=13.0 -allowProvisioningUpdates CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO;
+      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO;
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 -allowProvisioningUpdates CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO;
     displayName: 'Build with cmake - Unsigned'
     condition: eq(variables['Build.Reason'], 'PullRequest')
 
   - script:  |
       cd build;
-      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=13.0
-      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=13.0 PROVISIONING_PROFILE_SPECIFIER="Ios-2020-dist" CODE_SIGN_IDENTITY="iPhone Distribution" CODE_SIGN_STYLE="Manual"
+      cmake --build . --target thymio-launcher --config Release -- -IPHONEOS_DEPLOYMENT_TARGET=11.0
+      xcodebuild -scheme thymio-launcher  -configuration Release -derivedDataPath ./bin/datas/libraries  -sdk iphoneos clean archive -archivePath ./bin/launcher.xcarchive -IPHONEOS_DEPLOYMENT_TARGET=11.0 PROVISIONING_PROFILE_SPECIFIER="Ios-2020-dist" CODE_SIGN_IDENTITY="iPhone Distribution" CODE_SIGN_STYLE="Manual"
       xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath $(Build.ArtifactStagingDirectory)
     displayName: 'Build with cmake - SIGNED'
     condition: ne(variables['Build.Reason'], 'PullRequest')
