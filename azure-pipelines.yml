@@ -297,7 +297,8 @@ jobs:
   - script: |
       curl -sL  http://www.openssl.org/source/openssl-1.0.2t.tar.gz | tar xzf - -C .
       cd openssl-1.0.2t
-      ./config --openssldir=/usr/local/ssl
+      export KERNEL_BITS=64
+      ./config enable-ec_nistp_64_gcc_128 openssldir=/usr/local/ssl
       make
       sudo make install
     displayName: 'Setting openssl version to 1.0.2'
