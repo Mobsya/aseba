@@ -291,17 +291,18 @@ jobs:
     
   #workaround until devops deploy
   - script: |
-      brew uninstall openssl@1.0.2t
-      brew untap local/openssl
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
     
   - script: |
-      brew tap mobsya/brewqt https://github.com/mobsya/brewqt
-      brew extract --version=1.0.2t openssl mobsya/brewqt
-      brew install mobsya/brewqt/openssl@1.0.2t
-      brew info openssl
-    displayName: 'Setting openssl version to 1.0.0'
+      curl -sL  http://www.openssl.org/source/openssl-1.0.2t.tar.gz | tar xzf - -C .
+      cd openssl-1.0.2t
+      perl ./Configure --prefix=/usr/local/Cellar/openssl@1.0.2t/1.0.2t --openssldir=/usr/local/etc/openssl no-ssl2 no-ssl3 no-zlib shared enable-cms darwin64-x86_64-cc enable-ec_nistp_64_gcc_128
+      make depend
+      make
+      make test
+      make install MANDIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/share/man MANSUFFIX=ssl
+    displayName: 'Setting openssl version to 1.0.2'
     
   - script: |
       git submodule update --init --recursive
@@ -355,8 +356,6 @@ jobs:
     #we need 7z to extract qt so brew needs to run first
     #workaround until devops deploy
   - script: |
-      brew uninstall openssl@1.0.2t
-      brew untap local/openssl
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
