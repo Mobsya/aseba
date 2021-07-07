@@ -100,7 +100,7 @@
     <key>NSBonjourServices</key>
     <array>
         <string>_mobsya._tcp.</string>
-    </array
+    </array>
     
      <!-- Export compliance keys -->
     <key>ITSAppUsesNonExemptEncryption</key><false/>
