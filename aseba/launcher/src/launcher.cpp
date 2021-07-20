@@ -348,7 +348,7 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 Q_INVOKABLE void Launcher::applicationStateChanged(Qt::ApplicationState state) {
     static Qt::ApplicationState lastState = Qt::ApplicationActive;
 
