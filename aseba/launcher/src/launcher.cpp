@@ -22,7 +22,7 @@ namespace mobsya {
 Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject(parent), m_client(client) {
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
 
-    useLocalBrowser = false;
+    setUseLocalBrowser(false);
     // On mac we use the native web view since chromium is not app-store compatible.
     // But on versions prior to High Sierra, the WebKit version shipped with
     // the OS cannot handle webassembly, which we require to run all of our web apps
@@ -30,7 +30,10 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
     // because the version of safari shipped with an up-to-date Sierra is more current
     // than the system's webkit
 #ifdef Q_OS_OSX
-    useLocalBrowser = true;
+    setUseLocalBrowser(true);
+#endif
+#ifdef Q_OS_ANDROID
+    setUseLocalBrowser(true);
 #endif
     readSettings();
 }
@@ -51,7 +54,14 @@ bool Launcher::platformIsIos() const {
 #endif
 }
 bool Launcher::platformIsLinux() const {
-#ifdef Q_OS_LINUX
+#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+    return true;
+#else
+    return false;
+#endif
+}
+bool Launcher::platformIsAndroid() const {
+#ifdef Q_OS_ANDROID
     return true;
 #else
     return false;
@@ -128,6 +138,11 @@ QStringList Launcher::webappsFolderSearchPaths() const {
 #ifdef Q_OS_IOS
     files.append(QFileInfo(QCoreApplication::applicationDirPath() + "/webapps/").absolutePath());
 #endif
+#ifdef Q_OS_ANDROID
+    // See copyAndroidAssetsIntoAppDataIfRequired() in main.cpp.
+    // files.append("assets:/");
+    files.append(QStandardPaths::standardLocations(QStandardPaths::StandardLocation::AppLocalDataLocation).at(0));
+#endif
     return files;
 }
 
@@ -165,12 +180,31 @@ static bool openUrlWithParameters(const QUrl& url) {
     return QDesktopServices::openUrl(QUrl::fromLocalFile(t.fileName()));
 }
 
+bool Launcher::openUrlWithExternal(const QUrl& url) const {
+    QString urlPath = url.toString();
+#ifdef Q_OS_ANDROID
+    const QString LOCAL_FILES_PATH_SEPARATOR = "/files/";
+#else
+    const QString LOCAL_FILES_PATH_SEPARATOR = "/share/";
+#endif
+    int indexOfFiles = urlPath.indexOf(LOCAL_FILES_PATH_SEPARATOR);
+    urlPath = urlPath.mid(indexOfFiles + LOCAL_FILES_PATH_SEPARATOR.length());
+
+    // Use external web site
+    QString urlAsString = QString("http://software.mobsya.org/%1").arg(urlPath);
+    return QDesktopServices::openUrl(QUrl(urlAsString));
+}
+
 bool Launcher::openUrl(const QUrl& url) {
 
     qDebug() << url;
 
-    if ( useLocalBrowser ){
+    if ( getUseLocalBrowser() ){
+#ifdef Q_OS_LINUX
+		return openUrlWithExternal(url);
+#else
         return openUrlWithParameters(url);
+#endif
     }
 #ifdef Q_OS_IOS
     OpenUrlInNativeWebView(url);
@@ -182,10 +216,9 @@ bool Launcher::openUrl(const QUrl& url) {
 #else
     QUrl source("qrc:/qml/webview_native.qml");
 #endif
-
- 
-
-
+#ifdef Q_OS_ANDROID
+    qDebug() << url.toString(QUrl::None);
+#endif
     auto e = new QQmlApplicationEngine(qobject_cast<QObject*>(this));
     disconnect(e, &QQmlApplicationEngine::quit, nullptr, nullptr);
     e->rootContext()->setContextProperty("Utils", qobject_cast<QObject*>(this));
@@ -202,24 +235,24 @@ bool Launcher::openUrl(const QUrl& url) {
 }
 
 /* **************
-* it writes local application information to application settings 
-* for being available in next execution - 
-* the function must be called in the program exit and not all times  
+* it writes local application information to application settings
+* for being available in next execution -
+* the function must be called in the program exit and not all times
 ************** */
 void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
-    settings.setValue("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser) );
+    settings.setValue("mainwindowuseLocalBrowser2",QVariant(getUseLocalBrowser()) );
 
 }
 
 /* **************
-* it reads the application settings to set the application information 
+* it reads the application settings to set the application information
 * the function must be called after the program load a
 ************** */
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
-    useLocalBrowser = settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool();
+    setUseLocalBrowser(settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool());
 }
 
 
@@ -260,10 +293,12 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
         QFileInfo d(dirpath + "/" + it->second);
         if(d.exists()) {
             auto q = QUrl::fromLocalFile(d.absoluteFilePath());
+            qDebug() << QString("Web app %1 found in: %2 (%3)").arg(name, d.absoluteFilePath(), q.toString());
             return q;
         }
     }
-    return {};
+    qDebug() << QString("Web app %1 not found!").arg(name);
+    return QUrl();
 }
 
 QByteArray Launcher::readFileContent(QString path) {
@@ -313,7 +348,7 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 Q_INVOKABLE void Launcher::applicationStateChanged(Qt::ApplicationState state) {
     static Qt::ApplicationState lastState = Qt::ApplicationActive;
 

@@ -31,6 +31,15 @@ variables:
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
+parameters:
+- name: 'architectures'
+  type: object
+  default: 
+  - armeabi-v7a
+  - arm64-v8a
+  - x86
+  - x86_64
+
 jobs:
 - job: 'BuildFlatpak'
   pool:
@@ -153,42 +162,109 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.exe'
-
-
-- job: 'BuildAndroid_armeabi'
+      
+- job: 'BuildAndroid'
   pool:
     vmImage: 'Ubuntu-18.04'
-  strategy:
-    matrix:
-      armeabi:
-        TARGET_ARCH: 'armeabi-v7a'
-      aarch64:
-        TARGET_ARCH: 'arm64-v8a'
-      x86_64:
-        TARGET_ARCH: 'x86_64'
+  # strategy:
+  #   matrix:
+  #     armeabi:
+  #       TARGET_ARCH: 'armeabi-v7a'
+  #     aarch64:
+  #       TARGET_ARCH: 'arm64-v8a'
+  #     x86_64:
+  #       TARGET_ARCH: 'x86_64'
+  variables:
+    - group: passport
+    - name: THYMIO_BUILD_API_LEVEL
+      value: '24'
+    - name: THYMIO_DEPLOYMENT_TARGET_API_LEVEL
+      value: '29'
+    - name: NDK_VERSION
+      value: '21'
+    - name: QT_VERSION
+      value: '5.15.2'
+    - name: CMAKE_VERSION
+      value: '3.19.7'
+    - name: BUILD_MULTI_DIR
+    - name: DEV_ENVIRONMENT_TAG
+      value: "android$(THYMIO_BUILD_API_LEVEL)and$(THYMIO_DEPLOYMENT_TARGET_API_LEVEL)-ndk$(NDK_VERSION)-qt$(QT_VERSION)-cmake$(CMAKE_VERSION)"
   steps:
+  - task: DownloadSecureFile@1
+    name: keystore
+    displayName: 'Download android keystore'
+    inputs:
+      secureFile: 'thymio_suite_mobile.p12'
+
   - script: |
-      docker pull mobsya/android-dev-env:$TARGET_ARCH
+      mv $(keystore.secureFilePath) .
+    displayName: 'Move secure file'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
   - script: |
-      wget -q $(blockly_url) && tar xzf thymio-blockly.tar.gz -C .
-      wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
-      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
-    displayName: 'Extract scratch, blockly and vpl3'
+      docker pull mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG}
+    displayName: 'Pull docker image'
 
   - script: |
       git submodule update --init --recursive
     displayName: 'Clone submodules'
+    
+  - script: |
+      wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
+      wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
+    displayName: 'Fetch VPL3 & Scratch'
 
   - script: |
-      sudo docker run --rm -e TARGET_ARCH=${TARGET_ARCH} -v $(pwd):/src:rw -v $(Build.ArtifactStagingDirectory):/build:rw mobsya/android-dev-env:$TARGET_ARCH /bin/bash -c 'cd /src && mkdir build && cd build && export CMAKE_PREFIX_PATH="/Qt/android_${TARGET_ARCH}" && cmake -DANDROID_PLATFORM=android-22 -DANDROID_ABI=${TARGET_ARCH}  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/Qt/android_${TARGET_ARCH} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ../ -GNinja && ninja && cp bin/*.apk /build/thymio-suite-${TARGET_ARCH}.apk'
-    displayName: 'Build Thymio Suite'
+      BUILD_MULTI_DIR=$(pwd)/build/Release/multi/android-${THYMIO_BUILD_API_LEVEL}
+      mkdir -p ${BUILD_MULTI_DIR}/android-build/assets ${BUILD_MULTI_DIR}/android-build/libs ${BUILD_MULTI_DIR}/aseba
+      cp -R $(pwd)/vpl3-thymio-suite $(pwd)/scratch ${BUILD_MULTI_DIR}/android-build/assets
+    displayName: 'Prepare CI environment'
+
+  - ${{ each arch in parameters.architectures}}:
+    - script: |
+        build_multi=$(pwd)/build/Release/multi/android-${THYMIO_BUILD_API_LEVEL}
+        build_dir=$(pwd)/build/Release/${{ arch }}/android-${THYMIO_BUILD_API_LEVEL}
+        mkdir -p ${build_dir}
+        docker run --rm \
+            -v $(pwd):/src:rw \
+            -v ${build_dir}:/build:rw \
+            mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
+            "cmake -DANDROID_PLATFORM=android-${THYMIO_BUILD_API_LEVEL} -DANDROID_ABI=${{ arch }} -DCMAKE_TOOLCHAIN_FILE=/android/ndk/android-ndk-r$NDK_VERSION/build/cmake/android.toolchain.cmake -DCMAKE_FIND_ROOT_PATH=/qt -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -GNinja -S /src -B /build && cd /build && ninja -j $(nproc)"
+
+        sudo cp -r ${build_dir}/android-build/* ${build_multi}/android-build/
+        sudo cp -r ${build_dir}/aseba/* ${build_multi}/aseba/
+      displayName: 'Build ${{ arch }}'
+
+  - script: |
+      build_multi=$(pwd)/build/Release/multi/android-${THYMIO_BUILD_API_LEVEL}
+      android_target_platform="--android-platform android-${THYMIO_DEPLOYMENT_TARGET_API_LEVEL}"
+      build_type_option="--release"
+      sign_options="--sign thymio_suite_mobile.p12 thymio_suite_mobile --storepass $(keystore_pass)"
+      sudo cp ${build_multi}/aseba/launcher/src/AndroidManifest.xml ${build_multi}/android-build/
+      sudo cp $(pwd)/android/qt-android-cmake/build.gradle.in ${build_multi}/android-build/build.gradle
+      sed -i "s/@ANDROID_PLATFORM_LEVEL@/${THYMIO_DEPLOYMENT_TARGET_API_LEVEL}/" ${build_multi}/android-build/build.gradle
+      docker run --rm \
+        -v $(pwd):/src:ro \
+        -v ${build_multi}:/build:rw \
+        -e ANDROID_TARGET_SDK_VERSION=${THYMIO_DEPLOYMENT_TARGET_API_LEVEL} \
+        mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
+        "jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json > /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --verbose --gradle --aab ${build_type_option} ${android_target_platform} ${sign_options}"
+      
+      sudo cp -r ${build_multi}/android-build/build/outputs/bundle/release ${build_multi}/android-build/build/outputs/apk/release $(Build.ArtifactStagingDirectory)
+    displayName: 'Package app'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - script: |
+      curl -sL https://firebase.tools | bash
+      firebase appdistribution:distribute $(Build.ArtifactStagingDirectory)/release/android-build-release-signed.apk --app 1:1076253646123:android:91d4d8e3a0ef626bb5396e --token $(FIREBASE_TOKEN) --release-notes "Build $(Build.BuildNumber) Version $(packet_version) of Thymio Suite"
+    displayName: 'Deploy to firebase'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite-android'
-
-
+      
 - job: BuildOnOsX
   pool:
     vmImage: 'macOS-10.14'
@@ -209,23 +285,24 @@ jobs:
     displayName: 'Extract scratch, blockly and vpl3' 
 
   - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.13.2-mac.7z --output mac.7z
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-mac.7z --output mac.7z
       7z x mac.7z
-    displayName: 'Setting Qt version to 5.13.2'
+    displayName: 'Setting Qt version to 5.15.2'
     
   #workaround until devops deploy
   - script: |
-      brew uninstall openssl@1.0.2t
-      brew untap local/openssl
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
     
   - script: |
-      brew tap mobsya/brewqt https://github.com/mobsya/brewqt
-      brew extract --version=1.0.2t openssl mobsya/brewqt
-      brew install mobsya/brewqt/openssl@1.0.2t
-      brew info openssl
-    displayName: 'Setting openssl version to 1.0.0'
+      curl -sL  http://www.openssl.org/source/openssl-1.0.2t.tar.gz | tar xzf - -C .
+      cd openssl-1.0.2t
+      perl ./Configure --prefix=/usr/local/Cellar/openssl@1.0.2t/1.0.2t --openssldir=/usr/local/etc/openssl no-ssl2 no-ssl3 no-zlib shared enable-cms darwin64-x86_64-cc enable-ec_nistp_64_gcc_128
+      make depend
+      make
+      make test
+      make install MANDIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/share/man MANSUFFIX=ssl
+    displayName: 'Setting openssl version to 1.0.2'
     
   - script: |
       git submodule update --init --recursive
@@ -233,16 +310,16 @@ jobs:
     
   - script: |
       sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
-      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.13.2/clang_64/" && ninja)
+      (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_LIBRARIES=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/lib -DOPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/include -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DQt5Core_DIR="`pwd`/../Qt/5.15.2/clang_64/lib/cmake/Qt5Core" -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/clang_64/" && ninja)
     displayName: 'Build with cmake'
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-12-15.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-15.dmg build/bin '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
     displayName: 'Signing and create dmg'
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - script: |
-      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-12-15.dmg build/bin
+      osx/createbundle.sh $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version)-OsX-13-15.dmg build/bin
     displayName: 'Create Unsigned DMG'
     condition: eq(variables['Build.Reason'], 'PullRequest')
 
@@ -253,7 +330,7 @@ jobs:
 
 - job: BuildForIOs
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-10.15'
   steps:
   - task: NodeTool@0
     inputs:
@@ -279,8 +356,6 @@ jobs:
     #we need 7z to extract qt so brew needs to run first
     #workaround until devops deploy
   - script: |
-      brew uninstall openssl@1.0.2t
-      brew untap local/openssl
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
 
@@ -294,14 +369,14 @@ jobs:
     displayName: 'Clone submodules'
 
   - script: |
-      sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_12.1.1.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
-      cmake ../../third_party/flatbuffers -GXcode
+      cmake ../../third_party/flatbuffers -G Xcode -T buildsystem=1
       cmake --build . --config Release --target flatc
       export FLATC=`pwd`/Release/flatc
       cd ..
-      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/ios/" -G Xcode -DIOS_ARCHIVE_BUILD=1 ..
+      cmake -DIOS_ARCH="arm64" -DENABLE_BITCODE=NO -DIOS_DEPLOYMENT_TARGET=11.0 -DCMAKE_TOOLCHAIN_FILE=../ios/ios-cmake/ios.toolchain.cmake -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/ios/" -G Xcode -T buildsystem=1 -DIOS_ARCHIVE_BUILD=1 ..
     displayName: 'CONFIGURE with cmake'
 
   - script: |

@@ -21,6 +21,7 @@ public:
     bool isPlaygroundAvailable() const;
     Q_INVOKABLE bool platformIsOsX() const;
     Q_INVOKABLE bool platformIsIos() const;
+    Q_INVOKABLE bool platformIsAndroid() const;
     Q_INVOKABLE bool platformIsLinux() const;
     Q_INVOKABLE bool platformHasSerialPorts() const;
     Q_INVOKABLE void setUseLocalBrowser(bool checked);
@@ -40,6 +41,7 @@ public:
 
     Q_INVOKABLE QString search_program(const QString& name) const;
     Q_INVOKABLE QUrl webapp_base_url(const QString& name) const;
+	bool openUrlWithExternal(const QUrl& url) const;
     Q_INVOKABLE bool openUrl(const QUrl& url);
     Q_INVOKABLE bool launch_process(const QString& program, const QStringList& args = {}) const;
     Q_INVOKABLE QByteArray readFileContent(QString path);
@@ -49,7 +51,7 @@ public:
 #ifdef Q_OS_OSX
     bool doLaunchPlaygroundBundle() const;
 #endif
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     Q_INVOKABLE void applicationStateChanged(Qt::ApplicationState state);
 #endif
 
