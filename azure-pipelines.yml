@@ -15,11 +15,11 @@ trigger:
 variables:
 - group: passwords
 - name: blockly_version
-  value: "v20200506.1"
+  value: "v20210604.4"
 - name: scratch_version
-  value: "v20201116.1"
+  value: "v20210602.1"
 - name: packet_version
-  value: "2.1.5"
+  value: "2.2.0"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
@@ -30,6 +30,15 @@ variables:
   value: "cccef600decd1091a20a0b4d8a2e61f7041eb686"
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
+
+parameters:
+- name: 'architectures'
+  type: object
+  default: 
+  - armeabi-v7a
+  - arm64-v8a
+  - x86
+  - x86_64
 
 jobs:
 
@@ -42,16 +51,16 @@ jobs:
       x64:
         ARCH: 'x64'
         vcpkgTriplet: 'x64-windows-static'
-        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12.8-msvc-x64.7z"
-        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.8/msvc2017_64/
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-msvc-x64.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.15.2/msvc2019_64/
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A x64 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"
       x86:
         ARCH: 'x86'
         vcpkgTriplet: 'x86-windows-static'
-        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.12.8-msvc-x86.7z"
-        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.12.8/msvc2017
+        QT_URL: "https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-msvc-x86.7z"
+        CMAKE_PREFIX_PATH: $(Build.BinariesDirectory)/Qt/5.15.2/msvc2019
         cmake_generator: "Visual Studio 16 2019"
         ARCH_CMAKE: "-A Win32 -T version=14.25"
         VCINSTALLDIR: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC"

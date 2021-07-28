@@ -159,7 +159,7 @@ Item {
                         verticalAlignment: Image.AlignTop
                         horizontalAlignment: Image.AlignLeft
                         height: {
-                            return selection_view.width > selection_view.height ? Math.min(width * 0.5, parent.height* 0.5) : parent.height * 0.33
+                            return selection_view.width > selection_view.height ? Math.min(width * 0.66, parent.height* 0.5) : parent.height * 0.5
                         }
 
                         id: img_description
@@ -243,7 +243,7 @@ Item {
                 }
             }
             Item {
-                visible: Utils.isZeroconfRunning && Utils.platformIsIos() && device_view.count == 0
+                visible: Utils.isZeroconfRunning && (Utils.platformIsIos()||Utils.platformIsAndroid()) && device_view.count == 0
                 id: selection_warning
                 anchors.left: parent.left
                 anchors.right: parent.right

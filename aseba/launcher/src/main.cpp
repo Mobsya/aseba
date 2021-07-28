@@ -21,6 +21,68 @@
 #include "tdmsupervisor.h"
 #include "launcherwindow.h"
 
+
+#ifdef Q_OS_ANDROID
+static bool copyRecursively(const QString &srcFilePath,
+                            const QString &tgtFilePath)
+{
+    QFileInfo srcFileInfo(srcFilePath);
+    if (srcFileInfo.isDir()) {
+        QDir targetDir(tgtFilePath);
+        targetDir.cdUp();
+        if (!targetDir.mkpath(QFileInfo(tgtFilePath).fileName())) {
+            qDebug() << "Could not create folder:" << tgtFilePath;
+            return false;
+        }
+        QDir sourceDir(srcFilePath);
+        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+        foreach (const QString &fileName, fileNames) {
+            const QString newSrcFilePath
+                    = srcFilePath + QDir::separator() + fileName;
+            const QString newTgtFilePath
+                    = tgtFilePath + QDir::separator() + fileName;
+            if (!copyRecursively(newSrcFilePath, newTgtFilePath))
+                return false;
+        }
+    } else {
+        qDebug() << QString("Copying '%1' -> '%2'").arg(srcFilePath, tgtFilePath);
+        if (!QFile::copy(srcFilePath, tgtFilePath)) {
+            qDebug() << "Copy failed. Aborting.";
+            return false;
+        }
+    }
+    return true;
+}
+
+static void copyAndroidAssetsIntoAppDataIfRequired()
+{
+    // WebView cannot load local URLs (using 'file' protocol) if the files path start with 'assets:', and
+    // there is no other solution to access files in the 'assets' folder of the application's package
+    // than using the special 'assets:' prefix. As a workaround, we copy the files from the 'assets:' folder
+    // in to the apps' own data folder.
+
+    // List the web apps we need to deploy.
+    auto appNames = QStringList();
+    appNames.append("vpl3-thymio-suite");
+    appNames.append("scratch");
+
+    // Deploy each app's assets if not already done.
+    foreach (const QString& appName, appNames) {
+        // Get global app data dir location.
+        QDir appDataDir = QDir(QStandardPaths::standardLocations(QStandardPaths::StandardLocation::AppLocalDataLocation).at(0));
+
+        // Copy only if they have never been copied so far.
+        if(appDataDir.exists(appName)) {
+            qDebug() << QString("Assets for %1 already exist in '%2/%1'").arg(appName, appDataDir.path());
+        } else {
+            qDebug() << QString("Copying assets for %1 into '%2/%1'").arg(appName, appDataDir.path());
+            copyRecursively(QString("assets:/%1").arg(appName), appDataDir.filePath(appName));
+        }
+    }
+}
+
+#endif
+
 int main(int argc, char** argv) {
 
 #ifndef MOBSYA_USE_WEBENGINE
@@ -48,7 +110,9 @@ int main(int argc, char** argv) {
     QQmlDebuggingEnabler enabler;
 #endif
 
+#if not defined(Q_OS_ANDROID)
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif	
     // Ensure a single instance
     QtSingleApplication app(argc, argv);
 
@@ -56,6 +120,11 @@ int main(int argc, char** argv) {
         qWarning("Already launched, exiting");
         return 0;
     }
+
+#ifdef Q_OS_ANDROID
+    // Prepare web apps' assets for later use in WebView.
+    copyAndroidAssetsIntoAppDataIfRequired();
+#endif
 
 #ifndef MOBSYA_USE_WEBENGINE
     QtWebView::initialize();
@@ -105,10 +174,13 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("client", &client);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     w.setResizeMode(QQuickWidget::SizeRootObjectToView);    
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS)
     w.showFullScreen();
+#elif defined(Q_OS_ANDROID)
+	w.setMinimumSize(1024, 640);
+	w.show();
 #else
-    w.setMinimumSize(1024, 640);
+    w.setMinimumSize(1024, 640);//960,530 for testing Android
     w.showNormal();
 #endif
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, [&]() {
@@ -125,7 +197,7 @@ int main(int argc, char** argv) {
     app.setActivationWindow(&w, true);
     app.setQuitOnLastWindowClosed(false);
     
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     QObject::connect(&app, &QGuiApplication::applicationStateChanged, &launcher, &mobsya::Launcher::applicationStateChanged);
 #endif
     return app.exec();
