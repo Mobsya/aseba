@@ -30,7 +30,7 @@ public:
 
     void set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
     void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
-	void set_discovery();
+    void announce_on_zeroconf();
 
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
@@ -48,8 +48,8 @@ private:
     void save_group_affiliation(const aseba_node& node);
     void restore_group_affiliation(const aseba_node& node);
 
-    void update_discovery();
-    void on_update_discovery_complete(const boost::system::error_code&);
+    void do_announce_on_zeroconf();
+    void on_announce_complete(const boost::system::error_code&);
     aware::contact::property_map_type build_discovery_properties() const;
 
     node_map::const_iterator find(const std::shared_ptr<aseba_node>& node) const;
@@ -72,9 +72,6 @@ private:
     aware::contact m_nodes_service_desc;
     // Endpoint of the WebSocket - So we can expose the port on zeroconf
     boost::asio::ip::tcp::endpoint m_ws_endpoint;
-
-    bool m_updating_discovery = false;
-    bool m_discovery_needs_update = false;
 
     boost::signals2::signal<void(std::shared_ptr<aseba_node>, node_id, aseba_node::status)>
         m_node_status_changed_signal;
