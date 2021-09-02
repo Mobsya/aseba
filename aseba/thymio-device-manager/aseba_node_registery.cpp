@@ -16,8 +16,6 @@ aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_co
     , m_discovery_socket(static_cast<boost::asio::io_context&>(io_context))
     , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
-
-    //  update_discovery();
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
@@ -114,48 +112,43 @@ void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint&
     m_ws_endpoint = endpoint;
 }
 
-void aseba_node_registery::set_discovery() {
-    update_discovery();
+void aseba_node_registery::announce_on_zeroconf() {
+    // Make sure we have entered the event loop before announcing ourself
+    boost::asio::post(boost::asio::get_associated_executor(this),
+                      boost::bind(&aseba_node_registery::do_announce_on_zeroconf, this));
 }
 
-void aseba_node_registery::update_discovery() {
-
-    if(m_updating_discovery) {
-        m_discovery_needs_update = true;
-        return;
-    }
+void aseba_node_registery::do_announce_on_zeroconf() {
     m_nodes_service_desc.properties(build_discovery_properties());
-
-    m_discovery_needs_update = false;
-    m_updating_discovery = true;
     m_discovery_socket.async_announce(
         m_nodes_service_desc,
-        std::bind(&aseba_node_registery::on_update_discovery_complete, this, std::placeholders::_1));
+        std::bind(&aseba_node_registery::on_announce_complete, this, std::placeholders::_1));
 }
 
-void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
+void aseba_node_registery::on_announce_complete(const boost::system::error_code& ec) {
     if(ec) {
         mLogError("Discovery : {}", ec.message());
-		m_discovery_needs_update = true;
     } else {
         mLogTrace("Discovery : update complete");		
     }
-	m_updating_discovery = false;
-    if(m_discovery_needs_update) {
-        boost::asio::post(boost::asio::get_associated_executor(this),
-                          boost::bind(&aseba_node_registery::update_discovery, this));
-    }
+
+    // Refresh the zeroconf info every few seconds in case they get lost
+    // or corrupted.
+    auto timer = std::make_shared<boost::asio::deadline_timer>(get_io_context());
+    timer->expires_from_now(boost::posix_time::seconds(5));
+    auto cb = boost::asio::bind_executor(get_io_context().get_executor(), [timer, this](const boost::system::error_code& ec) {
+        do_announce_on_zeroconf();
+    });
+    timer->async_wait(std::move(cb));
 }
 
 
 aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
-    map["_ws-port"] = "8597"; //HACK adding some unused description to correct bug in avahi
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
     mLogTrace("=> WS port discovery on {}", map["ws-port"]);
-    map["_ws-port2"] = "8597"; //HACK adding some unused description to correct bug in avahi
     return map;
 }
 
