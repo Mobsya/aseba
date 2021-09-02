@@ -193,6 +193,45 @@ Rectangle {
                         horizontalAlignment: Text.AlignRight
                     }
                 }
+                CheckBox {
+                    id: automatic_local_connection
+                    text: qsTr("Automatic local connections")
+                    anchors.top:local_browser_checkbox.bottom
+                    anchors.right: local_browser_switch.right
+                    onClicked: {
+                        Utils.setAutomaticConnection(checked)
+                    }
+                    checked: Utils.getAutomaticConnection()
+                    indicator: Rectangle {
+                        implicitWidth: 18
+                        implicitHeight: 18
+                        y: parent.height / 2 - height / 2
+                        radius: 3
+                        anchors.right: automatic_local_connection_text.left
+                        border.color: automatic_local_connection.down ? "#276fa5" : "#389EEC"
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            x: 4
+                            y: 4
+                            radius: 2
+                            color: automatic_local_connection.down ? "#276fa5" : "#389EEC"
+                            visible: automatic_local_connection.checked
+                        }
+                    }
+                    contentItem: Text {
+                        id: automatic_local_connection_text
+                        text: automatic_local_connection.text
+                        width: contentWidth
+                        font: automatic_local_connection.font
+                        anchors.right: parent.right
+                        opacity: enabled ? 1.0 : 0.3
+                        color: automatic_local_connection.down ? "#ededed" : "#fff"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: 10
+                        horizontalAlignment: Text.AlignRight
+                    }
+                }
             }
         }
 

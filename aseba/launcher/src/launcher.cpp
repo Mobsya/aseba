@@ -35,6 +35,9 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
 #ifdef Q_OS_ANDROID
     setUseLocalBrowser(true);
 #endif
+
+    setAutomaticConnection(true);
+
     readSettings();
 }
 
@@ -243,7 +246,7 @@ void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
     settings.setValue("mainwindowuseLocalBrowser2",QVariant(getUseLocalBrowser()) );
-
+    settings.setValue("mainwindowAutomaticConnection",QVariant(getAutomaticConnection()) );
 }
 
 /* **************
@@ -253,6 +256,7 @@ void Launcher::writeSettings(){
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
     setUseLocalBrowser(settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool());
+    setAutomaticConnection(settings.value("mainwindowAutomaticConnection",QVariant(useAutomaticConnection)).toBool());
 }
 
 
@@ -262,6 +266,14 @@ void Launcher::setUseLocalBrowser(bool checked){
 
 bool Launcher::getUseLocalBrowser(){
     return useLocalBrowser;
+}
+
+void Launcher::setAutomaticConnection(bool checked){
+    useAutomaticConnection = checked;
+}
+
+bool Launcher::getAutomaticConnection(){
+    return useAutomaticConnection;
 }
 
 QString Launcher::getDownloadPath(const QUrl& url) {
