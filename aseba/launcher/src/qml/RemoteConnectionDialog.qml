@@ -17,7 +17,10 @@ Dialog {
                 textFormat: TextEdit.RichText
                 readOnly: true
                 selectByMouse: true
-                text: qsTr("The address of this host is:<br/>  - ipv4: <b>%1</b><br/>  - ipv6: <b>%2</b>").arg(ip).arg(ipv6)
+                text: qsTr("The address of this host is:<br/>  - ipv4: <b>%1</b><br/>  - ipv6: <b>%2</b><br/>Password for remote connections: <b>%3</b>")
+                .arg(ip)
+                .arg(ipv6)
+                .arg(client.localEndpoint.password)
             }
 
             Item {
@@ -88,7 +91,7 @@ Dialog {
 
     function showErrorMessage(text) {
         message.visible = true
-        message.text = qsTr("Error: %1 - Please veryfy the address, port and password of the server")
+        message.text = qsTr("Error: %1 - Please verify the address, port and password of the server")
                       .arg(text)
         message.color = "red"
     }
