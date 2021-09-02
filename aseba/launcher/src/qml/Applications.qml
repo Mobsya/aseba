@@ -10,8 +10,12 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        const url = "%1/thymio_blockly.%2.html#device=%3&ws=%4"
-            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/thymio_blockly.%2.html#device=%3&ws=%4&pass=%5"
+            .arg(baseurl)
+            .arg(language)
+            .arg(device.id)
+            .arg(device.websocketEndpoint())
+            .arg(device.password())
         return Utils.openUrl(url)
     }
 
@@ -20,30 +24,38 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        const url = "%1/index.html?device=%2&ws=%3"
-            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/index.html?device=%2&ws=%3&pass=%4"
+            .arg(baseurl).arg(device.id).arg(device.websocketEndpoint()).arg(device.password())
         return Utils.openUrl(url)
     }
 
     function launch_studio(device) {
         if(Utils.platformIsOsX()) {
-            Utils.launchOsXBundle("AsebaStudio", {"uuid" : device.id})
+            Utils.launchOsXBundle("AsebaStudio", {"uuid" : device.id,
+                                      "endpoint" : device.tcpEndpoint(),
+                                      "password" : device.password()})
         } else {
             var program = Utils.search_program("asebastudio")
             if(!program)
                 return false;
-            return Utils.launch_process(program, ["--uuid", device.id, "--endpoint", device.tcpEndpoint()])
+            return Utils.launch_process(program, ["--uuid", device.id,
+                                                  "--endpoint", device.tcpEndpoint(),
+                                                  "--password", device.password()])
         }
     }
 
     function launch_vplClassic(device) {
         if(Utils.platformIsOsX()) {
-            Utils.launchOsXBundle("ThymioVPLClassic", {"uuid" : device.id})
+            Utils.launchOsXBundle("ThymioVPLClassic", {"uuid" : device.id,
+                                                       "endpoint" : device.tcpEndpoint(),
+                                                       "password" : device.password()})
         } else {
             var program = Utils.search_program("thymiovplclassic")
             if(!program)
                 return false;
-            return Utils.launch_process(program, ["--uuid", device.id, "--endpoint", device.tcpEndpoint()])
+            return Utils.launch_process(program, ["--uuid", device.id,
+                                                  "--endpoint", device.tcpEndpoint(),
+                                                  "--password", device.password()])
         }
     }
 
@@ -54,8 +66,12 @@ ListModel {
             return false;
         }
         
-        const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4"
-            .arg(baseurl).arg(language).arg(device.id).arg(device.websocketEndpoint())
+        const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4&pass=%5"
+            .arg(baseurl)
+            .arg(language)
+            .arg(device.id)
+            .arg(device.websocketEndpoint())
+            .arg(device.password())
         return Utils.openUrl(url)
     }
 

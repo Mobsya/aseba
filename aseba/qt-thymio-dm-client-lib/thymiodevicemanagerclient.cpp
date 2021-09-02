@@ -85,6 +85,9 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     const auto properties = service.txt();
     uint16_t port = properties.value("ws-port", 0).toUInt();
     endpoint->setWebSocketMatchingPort(port);
+
+    QByteArray password = properties.value("password");
+    endpoint->setPassword(password);
 }
 
 void ThymioDeviceManagerClient::onNodeAdded(std::shared_ptr<ThymioNode> node) {

@@ -59,7 +59,7 @@ private:
 
     void do_announce_on_zeroconf();
     void on_announce_complete(const boost::system::error_code&);
-    aware::contact::property_map_type build_discovery_properties() const;
+    aware::contact::property_map_type build_discovery_properties();
 
     node_map::const_iterator find(const std::shared_ptr<aseba_node>& node) const;
     node_map::const_iterator find_from_native_id(aseba_node::node_id_t id) const;

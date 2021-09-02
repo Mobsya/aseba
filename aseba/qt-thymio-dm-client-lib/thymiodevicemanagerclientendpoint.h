@@ -15,6 +15,7 @@ class ThymioDeviceManagerClientEndpoint : public QObject,
                                           public std::enable_shared_from_this<ThymioDeviceManagerClientEndpoint> {
     Q_OBJECT
     Q_PROPERTY(QString hostName READ hostName CONSTANT)
+    Q_PROPERTY(QByteArray password READ password CONSTANT)
     Q_PROPERTY(bool isLocalhostPeer READ isLocalhostPeer CONSTANT)
     Q_PROPERTY(QUrl websocketConnectionUrl READ websocketConnectionUrl CONSTANT)
     Q_PROPERTY(Thymio2WirelessDonglesManager* donglesManager READ donglesManager CONSTANT)
@@ -36,7 +37,10 @@ public:
 
     QUrl websocketConnectionUrl() const;
     QUrl tcpConnectionUrl() const;
+    QByteArray password() const;
+
     void setWebSocketMatchingPort(quint16 port);
+    void setPassword(QByteArray password);
 
     bool isLocalhostPeer() const;
     Request requestDeviceManagerShutdown();
@@ -115,6 +119,7 @@ private:
     quint32 m_message_size;
     QUuid m_serverUUid;
     quint16 m_ws_port = 0;
+    QByteArray m_password;
     bool m_islocalhostPeer = false;
     QMap<detail::RequestDataBase::request_id, detail::RequestDataBase::shared_ptr> m_pending_requests;
     QString m_host_name;

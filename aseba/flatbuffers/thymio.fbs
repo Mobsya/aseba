@@ -38,6 +38,13 @@ table ConnectionHandshake {
 
     //In the server -> client direction, server guid
     uuid: NodeId;
+
+    // In the server -> client, the password that can be used to connect to the TDM
+    // This is only sent to local client.
+
+    // In the client->server direction, a password to identify the server
+    // This password is broadcasted over mDNS for lan-local clients
+    password: string;
 }
 
 // The server sends ping at short intervals

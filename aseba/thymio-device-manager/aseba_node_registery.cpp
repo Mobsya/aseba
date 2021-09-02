@@ -1,5 +1,6 @@
 #include "aseba_node_registery.h"
 #include "aseba_endpoint.h"
+#include "app_token_manager.h"
 #include "log.h"
 #include "uuid_provider.h"
 #include <aware/aware.hpp>
@@ -143,12 +144,17 @@ void aseba_node_registery::on_announce_complete(const boost::system::error_code&
 }
 
 
-aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
+aware::contact::property_map_type aseba_node_registery::build_discovery_properties() {
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
     mLogTrace("=> WS port discovery on {}", map["ws-port"]);
+
+    // Advertise the password on the local network.
+    // This solution is more reliable that trying to filter out IPs using masks
+    auto& token_manager = boost::asio::use_service<app_token_manager>(get_io_context());
+    map["password"] = token_manager.password();
     return map;
 }
 

@@ -59,6 +59,14 @@ Dialog {
                     placeholderText: qsTr("Port")
                     id: portInput
                 }
+
+                TextField  {
+                    validator: RegExpValidator {  regExp: /[0-9A-Z]{6}/ }
+                    maximumLength: 6
+                    placeholderText: qsTr("Password")
+                    id: passwordInput
+                }
+
                 Button {
                     Layout.minimumWidth: 80
                     Layout.fillWidth: true
@@ -80,7 +88,8 @@ Dialog {
 
     function showErrorMessage(text) {
         message.visible = true
-        message.text = qsTr("Error: ")  + text
+        message.text = qsTr("Error: %1 - Please veryfy the address, port and password of the server")
+                      .arg(text)
         message.color = "red"
     }
 
@@ -93,7 +102,8 @@ Dialog {
     function connect() {
         var host = hostInput.text
         var port = parseInt(portInput.text)
-        var monitor = Utils.connectToServer(host, port)
+        var password = passwordInput.text
+        var monitor = Utils.connectToServer(host, port, password)
         monitor.error.connect(function(msg) {
             showErrorMessage(msg)
             button.enabled = true

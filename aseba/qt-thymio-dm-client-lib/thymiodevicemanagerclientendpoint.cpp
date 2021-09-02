@@ -65,6 +65,14 @@ void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {
     m_ws_port = port;
 }
 
+QByteArray ThymioDeviceManagerClientEndpoint::password() const {
+    return m_password;
+}
+
+void ThymioDeviceManagerClientEndpoint::setPassword(QByteArray password) {
+    m_password = password;
+}
+
 QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     QUrl u;
     if(!m_ws_port)
@@ -459,10 +467,16 @@ Request ThymioDeviceManagerClientEndpoint::requestDeviceManagerShutdown() {
 }
 
 void ThymioDeviceManagerClientEndpoint::onConnected() {
+
+    flatbuffers::Offset<flatbuffers::String> passwordOffset;
     flatbuffers::FlatBufferBuilder builder;
+    if(!m_password.isEmpty())
+        passwordOffset = qfb::add_string(builder, m_password);
+
     fb::ConnectionHandshakeBuilder hsb(builder);
     hsb.add_protocolVersion(protocolVersion);
     hsb.add_minProtocolVersion(minProtocolVersion);
+    hsb.add_password(passwordOffset);
     write(wrap_fb(builder, hsb.Finish()));
 }
 

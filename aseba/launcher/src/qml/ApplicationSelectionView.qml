@@ -101,7 +101,11 @@ Item {
 
     Text {
         id: version
-        text: qsTr("<a href=\"https://thymio.org\">Thymio Suite</a> - %1").arg(Qt.application.version)
+        text: qsTr("<a href=\"https://thymio.org\">Thymio Suite</a> - %1 %2")
+             .arg(Qt.application.version)
+             .arg(client.localEndpoint && client.localEndpoint.password?
+              qsTr("<br/> Local endpoint connected (password for remote connections: <b>%1</b>)")
+             .arg(client.localEndpoint.password) : "")
         onLinkActivated: Qt.openUrlExternally(link)
         font.family: "Roboto Light"
         anchors.bottom: parent.bottom

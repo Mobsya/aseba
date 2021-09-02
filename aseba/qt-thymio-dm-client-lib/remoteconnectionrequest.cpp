@@ -5,9 +5,10 @@
 
 namespace mobsya {
 
-RemoteConnectionRequest::RemoteConnectionRequest(ThymioDeviceManagerClient* client, const QString& host, quint16 port,
+RemoteConnectionRequest::RemoteConnectionRequest(ThymioDeviceManagerClient* client, const QString& host,
+                                                 quint16 port, QByteArray password,
                                                  QObject* parent)
-    : QObject(parent), m_client(client), m_host(host), m_port(port) {}
+    : QObject(parent), m_client(client), m_host(host), m_port(port), m_password(password) {}
 
 RemoteConnectionRequest::~RemoteConnectionRequest() {
     qDebug() << "d";
@@ -22,6 +23,8 @@ void RemoteConnectionRequest::start() {
     m_endpoint = std::shared_ptr<ThymioDeviceManagerClientEndpoint>(
         new ThymioDeviceManagerClientEndpoint(socket, m_host),
         [](ThymioDeviceManagerClientEndpoint* ep) { ep->deleteLater(); });
+
+    m_endpoint->setPassword(m_password);
 
     qRegisterMetaType<QAbstractSocket::SocketState>();
     qRegisterMetaType<QAbstractSocket::SocketError>();

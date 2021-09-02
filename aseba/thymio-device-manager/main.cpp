@@ -61,7 +61,6 @@ void run_service(boost::asio::io_context& ctx) {
     // Create a server for websocket
     mobsya::application_server<mobsya::websocket_t> websocket_server(ctx, 8597);
 	node_registery.set_ws_endpoint(websocket_server.endpoint());
-    
 
 #ifdef MOBSYA_TDM_ENABLE_USB
     mobsya::usb_server usb_server(ctx, {mobsya::THYMIO2_DEVICE_ID, mobsya::THYMIO_WIRELESS_DEVICE_ID});
@@ -77,6 +76,8 @@ void run_service(boost::asio::io_context& ctx) {
 
     mLogTrace("=> TCP Server started on {}", tcp_server.endpoint().port());
     mLogTrace("=> WS Server started on {}", websocket_server.endpoint().port());
+    mLogInfo("Server Password: {}", token_manager.password());
+
 
     // Enable Bonjour/Zeroconf
     // Make sure this is done after the different servers are started and accept connections

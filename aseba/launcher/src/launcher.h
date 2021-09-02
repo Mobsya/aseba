@@ -50,7 +50,7 @@ public:
     Q_INVOKABLE QString getDownloadPath(const QUrl& url);
     Q_INVOKABLE bool launchPlayground() const;
 
-    Q_INVOKABLE RemoteConnectionRequest* connectToServer(const QString& host, quint16 port) const;
+    Q_INVOKABLE RemoteConnectionRequest* connectToServer(const QString& host, quint16 port, QByteArray password) const;
 
 
 #ifdef Q_OS_OSX

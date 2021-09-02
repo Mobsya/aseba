@@ -46,16 +46,18 @@ int main(int argc, char* argv[]) {
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
     QCoreApplication::setApplicationName("Thymio VPL");
 
-    const QString language(QLocale::system().name());
-
     QCommandLineParser parser;
     QCommandLineOption uuid(QStringLiteral("uuid"),
                             QStringLiteral("Uuid of the target to connect to - can be specified multiple times"),
                             QStringLiteral("uuid"));
     QCommandLineOption ep(QStringLiteral("endpoint"), QStringLiteral("Endpoint to connect to"),
                           QStringLiteral("endpoint"));
+    QCommandLineOption password(QStringLiteral("password"), QStringLiteral("Password associated with the endpoint"),
+                                QStringLiteral("password"));
+
     parser.addOption(uuid);
     parser.addOption(ep);
+    parser.addOption(password);
     parser.addHelpOption();
     parser.process(qApp->arguments());
 
@@ -91,7 +93,7 @@ int main(int argc, char* argv[]) {
         QUrl url(s);
         QString host = url.host();
         quint16 port = url.port();
-        auto c = new mobsya::RemoteConnectionRequest(&thymioClient, host, port, qApp);
+        auto c = new mobsya::RemoteConnectionRequest(&thymioClient, host, port, parser.value(password).toUtf8(), qApp);
         QObject::connect(c, &mobsya::RemoteConnectionRequest::done, &mobsya::RemoteConnectionRequest::deleteLater);
         QObject::connect(c, &mobsya::RemoteConnectionRequest::error, &mobsya::RemoteConnectionRequest::deleteLater);
         QTimer::singleShot(0, c, &mobsya::RemoteConnectionRequest::start);

@@ -994,24 +994,44 @@ private:
             mLogError("Client did not send a ConnectionHandshake message");
             return;
         }
+
         auto hs = msg.as<fb::ConnectionHandshake>();
+        auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
+
         if(hs->protocolVersion() < tdm::minProtocolVersion || tdm::protocolVersion < hs->minProtocolVersion()) {
             mLogError("Client protocol version ({}) is not compatible with this server({}+)", hs->protocolVersion(),
                       tdm::minProtocolVersion);
         } else {
             m_protocol_version = std::min(hs->protocolVersion(), tdm::protocolVersion);
             m_max_out_going_packet_size = hs->maxMessageSize();
-            auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
             // TODO ?
             if(hs->token())
                 token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
+
+            // Only check password for non-local clients
+            if(!m_local_endpoint) {
+                std::string_view password;
+                if(hs->password())
+                    password = hs->password()->c_str();
+
+                if(!token_manager.check_tdm_password(password)) {
+                    mLogError("Client password incorrect");
+                    // If the password is not correct, returming here will drop the connection
+                    return;
+                }
+            }
         }
         flatbuffers::FlatBufferBuilder builder;
         auto offset = node_id(registery().endpoint_uuid()).fb(builder);
+
+        // We always send the password to already connected clients
+        // as they have further use for it.
+        auto passwordOffset = builder.CreateString(token_manager.password());
+
         write_message(wrap_fb(builder,
                               fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version,
                                                             tdm::maxAppEndPointMessageSize, 0, m_local_endpoint,
-                                                            registery().ws_port(), offset)));
+                                                            registery().ws_port(), offset, passwordOffset)));
 
         // the client do not have a compatible protocol version, bailing out
         if(m_protocol_version == 0) {

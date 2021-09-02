@@ -915,6 +915,7 @@ class Client implements IClient {
     private _nodes:  Map<string, Node>;
     private _flex:   FlexBuffers;
     private _socket: WebSocket;
+    private _password: string;
 
     onNodesChanged: (nodes: Node[]) => void = undefined;
     onClose: (event: CloseEvent) => void = undefined;
@@ -923,10 +924,11 @@ class Client implements IClient {
      *  @param {external:String} url : Web socket address
      *  @see lock
      */
-    constructor(url: string) {
+    constructor(url: string, password: string) {
         //In progress requests (id : node)
         this._requests = new Map();
         //Known nodes (id : node)
+        this._password = password;
         this._nodes    = new Map();
         this._flex = new FlexBuffers();
         this._flex.onRuntimeInitialized = () => {
@@ -946,9 +948,11 @@ class Client implements IClient {
     private _onopen() {
         console.log("connected, sending protocol version")
         const builder = new flatbuffers.Builder();
+        const passwordOffset = builder.createString(this._password)
         mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
         mobsya.fb.ConnectionHandshake.addProtocolVersion(builder, PROTOCOL_VERSION)
         mobsya.fb.ConnectionHandshake.addMinProtocolVersion(builder, MIN_PROTOCOL_VERSION)
+        mobsya.fb.ConnectionHandshake.addPassword(builder, passwordOffset)
         this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
@@ -1421,6 +1425,6 @@ class Client implements IClient {
  * The server must be a Thymio Device Manger or a Thymio 3
  * Or otherwise implement the Thymio Device Manager protocol
  */
-export function createClient(url : string) : IClient {
-    return new Client(url)
+export function createClient(url : string, password : string = "") : IClient {
+    return new Client(url, password)
 }
