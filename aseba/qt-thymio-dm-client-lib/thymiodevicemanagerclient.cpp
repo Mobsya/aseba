@@ -3,6 +3,7 @@
 #include "qflatbuffers.h"
 #include <QDebug>
 #include <QTcpSocket>
+#include <aseba/qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 
 namespace mobsya {
 
@@ -38,6 +39,20 @@ bool ThymioDeviceManagerClient::hasEndpoint(QUuid uuid) const {
     return it->operator bool();
 }
 
+void ThymioDeviceManagerClient::connectToRemoteUrlEndpoint(QUrl endpoint, QByteArray password) {
+    QUrl url(endpoint);
+    QString host = url.host();
+    quint16 port = url.port();
+    connectToRemoteEndpoint(host, port, password);
+}
+
+void ThymioDeviceManagerClient::connectToRemoteEndpoint(QString host, quint16 port, QByteArray password) {
+    auto c = new mobsya::RemoteConnectionRequest(this, host, port, password, this);
+    QObject::connect(c, &mobsya::RemoteConnectionRequest::done, &mobsya::RemoteConnectionRequest::deleteLater);
+    QObject::connect(c, &mobsya::RemoteConnectionRequest::error, &mobsya::RemoteConnectionRequest::deleteLater);
+    QTimer::singleShot(0, c, &mobsya::RemoteConnectionRequest::start);
+}
+
 void ThymioDeviceManagerClient::doRegisterEndpoint(std::shared_ptr<ThymioDeviceManagerClientEndpoint>& endpoint) {
     connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
             &ThymioDeviceManagerClient::onEndpointDisconnected);
@@ -51,6 +66,7 @@ void ThymioDeviceManagerClient::doRegisterEndpoint(std::shared_ptr<ThymioDeviceM
     connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
             &ThymioDeviceManagerClient::onNodeRemoved);
 }
+
 bool ThymioDeviceManagerClient::registerEndpoint(QUuid id,
                                                  std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint) {
     if(hasEndpoint(id))

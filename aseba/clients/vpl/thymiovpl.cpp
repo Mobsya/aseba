@@ -30,7 +30,6 @@
 #include <QCommandLineParser>
 #include <QUuid>
 #include <aseba/common/consts.h>
-#include <qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 #include "ThymioVPLApplication.h"
 #include "UsageLogger.h"
 
@@ -86,22 +85,16 @@ int main(int argc, char* argv[]) {
     }
 
     mobsya::ThymioDeviceManagerClient thymioClient;
-
-
     QString s = parser.value(ep);
     if(!s.isEmpty()) {
-        QUrl url(s);
-        QString host = url.host();
-        quint16 port = url.port();
-        auto c = new mobsya::RemoteConnectionRequest(&thymioClient, host, port, parser.value(password).toUtf8(), qApp);
-        QObject::connect(c, &mobsya::RemoteConnectionRequest::done, &mobsya::RemoteConnectionRequest::deleteLater);
-        QObject::connect(c, &mobsya::RemoteConnectionRequest::error, &mobsya::RemoteConnectionRequest::deleteLater);
-        QTimer::singleShot(0, c, &mobsya::RemoteConnectionRequest::start);
+        thymioClient.connectToRemoteUrlEndpoint(s, parser.value("password").toUtf8());
     }
 
     Aseba::ThymioVPLApplication vpl(&thymioClient, id);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &vpl,
                      &Aseba::ThymioVPLApplication::connectToDevice);
+    QObject::connect(&app, &mobsya::MobsyaApplication::endpointConnectionRequest, &thymioClient,
+                     &mobsya::ThymioDeviceManagerClient::connectToRemoteUrlEndpoint);
     vpl.show();
     app.setOverrideCursor(Qt::ArrowCursor);
     return app.exec();

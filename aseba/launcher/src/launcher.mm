@@ -8,6 +8,8 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QUrl>
+#include <QUrlQuery>
 
 #ifdef Q_OS_IOS
 #include <WebKit/WebKit.h>
@@ -300,8 +302,12 @@ bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) c
 
     NSLog(@"Bundle url %@", url);
 
-    QUrl appUrl(QStringLiteral("mobsya:connect-to-device?uuid=%1")
-                .arg(args.value("uuid").toString()));
+    QUrl appUrl(QStringLiteral("mobsya:connect-to-device"));
+    QUrlQuery query;
+    for(auto it = args.begin(); it != args.end(); ++it) {
+        query.addQueryItem(it.key(), it->toString());
+    }
+    appUrl.setQuery(query);
 
 
     auto urls = @[appUrl.toNSURL()];

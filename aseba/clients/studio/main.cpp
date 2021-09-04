@@ -29,7 +29,6 @@
 #include "MobsyaApplication.h"
 #include "MainWindow.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
-#include <aseba/qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 #include <aseba/common/consts.h>
 
 
@@ -87,18 +86,14 @@ int main(int argc, char* argv[]) {
 
     QString s = parser.value(ep);
     if(!s.isEmpty()) {
-        QUrl url(s);
-        QString host = url.host();
-        quint16 port = url.port();
-        auto c = new mobsya::RemoteConnectionRequest(&thymioClient, host, port, parser.value(password).toUtf8(), qApp);
-        QObject::connect(c, &mobsya::RemoteConnectionRequest::done, &mobsya::RemoteConnectionRequest::deleteLater);
-        QObject::connect(c, &mobsya::RemoteConnectionRequest::error, &mobsya::RemoteConnectionRequest::deleteLater);
-        QTimer::singleShot(0, c, &mobsya::RemoteConnectionRequest::start);
+        thymioClient.connectToRemoteUrlEndpoint(s, parser.value("password").toUtf8());
     }
 
     Aseba::MainWindow window(thymioClient, targetUuids);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &window,
                      &Aseba::MainWindow::connectToDevice);
+    QObject::connect(&app, &mobsya::MobsyaApplication::endpointConnectionRequest, &thymioClient,
+                     &mobsya::ThymioDeviceManagerClient::connectToRemoteUrlEndpoint);
     window.show();
     return app.exec();
 }
