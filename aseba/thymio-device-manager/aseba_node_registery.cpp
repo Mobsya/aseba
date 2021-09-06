@@ -11,10 +11,20 @@
 
 namespace mobsya {
 
+static std::optional<aware::announce_socket> make_aware_announce_socket(boost::asio::execution_context& io_context)
+{
+    try {
+        return {static_cast<boost::asio::io_context&>(io_context)};
+    } catch(boost::system::system_error& e) {
+         mLogError("Unable to Start the discovy service {}", e.what());
+    }
+    return std::nullopt;
+}
+
 aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_context)
     : boost::asio::detail::service_base<aseba_node_registery>(static_cast<boost::asio::io_context&>(io_context))
     , m_service_uid(boost::asio::use_service<uuid_generator>(io_context).generate())
-    , m_discovery_socket(static_cast<boost::asio::io_context&>(io_context))
+    , m_discovery_socket(make_aware_announce_socket(io_context))
     , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
 }
@@ -120,8 +130,10 @@ void aseba_node_registery::announce_on_zeroconf() {
 }
 
 void aseba_node_registery::do_announce_on_zeroconf() {
+    if(!m_discovery_socket)
+        return;
     m_nodes_service_desc.properties(build_discovery_properties());
-    m_discovery_socket.async_announce(
+    m_discovery_socket->async_announce(
         m_nodes_service_desc,
         std::bind(&aseba_node_registery::on_announce_complete, this, std::placeholders::_1));
 }

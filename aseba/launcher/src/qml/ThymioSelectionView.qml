@@ -341,7 +341,7 @@ Item {
             }
             Text {
                 anchors.centerIn: parent
-                visible: !Utils.isZeroconfRunning
+                visible: !Utils.isZeroconfRunning && device_view.count == 0
                 id: zeoconfErrorMessage
                 text: {
                     if(Utils.platformIsLinux()) {

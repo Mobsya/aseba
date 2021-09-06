@@ -77,7 +77,7 @@ private:
     };
     std::map<node_id, last_known_node_group> m_ghost_groups;
 
-    aware::announce_socket m_discovery_socket;
+    std::optional<aware::announce_socket> m_discovery_socket;
     aware::contact m_nodes_service_desc;
     // Endpoint of the WebSocket - So we can expose the port on zeroconf
     boost::asio::ip::tcp::endpoint m_ws_endpoint;

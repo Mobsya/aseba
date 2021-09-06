@@ -11,15 +11,27 @@ static const std::map<std::string, aseba_endpoint::endpoint_type> endpoint_type_
     {"Thymio II", aseba_endpoint::endpoint_type::simulated_thymio},
     {"Dummy Node", aseba_endpoint::endpoint_type::simulated_dummy_node}};
 
+
+static std::optional<aware::monitor_socket> make_aware_monitor_service(boost::asio::execution_context& io_context)
+{
+    try {
+        return {static_cast<boost::asio::io_context&>(io_context)};
+    } catch(boost::system::system_error& e) {
+         mLogError("Unable to start the monotor service {}", e.what());
+    }
+    return std::nullopt;
+}
+
 aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::io_context& io_context)
     : boost::asio::detail::service_base<aseba_tcp_acceptor>(io_context)
     , m_iocontext(io_context)
     , m_stopped(false)
     , m_contact("aseba")
-    , m_monitor(m_monitor_ctx)
+    , m_monitor(make_aware_monitor_service(m_monitor_ctx))
     , m_active_timer(io_context) {
 
-    m_monitor_thread = std::thread(boost::bind(&aseba_tcp_acceptor::monitor, this));
+    if(m_monitor)
+        m_monitor_thread = std::thread(boost::bind(&aseba_tcp_acceptor::monitor, this));
 }
 
 aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::execution_context& io_context)
@@ -27,8 +39,10 @@ aseba_tcp_acceptor::aseba_tcp_acceptor(boost::asio::execution_context& io_contex
 
 aseba_tcp_acceptor::~aseba_tcp_acceptor() {
     m_stopped.store(true);
-    m_monitor_ctx.stop();
-    m_monitor_thread.join();
+    if(m_monitor) {
+        m_monitor_ctx.stop();
+        m_monitor_thread.join();
+    }
 }
 
 void aseba_tcp_acceptor::free_endpoint(const aseba_device* ep) {
@@ -41,12 +55,17 @@ void aseba_tcp_acceptor::free_endpoint(const aseba_device* ep) {
 }
 
 void aseba_tcp_acceptor::monitor() {
+    if(!m_monitor)
+        return;
+
     monitor_next();
     m_monitor_ctx.run();
 }
 
 void aseba_tcp_acceptor::monitor_next() {
-    m_monitor.async_listen(m_contact, [this](boost::system::error_code ec) {
+    if(!m_monitor)
+        return;
+    m_monitor->async_listen(m_contact, [this](boost::system::error_code ec) {
         if(ec) {
             mLogError("[tcp] Error {} - {}", ec.value(), ec.message());
             return;
