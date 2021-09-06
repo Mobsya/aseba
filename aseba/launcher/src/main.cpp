@@ -145,6 +145,15 @@ int main(int argc, char** argv) {
     mobsya::Launcher launcher(&client);
     mobsya::TDMSupervisor supervisor(launcher);
     supervisor.startLocalTDM();
+
+    // Try to connect to the local server directly in case ZeroConf does
+    // not work or is disabled
+    // This forces us to run the TDM on a fixed port
+    // We wait for the TDM to be started befor attempting a connection.
+    QObject::connect(&supervisor, &mobsya::TDMSupervisor::started, [&client] {
+        client.connectToRemoteEndpoint("localhost", 8596);
+    });
+
     mobsya::ThymioDevicesModel model(client);
 
     QApplication::setWindowIcon(QIcon(":/assets/thymio-launcher.ico"));

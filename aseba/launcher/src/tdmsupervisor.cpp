@@ -51,6 +51,7 @@ void TDMSupervisor::startLocalTDM() {
             }
             case QProcess::Running: {
                 qInfo("thymio-device-manager started");
+                Q_EMIT started();
                 break;
             }
         }

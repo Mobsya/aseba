@@ -19,6 +19,7 @@ Q_SIGNALS:
 
     void statusChanged();
     void error();
+    void started();
 
 private:
     const Launcher& m_launcher;

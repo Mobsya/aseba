@@ -48,7 +48,7 @@ public:
     void restartBrowser();
     bool isZeroconfBrowserConnected() const;
     void connectToRemoteUrlEndpoint(QUrl endpoint, QByteArray password);
-    void connectToRemoteEndpoint(QString host, quint16 port, QByteArray password);
+    void connectToRemoteEndpoint(QString host, quint16 port, QByteArray password = {});
 
     bool hasEndpoint(QUuid) const;
     bool registerEndpoint(QUuid, std::shared_ptr<ThymioDeviceManagerClientEndpoint>);
