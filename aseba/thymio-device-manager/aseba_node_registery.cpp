@@ -151,10 +151,12 @@ aware::contact::property_map_type aseba_node_registery::build_discovery_properti
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
     mLogTrace("=> WS port discovery on {}", map["ws-port"]);
 
-    // Advertise the password on the local network.
-    // This solution is more reliable that trying to filter out IPs using masks
-    auto& token_manager = boost::asio::use_service<app_token_manager>(get_io_context());
-    map["password"] = token_manager.password();
+    // We could sdvertise the password on the local network.
+    // But we prefer using ip filtering
+    // Leaving this for future reference
+    // The client code to support that is left intact
+    // auto& token_manager = boost::asio::use_service<app_token_manager>(get_io_context());
+    // map["password"] = token_manager.password();
     return map;
 }
 
