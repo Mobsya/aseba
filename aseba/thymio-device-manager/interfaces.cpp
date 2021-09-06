@@ -67,9 +67,9 @@ std::map<boost::asio::ip::address, boost::asio::ip::address> network_interfaces_
             if(!sockaddr)
                 continue;
             auto address = address_from_socket(sockaddr);
+            ULONG MaskSize = addr->OnLinkPrefixLength;
 
             if(address.is_v4()) {
-                ULONG MaskSize = addr->OnLinkPrefixLength;
                 ULONG maskInt;
                 ConvertLengthToIpv4Mask(MaskSize, &maskInt);
                 auto netmask = boost::asio::ip::make_address_v4(maskInt);

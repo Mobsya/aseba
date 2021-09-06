@@ -4,6 +4,7 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include <optional>
 #include <queue>
 #include <thread>
 #include <boost/asio/deadline_timer.hpp>

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <random>
 #include <chrono>
+#include <optional>
 #include <aware/aware.hpp>
 #include <boost/signals2.hpp>
 #include <range/v3/view/filter.hpp>
