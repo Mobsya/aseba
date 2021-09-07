@@ -341,11 +341,11 @@ Item {
             }
             Text {
                 anchors.centerIn: parent
-                visible: !Utils.isZeroconfRunning && device_view.count == 0
+                visible: !Utils.isZeroconfRunning && device_view.count == 0 && !client.localEndpoint
                 id: zeoconfErrorMessage
                 text: {
                     if(Utils.platformIsLinux()) {
-                        return qsTr("No robot found because the Avahi Daemon is missing or not running. <a href='http://google.com'>Troubleshooting</a>")
+                        return qsTr("No robot found because the Avahi Daemon is missing or not running. <a href='https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/'>Troubleshooting</a>")
                     }
                     return qsTr("No robot found because the Bonjour service is missing or not running. <a href='https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/'>Troubleshooting</a>")
                 }
