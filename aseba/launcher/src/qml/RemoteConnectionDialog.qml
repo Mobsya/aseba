@@ -4,8 +4,8 @@ import QtQuick.Controls 2.5
 import QtQuick.Controls.Styles 1.4
 
 Dialog {
-    property string ip   : "<??>"
-    property string ipv6 : "<??>"
+    property string ip   : ""
+    property string ipv6 : ""
     anchors.centerIn: parent
     visible: true
     title: qsTr("Connect to a remote server")
@@ -17,12 +17,30 @@ Dialog {
                 textFormat: TextEdit.RichText
                 readOnly: true
                 selectByMouse: true
-                text: qsTr("The address of this host is:<br/>  - ipv4: <b>%1</b><br/>  - ipv6: <b>%2</b><br/>Password for remote connections: <b>%3</b>")
-                .arg(ip)
-                .arg(ipv6)
-                .arg(client.localEndpoint.password)
-            }
+                text: {
+                    var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
+                    if(ip != "") {
+                        ipText = qsTr("The address of this host is:<br/>  - ipv4: <b>%1</b><br/>  - ipv6: <b>%2</b>")
+                                        .arg(ip)
+                                        .arg(ipv6)
+                    }
+                    var passwordText = "";
+                    if(client && client.localEndpoint && client.localEndpoint.password !== "")
+                        passwordText = qsTr("<br/>Password for remote connections: <b>%1</b>")
+                               .arg(client.localEndpoint.password)
 
+                    return qsTr("%1<br/>%2")
+                        .arg(ipText)
+                        .arg(passwordText)
+                }
+                onLinkActivated: Qt.openUrlExternally(link)
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
+
+            }
             Item {
                 height: 10
                 width: parent.width
@@ -41,7 +59,7 @@ Dialog {
             }
 
             Text {
-                text: qsTr("Input the address of a server to connect to<br/> <b> The connection will not be encrypted.<br/>Do not connect to host you don't trust !</b>")
+                text: qsTr("Input the address of a server to connect to<br/> <b> The connection will not be encrypted.<br/>Do not connect to hosts you don't trust !</b>")
             }
             Item {
                 height: 10
