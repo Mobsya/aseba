@@ -140,6 +140,7 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
             localPeerChanged();
             m_serverUUid = message->uuid ? qfb::uuid(message->uuid->id) : QUuid{};
             m_ws_port = message->ws_port;
+            m_password = QByteArray::fromStdString(message->password);
             handshakeCompleted(m_serverUUid);
             // TODO handle versionning, etc
             break;
