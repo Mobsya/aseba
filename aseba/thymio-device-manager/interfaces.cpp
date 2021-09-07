@@ -2,6 +2,7 @@
 #include <boost/predef.h>
 #include <bitset>
 #include <boost/multiprecision/integer.hpp>
+#include "log.h"
 
 #if BOOST_OS_WINDOWS
 #    include <iphlpapi.h>
@@ -120,7 +121,7 @@ std::map<boost::asio::ip::address, boost::asio::ip::address> network_interfaces_
             if(address.is_v6() && address.to_v6().is_v4_mapped() &&
                     mask.is_v6() && mask.to_v6().is_v4_mapped()) {
                 auto v4 = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, address.to_v6());
-                auto v4Mask = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, address.to_v6());
+                auto v4Mask = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, mask.to_v6());
                 addresses.emplace(v4, v4Mask);
             }
         }
@@ -136,7 +137,7 @@ bool endpoint_is_local(const boost::asio::ip::tcp::endpoint& ep) {
 }
 
 bool endpoint_is_network_local(const boost::asio::ip::tcp::endpoint& ep) {
-    return address_is_local(ep.address());
+    return address_is_network_local(ep.address());
 }
 
 bool address_is_local(const boost::asio::ip::address& addr) {
@@ -152,12 +153,19 @@ bool address_is_local(const boost::asio::ip::address& addr) {
 static bool check_mask(const boost::asio::ip::address_v4&  netip,
                        const boost::asio::ip::address_v4&  mask,
                        const boost::asio::ip::address_v4&  ip) {
+
+    mLogDebug("Checking v4: network {}, mask {}, remote {}",
+              netip.to_string(), mask.to_string(), ip.to_string());
+
     return ((netip.to_ulong() & mask.to_ulong()) == (ip.to_ulong() & mask.to_ulong()));
 }
 
 static bool check_mask(const boost::asio::ip::address_v6& netip,
                        const boost::asio::ip::address_v6&  mask,
                        const boost::asio::ip::address_v6&  ip) {
+
+    mLogDebug("Checking v6: network {}, mask {}, remote {}",
+              netip.to_string(), mask.to_string(), ip.to_string());
 
     using ipv6 = boost::multiprecision::uint128_t;
 
@@ -177,11 +185,21 @@ static bool check_mask(const boost::asio::ip::address_v6& netip,
 
 bool address_is_network_local(const boost::asio::ip::address &ip) {
     auto local_ips = mobsya::network_interfaces_addresses();
-    for(auto & [netip, mask] : local_ips) {
-        if(netip.is_v4() && ip.is_v4() && check_mask(netip.to_v4(), mask.to_v4(), ip.to_v4()))
-            return true;
-        if(netip.is_v6() && ip.is_v6() && check_mask(netip.to_v6(), mask.to_v6(), ip.to_v6()))
-            return true;
+
+    std::array<boost::asio::ip::address, 2> ips;
+    ips[0] = ip;
+
+    if(ip.is_v6() && ip.to_v6().is_v4_mapped()) {
+        ips[1] = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, ip.to_v6());
+    }
+
+    for(const auto & ip : ips) {
+        for(auto & [netip, mask] : local_ips) {
+            if(netip.is_v4() && ip.is_v4() && check_mask(netip.to_v4(), mask.to_v4(), ip.to_v4()))
+                return true;
+            if(netip.is_v6() && ip.is_v6() && check_mask(netip.to_v6(), mask.to_v6(), ip.to_v6()))
+                return true;
+        }
     }
     return false;
 }

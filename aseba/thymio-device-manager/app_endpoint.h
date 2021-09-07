@@ -1018,8 +1018,15 @@ private:
             // Ignore password checks for clients on the same network
             if(!(m_endpoint_type & uint32_t(EndPointType::NetworkLocal))) {
                 std::string_view password;
+
                 if(hs->password())
                     password = hs->password()->c_str();
+
+                else {
+                    mLogError("Missing password!!");
+                    // No password - maybe an incorrectly labeled LAN connection?
+                    return;
+                }
 
                 if(!token_manager.check_tdm_password(password)) {
                     mLogError("Client password incorrect");
