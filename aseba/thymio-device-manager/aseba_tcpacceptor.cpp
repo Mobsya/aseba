@@ -17,7 +17,7 @@ static std::optional<aware::monitor_socket> make_aware_monitor_service(boost::as
     try {
         return {static_cast<boost::asio::io_context&>(io_context)};
     } catch(boost::system::system_error& e) {
-         mLogError("Unable to start the monotor service {}", e.what());
+         mLogError("Unable to start the monitor service {}", e.what());
     }
     return std::nullopt;
 }

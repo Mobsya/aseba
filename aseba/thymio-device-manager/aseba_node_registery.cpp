@@ -16,7 +16,7 @@ static std::optional<aware::announce_socket> make_aware_announce_socket(boost::a
     try {
         return {static_cast<boost::asio::io_context&>(io_context)};
     } catch(boost::system::system_error& e) {
-         mLogError("Unable to Start the discovy service {}", e.what());
+         mLogError("Unable to start the discovy service {}", e.what());
     }
     return std::nullopt;
 }

@@ -25,10 +25,10 @@ public:
     Q_INVOKABLE bool platformIsAndroid() const;
     Q_INVOKABLE bool platformIsLinux() const;
     Q_INVOKABLE bool platformHasSerialPorts() const;
-    Q_INVOKABLE void setUseLocalBrowser(bool checked);
-    Q_INVOKABLE bool getUseLocalBrowser();
-    Q_INVOKABLE void setAutomaticConnection(bool checked);
-    Q_INVOKABLE bool getAutomaticConnection();
+    Q_INVOKABLE void setUseLocalBrowser(bool allow);
+    Q_INVOKABLE bool getUseLocalBrowser() const;
+    Q_INVOKABLE void setAllowRemoteConnections(bool allow);
+    Q_INVOKABLE bool getAllowRemoteConnections() const;
 
 
 #ifdef Q_OS_OSX
@@ -64,6 +64,8 @@ public:
 
     bool isZeroconfRunning() const;
 
+    ThymioDeviceManagerClient* client() const;
+
     /* *************
      * Launcher Application Settings -
      ************** */
@@ -72,13 +74,14 @@ public:
 
 Q_SIGNALS:
     void zeroconfStatusChanged() const;
+    void remoteConnectionsAllowedChanged() const;
 
 private:
     mobsya::ThymioDeviceManagerClient* m_client;
     QStringList applicationsSearchPaths() const;
     QStringList webappsFolderSearchPaths() const;
     bool useLocalBrowser;
-    bool useAutomaticConnection;
+    bool allowRemoteConnections;
 };
 
 

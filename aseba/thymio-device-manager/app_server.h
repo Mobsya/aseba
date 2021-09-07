@@ -32,7 +32,14 @@ public:
                      same_network ? "Local" : "Remote",
                      endpoint->tcp_socket().remote_endpoint().address().to_string(),
                      error.message());
-            if(!error) {
+
+            // Drop connections to non-locale machines unless the TDM
+            // was started with --allow-remote-connections
+            if(!same_machine && !m_allow_remote_connections) {
+                mLogWarn("Connection from {} dropped: remote connections not allowed",
+                         endpoint->tcp_socket().remote_endpoint().address().to_string());
+            }
+            else if(!error) {
                 if(same_machine)
                     endpoint->set_is_machine_local();
                 if(same_network)
@@ -43,9 +50,14 @@ public:
         });
     }
 
+    void allow_remote_connections(bool allow) {
+        m_allow_remote_connections = allow;
+    }
+
 private:
     boost::asio::io_context& m_io_context;
     tcp::acceptor m_acceptor;
+    bool m_allow_remote_connections = false;
 };
 
 extern template class application_server<websocket_t>;

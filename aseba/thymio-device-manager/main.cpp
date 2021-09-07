@@ -4,8 +4,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+#include <boost/program_options/cmdline.hpp>
 #include <errno.h>
 #include "log.h"
+#include <fmt/color.h>
 #include "interfaces.h"
 #include "aseba_node_registery.h"
 #include "app_server.h"
@@ -27,7 +29,11 @@
 
 static const auto lock_file_path = boost::filesystem::temp_directory_path() / "mobsya-tdm-0accdcbf-eeb2";
 
-void run_service(boost::asio::io_context& ctx) {
+struct options {
+    bool allow_remote_connections = false;
+};
+
+void run_service(boost::asio::io_context& ctx, const options& opts) {
 
     // Gather a list of local ips so that we can detect connections from
     // the same machine.
@@ -71,9 +77,16 @@ void run_service(boost::asio::io_context& ctx) {
     serial_server.accept();
 #endif
     aseba_tcp_acceptor.accept();
+
+    websocket_server.allow_remote_connections(opts.allow_remote_connections);
     websocket_server.accept();
+
+    tcp_server.allow_remote_connections(opts.allow_remote_connections);
     tcp_server.accept();
 
+    if(!opts.allow_remote_connections){
+        mLogWarn("Remote connections are not allowed");
+    }
     mLogTrace("=> TCP Server started on {}", tcp_server.endpoint().port());
     mLogTrace("=> WS Server started on {}", websocket_server.endpoint().port());
     mLogInfo("Server Password: {}", token_manager.password());
@@ -88,7 +101,7 @@ void run_service(boost::asio::io_context& ctx) {
 }
 
 
-int start() {
+int start(const options& opts) {
     mLogInfo("Starting...");
     boost::asio::io_context ctx;
     boost::asio::signal_set sig(ctx);
@@ -122,14 +135,41 @@ int start() {
         std::exit(0);
     });
 
-    run_service(ctx);
+    run_service(ctx, opts);
     return 0;
 }
 
-int main() {
+options parse_options(int argc, char** argv) {
+    options opts;
 
+    namespace po = boost::program_options;
+    po::options_description desc("Options");
+    desc.add_options()
+        ("help,h", "Show help")
+        ("allow-remote-connections", po::bool_switch(&opts.allow_remote_connections),
+         "Allow connections from other machines\n(on the local network and internet)")
+    ;
+    po::variables_map vm;
+    try{
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+    }
+    catch(po::error& e) {
+        fmt::print(fg(fmt::color::red), "invalid command line arguments: {}\n", e.what());
+        exit(1);
+    }
+
+    if (vm.count("help")) {
+        std::cout << desc << "\n";
+        exit(1);
+    }
+    return opts;
+}
+
+int main(int argc, char** argv) {
+    auto opts = parse_options(argc, argv);
     try {
-        return start();
+        return start(opts);
     } catch(boost::system::system_error& e) {
         mLogError("Exception thrown: {}", e.what());
         std::exit(e.code().value());
