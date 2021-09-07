@@ -26,9 +26,16 @@ static boost::asio::ip::address address_from_socket(sockaddr* sa) {
 
 static boost::asio::ip::address v6netmask_from_prefix(uint32_t length) {
     std::array<unsigned char, 16> netmask;
-    for (int32_t i = length, j = 0; i > 0; i -= 8, ++j)
+    for (int32_t i = length, j = 0; i > 0 && j <16; i -= 8, ++j)
       netmask[j] = i >= 8 ? 0xff : (uint32_t)(( 0xffU << ( 8 - i ) ) & 0xffU );
     return boost::asio::ip::address_v6(netmask);
+}
+
+static boost::asio::ip::address v4netmask_from_prefix(uint32_t length) {
+    uint32_t netmask = 0xFFFFFFFF;
+    length = 32 - length;
+    netmask = netmask << length;
+    return boost::asio::ip::address_v4(netmask);
 }
 
 #if BOOST_OS_WINDOWS
@@ -66,18 +73,17 @@ std::map<boost::asio::ip::address, boost::asio::ip::address> network_interfaces_
             auto sockaddr = addr->Address.lpSockaddr;
             if(!sockaddr)
                 continue;
-            auto address = address_from_socket(sockaddr);
+
             ULONG MaskSize = addr->OnLinkPrefixLength;
+            auto address = address_from_socket(sockaddr);
 
             if(address.is_v4()) {
-                ULONG maskInt;
-                ConvertLengthToIpv4Mask(MaskSize, &maskInt);
-                auto netmask = boost::asio::ip::make_address_v4(maskInt);
+                auto netmask = v4netmask_from_prefix(MaskSize);
                 addresses.emplace(address, netmask);
-
             }
+
             if(address.is_v6()) {
-                auto mask =  v6netmask_from_prefix(MaskSize).to_v6();
+                auto mask = v6netmask_from_prefix(MaskSize).to_v6();
                 addresses.emplace(address, mask);
                 if(address.to_v6().is_v4_mapped() && mask.is_v4_mapped()) {
                     auto v4 = boost::asio::ip::make_address_v4(boost::asio::ip::v4_mapped_t{}, address.to_v6());
