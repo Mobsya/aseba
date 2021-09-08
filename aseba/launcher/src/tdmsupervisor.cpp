@@ -82,7 +82,7 @@ void TDMSupervisor::startLocalTDM() {
     // The empty argument list QStringList{} is necessary to make sure Qt will not try
     // to split the path if it contains space
     QStringList args;
-    if(!m_launcher.getAllowRemoteConnections()) {
+    if(m_launcher.getAllowRemoteConnections()) {
         args.append("--allow-remote-connections");
     }
     m_tdm_process->setReadChannelMode(QProcess::ForwardedOutputChannel);
