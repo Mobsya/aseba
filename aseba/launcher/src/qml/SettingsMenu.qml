@@ -199,7 +199,6 @@ Rectangle {
                     anchors.top:local_browser_checkbox.bottom
                     anchors.right: local_browser_switch.right
                     onClicked: {
-                        console.log(checked)
                         Utils.setAllowRemoteConnections(checked)
                     }
                     checked: Utils.getAllowRemoteConnections()
@@ -264,4 +263,4 @@ Rectangle {
 
 
 
-        
+

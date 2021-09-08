@@ -29,8 +29,10 @@ TDMSupervisor::~TDMSupervisor() {}
 
 void TDMSupervisor::startLocalTDM() {
 #ifndef Q_OS_IOS
-    if(m_tdm_process != nullptr)
+    if(m_tdm_process != nullptr) {
         return;
+        m_restart = false;
+    }
 
     if(m_launches++ >= max_launch_count) {
         qCritical("thymio-device-manager Relaunched too many times");
@@ -97,16 +99,23 @@ void TDMSupervisor::restart() {
         return;
 
     m_restart = true;
+    m_launches = 0;
     if(m_tdm_process) {
-        m_launches = 0;
         if(m_launcher.client()) {
             m_launcher.client()->requestDeviceManagersShutdown();
+            QTimer::singleShot(500, [&] {
+                if(m_tdm_process)
+                    m_tdm_process->kill();
+                startLocalTDM();
+            });
             return;
         }
         m_tdm_process->kill();
         return;
     }
-    startLocalTDM();
+    QTimer::singleShot(100, [&] {
+        startLocalTDM();
+    });
  #endif
 }
 
