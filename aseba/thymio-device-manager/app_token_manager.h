@@ -35,10 +35,12 @@ private:
         std::string chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
         std::random_device r;
         std::mt19937 gen(r());
-        std::uniform_int_distribution<std::size_t> dist(0, chars.size());
+        std::uniform_int_distribution<std::size_t> dist(0, chars.size()-1);
         std::string out;
         for(int i = 0; i < 6; i++) {
-            out.push_back(chars[dist(gen)]);
+            auto n = dist(gen);
+            assert(n < chars.size());
+            out.push_back(chars[n]);
         }
         return out;
     }

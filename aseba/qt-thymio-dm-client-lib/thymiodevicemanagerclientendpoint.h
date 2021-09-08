@@ -15,7 +15,7 @@ class ThymioDeviceManagerClientEndpoint : public QObject,
                                           public std::enable_shared_from_this<ThymioDeviceManagerClientEndpoint> {
     Q_OBJECT
     Q_PROPERTY(QString hostName READ hostName CONSTANT)
-    Q_PROPERTY(QByteArray password READ password CONSTANT)
+    Q_PROPERTY(QByteArray password READ password NOTIFY passwordChanged)
     Q_PROPERTY(bool isLocalhostPeer READ isLocalhostPeer CONSTANT)
     Q_PROPERTY(QUrl websocketConnectionUrl READ websocketConnectionUrl CONSTANT)
     Q_PROPERTY(Thymio2WirelessDonglesManager* donglesManager READ donglesManager CONSTANT)
@@ -83,6 +83,7 @@ private Q_SLOTS:
     void write(const tagged_detached_flatbuffer& buffer);
 
 Q_SIGNALS:
+    void passwordChanged();
     void nodesChanged();
     void nodeAdded(std::shared_ptr<ThymioNode>);
     void nodeRemoved(std::shared_ptr<ThymioNode>);
