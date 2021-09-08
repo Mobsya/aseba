@@ -23,11 +23,6 @@ exec('npm pack', function callback(error, stdout, stderr){
 
     console.log(`${src} => ${dest}`)
 
-    fs.copyFileSync(`${src}`, `${dest}`, (err) => {
-        if (err) throw err;
-        console.log(`removing ${src}`)
-        fs.unlinkSync(file)
-        process.exit(0);
-    })
+    fs.copyFileSync(`${src}`, `${dest}`)
     process.exit(0);
 });
