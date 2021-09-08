@@ -272,7 +272,6 @@ void Launcher::setAllowRemoteConnections(bool allow){
     if(allow == allowRemoteConnections)
         return;
     allowRemoteConnections = allow;
-    qDebug() << QString("%1, %2").arg(allow).arg(allowRemoteConnections);
     Q_EMIT remoteConnectionsAllowedChanged();
 }
 

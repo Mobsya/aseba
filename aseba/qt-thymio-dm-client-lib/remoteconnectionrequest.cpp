@@ -11,7 +11,6 @@ RemoteConnectionRequest::RemoteConnectionRequest(ThymioDeviceManagerClient* clie
     : QObject(parent), m_client(client), m_host(host), m_port(port), m_password(password) {}
 
 RemoteConnectionRequest::~RemoteConnectionRequest() {
-    qDebug() << "d";
     if(m_req != -1)
         QHostInfo::abortHostLookup(m_req);
 }
@@ -49,7 +48,6 @@ void RemoteConnectionRequest::onConnected() {
 }
 
 void RemoteConnectionRequest::onHandshakeCompleted(QUuid id) {
-    qDebug() << "hs";
     if(m_client->registerEndpoint(id, m_endpoint)) {
         Q_EMIT done();
     } else {
