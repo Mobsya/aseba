@@ -138,7 +138,6 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
             auto message = msg.as<mobsya::fb::ConnectionHandshake>()->UnPack();
             m_islocalhostPeer = message->localhostPeer;
-            localPeerChanged();
             m_serverUUid = message->uuid ? qfb::uuid(message->uuid->id) : QUuid{};
             m_ws_port = message->ws_port;
             setPassword(QByteArray::fromStdString(message->password));

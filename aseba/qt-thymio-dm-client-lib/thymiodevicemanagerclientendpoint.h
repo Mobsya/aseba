@@ -91,7 +91,6 @@ Q_SIGNALS:
 
     void onMessage(const fb_message_ptr& msg) const;
     void disconnected();
-    void localPeerChanged();
     void handshakeCompleted(QUuid id);
 
 private:

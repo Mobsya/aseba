@@ -58,7 +58,6 @@ private Q_SLOTS:
     void onServiceRemoved(QZeroConfService);
     void onNodeAdded(std::shared_ptr<ThymioNode>);
     void onNodeRemoved(std::shared_ptr<ThymioNode>);
-    void onLocalPeerChanged();
 
 Q_SIGNALS:
     void nodeAdded(std::shared_ptr<ThymioNode>);
