@@ -590,7 +590,7 @@ export interface INode extends IBasicNode {
      *
      * @see [[lock]]
      */
-    sendAsebaProgram(code : string, dontLoadOnTarget) : Promise<any>;
+    sendAsebaProgram(code : string, dontLoadOnTarget: boolean) : Promise<any>;
 
     /** Run the code currently loaded on the vm
      * The device must be locked & ready before calling this function
@@ -764,7 +764,7 @@ export class Node extends BasicNode implements INode {
         return this.group.eventsDescriptions
     }
 
-    sendAsebaProgram(code : string, dontLoadOnTarget) {
+    sendAsebaProgram(code : string, dontLoadOnTarget: boolean = false) {
         return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba, dontLoadOnTarget);
     }
 
@@ -774,7 +774,7 @@ export class Node extends BasicNode implements INode {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
-    send_aesl_program(code, dontLoadOnTarget) {
+    send_aesl_program(code, dontLoadOnTarget: boolean = false) {
         return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl, dontLoadOnTarget);
     }
 
@@ -1122,7 +1122,7 @@ class Client implements IClient {
         return this._prepare_request(req_id)
     }
 
-    _send_program(id : NodeId, code : string, language : mobsya.fb.ProgrammingLanguage, dontLoadOnTarget) {
+    _send_program(id : NodeId, code : string, language : mobsya.fb.ProgrammingLanguage, dontLoadOnTarget: boolean = false) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const codeOffset = builder.createString(code)
