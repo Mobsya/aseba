@@ -1,6 +1,6 @@
 {
   "name": "@mobsya-association/thymio-api",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "A JS api to communicate with Thymio from node and browsers",
   "dependencies": {
     "@cor3ntin/flexbuffers-wasm": "0.0.18",
