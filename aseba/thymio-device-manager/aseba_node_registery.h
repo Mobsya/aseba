@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <random>
 #include <chrono>
+#include <optional>
 #include <aware/aware.hpp>
 #include <boost/signals2.hpp>
 #include <range/v3/view/filter.hpp>
@@ -32,6 +33,15 @@ public:
     void set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint);
     void announce_on_zeroconf();
 
+
+    uint16_t ws_port() const {
+        return m_ws_endpoint.port();
+    }
+    boost::uuids::uuid endpoint_uuid() const {
+        return m_service_uid;
+    }
+
+
     node_map nodes() const;
     std::shared_ptr<aseba_node> node_from_id(const node_id&) const;
 
@@ -50,7 +60,7 @@ private:
 
     void do_announce_on_zeroconf();
     void on_announce_complete(const boost::system::error_code&);
-    aware::contact::property_map_type build_discovery_properties() const;
+    aware::contact::property_map_type build_discovery_properties();
 
     node_map::const_iterator find(const std::shared_ptr<aseba_node>& node) const;
     node_map::const_iterator find_from_native_id(aseba_node::node_id_t id) const;
@@ -68,7 +78,7 @@ private:
     };
     std::map<node_id, last_known_node_group> m_ghost_groups;
 
-    aware::announce_socket m_discovery_socket;
+    std::optional<aware::announce_socket> m_discovery_socket;
     aware::contact m_nodes_service_desc;
     // Endpoint of the WebSocket - So we can expose the port on zeroconf
     boost::asio::ip::tcp::endpoint m_ws_endpoint;

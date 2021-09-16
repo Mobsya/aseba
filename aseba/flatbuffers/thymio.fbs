@@ -2,6 +2,11 @@
 
 namespace mobsya.fb;
 
+///A node id
+table NodeId {
+    id:[ubyte];
+}
+
 //Handshake messages
 //The client needs to initiate the session by sending a ConnectionHandshake.
 //If the client sends a message before a ConnectionHandshake, the server will
@@ -27,6 +32,19 @@ table ConnectionHandshake {
 
     //In the server -> client direction, this is set to true if the client is on the same machine as the server
     localhostPeer:bool = false;
+
+    //In the server -> client direction, associated websocket port
+    ws_port: uint16 = 0;
+
+    //In the server -> client direction, server guid
+    uuid: NodeId;
+
+    // In the server -> client, the password that can be used to connect to the TDM
+    // This is only sent to local client.
+
+    // In the client->server direction, a password to identify the server
+    // This password is broadcasted over mDNS for lan-local clients
+    password: string;
 }
 
 // The server sends ping at short intervals
@@ -36,11 +54,6 @@ table Ping {}
 //Stop the device manager
 table DeviceManagerShutdownRequest {
     request_id:uint;
-}
-
-///A node id
-table NodeId {
-   id:[ubyte];
 }
 
 /// The Type of a node

@@ -35,6 +35,19 @@ Rectangle {
        dialog.visible = true
     }
 
+
+    function remoteConnectionDialog() {
+        var component = Qt.createComponent("qrc:/qml/RemoteConnectionDialog.qml");
+        var dialog = component.createObject(launcher);
+
+       if (dialog === null) {
+           console.log("Error creating dialog");
+           return
+       }
+       dialog.visible = true
+    }
+
+
     function onMenuEntryClicked(action) {
         pane.visible = false
         if(action === "playground") {
@@ -48,6 +61,9 @@ Rectangle {
         }
         else if(action === "thymio2-valise-pairing") {
             thymio2PairingWizard(true)
+        }
+        else if(action === "remote") {
+            remoteConnectionDialog()
         }
     }
 
@@ -65,6 +81,7 @@ Rectangle {
             entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
             entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
         }
+        entries.append( { "name": qsTr("Connect to a remote host"), action: "remote"})
     }
 
     Item {
@@ -176,6 +193,45 @@ Rectangle {
                         horizontalAlignment: Text.AlignRight
                     }
                 }
+                CheckBox {
+                    id: remote_connections_checkbox
+                    text: qsTr("Allow connections from other computers")
+                    anchors.top:local_browser_checkbox.bottom
+                    anchors.right: local_browser_switch.right
+                    onClicked: {
+                        Utils.setAllowRemoteConnections(checked)
+                    }
+                    checked: Utils.getAllowRemoteConnections()
+                    indicator: Rectangle {
+                        implicitWidth: 18
+                        implicitHeight: 18
+                        y: parent.height / 2 - height / 2
+                        radius: 3
+                        anchors.right: remote_connections_checkbox_text.left
+                        border.color: remote_connections_checkbox.down ? "#276fa5" : "#389EEC"
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            x: 4
+                            y: 4
+                            radius: 2
+                            color: remote_connections_checkbox.down ? "#276fa5" : "#389EEC"
+                            visible: remote_connections_checkbox.checked
+                        }
+                    }
+                    contentItem: Text {
+                        id: remote_connections_checkbox_text
+                        text: remote_connections_checkbox.text
+                        width: contentWidth
+                        font: remote_connections_checkbox.font
+                        anchors.right: parent.right
+                        opacity: enabled ? 1.0 : 0.3
+                        color: remote_connections_checkbox.down ? "#ededed" : "#fff"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: 10
+                        horizontalAlignment: Text.AlignRight
+                    }
+                }
             }
         }
 
@@ -207,4 +263,4 @@ Rectangle {
 
 
 
-        
+

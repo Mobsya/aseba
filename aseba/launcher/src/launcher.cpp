@@ -35,6 +35,9 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
 #ifdef Q_OS_ANDROID
     setUseLocalBrowser(true);
 #endif
+
+    setAllowRemoteConnections(true);
+
     readSettings();
 }
 
@@ -243,7 +246,7 @@ void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
     settings.setValue("mainwindowuseLocalBrowser2",QVariant(getUseLocalBrowser()) );
-
+    settings.setValue("allowRemoteConnections",QVariant(getAllowRemoteConnections()) );
 }
 
 /* **************
@@ -253,6 +256,7 @@ void Launcher::writeSettings(){
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
     setUseLocalBrowser(settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool());
+    setAllowRemoteConnections(settings.value("allowRemoteConnections",QVariant(allowRemoteConnections)).toBool());
 }
 
 
@@ -260,8 +264,19 @@ void Launcher::setUseLocalBrowser(bool checked){
     useLocalBrowser = checked;
 }
 
-bool Launcher::getUseLocalBrowser(){
+bool Launcher::getUseLocalBrowser() const{
     return useLocalBrowser;
+}
+
+void Launcher::setAllowRemoteConnections(bool allow){
+    if(allow == allowRemoteConnections)
+        return;
+    allowRemoteConnections = allow;
+    Q_EMIT remoteConnectionsAllowedChanged();
+}
+
+bool Launcher::getAllowRemoteConnections() const{
+    return allowRemoteConnections;
 }
 
 QString Launcher::getDownloadPath(const QUrl& url) {
@@ -289,7 +304,7 @@ QUrl Launcher::webapp_base_url(const QString& name) const {
     auto it = default_folder_name.find(name);
     if(it == default_folder_name.end())
         return {};
-    for(auto dirpath : webappsFolderSearchPaths()) {
+    for(const auto & dirpath : webappsFolderSearchPaths()) {
         QFileInfo d(dirpath + "/" + it->second);
         if(d.exists()) {
             auto q = QUrl::fromLocalFile(d.absoluteFilePath());
@@ -348,6 +363,17 @@ Q_INVOKABLE QString Launcher::filenameForLocale(QString pattern) {
 bool Launcher::isZeroconfRunning() const {
     return m_client->isZeroconfBrowserConnected();
 }
+
+ThymioDeviceManagerClient* Launcher::client() const {
+    return m_client;
+}
+
+RemoteConnectionRequest* Launcher::connectToServer(const QString& host, quint16 port, QByteArray password) const {
+    auto c = new RemoteConnectionRequest(m_client, host, port, password);
+    QQmlEngine::setObjectOwnership(c, QQmlEngine::JavaScriptOwnership);
+    return c;
+}
+
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 Q_INVOKABLE void Launcher::applicationStateChanged(Qt::ApplicationState state) {
     static Qt::ApplicationState lastState = Qt::ApplicationActive;

@@ -43,16 +43,21 @@ public:
     auto nodes() const {
         return ranges::view::all(m_nodes);
     }
+
     void requestDeviceManagersShutdown();
     void restartBrowser();
     bool isZeroconfBrowserConnected() const;
+    void connectToRemoteUrlEndpoint(QUrl endpoint, QByteArray password);
+    void connectToRemoteEndpoint(QString host, quint16 port, QByteArray password = {});
+
+    bool hasEndpoint(QUuid) const;
+    bool registerEndpoint(QUuid, std::shared_ptr<ThymioDeviceManagerClientEndpoint>);
 
 private Q_SLOTS:
     void onServiceAdded(QZeroConfService);
     void onServiceRemoved(QZeroConfService);
     void onNodeAdded(std::shared_ptr<ThymioNode>);
     void onNodeRemoved(std::shared_ptr<ThymioNode>);
-    void onLocalPeerChanged();
 
 Q_SIGNALS:
     void nodeAdded(std::shared_ptr<ThymioNode>);
@@ -64,6 +69,8 @@ Q_SIGNALS:
 
 
 private:
+    void doRegisterEndpoint(std::shared_ptr<ThymioDeviceManagerClientEndpoint>& endpoint);
+
     friend class ThymioDevicesModel;
     void onEndpointDisconnected();
     ThymioDeviceManagerClientEndpoint* qml_localEndpoint() const;

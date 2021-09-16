@@ -25,6 +25,7 @@
 #include <QLibraryInfo>
 #include <QDebug>
 #include <QCommandLineParser>
+#include <QTimer>
 #include "MobsyaApplication.h"
 #include "MainWindow.h"
 #include <aseba/qt-thymio-dm-client-lib/thymiodevicemanagerclient.h>
@@ -63,7 +64,14 @@ int main(int argc, char* argv[]) {
     QCommandLineOption uuid(QStringLiteral("uuid"),
                             QStringLiteral("Uuid of the target to connect to - can be specified multiple times"),
                             QStringLiteral("uuid"));
+    QCommandLineOption ep(QStringLiteral("endpoint"), QStringLiteral("Endpoint to connect to"),
+                          QStringLiteral("endpoint"));
+
+    QCommandLineOption password(QStringLiteral("password"), QStringLiteral("Password associated with the endpoint"),
+                                QStringLiteral("password"));
     parser.addOption(uuid);
+    parser.addOption(ep);
+    parser.addOption(password);
     parser.addHelpOption();
     parser.process(qApp->arguments());
 
@@ -75,9 +83,17 @@ int main(int argc, char* argv[]) {
     }
 
     mobsya::ThymioDeviceManagerClient thymioClient;
+
+    QString s = parser.value(ep);
+    if(!s.isEmpty()) {
+        thymioClient.connectToRemoteUrlEndpoint(s, parser.value("password").toUtf8());
+    }
+
     Aseba::MainWindow window(thymioClient, targetUuids);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &window,
                      &Aseba::MainWindow::connectToDevice);
+    QObject::connect(&app, &mobsya::MobsyaApplication::endpointConnectionRequest, &thymioClient,
+                     &mobsya::ThymioDeviceManagerClient::connectToRemoteUrlEndpoint);
     window.show();
     return app.exec();
 }
