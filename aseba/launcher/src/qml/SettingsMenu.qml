@@ -159,6 +159,7 @@ Rectangle {
                     id: local_browser_checkbox
                     text: qsTr("Use your system default browser")
                     anchors.right: local_browser_switch.right
+                    visible: !Utils.platformIsIos()
                     onClicked: {
                         Utils.setUseLocalBrowser(checked )
                     }
@@ -198,6 +199,7 @@ Rectangle {
                     text: qsTr("Allow connections from other computers")
                     anchors.top:local_browser_checkbox.bottom
                     anchors.right: local_browser_switch.right
+                    visible: !(Utils.platformIsIos()||Utils.platformIsAndroid())
                     onClicked: {
                         Utils.setAllowRemoteConnections(checked)
                     }
