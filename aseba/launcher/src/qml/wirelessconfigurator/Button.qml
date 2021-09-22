@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle {
-    property alias text: text.text
+    property alias text: text1.text
     property alias enabled: mouse_area.enabled
     signal clicked
     height: 40
@@ -10,7 +10,7 @@ Rectangle {
     color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
     opacity: enabled ? 1 : 0.3
     Text {
-        id: text
+        id: text1
         font.family: "Roboto Bold"
         font.pointSize: 12
         color : "white"
