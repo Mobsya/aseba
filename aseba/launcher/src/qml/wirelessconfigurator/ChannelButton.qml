@@ -19,7 +19,6 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        // @disable-check M16
         cursorShape: Qt.PointingHandCursor
         onClicked: {
             parent.clicked()
