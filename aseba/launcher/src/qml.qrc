@@ -106,6 +106,7 @@
         <file>qml/wirelessconfigurator/ChannelSelector.qml</file>
         <file>qml/wirelessconfigurator/NetworkIdInput.qml</file>
         <file>qml/wirelessconfigurator/WirelessWizardWarningDialog.qml</file>
-        <file>qml/RemoteConnectionDialog.qml</file>
+        <file>qml/remoteconnection/RemoteConnectionDialog.qml</file>
+		<file>qml/remoteconnection/TitleBar.qml</file>
     </qresource>
 </RCC>
