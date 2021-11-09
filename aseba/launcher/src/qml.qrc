@@ -38,6 +38,7 @@
         <file>assets/battery_mid.svg</file>
         <file>assets/battery_low.svg</file>
         <file>assets/dummy_node.svg</file>
+		<file>assets/remote_access.svg</file>
         <file>qml/BatteryIndicator.qml</file>
         <file>assets/selected_thymio.svg</file>
         <file>assets/selected_simulated_thymio.svg</file>
