@@ -9,7 +9,6 @@ Rectangle {
     id: remoteConnection
     color: Style.mid
     anchors.fill: parent
-    property alias connectImageY: connectImage.y
 
     /*
       Put a mouse area over all the interface to prevent the
@@ -77,7 +76,7 @@ Rectangle {
         Image {
             anchors.top: connectIP.bottom
             width: parent.width
-            height: Math.min(parent.height-370,300)
+            height: Math.min(parent.height-370,400)
             id: connectImage
             verticalAlignment: Image.AlignTop
             source : "qrc:/assets/remote_access.svg"
@@ -105,43 +104,52 @@ Rectangle {
             wrapMode: Text.WordWrap
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("Input the address of a server to connect to<br/> <b> The connection will not be encrypted. Do not connect to hosts you don't trust !</b>")
+            text: qsTr("Input the address of a server to connect to<br/> The connection will not be encrypted. Do not connect to hosts you don't trust !")
         }
         RowLayout {
             id:connectInputs
+            width: inputzone.width
             anchors.top: connectText.bottom
             anchors.margins: 30
+            clip: false
             anchors.horizontalCenter:parent.horizontalCenter
-            spacing: 10
+            spacing: 15
             TextField  {
                 color: "white"
-                placeholderTextColor: "#9effffff"
+                width: connectInputs.width - passwordInput.width - portInput.width - 150
+                horizontalAlignment: Text.AlignLeft
+                font.weight: Font.Normal
                 Layout.fillWidth: true
-                Layout.preferredWidth: 250
-                Layout.minimumWidth: 220
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                placeholderTextColor: "#9effffff"
                 font.bold: true
                 font.family: "Roboto Bold"
-                font.pointSize: 16
+                font.pointSize: 15
                 background:Rectangle {
-                    width: hostInput.implicitWidth
-                    color: "#0a78eb"
-                    radius: 10
+                    width: hostInput.Width
+                    color: "#35216b"
+                    radius: 5
+                    border.width: 0
                 }
-                placeholderText: qsTr("Host Address           ")
+                placeholderText: qsTr("Host Address")
                 id: hostInput
             }
             TextField  {
                 color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.fillWidth: false
                 placeholderTextColor: "#9effffff"
                 font.capitalization: Font.AllUppercase
-                Layout.preferredWidth: 150
-                font.pointSize: 16
+                width: 150
+                font.pointSize: 15
                 font.bold: true
                 font.family: "Roboto Bold"
                 background:Rectangle {
-                    width: passwordInput.implicitWidth
-                    color: "#0a78eb"
-                    radius: 10
+                    width: passwordInput.Width
+                    color: "#35216b"
+                    radius: 5
+                    border.width: 0
                 }
                 validator: RegExpValidator {  regExp: /[0-9A-Z]{6}/ }
                 maximumLength: 6
@@ -152,18 +160,22 @@ Rectangle {
                 color: "white"
                 placeholderTextColor: "#9effffff"
                 font.capitalization: Font.AllUppercase
-                font.pointSize: 14
+                font.pointSize: 15
                 font.bold: true
                 font.family: "Roboto Bold"
-                Layout.preferredWidth: 100
+                width: 90
                 background:Rectangle {
-                    width: portInput.implicitWidth
-                    color: "#0a78eb"
-                    radius: 10
+                    width: portInput.Width
+                    color: "#35216b"
+                    radius: 5
+                    border.width: 0
                 }
                 validator: IntValidator { bottom: 1; top: 0xFFFF }
-                maximumLength: 6
-                text: "123456"
+                maximumLength: 5
+                text: "8596"
+                horizontalAlignment: Text.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.fillWidth: false
                 placeholderText: qsTr("Port")
                 id: portInput
             }
@@ -272,6 +284,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:640;width:800}
+    D{i:0;autoSize:true;height:800;width:1024}
 }
 ##^##*/
