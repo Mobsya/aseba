@@ -310,17 +310,17 @@ Section "Uninstall"
 		DetailPrint $(STR_Drv_Uninstall)
 		${If} ${RunningX64}
 			DetailPrint $(STR_Drv_64bits)
-			ExecWait '"$INSTDIR\drivers\dpinst64.exe" /c /u "$INSTDIR\drivers\mchpcdc.inf" /d'
+			ExecWait '"$INSTDIR\drivers\dpinst64.exe" /c /u "$INSTDIR\drivers\mchpcdc.inf" /d /q'
 			${If} ${FileExists} "$INSTDIR\drivers\mchpcdcw.inf"
 				; Driver was installed
-				ExecWait '"$INSTDIR\drivers\dpinst64.exe" /c /u "$INSTDIR\drivers\mchpcdcw.inf" /d'
+				ExecWait '"$INSTDIR\drivers\dpinst64.exe" /c /u "$INSTDIR\drivers\mchpcdcw.inf" /d /q'
 			${EndIf}
 		${Else}
 			DetailPrint $(STR_Drv_32bits)cer
-			ExecWait '"$INSTDIR\drivers\dpinst32.exe" /c /u "$INSTDIR\drivers\mchpcdc.inf" /d'
+			ExecWait '"$INSTDIR\drivers\dpinst32.exe" /c /u "$INSTDIR\drivers\mchpcdc.inf" /d /q'
 			${If} ${FileExists} "$INSTDIR\drivers\mchpcdcw.inf"
 				; Driver was installed
-				ExecWait '"$INSTDIR\drivers\dpinst32.exe" /c /u "$INSTDIR\drivers\mchpcdcw.inf" /d'
+				ExecWait '"$INSTDIR\drivers\dpinst32.exe" /c /u "$INSTDIR\drivers\mchpcdcw.inf" /d /q'
 			${EndIf}
 		${EndIf}
 
