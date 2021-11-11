@@ -216,6 +216,7 @@ Rectangle {
             color: "white"
             anchors.fill: parent
             font.family: "Roboto Bold"
+            font.pointSize: 14
         }
 
     }
@@ -225,14 +226,12 @@ Rectangle {
         message.text = qsTr("Error: %1 - Please verify the address, port and password of the server")
         .arg(text)
         message.color = "red"
-        message.font.pointSize= 12
     }
 
     function showMessage(text) {
         message.visible = true
         message.text = text
         message.color = "white"
-        message.font.pointSize= 12
     }
 
     function connect() {
@@ -242,22 +241,21 @@ Rectangle {
         var monitor = Utils.connectToServer(host, port, password)
         monitor.error.connect(function(msg) {
             showErrorMessage(msg)
-            button.enabled = true
+            connectButtonid.enabled = true
         })
         monitor.message.connect(function(msg) {
             showMessage(msg)
-            button.enabled = false
+            connectButtonid.enabled = false
         })
         monitor.done.connect(function() {
             message.visible = true
             message.text = qsTr("Connected!")
-            message.color = "green"
-            button.enabled = true
-            message.font.pointSize= 12
+            message.color = "white"
+            connectButtonid.enabled = true
         })
 
         showMessage(qsTr("Connecting...."))
-        button.enabled = false
+        connectButtonid.enabled = false
         monitor.start()
     }
 
