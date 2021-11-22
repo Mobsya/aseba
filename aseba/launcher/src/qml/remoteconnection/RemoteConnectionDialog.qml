@@ -19,19 +19,35 @@ Rectangle {
         anchors.fill: parent
     }
 
+    visible: true
+    Rectangle
+    {
+        id: connectionzone
+        anchors.top: parent.top
+        width : parent.width
+        height : parent.height/2
+        color: Style.light
+    }
+
     TitleBar {}
 
     property string ip   : ""
     property string ipv6 : ""
-    visible: true
+
+    function fontsize(){
+        if(remoteConnection.height>=800)
+            return 16;
+        return 12;
+    }
+
 
     Item {
         id: inputzone
         anchors.fill: parent
         anchors.margins:60
-
+        anchors.topMargin: 80
         Item {
-            width : parent.width
+            width : parent.width / 2
             height : 120
             id: connectIP
             anchors.margins: 20
@@ -40,7 +56,7 @@ Rectangle {
                 textFormat: TextEdit.RichText
                 readOnly: true
                 selectByMouse: true
-                font.pointSize: 14
+                font.pointSize: fontsize()
                 anchors.left: parent.left
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
@@ -74,32 +90,32 @@ Rectangle {
 
             }
         }
-
         Image {
-            anchors.top: connectIP.bottom
-            width: parent.width
-            height: Math.min(parent.height-400,400)
+            anchors.top: parent.top
+            anchors.right:parent.right
+            anchors.margins: 20
+            width: parent.width / 2.2
+            height: parent.height / 2.2
             id: connectImage
-            verticalAlignment: Image.AlignTop
             source : "qrc:/assets/remote_access.svg"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 20
+            anchors.topMargin: 0
+            verticalAlignment: Image.AlignTop
+            horizontalAlignment: Image.AlignHCenter
             transformOrigin: Item.Center
             sourceSize.height: connectImage.height
             sourceSize.width: connectImage.width
             fillMode: Image.PreserveAspectFit
-            horizontalAlignment: Image.AlignHCenter
             smooth: true
             antialiasing: true
         }
 
         Text {
             id:connectText
-            anchors.margins: 30
-            horizontalAlignment: Text.AlignHCenter
+            anchors.margins: 40
+            horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.RichText
-            font.pointSize: 16
+            font.pointSize: fontsize()
             anchors.horizontalCenter:parent.horizontalCenter
             anchors.top: connectImage.bottom
             width : parent.width
@@ -113,7 +129,7 @@ Rectangle {
             id:connectInputs
             width: inputzone.width
             anchors.top: connectText.bottom
-            anchors.margins: 30
+            anchors.margins: 20
             clip: false
             anchors.horizontalCenter:parent.horizontalCenter
             spacing: 15
@@ -127,7 +143,7 @@ Rectangle {
                 placeholderTextColor: "#9effffff"
                 font.bold: true
                 font.family: "Roboto Bold"
-                font.pointSize: 15
+                font.pointSize: 14
                 background:Rectangle {
                     width: hostInput.Width
                     color: "#35216b"
@@ -145,7 +161,7 @@ Rectangle {
                 placeholderTextColor: "#9effffff"
                 font.capitalization: Font.AllUppercase
                 width: 150
-                font.pointSize: 15
+                font.pointSize: 14
                 font.bold: true
                 font.family: "Roboto Bold"
                 background:Rectangle {
@@ -163,7 +179,7 @@ Rectangle {
                 color: "white"
                 placeholderTextColor: "#9effffff"
                 font.capitalization: Font.AllUppercase
-                font.pointSize: 15
+                font.pointSize: 14
                 font.bold: true
                 font.family: "Roboto Bold"
                 width: 90
@@ -185,11 +201,11 @@ Rectangle {
         }
         Text {
             id:warningText
-            anchors.margins: 30
+            anchors.margins: 20
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.RichText
-            font.pointSize: 16
+            font.pointSize: 13
             anchors.horizontalCenter:parent.horizontalCenter
             anchors.top: connectInputs.bottom
             width : parent.width
@@ -199,7 +215,6 @@ Rectangle {
             text: qsTr("The connection will not be encrypted. Do not connect to hosts you don't trust !")
         }
         Item {
-            id: item2
             anchors.top: warningText.bottom
             anchors.horizontalCenter: parent
             anchors.margins: 50
@@ -302,6 +317,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:800;width:1024}
+    D{i:0;autoSize:true;height:530;width:800}
 }
 ##^##*/
