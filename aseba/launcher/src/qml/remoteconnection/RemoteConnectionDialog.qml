@@ -48,18 +48,20 @@ Rectangle {
                 clip: true
                 font.family: "Roboto Bold"
                 text: {
+                    var explainText = qsTr("<b>If you want to share access to your robots, transmit these informations:<br/><br/>ADDRESS</b>")
                     var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
                     if(ip != "") {
-                        ipText = qsTr("The address of this host is:<br/>  - ipv4: <b>%1</b><br/>  - ipv6: <b>%2</b>")
+                        ipText = qsTr("ipv4: <b>%1</b><br/>ipv6: <b>%2</b>")
                         .arg(ip)
                         .arg(ipv6)
                     }
-                    var passwordText = "";
+                    var passwordText = qsTr("<b>PASSWORD</b>");
                     if(client && client.localEndpoint && client.localEndpoint.password !== "")
-                        passwordText = qsTr("<br/>Password for remote connections: <b>%1</b>")
+                        passwordText = qsTr("<b>PASSWORD</b><br/>%1")
                     .arg(client.localEndpoint.password)
 
-                    return qsTr("%1<br/>%2")
+                    return qsTr("%1<br/>%2<br/><br/>%3")
+                    .arg(explainText)
                     .arg(ipText)
                     .arg(passwordText)
                 }
@@ -76,7 +78,7 @@ Rectangle {
         Image {
             anchors.top: connectIP.bottom
             width: parent.width
-            height: Math.min(parent.height-370,400)
+            height: Math.min(parent.height-400,400)
             id: connectImage
             verticalAlignment: Image.AlignTop
             source : "qrc:/assets/remote_access.svg"
@@ -102,9 +104,10 @@ Rectangle {
             anchors.top: connectImage.bottom
             width : parent.width
             wrapMode: Text.WordWrap
+            font.bold: true
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("Input the address of a server to connect to<br/> The connection will not be encrypted. Do not connect to hosts you don't trust !")
+            text: qsTr("If you like to connect to robots of another host, input the transmitted informations here:")
         }
         RowLayout {
             id:connectInputs
@@ -131,7 +134,7 @@ Rectangle {
                     radius: 5
                     border.width: 0
                 }
-                placeholderText: qsTr("Host Address")
+                placeholderText: qsTr("ADDRESS")
                 id: hostInput
             }
             TextField  {
@@ -180,10 +183,24 @@ Rectangle {
                 id: portInput
             }
         }
-
+        Text {
+            id:warningText
+            anchors.margins: 30
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            textFormat: TextEdit.RichText
+            font.pointSize: 16
+            anchors.horizontalCenter:parent.horizontalCenter
+            anchors.top: connectInputs.bottom
+            width : parent.width
+            wrapMode: Text.WordWrap
+            color: "white"
+            font.family: "Roboto Bold"
+            text: qsTr("The connection will not be encrypted. Do not connect to hosts you don't trust !")
+        }
         Item {
             id: item2
-            anchors.top: connectInputs.bottom
+            anchors.top: warningText.bottom
             anchors.horizontalCenter: parent
             anchors.margins: 50
             width: parent.width
@@ -195,6 +212,9 @@ Rectangle {
                 width: parent.width / 3
                 anchors.centerIn: parent
                 anchors.top: parent.top
+                enabled: {if(hostInput.text != "" && passwordInput.text != "")
+                            return true;
+                          return false}
             }
         }
     }
