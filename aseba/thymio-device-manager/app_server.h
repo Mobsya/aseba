@@ -11,11 +11,17 @@ template <typename socket_type>
 class application_server {
 public:
     application_server(boost::asio::io_context& io_context, uint16_t port = 0)
-        : m_io_context(io_context), m_acceptor(io_context, tcp::endpoint(tcp::v6(), port)) {
+        : m_io_context(io_context),
+          m_acceptor(io_context,
+#ifdef HAS_IPV6
+                     tcp::endpoint(tcp::v6(), port)) {
         // Make sure we accept both ipv4 + ipv6
         boost::asio::ip::v6_only opt(false);
         boost::system::error_code ec;
         m_acceptor.set_option(opt, ec);
+#else
+                     tcp::endpoint(tcp::v4(), port)) {
+#endif
         m_acceptor.listen(boost::asio::socket_base::max_listen_connections);
     }
 

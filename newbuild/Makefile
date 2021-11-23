@@ -30,6 +30,8 @@
 #  requires openssl
 # MOBSYA_TDM_ENABLE_TCP=anything:
 #  include tcp devices
+# HAS_IPV6=anything:
+#  listens also on ipv6
 # OPTIM=TRUE (default):
 #  optimize for size with -Os
 # OPTIM=FALSE:

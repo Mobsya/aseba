@@ -58,7 +58,7 @@ The following command-line options are supported:
     sudo apt install -y libudev-dev
     ```
 
-- Build the TDM. By default, neither zeroconf nor firmware upgrade support are included; read below to know why.
+- Build the TDM. By default, no zeroconf, firmware upgrade and IPv6 support is included; read below to know why.
     ```
     make -f aseba/newbuild/Makefile -j
     ```
@@ -122,6 +122,15 @@ The TDM relies on OpenSSL to retrieve firmware upgrades via https (it connects t
 By default, firmware upgrade and OpenSSL are not included; OpenSSL is not a required dependency anymore. To build the TDM with firmware upgrade support, you can type
 ```
 HAS_FIRMWARE_UPGRADE=TRUE make -f aseba/newbuild/Makefile -j
+```
+
+## Build without IPv6
+
+The TDM can listen on both IPv6 and IPv4. This has caused unexpected issues on Linux when IPv6 isn't available. Support for IPv6 is enabled only if the optional constant `HAS_IPV6` is defined. By default, it is not, therefore IPv6 is disabled.
+
+To build the TDM with support for IPv6, you can type
+```
+HAS_IPV6=TRUE make -f aseba/newbuild/Makefile -j
 ```
 
 ## Build without TCP or WebSocket services
