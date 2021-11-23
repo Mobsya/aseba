@@ -25,7 +25,7 @@ Rectangle {
         id: connectionzone
         anchors.top: parent.top
         width : parent.width
-        height : parent.height/2
+        height : parent.height*0.6
         color: Style.light
     }
 
@@ -76,7 +76,7 @@ Rectangle {
                         passwordText = qsTr("<b>PASSWORD</b><br/>%1")
                     .arg(client.localEndpoint.password)
 
-                    return qsTr("%1<br/>%2<br/><br/>%3")
+                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirect to this computer <a href='https://www.google.com/'>More information</a>")
                     .arg(explainText)
                     .arg(ipText)
                     .arg(passwordText)
@@ -95,7 +95,7 @@ Rectangle {
             anchors.right:parent.right
             anchors.margins: 20
             width: parent.width / 2.2
-            height: parent.height / 2.2
+            height: parent.height * 0.55
             id: connectImage
             source : "qrc:/assets/remote_access.svg"
             anchors.topMargin: 0
@@ -137,13 +137,12 @@ Rectangle {
                 color: "white"
                 width: connectInputs.width - passwordInput.width - portInput.width - 150
                 horizontalAlignment: Text.AlignLeft
-                font.weight: Font.Normal
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 placeholderTextColor: "#9effffff"
+                font.pointSize: 14
                 font.bold: true
                 font.family: "Roboto Bold"
-                font.pointSize: 14
                 background:Rectangle {
                     width: hostInput.Width
                     color: "#35216b"
