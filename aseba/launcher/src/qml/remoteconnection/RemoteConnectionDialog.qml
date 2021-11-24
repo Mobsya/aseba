@@ -19,19 +19,35 @@ Rectangle {
         anchors.fill: parent
     }
 
+    visible: true
+    Rectangle
+    {
+        id: connectionzone
+        anchors.top: parent.top
+        width : parent.width
+        height : parent.height*0.6
+        color: Style.light
+    }
+
     TitleBar {}
 
     property string ip   : ""
     property string ipv6 : ""
-    visible: true
+
+    function fontsize(){
+        if(remoteConnection.height>=800)
+            return 16;
+        return 12;
+    }
+
 
     Item {
         id: inputzone
         anchors.fill: parent
         anchors.margins:60
-
+        anchors.topMargin: 80
         Item {
-            width : parent.width
+            width : parent.width / 2
             height : 120
             id: connectIP
             anchors.margins: 20
@@ -40,7 +56,7 @@ Rectangle {
                 textFormat: TextEdit.RichText
                 readOnly: true
                 selectByMouse: true
-                font.pointSize: 14
+                font.pointSize: fontsize()
                 anchors.left: parent.left
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
@@ -48,18 +64,20 @@ Rectangle {
                 clip: true
                 font.family: "Roboto Bold"
                 text: {
+                    var explainText = qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).<br/><br/>ADDRESS</b>")
                     var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
                     if(ip != "") {
-                        ipText = qsTr("The address of this host is:<br/>  - ipv4: <b>%1</b><br/>  - ipv6: <b>%2</b>")
+                        ipText = qsTr("ipv4: <b>%1</b><br/>ipv6: <b>%2</b>")
                         .arg(ip)
                         .arg(ipv6)
                     }
-                    var passwordText = "";
+                    var passwordText = qsTr("<b>PASSWORD</b>");
                     if(client && client.localEndpoint && client.localEndpoint.password !== "")
-                        passwordText = qsTr("<br/>Password for remote connections: <b>%1</b>")
+                        passwordText = qsTr("<b>PASSWORD</b><br/>%1")
                     .arg(client.localEndpoint.password)
 
-                    return qsTr("%1<br/>%2")
+                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirect to this computer <a href='https://www.google.com/'>More information</a>")
+                    .arg(explainText)
                     .arg(ipText)
                     .arg(passwordText)
                 }
@@ -72,45 +90,46 @@ Rectangle {
 
             }
         }
-
         Image {
-            anchors.top: connectIP.bottom
-            width: parent.width
-            height: Math.min(parent.height-370,400)
+            anchors.top: parent.top
+            anchors.right:parent.right
+            anchors.margins: 20
+            width: parent.width / 2.2
+            height: parent.height * 0.55
             id: connectImage
-            verticalAlignment: Image.AlignTop
             source : "qrc:/assets/remote_access.svg"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 20
+            anchors.topMargin: 0
+            verticalAlignment: Image.AlignTop
+            horizontalAlignment: Image.AlignHCenter
             transformOrigin: Item.Center
             sourceSize.height: connectImage.height
             sourceSize.width: connectImage.width
             fillMode: Image.PreserveAspectFit
-            horizontalAlignment: Image.AlignHCenter
             smooth: true
             antialiasing: true
         }
 
         Text {
             id:connectText
-            anchors.margins: 30
-            horizontalAlignment: Text.AlignHCenter
+            anchors.topMargin:20 + parent.height * 0.6
+            anchors.horizontalCenter:parent.horizontalCenter
+            anchors.top: parent.top
+            horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.RichText
-            font.pointSize: 16
-            anchors.horizontalCenter:parent.horizontalCenter
-            anchors.top: connectImage.bottom
+            font.pointSize: fontsize()
             width : parent.width
             wrapMode: Text.WordWrap
+            font.bold: true
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("Input the address of a server to connect to<br/> The connection will not be encrypted. Do not connect to hosts you don't trust !")
+            text: qsTr("To connect to the robot(s) of another host, please enter the address and password in the fields below:")
         }
         RowLayout {
             id:connectInputs
             width: inputzone.width
             anchors.top: connectText.bottom
-            anchors.margins: 30
+            anchors.margins: 20
             clip: false
             anchors.horizontalCenter:parent.horizontalCenter
             spacing: 15
@@ -118,20 +137,19 @@ Rectangle {
                 color: "white"
                 width: connectInputs.width - passwordInput.width - portInput.width - 150
                 horizontalAlignment: Text.AlignLeft
-                font.weight: Font.Normal
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 placeholderTextColor: "#9effffff"
+                font.pointSize: 14
                 font.bold: true
                 font.family: "Roboto Bold"
-                font.pointSize: 15
                 background:Rectangle {
                     width: hostInput.Width
                     color: "#35216b"
                     radius: 5
                     border.width: 0
                 }
-                placeholderText: qsTr("Host Address")
+                placeholderText: qsTr("ADDRESS")
                 id: hostInput
             }
             TextField  {
@@ -142,7 +160,7 @@ Rectangle {
                 placeholderTextColor: "#9effffff"
                 font.capitalization: Font.AllUppercase
                 width: 150
-                font.pointSize: 15
+                font.pointSize: 14
                 font.bold: true
                 font.family: "Roboto Bold"
                 background:Rectangle {
@@ -160,7 +178,7 @@ Rectangle {
                 color: "white"
                 placeholderTextColor: "#9effffff"
                 font.capitalization: Font.AllUppercase
-                font.pointSize: 15
+                font.pointSize: 14
                 font.bold: true
                 font.family: "Roboto Bold"
                 width: 90
@@ -180,12 +198,25 @@ Rectangle {
                 id: portInput
             }
         }
-
-        Item {
-            id: item2
+        Text {
+            id:warningText
+            anchors.margins: 20
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            textFormat: TextEdit.RichText
+            font.pointSize: 12
+            anchors.horizontalCenter:parent.horizontalCenter
             anchors.top: connectInputs.bottom
+            width : parent.width
+            wrapMode: Text.WordWrap
+            color: "white"
+            font.family: "Roboto Bold"
+            text: qsTr("The connection will not be encrypted. Do not connect to hosts you don't trust !")
+        }
+        Item {
+            anchors.top: warningText.bottom
             anchors.horizontalCenter: parent
-            anchors.margins: 50
+            anchors.margins: 40
             width: parent.width
 
             Button {
@@ -195,6 +226,9 @@ Rectangle {
                 width: parent.width / 3
                 anchors.centerIn: parent
                 anchors.top: parent.top
+                enabled: {if(hostInput.text != "" && passwordInput.text != "")
+                            return true;
+                          return false}
             }
         }
     }
@@ -282,6 +316,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:800;width:1024}
+    D{i:0;autoSize:true;height:560;width:960}
 }
 ##^##*/
