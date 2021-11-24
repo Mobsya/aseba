@@ -64,7 +64,7 @@ Rectangle {
                 clip: true
                 font.family: "Roboto Bold"
                 text: {
-                    var explainText = qsTr("<b>If you want to share access to your robots, transmit these informations:<br/><br/>ADDRESS</b>")
+                    var explainText = qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).<br/><br/>ADDRESS</b>")
                     var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
                     if(ip != "") {
                         ipText = qsTr("ipv4: <b>%1</b><br/>ipv6: <b>%2</b>")
@@ -123,7 +123,7 @@ Rectangle {
             font.bold: true
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("If you like to connect to robots of another host, input the transmitted informations here:")
+            text: qsTr("To connect to the robot(s) of another host, please enter the address and password in the fields below:")
         }
         RowLayout {
             id:connectInputs
@@ -204,7 +204,7 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.RichText
-            font.pointSize: 13
+            font.pointSize: 12
             anchors.horizontalCenter:parent.horizontalCenter
             anchors.top: connectInputs.bottom
             width : parent.width
@@ -216,7 +216,7 @@ Rectangle {
         Item {
             anchors.top: warningText.bottom
             anchors.horizontalCenter: parent
-            anchors.margins: 50
+            anchors.margins: 40
             width: parent.width
 
             Button {
@@ -316,6 +316,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:530;width:800}
+    D{i:0;autoSize:true;height:560;width:960}
 }
 ##^##*/
