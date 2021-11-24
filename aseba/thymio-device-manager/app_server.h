@@ -11,12 +11,19 @@ template <typename socket_type>
 class application_server {
 public:
     application_server(boost::asio::io_context& io_context, uint16_t port = 0)
-        : m_io_context(io_context), m_acceptor(io_context, tcp::endpoint(tcp::v6(), port)) {
-        // Make sure we accept both ipv4 + ipv6
-        boost::asio::ip::v6_only opt(false);
-        boost::system::error_code ec;
-        m_acceptor.set_option(opt, ec);
-        m_acceptor.listen(boost::asio::socket_base::max_listen_connections);
+        : m_io_context(io_context), m_acceptor(io_context) {
+        try {
+            m_acceptor = tcp::acceptor(io_context, tcp::endpoint(tcp::v6(), port));
+            // Make sure we accept both ipv4 + ipv6
+            boost::asio::ip::v6_only opt(false);
+            boost::system::error_code ec;
+            m_acceptor.set_option(opt, ec);
+        } catch (std::exception &e) {
+            // IPv6 failed: try IPv4
+            mLogInfo("IPv6 failed, switch to IPv4-only");
+            m_acceptor = tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), port));
+        }
+		m_acceptor.listen(boost::asio::socket_base::max_listen_connections);
     }
 
     tcp::acceptor::endpoint_type endpoint() const {
