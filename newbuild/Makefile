@@ -167,6 +167,13 @@ OBJ += \
 
 endif
 
+ifdef HAS_IPV6
+
+CXXFLAGS += \
+	-DHAS_IPV6
+
+endif
+
 ifeq ($(TARGET), darwin)
 CXXFLAGS += \
 
