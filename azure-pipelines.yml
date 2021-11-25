@@ -309,7 +309,7 @@ jobs:
     displayName: 'Clone submodules'
     
   - script: |
-      sudo xcode-select -s /Applications/Xcode_11.3.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_11.4.1.app/Contents/Developer
       (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_ROOT_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOSX15=ON -DQt5Core_DIR="`pwd`/../Qt/5.15.2/clang_64/lib/cmake/Qt5Core" -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/clang_64/" && ninja)
     displayName: 'Build with cmake'
 
