@@ -15,6 +15,7 @@ class ThymioDeviceManagerClientEndpoint : public QObject,
                                           public std::enable_shared_from_this<ThymioDeviceManagerClientEndpoint> {
     Q_OBJECT
     Q_PROPERTY(QString hostName READ hostName CONSTANT)
+    Q_PROPERTY(QByteArray password READ password NOTIFY passwordChanged)
     Q_PROPERTY(bool isLocalhostPeer READ isLocalhostPeer CONSTANT)
     Q_PROPERTY(QUrl websocketConnectionUrl READ websocketConnectionUrl CONSTANT)
     Q_PROPERTY(Thymio2WirelessDonglesManager* donglesManager READ donglesManager CONSTANT)
@@ -28,11 +29,18 @@ public:
 public:
     std::shared_ptr<ThymioNode> node(const QUuid& id) const;
 
+    const QTcpSocket* socket() const {
+        return m_socket;
+    }
     QHostAddress peerAddress() const;
     QString hostName() const;
 
     QUrl websocketConnectionUrl() const;
+    QUrl tcpConnectionUrl() const;
+    QByteArray password() const;
+
     void setWebSocketMatchingPort(quint16 port);
+    void setPassword(QByteArray password);
 
     bool isLocalhostPeer() const;
     Request requestDeviceManagerShutdown();
@@ -75,6 +83,7 @@ private Q_SLOTS:
     void write(const tagged_detached_flatbuffer& buffer);
 
 Q_SIGNALS:
+    void passwordChanged();
     void nodesChanged();
     void nodeAdded(std::shared_ptr<ThymioNode>);
     void nodeRemoved(std::shared_ptr<ThymioNode>);
@@ -82,7 +91,7 @@ Q_SIGNALS:
 
     void onMessage(const fb_message_ptr& msg) const;
     void disconnected();
-    void localPeerChanged();
+    void handshakeCompleted(QUuid id);
 
 private:
     template <typename T>
@@ -108,7 +117,9 @@ private:
     QMap<QUuid, std::shared_ptr<ThymioNode>> m_nodes;
     QTcpSocket* m_socket;
     quint32 m_message_size;
+    QUuid m_serverUUid;
     quint16 m_ws_port = 0;
+    QByteArray m_password;
     bool m_islocalhostPeer = false;
     QMap<detail::RequestDataBase::request_id, detail::RequestDataBase::shared_ptr> m_pending_requests;
     QString m_host_name;

@@ -590,7 +590,7 @@ export interface INode extends IBasicNode {
      *
      * @see [[lock]]
      */
-    sendAsebaProgram(code : string) : Promise<any>;
+    sendAsebaProgram(code : string, dontLoadOnTarget: boolean) : Promise<any>;
 
     /** Run the code currently loaded on the vm
      * The device must be locked & ready before calling this function
@@ -764,8 +764,8 @@ export class Node extends BasicNode implements INode {
         return this.group.eventsDescriptions
     }
 
-    sendAsebaProgram(code : string) {
-        return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba);
+    sendAsebaProgram(code : string, dontLoadOnTarget: boolean = false) {
+        return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aseba, dontLoadOnTarget);
     }
 
     /** Load an aesl program on the VM
@@ -774,8 +774,8 @@ export class Node extends BasicNode implements INode {
      *  @throws {mobsya.fb.Error}
      *  @see lock
      */
-    send_aesl_program(code) {
-        return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl);
+    send_aesl_program(code, dontLoadOnTarget: boolean = false) {
+        return this._client._send_program(this._id, code, mobsya.fb.ProgrammingLanguage.Aesl, dontLoadOnTarget);
     }
 
     runProgram() {
@@ -915,6 +915,7 @@ class Client implements IClient {
     private _nodes:  Map<string, Node>;
     private _flex:   FlexBuffers;
     private _socket: WebSocket;
+    private _password: string;
 
     onNodesChanged: (nodes: Node[]) => void = undefined;
     onClose: (event: CloseEvent) => void = undefined;
@@ -923,10 +924,11 @@ class Client implements IClient {
      *  @param {external:String} url : Web socket address
      *  @see lock
      */
-    constructor(url: string) {
+    constructor(url: string, password: string) {
         //In progress requests (id : node)
         this._requests = new Map();
         //Known nodes (id : node)
+        this._password = password;
         this._nodes    = new Map();
         this._flex = new FlexBuffers();
         this._flex.onRuntimeInitialized = () => {
@@ -946,9 +948,11 @@ class Client implements IClient {
     private _onopen() {
         console.log("connected, sending protocol version")
         const builder = new flatbuffers.Builder();
+        const passwordOffset = builder.createString(this._password)
         mobsya.fb.ConnectionHandshake.startConnectionHandshake(builder)
         mobsya.fb.ConnectionHandshake.addProtocolVersion(builder, PROTOCOL_VERSION)
         mobsya.fb.ConnectionHandshake.addMinProtocolVersion(builder, MIN_PROTOCOL_VERSION)
+        mobsya.fb.ConnectionHandshake.addPassword(builder, passwordOffset)
         this._wrap_message_and_send(builder, mobsya.fb.ConnectionHandshake.endConnectionHandshake(builder), mobsya.fb.AnyMessage.ConnectionHandshake)
     }
 
@@ -1012,8 +1016,7 @@ class Client implements IClient {
                 let msg = message.message(new mobsya.fb.CompilationResultFailure())
                 let req = this._get_request(msg.requestId())
                 if(req) {
-                    //TODO
-                    req._trigger_error("Compilation error")
+                    req._trigger_error(msg.message())
                 }
                 break
             }
@@ -1119,7 +1122,7 @@ class Client implements IClient {
         return this._prepare_request(req_id)
     }
 
-    _send_program(id : NodeId, code : string, language : mobsya.fb.ProgrammingLanguage) {
+    _send_program(id : NodeId, code : string, language : mobsya.fb.ProgrammingLanguage, dontLoadOnTarget: boolean = false) {
         const builder = new flatbuffers.Builder();
         const req_id  = this._gen_request_id()
         const codeOffset = builder.createString(code)
@@ -1129,7 +1132,9 @@ class Client implements IClient {
         mobsya.fb.CompileAndLoadCodeOnVM.addNodeId(builder, nodeOffset)
         mobsya.fb.CompileAndLoadCodeOnVM.addProgram(builder, codeOffset)
         mobsya.fb.CompileAndLoadCodeOnVM.addLanguage(builder, language)
-        mobsya.fb.CompileAndLoadCodeOnVM.addOptions(builder, mobsya.fb.CompilationOptions.LoadOnTarget)
+		if (!dontLoadOnTarget){
+			mobsya.fb.CompileAndLoadCodeOnVM.addOptions(builder, mobsya.fb.CompilationOptions.LoadOnTarget)
+		}
         const offset = mobsya.fb.CompileAndLoadCodeOnVM.endCompileAndLoadCodeOnVM(builder)
         this._wrap_message_and_send(builder, offset, mobsya.fb.AnyMessage.CompileAndLoadCodeOnVM)
         return this._prepare_request(req_id)
@@ -1421,6 +1426,6 @@ class Client implements IClient {
  * The server must be a Thymio Device Manger or a Thymio 3
  * Or otherwise implement the Thymio Device Manager protocol
  */
-export function createClient(url : string) : IClient {
-    return new Client(url)
+export function createClient(url : string, password : string = "") : IClient {
+    return new Client(url, password)
 }

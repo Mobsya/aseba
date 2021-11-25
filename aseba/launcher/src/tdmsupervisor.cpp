@@ -14,15 +14,25 @@ static const auto tdm_program_name = QByteArrayLiteral("thymio-device-manager");
 static const auto max_launch_count = 10;
 
 TDMSupervisor::TDMSupervisor(const Launcher& launcher, QObject* parent)
-    : QObject(parent), m_launcher(launcher), m_tdm_process(nullptr), m_launches(0) {}
+    : QObject(parent), m_launcher(launcher), m_tdm_process(nullptr), m_launches(0) {
+
+    // When the configuration for remote connection changes,
+    // We want to restart the TDM
+    // This will stop all existing connections
+    connect(&launcher,
+            &mobsya::Launcher::remoteConnectionsAllowedChanged, this, &TDMSupervisor::restart);
+
+}
 
 
 TDMSupervisor::~TDMSupervisor() {}
 
 void TDMSupervisor::startLocalTDM() {
 #ifndef Q_OS_IOS
-    if(m_tdm_process != nullptr)
+    if(m_tdm_process != nullptr) {
         return;
+        m_restart = false;
+    }
 
     if(m_launches++ >= max_launch_count) {
         qCritical("thymio-device-manager Relaunched too many times");
@@ -43,6 +53,9 @@ void TDMSupervisor::startLocalTDM() {
                 qInfo("thymio-device-manager stopped");
                 m_tdm_process->deleteLater();
                 m_tdm_process = nullptr;
+                if(m_restart) {
+                     QTimer::singleShot(500, this, &TDMSupervisor::startLocalTDM);
+                }
                 break;
             }
             case QProcess::Starting: {
@@ -51,6 +64,7 @@ void TDMSupervisor::startLocalTDM() {
             }
             case QProcess::Running: {
                 qInfo("thymio-device-manager started");
+                QTimer::singleShot(500, this, &TDMSupervisor::started);
                 break;
             }
         }
@@ -69,8 +83,40 @@ void TDMSupervisor::startLocalTDM() {
             });
     // The empty argument list QStringList{} is necessary to make sure Qt will not try
     // to split the path if it contains space
-    m_tdm_process->start(path, QStringList{});
+    QStringList args;
+    if(m_launcher.getAllowRemoteConnections()) {
+        args.append("--allow-remote-connections");
+    }
+    m_tdm_process->setReadChannelMode(QProcess::ForwardedOutputChannel);
+    m_tdm_process->start(path, args);
+    m_restart = false;
 #endif
+}
+
+void TDMSupervisor::restart() {
+#ifndef Q_OS_IOS
+    if(m_restart)
+        return;
+
+    m_restart = true;
+    m_launches = 0;
+    if(m_tdm_process) {
+        if(m_launcher.client()) {
+            m_launcher.client()->requestDeviceManagersShutdown();
+            QTimer::singleShot(500, [&] {
+                if(m_tdm_process)
+                    m_tdm_process->kill();
+                startLocalTDM();
+            });
+            return;
+        }
+        m_tdm_process->kill();
+        return;
+    }
+    QTimer::singleShot(100, [&] {
+        startLocalTDM();
+    });
+ #endif
 }
 
 }  // namespace mobsya

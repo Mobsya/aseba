@@ -25,6 +25,7 @@
 #include <QLocale>
 #include <QLibraryInfo>
 #include <QDebug>
+#include <QTimer>
 #include <iostream>
 #include <QCommandLineParser>
 #include <QUuid>
@@ -44,13 +45,18 @@ int main(int argc, char* argv[]) {
     QCoreApplication::setOrganizationDomain(ASEBA_ORGANIZATION_DOMAIN);
     QCoreApplication::setApplicationName("Thymio VPL");
 
-    const QString language(QLocale::system().name());
-
     QCommandLineParser parser;
     QCommandLineOption uuid(QStringLiteral("uuid"),
                             QStringLiteral("Uuid of the target to connect to - can be specified multiple times"),
                             QStringLiteral("uuid"));
+    QCommandLineOption ep(QStringLiteral("endpoint"), QStringLiteral("Endpoint to connect to"),
+                          QStringLiteral("endpoint"));
+    QCommandLineOption password(QStringLiteral("password"), QStringLiteral("Password associated with the endpoint"),
+                                QStringLiteral("password"));
+
     parser.addOption(uuid);
+    parser.addOption(ep);
+    parser.addOption(password);
     parser.addHelpOption();
     parser.process(qApp->arguments());
 
@@ -71,9 +77,24 @@ int main(int argc, char* argv[]) {
     load_trads("qtabout_", ":/");
     load_trads("qtbase_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
-    Aseba::ThymioVPLApplication vpl(id);
+    QVector<QUuid> targetUuids;
+    for(auto&& id : parser.values(uuid)) {
+        auto uuid = QUuid::fromString(id);
+        if(!uuid.isNull())
+            targetUuids.append(uuid);
+    }
+
+    mobsya::ThymioDeviceManagerClient thymioClient;
+    QString s = parser.value(ep);
+    if(!s.isEmpty()) {
+        thymioClient.connectToRemoteUrlEndpoint(s, parser.value("password").toUtf8());
+    }
+
+    Aseba::ThymioVPLApplication vpl(&thymioClient, id);
     QObject::connect(&app, &mobsya::MobsyaApplication::deviceConnectionRequest, &vpl,
                      &Aseba::ThymioVPLApplication::connectToDevice);
+    QObject::connect(&app, &mobsya::MobsyaApplication::endpointConnectionRequest, &thymioClient,
+                     &mobsya::ThymioDeviceManagerClient::connectToRemoteUrlEndpoint);
     vpl.show();
     app.setOverrideCursor(Qt::ArrowCursor);
     return app.exec();

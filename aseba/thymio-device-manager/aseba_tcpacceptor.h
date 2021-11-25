@@ -4,6 +4,7 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include <optional>
 #include <queue>
 #include <thread>
 #include <boost/asio/deadline_timer.hpp>
@@ -37,7 +38,7 @@ private:
     std::atomic_bool m_stopped;
     aware::contact m_contact;
     boost::asio::io_context m_monitor_ctx;
-    aware::monitor_socket m_monitor;
+    std::optional<aware::monitor_socket> m_monitor;
     using known_ep = std::pair<std::string, uint16_t>;
     std::map<known_ep, std::weak_ptr<aseba_endpoint>> m_connected_endpoints;
     std::map<const aseba_device*, aware::contact> m_known_contacts;

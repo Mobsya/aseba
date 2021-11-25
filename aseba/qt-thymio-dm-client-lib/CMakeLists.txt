@@ -20,6 +20,8 @@ add_library(qt-thymio-dm-client-lib STATIC
     qflatbuffers.h
     request.h
     request.cpp
+    remoteconnectionrequest.h
+    remoteconnectionrequest.cpp
 )
 
 if(IOS)

@@ -3,6 +3,7 @@
 #include "qflatbuffers.h"
 #include <QDebug>
 #include <QTcpSocket>
+#include <aseba/qt-thymio-dm-client-lib/remoteconnectionrequest.h>
 
 namespace mobsya {
 
@@ -30,6 +31,53 @@ bool ThymioDeviceManagerClient::isZeroconfBrowserConnected() const {
     return m_register->browserExists();
 }
 
+bool ThymioDeviceManagerClient::hasEndpoint(QUuid uuid) const {
+    auto it = m_endpoints.find(uuid);
+    if(it == m_endpoints.end()) {
+        return false;
+    }
+    return it->operator bool();
+}
+
+void ThymioDeviceManagerClient::connectToRemoteUrlEndpoint(QUrl endpoint, QByteArray password) {
+    QUrl url(endpoint);
+    QString host = url.host();
+    quint16 port = url.port();
+    connectToRemoteEndpoint(host, port, password);
+}
+
+void ThymioDeviceManagerClient::connectToRemoteEndpoint(QString host, quint16 port, QByteArray password) {
+    auto c = new mobsya::RemoteConnectionRequest(this, host, port, password, this);
+    QObject::connect(c, &mobsya::RemoteConnectionRequest::done, &mobsya::RemoteConnectionRequest::deleteLater);
+    QObject::connect(c, &mobsya::RemoteConnectionRequest::error, &mobsya::RemoteConnectionRequest::deleteLater);
+    QTimer::singleShot(0, c, &mobsya::RemoteConnectionRequest::start);
+}
+
+void ThymioDeviceManagerClient::doRegisterEndpoint(std::shared_ptr<ThymioDeviceManagerClientEndpoint>& endpoint) {
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
+            &ThymioDeviceManagerClient::onEndpointDisconnected);
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
+            &ThymioDeviceManagerClient::onNodeAdded);
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeModified, this,
+            &ThymioDeviceManagerClient::nodeModified);
+    connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
+            &ThymioDeviceManagerClient::onNodeRemoved);
+}
+
+bool ThymioDeviceManagerClient::registerEndpoint(QUuid id,
+                                                 std::shared_ptr<ThymioDeviceManagerClientEndpoint> endpoint) {
+    if(hasEndpoint(id))
+        return false;
+    doRegisterEndpoint(endpoint);
+    m_endpoints.insert(id, endpoint);
+
+    if(endpoint->isLocalhostPeer()) {
+        Q_EMIT localEndpointChanged();
+    }
+
+    return true;
+}
+
 void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
     qCDebug(zeroconf) << "ThymioDeviceManagerClient::onServiceAdded: " << service;
     QUuid id = service_id(service);
@@ -45,18 +93,7 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
             new ThymioDeviceManagerClientEndpoint(socket, service.host()),
             [](ThymioDeviceManagerClientEndpoint* ep) { ep->deleteLater(); });
         socket->connectToHost(service.ip(), service.port());
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::disconnected, this,
-                &ThymioDeviceManagerClient::onEndpointDisconnected);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::localPeerChanged, this,
-                &ThymioDeviceManagerClient::onLocalPeerChanged);
-
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeAdded, this,
-                &ThymioDeviceManagerClient::onNodeAdded);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeModified, this,
-                &ThymioDeviceManagerClient::nodeModified);
-        connect(endpoint.get(), &ThymioDeviceManagerClientEndpoint::nodeRemoved, this,
-                &ThymioDeviceManagerClient::onNodeRemoved);
-
+        doRegisterEndpoint(endpoint);
         m_endpoints.insert(id, endpoint);
 
     } else if(endpoint->peerAddress() != service.ip()) {
@@ -65,7 +102,8 @@ void ThymioDeviceManagerClient::onServiceAdded(QZeroConfService service) {
 
     const auto properties = service.txt();
     uint16_t port = properties.value("ws-port", 0).toUInt();
-    endpoint->setWebSocketMatchingPort(port);
+    if(port != 0)
+        endpoint->setWebSocketMatchingPort(port);
 }
 
 void ThymioDeviceManagerClient::onNodeAdded(std::shared_ptr<ThymioNode> node) {
@@ -83,18 +121,6 @@ void ThymioDeviceManagerClient::onServiceRemoved(QZeroConfService service) {
     if(id.isNull())
         return;
 }
-
-void ThymioDeviceManagerClient::onLocalPeerChanged() {
-    auto endpoint = qobject_cast<ThymioDeviceManagerClientEndpoint*>(sender());
-    if(!endpoint->isLocalhostPeer())
-        return;
-    auto it = std::find_if(m_endpoints.begin(), m_endpoints.end(),
-                           [endpoint](const auto& ep) { return ep.get() == endpoint; });
-    if(it != std::end(m_endpoints)) {
-        Q_EMIT localEndpointChanged();
-    }
-}
-
 
 void ThymioDeviceManagerClient::onEndpointDisconnected() {
     auto endpoint = qobject_cast<ThymioDeviceManagerClientEndpoint*>(sender());
