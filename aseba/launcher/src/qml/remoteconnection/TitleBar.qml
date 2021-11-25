@@ -7,7 +7,7 @@ Rectangle  {
     height: Style.titlebar_height
     color: Style.dark
     Text {
-        text: qsTr("Wireless Thymio Network Configurator")
+        text: qsTr("Remote Connection Setup")
         color: "white"
         font.bold: true
         font.family: "Roboto"
@@ -27,7 +27,7 @@ Rectangle  {
         anchors.right: parent.right
         anchors.rightMargin: (parent.height - height) / 2
         onClicked: {
-            wirelessConfigurator.destroy()
+            remoteConnection.destroy()
         }
     }
 }

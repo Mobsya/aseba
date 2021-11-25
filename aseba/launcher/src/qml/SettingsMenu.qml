@@ -37,7 +37,7 @@ Rectangle {
 
 
     function remoteConnectionDialog() {
-        var component = Qt.createComponent("qrc:/qml/RemoteConnectionDialog.qml");
+        var component = Qt.createComponent("qrc:/qml/remoteconnection/RemoteConnectionDialog.qml");
         var dialog = component.createObject(launcher);
 
        if (dialog === null) {
