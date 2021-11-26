@@ -63,6 +63,7 @@ Rectangle {
                 color: "white"
                 clip: true
                 font.family: "Roboto Bold"
+                visible: Utils.platformHasSerialPorts()
                 text: {
                     var explainText = qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).<br/><br/>ADDRESS</b>")
                     var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
