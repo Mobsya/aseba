@@ -25,7 +25,7 @@ Rectangle {
         id: connectionzone
         anchors.top: parent.top
         width : parent.width
-        height : parent.height*0.6
+        height : Utils.platformHasSerialPorts()?parent.height*0.6:parent.height*0.3
         color: Style.light
     }
 
@@ -96,7 +96,7 @@ Rectangle {
             anchors.right:parent.right
             anchors.margins: 20
             width: parent.width / 2.2
-            height: parent.height * 0.55
+            height: Utils.platformHasSerialPorts()?parent.height*0.55:parent.height*0.25
             id: connectImage
             source : "qrc:/assets/remote_access.svg"
             anchors.topMargin: 0
@@ -112,7 +112,7 @@ Rectangle {
 
         Text {
             id:connectText
-            anchors.topMargin:20 + parent.height * 0.6
+            anchors.topMargin:Utils.platformHasSerialPorts()?20 + parent.height * 0.6: 20 + parent.height * 0.3
             anchors.horizontalCenter:parent.horizontalCenter
             anchors.top: parent.top
             horizontalAlignment: Text.AlignLeft
