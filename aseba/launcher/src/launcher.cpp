@@ -232,7 +232,7 @@ bool Launcher::openUrl(const QUrl& url) {
     // might crash
     // see https://bugreports.qt.io/browse/QTBUG-75165
 #ifndef Q_OS_OSX
-    connect(e, &QQmlApplicationEngine::quit, &QQmlApplicationEngine::deleteLater);
+    //connect(e, &QQmlApplicationEngine::quit, &QQmlApplicationEngine::deleteLater);
 #endif
     return true;
 }
