@@ -18,6 +18,8 @@ variables:
   value: "v20210908.3"
 - name: scratch_version
   value: "v20210908.1"
+- name: vpl3_version
+  value: "v20211130.2"
 - name: packet_version
   value: "2.2.1"
 - name: blockly_url
@@ -25,7 +27,7 @@ variables:
 - name: scratch_url
   value: "https://github.com/Mobsya/scratch-gui/releases/download/$(scratch_version)/scratch-gui.tar.gz"
 - name: vpl3_url
-  value: "https://github.com/Mobsya/ci-data/releases/download/data/vpl3-thymio-suite.tar.gz"
+  value: "https://github.com/Mobsya/vpl-web/releases/download/$(vpl3_version)/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
   value: "cccef600decd1091a20a0b4d8a2e61f7041eb686"
 - name: visual_bootstrapper
