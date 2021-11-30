@@ -179,7 +179,7 @@ if(APPLE)
 		find_library(FOUNDATION_FRAMEWORK Foundation)
         find_library(UIKit_FRAMEWORK UIKit)
     else()
-        query_qmake(QWEBENGINE_PATH QT_INSTALL_LIBEXECS) 
+        find_package(Qt5 ${QT_VERSION} CONFIG COMPONENTS WebEngine)
     endif()
 
     if(NOT IOS)
