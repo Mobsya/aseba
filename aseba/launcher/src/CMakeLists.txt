@@ -52,7 +52,7 @@ if(IOS)
   SET_SOURCE_FILES_PROPERTIES("${PROJECT_SOURCE_DIR}/vpl3-thymio-suite" PROPERTIES MACOSX_PACKAGE_LOCATION "webapps")
 endif()
 
-if(IOS)
+if(APPLE)
     target_sources(thymio-launcher PRIVATE launcher.mm)
 endif()
 
