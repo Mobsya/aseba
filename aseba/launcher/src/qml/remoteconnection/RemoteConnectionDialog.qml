@@ -37,7 +37,7 @@ Rectangle {
     function fontsize(){
         if(remoteConnection.height>=800)
             return 16;
-        return 12;
+        return 14;
     }
 
 
@@ -45,7 +45,7 @@ Rectangle {
         id: inputzone
         anchors.fill: parent
         anchors.margins:60
-        anchors.topMargin: 80
+        anchors.topMargin: 70
         Item {
             width : parent.width / 2
             height : 120
@@ -124,7 +124,7 @@ Rectangle {
             font.bold: true
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("To connect to the robot(s) of another host, please enter the address and password in the fields below:")
+            text: qsTr("To connect to the robot(s) of another host, please enter the address and password and change the port number if necessary in the fields below:")
         }
         RowLayout {
             id:connectInputs
