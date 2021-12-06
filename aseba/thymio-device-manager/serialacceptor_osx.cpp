@@ -1,7 +1,7 @@
 #include "serialacceptor.h"
 #include <algorithm>
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/beast/core/bind_handler.hpp>
 #include "log.h"
 

@@ -18,5 +18,6 @@ protected:
     bool event(QEvent* event) override;
 Q_SIGNALS:
     void deviceConnectionRequest(QUuid);
+    void endpointConnectionRequest(QUrl, QByteArray);
 };
 }  // namespace mobsya

@@ -1,6 +1,7 @@
 import QtQuick 2.10
 import QtQuick.Layouts 1.12
 import org.mobsya  1.0
+import "../components"
 import ".."
 
 Rectangle {

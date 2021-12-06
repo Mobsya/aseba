@@ -12,6 +12,7 @@ cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0003 NEW)
 cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0007 NEW)
+cmake_policy(SET CMP0023 NEW)
 
 project(ThymioSuite)
 set (CMAKE_PROJECT_VERSION 2.0)
@@ -191,7 +192,7 @@ include(CPack)
 add_subdirectory(aseba)
 
 if(NOT ANDROID AND NOT IOS)
-	add_subdirectory(js)
+    add_subdirectory(js)
 endif()
 
 if(NOT ANDROID AND NOT IOS)

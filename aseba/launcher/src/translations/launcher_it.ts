@@ -4,17 +4,17 @@
 <context>
     <name>ApplicationSelectionView</name>
     <message>
+        <location filename="../qml/ApplicationSelectionView.qml" line="37"/>
         <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to learn with Thymio&lt;/div&gt;</source>
-        <translation type="vanished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in  Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
+        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in  Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="35"/>
         <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
                 learn with Thymio&lt;/div&gt;</source>
-        <translation>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
+        <translation type="vanished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ApplicationSelectionView.qml" line="108"/>
+        <location filename="../qml/ApplicationSelectionView.qml" line="104"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</source>
         <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1</translation>
     </message>
@@ -46,7 +46,7 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="98"/>
+        <location filename="../main.cpp" line="167"/>
         <source>Thymio Suite</source>
         <translation>Thymio Suite</translation>
     </message>
@@ -349,7 +349,7 @@ Continuare?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="238"/>
+        <location filename="../launcher.cpp" line="271"/>
         <source>Save %1</source>
         <translation>Salva %1</translation>
     </message>

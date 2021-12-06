@@ -65,6 +65,15 @@ void ThymioDeviceManagerClientEndpoint::setWebSocketMatchingPort(quint16 port) {
     m_ws_port = port;
 }
 
+QByteArray ThymioDeviceManagerClientEndpoint::password() const {
+    return m_password;
+}
+
+void ThymioDeviceManagerClientEndpoint::setPassword(QByteArray password) {
+    m_password = password;
+    Q_EMIT passwordChanged();
+}
+
 QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     QUrl u;
     if(!m_ws_port)
@@ -72,6 +81,14 @@ QUrl ThymioDeviceManagerClientEndpoint::websocketConnectionUrl() const {
     u.setScheme("ws");
     u.setHost(m_socket->peerAddress().toString());
     u.setPort(m_ws_port);
+    return u;
+}
+
+QUrl ThymioDeviceManagerClientEndpoint::tcpConnectionUrl() const {
+    QUrl u;
+    u.setScheme("tcp");
+    u.setHost(m_socket->peerAddress().toString());
+    u.setPort(m_socket->peerPort());
     return u;
 }
 
@@ -119,9 +136,12 @@ void ThymioDeviceManagerClientEndpoint::handleIncommingMessage(const fb_message_
     m_last_message_reception_date = QDateTime::currentDateTime();
     switch(msg.message_type()) {
         case mobsya::fb::AnyMessage::ConnectionHandshake: {
-            auto message = msg.as<mobsya::fb::ConnectionHandshake>();
-            m_islocalhostPeer = message->localhostPeer();
-            localPeerChanged();
+            auto message = msg.as<mobsya::fb::ConnectionHandshake>()->UnPack();
+            m_islocalhostPeer = message->localhostPeer;
+            m_serverUUid = message->uuid ? qfb::uuid(message->uuid->id) : QUuid{};
+            m_ws_port = message->ws_port;
+            setPassword(QByteArray::fromStdString(message->password));
+            handshakeCompleted(m_serverUUid);
             // TODO handle versionning, etc
             break;
         }
@@ -448,10 +468,16 @@ Request ThymioDeviceManagerClientEndpoint::requestDeviceManagerShutdown() {
 }
 
 void ThymioDeviceManagerClientEndpoint::onConnected() {
+
+    flatbuffers::Offset<flatbuffers::String> passwordOffset;
     flatbuffers::FlatBufferBuilder builder;
+    if(!m_password.isEmpty())
+        passwordOffset = qfb::add_string(builder, m_password);
+
     fb::ConnectionHandshakeBuilder hsb(builder);
     hsb.add_protocolVersion(protocolVersion);
     hsb.add_minProtocolVersion(minProtocolVersion);
+    hsb.add_password(passwordOffset);
     write(wrap_fb(builder, hsb.Finish()));
 }
 

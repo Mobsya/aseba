@@ -38,6 +38,7 @@
         <file>assets/battery_mid.svg</file>
         <file>assets/battery_low.svg</file>
         <file>assets/dummy_node.svg</file>
+		<file>assets/remote_access.svg</file>
         <file>qml/BatteryIndicator.qml</file>
         <file>assets/selected_thymio.svg</file>
         <file>assets/selected_simulated_thymio.svg</file>
@@ -90,16 +91,23 @@
         <file>apps/scratch/desc.pl.html</file>
         <file>apps/blockly/desc.pl.html</file>
         <file>apps/studio/desc.pl.html</file>
+        <file>apps/vpl/desc.zh-CN.html</file>
+        <file>apps/vpl3/desc.zh-CN.html</file>
+        <file>apps/scratch/desc.zh-CN.html</file>
+        <file>apps/blockly/desc.zh-CN.html</file>
+        <file>apps/studio/desc.zh-CN.html</file>
         <file>qml/wirelessconfigurator/WirelessConfigurator.qml</file>
         <file>qml/wirelessconfigurator/TitleBar.qml</file>
         <file>assets/multiple-thymio-one-dongle.svg</file>
         <file>assets/usb-cable-and-dongle.svg</file>
         <file>assets/one-thymio-one-dongle.svg</file>
-        <file>qml/wirelessconfigurator/Button.qml</file>
+        <file>qml/components/Button.qml</file>
         <file>assets/alert.svg</file>
         <file>qml/wirelessconfigurator/ChannelButton.qml</file>
         <file>qml/wirelessconfigurator/ChannelSelector.qml</file>
         <file>qml/wirelessconfigurator/NetworkIdInput.qml</file>
         <file>qml/wirelessconfigurator/WirelessWizardWarningDialog.qml</file>
+        <file>qml/remoteconnection/RemoteConnectionDialog.qml</file>
+		<file>qml/remoteconnection/TitleBar.qml</file>
     </qresource>
 </RCC>

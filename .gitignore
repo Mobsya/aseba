@@ -12,3 +12,8 @@ enki/
 build/
 *.qmlc
 *.jsc
+CMakeLists.txt.user
+
+scratch/
+vpl3-thymio-suite/
+*.jks

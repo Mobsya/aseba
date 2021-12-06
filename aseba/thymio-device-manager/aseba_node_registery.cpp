@@ -1,5 +1,6 @@
 #include "aseba_node_registery.h"
 #include "aseba_endpoint.h"
+#include "app_token_manager.h"
 #include "log.h"
 #include "uuid_provider.h"
 #include <aware/aware.hpp>
@@ -10,14 +11,22 @@
 
 namespace mobsya {
 
+static std::optional<aware::announce_socket> make_aware_announce_socket(boost::asio::execution_context& io_context)
+{
+    try {
+        return {static_cast<boost::asio::io_context&>(io_context)};
+    } catch(boost::system::system_error& e) {
+         mLogError("Unable to start the discovy service {}", e.what());
+    }
+    return std::nullopt;
+}
+
 aseba_node_registery::aseba_node_registery(boost::asio::execution_context& io_context)
     : boost::asio::detail::service_base<aseba_node_registery>(static_cast<boost::asio::io_context&>(io_context))
     , m_service_uid(boost::asio::use_service<uuid_generator>(io_context).generate())
-    , m_discovery_socket(static_cast<boost::asio::io_context&>(io_context))
+    , m_discovery_socket(make_aware_announce_socket(io_context))
     , m_nodes_service_desc("mobsya") {
     m_nodes_service_desc.name(fmt::format("Thymio Device Manager on {}", boost::asio::ip::host_name()));
-
-    //  update_discovery();
 }
 
 void aseba_node_registery::add_node(std::shared_ptr<aseba_node> node) {
@@ -108,49 +117,58 @@ aseba_node_registery::node_map aseba_node_registery::nodes() const {
 
 void aseba_node_registery::set_tcp_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_nodes_service_desc.endpoint(endpoint);
-    update_discovery();
 }
 
 void aseba_node_registery::set_ws_endpoint(const boost::asio::ip::tcp::endpoint& endpoint) {
     m_ws_endpoint = endpoint;
-    update_discovery();
 }
 
-void aseba_node_registery::update_discovery() {
+void aseba_node_registery::announce_on_zeroconf() {
+    // Make sure we have entered the event loop before announcing ourself
+    boost::asio::post(boost::asio::get_associated_executor(this),
+                      boost::bind(&aseba_node_registery::do_announce_on_zeroconf, this));
+}
 
-    if(m_updating_discovery) {
-        m_discovery_needs_update = true;
+void aseba_node_registery::do_announce_on_zeroconf() {
+    if(!m_discovery_socket)
         return;
-    }
     m_nodes_service_desc.properties(build_discovery_properties());
-
-    m_discovery_needs_update = false;
-    m_updating_discovery = true;
-    m_discovery_socket.async_announce(
+    m_discovery_socket->async_announce(
         m_nodes_service_desc,
-        std::bind(&aseba_node_registery::on_update_discovery_complete, this, std::placeholders::_1));
+        std::bind(&aseba_node_registery::on_announce_complete, this, std::placeholders::_1));
 }
 
-void aseba_node_registery::on_update_discovery_complete(const boost::system::error_code& ec) {
+void aseba_node_registery::on_announce_complete(const boost::system::error_code& ec) {
     if(ec) {
         mLogError("Discovery : {}", ec.message());
     } else {
-        mLogTrace("Discovery : update complete");
+        mLogTrace("Discovery : update complete");		
     }
-    m_updating_discovery = false;
-    if(m_discovery_needs_update) {
-        boost::asio::post(boost::asio::get_associated_executor(this),
-                          boost::bind(&aseba_node_registery::update_discovery, this));
-    }
+
+    // Refresh the zeroconf info every few seconds in case they get lost
+    // or corrupted.
+    auto timer = std::make_shared<boost::asio::deadline_timer>(get_io_context());
+    timer->expires_from_now(boost::posix_time::seconds(5));
+    auto cb = boost::asio::bind_executor(get_io_context().get_executor(), [timer, this](const boost::system::error_code& ec) {
+        do_announce_on_zeroconf();
+    });
+    timer->async_wait(std::move(cb));
 }
 
 
-aware::contact::property_map_type aseba_node_registery::build_discovery_properties() const {
-
+aware::contact::property_map_type aseba_node_registery::build_discovery_properties() {
     aware::contact::property_map_type map;
     map["uuid"] = boost::uuids::to_string(m_service_uid);
     if(m_ws_endpoint.port())
         map["ws-port"] = std::to_string(m_ws_endpoint.port());
+    mLogTrace("=> WS port discovery on {}", map["ws-port"]);
+
+    // We could sdvertise the password on the local network.
+    // But we prefer using ip filtering
+    // Leaving this for future reference
+    // The client code to support that is left intact
+    // auto& token_manager = boost::asio::use_service<app_token_manager>(get_io_context());
+    // map["password"] = token_manager.password();
     return map;
 }
 

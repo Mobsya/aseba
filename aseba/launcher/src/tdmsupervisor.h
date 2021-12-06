@@ -14,16 +14,19 @@ public:
 public Q_SLOTS:
 
     void startLocalTDM();
+    void restart();
 
 Q_SIGNALS:
 
     void statusChanged();
     void error();
+    void started();
 
 private:
     const Launcher& m_launcher;
     QProcess* m_tdm_process;
     quint8 m_launches;
+    bool m_restart = false;
 };
 
 }  // namespace mobsya

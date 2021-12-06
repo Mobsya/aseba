@@ -136,8 +136,11 @@ public:
     using base = application_endpoint_base<application_endpoint<Socket>, Socket>;
     application_endpoint(boost::asio::io_context& ctx) : base(ctx), m_ctx(ctx), m_pings_timer(ctx) {}
 
-    void set_local(bool is_local) {
-        this->m_local_endpoint = is_local;
+    void set_is_machine_local() {
+        this->m_endpoint_type |= uint32_t(EndPointType::MachineLocal);
+    }
+    void set_is_network_local() {
+        this->m_endpoint_type |= uint32_t(EndPointType::NetworkLocal);
     }
 
     void start() {
@@ -190,7 +193,7 @@ public:
         mLogTrace("-> {}", EnumNameAnyMessage(msg.message_type()));
         switch(msg.message_type()) {
             case mobsya::fb::AnyMessage::DeviceManagerShutdownRequest: {
-                if(m_local_endpoint) {
+                if(is_local_endpoint()) {
 #ifdef _WIN32
                     std::quick_exit(0);
 #endif
@@ -389,6 +392,10 @@ public:
     }
 
 private:
+    bool is_local_endpoint() const {
+        return m_endpoint_type & uint32_t(EndPointType::MachineLocal);
+    }
+
     void do_node_changed(std::shared_ptr<aseba_node> node, const aseba_node_registery::node_id& id,
                          aseba_node::status status) {
         // mLogInfo("node changed: {}, {}", node->native_id(), node->status_to_string(status));
@@ -504,7 +511,7 @@ private:
 
     uint64_t node_capabilities(const aseba_node& node) const {
         uint64_t caps = 0;
-        if(m_local_endpoint) {
+        if(is_local_endpoint()) {
             caps |= uint64_t(fb::NodeCapability::ForceResetAndStop);
             if(!node.is_wirelessly_connected())
                 caps |= uint64_t(fb::NodeCapability::FirwmareUpgrade);
@@ -994,22 +1001,51 @@ private:
             mLogError("Client did not send a ConnectionHandshake message");
             return;
         }
+
         auto hs = msg.as<fb::ConnectionHandshake>();
+        auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
+
         if(hs->protocolVersion() < tdm::minProtocolVersion || tdm::protocolVersion < hs->minProtocolVersion()) {
             mLogError("Client protocol version ({}) is not compatible with this server({}+)", hs->protocolVersion(),
                       tdm::minProtocolVersion);
         } else {
             m_protocol_version = std::min(hs->protocolVersion(), tdm::protocolVersion);
             m_max_out_going_packet_size = hs->maxMessageSize();
-            auto& token_manager = boost::asio::use_service<app_token_manager>(m_ctx);
             // TODO ?
             if(hs->token())
                 token_manager.check_token(app_token_manager::token_view{hs->token()->data(), hs->token()->size()});
+
+            // Ignore password checks for clients on the same network
+            if(!(m_endpoint_type & uint32_t(EndPointType::NetworkLocal))) {
+                std::string_view password;
+
+                if(hs->password())
+                    password = hs->password()->c_str();
+
+                else {
+                    mLogError("Missing password!!");
+                    // No password - maybe an incorrectly labeled LAN connection?
+                    return;
+                }
+
+                if(!token_manager.check_tdm_password(password)) {
+                    mLogError("Client password incorrect");
+                    // If the password is not correct, returming here will drop the connection
+                    return;
+                }
+            }
         }
         flatbuffers::FlatBufferBuilder builder;
+        auto offset = node_id(registery().endpoint_uuid()).fb(builder);
+
+        // We always send the password to already connected clients
+        // as they have further use for it.
+        auto passwordOffset = builder.CreateString(token_manager.password());
+
         write_message(wrap_fb(builder,
                               fb::CreateConnectionHandshake(builder, tdm::minProtocolVersion, m_protocol_version,
-                                                            tdm::maxAppEndPointMessageSize, 0, m_local_endpoint)));
+                                                            tdm::maxAppEndPointMessageSize, 0, is_local_endpoint(),
+                                                            registery().ws_port(), offset, passwordOffset)));
 
         // the client do not have a compatible protocol version, bailing out
         if(m_protocol_version == 0) {
@@ -1055,7 +1091,13 @@ private:
         m_watch_nodes;
     uint16_t m_protocol_version = 0;
     uint16_t m_max_out_going_packet_size = 0;
-    bool m_local_endpoint = false;
+    enum class EndPointType {
+        Remote = 0,
+        MachineLocal = 0x01,
+        NetworkLocal = 0x02
+    };
+
+    uint32_t m_endpoint_type = uint32_t(EndPointType::Remote);
 };
 
 extern template class application_endpoint<websocket_t>;

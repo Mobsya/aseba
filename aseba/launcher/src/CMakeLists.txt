@@ -167,8 +167,6 @@ if(NOT ANDROID AND NOT IOS)
     install_qt_app(thymio-launcher)
 endif()
 
-
-
 if(NOT CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(thymio-launcher PRIVATE -DQT_QML_DEBUG)
 endif()
@@ -198,17 +196,29 @@ if(APPLE)
     endif() #NOT IOS
 endif()
 
-
-
 if(ANDROID)
-    add_qt_android_apk(thymio-launcher-apk thymio-launcher
-        PACKAGE_NAME org.mobsya.ThymioSuite
-        QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
-    )
+    string(TIMESTAMP CUR_TIME %s)
+    set(PROJECT_VERSION ${ASEBA_VERSION})
+    set(ANDROID_PLATFORM_LEVEL $ENV{THYMIO_DEPLOYMENT_TARGET_API_LEVEL})
+    if(EXISTS "${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12" AND NOT "$ENV{KEYSTORE_PASSWORD}" STREQUAL "")
+        message(NOTICE "Keystore found and password defined. The APK will be signed.")
+        add_qt_android_apk(thymio-launcher-apk thymio-launcher
+            NAME "Thymio Suite Mobile"
+            PACKAGE_NAME org.mobsya.ThymioSuite
+            PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
+            QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
+            KEYSTORE ${CMAKE_SOURCE_DIR}/thymio_suite_mobile.p12 thymio_suite_mobile
+            KEYSTORE_PASSWORD $ENV{KEYSTORE_PASSWORD}
+            VERSION_CODE ${CUR_TIME}
+        )
+    else()
+        message(NOTICE "Keystore not found or password undefined. The APK will not be signed.")
+        add_qt_android_apk(thymio-launcher-apk thymio-launcher
+                    NAME "Thymio Suite Mobile"
+                    PACKAGE_NAME org.mobsya.ThymioSuite
+                    PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/android
+                    QML_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml
+                    VERSION_CODE ${CUR_TIME}
+                )
+    endif()
 endif()
-
-
-
-
-
-
