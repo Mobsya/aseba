@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 
 Rectangle {
     property alias text: text1.text
