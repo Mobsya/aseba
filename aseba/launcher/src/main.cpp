@@ -181,7 +181,8 @@ int main(int argc, char** argv) {
     w.rootContext()->setContextProperty("thymios", &model);
     w.rootContext()->setContextProperty("client", &client);
     w.setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    w.setResizeMode(QQuickWidget::SizeRootObjectToView);    
+    w.setResizeMode(QQuickWidget::SizeRootObjectToView);
+    w.setAttribute(Qt::WA_AcceptTouchEvents);
 #if defined(Q_OS_IOS)
     w.showFullScreen();
 #elif defined(Q_OS_ANDROID)
