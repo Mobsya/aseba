@@ -17,8 +17,6 @@ fi
 # Make the top Level Bundle Out of the Launcher Bundle
 mkdir -p "$DEST"
 cp -R "$BUILD_DIR"/thymio-launcher.app/* "$DEST"
-rm -r "$DEST/Contents/Frameworks/QtWebEngine.framework"
-rm -r "$DEST/Contents/Frameworks/QtWebEngineCore.framework"
 
 if [ -d "$BUILD_DIR/scratch" ]; then
     cp -R "$BUILD_DIR/scratch" "$DEST/Contents/Resources"

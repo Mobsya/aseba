@@ -1,6 +1,6 @@
-import QtQuick 2.3
+import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.12
 import QtQuick.Controls.Styles 1.4
 import "../components"
 import ".."
@@ -25,7 +25,7 @@ Rectangle {
         id: connectionzone
         anchors.top: parent.top
         width : parent.width
-        height : parent.height*0.6
+        height : Utils.platformHasSerialPorts()?parent.height*0.6:parent.height*0.3
         color: Style.light
     }
 
@@ -37,7 +37,7 @@ Rectangle {
     function fontsize(){
         if(remoteConnection.height>=800)
             return 16;
-        return 12;
+        return 14;
     }
 
 
@@ -45,7 +45,7 @@ Rectangle {
         id: inputzone
         anchors.fill: parent
         anchors.margins:60
-        anchors.topMargin: 80
+        anchors.topMargin: 70
         Item {
             width : parent.width / 2
             height : 120
@@ -63,6 +63,7 @@ Rectangle {
                 color: "white"
                 clip: true
                 font.family: "Roboto Bold"
+                visible: Utils.platformHasSerialPorts()
                 text: {
                     var explainText = qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).<br/><br/>ADDRESS</b>")
                     var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
@@ -95,7 +96,7 @@ Rectangle {
             anchors.right:parent.right
             anchors.margins: 20
             width: parent.width / 2.2
-            height: parent.height * 0.55
+            height: Utils.platformHasSerialPorts()?parent.height*0.55:parent.height*0.25
             id: connectImage
             source : "qrc:/assets/remote_access.svg"
             anchors.topMargin: 0
@@ -111,7 +112,7 @@ Rectangle {
 
         Text {
             id:connectText
-            anchors.topMargin:20 + parent.height * 0.6
+            anchors.topMargin:Utils.platformHasSerialPorts()?20 + parent.height * 0.6: 20 + parent.height * 0.3
             anchors.horizontalCenter:parent.horizontalCenter
             anchors.top: parent.top
             horizontalAlignment: Text.AlignLeft
@@ -123,7 +124,7 @@ Rectangle {
             font.bold: true
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("To connect to the robot(s) of another host, please enter the address and password in the fields below:")
+            text: qsTr("To connect to the robot(s) of another host, please enter the address and password and change the port number if necessary in the fields below:")
         }
         RowLayout {
             id:connectInputs

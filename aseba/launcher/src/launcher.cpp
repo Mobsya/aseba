@@ -228,12 +228,6 @@ bool Launcher::openUrl(const QUrl& url) {
     e->rootContext()->setContextProperty("appUrl", url);
     e->load(source);
 
-    // FIXME: On OSX, let the engine leak, otherwise the application
-    // might crash
-    // see https://bugreports.qt.io/browse/QTBUG-75165
-#ifndef Q_OS_OSX
-    //connect(e, &QQmlApplicationEngine::quit, &QQmlApplicationEngine::deleteLater);
-#endif
     return true;
 }
 
@@ -284,6 +278,7 @@ QString Launcher::getDownloadPath(const QUrl& url) {
     const auto name = url.fileName();
     const auto extension = QFileInfo(name).suffix();
     d.setWindowTitle(tr("Save %1").arg(name));
+    d.selectFile(name);
     d.setNameFilter(QString("%1 (*.%1)").arg(extension));
     d.setAcceptMode(QFileDialog::AcceptSave);
     d.setFileMode(QFileDialog::AnyFile);

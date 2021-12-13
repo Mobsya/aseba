@@ -1,11 +1,13 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtWebEngine 1.7
-import QtQuick.Window 2.11
+import QtQuick.Window 2.12
+import QtQml 2.12
 Window {
     id: window
     minimumHeight: 700
     minimumWidth: 1024
     WebEngineView {
+        id:webengineview1
         anchors.fill: parent
         url: appUrl
         onTitleChanged: {
@@ -32,6 +34,7 @@ Window {
         window.show();
     }
     onClosing: {
+        webengineview1.loadHtml("<html></html>")
         Qt.quit();
     }
 }
