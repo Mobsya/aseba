@@ -168,12 +168,12 @@ sign --options=runtime $(realpath "$MAIN_DIR/thymio-launcher")
 
 if [ -n "$DMG" ]; then
     test -f "$1" && rm "$DMG"
-    "$DIR/dmg/create-dmg" \
+    create-dmg \
     --volname "Thymio Suite" \
     --volicon "$DIR/../menu/osx/launcher.icns" \
     --background "$DIR/background.png" \
     --window-pos 200 120 \
-    --window-size 620 470 \
+    --window-size 640 480 \
     --icon-size 100 \
     --icon "ThymioSuite.app" 100 300 \
     --hide-extension "ThymioSuite.app" \

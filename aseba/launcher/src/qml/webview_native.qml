@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtWebView 1.1
+import QtWebView 1.12
 import QtQuick.Window 2.12
 Window {
     id: window
