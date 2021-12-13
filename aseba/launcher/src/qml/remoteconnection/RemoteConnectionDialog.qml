@@ -77,7 +77,7 @@ Rectangle {
                         passwordText = qsTr("<b>PASSWORD</b><br/>%1")
                     .arg(client.localEndpoint.password)
 
-                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirect to this computer <a href='https://www.google.com/'>More information</a>")
+                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.google.com/'>More information</a>")
                     .arg(explainText)
                     .arg(ipText)
                     .arg(passwordText)

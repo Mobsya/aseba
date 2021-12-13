@@ -89,7 +89,7 @@ Do not unplug the device while the update is in progress.</source>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="80"/>
-        <source>%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Be sure your port 8596 and 8597 are open and redirect to this computer &lt;a href=&apos;https://www.google.com/&apos;&gt;More information&lt;/a&gt;</source>
+        <source>%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Be sure your port 8596 and 8597 are open and redirected to this computer &lt;a href=&apos;https://www.google.com/&apos;&gt;More information&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -16,12 +16,12 @@
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="107"/>
         <source>&lt;br/&gt; Local connection </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br/&gt; Collegamento locale </translation>
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="109"/>
         <source>Discovery service enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Servizio di scoperta attivato</translation>
     </message>
     <message>
         <source>&lt;br/&gt; Connect locally </source>
@@ -74,77 +74,81 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="68"/>
         <source>&lt;b&gt;Your address and password are below. This information is needed to enable other users to access your robot(s).&lt;br/&gt;&lt;br/&gt;ADDRESS&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Il tuo indirizzo e la tua password sono qui sotto. Queste informazioni sono necessarie per permettere agli altri utenti di accedere ai tuoi robot.&lt;br/&gt;&lt;br/&gt;INDIRIZZO&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="69"/>
         <source>&lt;a href=&apos;https://whatismyipaddress.com/&apos;&gt;Click here to show your IP address&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&apos;https://whatismyipaddress.com/&apos;&gt;Clicca qui per mostrare il tuo indirizzo IP&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="71"/>
         <source>ipv4: &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;ipv6: &lt;b&gt;%2&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>ipv4: &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;ipv6: &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="75"/>
         <source>&lt;b&gt;PASSWORD&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;PASSWORD&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="77"/>
         <source>&lt;b&gt;PASSWORD&lt;/b&gt;&lt;br/&gt;%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;PASSWORD&lt;/b&gt;&lt;br/&gt;%1</translation>
+    </message>
+    <message>
+        <source>%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Be sure your port 8596 and 8597 are open and redirect to this computer &lt;a href=&apos;https://www.google.com/&apos;&gt;More information&lt;/a&gt;</source>
+        <translation type="obsolete">%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Assicurati che le tue porte 8596 e 8597 siano aperte e reindirizzate a questo computer &lt;a href=&apos;https://www.google.com/&apos;&gt;Più informazioni&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="80"/>
-        <source>%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Be sure your port 8596 and 8597 are open and redirect to this computer &lt;a href=&apos;https://www.google.com/&apos;&gt;More information&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Be sure your port 8596 and 8597 are open and redirected to this computer &lt;a href=&apos;https://www.google.com/&apos;&gt;More information&lt;/a&gt;</source>
+        <translation>%1&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;%3&lt;br/&gt;&lt;br/&gt;Assicurati che le tue porte 8596 e 8597 siano aperte e reindirizzate a questo computer &lt;a href=&apos;https://www.google.com/&apos;&gt;Più informazioni&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="127"/>
         <source>To connect to the robot(s) of another host, please enter the address and password and change the port number if necessary in the fields below:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Per connettersi al o ai robot di un altro host, inserisci l&apos;indirizzo e la password e cambia il numero di porta se necessario nei campi sottostanti:</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="153"/>
         <source>ADDRESS</source>
-        <translation type="unfinished"></translation>
+        <translation>INDIRIZZO</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="175"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>PASSWORD</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="198"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Port</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="215"/>
         <source>The connection will not be encrypted. Do not connect to hosts you don&apos;t trust !</source>
-        <translation type="unfinished"></translation>
+        <translation>La connessione non sarà criptata. Non connettersi a host di cui non ci si fida!</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="225"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Collegare</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="261"/>
         <source>Error: %1 - Please verify the address, port and password of the server</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore: %1 - Si prega di verificare l&apos;indirizzo, la porta e la password del server</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="287"/>
         <source>Connected!</source>
-        <translation type="unfinished"></translation>
+        <translation>Collegato!</translation>
     </message>
     <message>
         <location filename="../qml/remoteconnection/RemoteConnectionDialog.qml" line="292"/>
         <source>Connecting....</source>
-        <translation type="unfinished"></translation>
+        <translation>Collegamento....</translation>
     </message>
 </context>
 <context>
@@ -172,7 +176,7 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
     <message>
         <location filename="../qml/SettingsMenu.qml" line="84"/>
         <source>BETA Connect to a remote host</source>
-        <translation type="unfinished"></translation>
+        <translation>BETA Connettersi a un host remoto</translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="160"/>
@@ -182,7 +186,7 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
     <message>
         <location filename="../qml/SettingsMenu.qml" line="199"/>
         <source>Allow connections from other computers</source>
-        <translation type="unfinished"></translation>
+        <translation>Permettere connessioni da altri computer</translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="57"/>
@@ -277,7 +281,7 @@ Connect the robot with an usb cable to install it</source>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="348"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun robot trovato perché Avahi Daemon mancante o non in funzione. &lt;a href=&apos;https://www.thymio.org/it/faq/il-mio-robot-thymio-non-appare-nella-lista-di-selezione-dei-robot/&apos;&gt;Troubleshooting&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/news/thymio-suite/&apos;&gt;More Informations&lt;/a&gt;</source>
@@ -302,12 +306,12 @@ Connect the robot with an usb cable to install it</source>
     <message>
         <location filename="../qml/remoteconnection/TitleBar.qml" line="10"/>
         <source>Remote Connection Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazione della connessione remota</translation>
     </message>
     <message>
         <location filename="../qml/wirelessconfigurator/TitleBar.qml" line="10"/>
         <source>Wireless Thymio Network Configurator</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuratore di rete Thymio senza fili</translation>
     </message>
 </context>
 <context>
