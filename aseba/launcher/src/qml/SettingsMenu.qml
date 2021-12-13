@@ -81,7 +81,7 @@ Rectangle {
             entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
             entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
         }
-        entries.append( { "name": qsTr("Connect to a remote host"), action: "remote"})
+        entries.append( { "name": qsTr("BETA Connect to a remote host"), action: "remote"})
     }
 
     Item {
