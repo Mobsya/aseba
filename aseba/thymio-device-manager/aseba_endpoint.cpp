@@ -181,7 +181,7 @@ void aseba_endpoint::handle_read(boost::system::error_code ec, std::shared_ptr<A
         mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
         return;
     }
-    mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
+    mLogTrace("Message received : '{}'", msg->message_name());
 
     auto node_id = msg->source;
     auto it = m_nodes.find(node_id);
@@ -263,7 +263,7 @@ void aseba_endpoint::schedule_send_ping(boost::posix_time::time_duration delay) 
         auto that = ptr.lock();
         if(!that || ec)
             return;
-        mLogTrace("Requesting list nodes( ec : {} )", ec.message());
+        mLogTrace("Requesting list nodes");
         if(that->m_upgrading_firmware)
             return;
 

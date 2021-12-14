@@ -208,7 +208,7 @@ private:
         if(m_msg_queue.empty())
             return;
         std::unique_lock<std::mutex> _(m_msg_queue_lock);
-        mLogDebug("Message '{}' sent : {}", m_msg_queue.front().first->message_name(), ec.message());
+        mLogDebug("Message '{}' sent : {}", m_msg_queue.front().first->message_name(), ec ? ec.message() : "ok");
         if(ec) {
             m_msg_queue = {};
             return;
