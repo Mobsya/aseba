@@ -11,7 +11,7 @@
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="104"/>
         <source>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 %2 %3</source>
-        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1  {1 %2 %3?}</translation>
+        <translation>&lt;a href=&quot;https://thymio.org&quot;&gt;Thymio Suite&lt;/a&gt; - %1 %2 %3</translation>
     </message>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="107"/>
