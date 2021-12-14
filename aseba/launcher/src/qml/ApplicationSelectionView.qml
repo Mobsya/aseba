@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 
 Item {
     id:item1
@@ -104,9 +104,9 @@ Item {
         text: qsTr("<a href=\"https://thymio.org\">Thymio Suite</a> - %1 %2 %3")
              .arg(Qt.application.version)
              .arg(client.localEndpoint?
-              qsTr("<br/> Connect locally ") : "<br/>")
+              qsTr("<br/> Local connection ") : "<br/>")
              .arg(Utils.isZeroconfRunning?
-              qsTr("Discovery service enable") : "")
+              qsTr("Discovery service enabled") : "")
         onLinkActivated: Qt.openUrlExternally(link)
         font.family: "Roboto Light"
         anchors.bottom: parent.bottom

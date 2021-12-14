@@ -278,6 +278,7 @@ QString Launcher::getDownloadPath(const QUrl& url) {
     const auto name = url.fileName();
     const auto extension = QFileInfo(name).suffix();
     d.setWindowTitle(tr("Save %1").arg(name));
+    d.selectFile(name);
     d.setNameFilter(QString("%1 (*.%1)").arg(extension));
     d.setAcceptMode(QFileDialog::AcceptSave);
     d.setFileMode(QFileDialog::AnyFile);

@@ -1,6 +1,6 @@
-import QtQuick 2.3
+import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.12
 import QtQuick.Controls.Styles 1.4
 import "../components"
 import ".."
@@ -37,7 +37,7 @@ Rectangle {
     function fontsize(){
         if(remoteConnection.height>=800)
             return 16;
-        return 12;
+        return 14;
     }
 
 
@@ -45,7 +45,7 @@ Rectangle {
         id: inputzone
         anchors.fill: parent
         anchors.margins:60
-        anchors.topMargin: 80
+        anchors.topMargin: 70
         Item {
             width : parent.width / 2
             height : 120
@@ -77,7 +77,7 @@ Rectangle {
                         passwordText = qsTr("<b>PASSWORD</b><br/>%1")
                     .arg(client.localEndpoint.password)
 
-                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirect to this computer <a href='https://www.google.com/'>More information</a>")
+                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.google.com/'>More information</a>")
                     .arg(explainText)
                     .arg(ipText)
                     .arg(passwordText)
@@ -124,7 +124,7 @@ Rectangle {
             font.bold: true
             color: "white"
             font.family: "Roboto Bold"
-            text: qsTr("To connect to the robot(s) of another host, please enter the address and password in the fields below:")
+            text: qsTr("To connect to the robot(s) of another host, please enter the address and password and change the port number if necessary in the fields below:")
         }
         RowLayout {
             id:connectInputs

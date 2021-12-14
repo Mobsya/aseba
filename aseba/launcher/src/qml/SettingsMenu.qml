@@ -1,6 +1,6 @@
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12
 
-import QtQuick 2.11
+import QtQuick 2.12
 
 Rectangle {
     color: "#535353"
@@ -81,7 +81,7 @@ Rectangle {
             entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
             entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
         }
-        entries.append( { "name": qsTr("Connect to a remote host"), action: "remote"})
+        entries.append( { "name": qsTr("BETA Connect to a remote host"), action: "remote"})
     }
 
     Item {
