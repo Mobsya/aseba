@@ -1,8 +1,10 @@
 {
     "app-id": "org.mobsya.ThymioSuite",
     "runtime": "org.kde.Platform",
+    "base": "io.qt.qtwebengine.BaseApp",
+    "base-version": "5.15",
     "sdk": "org.kde.Sdk",
-    "runtime-version": "5.12",
+    "runtime-version": "5.15",
     "finish-args": [
         "--socket=x11",
         "--socket=wayland",
