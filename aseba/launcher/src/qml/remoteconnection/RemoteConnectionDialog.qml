@@ -36,8 +36,8 @@ Rectangle {
 
     function fontsize(){
         if(remoteConnection.height>=800)
-            return 16;
-        return 14;
+            return 15;
+        return 13;
     }
 
 
@@ -51,6 +51,20 @@ Rectangle {
             height : 120
             id: connectIP
             anchors.margins: 20
+            Text {
+                id:introText
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                text: qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).</b>")
+                color: "white"
+                font.family: "Roboto Bold"
+                font.pointSize: fontsize()
+                onLinkActivated: Utils.launchPlayground()
+                wrapMode: Text.WordWrap
+                verticalAlignment: Text.AlignTop
+                visible: Utils.platformHasSerialPorts()
+            }
             TextEdit {
                 id:connectIPText
                 textFormat: TextEdit.RichText
@@ -59,13 +73,16 @@ Rectangle {
                 font.pointSize: fontsize()
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.top: introText.bottom
                 wrapMode: Text.WordWrap
+                selectionColor: "#0a9eeb"
                 color: "white"
+                //linkColor: "#0a9eeb"
                 clip: true
                 font.family: "Roboto Bold"
                 visible: Utils.platformHasSerialPorts()
                 text: {
-                    var explainText = qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).<br/><br/>ADDRESS</b>")
+                    var adressText = qsTr("<b><br/>ADDRESS</b>")
                     var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
                     if(ip != "") {
                         ipText = qsTr("ipv4: <b>%1</b><br/>ipv6: <b>%2</b>")
@@ -77,8 +94,8 @@ Rectangle {
                         passwordText = qsTr("<b>PASSWORD</b><br/>%1")
                     .arg(client.localEndpoint.password)
 
-                    return qsTr("%1<br/>%2<br/><br/>%3<br/><br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.google.com/'>More information</a>")
-                    .arg(explainText)
+                    return qsTr("%1<br/>%2<br/><br/>%3<br/>")
+                    .arg(adressText)
                     .arg(ipText)
                     .arg(passwordText)
                 }
@@ -90,6 +107,26 @@ Rectangle {
                 }
 
             }
+            Text {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top:connectIPText.bottom
+                text: qsTr("<br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.google.com/'>More information</a>")
+                color: "white"
+                linkColor: "#0a9eeb"
+                font.family: "Roboto Bold"
+                font.pointSize: fontsize()
+                onLinkActivated: Qt.openUrlExternally(link)
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
+                wrapMode: Text.WordWrap
+                verticalAlignment: Text.AlignTop
+                visible: Utils.platformHasSerialPorts()
+            }
+
         }
         Image {
             anchors.top: parent.top
@@ -317,6 +354,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:560;width:960}
+    D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/
