@@ -794,14 +794,14 @@ void MainWindow::setupMenu() {
     regenerateOpenRecentMenu();
     fileMenu->addMenu(openRecentMenu)->setIcon(QIcon(":/images/fileopen.png"));
 
-    fileMenu->addAction(QIcon(":/images/filesave.png"), tr("&Save..."), this, SLOT(save()), QKeySequence::Save);
+    fileMenu->addAction(QIcon(":/images/filesave.png"), tr("&Save"), this, SLOT(save()), QKeySequence::Save);
     fileMenu->addAction(QIcon(":/images/filesaveas.png"), tr("Save &As..."), this, SLOT(saveFile()),
                         QKeySequence::SaveAs);
 
     fileMenu->addSeparator();
     fileMenu->addAction(QIcon(":/images/filesaveas.png"), tr("Export &memories content..."), this,
                         SLOT(exportMemoriesContent()));
-    fileMenu->addAction(QIcon(":/images/filesaveas.png"), tr("Export current program to binary"), this, SLOT(ExportCode())),
+    fileMenu->addAction(QIcon(":/images/filesaveas.png"), tr("Export current program to binary..."), this, SLOT(ExportCode())),
     fileMenu->addSeparator();
 #ifdef Q_WS_MAC
     fileMenu->addAction(QIcon(":/images/exit.png"), "quit", this, SLOT(close()), QKeySequence::Quit);
