@@ -81,7 +81,7 @@ Rectangle {
             entries.append( { "name": qsTr("Pair a Wireless Thymio to a Wireless dongle"), action: "thymio2-pairing"})
             entries.append( { "name": qsTr("Pair a case of Wireless Thymio"), action: "thymio2-valise-pairing"})
         }
-        entries.append( { "name": qsTr("BETA Connect to a remote host"), action: "remote"})
+        entries.append( { "name": qsTr("BETA Remote Connection"), action: "remote"})
     }
 
     Item {
@@ -190,7 +190,7 @@ Rectangle {
                         opacity: enabled ? 1.0 : 0.3
                         color: local_browser_checkbox.down ? "#ededed" : "#fff"
                         verticalAlignment: Text.AlignVCenter
-                        leftPadding: 10
+                        leftPadding: 13
                         horizontalAlignment: Text.AlignRight
                     }
                 }
@@ -230,7 +230,7 @@ Rectangle {
                         opacity: enabled ? 1.0 : 0.3
                         color: remote_connections_checkbox.down ? "#ededed" : "#fff"
                         verticalAlignment: Text.AlignVCenter
-                        leftPadding: 10
+                        leftPadding: 13
                         horizontalAlignment: Text.AlignRight
                     }
                 }
