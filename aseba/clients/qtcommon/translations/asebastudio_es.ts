@@ -901,12 +901,11 @@ evento %0 : </translation>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="+146"/>
         <source>Web site Aseba...</source>
         <translation>Sitio web Aseba...</translation>
     </message>
@@ -981,7 +980,17 @@ evento %0 : </translation>
         <translation>&amp;Nuevo</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+6"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Guardar</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Export current program to binary...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>&amp;Stop all</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1012,9 +1021,8 @@ evento %0 : </translation>
         <translation>Abrir &amp;reciente</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>&amp;Save...</source>
-        <translation>&amp;Guardar...</translation>
+        <translation type="vanished">&amp;Guardar...</translation>
     </message>
     <message>
         <source>Ctrl+S</source>
@@ -1022,7 +1030,7 @@ evento %0 : </translation>
         <translation type="obsolete">Ctrl+S</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Save &amp;As...</source>
         <translation>G&amp;uardar como...</translation>
     </message>

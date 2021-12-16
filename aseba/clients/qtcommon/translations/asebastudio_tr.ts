@@ -818,12 +818,11 @@ event %0 : </source>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="+146"/>
         <source>Web site Aseba...</source>
         <translation>İnternet sitesi Aseba...</translation>
     </message>
@@ -914,8 +913,12 @@ event %0 : </source>
     </message>
     <message>
         <location line="+4"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Kaydet</translation>
+    </message>
+    <message>
         <source>&amp;Save...</source>
-        <translation>&amp;Kaydet...</translation>
+        <translation type="vanished">&amp;Kaydet...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -928,7 +931,12 @@ event %0 : </source>
         <translation>&amp;Hafıza içeriğini dışa aktar... </translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+2"/>
+        <source>Export current program to binary...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>&amp;Stop all</source>
         <translation type="unfinished"></translation>
     </message>

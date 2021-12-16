@@ -864,12 +864,11 @@ event %0 : </source>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="+146"/>
         <source>Web site Aseba...</source>
         <translation>Ιστότοπος Aseba...</translation>
     </message>
@@ -955,8 +954,12 @@ event %0 : </source>
     </message>
     <message>
         <location line="+4"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Αποθήκευση</translation>
+    </message>
+    <message>
         <source>&amp;Save...</source>
-        <translation>&amp;Αποθήκευση...</translation>
+        <translation type="vanished">&amp;Αποθήκευση...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -969,7 +972,12 @@ event %0 : </source>
         <translation>Εξαγωγή &amp;περιεχομένου μνημών...</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+2"/>
+        <source>Export current program to binary...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>&amp;Stop all</source>
         <translation type="unfinished"></translation>
     </message>
