@@ -31,10 +31,11 @@
 
 static const auto lock_file_path = boost::filesystem::temp_directory_path() / "mobsya-tdm-0accdcbf-eeb2";
 
+#define DEFAULT_TCP_PORT 8596
 #define DEFAULT_WS_PORT 8597
 
 #ifdef HAS_FB_TCP
-static int tcp_port = 0;    // default: ephemeral port
+static int tcp_port = DEFAULT_TCP_PORT;    // default: 8596
 #endif
 
 #ifdef HAS_FB_WS
@@ -227,7 +228,7 @@ int main(int argc, char **argv) {
 #endif
 #ifdef HAS_FB_TCP
             std::cerr << "  --tcpport n   TCP port opened for listening, or \"no\" for no TCP client" << std::endl;
-            std::cerr << "                (default: ephemeral)" << std::endl;
+            std::cerr << "                (default: " << DEFAULT_TCP_PORT << "; 0: ephemeral)" << std::endl;
 #endif
 #ifdef HAS_FB_WS
             std::cerr << "  --wsport n    WebSocket port opened for listening, or \"no\" for no WebSocket client" << std::endl;
