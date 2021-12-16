@@ -38,11 +38,13 @@ public:
     void accept() {
         auto endpoint = std::make_shared<application_endpoint<socket_type>>(m_io_context);
         m_acceptor.async_accept(endpoint->tcp_socket(), [this, endpoint](const boost::system::error_code& error) {
-            mLogInfo("New connection from {} {}", endpoint->tcp_socket().remote_endpoint().address().to_string(),
-                     error.message());
             if(!error) {
+                mLogInfo("New connection from {}", endpoint->tcp_socket().remote_endpoint().address().to_string());
                 endpoint->set_local(mobsya::endpoint_is_local(endpoint->tcp_socket().remote_endpoint()));
                 endpoint->start();
+            } else {
+                mLogInfo("New connection from {} {}", endpoint->tcp_socket().remote_endpoint().address().to_string(),
+                         error.message());
             }
             this->accept();
         });

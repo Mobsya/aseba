@@ -157,7 +157,7 @@ public:
     }
 
     void on_initialized(boost::system::error_code ec = {}) {
-        mLogTrace("on_initialized: {}", ec.message());
+        mLogTrace("on_initialized: {}", ec ? ec.message() : "ok");
 
         // start listening for incomming messages
         read_message(
