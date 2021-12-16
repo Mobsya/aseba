@@ -988,9 +988,8 @@ Ereignis %0: </translation>
         <translation>&amp;Kürzlich geöffnet</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>&amp;Save...</source>
-        <translation>&amp;Speichern...</translation>
+        <translation type="vanished">&amp;Speichern...</translation>
     </message>
     <message>
         <source>Ctrl+S</source>
@@ -998,7 +997,7 @@ Ereignis %0: </translation>
         <translation type="obsolete">Ctrl+S</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Save &amp;As...</source>
         <translation>Speichern &amp;unter...</translation>
     </message>
@@ -1344,12 +1343,11 @@ Ereignis %0: </translation>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation>Aktuelles Programm als Binärdatei exportieren</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="+156"/>
         <source>&amp;About...</source>
         <translation>Ü&amp;ber...</translation>
     </message>
@@ -1359,7 +1357,17 @@ Ereignis %0: </translation>
         <translation>Über &amp;Qt...</translation>
     </message>
     <message>
-        <location line="+126"/>
+        <location line="+71"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Speichern</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Export current program to binary...</source>
+        <translation>Aktuelles Programm als Binärdatei exportieren...</translation>
+    </message>
+    <message>
+        <location line="+48"/>
         <source>Uncomment the selection</source>
         <translation>Auswahl unkommentieren</translation>
     </message>

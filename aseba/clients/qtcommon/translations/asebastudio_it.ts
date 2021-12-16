@@ -939,7 +939,17 @@ event %0 : </source>
         <translation>&amp;Nuovo</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+6"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Salva</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Export current program to binary...</source>
+        <translation>Esportare il programma corrente in binario...</translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>&amp;Stop all</source>
         <translation>&amp;Ferma tutto</translation>
     </message>
@@ -970,9 +980,8 @@ event %0 : </source>
         <translation>Apri &amp;Recente</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>&amp;Save...</source>
-        <translation>&amp;Salva...</translation>
+        <translation type="vanished">&amp;Salva...</translation>
     </message>
     <message>
         <source>Ctrl+S</source>
@@ -980,7 +989,7 @@ event %0 : </source>
         <translation type="obsolete">Ctrl+S</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Save &amp;As...</source>
         <translation>Salva &amp;con nome...</translation>
     </message>
@@ -1154,12 +1163,11 @@ event %0 : </source>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation>Esportare il programma corrente in binario</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+274"/>
         <source>&amp;Go To Line...</source>
         <translation>Vai alla &amp;linea...</translation>
     </message>

@@ -849,12 +849,11 @@ event %0 : </source>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation>导出当前程序为二进制</translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="+146"/>
         <source>Web site Aseba...</source>
         <translation>Aseba网站...</translation>
     </message>
@@ -940,8 +939,12 @@ event %0 : </source>
     </message>
     <message>
         <location line="+4"/>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
+    </message>
+    <message>
         <source>&amp;Save...</source>
-        <translation>保存(&amp;S)...</translation>
+        <translation type="vanished">保存(&amp;S)...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -954,7 +957,12 @@ event %0 : </source>
         <translation>输出变量(&amp;m)...</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+2"/>
+        <source>Export current program to binary...</source>
+        <translation>导出当前程序为二进制...</translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>&amp;Stop all</source>
         <translation>全部停止(&amp;L)</translation>
     </message>

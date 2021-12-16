@@ -575,12 +575,11 @@ Occurrences</source>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="+147"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation></translation>
     </message>
@@ -908,8 +907,12 @@ event %0 : </source>
     </message>
     <message>
         <location line="+4"/>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
+    </message>
+    <message>
         <source>&amp;Save...</source>
-        <translation>保存...</translation>
+        <translation type="vanished">保存...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -922,7 +925,12 @@ event %0 : </source>
         <translation>メモリ内容を出力...</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+2"/>
+        <source>Export current program to binary...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>&amp;Stop all</source>
         <translation type="unfinished"></translation>
     </message>

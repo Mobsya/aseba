@@ -710,9 +710,8 @@ event %0 : </source>
         <translation>Enregistrer &amp;sous...</translation>
     </message>
     <message>
-        <location line="-1"/>
         <source>&amp;Save...</source>
-        <translation>&amp;Enregistrer...</translation>
+        <translation type="vanished">&amp;Enregistrer...</translation>
     </message>
     <message>
         <source>&lt;p&gt;Aseba version informations:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Aseba ver. </source>
@@ -747,7 +746,7 @@ event %0 : </source>
         <translation type="vanished">Une partie du contenu n&apos;a pas été importé</translation>
     </message>
     <message>
-        <location line="-358"/>
+        <location line="-359"/>
         <source>Go To Line</source>
         <translation>Aller à la ligne</translation>
     </message>
@@ -830,12 +829,11 @@ event %0 : </source>
     </message>
     <message>
         <location line="+329"/>
-        <location line="+235"/>
         <source>Export current program to binary</source>
         <translation>Exporter le programme actuel en code binaire</translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="+147"/>
         <source>http://aseba.wikidot.com/en:start</source>
         <translation>http://aseba.wikidot.com/fr:start</translation>
     </message>
@@ -1357,12 +1355,22 @@ event %0 : </source>
         <translation>...tous les noeuds</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+88"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Enregistrer</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Export &amp;memories content...</source>
         <translation>Exporter le contenu des &amp;mémoires...</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+2"/>
+        <source>Export current program to binary...</source>
+        <translation>Exporter le programme actuel en code binaire...</translation>
+    </message>
+    <message>
+        <location line="+58"/>
         <source>Copy &amp;all</source>
         <translation>Copier &amp;tout</translation>
     </message>

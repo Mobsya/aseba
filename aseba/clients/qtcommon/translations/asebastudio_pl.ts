@@ -509,7 +509,6 @@ Znalezione</translation>
     </message>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="569"/>
-        <location filename="../../studio/MainWindow.cpp" line="804"/>
         <source>Export current program to binary</source>
         <translation type="unfinished"></translation>
     </message>
@@ -624,9 +623,13 @@ Znalezione</translation>
         <translation>Ostatnio &amp;Otwarte</translation>
     </message>
     <message>
-        <location filename="../../studio/MainWindow.cpp" line="797"/>
         <source>&amp;Save...</source>
-        <translation>&amp;Zapisz...</translation>
+        <translation type="vanished">&amp;Zapisz...</translation>
+    </message>
+    <message>
+        <location filename="../../studio/MainWindow.cpp" line="797"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="798"/>
@@ -637,6 +640,11 @@ Znalezione</translation>
         <location filename="../../studio/MainWindow.cpp" line="802"/>
         <source>Export &amp;memories content...</source>
         <translation>Eksport &amp;zawartości pamięci....</translation>
+    </message>
+    <message>
+        <location filename="../../studio/MainWindow.cpp" line="804"/>
+        <source>Export current program to binary...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../studio/MainWindow.cpp" line="809"/>
