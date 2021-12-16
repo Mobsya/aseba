@@ -45,12 +45,12 @@ Rectangle {
         id: inputzone
         anchors.fill: parent
         anchors.margins:60
-        anchors.topMargin: 70
+        anchors.topMargin: 80
         Item {
             width : parent.width / 2
             height : 120
             id: connectIP
-            anchors.margins: 20
+            anchors.margins: 30
             Text {
                 id:introText
                 anchors.left: parent.left
@@ -83,8 +83,8 @@ Rectangle {
                 visible: Utils.platformHasSerialPorts()
                 text: {
                     var adressText = qsTr("<b><br/>ADDRESS</b>")
-                    var ipText = qsTr("<a href='https://whatismyipaddress.com/'>Click here to show your IP address</a>")
-                    if(ip != "") {
+                    var ipText = qsTr("<a href='https://www.google.com/search?q=what+is+my+ip'>Click here to show your IP address</a>")
+                    if((ip != "") || (ipv6 != "")) {
                         ipText = qsTr("ipv4: <b>%1</b><br/>ipv6: <b>%2</b>")
                         .arg(ip)
                         .arg(ipv6)
@@ -111,7 +111,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top:connectIPText.bottom
-                text: qsTr("<br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.google.com/'>More information</a>")
+                text: qsTr("<br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.thymio.org/support/remote-connection-setup-for-host/'>More information</a>")
                 color: "white"
                 linkColor: "#0a9eeb"
                 font.family: "Roboto Bold"
@@ -131,7 +131,7 @@ Rectangle {
         Image {
             anchors.top: parent.top
             anchors.right:parent.right
-            anchors.margins: 20
+            anchors.margins: 30
             width: parent.width / 2.2
             height: Utils.platformHasSerialPorts()?parent.height*0.55:parent.height*0.25
             id: connectImage
@@ -236,7 +236,7 @@ Rectangle {
                 id: portInput
             }
         }
-        Text {
+        /*Text {
             id:warningText
             anchors.margins: 20
             horizontalAlignment: Text.AlignHCenter
@@ -250,9 +250,9 @@ Rectangle {
             color: "white"
             font.family: "Roboto Bold"
             text: qsTr("The connection will not be encrypted. Do not connect to hosts you don't trust !")
-        }
+        }*/
         Item {
-            anchors.top: warningText.bottom
+            anchors.top: connectInputs.bottom
             anchors.horizontalCenter: parent
             anchors.margins: 40
             width: parent.width
