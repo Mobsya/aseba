@@ -325,7 +325,7 @@ public:
     }
 
     void handle_write(boost::system::error_code ec) {
-        mLogTrace("<- {} : {} ", EnumNameAnyMessage(m_queue.front().tag), ec.message());
+        mLogTrace("<- {}", EnumNameAnyMessage(m_queue.front().tag));
         if(ec) {
             mLogError("handle_write : error {}", ec.message());
         }
@@ -645,7 +645,7 @@ private:
         g->emit_events(m, create_device_write_completion_cb(request_id));
     }
 
-    
+
     void compile_and_save(uint32_t request_id, const aseba_node_registery::node_id& id, vm_language language,
                                   std::string program, fb::CompilationOptions opts) {
         auto n = get_locked_node(id);
