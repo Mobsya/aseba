@@ -375,7 +375,7 @@ jobs:
     displayName: 'Clone submodules'
 
   - script: |
-      sudo xcode-select -s /Applications/Xcode_12.1.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_13.2.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
       cmake ../../third_party/flatbuffers -G Xcode -T buildsystem=1
