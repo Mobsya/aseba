@@ -36,8 +36,8 @@ Rectangle {
 
     function fontsize(){
         if(remoteConnection.height>=800)
-            return 15;
-        return 13;
+            return 14;
+        return 12;
     }
 
 

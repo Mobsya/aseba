@@ -125,8 +125,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
 cmake_policy(SET CMP0020 NEW)
 
 if(CREATE_QT_CONF_FILE)
-    #create an empty qt.conf file
-    file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "")
+    #create an qt.conf file
+    file(WRITE ${CMAKE_BINARY_DIR}/bin/qt.conf "[Platforms] WindowsArguments = dpiawareness=0")
     install(FILES ${CMAKE_BINARY_DIR}/bin/qt.conf DESTINATION bin)
 endif()
 
