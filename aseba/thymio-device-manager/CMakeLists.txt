@@ -79,7 +79,6 @@ elseif(APPLE)
     )
     target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
 else()
-    find_package(udev)
     if(UDEV_FOUND)
         target_sources(thymio-device-manager-lib PRIVATE
             serialacceptor.h
