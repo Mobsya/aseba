@@ -167,6 +167,7 @@ options parse_options(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+    mobsya::setLogLevel(spdlog::level::info);
     auto opts = parse_options(argc, argv);
     try {
         return start(opts);

@@ -22,6 +22,10 @@ std::string mobsya::log_filename(const char* path) {
     return str;
 }
 
+void mobsya::setLogLevel(spdlog::level::level_enum level) {
+    mobsya::logger->set_level(level);
+}
+
 #if WIN32
 std::string mobsya::get_last_win32_error_string() {
     std::string str;
