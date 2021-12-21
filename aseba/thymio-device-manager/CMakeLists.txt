@@ -79,7 +79,7 @@ elseif(APPLE)
     )
     target_compile_definitions(thymio-device-manager-lib  PUBLIC MOBSYA_TDM_ENABLE_SERIAL)
 else()
-    find_package(udev)
+    # find_package(udev)
     if(UDEV_FOUND)
         target_sources(thymio-device-manager-lib PRIVATE
             serialacceptor.h
@@ -102,6 +102,7 @@ else()
         )
         target_compile_definitions(thymio-device-manager-lib PUBLIC MOBSYA_TDM_ENABLE_USB)
         target_link_libraries(thymio-device-manager-lib PUBLIC libusb)
+    add_compile_definitions(USE_MPARK)
     endif()
 endif()
 
