@@ -146,7 +146,7 @@ do
 done
 
 echo "Signing $DEST/Contents/Frameworks/QTWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app"
-sign --options=runtime $(realpath $DEST/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
+sign --options=runtime $(realpath $DEST/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app)
 
 for fw in $(ls "$DEST/Contents/Frameworks")
 do
