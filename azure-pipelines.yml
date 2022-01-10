@@ -17,7 +17,7 @@ variables:
 - name: blockly_version
   value: "v20210908.3"
 - name: scratch_version
-  value: "v20210908.1"
+  value: "v20211222.1"
 - name: vpl3_version
   value: "v20211130.2"
 - name: packet_version
@@ -45,7 +45,7 @@ parameters:
 jobs:
 - job: 'BuildFlatpak'
   pool:
-    vmImage: 'Ubuntu-20.04'
+    vmImage: 'Ubuntu-18.04'
   container: fpkde
   steps:
   - script: |
@@ -53,6 +53,23 @@ jobs:
       flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
       flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version).flatpak org.mobsya.ThymioSuite
+    displayName: 'Build flatpak bundle'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite.flatpak'
+      
+- job: 'BuildFlatpak515'
+  pool:
+    vmImage: 'Ubuntu-20.04'
+  container: fpkde
+  steps:
+  - script: |
+      git submodule update --init --recursive
+      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite515.json
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite515-$(packet_version).flatpak org.mobsya.ThymioSuite
     displayName: 'Build flatpak bundle'
 
   - task: PublishBuildArtifacts@1

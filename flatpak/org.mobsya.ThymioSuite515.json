@@ -1,8 +1,10 @@
 {
     "app-id": "org.mobsya.ThymioSuite",
     "runtime": "org.kde.Platform",
+    "base": "io.qt.qtwebengine.BaseApp",
+    "base-version": "5.15",
     "sdk": "org.kde.Sdk",
-    "runtime-version": "5.12",
+    "runtime-version": "5.15",
     "finish-args": [
         "--socket=x11",
         "--socket=wayland",
@@ -85,12 +87,12 @@
                     "sha256": "4975d9d9ddd49c8c0ec9c6862851e2b4498c4c64e471cd840d9e4c02acb66ed6",
                     "strip-components": 0
                 },
-              {
-                "type": "archive",
-                "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20211222.1/scratch-gui.tar.gz",
-                "sha256": "83c70e93d779a43430e811b95ff36f46144cd7f0cf350868f8f9c529c5632d03",
-                "strip-components": 0
-              },
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20210908.1/scratch-gui.tar.gz",
+                    "sha256": "09defa4cc5475132151860a7faa6dd88468b63aa17741a1b3207401a862a3674",
+                    "strip-components": 0
+                },
                 {
                     "type": "archive",
                     "url": "https://github.com/Mobsya/vpl-web/releases/download/v20211130.2/vpl3-thymio-suite.tar.gz",
