@@ -95,8 +95,8 @@
               },
                 {
                     "type": "archive",
-                    "url": "https://github.com/Mobsya/vpl-web/releases/download/v20211130.2/vpl3-thymio-suite.tar.gz",
-                    "sha256": "e8ceeeea6dddb71b4c3592678ff22552726e3693c4796d0c4b51d10e00abe636",
+                    "url": "https://github.com/Mobsya/vpl-web/releases/download/v20220119.2/vpl3-thymio-suite.tar.gz",
+                    "sha256": "8ad5c906b1297ed1c4c429f6b9ab113e8303557227d46e7fdf72014e5018c9fd",
                     "strip-components": 0
                 }
             ],
