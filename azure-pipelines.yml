@@ -19,7 +19,7 @@ variables:
 - name: scratch_version
   value: "v20220119.2"
 - name: vpl3_version
-  value: "v20220119.2"
+  value: "v20220121.4"
 - name: packet_version
   value: "2.3.1"
 - name: blockly_url

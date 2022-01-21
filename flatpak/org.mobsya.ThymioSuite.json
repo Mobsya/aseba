@@ -91,12 +91,12 @@
                 "sha256": "c115031ea5b32b914c407356c5e80f45eee44abdb5f1157ea1a826eae3e39da2",
                 "strip-components": 0
               },
-                {
-                    "type": "archive",
-                    "url": "https://github.com/Mobsya/vpl-web/releases/download/v20220119.2/vpl3-thymio-suite.tar.gz",
-                    "sha256": "8ad5c906b1297ed1c4c429f6b9ab113e8303557227d46e7fdf72014e5018c9fd",
-                    "strip-components": 0
-                }
+              {
+                "type": "archive",
+                "url": "https://github.com/Mobsya/vpl-web/releases/download/v20220121.4/vpl3-thymio-suite.tar.gz",
+                "sha256": "9a9d16fb46216c0ba3803c6808b02ea5384f96c1a5037b86d42143e2122ea5e9",
+                "strip-components": 0
+              }
             ],
             "post-install": [
                 "install -D --target-directory /app/share/mobsya/Playground/  aseba/targets/playground/examples/*"
