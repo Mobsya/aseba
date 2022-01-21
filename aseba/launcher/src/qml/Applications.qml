@@ -167,6 +167,21 @@ ListModel {
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
                     isIosSupported:false,
                     isAndroidSupported:false
+                 },
+
+                {
+                    appId:"other",
+                    name: "Other...",
+                    animatedIcon:"qrc:/apps/other/launcher-icon-other.svg",
+                    icon: "qrc:/apps/other/launcher-icon-other.svg",
+                    descriptionImage: "qrc:/apps/other/description.jpg",
+                    descriptionTextFile: "qrc:/apps/other/desc.%1.html",
+                    supportsGroups: true,
+                    supportsWatchMode: false,
+                    supportsNonThymioDevices: true,
+                    helpUrl: "https://www.thymio.org/%1/program/aseba/",
+                    isIosSupported:false,
+                    isAndroidSupported:false
                  }
                 ]
 
