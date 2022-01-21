@@ -2,8 +2,8 @@
 # attempt to compile tdm as simply as possible
 # 18 July 2019: success on macOS 10.13.6
 
-# Ubuntu:
-# sudo apt install libudev-dev
+# Ubuntu if not HAS_LIBUSB:
+# sudo apt install libusb-dev
 
 # git clone --recurse-submodules https://github.com/Mobsya/aseba.git
 
@@ -45,6 +45,7 @@ OPTIM ?= TRUE
 BOOST = boost_1_73_0
 
 vpath %.cpp aseba/aseba/thymio-device-manager:aseba/aseba/common/msg:aseba/aseba/compiler:aseba/aseba/common/utils:$(BOOST)/libs/filesystem/src:$(BOOST)/libs/thread/src/pthread:$(BOOST)/libs/thread/src:aseba/third_party/aware/src/bonjour:aseba/third_party/aware/src/detail:aseba/third_party/aware/src/bonjour/detail:aseba/third_party/aware/src:aseba/third_party/pugixml/src
+vpath %.c aseba/third_party/libusb/libusb/libusb
 vpath %.cc aseba/third_party/fmt/src
 
 CXXFLAGS = \
@@ -89,7 +90,10 @@ OBJ_BOOST = \
 	thread.o once_atomic.o future.o \
 	exception.o directory.o
 
-OPENSSL = \
+OBJ_LIBUSB = \
+	aseba/third_party/libusb/liblibusb.a
+
+OPEN_SSL = \
 	openssl/libssl.a \
 	openssl/libcrypto.a
 
@@ -163,7 +167,7 @@ OBJ += \
         thymio2_fwupgrade.o \
         thymio2_fwupgrade_impl.o \
 	\
-	$(OPENSSL)
+	$(OPEN_SSL)
 
 endif
 
@@ -186,17 +190,42 @@ endif
 
 ifeq ($(TARGET), linux)
 
-OBJ += serialacceptor_udev.o serialserver.o
-
 CFLAGS += \
 	-DNOT_HAVE_SA_LEN
 
 CXXFLAGS += \
-	-DMOBSYA_TDM_ENABLE_SERIAL \
-	-DMOBSYA_TDM_ENABLE_UDEV \
 	-isystem aseba/third_party/bonjour/include
 
-LIB += -ldl -lpthread -ludev
+LIB += -ldl -lpthread
+
+ifdef HAS_LIBUSB
+
+# libusb
+
+OBJ += usbserver.o usbacceptor.o usbdevice.o $(OBJ_LIBUSB)
+
+CXXFLAGS += \
+	-DMOBSYA_TDM_ENABLE_USB \
+	-DHAS_MPARK \
+	-isystem aseba/third_party/libusb/libusb
+
+CFLAGS += \
+	-Iaseba/third_party/libusb/include \
+	-Iaseba/third_party/libusb/libusb/libusb
+
+else
+
+# udev
+
+OBJ += serialacceptor_udev.o serialserver.o
+
+CXXFLAGS += \
+	-DMOBSYA_TDM_ENABLE_SERIAL \
+	-DMOBSYA_TDM_ENABLE_UDEV
+
+LIB += -ludev
+
+endif
 
 ifdef HAS_ZEROCONF
 
@@ -254,17 +283,30 @@ openssl/libssl.a openssl/libcrypto.a:
 expected/include/tl/expected.hpp:
 	git clone https://github.com/TartanLlama/expected
 
+aseba/third_party/libusb/liblibusb.a:
+	(cd aseba/third_party/libusb; cmake .; make)
+
 # some dependencies for tdm source code
 
 tdmpth = aseba/aseba/thymio-device-manager
-aesl_parser.o: $(tdmpth)/aesl_parser.h
+aesl_parser.o: $(tdmpth)/aesl_parser.h $(tdmpth)/variant_compat.h
 app_endpoint.o: $(tdmpth)/app_endpoint.h
 app_server.o: $(tdmpth)/app_server.h
-aseba_device.o: $(tdmpth)/aseba_device.h
-aseba_endpoint.o: $(tdmpth)/aseba_endpoint.h $(tdmpth)/aseba_node_registery.h
+aseba_device.o: $(tdmpth)/aseba_device.h $(tdmpth)/variant_compat.h
+aseba_endpoint.o: $(tdmpth)/aseba_endpoint.h $(tdmpth)/aseba_node_registery.h $(tdmpth)/variant_compat.h
 aseba_node_registery.o: $(tdmpth)/aseba_node_registery.h $(tdmpth)/aseba_endpoint.h
-aseba_node.o: $(tdmpth)/aseba_node.h $(tdmpth)/aseba_endpoint.h $(tdmpth)/aseba_node_registery.h
+aseba_node.o: $(tdmpth)/aseba_node.h $(tdmpth)/aseba_endpoint.h $(tdmpth)/aseba_node_registery.h $(tdmpth)/variant_compat.h
 aseba_tcpacceptor.o: $(tdmpth)/aseba_tcpacceptor.h $(tdmpth)/aseba_endpoint.h
 error.o: $(tdmpth)/error.h
 
-
+# assume pwd is in parent directory of aseba repository
+.PHONY: prepare-ubuntu
+prepare-ubuntu:
+	sudo apt update
+	sudo apt upgrade -y
+	sudo apt install -y build-essential cmake git wget libudev-dev
+	wget -q https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.tar.gz
+	tar xfz boost_1_73_0.tar.gz
+	git clone https://github.com/TartanLlama/expected
+	(cd ./aseba/third_party; rm -Rf flatbuffers; git clone https://github.com/google/flatbuffers.git)
+	(cd ./aseba/third_party/flatbuffers/; cmake .; make -j)
