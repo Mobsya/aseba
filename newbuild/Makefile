@@ -3,7 +3,7 @@
 # 18 July 2019: success on macOS 10.13.6
 
 # Ubuntu if not HAS_LIBUSB:
-# sudo apt install libusb-dev
+# sudo apt install libudev-dev
 
 # git clone --recurse-submodules https://github.com/Mobsya/aseba.git
 
@@ -45,7 +45,6 @@ OPTIM ?= TRUE
 BOOST = boost_1_73_0
 
 vpath %.cpp aseba/aseba/thymio-device-manager:aseba/aseba/common/msg:aseba/aseba/compiler:aseba/aseba/common/utils:$(BOOST)/libs/filesystem/src:$(BOOST)/libs/thread/src/pthread:$(BOOST)/libs/thread/src:aseba/third_party/aware/src/bonjour:aseba/third_party/aware/src/detail:aseba/third_party/aware/src/bonjour/detail:aseba/third_party/aware/src:aseba/third_party/pugixml/src
-vpath %.c aseba/third_party/libusb/libusb/libusb
 vpath %.cc aseba/third_party/fmt/src
 
 CXXFLAGS = \
