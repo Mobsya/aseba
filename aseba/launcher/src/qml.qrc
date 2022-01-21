@@ -21,7 +21,6 @@
         <file>apps/blockly/blockly-animated-icon.webp</file>
         <file>apps/studio/studio-animated-icon.webp</file>
         <file>apps/vpl/vpl-animated-icon.webp</file>
-        <!-- replace in the future with animated one -->
         <file>apps/vpl3/vpl3-animated-icon.webp</file>
         <file>main.cpp</file>
         <file>apps/scratch/scratch-animated-icon.webp</file>
@@ -38,7 +37,7 @@
         <file>assets/battery_mid.svg</file>
         <file>assets/battery_low.svg</file>
         <file>assets/dummy_node.svg</file>
-		<file>assets/remote_access.svg</file>
+        <file>assets/remote_access.svg</file>
         <file>qml/BatteryIndicator.qml</file>
         <file>assets/selected_thymio.svg</file>
         <file>assets/selected_simulated_thymio.svg</file>
@@ -86,7 +85,7 @@
         <file>apps/scratch/desc.de.html</file>
         <file>apps/blockly/desc.de.html</file>
         <file>apps/studio/desc.de.html</file>
-		<file>apps/vpl/desc.pl.html</file>
+        <file>apps/vpl/desc.pl.html</file>
         <file>apps/vpl3/desc.pl.html</file>
         <file>apps/scratch/desc.pl.html</file>
         <file>apps/blockly/desc.pl.html</file>
@@ -108,6 +107,15 @@
         <file>qml/wirelessconfigurator/NetworkIdInput.qml</file>
         <file>qml/wirelessconfigurator/WirelessWizardWarningDialog.qml</file>
         <file>qml/remoteconnection/RemoteConnectionDialog.qml</file>
-		<file>qml/remoteconnection/TitleBar.qml</file>
+        <file>qml/remoteconnection/TitleBar.qml</file>
+        <file>apps/other/desc.de.html</file>
+        <file>apps/other/desc.en.html</file>
+        <file>apps/other/desc.fr.html</file>
+        <file>apps/other/desc.it.html</file>
+        <file>apps/other/desc.pl.html</file>
+        <file>apps/other/desc.zh-CN.html</file>
+        <file>apps/other/description.jpg</file>
+        <file>apps/other/launcher-icon-other.svg</file>
+        <file>apps/other/studio-animated-icon.webp</file>
     </qresource>
 </RCC>
