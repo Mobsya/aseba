@@ -1053,7 +1053,6 @@ void NodeTab::setupConnections() {
             case mobsya::ThymioNode::VMExecutionState::Stopped: {
                 pauseButton->setEnabled(false);
                 nextButton->hide();
-                stopButton->setEnabled(false);
                 break;
             };
             default: break;
