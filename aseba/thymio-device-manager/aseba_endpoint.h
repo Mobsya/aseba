@@ -273,6 +273,7 @@ private:
     node_id m_uuid;
 
     bool m_upgrading_firmware = false;
+	bool m_has_had_sucessful_read = false;
     bool m_first_ping = true;
     bool m_rebooting = false;
 };

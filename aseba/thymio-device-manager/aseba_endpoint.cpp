@@ -172,12 +172,17 @@ void aseba_endpoint::handle_read(boost::system::error_code ec, std::shared_ptr<A
     if(ec || !msg) {
         if(!ec && !msg && !m_upgrading_firmware)
             read_aseba_message();
-
+		
+		if(!m_has_had_sucessful_read)
+			restore_firmware();
+		return;
+       	
         mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
         return;
     }
     mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
-
+	m_has_had_sucessful_read = true;
+	
     auto node_id = msg->source;
     auto it = m_nodes.find(node_id);
     auto node = it == std::end(m_nodes) ? std::shared_ptr<aseba_node>{} : it->second.node;
