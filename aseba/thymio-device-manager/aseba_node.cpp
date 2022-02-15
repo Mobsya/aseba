@@ -55,10 +55,11 @@ void aseba_node::disconnect() {
 }
 
 aseba_node::~aseba_node() {
+	mLogInfo("Destroying node id={}", uuid());
     cancel_pending_step_request();
     cancel_pending_breakpoint_request();
     if(m_status.load() != status::disconnected) {
-        mLogWarn("Node destroyed before being disconnected");
+        mLogWarn("Node destroyed before being disconnected id={}", uuid());
     }
 }
 
@@ -143,7 +144,7 @@ bool aseba_node::unlock(void* app) {
         return false;
     }
     m_connected_app = nullptr;
-    mLogDebug("Unlocking node");
+    mLogDebug("Unlocking node id={}", uuid());
     set_status(status::available);
     return true;
 }
@@ -636,7 +637,7 @@ void aseba_node::rename(const std::string& newName) {
 }
 
 void aseba_node::on_description_received() {
-    mLogInfo("Got description for {} [{} variables, {} functions, {} events - protocol {}]", native_id(),
+    mLogInfo("Got description for {} id={} [{} variables, {} functions, {} events - protocol {}]", native_id(), uuid(),
              m_description.namedVariables.size(), m_description.nativeFunctions.size(),
              m_description.localEvents.size(), m_description.protocolVersion);
     unsigned count;
@@ -777,7 +778,7 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
                        data_it + count)) {
             std::copy(data_it, data_it + count, std::begin(var.value) + var_start);
             vars.insert(std::pair{var.name, detail::aseba_variable_from_range(var.value)});
-            mLogTrace("Variable changed {} : {}", var.name, detail::aseba_variable_from_range(var.value));
+            mLogTrace("For node id={}, variable changed {} : {}", uuid(), var.name, detail::aseba_variable_from_range(var.value));
             if(var.name == "_fwversion" && m_firmware_version != var.value[0]) {
                 m_firmware_version = var.value[0];
                 set_status(m_status);
@@ -821,7 +822,7 @@ void aseba_node::schedule_variables_update(boost::posix_time::time_duration dela
 }
 
 void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
-    mLogTrace("Got info for {} [{} : {}]", native_id(), info.info, info.data.size());
+    mLogTrace("Got info for {} id={} [{} : {}]", native_id(), uuid(), info.info, info.data.size());
     if(info.info == DEVICE_INFO_UUID) {
         // see request_device_info
         m_resend_timer.cancel();
@@ -838,7 +839,7 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
             std::copy(m_uuid.begin(), m_uuid.end(), std::back_inserter(data));
             write_message(std::make_shared<Aseba::SetDeviceInfo>(native_id(), DEVICE_INFO_UUID, data));
         }
-        mLogInfo("Persistent uuid for {} is now {} ", native_id(), boost::uuids::to_string(m_uuid));
+        mLogInfo("Persistent uuid for {} id={} is now {} ", native_id(), uuid(), boost::uuids::to_string(m_uuid));
         auto& registery = boost::asio::use_service<aseba_node_registery>(m_io_ctx);
         registery.handle_node_uuid_change(shared_from_this());
         set_status(status::available);
@@ -848,7 +849,7 @@ void aseba_node::on_device_info(const Aseba::DeviceInfo& info) {
         m_friendly_name.reserve(info.data.size());
         std::copy(info.data.begin(), info.data.end(), std::back_inserter(m_friendly_name));
         set_status(m_status);
-        mLogInfo("Persistent name for {} is now \"{}\"", native_id(), friendly_name());
+         mLogInfo("Persistent name for {} id={} is now \"{}\"", native_id(), uuid(), friendly_name());
     } else if(info.info == DEVICE_INFO_THYMIO2_RF_SETTINGS) {
         if(info.data.size() != 3 * sizeof(uint16_t))
             return;
@@ -965,7 +966,7 @@ void aseba_node::handle_description_messages(const Aseba::Message& msg) {
     switch(msg.type) {
         case ASEBA_MESSAGE_DESCRIPTION:
             if(!desc.name.empty()) {
-                mLogWarn("Received an Aseba::Description but we already got one");
+                mLogWarn("For node id={}, received an Aseba::Description but we already got one", uuid());
             }
             desc = static_cast<const Aseba::Description&>(msg);
             break;

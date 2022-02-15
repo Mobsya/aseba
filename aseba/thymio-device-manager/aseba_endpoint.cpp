@@ -22,7 +22,14 @@ aseba_endpoint::~aseba_endpoint() {
 void aseba_endpoint::destroy() {
     if(m_endpoint.is_empty())
         return;
-    mLogInfo("Destroying endpoint");
+    
+    mLogInfo("Destroying endpoint, id={}", m_uuid);
+    for(auto it = m_nodes.begin(); it != m_nodes.end(); it++) {
+        const auto& info = it->second;
+        if (info.node)
+            mLogInfo(" bringing down Thymio id={}", info.node->uuid());
+    }
+
     std::for_each(std::begin(m_nodes), std::end(m_nodes), [](auto&& node) { node.second.node->disconnect(); });
     boost::asio::post([ctx = &m_io_context]() {
         auto& registery = boost::asio::use_service<aseba_node_registery>(*ctx);
