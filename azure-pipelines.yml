@@ -29,7 +29,7 @@ variables:
 - name: vpl3_url
   value: "https://github.com/Mobsya/vpl-web/releases/download/$(vpl3_version)/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
-  value: "5d1ce1b9cb311740a394381901cac5e7386e9893"
+  value: "3492c266ba0afa053966cfa6409f0a1f090649d4"
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
