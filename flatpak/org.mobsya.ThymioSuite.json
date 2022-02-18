@@ -19,10 +19,11 @@
         {
             "name": "avahi",
             "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/lathiat/avahi"
-                }
+              {
+                "type": "git",
+                "url": "https://github.com/lathiat/avahi",
+                "commit": "17d30f5ad638619f2f4fa6529f033007a4ddb989"
+              }
             ],
             "buildsystem" : "autotools",
             "config-opts": [

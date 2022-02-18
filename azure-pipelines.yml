@@ -29,7 +29,7 @@ variables:
 - name: vpl3_url
   value: "https://github.com/Mobsya/vpl-web/releases/download/$(vpl3_version)/vpl3-thymio-suite.tar.gz"
 - name: vcpkg_commit
-  value: "cccef600decd1091a20a0b4d8a2e61f7041eb686"
+  value: "456b97564391c78f0c61d8e8b617042aa7ae77bf"
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
 
@@ -121,13 +121,17 @@ jobs:
       key:  Qt_5_12_3 | "$(QT_URL)" | "2"
       path: $(Build.BinariesDirectory)/Qt/
       cacheHitVar: QT_LIB_CACHE_RESTORED
-  - task: lucappa.cmake-ninja-vcpkg-tasks.d855c326-b1c0-4d6f-b1c7-440ade6835fb.run-vcpkg@0
+  - task: run-vcpkg@0
     displayName: 'Run vcpkg'
     inputs:
       vcpkgTriplet: '$(vcpkgTriplet)'
       vcpkgArguments: '@$(Build.SourcesDirectory)/vcpkg-list.txt'
       vcpkgGitCommitId: "$(vcpkg_commit)"
       vcpkgGitURL: https://github.com/mobsya/vcpkg.git
+      vcpkgSetupOnly: true
+  - script: |   
+      vcpkg --feature-flags="manifests,versions" install --triplet $(vcpkgTriplet) --clean-after-build
+    displayName: RerunVcpk install 
   - powershell: |
         Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
         Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore

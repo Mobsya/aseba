@@ -1,0 +1,20 @@
+{
+    "name": "demo",
+    "version": "1.0.0",
+    "builtin-baseline": "456b97564391c78f0c61d8e8b617042aa7ae77bf",
+    "dependencies": [
+		"openssl",
+		"zlib",
+		"boost-signals2",
+		"boost-program-options",
+		"boost-filesystem",
+		"boost-scope-exit",
+		"boost-asio",
+		"boost-uuid",
+		"boost-asio",
+		"boost-date-time",
+		"boost-thread",
+		"boost-beast",
+		"boost-interprocess"
+	]
+}
