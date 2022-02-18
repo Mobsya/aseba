@@ -1,5 +1,4 @@
 openssl
-zlib
 boost-signals2
 boost-program-options
 boost-filesystem
