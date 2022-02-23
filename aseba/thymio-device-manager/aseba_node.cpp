@@ -687,7 +687,7 @@ void aseba_node::request_variables() {
     messages.reserve(3);
 
     {
-        if(!m_resend_all_variables && m_description.protocolVersion >= 7) {
+        if(!m_resend_all_variables && m_description.protocolVersion >= 100) {//was on protocole 7, but for an unknown reason, this make Thymio be unresponsive
             messages.emplace_back(std::make_shared<Aseba::GetChangedVariables>(native_id()));
         } else {
             uint16_t start = 0;
