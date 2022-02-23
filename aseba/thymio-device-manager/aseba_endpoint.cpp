@@ -183,7 +183,7 @@ void aseba_endpoint::handle_read(boost::system::error_code ec, std::shared_ptr<A
         mLogError("Error while reading aseba message {}", ec ? ec.message() : "Message corrupted");
         return;
     }
-    mLogTrace("Message received : '{}' {}", msg->message_name(), ec.message());
+    mLogTrace("Message received for endpoint id={}: '{}' {}", m_uuid, msg->message_name(), ec.message());
 
     auto node_id = msg->source;
     auto it = m_nodes.find(node_id);
@@ -207,14 +207,15 @@ void aseba_endpoint::handle_read(boost::system::error_code ec, std::shared_ptr<A
         node = it->second.node;
         if(msg->type == ASEBA_MESSAGE_NODE_PRESENT) {
             node->get_description();
-            read_aseba_message();
-            return;
+            //read_aseba_message();
+            //return;
         }
     }
     if(node) {
         node->on_message(*msg);
         // Update node status
         it->second.last_seen = std::chrono::steady_clock::now();
+		mLogTrace("Reseting timeout for endpoint id={}", m_uuid);
     }
     if(is_rebooting())
         return;
@@ -265,10 +266,10 @@ void aseba_endpoint::schedule_send_ping(boost::posix_time::time_duration delay) 
         auto that = ptr.lock();
         if(!that || ec)
             return;
-        mLogInfo("Requesting list nodes( ec : {} )", ec.message());
+        
         if(that->m_upgrading_firmware)
             return;
-
+		mLogInfo("Requesting list nodes id: {}( ec : {} )", that->m_uuid, ec.message());
         that->write_message(std::make_unique<Aseba::ListNodes>());
         if(that->m_first_ping && that->is_usb()) {
             that->write_message(std::make_unique<Aseba::GetDescription>());
@@ -298,8 +299,8 @@ void aseba_endpoint::schedule_nodes_health_check(boost::posix_time::time_duratio
             const auto& info = it->second;
             auto d = std::chrono::duration_cast<std::chrono::seconds>(now - info.last_seen);
             if(!is_rebooting() && d.count() >= (info.node->get_status() == aseba_node::status::connected ? 25 : 5)) {
-                mLogTrace("Node {} has been unresponsive for too long, disconnecting it!",
-                          it->second.node->native_id());
+                mLogTrace("Node {} has been unresponsive for too long ({} sec), disconnecting it!",
+                          it->second.node->native_id(),d.count());
                 info.node->set_status(aseba_node::status::disconnected);
                 it = m_nodes.erase(it);
 

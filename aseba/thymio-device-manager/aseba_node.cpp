@@ -760,6 +760,7 @@ void aseba_node::set_variables(uint16_t start, const std::vector<int16_t>& data,
 
     auto data_it = std::begin(data);
     auto it = m_variables.begin();
+	//mLogTrace("Set variable loop id={}", uuid());
     while(data_it != std::end(data)) {
         it = std::find_if(it, m_variables.end(), [start](const aseba_vm_variable& var) {
             return start >= var.start && start < var.start + var.size;
