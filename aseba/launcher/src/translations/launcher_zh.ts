@@ -166,6 +166,11 @@ Do not unplug the device while the update is in progress.</source>
         <translation>将多台Thymio设备与无线适配器配对</translation>
     </message>
     <message>
+        <location filename="../qml/SettingsMenu.qml" line="84"/>
+        <source>Remote Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../qml/SettingsMenu.qml" line="160"/>
         <source>Use your system default browser</source>
         <translation>使用系统默认浏览器</translation>
@@ -179,11 +184,6 @@ Do not unplug the device while the update is in progress.</source>
         <location filename="../qml/SettingsMenu.qml" line="57"/>
         <source>https://www.thymio.org/thymio-simulator</source>
         <translation>https://www.thymio.org/thymio-simulator</translation>
-    </message>
-    <message>
-        <location filename="../qml/SettingsMenu.qml" line="84"/>
-        <source>BETA Remote Connection</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="109"/>

@@ -157,6 +157,11 @@ Do not unplug the device while the update is in progress.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../qml/SettingsMenu.qml" line="84"/>
+        <source>Remote Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../qml/SettingsMenu.qml" line="160"/>
         <source>Use your system default browser</source>
         <translation type="unfinished"></translation>
@@ -169,11 +174,6 @@ Do not unplug the device while the update is in progress.</source>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="57"/>
         <source>https://www.thymio.org/thymio-simulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SettingsMenu.qml" line="84"/>
-        <source>BETA Remote Connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

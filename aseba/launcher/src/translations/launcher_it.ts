@@ -195,6 +195,11 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
         <translation>Associare una valigia Wireless Thymio</translation>
     </message>
     <message>
+        <location filename="../qml/SettingsMenu.qml" line="84"/>
+        <source>Remote Connection</source>
+        <translation type="unfinished">Connessione a distanza</translation>
+    </message>
+    <message>
         <source>BETA Connect to a remote host</source>
         <translation type="vanished">BETA Connettersi a un host remoto</translation>
     </message>
@@ -214,9 +219,8 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
         <translation>https://www.thymio.org/it/simulatore-thymio</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="84"/>
         <source>BETA Remote Connection</source>
-        <translation>BETA Connessione a distanza</translation>
+        <translation type="vanished">BETA Connessione a distanza</translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="109"/>
