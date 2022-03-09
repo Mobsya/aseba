@@ -195,6 +195,11 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
         <translation>Appairer une valise de Wireless Thymio</translation>
     </message>
     <message>
+        <location filename="../qml/SettingsMenu.qml" line="84"/>
+        <source>Remote Connection</source>
+        <translation>Connexion à distance</translation>
+    </message>
+    <message>
         <source>BETA Connect to a remote host</source>
         <translation type="vanished">BETA Se connecter à un hôte distant</translation>
     </message>
@@ -214,9 +219,8 @@ Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</transla
         <translation>https://www.thymio.org/fr/simulateur-thymio/</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="84"/>
         <source>BETA Remote Connection</source>
-        <translation>BETA Connexion à distance</translation>
+        <translation type="vanished">BETA Connexion à distance</translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="109"/>

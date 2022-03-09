@@ -195,6 +195,11 @@ Ziehen Sie den Stecker des Geräts nicht heraus, während das Update läuft.</tr
         <translation>Paaren Sie einen Koffer von Wireless Thymio</translation>
     </message>
     <message>
+        <location filename="../qml/SettingsMenu.qml" line="84"/>
+        <source>Remote Connection</source>
+        <translation>Entfernte Verbindung</translation>
+    </message>
+    <message>
         <source>BETA Connect to a remote host</source>
         <translation type="vanished">BETA Verbindung zu einem entfernten Host</translation>
     </message>
@@ -214,9 +219,8 @@ Ziehen Sie den Stecker des Geräts nicht heraus, während das Update läuft.</tr
         <translation>https://www.thymio.org/de/thymio-simulator/</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsMenu.qml" line="84"/>
         <source>BETA Remote Connection</source>
-        <translation>BETA Entfernte Verbindung</translation>
+        <translation type="vanished">BETA Entfernte Verbindung</translation>
     </message>
     <message>
         <location filename="../qml/SettingsMenu.qml" line="109"/>
