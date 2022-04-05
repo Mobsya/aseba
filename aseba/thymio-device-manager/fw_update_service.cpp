@@ -9,7 +9,7 @@ namespace belle = OB::Belle;
 
 namespace mobsya {
 
-static constexpr const auto UPDATE_SERVER = "www.mobsya.org";
+static constexpr const auto UPDATE_SERVER = "www.thymio.org";
 static constexpr const auto THYMIO2_CHECK_PATH = "/update/Thymio2-firmware-meta.xml";
 
 firmware_update_service::firmware_update_service(boost::asio::execution_context& ctx)
@@ -55,12 +55,12 @@ void firmware_update_service::download_thymio_2_firmware() {
         return;
     m_downloading.insert(aseba_node::node_type::Thymio2);
 
-    mLogInfo("Downloading https://{}/{}", UPDATE_SERVER, THYMIO2_CHECK_PATH);
+    mLogInfo("Downloading https://{}{}", UPDATE_SERVER, THYMIO2_CHECK_PATH);
     m_http_client->on_http(THYMIO2_CHECK_PATH, [this](auto& ctx) {
         m_downloading.erase(aseba_node::node_type::Thymio2);
 
         if(ctx.res.result() != belle::Status::ok) {
-            mLogWarn("Http request failed: https://{}/{}", UPDATE_SERVER, THYMIO2_CHECK_PATH);
+            mLogWarn("Http request failed: https://{}{}", UPDATE_SERVER, THYMIO2_CHECK_PATH);
             return;
         }
         pugi::xml_document doc;
