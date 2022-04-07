@@ -23,15 +23,7 @@ Launcher::Launcher(ThymioDeviceManagerClient* client, QObject* parent) : QObject
     connect(m_client, &ThymioDeviceManagerClient::zeroconfBrowserStatusChanged, this, &Launcher::zeroconfStatusChanged);
 
     setUseLocalBrowser(false);
-    // On mac we use the native web view since chromium is not app-store compatible.
-    // But on versions prior to High Sierra, the WebKit version shipped with
-    // the OS cannot handle webassembly, which we require to run all of our web apps
-    // So, instead, defer to the system browser - which is more likely to work
-    // because the version of safari shipped with an up-to-date Sierra is more current
-    // than the system's webkit
-#ifdef Q_OS_OSX
-    setUseLocalBrowser(true);
-#endif
+
 #ifdef Q_OS_ANDROID
     setUseLocalBrowser(true);
 #endif
@@ -239,7 +231,7 @@ bool Launcher::openUrl(const QUrl& url) {
 void Launcher::writeSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
    // the use of local browser available
-    settings.setValue("mainwindowuseLocalBrowser2",QVariant(getUseLocalBrowser()) );
+    settings.setValue("mainwindowuseLocalBrowser3",QVariant(getUseLocalBrowser()) );
     settings.setValue("allowRemoteConnections",QVariant(getAllowRemoteConnections()) );
 }
 
@@ -249,7 +241,7 @@ void Launcher::writeSettings(){
 ************** */
 void Launcher::readSettings(){
     QSettings settings("ThymioSuite", "Mobsya");
-    setUseLocalBrowser(settings.value("mainwindowuseLocalBrowser2",QVariant(useLocalBrowser)).toBool());
+    setUseLocalBrowser(settings.value("mainwindowuseLocalBrowser3",QVariant(useLocalBrowser)).toBool());
     setAllowRemoteConnections(settings.value("allowRemoteConnections",QVariant(allowRemoteConnections)).toBool());
 }
 
