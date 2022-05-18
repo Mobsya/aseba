@@ -170,16 +170,16 @@ ListModel {
                  },
 
                 {
-                    appId:"other",
-                    name: "Other...",
-                    animatedIcon:"qrc:/apps/other/launcher-icon-other.svg",
-                    icon: "qrc:/apps/other/launcher-icon-other.svg",
-                    descriptionImage: "qrc:/apps/other/description.jpg",
-                    descriptionTextFile: "qrc:/apps/other/desc.%1.html",
+                    appId:"thonny",
+                    name: "Thonny Python",
+                    animatedIcon:"qrc:/apps/thonny/launcher-icon-thonny-python.svg",
+                    icon: "qrc:/apps/thonnyr/launcher-icon-thonny-python.svg",
+                    descriptionImage: "qrc:/apps/thonny/description.jpg",
+                    descriptionTextFile: "qrc:/apps/thonny/desc.%1.html",
                     supportsGroups: true,
                     supportsWatchMode: false,
                     supportsNonThymioDevices: true,
-                    helpUrl: "https://www.thymio.org/%1/program/aseba/",
+                    helpUrl: "https://www.thymio.org/%1/program/python/",
                     isIosSupported:false,
                     isAndroidSupported:false
                  }

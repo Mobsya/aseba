@@ -108,14 +108,14 @@
         <file>qml/wirelessconfigurator/WirelessWizardWarningDialog.qml</file>
         <file>qml/remoteconnection/RemoteConnectionDialog.qml</file>
         <file>qml/remoteconnection/TitleBar.qml</file>
-        <file>apps/other/desc.de.html</file>
-        <file>apps/other/desc.en.html</file>
-        <file>apps/other/desc.fr.html</file>
-        <file>apps/other/desc.it.html</file>
-        <file>apps/other/desc.pl.html</file>
-        <file>apps/other/desc.zh-CN.html</file>
-        <file>apps/other/description.jpg</file>
-        <file>apps/other/launcher-icon-other.svg</file>
-        <file>apps/other/studio-animated-icon.webp</file>
+        <file>apps/thonny/desc.de.html</file>
+        <file>apps/thonny/desc.en.html</file>
+        <file>apps/thonny/desc.fr.html</file>
+        <file>apps/thonny/desc.it.html</file>
+        <file>apps/thonny/desc.pl.html</file>
+        <file>apps/thonny/desc.zh-CN.html</file>
+        <file>apps/thonny/description.jpg</file>
+        <file>apps/thonny/launcher-icon-thonny-python.svg</file>
+        <file>apps/thonny/studio-animated-icon.webp</file>
     </qresource>
 </RCC>
