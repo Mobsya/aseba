@@ -88,14 +88,14 @@
                 },
               {
                 "type": "archive",
-                "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20220216.1/scratch-gui.tar.gz",
-                "sha256": "bc4a92270397648d9c7d8047217fd6d499e2338fcf56acfbc2deed7b78db8da8",
+                "url": "https://github.com/Mobsya/scratch-gui/releases/download/v20220517.9/scratch-gui.tar.gz",
+                "sha256": "ae4be2f593990413d3335165c8396a71f08f95a6998245e7ecb77704c20ea993",
                 "strip-components": 0
               },
               {
                 "type": "archive",
-                "url": "https://github.com/Mobsya/vpl-web/releases/download/v20220307.1/vpl3-thymio-suite.tar.gz",
-                "sha256": "72b6caca0f32f046adf02ff59a90d352faff36f6429eabd6758b82a44815af94",
+                "url": "https://github.com/Mobsya/vpl-web/releases/download/v20220408.1/vpl3-thymio-suite.tar.gz",
+                "sha256": "1e141934e9c5f5f85276980aaf8fe7c1139ea3588ece0e4ba942d517b33ba099",
                 "strip-components": 0
               }
             ],
