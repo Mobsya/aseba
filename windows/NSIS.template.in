@@ -274,7 +274,7 @@ SectionEnd
 Section "-Install Thonny" InstThonny	; Hidden section -> always executed
 	SetOutPath "$INSTDIR"
 
-	File "${INSTALLER_SOURCE_DIRECTORY}\thonny-3.3.13.exe"
+	File "${ASEBA_SOURCE_DIRECTORY}\thonny-3.3.13.exe"
 	DetailPrint $(Thonny)
 	ExecWait '"$INSTDIR\thonny-3.3.13.exe" /DIR="$INSTDIR\Thonny" /VERYSILENT /NORESTART' $0
 	

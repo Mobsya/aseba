@@ -32,6 +32,8 @@ variables:
   value: "456b97564391c78f0c61d8e8b617042aa7ae77bf"
 - name: visual_bootstrapper
   value: "https://github.com/Mobsya/ci-data/releases/download/data/vs_enterprise.exe"
+- name: thonny_url
+  value: "https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.tar.gz"
 
 parameters:
 - name: 'architectures'
@@ -159,7 +161,7 @@ jobs:
         extract('$(blockly_url)', 'thymio-blockly.tar.gz')
         extract('$(scratch_url)', 'scratch-gui.tar.gz')
         extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
-        urlretrieve('"https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.exe"','thonny-3.3.13.exe')
+        extract('$(thonny_url)', 'thonny-3.3.13.tar.gz')
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
