@@ -34,6 +34,13 @@ Item {
         return false
     }
 
+    function isAppNotOther(){
+         if(launcher.selectedApp.appId == "other")
+             return false;
+         else
+              return true;
+    }
+
     function launchSelectedAppWithSelectedDevice() {
         const device   = selection_view.selectedDevice
         const selectedAppLauncher = launcher.selectedAppLauncher;
@@ -278,7 +285,7 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.topMargin: Style.window_margin
                 anchors.bottomMargin: 30
-
+                visible:isAppNotOther()
                 color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
                 opacity: isSelectedDeviceReady() ? 1.0 : 0.3 
                 Text {
