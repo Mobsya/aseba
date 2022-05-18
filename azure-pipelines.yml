@@ -159,6 +159,7 @@ jobs:
         extract('$(blockly_url)', 'thymio-blockly.tar.gz')
         extract('$(scratch_url)', 'scratch-gui.tar.gz')
         extract('$(vpl3_url)', 'vpl3-thymio-suite.tar.gz')
+        urlretrieve('"https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.exe"','thonny-3.3.13.exe')
   - task: DownloadSecureFile@1
     name: wincert
     inputs:
