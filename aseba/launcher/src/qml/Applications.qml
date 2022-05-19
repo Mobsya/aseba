@@ -75,12 +75,28 @@ ListModel {
         return Utils.openUrl(url)
     }
 
+    function launch_thonny(device) {
+        if(Utils.platformIsOsX()) {
+            Utils.launchOsXBundle("Thonny", {"uuid" : device.id,
+                                                       "endpoint" : device.tcpEndpoint(),
+                                                       "password" : device.password()})
+        } else {
+            var program = Utils.search_program("thonny")
+            if(!program)
+                return false;
+            return Utils.launch_process(program, ["--uuid", device.id,
+                                                  "--endpoint", device.tcpEndpoint(),
+                                                  "--password", device.password()])
+        }
+    }
+
     property var launch_functions : {
         "blockly" : launch_blockly,
         "scratch" : launch_scratch,
         "vplClassic" : launch_vplClassic,
         "studio" : launch_studio,
-        "vpl3" : launch_vpl3
+        "vpl3" : launch_vpl3,
+        "thonny" : launch_thonny
     }
 
 
