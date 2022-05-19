@@ -81,7 +81,7 @@ ListModel {
                                                        "endpoint" : device.tcpEndpoint(),
                                                        "password" : device.password()})
         } else {
-            var program = Utils.search_program("thonny")
+            var program = Utils.search_program("../thonny/thonny")
             if(!program)
                 return false;
             return Utils.launch_process(program, ["--uuid", device.id,
