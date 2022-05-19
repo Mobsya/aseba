@@ -68,6 +68,9 @@ cp -R "${BUILD_DIR}/AsebaStudio.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/AsebaPlayground.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/ThymioVPLClassic.app" "$APPS_DIR/"
 
+sudo installer -pkg thonny-3.3.13.pkg -target /
+cp -R "/Applications/Thonny.app" "$APPS_DIR/"
+
 for app in "AsebaStudio" "ThymioVPLClassic"
 do
     cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"

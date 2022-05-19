@@ -319,6 +319,11 @@ jobs:
       7z x mac.7z
     displayName: 'Setting Qt version to 5.15.2'
     
+    
+  - script: |
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.pkg --output thonny-3.3.13.pkg 
+    displayName: 'Get Thonny'
+    
   #workaround until devops deploy
   - script: |
       brew bundle
