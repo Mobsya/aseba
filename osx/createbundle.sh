@@ -72,7 +72,7 @@ sudo installer -pkg thonny-3.3.13.pkg -target /
 cp -R "/Applications/Thonny.app" "$APPS_DIR/"
 mv "$APPS_DIR/Thonny.app/Contents/MacOS/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/thonny.py"
 cp "$DIR/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/"
-chmod +x $(realpath"$APPS_DIR/Thonny.app/Contents/MacOS/thonny")
+chmod +x $(realpath "$APPS_DIR/Thonny.app/Contents/MacOS/thonny")
 
 for app in "AsebaStudio" "ThymioVPLClassic"
 do
