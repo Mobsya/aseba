@@ -89,7 +89,7 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: 10
         Item {
-            id:top
+            id:topw
             anchors.left: parent.left
             anchors.right: parent.right
             height: 20
@@ -118,7 +118,7 @@ Rectangle {
             id: settings_list_view
             anchors.topMargin: 20
             orientation: ListView.Vertical
-            anchors.top: top.bottom
+            anchors.top: topw.bottom
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -190,7 +190,8 @@ Rectangle {
                         opacity: enabled ? 1.0 : 0.3
                         color: local_browser_checkbox.down ? "#ededed" : "#fff"
                         verticalAlignment: Text.AlignVCenter
-                        leftPadding: 13
+                        leftPadding: 20
+
                         horizontalAlignment: Text.AlignRight
                     }
                 }
@@ -230,7 +231,7 @@ Rectangle {
                         opacity: enabled ? 1.0 : 0.3
                         color: remote_connections_checkbox.down ? "#ededed" : "#fff"
                         verticalAlignment: Text.AlignVCenter
-                        leftPadding: 13
+                        leftPadding: 20
                         horizontalAlignment: Text.AlignRight
                     }
                 }
