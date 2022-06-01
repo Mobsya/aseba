@@ -19,7 +19,7 @@ if (NPM_EXECUTABLE)
 
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/thymio_generated.ts ${timestamp_file2}
-    COMMAND flatc --ts --no-fb-import --gen-mutable --gen-object-api -o "${CMAKE_CURRENT_SOURCE_DIR}/src/" ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
+    COMMAND flatc --ts --gen-mutable --gen-object-api -o "${CMAKE_CURRENT_SOURCE_DIR}/src/" ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
     COMMAND ${CMAKE_COMMAND} -E touch ${timestamp_file2}
     DEPENDS flatc thymio-flatbuffers ${CMAKE_CURRENT_SOURCE_DIR}/../aseba/flatbuffers/thymio.fbs
     COMMENT "Generating ${CMAKE_CURRENT_SOURCE_DIR}/src/thymio_generated.ts"
