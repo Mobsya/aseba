@@ -197,7 +197,7 @@ include(CPack)
 add_subdirectory(aseba)
 
 if(NOT ANDROID AND NOT IOS)
-    add_subdirectory(js)
+   # add_subdirectory(js)
 endif()
 
 if(NOT ANDROID AND NOT IOS)
