@@ -21,11 +21,11 @@ function(compile_flatbuffers_schema_to_js SRC_FBS HEADER)
   add_custom_command(
     OUTPUT ${GEN_HEADER}
     COMMAND flatc --ts --gen-mutable
-            --gen-object-api
+            --gen-object-api -o "${CMAKE_BINARY_DIR}/js"
             "${SRC_FBS_ABS}"
             DEPENDS flatc ${SRC_FBS_ABS}
             USES_TERMINAL
-	COMMAND tsc thymio_generated.ts -o "${CMAKE_BINARY_DIR}/js"# résultat: thymio_generated.js
+	#COMMAND tsc "${CMAKE_BINARY_DIR}/js/thymio_generated.ts" -outDir "${CMAKE_BINARY_DIR}/js"
     )
     set(${HEADER} "${${HEADER}}" PARENT_SCOPE)
 endfunction()
