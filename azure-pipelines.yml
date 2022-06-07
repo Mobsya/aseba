@@ -403,7 +403,7 @@ jobs:
       export CXX="$(brew --prefix)/opt/llvm@12/bin/clang++"
       export LD="$(brew --prefix)/opt/llvm@12/bin/ld"
       export LDFLAGS="-L$(brew --prefix)/opt/llvm@12/lib -Wl,-rpath,$(brew --prefix)/opt/llvm@12/lib"
-      cmake ../../third_party/flatbuffers -G Xcode -T buildsystem=1
+      cmake ../../third_party/flatbuffers -DCMAKE_C_COMPILER="$(brew --prefix)/opt/llvm@12/bin/clang" -G Xcode -T buildsystem=1
       cmake --build . --config Release --target flatc
       export FLATC=`pwd`/Release/flatc
       cd ..
