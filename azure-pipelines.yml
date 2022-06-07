@@ -399,6 +399,8 @@ jobs:
       sudo xcode-select -s /Applications/Xcode_13.2.1.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
+      export CXX="$(brew --prefix)/opt/llvm@12/bin/clang"
+      export LD="$(brew --prefix)/opt/llvm@12/bin/ld"
       export LDFLAGS="-L$(brew --prefix)/opt/llvm@12/lib -Wl,-rpath,$(brew --prefix)/opt/llvm@12/lib"
       cmake ../../third_party/flatbuffers -G Xcode -T buildsystem=1
       cmake --build . --config Release --target flatc
