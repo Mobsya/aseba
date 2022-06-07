@@ -399,7 +399,7 @@ jobs:
       sudo xcode-select -s /Applications/Xcode_13.2.1.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
-      export C="$(brew --prefix)/opt/llvm@12/bin/clang"
+      export CC="$(brew --prefix)/opt/llvm@12/bin/clang"
       export CXX="$(brew --prefix)/opt/llvm@12/bin/clang++"
       export LD="$(brew --prefix)/opt/llvm@12/bin/ld"
       export LDFLAGS="-L$(brew --prefix)/opt/llvm@12/lib -Wl,-rpath,$(brew --prefix)/opt/llvm@12/lib"
