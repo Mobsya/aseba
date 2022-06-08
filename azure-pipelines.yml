@@ -298,7 +298,7 @@ jobs:
   steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '9.x'
+      versionSpec: '14.x'
 
   - task: InstallAppleCertificate@2
     inputs:
@@ -357,11 +357,11 @@ jobs:
 
 - job: BuildForIOs
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-11'
   steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '9.x'
+      versionSpec: '14.x'
 
   - task: InstallAppleCertificate@2
     inputs:
