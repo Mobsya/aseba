@@ -10,13 +10,22 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        const url = "%1/thymio_blockly.%2.html#device=%3&ws=%4&pass=%5"
-            .arg(baseurl)
-            .arg(language)
-            .arg(device.id)
-            .arg(device.websocketEndpoint())
-            .arg(device.password())
-        return Utils.openUrl(url)
+        if ((language=="de")||(language=="en")||(language=="es")||(language=="fr")||(language=="it")||(language=="pl")||(language=="zh-cn")){
+            const url = "%1/thymio_blockly.%2.html#device=%3&ws=%4&pass=%5"
+                .arg(baseurl)
+                .arg(language)
+                .arg(device.id)
+                .arg(device.websocketEndpoint())
+                .arg(device.password())
+            return Utils.openUrl(url);
+        } else {
+            const url = "%1/thymio_blockly.en.html#device=%2&ws=%3&pass=%4"
+                .arg(baseurl)
+                .arg(device.id)
+                .arg(device.websocketEndpoint())
+                .arg(device.password())
+			return Utils.openUrl(url);
+        }
     }
 
     function launch_scratch(device) {

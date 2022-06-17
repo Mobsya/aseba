@@ -17,11 +17,11 @@ variables:
 - name: blockly_version
   value: "v20210908.3"
 - name: scratch_version
-  value: "v20220216.1"
+  value: "v20220608.1"
 - name: vpl3_version
   value: "v20220408.1"
 - name: packet_version
-  value: "2.3.2"
+  value: "2.4.0"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
@@ -45,39 +45,39 @@ parameters:
   - x86_64
 
 jobs:
-#- job: 'BuildFlatpak'
-#  pool:
-#    vmImage: 'Ubuntu-18.04'
-#  container: fpkde
-#  steps:
-#  - script: |
-#      git submodule update --init --recursive
-#      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-#      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
-#      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version).flatpak org.mobsya.ThymioSuite
-#    displayName: 'Build flatpak bundle'
-#
-#  - task: PublishBuildArtifacts@1
-#    inputs:
-#      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#      artifactName: 'thymio-suite.flatpak'
-#      
-#- job: 'BuildFlatpak515'
-#  pool:
-#    vmImage: 'Ubuntu-20.04'
-#  container: fpkde
-#  steps:
-#  - script: |
-#      git submodule update --init --recursive
-#      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-#      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite515.json
-#      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite515-$(packet_version).flatpak org.mobsya.ThymioSuite
-#    displayName: 'Build flatpak bundle'
-#
-#  - task: PublishBuildArtifacts@1
-#    inputs:
-#      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#      artifactName: 'thymio-suite.flatpak'
+- job: 'BuildFlatpak'
+  pool:
+    vmImage: 'Ubuntu-18.04'
+  container: fpkde
+  steps:
+  - script: |
+      git submodule update --init --recursive
+      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite.json
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite-$(packet_version).flatpak org.mobsya.ThymioSuite
+    displayName: 'Build flatpak bundle'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite.flatpak'
+      
+- job: 'BuildFlatpak515'
+  pool:
+    vmImage: 'Ubuntu-20.04'
+  container: fpkde
+  steps:
+  - script: |
+      git submodule update --init --recursive
+      flatpak remote-add --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      flatpak-builder --user --install-deps-from=flathub --force-clean --keep-build-dirs -v --repo=bundle build-dir flatpak/org.mobsya.ThymioSuite515.json
+      flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bundle $(Build.ArtifactStagingDirectory)/ThymioSuite515-$(packet_version).flatpak org.mobsya.ThymioSuite
+    displayName: 'Build flatpak bundle'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'thymio-suite.flatpak'
 
 - job: 'MSVC'
   timeoutInMinutes: 90
@@ -301,7 +301,7 @@ jobs:
   steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '9.x'
+      versionSpec: '14.x'
 
   - task: InstallAppleCertificate@2
     inputs:
@@ -365,11 +365,11 @@ jobs:
 
 - job: BuildForIOs
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-11'
   steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '9.x'
+      versionSpec: '14.x'
 
   - task: InstallAppleCertificate@2
     inputs:
@@ -404,7 +404,7 @@ jobs:
     displayName: 'Clone submodules'
 
   - script: |
-      sudo xcode-select -s /Applications/Xcode_12.1.1.app/Contents/Developer
+      sudo xcode-select -s /Applications/Xcode_13.2.1.app/Contents/Developer
       mkdir build && cd build;
       mkdir flatc && cd flatc;
       cmake ../../third_party/flatbuffers -G Xcode -T buildsystem=1

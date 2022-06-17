@@ -21,7 +21,7 @@
 	url = https://github.com/mobsya/aware
 [submodule "third_party/flatbuffers"]
 	path = third_party/flatbuffers
-	url = https://github.com/google/flatbuffers
+	url = https://github.com/mobsya/flatbuffers
 [submodule "third_party/fmt"]
 	path = third_party/fmt
 	url = https://github.com/fmtlib/fmt.git
