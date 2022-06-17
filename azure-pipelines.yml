@@ -21,7 +21,7 @@ variables:
 - name: vpl3_version
   value: "v20220408.1"
 - name: packet_version
-  value: "2.3.2"
+  value: "2.3.3"
 - name: blockly_url
   value: "https://github.com/Mobsya/thymio-blockly-standalone/releases/download/$(blockly_version)/thymio-blockly.tar.gz"
 - name: scratch_url
