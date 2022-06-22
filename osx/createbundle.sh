@@ -73,6 +73,7 @@ cp -R "/Applications/Thonny.app" "$APPS_DIR/"
 mv "$APPS_DIR/Thonny.app/Contents/MacOS/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/thonny.py"
 cp "$DIR/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/"
 chmod +x $(realpath "$APPS_DIR/Thonny.app/Contents/MacOS/thonny")
+$(realpath "$APPS_DIR/Thonny.app/Contents/MacOS/Python") -m pip install -U tdmclient-ty
 
 for app in "AsebaStudio" "ThymioVPLClassic"
 do
