@@ -197,7 +197,7 @@ ListModel {
                 {
                     appId:"thonny",
                     name: "Thonny Python",
-                    animatedIcon:"qrc:/apps/thonny/launcher-icon-thonny-python.svg",
+                    animatedIcon:"qrc:/apps/thonny/thonny-animated-icon.webp",
                     icon: "qrc:/apps/thonny/launcher-icon-thonny-python.svg",
                     descriptionImage: "qrc:/apps/thonny/description.jpg",
                     descriptionTextFile: "qrc:/apps/thonny/desc.%1.html",

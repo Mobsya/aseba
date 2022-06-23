@@ -116,6 +116,6 @@
         <file>apps/thonny/desc.zh-CN.html</file>
         <file>apps/thonny/description.jpg</file>
         <file>apps/thonny/launcher-icon-thonny-python.svg</file>
-        <file>apps/thonny/studio-animated-icon.webp</file>
+        <file>apps/thonny/thonny-animated-icon.webp</file>
     </qresource>
 </RCC>
