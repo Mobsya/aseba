@@ -33,6 +33,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
+            font.family: "Tahoma"
             textFormat: Text.RichText
             text: qsTr("<div align='center' style='font-size:24px'>Welcome to Thymio Suite</div><div style='font-size:16px'>Choose your programming language to learn with Thymio</div>")
         }
@@ -108,7 +109,7 @@ Item {
              .arg(Utils.isZeroconfRunning?
               qsTr("Discovery service enabled") : "")
         onLinkActivated: Qt.openUrlExternally(link)
-        font.family: "Roboto Light"
+        font.family: "Roboto"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.bottomMargin: Style.window_margin
