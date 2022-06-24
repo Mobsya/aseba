@@ -84,12 +84,28 @@ ListModel {
         return Utils.openUrl(url)
     }
 
+    function launch_thonny(device) {
+        if(Utils.platformIsOsX()) {
+            Utils.launchOsXBundle("Thonny", {"uuid" : device.id,
+                                                       "endpoint" : device.tcpEndpoint(),
+                                                       "password" : device.password()})
+        } else {
+            var program = Utils.search_program("../thonny/thonny")
+            if(!program)
+                return false;
+            return Utils.launch_process(program, ["--uuid", device.id,
+                                                  "--endpoint", device.tcpEndpoint(),
+                                                  "--password", device.password()])
+        }
+    }
+
     property var launch_functions : {
         "blockly" : launch_blockly,
         "scratch" : launch_scratch,
         "vplClassic" : launch_vplClassic,
         "studio" : launch_studio,
-        "vpl3" : launch_vpl3
+        "vpl3" : launch_vpl3,
+        "thonny" : launch_thonny
     }
 
 
@@ -174,6 +190,21 @@ ListModel {
                     supportsWatchMode: true,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
+                    isIosSupported:false,
+                    isAndroidSupported:false
+                 },
+
+                {
+                    appId:"thonny",
+                    name: "Thonny Python",
+                    animatedIcon:"qrc:/apps/thonny/thonny-animated-icon.webp",
+                    icon: "qrc:/apps/thonny/launcher-icon-thonny-python.svg",
+                    descriptionImage: "qrc:/apps/thonny/description.jpg",
+                    descriptionTextFile: "qrc:/apps/thonny/desc.%1.html",
+                    supportsGroups: true,
+                    supportsWatchMode: false,
+                    supportsNonThymioDevices: true,
+                    helpUrl: "https://www.thymio.org/%1/program/python/",
                     isIosSupported:false,
                     isAndroidSupported:false
                  }
