@@ -135,7 +135,7 @@ done
 
 for app in "AsebaStudio" "AsebaPlayground" "ThymioVPLClassic"
 do
-    echo "Signing $APPS_DIR/$app.app/ with $DIR/inherited.entitlements"
+    echo "Signing $APPS_DIR/$app.app/"
 	
 	for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
 		do
@@ -149,6 +149,25 @@ do
 			sign $(realpath "$plugin")
 		done
 	
+    sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
+done
+
+for app in "Thonny"
+do
+    echo "Signing $APPS_DIR/$app.app/"
+    
+    for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
+        do
+            echo "Signing $DEST/Contents/Frameworks/$fw"
+            sign $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
+        done
+
+    for py in $(find $APPS_DIR/$app.app/Contents/MacOS -name '*.py')
+        do
+            echo "Signing $py"
+            sign $(realpath "$py")
+        done
+    
     sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
 done
 
