@@ -279,7 +279,21 @@ bool Launcher::doLaunchPlaygroundBundle() const {
         options:NSWorkspaceLaunchNewInstance
         configuration:@{} error:nil];
     return true;
+}
 
+bool Launcher::doLaunchThonnyBundle() const {
+    const auto path = QDir(QCoreApplication::applicationDirPath() +
+                           QStringLiteral("/../Applications/Thonny.app")).absolutePath();
+    auto* bundle = [NSBundle bundleWithPath:path.toNSString()];
+    if(!bundle) {
+        NSLog(@"Unable to find the bundle");
+        return false;
+    }
+    auto ws = [NSWorkspace sharedWorkspace];
+    [ws launchApplicationAtURL:[bundle bundleURL]
+        options:NSWorkspaceLaunchNewInstance
+        configuration:@{} error:nil];
+    return true;
 }
     
 bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) const {

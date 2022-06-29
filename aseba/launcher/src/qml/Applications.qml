@@ -86,7 +86,9 @@ ListModel {
 
     function launch_thonny(device) {
         if(Utils.platformIsOsX()) {
-            Utils.launchOsXBundle("Thonny")
+            Utils.launchOsXBundle("Thonny", {"uuid" : device.id,
+                                                       "endpoint" : device.tcpEndpoint(),
+                                                       "password" : device.password()})
         } else {
             var program = Utils.search_program("../thonny/thonny")
             if(!program)
