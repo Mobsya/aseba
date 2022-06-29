@@ -57,6 +57,7 @@ public:
 
 #ifdef Q_OS_OSX
     bool doLaunchPlaygroundBundle() const;
+	bool doLaunchThonnyBundle() const;
 #endif
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     Q_INVOKABLE void applicationStateChanged(Qt::ApplicationState state);

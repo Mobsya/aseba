@@ -73,7 +73,10 @@ Q_INVOKABLE bool Launcher::platformHasSerialPorts() const {
 
 #ifdef Q_OS_MACOS
 bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
-    return doLaunchOsXBundle(name, args);
+	if (name=="Thonny")
+		return doLaunchThonnyBundle();
+	else
+		return doLaunchOsXBundle(name, args);
 }
 #endif
 #ifdef Q_OS_IOS
