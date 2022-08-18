@@ -68,7 +68,7 @@ cp -R "${BUILD_DIR}/AsebaStudio.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/AsebaPlayground.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/ThymioVPLClassic.app" "$APPS_DIR/"
 
-sudo installer -pkg thonny-3.3.13.pkg -target /
+sudo installer -pkg thonny-4.0.0b4.pkg -target /
 cp -R "/Applications/Thonny.app" "$APPS_DIR/"
 mv "$APPS_DIR/Thonny.app/Contents/MacOS/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/thonny.py"
 cp "$DIR/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/"
@@ -159,16 +159,16 @@ do
     for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
         do
             echo "Signing $DEST/Contents/Frameworks/$fw"
-            sign $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
+            sign --strict $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
         done
 
     for py in $(find $APPS_DIR/$app.app/Contents/MacOS -name '*.py')
         do
             echo "Signing $py"
-            sign $(realpath "$py")
+            sign --strict $(realpath "$py")
         done
     
-    sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
+    sign --options=runtime --strict $(realpath "$APPS_DIR/$app.app/")
 done
 
 echo "Signing $DEST/Contents/Frameworks/QTWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app"

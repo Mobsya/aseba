@@ -321,7 +321,7 @@ jobs:
     
     
   - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.pkg --output thonny-3.3.13.pkg 
+      curl -sL https://github.com/thonny/thonny/releases/download/v4.0.0b4/thonny-4.0.0b4.pkg --output thonny-4.0.0b4.pkg 
     displayName: 'Get Thonny'
     
   #workaround until devops deploy
