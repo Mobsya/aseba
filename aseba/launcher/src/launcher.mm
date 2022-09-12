@@ -281,19 +281,19 @@ bool Launcher::doLaunchPlaygroundBundle() const {
     return true;
 }
 
+bool Launcher::isThonnyInstalled() const {
+    NSString* thonnyPath = [[NSWorkspace sharedWorkspace]
+                            absolutePathForAppBundleWithIdentifier: @"org.thonny.Thonny"];
+    return thonnyPath != nil;
+}
+
 bool Launcher::doLaunchThonnyBundle() const {
-    const auto path = QDir(QCoreApplication::applicationDirPath() +
-                           QStringLiteral("/../Applications/Thonny.app")).absolutePath();
-    auto* bundle = [NSBundle bundleWithPath:path.toNSString()];
-    if(!bundle) {
-        NSLog(@"Unable to find the bundle");
-        return false;
-    }
-    auto ws = [NSWorkspace sharedWorkspace];
-    [ws launchApplicationAtURL:[bundle bundleURL]
-        options:NSWorkspaceLaunchNewInstance
-        configuration:@{} error:nil];
-    return true;
+    auto* task = [[NSTask alloc] init];
+    [task autorelease];
+    task.launchPath = @"/bin/sh";
+    task.arguments = @[@"-c", @"open -a Thonny"];
+    NSError *error = nil;
+    return [task launchAndReturnError:&error];
 }
     
 bool Launcher::doLaunchOsXBundle(const QString& name, const QVariantMap &args) const {

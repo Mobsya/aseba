@@ -29,7 +29,7 @@ public:
     Q_INVOKABLE bool getUseLocalBrowser() const;
     Q_INVOKABLE void setAllowRemoteConnections(bool allow);
     Q_INVOKABLE bool getAllowRemoteConnections() const;
-
+    Q_INVOKABLE bool isApplicationInstalled(const QString& name) const;
 
 #ifdef Q_OS_OSX
     Q_INVOKABLE bool launchOsXBundle(const QString& name, const QVariantMap& args) const;
@@ -57,6 +57,7 @@ public:
 
 #ifdef Q_OS_OSX
     bool doLaunchPlaygroundBundle() const;
+    bool isThonnyInstalled() const;
 	bool doLaunchThonnyBundle() const;
 #endif
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)

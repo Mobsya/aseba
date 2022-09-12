@@ -133,6 +133,7 @@ ListModel {
                    supportsWatchMode: false,
                    supportsNonThymioDevices: false,
                    helpUrl: "https://www.thymio.org/%1/program/vpl/",
+                   installUrl: "",
                    isIosSupported:false,
                    isAndroidSupported:false
                 },
@@ -146,6 +147,7 @@ ListModel {
                     supportsGroups: false,
                     supportsWatchMode: false,
                     helpUrl: "https://www.thymio.org/%1/program/vpl3/",
+                    installUrl: "",
                     isIosSupported: true,
                     isAndroidSupported:true
                 },
@@ -160,6 +162,7 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/scratch/",
+                    installUrl: "",
                     isIosSupported:true,
                     isAndroidSupported:true
                  },
@@ -175,6 +178,7 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/blockly/",
+                    installUrl: "",
                     isIosSupported:false,
                     isAndroidSupported:false
                  },
@@ -190,6 +194,7 @@ ListModel {
                     supportsWatchMode: true,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
+                    installUrl: "",
                     isIosSupported:false,
                     isAndroidSupported:false
                  },
@@ -205,6 +210,7 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/python/",
+                    installUrl: "https://thonny.org/",
                     isIosSupported:false,
                     isAndroidSupported:false
                  }
