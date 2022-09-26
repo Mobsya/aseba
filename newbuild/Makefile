@@ -40,6 +40,10 @@
 TARGET ?= $(shell uname | tr '[:upper:]' '[:lower:]')
 OPTIM ?= TRUE
 
+ifdef OPENWRT
+HAS_LIBUSB = TRUE
+endif
+
 
 # BOOST = boost_1_67_0
 BOOST = boost_1_73_0
@@ -201,7 +205,22 @@ ifdef HAS_LIBUSB
 
 # libusb
 
-OBJ += usbserver.o usbacceptor.o usbdevice.o $(OBJ_LIBUSB)
+OBJ += usbserver.o usbacceptor.o usbdevice.o
+
+ifdef OPENWRT
+
+LIB += -latomic
+
+LIB += -static-libstdc++
+
+#CMAKEFLAGS = -DCMAKE_TOOLCHAIN_FILE=/home/piguet/Pro/EPFL/Mobots/tdm-build-new/openwrt.cmake
+OBJ += $(OBJ_LIBUSB)
+
+else
+
+OBJ += $(OBJ_LIBUSB)
+
+endif
 
 CXXFLAGS += \
 	-DMOBSYA_TDM_ENABLE_USB \
@@ -244,6 +263,17 @@ CXXFLAGS += -g
 LDFLAGS += -g
 endif
 
+ifdef OPENWRT
+CC = /home/piguet/Pro/EPFL/Mobots/tdm-build-new/x-openwrt/gcc
+CXX = /home/piguet/Pro/EPFL/Mobots/tdm-build-new/x-openwrt/g++
+CXXFLAGS += -DFLATBUFFERS_LOCALE_INDEPENDENT=0
+CXXFLAGS += -isystem .
+CMAKEFLAGS = -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CXX)
+
+CXXFLAGS += -D_USE_32BIT_TIME_T
+
+endif
+
 tdm: $(OBJ) $(MISC) aseba
 	$(CXX) $(LDFLAGS) -o $@ $(OBJ) $(LIB)
 
@@ -283,7 +313,7 @@ expected/include/tl/expected.hpp:
 	git clone https://github.com/TartanLlama/expected
 
 aseba/third_party/libusb/liblibusb.a:
-	(cd aseba/third_party/libusb; cmake .; make)
+	(cd aseba/third_party/libusb; cmake $(CMAKEFLAGS) .; make)
 
 # some dependencies for tdm source code
 
