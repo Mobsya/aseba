@@ -20,6 +20,7 @@
 
 #include "Thymio2.h"
 #include "Thymio2-natives.h"
+#include "../../../../../thymio-nn/thymio/nn-natives.h"
 #include "../../Parameters.h"
 #include "../../EnkiGlue.h"
 #include "common/productids.h"
@@ -210,7 +211,11 @@ const AsebaLocalEventDescription* AsebaThymio2::getLocalEventsDescriptions() con
 // array of descriptions of native functions, static so only visible in this file
 
 static const AsebaNativeFunctionDescription* nativeFunctionsDescriptions[] = {
-    ASEBA_NATIVES_STD_DESCRIPTIONS, PLAYGROUND_THYMIO2_NATIVES_DESCRIPTIONS, nullptr};
+    ASEBA_NATIVES_STD_DESCRIPTIONS,
+    PLAYGROUND_THYMIO2_NATIVES_DESCRIPTIONS,
+    NN_NATIVES_DESCRIPTIONS,
+    nullptr
+};
 
 const AsebaNativeFunctionDescription* const* AsebaThymio2::getNativeFunctionsDescriptions() const {
     return nativeFunctionsDescriptions;
@@ -218,8 +223,11 @@ const AsebaNativeFunctionDescription* const* AsebaThymio2::getNativeFunctionsDes
 
 // array of native functions, static so only visible in this file
 
-static AsebaNativeFunctionPointer nativeFunctions[] = {ASEBA_NATIVES_STD_FUNCTIONS,
-                                                       PLAYGROUND_THYMIO2_NATIVES_FUNCTIONS};
+static AsebaNativeFunctionPointer nativeFunctions[] = {
+    ASEBA_NATIVES_STD_FUNCTIONS,
+    PLAYGROUND_THYMIO2_NATIVES_FUNCTIONS,
+    NN_NATIVES_FUNCTIONS
+};
 
 void AsebaThymio2::callNativeFunction(uint16_t id) {
     nativeFunctions[id](&vm);
