@@ -17,7 +17,7 @@ variables:
 - name: blockly_version
   value: "v20210908.3"
 - name: scratch_version
-  value: "v20220608.1"
+  value: "v20220921.1"
 - name: vpl3_version
   value: "v20220408.1"
 - name: packet_version
@@ -38,7 +38,7 @@ variables:
 parameters:
 - name: 'architectures'
   type: object
-  default: 
+  default:
   - armeabi-v7a
   - arm64-v8a
   - x86
@@ -61,7 +61,7 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite.flatpak'
-      
+
 - job: 'BuildFlatpak515'
   pool:
     vmImage: 'Ubuntu-20.04'
@@ -131,9 +131,9 @@ jobs:
       vcpkgGitCommitId: "$(vcpkg_commit)"
       vcpkgGitURL: https://github.com/mobsya/vcpkg.git
       vcpkgSetupOnly: true
-  - script: |   
+  - script: |
       vcpkg --feature-flags="manifests,versions" install --triplet $(vcpkgTriplet) --clean-after-build
-    displayName: RerunVcpk install 
+    displayName: RerunVcpk install
   - powershell: |
         Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
         Remove-Item -Recurse -Force $(Build.BinariesDirectory)/vcpkg/buildtrees -ErrorAction Ignore
@@ -192,7 +192,7 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'ThymioSuite.exe'
-      
+
 - job: 'BuildAndroid'
   pool:
     vmImage: 'Ubuntu-18.04'
@@ -238,7 +238,7 @@ jobs:
   - script: |
       git submodule update --init --recursive
     displayName: 'Clone submodules'
-    
+
   - script: |
       wget -q $(scratch_url) && tar xzf scratch-gui.tar.gz -C .
       wget -q $(vpl3_url) && tar xzf vpl3-thymio-suite.tar.gz -C .
@@ -279,7 +279,7 @@ jobs:
         -e ANDROID_TARGET_SDK_VERSION=${THYMIO_DEPLOYMENT_TARGET_API_LEVEL} \
         mobsya/thymio-dev-env:${DEV_ENVIRONMENT_TAG} \
         "jq '.architectures = { \"arm64-v8a\":\"arm64-v8a\", \"armeabi-v7a\":\"armeabi-v7a\", \"x86\":\"x86\", \"x86_64\":\"x86_64\" }' /build/aseba/launcher/src/qtdeploy.json > /build/aseba/launcher/src/qtdeploy.json.tmp && mv /build/aseba/launcher/src/qtdeploy.json.tmp /build/aseba/launcher/src/qtdeploy.json && /qt/bin/androiddeployqt --input /build/aseba/launcher/src/qtdeploy.json --output /build/android-build --verbose --gradle --aab ${build_type_option} ${android_target_platform} ${sign_options}"
-      
+
       sudo cp -r ${build_multi}/android-build/build/outputs/bundle/release ${build_multi}/android-build/build/outputs/apk/release $(Build.ArtifactStagingDirectory)
     displayName: 'Package app'
     condition: ne(variables['Build.Reason'], 'PullRequest')
@@ -294,7 +294,7 @@ jobs:
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: 'thymio-suite-android'
-      
+
 - job: BuildOnOsX
   pool:
     vmImage: 'macOS-10.15'
@@ -312,23 +312,23 @@ jobs:
       curl -sL $(blockly_url) | tar xzf - -C .
       curl -sL $(scratch_url) | tar xzf - -C .
       curl -sL $(vpl3_url) | tar xzf - -C .
-    displayName: 'Extract scratch, blockly and vpl3' 
+    displayName: 'Extract scratch, blockly and vpl3'
 
   - script: |
       curl -sL https://github.com/Mobsya/ci-data/releases/download/data/qt-5.15.2-mac.7z --output mac.7z
       7z x mac.7z
     displayName: 'Setting Qt version to 5.15.2'
-    
-    
+
+
   - script: |
-      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.pkg --output thonny-3.3.13.pkg 
+      curl -sL https://github.com/Mobsya/ci-data/releases/download/data/thonny-3.3.13.pkg --output thonny-3.3.13.pkg
     displayName: 'Get Thonny'
-    
+
   #workaround until devops deploy
   - script: |
       brew bundle
     displayName: 'Install dependencies with HomeBrew'
-    
+
   - script: |
       curl -sL  http://www.openssl.org/source/openssl-1.0.2t.tar.gz | tar xzf - -C .
       cd openssl-1.0.2t
@@ -338,11 +338,11 @@ jobs:
       make test
       make install MANDIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/share/man MANSUFFIX=ssl
     displayName: 'Setting openssl version to 1.0.2'
-    
+
   - script: |
       git submodule update --init --recursive
     displayName: 'Clone submodules'
-    
+
   - script: |
       sudo xcode-select -s /Applications/Xcode_11.4.1.app/Contents/Developer
       (mkdir build && cd build &&  cmake .. -GNinja -DBoost_DEBUG=OFF -DOPENSSL_ROOT_DIR=/usr/local/Cellar/openssl@1.0.2t/1.0.2t/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DQt5Core_DIR="`pwd`/../Qt/5.15.2/clang_64/lib/cmake/Qt5Core" -DCMAKE_PREFIX_PATH="`pwd`/../Qt/5.15.2/clang_64/" && ninja)
@@ -428,7 +428,7 @@ jobs:
       xcodebuild -exportArchive -archivePath ./bin/launcher.xcarchive -exportOptionsPlist ../ios/exportOptions.plist -exportPath $(Build.ArtifactStagingDirectory)
     displayName: 'Build with cmake - SIGNED'
     condition: ne(variables['Build.Reason'], 'PullRequest')
-   
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
