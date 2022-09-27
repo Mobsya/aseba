@@ -1,6 +1,6 @@
 set(CMAKE_AUTOMOC on)
 
-set(NN_ROOT ../../../third_party/thymio-nn)
+set(NN_ROOT ${CMAKE_SOURCE_DIR}/third_party/thymio-nn)
 
 set (ASEBASIM_SRC
 	EnkiGlue.cpp
