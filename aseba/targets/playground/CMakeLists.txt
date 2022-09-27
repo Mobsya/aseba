@@ -1,6 +1,6 @@
 set(CMAKE_AUTOMOC on)
 
-set(NN_ROOT ../../../thymio-nn)
+set(NN_ROOT ../../../third_party/thymio-nn)
 
 set (ASEBASIM_SRC
 	EnkiGlue.cpp
@@ -19,6 +19,7 @@ set (ASEBASIM_SRC
 )
 
 add_library(asebasim STATIC ${ASEBASIM_SRC})
+target_include_directories(asebasim PUBLIC ${CMAKE_SOURCE_DIR}/third_party/thymio-nn)
 set_target_properties(asebasim PROPERTIES VERSION ${LIB_VERSION_STRING}
 										SOVERSION ${LIB_VERSION_MAJOR})
 

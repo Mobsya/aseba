@@ -20,7 +20,7 @@
 
 #include "Thymio2.h"
 #include "Thymio2-natives.h"
-#include "../../../../../thymio-nn/thymio/nn-natives.h"
+#include "thymio/nn-natives.h"
 #include "../../Parameters.h"
 #include "../../EnkiGlue.h"
 #include "common/productids.h"
