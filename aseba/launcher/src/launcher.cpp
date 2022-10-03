@@ -71,7 +71,7 @@ Q_INVOKABLE bool Launcher::platformHasSerialPorts() const {
 #endif
 }
 
-#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
+#if defined(Q_OS_MACOS)
 bool Launcher::isApplicationInstalled(const QString& name) const {
     if (name == "thonny") {
         return isThonnyInstalled();
@@ -79,16 +79,17 @@ bool Launcher::isApplicationInstalled(const QString& name) const {
         return true;
     }
 }
+#elif defined(Q_OS_LINUX)
+bool Launcher::isApplicationInstalled(const QString& name) const {
+    if (name == "thonny") {
+        return false;
+    } else {
+        return true;
+    }
+}
 #else
 bool Launcher::isApplicationInstalled(const QString& name) const {
     return true;
-}
-#endif
-
-#if defined(Q_OS_LINUX)
-bool Launcher::isThonnyInstalled() const {
-	// check status of "flatpak info org.thonny.Thonny"
-	return system("flatpak info org.thonny.Thonny") == 0;
 }
 #endif
 

@@ -14,13 +14,13 @@ Item {
                 || device.type === ThymioNode.SimulatedThymio2
     }
 
-    
+
     /* ****************************
      *   Given access to the local current view, the function retrieves the one or several devices selected by the user. If the selected app supports watch functionalities and the device is Busy, is considered to be Ready
      *   return: boolean
-     *      true if 
+     *      true if
      *          the device is ready and fully binded
-     *      false  otherwise 
+     *      false  otherwise
      *  2do: add group management - add non thymio devices support
      **************************** */
     function isSelectedDeviceReady() {
@@ -52,14 +52,14 @@ Item {
             console.error("No launch function")
             return
         }
-        
-        if(launcher.selectedApp.appId == "studio" ){ 
+
+        if(launcher.selectedApp.appId == "studio" ){
             if( isSelectedDeviceReady())
-                if(!selectedAppLauncher(device)) 
+                if(!selectedAppLauncher(device))
                     console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
         }
         else{
-             if(!selectedAppLauncher(device)) 
+             if(!selectedAppLauncher(device))
                 console.error("could not launch %1 with device %2".arg(selectedAppLauncher.name).arg(device))
         }
         if(!(device.status === ThymioNode.Available || selectedAppLauncher.supportsWatchMode)
@@ -67,18 +67,18 @@ Item {
                 &&  (isThymio(device)  || selectedAppLauncher.supportsNonThymioDevices))
             device_view.selectedDevice = null
     }
-  
+
     function openInstallationURLForSelectedApp() {
         if (launcher.selectedApp.installUrl != "") {
             Qt.openUrlExternally(launcher.selectedApp.installUrl);
         }
     }
-  
+
     /* ****************************
-     *   The function set the content for the id:button button depending on if the launched app supports watch functionality - in this case and if is there a watchable device available the string would differs 
-     *   return: translatable string   
+     *   The function set the content for the id:button button depending on if the launched app supports watch functionality - in this case and if is there a watchable device available the string would differs
+     *   return: translatable string
      *      "Watch with APPNAME" if we support watchable and the device is ready as defined in isSelectedDeviceReady()
-     *      "Program with APPNAME" otherwise 
+     *      "Program with APPNAME" otherwise
     ******************************* */
     function launchButtonText(){
         if (!isSelectedApplicationInstalled()) {
@@ -285,12 +285,12 @@ Item {
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
                 }
-            }        
+            }
 
 
             Rectangle {
                 id:button
-                
+
                 height: 40
                 width : 250
                 radius: 20
@@ -323,7 +323,7 @@ Item {
                         ? launchSelectedAppWithSelectedDevice()
                         : openInstallationURLForSelectedApp()
                 }
-                
+
             }
 
             Item {
@@ -372,7 +372,9 @@ Item {
                 visible: !isSelectedApplicationInstalled()
                 id: installationMessage
                 text: {
-                    return qsTr("%1 is not installed on your computer.")
+                    return qsTr(Utils.platformIsLinux()
+							? "%1 must be installed and started outside Thymio Suite."
+							: "%1 is not installed on your computer.")
                         .arg(launcher.selectedApp.name)
                 }
                 color: "white"

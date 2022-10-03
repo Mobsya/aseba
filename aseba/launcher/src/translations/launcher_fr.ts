@@ -28,7 +28,7 @@
         <translation type="obsolete">&lt;br/&gt; Connexion locale </translation>
     </message>
     <message>
-        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
+        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to
                 learn with Thymio&lt;/div&gt;</source>
         <translation type="vanished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Bienvenue dans Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choisissez un langage de programmation pour apprendre avec Thymio&lt;/div&gt;</translation>
     </message>
@@ -57,7 +57,7 @@
         <location filename="../qml/FirmwareUpdateDialog.qml" line="13"/>
         <source>This should only take a few seconds.
 Do not unplug the device while the update is in progress.</source>
-        <translation>Cela ne devrait durer que quelques secondes. 
+        <translation>Cela ne devrait durer que quelques secondes.
 Ne débranchez pas l&apos;appareil durant le processus de mise à jour.</translation>
     </message>
 </context>
@@ -266,13 +266,13 @@ Cliquez ici pour l&apos;installer</translation>
         <location filename="../qml/ThymioSelectionDeviceDelegate.qml" line="229"/>
         <source>A new firmware is available!
 Connect the robot with a usb cable to install it</source>
-        <translation>Un nouveau firmware est disponible ! 
+        <translation>Un nouveau firmware est disponible !
 Connectez le robot avec un câble USB pour l&apos;installer</translation>
     </message>
     <message>
         <source>A new firmware is available!
 Connect the robot with an usb cable to install it</source>
-        <translation type="vanished">Un nouveau firmware est disponible ! 
+        <translation type="vanished">Un nouveau firmware est disponible !
 Connectez le robot avec un câble USB pour l&apos;installer</translation>
     </message>
     <message>
@@ -332,6 +332,11 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
         <location filename="../qml/ThymioSelectionView.qml" line="351"/>
         <source>%1 is not installed on your computer.</source>
         <translation>%1 n'est pas installé sur votre ordinateur.</translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <source>%1 must be installed and started outside Thymio Suite.</source>
+        <translation>%1 doit être installé et lancé à l'extérieur de Thymio Suite.</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="79"/>
