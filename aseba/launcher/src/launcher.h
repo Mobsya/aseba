@@ -60,6 +60,9 @@ public:
     bool isThonnyInstalled() const;
 	bool doLaunchThonnyBundle() const;
 #endif
+#ifdef Q_OS_LINUX
+    bool isThonnyInstalled() const;
+#endif
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     Q_INVOKABLE void applicationStateChanged(Qt::ApplicationState state);
 #endif

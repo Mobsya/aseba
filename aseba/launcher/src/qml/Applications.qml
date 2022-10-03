@@ -74,7 +74,7 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        
+
         const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4&pass=%5"
             .arg(baseurl)
             .arg(language)
@@ -89,6 +89,8 @@ ListModel {
             Utils.launchOsXBundle("Thonny", {"uuid" : device.id,
                                                        "endpoint" : device.tcpEndpoint(),
                                                        "password" : device.password()})
+		} else if (Utils.platformIsLinux()) {
+            return Utils.launch_process("flatpak", ["run", "org.thonny.Thonny"])
         } else {
             var program = Utils.search_program("../thonny/thonny")
             if(!program)
