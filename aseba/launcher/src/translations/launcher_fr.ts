@@ -328,6 +328,16 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Aucun robot trouvé car le service Bonjour est manquant ou n&apos;est pas lancé. &lt;a href=&apos;https://www.thymio.org/fr/faq/mon-robot-thymio-n-apparait-pas-dans-la-liste-de-selection-du-robot/&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <source>%1 is not installed on your computer.</source>
+        <translation>%1 n'est pas installé sur votre ordinateur.</translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="79"/>
+        <source>Install %1</source>
+        <translation>Installer %1</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

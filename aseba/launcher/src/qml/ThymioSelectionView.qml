@@ -34,6 +34,10 @@ Item {
         return false
     }
 
+    function isSelectedApplicationInstalled() {
+        return Utils.isApplicationInstalled(launcher.selectedApp.appId);
+    }
+
     function isAppNotOther(){
          if(launcher.selectedApp.appId == "other")
              return false;
@@ -64,6 +68,12 @@ Item {
             device_view.selectedDevice = null
     }
   
+    function openInstallationURLForSelectedApp() {
+        if (launcher.selectedApp.installUrl != "") {
+            Qt.openUrlExternally(launcher.selectedApp.installUrl);
+        }
+    }
+  
     /* ****************************
      *   The function set the content for the id:button button depending on if the launched app supports watch functionality - in this case and if is there a watchable device available the string would differs 
      *   return: translatable string   
@@ -71,7 +81,10 @@ Item {
      *      "Program with APPNAME" otherwise 
     ******************************* */
     function launchButtonText(){
-        if(launcher.selectedApp.supportsWatchMode && selection_view.selectedDevice 
+        if (!isSelectedApplicationInstalled()) {
+            return qsTr("Install %1").arg(launcher.selectedApp.name)
+        }
+        if(launcher.selectedApp.supportsWatchMode && selection_view.selectedDevice
                 && selection_view.selectedDevice.status === ThymioNode.Busy){
             return qsTr("Watch with %1").arg(launcher.selectedApp.name)
         }
@@ -223,6 +236,7 @@ Item {
 
             Item {
                 visible: Utils.isZeroconfRunning && Utils.isPlaygroundAvailable
+                    && isSelectedApplicationInstalled()
                 id: selection_title
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -287,7 +301,9 @@ Item {
                 anchors.bottomMargin: 30
                 visible:isAppNotOther()
                 color: mouse_area.containsMouse ? "#57c6ff" : "#0a9eeb"
-                opacity: isSelectedDeviceReady() ? 1.0 : 0.3 
+                opacity: isSelectedDeviceReady() || !isSelectedApplicationInstalled()
+                    ? 1.0
+                    : 0.3
                 Text {
                     font.family: "Roboto Bold"
                     font.pointSize: 12
@@ -296,18 +312,23 @@ Item {
                     text : launchButtonText()
                 }
                 MouseArea {
-                    enabled: isSelectedDeviceReady()
+                    enabled: isSelectedDeviceReady() || !isSelectedApplicationInstalled()
                     anchors.fill: parent
                     hoverEnabled: true
                     id: mouse_area
-                    cursorShape: isSelectedDeviceReady() ?  Qt.PointingHandCursor : Qt.ForbiddenCursor
-                    onClicked: launchSelectedAppWithSelectedDevice()
+                    cursorShape: isSelectedDeviceReady() || !isSelectedApplicationInstalled()
+                        ? Qt.PointingHandCursor
+                        : Qt.ForbiddenCursor
+                    onClicked: isSelectedApplicationInstalled()
+                        ? launchSelectedAppWithSelectedDevice()
+                        : openInstallationURLForSelectedApp()
                 }
                 
             }
 
             Item {
                 id:grid_container
+                visible: isSelectedApplicationInstalled()
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top : selection_title.bottom
@@ -345,6 +366,20 @@ Item {
 
                     delegate:  ThymioSelectionDeviceDelegate { }
                 }
+            }
+            Text {
+                anchors.centerIn: parent
+                visible: !isSelectedApplicationInstalled()
+                id: installationMessage
+                text: {
+                    return qsTr("%1 is not installed on your computer.")
+                        .arg(launcher.selectedApp.name)
+                }
+                color: "white"
+                font.family: "Roboto Bold"
+                font.pointSize: 14
+                wrapMode: Text.WordWrap
+                width: parent.width * 0.90
             }
             Text {
                 anchors.centerIn: parent

@@ -131,6 +131,16 @@ Connect the robot with a usb cable to install it</source>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <source>%1 is not installed on your computer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="79"/>
+        <source>Install %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WindowButtons</name>
