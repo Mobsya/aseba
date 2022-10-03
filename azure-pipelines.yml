@@ -297,7 +297,7 @@ jobs:
       
 - job: BuildOnOsX
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-10.15'
   steps:
   - task: NodeTool@0
     inputs:
