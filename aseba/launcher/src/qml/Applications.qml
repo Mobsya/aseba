@@ -89,8 +89,6 @@ ListModel {
             Utils.launchOsXBundle("Thonny", {"uuid" : device.id,
                                                        "endpoint" : device.tcpEndpoint(),
                                                        "password" : device.password()})
-		} else if (Utils.platformIsLinux()) {
-            return Utils.launch_process("flatpak", ["run", "org.thonny.Thonny"])
         } else {
             var program = Utils.search_program("../thonny/thonny")
             if(!program)
