@@ -137,6 +137,11 @@ Connect the robot with a usb cable to install it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <source>%1 must be installed and started outside Thymio Suite.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../qml/ThymioSelectionView.qml" line="79"/>
         <source>Install %1</source>
         <translation type="unfinished"></translation>

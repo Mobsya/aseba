@@ -74,7 +74,7 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        
+
         const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4&pass=%5"
             .arg(baseurl)
             .arg(language)
