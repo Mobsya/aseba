@@ -58,7 +58,7 @@ Rectangle {
                 anchors.top: parent.top
                 text: qsTr("<b>Your address and password are below. This information is needed to enable other users to access your robot(s).</b>")
                 color: "white"
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 font.pointSize: fontsize()
                 onLinkActivated: Utils.launchPlayground()
                 wrapMode: Text.WordWrap
@@ -79,7 +79,7 @@ Rectangle {
                 color: "white"
                 //linkColor: "#0a9eeb"
                 clip: true
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 visible: Utils.platformHasSerialPorts()
                 text: {
                     var adressText = qsTr("<b><br/>ADDRESS</b>")
@@ -114,7 +114,7 @@ Rectangle {
                 text: qsTr("<br/>Be sure your port 8596 and 8597 are open and redirected to this computer <a href='https://www.thymio.org/support/remote-connection-setup-for-host/'>More information</a>")
                 color: "white"
                 linkColor: "#0a9eeb"
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 font.pointSize: fontsize()
                 onLinkActivated: Qt.openUrlExternally(link)
                 MouseArea {
@@ -160,7 +160,7 @@ Rectangle {
             wrapMode: Text.WordWrap
             font.bold: true
             color: "white"
-            font.family: "Roboto Bold"
+            font.family: "Roboto"
             text: qsTr("To connect to the robot(s) of another host, please enter the address and password and change the port number if necessary in the fields below:")
         }
         RowLayout {
@@ -180,7 +180,7 @@ Rectangle {
                 placeholderTextColor: "#9effffff"
                 font.pointSize: 14
                 font.bold: true
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 background:Rectangle {
                     width: hostInput.Width
                     color: "#35216b"
@@ -200,7 +200,7 @@ Rectangle {
                 width: 150
                 font.pointSize: 14
                 font.bold: true
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 background:Rectangle {
                     width: passwordInput.Width
                     color: "#35216b"
@@ -218,7 +218,7 @@ Rectangle {
                 font.capitalization: Font.AllUppercase
                 font.pointSize: 14
                 font.bold: true
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 width: 90
                 background:Rectangle {
                     width: portInput.Width
@@ -248,7 +248,7 @@ Rectangle {
             width : parent.width
             wrapMode: Text.WordWrap
             color: "white"
-            font.family: "Roboto Bold"
+            font.family: "Roboto"
             text: qsTr("The connection will not be encrypted. Do not connect to hosts you don't trust !")
         }*/
         Item {
@@ -287,7 +287,7 @@ Rectangle {
             visible: false
             color: "white"
             anchors.fill: parent
-            font.family: "Roboto Bold"
+            font.family: "Roboto"
             font.pointSize: 14
         }
 
