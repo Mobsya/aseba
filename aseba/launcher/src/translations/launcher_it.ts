@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="it" sourcelanguage="en">
 <context>
+    <name>Application</name>
+    <message>
+        <location filename="../qml/Application.qml" line="23"/>
+        <source>url-install-thonny-mac</source>
+        <translation>https://www.thymio.org/it/faq/come-installare-thonny-sul-mio-sistema/</translation>
+    </message>
+    <message>
+        <location filename="../qml/Application.qml" line="23"/>
+        <source>url-install-thonny-linux</source>
+        <translation>https://www.thymio.org/it/faq/come-installare-thonny-sul-mio-sistema/</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSelectionView</name>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="37"/>
@@ -28,7 +41,7 @@
         <translation type="obsolete">&lt;br/&gt; Collegamento locale </translation>
     </message>
     <message>
-        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to 
+        <source>&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Welcome to Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Choose your programming language to
                 learn with Thymio&lt;/div&gt;</source>
         <translation type="vanished">&lt;div align=&apos;center&apos; style=&apos;font-size:24px&apos;&gt;Benvenuti in Thymio Suite&lt;/div&gt;&lt;div style=&apos;font-size:16px&apos;&gt;Scegli il tuo linguaggio di programmazione per imparare con Thymio&lt;/div&gt;</translation>
     </message>
