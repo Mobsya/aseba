@@ -512,11 +512,10 @@ Rectangle {
             Text {
                 text: ""
                 id: message
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 font.pointSize: 12
                 color : "white"
             }
         }
     }
 }
-
