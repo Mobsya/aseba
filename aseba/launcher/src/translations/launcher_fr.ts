@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr" sourcelanguage="en">
 <context>
+    <name>Application</name>
+    <message>
+        <location filename="../qml/Application.qml" line="23"/>
+        <source>url-install-thonny-mac</source>
+        <translation>https://www.thymio.org/fr/faq/comment-installer-thonny/</translation>
+    </message>
+    <message>
+        <location filename="../qml/Application.qml" line="23"/>
+        <source>url-install-thonny-linux</source>
+        <translation>https://www.thymio.org/fr/faq/comment-installer-thonny/</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSelectionView</name>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="37"/>

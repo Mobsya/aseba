@@ -210,7 +210,9 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/python/",
-                    installUrl: "https://thonny.org/",
+                    installUrl: Utils.platformIsOsX() ? qsTr("url-install-thonny-mac")
+                        : Utils.platformIsLinux() ? qsTr("url-install-thonny-linux")
+                        : "",
                     isIosSupported:false,
                     isAndroidSupported:false
                  }
