@@ -34,6 +34,19 @@
     </message>
 </context>
 <context>
+    <name>Applications</name>
+    <message>
+        <location filename="../qml/Applications.qml" line="213"/>
+        <source>url-install-thonny-mac</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/Applications.qml" line="214"/>
+        <source>url-install-thonny-linux</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FirmwareUpdateDialog</name>
     <message>
         <location filename="../qml/FirmwareUpdateDialog.qml" line="10"/>
@@ -236,27 +249,32 @@ Connect the robot with a usb cable to install it</source>
 <context>
     <name>ThymioSelectionView</name>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="229"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="250"/>
         <source>Connect a Thymio or &lt;a href=&apos;#&apos;&gt;launch a simulator&lt;/a&gt;</source>
         <translation>连接 Thymio 开始编程 或者  &lt;a href=&apos;#&apos;&gt;启动模拟器&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="69"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="89"/>
         <source>Watch with %1</source>
         <translation>使用 %1 模拟</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="71"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="85"/>
+        <source>Install %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="91"/>
         <source>Program with %1</source>
         <translation>使用 %1 编程</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="257"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="278"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
         <translation>确认在中继计算机上启动了Thymio编程套件。 &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;获取更多信息&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="348"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="392"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -265,7 +283,7 @@ Connect the robot with a usb cable to install it</source>
         <translation type="vanished">由于 Avahi Daemon 进程丢失或未运行，未发现Thymio  &lt;a href=&apos;http://google.com&apos;&gt;疑难解答&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="350"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="394"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>因为Bonjour服务丢失或未运行，未发现Thymio  &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;疑难解答&lt;/a&gt;</translation>
     </message>
@@ -437,7 +455,7 @@ Continue?</source>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="280"/>
+        <location filename="../launcher.cpp" line="297"/>
         <source>Save %1</source>
         <translation>保存 %1</translation>
     </message>
