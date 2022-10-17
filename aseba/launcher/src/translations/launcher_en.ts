@@ -6,12 +6,12 @@
     <message>
         <location filename="../qml/Application.qml" line="23"/>
         <source>url-install-thonny-mac</source>
-        <translation>https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+        <translation type="vanished">https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
     </message>
     <message>
         <location filename="../qml/Application.qml" line="23"/>
         <source>url-install-thonny-linux</source>
-        <translation>https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+        <translation type="vanished">https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
     </message>
 </context>
 <context>
@@ -120,6 +120,19 @@ Click to install it</source>
         <source>A new firmware is available!
 Connect the robot with a usb cable to install it</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Applications</name>
+    <message>
+        <location filename="../qml/Applications.qml" line="213"/>
+        <source>url-install-thonny-mac</source>
+        <translation>https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+    </message>
+    <message>
+        <location filename="../qml/Applications.qml" line="214"/>
+        <source>url-install-thonny-linux</source>
+        <translation>https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
     </message>
 </context>
 <context>
