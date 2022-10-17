@@ -57,12 +57,12 @@
     <message>
         <location filename="../qml/Applications.qml" line="213"/>
         <source>url-install-thonny-mac</source>
-        <translation type="unfinished">https://www.thymio.org/it/faq/come-installare-thonny-sul-mio-sistema/</translation>
+        <translation>https://www.thymio.org/it/faq/come-installare-thonny-sul-mio-sistema/</translation>
     </message>
     <message>
         <location filename="../qml/Applications.qml" line="214"/>
         <source>url-install-thonny-linux</source>
-        <translation type="unfinished">https://www.thymio.org/it/faq/come-installare-thonny-sul-mio-sistema/</translation>
+        <translation>https://www.thymio.org/it/faq/come-installare-thonny-sul-mio-sistema/</translation>
     </message>
 </context>
 <context>
@@ -221,7 +221,7 @@ Non scollegare il dispositivo mentre l&apos;aggiornamento è in corso.</translat
     <message>
         <location filename="../qml/SettingsMenu.qml" line="84"/>
         <source>Remote Connection</source>
-        <translation type="unfinished">Connessione a distanza</translation>
+        <translation>Connessione a distanza</translation>
     </message>
     <message>
         <source>BETA Connect to a remote host</source>
@@ -319,7 +319,15 @@ Connect the robot with an usb cable to install it</source>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="85"/>
         <source>Install %1</source>
-        <translation type="unfinished"></translation>
+        <translation>installare %1</translation>
+    </message>
+	<message>
+        <source>%1 is not installed on your computer.</source>
+        <translation type="vanished">%1 non è installato sul computer.</translation>
+    </message>
+    <message>
+        <source>%1 must be installed and started outside Thymio Suite.</source>
+        <translation type="vanished">%1 deve essere installato e lanciato al di fuori di Thymio Suite.</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="89"/>

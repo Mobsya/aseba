@@ -57,12 +57,12 @@
     <message>
         <location filename="../qml/Applications.qml" line="213"/>
         <source>url-install-thonny-mac</source>
-        <translation type="unfinished">https://www.thymio.org/fr/faq/comment-installer-thonny/</translation>
+        <translation>https://www.thymio.org/fr/faq/comment-installer-thonny/</translation>
     </message>
     <message>
         <location filename="../qml/Applications.qml" line="214"/>
         <source>url-install-thonny-linux</source>
-        <translation type="unfinished">https://www.thymio.org/fr/faq/comment-installer-thonny/</translation>
+        <translation>https://www.thymio.org/fr/faq/comment-installer-thonny/</translation>
     </message>
 </context>
 <context>
