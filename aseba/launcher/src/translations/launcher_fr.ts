@@ -353,12 +353,14 @@ Connectez le robot avec un câble USB pour l&apos;installer</translation>
         <translation>Aucun robot trouvé car le service Bonjour est manquant ou n&apos;est pas lancé. &lt;a href=&apos;https://www.thymio.org/fr/faq/mon-robot-thymio-n-apparait-pas-dans-la-liste-de-selection-du-robot/&apos;&gt;Dépannage&lt;/a&gt;</translation>
     </message>
     <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="376"/>
         <source>%1 is not installed on your computer.</source>
-        <translation type="vanished">%1 n&apos;est pas installé sur votre ordinateur.</translation>
+        <translation>%1 n&apos;est pas installé sur votre ordinateur.</translation>
     </message>
     <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="377"/>
         <source>%1 must be installed and started outside Thymio Suite.</source>
-        <translation type="vanished">%1 doit être installé et lancé à l&apos;extérieur de Thymio Suite.</translation>
+        <translation>%1 doit être installé et lancé à l&apos;extérieur de Thymio Suite.</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="85"/>

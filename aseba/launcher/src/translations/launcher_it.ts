@@ -322,12 +322,14 @@ Connect the robot with an usb cable to install it</source>
         <translation>installare %1</translation>
     </message>
 	<message>
+		<location filename="../qml/ThymioSelectionView.qml" line="376"/>
         <source>%1 is not installed on your computer.</source>
-        <translation type="vanished">%1 non è installato sul computer.</translation>
+        <translation>%1 non è installato sul computer.</translation>
     </message>
     <message>
+		<location filename="../qml/ThymioSelectionView.qml" line="377"/>
         <source>%1 must be installed and started outside Thymio Suite.</source>
-        <translation type="vanished">%1 deve essere installato e lanciato al di fuori di Thymio Suite.</translation>
+        <translation>%1 deve essere installato e lanciato al di fuori di Thymio Suite.</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="89"/>

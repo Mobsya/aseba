@@ -325,12 +325,14 @@ Verbinden Sie den Roboter mit einem USB-Kabel, um diese zu installieren</transla
         <translation>%1 installieren</translation>
     </message>
 	<message>
+		<location filename="../qml/ThymioSelectionView.qml" line="376"/>
         <source>%1 is not installed on your computer.</source>
-        <translation type="vanished">%1 ist nicht auf Ihrem Computer installiert.</translation>
+        <translation>%1 ist nicht auf Ihrem Computer installiert.</translation>
     </message>
     <message>
+		<location filename="../qml/ThymioSelectionView.qml" line="377"/>
         <source>%1 must be installed and started outside Thymio Suite.</source>
-        <translation type="vanished">%1 muss außerhalb von Thymio Suite installiert und gestartet werden.</translation>
+        <translation>%1 muss außerhalb von Thymio Suite installiert und gestartet werden.</translation>
     </message>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="89"/>
