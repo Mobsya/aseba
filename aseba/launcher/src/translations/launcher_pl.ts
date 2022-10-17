@@ -38,6 +38,19 @@
     </message>
 </context>
 <context>
+    <name>Applications</name>
+    <message>
+        <location filename="../qml/Applications.qml" line="213"/>
+        <source>url-install-thonny-mac</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/Applications.qml" line="214"/>
+        <source>url-install-thonny-linux</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FirmwareUpdateDialog</name>
     <message>
         <location filename="../qml/FirmwareUpdateDialog.qml" line="10"/>
@@ -246,7 +259,7 @@ Connect the robot with a usb cable to install it</source>
         <translation type="vanished">Wybierz Thymio</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="229"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="250"/>
         <source>Connect a Thymio or &lt;a href=&apos;#&apos;&gt;launch a simulator&lt;/a&gt;</source>
         <translation>Podłącz Thymio lub &lt;a href=&apos;#&apos;&gt;uruchom symulator&lt;/a&gt;</translation>
     </message>
@@ -255,22 +268,27 @@ Connect the robot with a usb cable to install it</source>
         <translation type="vanished">Uruchom %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="69"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="85"/>
+        <source>Install %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="89"/>
         <source>Watch with %1</source>
         <translation type="unfinished">Zegarek z %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="71"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="91"/>
         <source>Program with %1</source>
         <translation type="unfinished">Program z %1</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="257"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="278"/>
         <source>Make Sure Thymio Suite is launched on a relay computer. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</source>
         <translation type="unfinished">Upewnij się że Thymio Suite jest uruchomione na komputerze z nadajnikiem. &lt;a href=&apos;https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/&apos;&gt;More Informations&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="348"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="392"/>
         <source>No robot found because the Avahi Daemon is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -283,7 +301,7 @@ Connect the robot with a usb cable to install it</source>
         <translation type="vanished">Robot nie znaleziony ponieważ brakuje lub nie jest uruchomiony Avahi Daemon. &lt;a href=&apos;http://google.com&apos;&gt;Rozwiązywanie problemów&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/ThymioSelectionView.qml" line="350"/>
+        <location filename="../qml/ThymioSelectionView.qml" line="394"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
         <translation>Robot nie znaleziony ponieważ brakuje lub nie jest uruchomiona usługa Bonjour. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Rozwiązywanie problemów&lt;/a&gt;</translation>
     </message>
@@ -463,7 +481,7 @@ Kontynuować?</translation>
 <context>
     <name>mobsya::Launcher</name>
     <message>
-        <location filename="../launcher.cpp" line="280"/>
+        <location filename="../launcher.cpp" line="297"/>
         <source>Save %1</source>
         <translation>Zapisz %1</translation>
     </message>
