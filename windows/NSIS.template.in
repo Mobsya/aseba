@@ -277,11 +277,11 @@ Section "-Install Thonny" InstThonny	; Hidden section -> always executed
 	File "${ASEBA_SOURCE_DIRECTORY}\thonny-3.3.13.exe"
 	File "${ASEBA_SOURCE_DIRECTORY}\ifaddr-0.2.0-py3-none-any.whl"
 	File "${ASEBA_SOURCE_DIRECTORY}\zeroconf-0.38.7-py3-none-any.whl"
-	File "${ASEBA_SOURCE_DIRECTORY}\tdmclient_ty-0.1.6-py3-none-any.whl"
+	File "${ASEBA_SOURCE_DIRECTORY}\tdmclient_ty-0.1.7-py3-none-any.whl"
 	File "${ASEBA_SOURCE_DIRECTORY}\tdmclient-0.1.19-py3-none-any.whl"
 	DetailPrint $(Thonny)
 	ExecWait '"$INSTDIR\thonny-3.3.13.exe" /DIR="$INSTDIR\thonny" /VERYSILENT /NORESTART /SUPPRESSMSGBOXES /ALLUSERS' $0
-	ExecWait '"$INSTDIR\thonny\python.exe" -m pip install -U "$INSTDIR/tdmclient-0.1.19-py3-none-any.whl" "$INSTDIR/tdmclient_ty-0.1.6-py3-none-any.whl" "$INSTDIR/zeroconf-0.38.7-py3-none-any.whl" "$INSTDIR/ifaddr-0.2.0-py3-none-any.whl"' $0
+	ExecWait '"$INSTDIR\thonny\python.exe" -m pip install -U "$INSTDIR/tdmclient-0.1.19-py3-none-any.whl" "$INSTDIR/tdmclient_ty-0.1.7-py3-none-any.whl" "$INSTDIR/zeroconf-0.38.7-py3-none-any.whl" "$INSTDIR/ifaddr-0.2.0-py3-none-any.whl"' $0
 
 SectionEnd
 
