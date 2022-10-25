@@ -74,7 +74,7 @@ ListModel {
         if(!baseurl) {
             return false;
         }
-        
+
         const url = "%1/index.html?robot=thymio-tdm&role=teacher&uilanguage=%2#uuid=%3&w=%4&pass=%5"
             .arg(baseurl)
             .arg(language)
@@ -133,6 +133,7 @@ ListModel {
                    supportsWatchMode: false,
                    supportsNonThymioDevices: false,
                    helpUrl: "https://www.thymio.org/%1/program/vpl/",
+                   installUrl: "",
                    isIosSupported:false,
                    isAndroidSupported:false
                 },
@@ -146,6 +147,7 @@ ListModel {
                     supportsGroups: false,
                     supportsWatchMode: false,
                     helpUrl: "https://www.thymio.org/%1/program/vpl3/",
+                    installUrl: "",
                     isIosSupported: true,
                     isAndroidSupported:true
                 },
@@ -160,6 +162,7 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/scratch/",
+                    installUrl: "",
                     isIosSupported:true,
                     isAndroidSupported:true
                  },
@@ -175,6 +178,7 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: false,
                     helpUrl: "https://www.thymio.org/%1/program/blockly/",
+                    installUrl: "",
                     isIosSupported:false,
                     isAndroidSupported:false
                  },
@@ -190,6 +194,7 @@ ListModel {
                     supportsWatchMode: true,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/aseba/",
+                    installUrl: "",
                     isIosSupported:false,
                     isAndroidSupported:false
                  },
@@ -205,6 +210,9 @@ ListModel {
                     supportsWatchMode: false,
                     supportsNonThymioDevices: true,
                     helpUrl: "https://www.thymio.org/%1/program/python/",
+                    installUrl: Utils.platformIsOsX() ? qsTr("url-install-thonny-mac")
+                        : Utils.platformIsLinux() ? qsTr("url-install-thonny-linux")
+                        : "",
                     isIosSupported:false,
                     isAndroidSupported:false
                  }

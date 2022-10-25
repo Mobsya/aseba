@@ -1,8 +1,0 @@
-#!/bin/sh
-
-script_dir=`echo "$0" | sed -E 's/\/[^\/]*$//'`
-
-python_path="${script_dir}/../Frameworks/Python.framework/Versions/3.7/Resources/Python.app/Contents/MacOS/Python"
-thonny_py_path="${script_dir}/thonny.py"
-
-"$python_path" "$thonny_py_path"

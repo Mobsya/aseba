@@ -108,7 +108,7 @@ Item {
              .arg(Utils.isZeroconfRunning?
               qsTr("Discovery service enabled") : "")
         onLinkActivated: Qt.openUrlExternally(link)
-        font.family: "Roboto Light"
+        font.family: "Roboto"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.bottomMargin: Style.window_margin

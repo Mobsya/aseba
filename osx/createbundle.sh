@@ -68,13 +68,6 @@ cp -R "${BUILD_DIR}/AsebaStudio.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/AsebaPlayground.app" "$APPS_DIR/"
 cp -R "${BUILD_DIR}/ThymioVPLClassic.app" "$APPS_DIR/"
 
-sudo installer -pkg thonny-3.3.13.pkg -target /
-cp -R "/Applications/Thonny.app" "$APPS_DIR/"
-mv "$APPS_DIR/Thonny.app/Contents/MacOS/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/thonny.py"
-cp "$DIR/thonny" "$APPS_DIR/Thonny.app/Contents/MacOS/"
-chmod +x $(realpath "$APPS_DIR/Thonny.app/Contents/MacOS/thonny")
-$(realpath "$APPS_DIR/Thonny.app/Contents/MacOS/Python") -m pip install -U tdmclient-ty
-
 for app in "AsebaStudio" "ThymioVPLClassic"
 do
     cp -r "${BUILD_DIR}/$app.app" "$APPS_DIR/"
@@ -149,25 +142,6 @@ do
 			sign $(realpath "$plugin")
 		done
 	
-    sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
-done
-
-for app in "Thonny"
-do
-    echo "Signing $APPS_DIR/$app.app/"
-    
-    for fw in $(ls "$APPS_DIR/$app.app/Contents/Frameworks")
-        do
-            echo "Signing $DEST/Contents/Frameworks/$fw"
-            sign $(realpath "$APPS_DIR/$app.app/Contents/Frameworks/$fw")
-        done
-
-    for py in $(find $APPS_DIR/$app.app/Contents/MacOS -name '*.py')
-        do
-            echo "Signing $py"
-            sign $(realpath "$py")
-        done
-    
     sign --options=runtime $(realpath "$APPS_DIR/$app.app/")
 done
 

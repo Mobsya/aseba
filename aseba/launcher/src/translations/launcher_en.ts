@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en" sourcelanguage="en">
 <context>
+    <name>Application</name>
+    <message>
+        <location filename="../qml/Application.qml" line="23"/>
+        <source>url-install-thonny-mac</source>
+        <translation type="vanished">https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+    </message>
+    <message>
+        <location filename="../qml/Application.qml" line="23"/>
+        <source>url-install-thonny-linux</source>
+        <translation type="vanished">https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSelectionView</name>
     <message>
         <location filename="../qml/ApplicationSelectionView.qml" line="23"/>
@@ -110,6 +123,19 @@ Connect the robot with a usb cable to install it</source>
     </message>
 </context>
 <context>
+    <name>Applications</name>
+    <message>
+        <location filename="../qml/Applications.qml" line="213"/>
+        <source>url-install-thonny-mac</source>
+        <translation>https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+    </message>
+    <message>
+        <location filename="../qml/Applications.qml" line="214"/>
+        <source>url-install-thonny-linux</source>
+        <translation>https://www.thymio.org/faq/how-to-install-thonny-on-my-system/</translation>
+    </message>
+</context>
+<context>
     <name>ThymioSelectionView</name>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="178"/>
@@ -129,6 +155,21 @@ Connect the robot with a usb cable to install it</source>
     <message>
         <location filename="../qml/ThymioSelectionView.qml" line="263"/>
         <source>No robot found because the Bonjour service is missing or not running. &lt;a href=&apos;https://www.thymio.org/faq/my-thymio-robot-does-not-appear-in-the-robot-selection-list/&apos;&gt;Troubleshooting&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <source>%1 is not installed on your computer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="351"/>
+        <source>%1 must be installed and started outside Thymio Suite.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/ThymioSelectionView.qml" line="79"/>
+        <source>Install %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

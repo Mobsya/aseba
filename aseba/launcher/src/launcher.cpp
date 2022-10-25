@@ -71,6 +71,28 @@ Q_INVOKABLE bool Launcher::platformHasSerialPorts() const {
 #endif
 }
 
+#if defined(Q_OS_MACOS)
+bool Launcher::isApplicationInstalled(const QString& name) const {
+    if (name == "thonny") {
+        return isThonnyInstalled();
+    } else {
+        return true;
+    }
+}
+#elif defined(Q_OS_LINUX)
+bool Launcher::isApplicationInstalled(const QString& name) const {
+    if (name == "thonny") {
+        return false;
+    } else {
+        return true;
+    }
+}
+#else
+bool Launcher::isApplicationInstalled(const QString& name) const {
+    return true;
+}
+#endif
+
 #ifdef Q_OS_MACOS
 bool Launcher::launchOsXBundle(const QString& name, const QVariantMap& args) const {
 	if (name=="Thonny")
