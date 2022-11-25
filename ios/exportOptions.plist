@@ -15,7 +15,7 @@
     <key>provisioningProfiles</key>
     <dict>
         <key>org.mobsya.thymio.launcher.ios</key>
-        <string>Ios2021dist</string>
+        <string>Ios2022dist</string>
     </dict>
 </dict>
 </plist>
