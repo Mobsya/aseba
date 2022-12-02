@@ -132,7 +132,7 @@ jobs:
       vcpkgGitURL: https://github.com/mobsya/vcpkg.git
       vcpkgSetupOnly: true
   - script: |
-      vcpkg --feature-flags="manifests,versions" install --triplet $(vcpkgTriplet) --clean-after-build
+      vcpkg --feature-flags="manifests,versions" install --triplet $(vcpkgTriplet) --clean-after-build --vcpkg-root
     displayName: RerunVcpk install
   - powershell: |
         Get-ChildItem $(Build.BinariesDirectory)/vcpkg -recurse -include *.o | remove-item
