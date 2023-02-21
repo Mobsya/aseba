@@ -47,7 +47,7 @@ parameters:
 jobs:
 - job: 'BuildFlatpak'
   pool:
-    vmImage: 'Ubuntu-18.04'
+    vmImage: 'Ubuntu-20.04'
   container: fpkde
   steps:
   - script: |
@@ -195,7 +195,7 @@ jobs:
 
 - job: 'BuildAndroid'
   pool:
-    vmImage: 'Ubuntu-18.04'
+    vmImage: 'Ubuntu-20.04'
   # strategy:
   #   matrix:
   #     armeabi:
@@ -297,7 +297,7 @@ jobs:
 
 - job: BuildOnOsX
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-11'
   steps:
   - task: NodeTool@0
     inputs:
