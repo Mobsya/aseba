@@ -250,7 +250,7 @@ Item {
                     text: qsTr("Connect a Thymio or <a href='#'>launch a simulator</a>")
                     color: "white"
                     linkColor: "#0a9eeb"
-                    font.family: "Roboto Bold"
+                    font.family: "Roboto"
                     font.pointSize: 12
                     onLinkActivated: Utils.launchPlayground()
                     MouseArea {
@@ -278,7 +278,7 @@ Item {
                     text: qsTr("Make Sure Thymio Suite is launched on a relay computer. <a href='https://www.thymio.org/faq/how-to-program-a-thymio-with-a-tablet/'>More Informations</a>")
                     color: "white"
                     linkColor: "#0a9eeb"
-                    font.family: "Roboto Bold"
+                    font.family: "Roboto"
                     font.pointSize: 12
                     onLinkActivated: Qt.openUrlExternally(link)
                     wrapMode: Text.WordWrap
@@ -305,7 +305,7 @@ Item {
                     ? 1.0
                     : 0.3
                 Text {
-                    font.family: "Roboto Bold"
+                    font.family: "Roboto"
                     font.pointSize: 12
                     color : "white"
                     anchors.centerIn: parent
@@ -378,7 +378,7 @@ Item {
                         .arg(launcher.selectedApp.name)
                 }
                 color: "white"
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 font.pointSize: 14
                 wrapMode: Text.WordWrap
                 width: parent.width * 0.90
@@ -395,7 +395,7 @@ Item {
                 }
                 color: "#DE7459"
                 linkColor: "#F9F871"
-                font.family: "Roboto Bold"
+                font.family: "Roboto"
                 font.pointSize: 13
                 onLinkActivated: Qt.openUrlExternally(link)
                 wrapMode: Text.WordWrap
