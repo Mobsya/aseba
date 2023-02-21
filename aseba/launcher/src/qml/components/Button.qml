@@ -11,7 +11,7 @@ Rectangle {
     opacity: enabled ? 1 : 0.3
     Text {
         id: text1
-        font.family: "Roboto Bold"
+        font.family: "Roboto"
         font.pointSize: 12
         color : "white"
         anchors.centerIn: parent
