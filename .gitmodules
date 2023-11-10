@@ -40,3 +40,6 @@
 [submodule "third_party/quazip"]
 	path = third_party/quazip
 	url = https://github.com/mobsya/quazip
+[submodule "third_party/thymio-nn"]
+	path = third_party/thymio-nn
+	url = https://github.com/Mobsya/thymio-nn.git

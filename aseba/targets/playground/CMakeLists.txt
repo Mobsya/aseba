@@ -1,5 +1,7 @@
 set(CMAKE_AUTOMOC on)
 
+set(NN_ROOT ${CMAKE_SOURCE_DIR}/third_party/thymio-nn)
+
 set (ASEBASIM_SRC
 	EnkiGlue.cpp
 	AsebaGlue.cpp
@@ -9,10 +11,15 @@ set (ASEBASIM_SRC
 	robots/e-puck/EPuck-descriptions.c
 	robots/thymio2/Thymio2.cpp
 	robots/thymio2/Thymio2-natives.cpp
-	robots/thymio2/Thymio2-descriptions.c
+    robots/thymio2/Thymio2-descriptions.c
+    ${NN_ROOT}/thymio/nn-natives.c
+    ${NN_ROOT}/thymio/nn-descriptions.c
+    ${NN_ROOT}/nn/nn.c
+    ${NN_ROOT}/nn/nn-alloc-stdlib.c
 )
 
 add_library(asebasim STATIC ${ASEBASIM_SRC})
+target_include_directories(asebasim PUBLIC ${CMAKE_SOURCE_DIR}/third_party/thymio-nn)
 set_target_properties(asebasim PROPERTIES VERSION ${LIB_VERSION_STRING}
 										SOVERSION ${LIB_VERSION_MAJOR})
 
